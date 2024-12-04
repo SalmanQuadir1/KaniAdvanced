@@ -1746,7 +1746,7 @@ const UpdateProduct = () => {
                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                             <div className="flex flex-col space-y-4">
                                                 {/* Upload Field */}
-                                                <div className="flex-1 min-w-[500px] max-w-[600px]">
+                                                <div className="flex-1 min-w-[400px] max-w-[600px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">
                                                         Reference Image <span className="text-meta-1">*</span>
                                                     </label>
@@ -1792,7 +1792,7 @@ const UpdateProduct = () => {
                                                             <p>
                                                                 <span className="text-primary">Click to upload</span> or drag and drop
                                                             </p>
-                                                            <p className="mt-1.5">SVG, PNG, JPG or GIF</p>
+                                                            <p className="mt-1.5"> PNG, JPG or GIF(Less Than 5 mb)</p>
                                                             <p>(max, 800 X 800px)</p>
                                                         </div>
                                                     </div>
@@ -1812,7 +1812,7 @@ const UpdateProduct = () => {
 
                                                     <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark flex flex-row">
                                                         {/* Grid Layout */}
-                                                        <div className="flex flex-col ">
+                                                        <div className="flex flex-col grid-cols-3">
 
                                                             <div className="flex flex-row gap-4 ">
                                                                 {/* Image Preview */}
@@ -1859,7 +1859,7 @@ const UpdateProduct = () => {
                                                         {/* Box Wrapper */}
                                                         <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
                                                             {/* Grid Layout */}
-                                                            <div className="grid grid-cols-4 gap-4">
+                                                            <div className="grid grid-cols-3 gap-4">
                                                                 {previews.map((preview, index) => (
                                                                     <div key={index} className="relative group">
                                                                         {/* Image Preview */}
@@ -1888,7 +1888,7 @@ const UpdateProduct = () => {
 
                                             <div className="flex-1 min-w-[300px]">
                                                 {/* Upload Field */}
-                                                <div className="flex-1 min-w-[500px] max-w-[600px]">
+                                                <div className="flex-1 min-w-[400px] max-w-[600px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">
                                                         Actual Image <span className="text-meta-1">*</span>
                                                     </label>
@@ -1951,7 +1951,7 @@ const UpdateProduct = () => {
 
                                                     <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark flex flex-row">
                                                         {/* Grid Layout */}
-                                                        <div className="flex flex-col ">
+                                                        <div className="flex flex-col grid-cols-3">
 
                                                             <div className="flex flex-row gap-4 ">
                                                                 {/* Image Preview */}
@@ -1996,7 +1996,7 @@ const UpdateProduct = () => {
                                                         {/* Box Wrapper */}
                                                         <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
                                                             {/* Grid Layout */}
-                                                            <div className="grid grid-cols-4 gap-4">
+                                                            <div className="grid grid-cols-3 gap-4">
                                                                 {previewsActual.map((previewActual, index) => (
                                                                     <div key={index} className="relative group">
                                                                         {/* Image Preview */}
