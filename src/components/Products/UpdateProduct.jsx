@@ -440,6 +440,7 @@ const UpdateProduct = () => {
                         design: product?.design || { id: 0 },
                         styles: product?.styles || { id: 0 },
                         sizes: product?.sizes || { id: 1, sizeName: "3l" },
+                        productId:product?.productId || '',
                         colorName: product?.colorName || '',
                         barcode: product?.barcode || '',
                         finishedWeight: product?.finishedWeight || '',
@@ -689,7 +690,8 @@ const UpdateProduct = () => {
                                                 <Field
                                                     name='productId'
                                                     type="text"
-                                                    placeholder="Enter your first name"
+                                                    placeholder="Enter Product id"
+                                                     value={values.productId}
                                                     readOnly
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                 />
