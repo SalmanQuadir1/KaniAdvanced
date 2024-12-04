@@ -293,7 +293,7 @@ const ViewProduct = () => {
                         <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50">
                             <div className="bg-white rounded p-6 shadow-lg ml-[200px]  w-[870px] h-[400px] mt-[120px]">
                                 <div className="text-right">
-                                    <button onClick={closeINVENTORYModal} className="text-xl font-bold">&times;</button>
+                                    <button onClick={closeINVENTORYModal} className="text-red-500 text-xl  font-bold">&times;</button>
                                 </div>
                                 <h2 className="text-xl mb-4">Inventory  Details</h2>
                                 <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">

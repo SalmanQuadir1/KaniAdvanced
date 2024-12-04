@@ -27,9 +27,10 @@ const HsnCode = () => {
                     validate={values => {
                         const errors = {};
 
-                        if (!values.hsnCodeName) {
-                            errors.hsnCodeName = 'Required';
+                        if (!values.hsnCodeName ||values.hsnCodeName===" ") {
+                            errors.hsnCodeName = 'Hsn Code Cannot Be Null';
                         }
+                     
                         return errors;
                     }}
                     onSubmit={handleSubmit}
@@ -49,12 +50,12 @@ const HsnCode = () => {
                                             <div className="flex-1 min-w-[300px]">
                                                 <label className="mb-2.5 block text-black dark:text-white"> HSN CODE</label>
                                                 <Field
-                                                    type="number"
+                                                    type="string"
                                                     name="hsnCodeName"
                                                     placeholder="Enter HsnCode Name"
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-black dark:focus:border-primary"
                                                 />
-                                                <ErrorMessage name="hsnCodesName" component="div" className="text-red-500" />
+                                                <ErrorMessage name="hsnCodeName" component="div" className="text-red-500" />
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
                                                 <label className="mb-2.5 block text-black dark:text-white"> IGST (%)</label>
