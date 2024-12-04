@@ -47,7 +47,7 @@ const ViewProduct = () => {
         getProduct();
         getProductId();
     }, []);
-    console.log(productId, "lo");
+  
 
     const formattedProductId = productId.map(id => ({
         label: id,
@@ -58,7 +58,7 @@ const ViewProduct = () => {
 
     const openBOMModal = (bomData) => {
 
-        console.log(bomData, "siriiiiiii");
+       
         setSelectedBOMData(bomData);
         setIsModalOpen(true);
     };
@@ -74,7 +74,7 @@ const ViewProduct = () => {
 
        
         const getInventory = async () => {
-            console.log("iam here");
+         
             try {
                 const response = await fetch(`${GET_INVENTORYLOCATION}/${id}`, {
                     method: "GET",
@@ -84,7 +84,7 @@ const ViewProduct = () => {
                     }
                 });
                 const data = await response.json();
-                console.log(data,"pr")
+            
     
                 // setLocation(data);
                 setSelectedINVENTORYData(data);
@@ -134,7 +134,7 @@ const ViewProduct = () => {
 
 
         }
-        console.log(Product[0].inventoryStatus,"inventtttttttt");
+  
 
 
 

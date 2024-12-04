@@ -104,6 +104,33 @@ console.log(productList,"puuuuu");
             setSubmitting(false);
         }
     };
+
+    // const validate = (values) => {
+    //     const errors = {};
+    
+    //     rows.forEach((row, index) => {
+    //         // Validate Unit of Measure
+    //         if (!row.selectedOption2) {
+    //             if (!errors[`selectedOption2[${index}]`]) {
+    //                 errors[`selectedOption2[${index}]`] = 'Unit of Measure is required';
+    //             }
+    //         }
+    
+    //         // Validate Quantity
+    //         if (!row.selectedOption3) {
+    //             if (!errors[`selectedOption3[${index}]`]) {
+    //                 errors[`selectedOption3[${index}]`] = 'Quantity is required';
+    //             }
+    //         } else if (isNaN(row.selectedOption3) || row.selectedOption3 <= 0) {
+    //             if (!errors[`selectedOption3[${index}]`]) {
+    //                 errors[`selectedOption3[${index}]`] = 'Quantity must be a positive number';
+    //             }
+    //         }
+    //     });
+    
+    //     return errors;
+    // };
+    
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Product /Add BILL OF MATERIAL" />
@@ -112,44 +139,7 @@ console.log(productList,"puuuuu");
                     initialValues={{
                         
                     }}
-                    // validate={values => {
-                    //     const errors = {};
-                    //     if (!values.name) {
-                    //         errors.name = 'Required';
-                    //     }
-                    //     if (!values.phoneNumber) {
-                    //         errors.phoneNumber = 'Required';
-                    //     }
-                    //     if (values.phoneNumber < 10) {
-                    //         errors.phoneNumber = 'Phone Number Must Be Greater than 10 digit';
-                    //     }
-                    //     if (!values.supplierCode) {
-                    //         errors.supplierCode = 'Required';
-                    //     }
-                    //     if (!values.address) {
-                    //         errors.address = 'Required';
-                    //     }
-                    //     if (!values.bankName) {
-                    //         errors.bankName = 'Required';
-                    //     }
-                    //     if (!values.accountNo) {
-                    //         errors.accountNo = 'Required';
-
-                    //     }
-
-
-                    //     if (values.accountNo < 10) {
-                    //         errors.accountNo = 'Required';
-                    //     }
-                    //     if (!values.ifscCode) {
-                    //         errors.ifscCode = 'Required';
-                    //     }
-
-                    //     if (!values.emailId) {
-                    //         errors.emailId = 'Required';
-                    //     }
-                    //     return errors;
-                    // }}
+                    // validate={validate(values)}
                     onSubmit={handleSubmit}
                 >
                     {({ setFieldValue, values }) => (

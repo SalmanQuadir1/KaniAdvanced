@@ -3,7 +3,7 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import { Field, Formik } from 'formik';
 import { useNavigate, useParams } from 'react-router-dom';
-import { GET_PRODUCTBYID_URL, UPDATE_PRODUCT_URL } from '../../Constants/utils';
+import { GET_IMAGE, GET_PRODUCTBYID_URL, UPDATE_PRODUCT_URL } from '../../Constants/utils';
 import { useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
 import { customStyles as createCustomStyles } from '../../Constants/utils';
@@ -13,11 +13,10 @@ import { toast } from 'react-toastify';
 
 
 const UpdateProduct = () => {
-    
-    const referenceImages="";
-    const actualImages="";
-     const productIdField="";
-     
+
+
+    const productIdField = "";
+
     const [product, setProduct] = useState(null); // To store fetched product data
     const [colorGroupOptions, setColorGroupOptions] = useState([]); // Color group options for ReactSelect
     const [isLoading, setIsLoading] = useState(true); // Loader state
@@ -32,14 +31,15 @@ const UpdateProduct = () => {
     const size = useSelector(state => state?.nonPersisted?.size);
     const [productCategoryOptions, setproductCategoryOptions] = useState([]);
     const [hsnOptions, sethsnOptions] = useState([]);
- const productCategory = useSelector(state => state?.nonPersisted?.productCategory);
- const hsnCode = useSelector(state => state?.nonPersisted?.hsn);
- const [supplierNameOptions, setsupplierNameOptions] = useState([])
+    const productCategory = useSelector(state => state?.nonPersisted?.productCategory);
+    const hsnCode = useSelector(state => state?.nonPersisted?.hsn);
+    const [supplierNameOptions, setsupplierNameOptions] = useState([])
     const [supplierCodeOptions, setsupplierCodeOptions] = useState([])
     const supplier = useSelector(state => state?.nonPersisted?.supplier);
     const [productGroupOption, setproductGroupOption] = useState([])
     const productGroup = useSelector(state => state?.nonPersisted?.productGroup);
- 
+    const [referenceImages, setrefImage] = useState({})
+    const [actualImages, setactualImage] = useState({})
     const navigate = useNavigate(); // Initialize navigate
     // const {  handleUpdateSubmit } = useProduct({referenceImages,actualImages,productIdField});
 
@@ -53,14 +53,40 @@ const UpdateProduct = () => {
 
     // const handleUpdateSubmit = async (values, { setSubmitting }) => {
     //     console.log(values, "Submitted values:");
-    
+
     //     // Ensure `id` exists
-      
 
 
-        
+    const handleFileChange = async (event) => {
+        const files = Array.from(event.target.files);
+        const newPreviews = files.map((file) => ({
+            file,
+            url: URL.createObjectURL(file),
+            referenceImage: file,  // Or actualImage depending on the logic
+            actualImage: file,     // Or referenceImage depending on the logic
+        }));
+        await setrefImage(files || "")
 
-    
+        setPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
+    };
+
+
+    const handleFileChangeActual = async (event) => {
+        const files = Array.from(event.target.files);
+        console.log(files, "actuaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        const newPreviewsActual = files.map((file) => ({
+            file,
+            url: URL.createObjectURL(file),
+            referenceImage: file,  // Or actualImage depending on the logic
+            actualImage: file,     // Or referenceImage depending on the logic
+        }));
+        setPreviewsActual((prevPreviewsActual) => [...prevPreviewsActual, ...newPreviewsActual]);
+        await setactualImage(files || "")
+
+    };
+
+
+
     //     // Explicitly map only the `id` of the supplier and supplierCode
     //     const product = {
     //         ...values,
@@ -68,14 +94,14 @@ const UpdateProduct = () => {
     //         supplier: { id: values.supplier?.id || 0 },  // Ensure that only `id` is included
     //         supplierCode: { id: values.supplierCode?.id || 0 },  // Ensure only `id` of supplierCode
     //     };
-    
+
     //     // Log to ensure the product object looks as expected
     //     console.log("Product object to send:", JSON.stringify(product, null, 2));
-    
+
     //     try {
     //         const url = `${UPDATE_PRODUCT_URL}/${id}`;
     //         console.log("Update URL:", url);
-    
+
     //         const response = await fetch(url, {
     //             method: "PUT",
     //             headers: {
@@ -84,9 +110,9 @@ const UpdateProduct = () => {
     //             },
     //             body: JSON.stringify(product), // Send raw JSON
     //         });
-    
+
     //         const data = await response.json();
-    
+
     //         if (response.ok) {
     //             console.log(data, "Update response:");
     //             toast.success("Product updated successfully");
@@ -106,13 +132,13 @@ const UpdateProduct = () => {
 
     const handleUpdateSubmit = async (values, { setSubmitting }) => {
         console.log(values, "Submitted values:");
-    
+
         // Ensure `id` exists
 
-    
+
         // Create FormData instance
         const formData = new FormData();
-    
+
         // Map the necessary fields to create the product object
         const product = {
             ...values,
@@ -120,25 +146,27 @@ const UpdateProduct = () => {
             supplier: { id: values.supplier?.id || 0 },
             supplierCode: { id: values.supplierCode?.id || 0 },
         };
-    
+
         // Append product data as JSON
         formData.append("product", JSON.stringify(product));
-    
+        Array.from(referenceImages).forEach((file) => formData.append('referenceImages', file)); // Add files
+        Array.from(actualImages).forEach((file) => formData.append('actualImages', file));
+
         // Append file if provided
-        if (values.file) {
-            formData.append("file", values.file); // Replace "file" with the appropriate field name
-        }
-    
+        // if (values.file) {
+        //     formData.append("file", values.file); // Replace "file" with the appropriate field name
+        // }
+
         // Log the FormData content (for debugging)
         console.log("FormData content:");
         for (let [key, value] of formData.entries()) {
             console.log(key, value);
         }
-    
+
         try {
             const url = `${UPDATE_PRODUCT_URL}/${id}`;
             console.log("Update URL:", url);
-    
+
             const response = await fetch(url, {
                 method: "PUT",
                 headers: {
@@ -146,18 +174,18 @@ const UpdateProduct = () => {
                 },
                 body: formData,
             });
-        
+
             let data;
             try {
                 data = await response.json();
             } catch {
                 data = await response.text();
             }
-        
+
             if (response.ok) {
                 console.log(data, "Update response:");
                 toast.success("Product updated successfully");
-                 navigate('/product/viewProducts');
+                navigate('/product/viewProducts');
             } else {
                 console.error("Update failed. Status:", response.status, response.statusText);
                 console.error("Raw response:", data);
@@ -169,9 +197,9 @@ const UpdateProduct = () => {
         } finally {
             if (setSubmitting) setSubmitting(false);
         }
-        
+
     };
-    
+
     const getProductById = async () => {
         try {
             const response = await fetch(`${GET_PRODUCTBYID_URL}/${id}`, {
@@ -193,7 +221,7 @@ const UpdateProduct = () => {
             setIsLoading(false); // Stop loader
         }
     };
-    console.log(product,'hloooooo')
+    console.log(product, 'hloooooo')
 
     // Fetch data when component mounts
     useEffect(() => {
@@ -207,7 +235,7 @@ const UpdateProduct = () => {
                 value: color.id,
                 label: color.colorName,
                 colorGroupObject: color,
-                color:{id:color.id}
+                color: { id: color.id }
             }));
             setColorGroupOptions(formattedOptions);
         }
@@ -218,8 +246,8 @@ const UpdateProduct = () => {
                 value: prodCat.id,
                 label: prodCat?.productCategoryName,
                 productCategoryObject: prodCat,
-                productCategoryid: {id:prodCat.id},
-                
+                productCategoryid: { id: prodCat.id },
+
             }));
             setproductCategoryOptions(formattedOptions);
         }
@@ -241,7 +269,7 @@ const UpdateProduct = () => {
                 value: design.id,
                 label: design?.designName,
                 designObject: design,
-                designid:{id: design.id}
+                designid: { id: design.id }
             }));
             setdesignOptions(formattedOptions);
         }
@@ -252,7 +280,7 @@ const UpdateProduct = () => {
                 value: style.id,
                 label: style?.stylesName,
                 styleObject: style,
-                styleid: {id : style.id}
+                styleid: { id: style.id }
             }));
             setstyleOptions(formattedOptions);
         }
@@ -263,7 +291,7 @@ const UpdateProduct = () => {
                 value: size.id,
                 label: size?.sizeName,
                 sizeObject: size,
-                sizeid: {id : size.id}
+                sizeid: { id: size.id }
             }));
             setsizeOptions(formattedOptions);
         }
@@ -315,41 +343,41 @@ const UpdateProduct = () => {
 
 
 
-    const onSubmit = async (values,e) => {
+    const onSubmit = async (values, e) => {
         console.log("Form submission triggered");
         console.log(values, "Received values from frontend");
-    
+
         const formattedValues = {
             // productId: id, // Assuming `id` is defined and corresponds to the product being updated
             // productId: productId,
-            productGroup: { 
-                id: values.productGroup?.id , 
-                
+            productGroup: {
+                id: values.productGroup?.id,
+
                 // productGroupName: values.productGroup?.productGroupName || "" 
             },
-            colors: { 
+            colors: {
                 // id: values.colors?.id || { id: 1 }, 
-                 id: values.colors?.id , 
-                 
+                id: values.colors?.id,
+
             },
             //colors: product?.colors || { id: 1, colorName: "green" },
-            productCategory: { 
-                 id: values.productCategory?.id , 
+            productCategory: {
+                id: values.productCategory?.id,
                 // productCategoryName: values.productCategory?.productCategoryName || "" 
             },
-            design: { 
-                id: values.design?.id , 
+            design: {
+                id: values.design?.id,
                 // designName: values.design?.designName || "" 
             },
             // hsnCode: { 
             //     id: values.hsnCode?.id , 
             //     // hsnCodeName: values.hsnCode?.hsnCodeName || "" 
             // },
-            hsnCode: { 
+            hsnCode: {
 
-                id: values.hsnCode?.id , // Only the `id` is sent
+                id: values.hsnCode?.id, // Only the `id` is sent
             },
-            
+
             warpColors: values.warpColors || "",
             weftColors: values.weftColors || "",
             warpYarn: values.warpYarn || "",
@@ -382,19 +410,19 @@ const UpdateProduct = () => {
             productDescription: values.productDescription || "",
             supplier: {
                 // name: values.supplier?.name || ""
-                id: values.supplier?.id ,
+                id: values.supplier?.id,
             },
             supplierCode: {
                 // supplierCode: values.supplierCode?.supplierCode || ""
                 id: values.supplierCode?.id,
             }
         };
-    
+
         console.log(JSON.stringify(formattedValues, null, 2), "Formatted Values");
-        handleUpdateSubmit(formattedValues,e);
+        handleUpdateSubmit(formattedValues, e);
     };
-    
-   
+
+
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Products / UpdateProduct" />
@@ -403,44 +431,44 @@ const UpdateProduct = () => {
                     enableReinitialize // Update initial values when product data changes
                     initialValues={{
                         // id: product?.id || "",
-                        productGroup: product?.productGroup ||{id:0} ,
-                          colors: product?.colors || { id: 0  },
+                        productGroup: product?.productGroup || { id: 0 },
+                        colors: product?.colors || { id: 0 },
                         // colors: product?.colors?.id || '',
-                        
-                        productCategory: product?.productCategory || {id:0} ,
-                        hsnCode: product?.hsnCode || { id:0},
+
+                        productCategory: product?.productCategory || { id: 0 },
+                        hsnCode: product?.hsnCode || { id: 0 },
                         design: product?.design || { id: 0 },
-                        styles: product?.styles || { id: 0},
+                        styles: product?.styles || { id: 0 },
                         sizes: product?.sizes || { id: 1, sizeName: "3l" },
                         colorName: product?.colorName || '',
-                        barcode:product?.barcode || '',
-                        finishedWeight:product?.finishedWeight || '',
-                        materialWeight:product?.materialWeight || '',
-                        warpColors:product?.warpColors || '',
-                        weftColors:product?.weftColors || '',
-                        weave:product?.weave || '',
-                        warpYarn:product?.warpYarn || '',
-                        weftYarn:product?.weftYarn || '',
-                        pixAndReed:product?.pixAndReed || '',
-                        units:product?.units || '',
-                        cost:product?.cost || '',
-                         mrp:product?.mrp || '',
-                         dyeingCost:product?.dyeingCost || '',
-                         wholesalePrice:product?.wholesalePrice || '',
-                         usdPrice:product?.usdPrice || '',
-                         euroPrice:product?.euroPrice || '',
-                         gbpPrice:product?.gbpPrice || '',
-                         rmbPrice:product?.rmbPrice || '',
-                         productDescription:product?.productDescription || '',
-                         baseColour:product?.baseColour || '',
-                         kaniColors:product?.kaniColors || '',
-                         fabricWeave:product?.fabricWeave || '',
-                         fabricCode:product?.fabricCode || '',
-                         fabricCost:product?.fabricCost || '',
-                         supplier: product?.supplier || { id: 0 },
-                         supplierCode: product?.supplierCode || { id:  0},
-                         embroideryCost:product?.embroideryCost || '',
-                         totalCost:product?.totalCost || '',
+                        barcode: product?.barcode || '',
+                        finishedWeight: product?.finishedWeight || '',
+                        materialWeight: product?.materialWeight || '',
+                        warpColors: product?.warpColors || '',
+                        weftColors: product?.weftColors || '',
+                        weave: product?.weave || '',
+                        warpYarn: product?.warpYarn || '',
+                        weftYarn: product?.weftYarn || '',
+                        pixAndReed: product?.pixAndReed || '',
+                        units: product?.units || '',
+                        cost: product?.cost || '',
+                        mrp: product?.mrp || '',
+                        dyeingCost: product?.dyeingCost || '',
+                        wholesalePrice: product?.wholesalePrice || '',
+                        usdPrice: product?.usdPrice || '',
+                        euroPrice: product?.euroPrice || '',
+                        gbpPrice: product?.gbpPrice || '',
+                        rmbPrice: product?.rmbPrice || '',
+                        productDescription: product?.productDescription || '',
+                        baseColour: product?.baseColour || '',
+                        kaniColors: product?.kaniColors || '',
+                        fabricWeave: product?.fabricWeave || '',
+                        fabricCode: product?.fabricCode || '',
+                        fabricCost: product?.fabricCost || '',
+                        supplier: product?.supplier || { id: 0 },
+                        supplierCode: product?.supplierCode || { id: 0 },
+                        embroideryCost: product?.embroideryCost || '',
+                        totalCost: product?.totalCost || '',
 
 
 
@@ -501,32 +529,32 @@ const UpdateProduct = () => {
 
 
                                             <div className="flex-1 min-w-[300px]">
-    <label className="mb-2.5 block text-black dark:text-white">
-        Color Group
-    </label>
-    <div className="z-20 bg-transparent dark:bg-form-field">
-        <ReactSelect
-            name="colors"
-            value={
-                colorGroupOptions.find(option => option.value === values.colors?.id) || null
-            } // Match the current value
-            // onChange={(option) => {
-            //     setFieldValue(
-            //         'colors',
-            //         option
-            //             ? { id: option.value, colorName: option.label }
-            //             : null
-            //     ); // Update the formik state
-            // }}
-            onChange={(option) => setFieldValue('colors', option ? option.color : null)}
-            options={colorGroupOptions}
-            styles={customStyles} // Apply custom styles
-            className="bg-white dark:bg-form-field"
-            classNamePrefix="react-select"
-            placeholder="Select Color Group" // Static placeholder
-        />
-    </div>
-</div>
+                                                <label className="mb-2.5 block text-black dark:text-white">
+                                                    Color Group
+                                                </label>
+                                                <div className="z-20 bg-transparent dark:bg-form-field">
+                                                    <ReactSelect
+                                                        name="colors"
+                                                        value={
+                                                            colorGroupOptions.find(option => option.value === values.colors?.id) || null
+                                                        } // Match the current value
+                                                        // onChange={(option) => {
+                                                        //     setFieldValue(
+                                                        //         'colors',
+                                                        //         option
+                                                        //             ? { id: option.value, colorName: option.label }
+                                                        //             : null
+                                                        //     ); // Update the formik state
+                                                        // }}
+                                                        onChange={(option) => setFieldValue('colors', option ? option.color : null)}
+                                                        options={colorGroupOptions}
+                                                        styles={customStyles} // Apply custom styles
+                                                        className="bg-white dark:bg-form-field"
+                                                        classNamePrefix="react-select"
+                                                        placeholder="Select Color Group" // Static placeholder
+                                                    />
+                                                </div>
+                                            </div>
 
 
                                         </div>
@@ -545,7 +573,7 @@ const UpdateProduct = () => {
                                                         classNamePrefix="react-select"
                                                         placeholder="Select Product Category"
                                                         isDisabled={true}  // This makes the select readonly
-        
+
                                                     />
 
 
@@ -564,12 +592,12 @@ const UpdateProduct = () => {
                                                     classNamePrefix="react-select"
                                                     placeholder="Select Hsn Code"
 
-                                                    
+
                                                 />
                                             </div>
                                         </div>
 
-                                                        
+
                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                             <div className="flex-1 min-w-[300px]">
                                                 <label className="mb-2.5 block text-black dark:text-white"> Design Name </label>
@@ -584,7 +612,7 @@ const UpdateProduct = () => {
                                                         classNamePrefix="react-select"
                                                         placeholder="Select Design"
                                                         isDisabled={true}  // This makes the select readonly
-        
+
                                                     />
                                                     {/* <span className="absolute top-1/2 right-4 z-30 -translate-y-1/2">
                                                         <svg className="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -601,14 +629,14 @@ const UpdateProduct = () => {
                                                     name='colorName'
                                                     type="text"
                                                     placeholder="Enter your first name"
-                                                  
+
                                                     readOnly // Make the field read-only
 
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                 />
                                             </div>
                                         </div>
-                                        
+
                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                             <div className="flex-1 min-w-[300px]">
                                                 <label className="mb-2.5 block text-black dark:text-white"> Style </label>
@@ -629,7 +657,7 @@ const UpdateProduct = () => {
                                                         classNamePrefix="react-select"
                                                         placeholder="Select Style"
                                                         isDisabled={true}  // This makes the select readonly
-        
+
                                                     />
 
                                                 </div>
@@ -647,7 +675,7 @@ const UpdateProduct = () => {
                                                         classNamePrefix="react-select"
                                                         placeholder="Select Size"
                                                         isDisabled={true}  // This makes the select readonly
-        
+
                                                     />
 
                                                 </div>
@@ -705,8 +733,8 @@ const UpdateProduct = () => {
                                         </div>
 
                                         {product.productGroup?.productGroupName === "Contemporary Pashmina" && (
-                                        <>
-                                        <div className="mb-4.5 flex flex-wrap gap-6">
+                                            <>
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
                                                     <div className="flex-1 min-w-[300px]">
                                                         <label className="mb-2.5 block text-black dark:text-white">
                                                             Warp Colors
@@ -768,8 +796,8 @@ const UpdateProduct = () => {
                                                     </div>
                                                 </div>
 
-                                                
-<div className="mb-4.5 flex flex-wrap gap-6">
+
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
                                                     <div className="flex-1 min-w-[300px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> Cost Price </label>
                                                         <Field
@@ -862,14 +890,14 @@ const UpdateProduct = () => {
                                                         />
                                                     </div>
                                                 </div>
-                                                </>
+                                            </>
                                         )}
 
 
 
-{product.productGroup?.productGroupName === "Kani" && (
-                                        <>
-                                         <div className="mb-4.5 flex flex-wrap gap-6">
+                                        {product.productGroup?.productGroupName === "Kani" && (
+                                            <>
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
                                                     <div className="flex-1 min-w-[300px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> Base Color </label>
                                                         <Field
@@ -994,92 +1022,92 @@ const UpdateProduct = () => {
                                                         />
                                                     </div>
                                                 </div>
-                                        </>
+                                            </>
                                         )}
 
-                                         {/* Conditionally render the fields based on the selected product group */}
-                                         {product.productGroup?.productGroupName === "Pashmina Embroidery" && (
+                                        {/* Conditionally render the fields based on the selected product group */}
+                                        {product.productGroup?.productGroupName === "Pashmina Embroidery" && (
 
-<>
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white">Base Color</label>
-            <Field
-                name="baseColour"
-                type="text"
-                placeholder="Enter Base Color"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white">Embroidery Colors</label>
-            <Field
-                name="embroideryColors"
-                type="text"
-                placeholder="Enter Embroidery Colors"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
-
-
-
-
-
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Fabric Wave </label>
-            <Field
-                name='fabricWeave'
-                type="text"
-                placeholder="Enter your first name"
-                value={values.fabricWeave}
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Fabric Code</label>
-            <Field
-                name='fabricCode'
-                type="text"
-                placeholder="Enter your last name"
-                value={values.fabricCode}
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
+                                            <>
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">Base Color</label>
+                                                        <Field
+                                                            name="baseColour"
+                                                            type="text"
+                                                            placeholder="Enter Base Color"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">Embroidery Colors</label>
+                                                        <Field
+                                                            name="embroideryColors"
+                                                            type="text"
+                                                            placeholder="Enter Embroidery Colors"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
 
 
 
 
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Fabric Cost </label>
-            <Field
-                name='fabricCost'
-                type="text"
-                placeholder="Enter your first name"
-                value={values.fabricCost}
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Embroidery Cost</label>
-            <Field
-                name='embroideryCost'
-                type="text"
-                placeholder="Enter your last name"
-                value={values.embroideryCost}
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
+
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Fabric Wave </label>
+                                                        <Field
+                                                            name='fabricWeave'
+                                                            type="text"
+                                                            placeholder="Enter your first name"
+                                                            value={values.fabricWeave}
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Fabric Code</label>
+                                                        <Field
+                                                            name='fabricCode'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            value={values.fabricCode}
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
 
 
 
 
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        {/* <div className="flex-1 min-w-[300px]">
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Fabric Cost </label>
+                                                        <Field
+                                                            name='fabricCost'
+                                                            type="text"
+                                                            placeholder="Enter your first name"
+                                                            value={values.fabricCost}
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Embroidery Cost</label>
+                                                        <Field
+                                                            name='embroideryCost'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            value={values.embroideryCost}
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
+
+
+
+
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    {/* <div className="flex-1 min-w-[300px]">
             <label className="mb-2.5 block text-black dark:text-white"> Weight(gms) </label>
             <Field
                 name='weight'
@@ -1088,109 +1116,109 @@ const UpdateProduct = () => {
                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
             />
         </div> */}
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Units</label>
-            <Field
-                name='units'
-                type="text"
-                placeholder="Enter your last name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Units</label>
+                                                        <Field
+                                                            name='units'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
 
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Total Cost </label>
-            <Field
-                name='totalCost'
-                type="text"
-                placeholder="Enter your first name"
-                value={values.totalCost}
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> MRP</label>
-            <Field
-                name='mrp'
-                type="text"
-                placeholder="Enter your last name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
-
-
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Dyeing Cost </label>
-            <Field
-                name='dyeingCost'
-                type="text"
-                placeholder="Enter your first name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Wholesale Price</label>
-            <Field
-                name='wholesalePrice'
-                type="text"
-                placeholder="Enter your last name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Total Cost </label>
+                                                        <Field
+                                                            name='totalCost'
+                                                            type="text"
+                                                            placeholder="Enter your first name"
+                                                            value={values.totalCost}
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> MRP</label>
+                                                        <Field
+                                                            name='mrp'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
 
 
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> USD Price </label>
-            <Field
-                name='usdPrice'
-                type="text"
-                placeholder="Enter your first name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Euro Price</label>
-            <Field
-                name='euroPrice'
-                type="text"
-                placeholder="Enter your last name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Dyeing Cost </label>
+                                                        <Field
+                                                            name='dyeingCost'
+                                                            type="text"
+                                                            placeholder="Enter your first name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Wholesale Price</label>
+                                                        <Field
+                                                            name='wholesalePrice'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
 
 
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> GBP Price </label>
-            <Field
-                name='gbpPrice'
-                type="text"
-                placeholder="Enter your first name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> RMB Price</label>
-            <Field
-                name='rmbPrice'
-                type="text"
-                placeholder="Enter your last name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> USD Price </label>
+                                                        <Field
+                                                            name='usdPrice'
+                                                            type="text"
+                                                            placeholder="Enter your first name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Euro Price</label>
+                                                        <Field
+                                                            name='euroPrice'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
 
-</>
-)}
 
-{product.productGroup?.productGroupName === "Contemporary Wool" && (
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> GBP Price </label>
+                                                        <Field
+                                                            name='gbpPrice'
+                                                            type="text"
+                                                            placeholder="Enter your first name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> RMB Price</label>
+                                                        <Field
+                                                            name='rmbPrice'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                            </>
+                                        )}
+
+                                        {product.productGroup?.productGroupName === "Contemporary Wool" && (
                                             <>
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
                                                     <div className="flex-1 min-w-[300px]">
@@ -1360,87 +1388,87 @@ const UpdateProduct = () => {
 
 
 
- {/* Wool Embroidery */}
+                                        {/* Wool Embroidery */}
 
- {product.productGroup?.productGroupName === "Wool Embroidery" && (
+                                        {product.productGroup?.productGroupName === "Wool Embroidery" && (
 
-<>
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white">Base Color</label>
-            <Field
-                name="baseColour"
-                type="text"
-                placeholder="Enter Base Color"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white">Embroidery Colors</label>
-            <Field
-                name="embroideryColors"
-                type="text"
-                placeholder="Enter Embroidery Colors"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
-
-
+                                            <>
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">Base Color</label>
+                                                        <Field
+                                                            name="baseColour"
+                                                            type="text"
+                                                            placeholder="Enter Base Color"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">Embroidery Colors</label>
+                                                        <Field
+                                                            name="embroideryColors"
+                                                            type="text"
+                                                            placeholder="Enter Embroidery Colors"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
 
 
 
 
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Fabric Wave </label>
-            <Field
-                name='fabricWeave'
-                type="text"
-                placeholder="Enter your first name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Fabric Code</label>
-            <Field
-                name='fabricCode'
-                type="text"
-                placeholder="Enter your last name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
+
+
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Fabric Wave </label>
+                                                        <Field
+                                                            name='fabricWeave'
+                                                            type="text"
+                                                            placeholder="Enter your first name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Fabric Code</label>
+                                                        <Field
+                                                            name='fabricCode'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
 
 
 
 
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Fabric Cost </label>
-            <Field
-                name='fabricWeave'
-                type="text"
-                placeholder="Enter your first name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Embroidery Cost</label>
-            <Field
-                name='fabricCode'
-                type="text"
-                placeholder="Enter your last name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Fabric Cost </label>
+                                                        <Field
+                                                            name='fabricWeave'
+                                                            type="text"
+                                                            placeholder="Enter your first name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Embroidery Cost</label>
+                                                        <Field
+                                                            name='fabricCode'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
 
 
 
 
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        {/* <div className="flex-1 min-w-[300px]">
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    {/* <div className="flex-1 min-w-[300px]">
             <label className="mb-2.5 block text-black dark:text-white"> Weight(gms) </label>
             <Field
                 name='weight'
@@ -1449,135 +1477,132 @@ const UpdateProduct = () => {
                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
             />
         </div> */}
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Units</label>
-            <Field
-                name='units'
-                type="text"
-                placeholder="Enter your last name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Units</label>
+                                                        <Field
+                                                            name='units'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
 
 
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Total Cost </label>
-            <Field
-                name='totalCost'
-                type="text"
-                placeholder="Enter your first name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> MRP</label>
-            <Field
-                name='mrp'
-                type="text"
-                placeholder="Enter your last name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Total Cost </label>
+                                                        <Field
+                                                            name='totalCost'
+                                                            type="text"
+                                                            placeholder="Enter your first name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> MRP</label>
+                                                        <Field
+                                                            name='mrp'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
 
 
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Dyeing Cost </label>
-            <Field
-                name='dyeingCost'
-                type="text"
-                placeholder="Enter your first name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Wholesale Price</label>
-            <Field
-                name='wholesalePrice'
-                type="text"
-                placeholder="Enter your last name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Dyeing Cost </label>
+                                                        <Field
+                                                            name='dyeingCost'
+                                                            type="text"
+                                                            placeholder="Enter your first name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Wholesale Price</label>
+                                                        <Field
+                                                            name='wholesalePrice'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
 
 
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> USD Price </label>
-            <Field
-                name='usdPrice'
-                type="text"
-                placeholder="Enter your first name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Euro Price</label>
-            <Field
-                name='euroPrice'
-                type="text"
-                placeholder="Enter your last name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> USD Price </label>
+                                                        <Field
+                                                            name='usdPrice'
+                                                            type="text"
+                                                            placeholder="Enter your first name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Euro Price</label>
+                                                        <Field
+                                                            name='euroPrice'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
 
 
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> GBP Price </label>
-            <Field
-                name='gbpPrice'
-                type="text"
-                placeholder="Enter your first name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> RMB Price</label>
-            <Field
-                name='rmbPrice'
-                type="text"
-                placeholder="Enter your last name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
-</>
-)}
- {/* Papier Machie */}
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> GBP Price </label>
+                                                        <Field
+                                                            name='gbpPrice'
+                                                            type="text"
+                                                            placeholder="Enter your first name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> RMB Price</label>
+                                                        <Field
+                                                            name='rmbPrice'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )}
+                                        {/* Papier Machie */}
 
- {product.productGroup?.productGroupName === "Papier Machie" && (
+                                        {product.productGroup?.productGroupName === "Papier Machie" && (
 
-<>
+                                            <>
 
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white">Base Color</label>
-            <Field
-                name="baseColour"
-                type="text"
-                placeholder="Enter Base Color"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white">Pattern Color</label>
-            <Field
-                name="patternColor"
-                type="text"
-                placeholder="Enter Embroidery Colors"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
-
-
-
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">Base Color</label>
+                                                        <Field
+                                                            name="baseColour"
+                                                            type="text"
+                                                            placeholder="Enter Base Color"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">Pattern Color</label>
+                                                        <Field
+                                                            name="patternColor"
+                                                            type="text"
+                                                            placeholder="Enter Embroidery Colors"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
 
 
 
@@ -1590,115 +1615,118 @@ const UpdateProduct = () => {
 
 
 
-    <div className="mb-4.5 flex flex-wrap gap-6">
-
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Units</label>
-            <Field
-                name='units'
-                type="text"
-                placeholder="Enter your last name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
-
-
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Cost Price </label>
-            <Field
-                name='cost'
-                type="text"
-                placeholder="Enter your first name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> MRP</label>
-            <Field
-                name='mrp'
-                type="text"
-                placeholder="Enter your last name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
-
-
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Dyeing Cost </label>
-            <Field
-                name='dyeingCost'
-                type="text"
-                placeholder="Enter your first name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Wholesale Price</label>
-            <Field
-                name='wholesalePrice'
-                type="text"
-                placeholder="Enter your last name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
-
-
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> USD Price </label>
-            <Field
-                name='usdPrice'
-                type="text"
-                placeholder="Enter your first name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Euro Price</label>
-            <Field
-                name='euroPrice'
-                type="text"
-                placeholder="Enter your last name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
-
-
-    <div className="mb-4.5 flex flex-wrap gap-6">
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> GBP Price </label>
-            <Field
-                name='gbpPrice'
-                type="text"
-                placeholder="Enter your first name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-        <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> RMB Price</label>
-            <Field
-                name='rmbPrice'
-                type="text"
-                placeholder="Enter your last name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div>
-    </div>
-
-
-</>
-)}
 
 
 
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
 
-                                                <div className="mb-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Units</label>
+                                                        <Field
+                                                            name='units'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
+
+
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Cost Price </label>
+                                                        <Field
+                                                            name='cost'
+                                                            type="text"
+                                                            placeholder="Enter your first name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> MRP</label>
+                                                        <Field
+                                                            name='mrp'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
+
+
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Dyeing Cost </label>
+                                                        <Field
+                                                            name='dyeingCost'
+                                                            type="text"
+                                                            placeholder="Enter your first name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Wholesale Price</label>
+                                                        <Field
+                                                            name='wholesalePrice'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
+
+
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> USD Price </label>
+                                                        <Field
+                                                            name='usdPrice'
+                                                            type="text"
+                                                            placeholder="Enter your first name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Euro Price</label>
+                                                        <Field
+                                                            name='euroPrice'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
+
+
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> GBP Price </label>
+                                                        <Field
+                                                            name='gbpPrice'
+                                                            type="text"
+                                                            placeholder="Enter your first name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> RMB Price</label>
+                                                        <Field
+                                                            name='rmbPrice'
+                                                            type="text"
+                                                            placeholder="Enter your last name"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
+
+
+                                            </>
+                                        )}
+
+
+
+
+                                        <div className="mb-6">
                                             <label className="mb-2.5 block text-black dark:text-white"> Product Description </label>
                                             <textarea
                                                 name='productDescription'
@@ -1709,10 +1737,10 @@ const UpdateProduct = () => {
                                             ></textarea>
                                         </div>
 
-                                        
 
 
-                                      
+
+
                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                             <div className="flex flex-col space-y-4">
                                                 {/* Upload Field */}
@@ -1727,7 +1755,7 @@ const UpdateProduct = () => {
                                                             //multiple={false}
                                                             multiple // Allow multiple files
                                                             accept="image/*"
-                                                            // onChange={handleFileChange}
+                                                            onChange={handleFileChange}
                                                             className="absolute inset-0 z-50 w-full h-full opacity-0 cursor-pointer"
                                                         />
                                                         <div className="flex flex-col items-center justify-center space-y-3 border-[1.5px] border-stroke bg-transparent py-3 px-5 rounded text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary">
@@ -1769,10 +1797,62 @@ const UpdateProduct = () => {
                                                 </div>
 
 
+
+
+
+                                                <div className="mt-4">
+
+
+                                                    <label className="mb-2.5 block text-black dark:text-white">
+                                                        Image Previews
+                                                    </label>
+
+
+                                                    <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark flex flex-row">
+                                                        {/* Grid Layout */}
+                                                        <div className="flex flex-col ">
+
+                                                            <div className="flex flex-row gap-4 ">
+                                                                {/* Image Preview */}
+                                                                {product?.images.map((ref) => (
+                                                                    <>
+                                                                    {
+                                                                        ref.referenceImage != null &&
+
+                                                                                <img
+                                                                                    className="h-10 w-10 rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                                                                                    crossOrigin="use-credentials"
+                                                                                    src={`${GET_IMAGE}/products/getimages/${ref.referenceImage}`}
+                                                                                    alt="Product Image"
+                                                                                />
+                                                                            }
+                                                                            </>
+                                                                ))}
+                                                                {/* Cancel Button */}
+                                                                <button
+                                                                    // onClick={() => handleRemoveImage(index)}
+                                                                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                >
+                                                                    &times;
+                                                                </button>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+
+
+
+
+                                                </div>
+
+
+
+
                                                 {previews.length > 0 && (
                                                     <div className="mt-4">
                                                         <label className="mb-2.5 block text-black dark:text-white">
-                                                            Image Previews
+                                                            New Image Previews
                                                         </label>
                                                         {/* Box Wrapper */}
                                                         <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
@@ -1817,7 +1897,7 @@ const UpdateProduct = () => {
                                                             //multiple={false}
                                                             multiple // Allow multiple files
                                                             accept="image/*"
-                                                            // onChange={handleFileChangeActual}
+                                                            onChange={handleFileChangeActual}
                                                             className="absolute inset-0 z-50 w-full h-full opacity-0 cursor-pointer"
                                                         />
                                                         <div className="flex flex-col items-center justify-center space-y-3 border-[1.5px] border-stroke bg-transparent py-3 px-5 rounded text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary">
@@ -1856,6 +1936,53 @@ const UpdateProduct = () => {
                                                             <p>(max, 800 X 800px)</p>
                                                         </div>
                                                     </div>
+                                                </div>
+
+                                                
+                                                <div className="mt-4">
+
+
+                                                    <label className="mb-2.5 block text-black dark:text-white">
+                                                        Image Previews
+                                                    </label>
+
+
+                                                    <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark flex flex-row">
+                                                        {/* Grid Layout */}
+                                                        <div className="flex flex-col ">
+
+                                                            <div className="flex flex-row gap-4 ">
+                                                                {/* Image Preview */}
+                                                                {product?.images.map((ref) => (
+                                                                    <>
+                                                                    {
+                                                                        ref.actualImage != null &&
+
+                                                                                <img
+                                                                                    className="h-10 w-10 rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                                                                                    crossOrigin="use-credentials"
+                                                                                    src={`${GET_IMAGE}/products/getimages/${ref.actualImage}`}
+                                                                                    alt="Product Image"
+                                                                                />
+                                                                            }
+                                                                            </>
+                                                                ))}
+                                                                {/* Cancel Button */}
+                                                                <button
+                                                                    // onClick={() => handleRemoveImage(index)}
+                                                                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                >
+                                                                    &times;
+                                                                </button>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+
+
+
+
                                                 </div>
 
 
@@ -1952,14 +2079,14 @@ const UpdateProduct = () => {
 
 
                                         <div className="flex justify-center mt-4"> {/* Centering the button */}
-    <button
-        type="button" // Ensures the button does not trigger the form submission
-        onClick={(e) => handleUpdateSubmit(values, e)}
-        className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none" // Increased width
-    >
-        Update
-    </button>
-</div>
+                                            <button
+                                                type="button" // Ensures the button does not trigger the form submission
+                                                onClick={(e) => handleUpdateSubmit(values, e)}
+                                                className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none" // Increased width
+                                            >
+                                                Update
+                                            </button>
+                                        </div>
 
                                     </div>
                                 </div>
