@@ -50,7 +50,7 @@ const HsnCode = () => {
                                             <div className="flex-1 min-w-[300px]">
                                                 <label className="mb-2.5 block text-black dark:text-white"> HSN CODE</label>
                                                 <Field
-                                                    type="string"
+                                                    type="text"
                                                     name="hsnCodeName"
                                                     placeholder="Enter HsnCode Name"
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-black dark:focus:border-primary"
