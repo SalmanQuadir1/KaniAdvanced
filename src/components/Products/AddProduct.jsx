@@ -341,12 +341,26 @@ const AddProduct = () => {
 
 
                     validate={values => {
+
+                        const errors = {};
+
+                        if (!values.barcode ||values.barcode===" ") {
+                            errors.barcode = 'bar code Cannot Be Null';
+                        }
+                        if (!values.productGroup ||values.productGroup===" ") {
+                            errors.productGroup = 'product Group Cannot Be Null';
+                        }
+                     
                         if (values) {
                             
 
                             setvaaluee(values)
                             // setFieldValue('productId', productIdField);
                         }
+                        return errors;
+
+
+
 
 
                     }}
@@ -387,6 +401,7 @@ const AddProduct = () => {
                                                         placeholder="Select Product Group"
                                                     />
                                                 </div>
+                                                <ErrorMessage name="productGroup" component="div" className="text-red-500" />
                                             </div>
 
 
@@ -682,6 +697,8 @@ const AddProduct = () => {
                                                     placeholder="Enter your last name"
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                 />
+                                                  <ErrorMessage name="barcode" component="div" className="text-red-500" />
+
                                             </div>
                                         </div>
 
