@@ -602,7 +602,7 @@ const AddProduct = () => {
                                                         setFieldValue('colorName', e.target.value);
                                                         updateProductId();
                                                     }}
-                                                    placeholder="Enter your first name"
+                                                    placeholder="Enter your Color Name"
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                 />
                                             </div>
@@ -679,7 +679,7 @@ const AddProduct = () => {
                                                 <Field
                                                     name='barcode'
                                                     type="text"
-                                                    placeholder="Enter your last name"
+                                                    placeholder="Enter Barcode"
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                 />
                                             </div>
@@ -751,7 +751,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='weave'
                                                             type="text"
-                                                            placeholder="Enter your first name"
+                                                            placeholder="Enter Wave"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -760,7 +760,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='warpYarn'
                                                             type="text"
-                                                            placeholder="Enter your last name"
+                                                            placeholder="Enter Warp Yarn"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -769,7 +769,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='weftYarn'
                                                             type="text"
-                                                            placeholder="Enter your last name"
+                                                            placeholder="Enter Weft Yarn"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -783,7 +783,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='pixAndReed'
                                                             type="text"
-                                                            placeholder="Enter your last name"
+                                                            placeholder="Pic & Read"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -793,7 +793,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='units'
                                                             type="number"
-                                                            placeholder="Enter your first name"
+                                                            placeholder="Enter your Units"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -806,7 +806,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='cost'
                                                             type="text"
-                                                            placeholder="Enter your first name"
+                                                            placeholder="Enter Cost Price"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -815,7 +815,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='mrp'
                                                             type="text"
-                                                            placeholder="Enter your last name"
+                                                            placeholder="Enter Mrp"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -828,7 +828,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='dyeingCost'
                                                             type="text"
-                                                            placeholder="Enter your first name"
+                                                            placeholder="Enter Deyeing Cost"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -837,7 +837,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='wholesalePrice'
                                                             type="text"
-                                                            placeholder="Enter your last name"
+                                                            placeholder="Enter Wholesale Price"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -850,7 +850,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='usdPrice'
                                                             type="text"
-                                                            placeholder="Enter your first name"
+                                                            placeholder="Enter Usd Price"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -859,7 +859,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='euroPrice'
                                                             type="text"
-                                                            placeholder="Enter your last name"
+                                                            placeholder="Enter Euro Price"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -872,7 +872,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='gbpPrice'
                                                             type="text"
-                                                            placeholder="Enter your first name"
+                                                            placeholder="Enter Gbp Price"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -881,7 +881,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='rmbPrice'
                                                             type="text"
-                                                            placeholder="Enter your last name"
+                                                            placeholder="Enter Rmb Price"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -924,7 +924,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='fabricWeave'
                                                             type="text"
-                                                            placeholder="Enter your first name"
+                                                            placeholder="Enter Fabric Wave"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -933,7 +933,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='fabricCode'
                                                             type="text"
-                                                            placeholder="Enter your last name"
+                                                            placeholder="Enter Fabric Code"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -948,7 +948,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='fabricCost'
                                                             type="text"
-                                                            placeholder="Enter your first name"
+                                                            placeholder="Enter Fabric Cost"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -957,7 +957,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='embroideryCost'
                                                             type="text"
-                                                            placeholder="Enter your last name"
+                                                            placeholder="Enter Embroidery Cost"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -981,7 +981,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='units'
                                                             type="number"
-                                                            placeholder="Enter your last name"
+                                                            placeholder="Enter Units"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -993,7 +993,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='totalCost'
                                                             type="text"
-                                                            placeholder="Enter your first name"
+                                                            placeholder="Enter Total Cost"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -1002,7 +1002,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='mrp'
                                                             type="text"
-                                                            placeholder="Enter your last name"
+                                                            placeholder="Enter Mrp"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -1015,7 +1015,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='dyeingCost'
                                                             type="text"
-                                                            placeholder="Enter your first name"
+                                                            placeholder="Enter Dyeing Cost"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -1024,7 +1024,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='wholesalePrice'
                                                             type="text"
-                                                            placeholder="Enter your last name"
+                                                            placeholder="Enter Wholesale Price"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -1037,7 +1037,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='usdPrice'
                                                             type="text"
-                                                            placeholder="Enter your first name"
+                                                            placeholder="Enter Usd Price"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -1046,7 +1046,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='euroPrice'
                                                             type="text"
-                                                            placeholder="Enter your last name"
+                                                            placeholder="Enter Euro Price"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -1059,7 +1059,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='gbpPrice'
                                                             type="text"
-                                                            placeholder="Enter your first name"
+                                                            placeholder="Enter Gbp Price"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -1068,7 +1068,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='rmbPrice'
                                                             type="text"
-                                                            placeholder="Enter your last name"
+                                                            placeholder="Enter Rmb Price"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -1087,7 +1087,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='baseColour'
                                                             type="text"
-                                                            placeholder="Enter your first name"
+                                                            placeholder="Enter Base Color"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -1096,7 +1096,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='kaniColors'
                                                             type="text"
-                                                            placeholder="Enter your last name"
+                                                            placeholder="Enter Kani Colors"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -1117,7 +1117,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='units'
                                                             type="number"
-                                                            placeholder="Enter your last name"
+                                                            placeholder="Enter Units"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -1129,7 +1129,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='cost'
                                                             type="text"
-                                                            placeholder="Enter your first name"
+                                                            placeholder="Enter Cost Price"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -1138,7 +1138,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='mrp'
                                                             type="text"
-                                                            placeholder="Enter your last name"
+                                                            placeholder="Enter Mrp"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -1149,7 +1149,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='dyeingCost'
                                                             type="text"
-                                                            placeholder="Enter your first name"
+                                                            placeholder="Enter Dyeing Cost"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -1158,7 +1158,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='wholesalePrice'
                                                             type="text"
-                                                            placeholder="Enter your last name"
+                                                            placeholder="Enter WholeSale Price"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -1169,7 +1169,7 @@ const AddProduct = () => {
                                                         <Field
                                                             name='usdPrice'
                                                             type="text"
-                                                            placeholder="Enter your first name"
+                                                            placeholder="Enter Usd Price"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
