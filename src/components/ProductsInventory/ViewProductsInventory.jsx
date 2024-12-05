@@ -33,7 +33,7 @@ const ViewProductsInventory = () => {
     const actualImages = [];
 
     // const { inventoryMaterial, ViewInventory, handleDelete, handleUpdate, handlePageChange, pagination } = useInventoryMaterial
-    const {  productId, getProductId,getLocation,Location } = useProduct({ referenceImages, actualImages });
+    const {  inventoryproductId, getInventoryProductId  ,getLocation,Location } = useProduct({ referenceImages, actualImages });
 
     const [inventory, setinventory] = useState()
 
@@ -48,13 +48,13 @@ const [pagination, setPagination] = useState({
 
 useEffect(() => {
     getLocation(),
-    getProductId();
+    getInventoryProductId();
 }, []);
 
 
-console.log(Location,productId,"proooooooooo");
+console.log(Location,inventoryproductId,"proooooooooo");
 
-const formattedProductId = productId.map(id => ({
+const formattedProductId = inventoryproductId.map(id => ({
     label: id,
     value: id
 }));
