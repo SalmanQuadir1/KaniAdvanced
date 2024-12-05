@@ -161,7 +161,7 @@ const ViewProduct = () => {
                     <p className="text-gray-900 whitespace-no-wrap">{item.productGroup?.productGroupName.substring(0,10)+".."}</p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.productCategory?.productCategoryName}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item.productCategory?.productCategoryName.substring(0,5)+".."}</p>
                 </td>
 
                 {/* BOM View Button */}
