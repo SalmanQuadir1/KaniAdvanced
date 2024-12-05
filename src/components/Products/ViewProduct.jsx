@@ -154,7 +154,8 @@ const ViewProduct = () => {
                     </div>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.productId}</p>
+                <p className="text-gray-900 whitespace-no-wrap">{item?.productId?.substring(0,14)+".."}</p>
+
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item.productGroup?.productGroupName}</p>
