@@ -71,7 +71,7 @@ unitCount&&unitCount?.forEach(item => {
     <DefaultLayout>
      
       <h3 className="text-2xl text-center dark:text-white font-extrabold">DASHBOARD</h3>
-      <div className="grid grid-cols-4 gap-3 my-4 md:grid-cols-4 md:gap-3 xl:grid-cols-4 2xl:gap-7.5">
+      <div className="grid grid-cols-1 gap-3 my-4 md:grid-cols-4 md:gap-3 xl:grid-cols-4 2xl:gap-7.5">
       <Link to={"/product/viewProducts"}>
           <CardDataStats
             title="Products"
