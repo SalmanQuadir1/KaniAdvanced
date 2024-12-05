@@ -305,6 +305,14 @@ const UpdateProduct = () => {
     }, [productGroup.data]);
 
 
+    const gstOptions = [
+
+        { value: 'Applicable', label: 'Applicable' },
+        { value: 'NotApplicable', label: 'NotApplicable' },
+
+    ]
+
+
 
     // Show loader until product data is fetched
     if (isLoading) {
@@ -361,6 +369,7 @@ const UpdateProduct = () => {
             gstDescription: values.gstDescription || "",
             gstRate: values.gstRate || null,
             taxationType: values.taxationType || "",
+            typeOfSupply: values.typeOfSupply || "",
             pixAndReed: values.pixAndReed || "",
             cost: values.cost || 0,
             dyeingCost: values.dyeingCost || 0,
@@ -412,6 +421,13 @@ const UpdateProduct = () => {
                         design: product?.design || { id: 0 },
                         styles: product?.styles || { id: 0 },
                         sizes: product?.sizes || { id: 1, sizeName: "3l" },
+                        gstDetails: product?.gstDetails || { id: 0 },
+                        hsnCodes: product?.hsnCodes || '',
+                        hsn_Sac: product?.hsn_Sac || '',
+                        gstDescription: product?.gstDescription || '',
+                        taxationType: product?.taxationType || '',
+                        gstRate: product?.gstRate || '',
+                        typeOfSupply: product?.typeOfSupply || '',
                         productId:product?.productId || '',
                         colorName: product?.colorName || '',
                         barcode: product?.barcode || '',
@@ -570,6 +586,97 @@ const UpdateProduct = () => {
                                             </div>
                                         </div>
 
+
+
+                                        <div className="mb-4.5 flex flex-wrap gap-6">
+                                                {/* GST DETAILS Select */}
+                                                <div className="flex-1 min-w-[300px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">GST DETAILS</label>
+                                                    <div className="z-20 bg-transparent dark:bg-form-Field">
+                                                        <ReactSelect
+                                                            name="gstDetails"
+                                                            options={gstOptions}
+                                                            value={gstOptions.find(option => option.value === values.gstDetails)}
+                                                            onChange={(option) => setFieldValue("gstDetails", option?.value)}
+                                                            styles={customStyles}
+                                                            className="bg-white dark:bg-form-Field"
+                                                            classNamePrefix="react-select"
+                                                            placeholder="Select GST details"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                {/* Conditional Fields based on gstDetails */}
+                                                {values.gstDetails === "Applicable" && (
+                                                    <>
+                                                        {/* HSN Codes Field */}
+                                                        <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">HSN Codes</label>
+                                                            <Field
+                                                                name="hsnCodes"
+                                                                type="text"
+                                                                placeholder="Enter HSN Code"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+
+                                                        {/* HSN/SAC Field */}
+                                                        <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">HSN/SAC</label>
+                                                            <Field
+                                                                name="hsn_Sac"
+                                                                type="text"
+                                                                placeholder="Enter HSN/SAC"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+
+                                                        {/* GST Description Field */}
+                                                        <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">GST Description</label>
+                                                            <Field
+                                                                name="gstDescription"
+                                                                type="text"
+                                                                placeholder="Enter GST Description"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+
+                                                        {/* Taxation Type Field */}
+                                                        <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">Taxation Type</label>
+                                                            <Field
+                                                                name="taxationType"
+                                                                type="text"
+                                                                placeholder="Enter Taxation Type"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+
+                                                        {/* GST Rate Field */}
+                                                        <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">GST Rate</label>
+                                                            <Field
+                                                                name="gstRate"
+                                                                type="number"
+                                                                placeholder="Enter GST Rate"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+
+                                                        {/* Type of Supply Field */}
+                                                        <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">Type of Supply</label>
+                                                            <Field
+                                                                name="typeOfSupply"
+                                                                type="text"
+                                                                placeholder="Enter Type of Supply"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+                                                    </>
+                                                )}
+                                            </div>
 
                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                             <div className="flex-1 min-w-[300px]">
