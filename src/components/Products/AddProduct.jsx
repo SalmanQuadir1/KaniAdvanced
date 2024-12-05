@@ -387,7 +387,7 @@ console.log(errorMessage,"error");
                                         <div className="p-6.5">
                                             <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Product Group</label>
+                                                    <label className="mb-2.5 block text-black dark:text-white">Product Group <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <div className="bg-white dark:bg-form-Field">
                                                         <ReactSelect
                                                             name="productGroup"
@@ -405,7 +405,7 @@ console.log(errorMessage,"error");
 
 
                                                 <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Color Group </label>
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Color Group <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
                                                             name="colors"
@@ -428,7 +428,7 @@ console.log(errorMessage,"error");
 
                                             <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Product Category </label>
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Product Category <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
                                                             name="productCategory"
@@ -445,7 +445,7 @@ console.log(errorMessage,"error");
                                                     </div>
                                                 </div>
                                                 <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> HSN Code</label>
+                                                    <label className="mb-2.5 block text-black dark:text-white"> HSN Code <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <ReactSelect
                                                         name="hsnCode"
                                                         value={hsnOptions?.find(option => option.value === values.hsnCode?.id) || null}
@@ -573,7 +573,7 @@ console.log(errorMessage,"error");
 
                                             <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Design Name </label>
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Design Name <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span> </label>
                                                     <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
                                                             name="design"
@@ -596,7 +596,7 @@ console.log(errorMessage,"error");
                                                     </div>
                                                 </div>
                                                 <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Color Name</label>
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Color Name <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <Field
                                                         name='colorName'
                                                         type="text"
@@ -616,7 +616,7 @@ console.log(errorMessage,"error");
 
                                             <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Style </label>
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Style <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <div className="relative z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
                                                             name="styles"
@@ -641,7 +641,7 @@ console.log(errorMessage,"error");
                                                     </div>
                                                 </div>
                                                 <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Size(in cms) </label>
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Size (in cm) <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <div className="relative z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
                                                             name="sizes"
@@ -651,6 +651,13 @@ console.log(errorMessage,"error");
                                                                 updateProductId();
                                                             }}
                                                             options={sizeOptions}
+                                                            styles={{
+                                                                ...customStyles,
+                                                                menuPortal: (base) => ({
+                                                                    ...base,
+                                                                    zIndex: 9999,  // Set high z-index to make sure the dropdown appears above other components
+                                                                }),
+                                                            }} 
                                                             // styles={customStyles} // Pass custom styles here
                                                             className="bg-white dark:bg-form-Field"
                                                             classNamePrefix="react-select"
@@ -1923,7 +1930,7 @@ console.log(errorMessage,"error");
                                                 />
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Supplier</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Supplier <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                 <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                     <ReactSelect
                                                         name="supplier"
@@ -1953,7 +1960,7 @@ console.log(errorMessage,"error");
 
 
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Supplier Code </label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Supplier Code <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                 <div className=" bg-transparent dark:bg-form-Field">
 
 
