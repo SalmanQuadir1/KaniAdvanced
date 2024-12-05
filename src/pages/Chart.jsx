@@ -12,6 +12,7 @@ import { GiMaterialsScience } from "react-icons/gi";
 import { IoJournalOutline } from "react-icons/io5";
 import { IoLocationOutline } from "react-icons/io5";
 import { FaRegUserCircle } from "react-icons/fa";
+import { RiAlignItemBottomFill } from "react-icons/ri";
 import { Link } from 'react-router-dom';
 import { Count } from '../Constants/utils';
 const Chart = () => {
@@ -70,21 +71,21 @@ unitCount&&unitCount?.forEach(item => {
     <DefaultLayout>
       <Breadcrumb pageName="" />
       <h3 className="text-4xl dark:text-white">Dashboard</h3>
-      <div className="grid grid-cols-1 gap-4 my-10 md:grid-cols-2 md:gap-6 xl:grid-cols-3 2xl:gap-7.5">
-        <Link to={"/configurator/addunit"}>
+      <div className="grid grid-cols-2 gap-4 my-10 md:grid-cols-2 md:gap-6 xl:grid-cols-3 2xl:gap-7.5">
+      <Link to={"/product/viewProducts"}>
           <CardDataStats
-            title="Units"
-            total={countMapping['unit'] || 0}
+            title="Products"
+            total={countMapping['products'] || 0}
 
 
-            rate="0.43%"
+            // rate="0.43%"
             levelUp
           >
-            <LuScale className='w-10 h-10' />
+            <RiAlignItemBottomFill className='w-10 h-10' />
           </CardDataStats>
         </Link>
 
-        <Link to={"/inventory/viewMaterialInventory"}>
+        <Link to={"/inventory/viewProductInventory"}>
           <CardDataStats
             title="Inventory"
             total={countMapping['inventory'] || 0}
@@ -96,7 +97,21 @@ unitCount&&unitCount?.forEach(item => {
             <SiHomeassistantcommunitystore className='w-10 h-10' />
 
           </CardDataStats>
+        </Link> 
+        <Link to={"/configurator/addunit"}>
+          <CardDataStats
+            title="Units"
+            total={countMapping['unit'] || 0}
+
+
+            // rate="0.43%"
+            levelUp
+          >
+            <LuScale className='w-10 h-10' />
+          </CardDataStats>
         </Link>
+
+       
 
         <Link to={"/material/viewPurchase"}>
           <CardDataStats
