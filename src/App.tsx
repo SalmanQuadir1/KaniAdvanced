@@ -250,7 +250,7 @@ function App() {
             }
           />
           <Route
-            path="/product/updateproduct/:id"
+            path="/product/updateBom/:id"
             element={
               <>
                 <PageTitle title="View B.O.M" />

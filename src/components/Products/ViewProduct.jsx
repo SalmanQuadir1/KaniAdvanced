@@ -130,7 +130,7 @@ const ViewProduct = () => {
         const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
 
         const handleUpdateBom = (id) => {
-            navigate(`/product/updateproduct/${id}`)
+            navigate(`/product/updateBom/${id}`)
 
 
         }
