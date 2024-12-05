@@ -49,12 +49,7 @@ const UpdateProduct = () => {
     const { token } = currentUser;
     const { id } = useParams();
     const productId = id;
-    // Fetch product by ID
-
-    // const handleUpdateSubmit = async (values, { setSubmitting }) => {
-    //     console.log(values, "Submitted values:");
-
-    //     // Ensure `id` exists
+   
 
 
     const handleFileChange = async (event) => {
@@ -87,48 +82,7 @@ const UpdateProduct = () => {
 
 
 
-    //     // Explicitly map only the `id` of the supplier and supplierCode
-    //     const product = {
-    //         ...values,
-    //         productGroup: { id: values.productGroup?.id || 0 }, 
-    //         supplier: { id: values.supplier?.id || 0 },  // Ensure that only `id` is included
-    //         supplierCode: { id: values.supplierCode?.id || 0 },  // Ensure only `id` of supplierCode
-    //     };
-
-    //     // Log to ensure the product object looks as expected
-    //     console.log("Product object to send:", JSON.stringify(product, null, 2));
-
-    //     try {
-    //         const url = `${UPDATE_PRODUCT_URL}/${id}`;
-    //         console.log("Update URL:", url);
-
-    //         const response = await fetch(url, {
-    //             method: "PUT",
-    //             headers: {
-    //                 "Content-Type": "application/json", // Set correct content type
-    //                 "Authorization": `Bearer ${token}`, // Include token if required
-    //             },
-    //             body: JSON.stringify(product), // Send raw JSON
-    //         });
-
-    //         const data = await response.json();
-
-    //         if (response.ok) {
-    //             console.log(data, "Update response:");
-    //             toast.success("Product updated successfully");
-    //             navigate('/inventory/viewMaterialInventory');
-    //         } else {
-    //             console.error("Update failed:", data.errorMessage);
-    //             toast.error(data.errorMessage || "An error occurred while updating the product.");
-    //         }
-    //     } catch (error) {
-    //         console.error("Error during update:", error);
-    //         toast.error("An error occurred while updating the product.");
-    //     } finally {
-    //         if (setSubmitting) setSubmitting(false); // Stop any loading spinner
-    //     }
-    // };
-
+    
 
     const handleUpdateSubmit = async (values, { setSubmitting }) => {
         console.log(values, "Submitted values:");
