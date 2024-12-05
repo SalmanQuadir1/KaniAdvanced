@@ -82,7 +82,25 @@ const UpdateProduct = () => {
 
 
 
-    
+    const handleRemoveImage = (indexToRemove) => {
+        setPreviews((prevPreviews) => {
+            const updatedPreviews = [...prevPreviews];
+            // Revoke the object URL to release memory
+            URL.revokeObjectURL(updatedPreviews[indexToRemove].url);
+            updatedPreviews.splice(indexToRemove, 1);
+            return updatedPreviews;
+        });
+    };
+    const handleRemoveActual = (indexToRemove) => {
+        setPreviewsActual((prevPreviewsActual) => {
+            const updatedPreviewsActual = [...prevPreviewsActual];
+            // Revoke the object URL to release memory
+            URL.revokeObjectURL(updatedPreviewsActual[indexToRemove].url);
+            updatedPreviewsActual.splice(indexToRemove, 1);
+            return updatedPreviewsActual;
+        });
+    };
+
 
     const handleUpdateSubmit = async (values, { setSubmitting }) => {
         console.log(values, "Submitted values:");
@@ -1831,7 +1849,7 @@ const UpdateProduct = () => {
                                                                         />
                                                                         {/* Cancel Button */}
                                                                         <button
-                                                                            // onClick={() => handleRemoveImage(index)}
+                                                                            onClick={() => handleRemoveImage(index)}
                                                                             className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                                                                         >
                                                                             &times;
@@ -1932,7 +1950,7 @@ const UpdateProduct = () => {
                                                                 ))}
                                                                 {/* Cancel Button */}
                                                                 <button
-                                                                    // onClick={() => handleRemoveImage(index)}
+                                                                    onClick={() => handleRemoveImage(index)}
                                                                     className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                                                                 >
                                                                     &times;

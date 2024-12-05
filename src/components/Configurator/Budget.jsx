@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import useBudget from '../../hooks/useBudget';
 import ViewTable from './ViewTable';
 import Pagination from '../Pagination/Pagination';
-
+import { customStyles as createCustomStyles } from '../../Constants/utils';
 import BudgetTable from "./BudgetTable"
 
 const Budget = () => {
@@ -18,12 +18,14 @@ const Budget = () => {
 
     const productGroup = useSelector(state => state?.nonPersisted?.productGroup);
     const orderType = useSelector(state => state?.nonPersisted?.orderType);
-
+    const theme = useSelector(state => state?.persisted?.theme);
     const [productOptions, setproductOptions] = useState([])
     const [orderOptions, setorderOptions] = useState([])
     const [dateSelected, setDateSelected] = useState('');
 
     console.log(productGroup, orderType, "heyproooo");
+
+    const customStyles = createCustomStyles(theme?.mode);
 
     useEffect(() => {
         if (productGroup.data) {
@@ -120,6 +122,7 @@ const Budget = () => {
                                                             <label className="mb-2.5 block text-black dark:text-white">Product Group</label>
                                                             <ReactSelect
                                                                 name="productGroup"
+                                                                styles={customStyles}
                                                                 value={productOptions?.find(option => option.value === values?.productGroup?.id) || null}
                                                                 onChange={(option) => setFieldValue('productGroup', option ? option.productObject : null)} // Keep the whole object here
                                                                 options={productOptions}
@@ -143,6 +146,7 @@ const Budget = () => {
                                                         <div className="flex-1 min-w-[300px]">
                                                             <label className="mb-2.5 block text-black dark:text-white">Order Type</label>
                                                             <ReactSelect
+                                                               styles={customStyles}
                                                                 name="orderType"
                                                                 value={orderOptions?.find(option => option?.value === values?.orderType?.id) || null}
                                                                 onChange={(option) => setFieldValue('orderType', option ? option.orderObject : null)} // Keep the whole object here

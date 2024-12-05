@@ -91,8 +91,8 @@ unitCount&&unitCount?.forEach(item => {
             total={countMapping['inventory'] || 0}
 
 
-            rate="0.43%"
-            levelUp
+            // rate="0.43%"
+            levelDown
           >
             <SiHomeassistantcommunitystore className='w-10 h-10' />
 
@@ -119,7 +119,7 @@ unitCount&&unitCount?.forEach(item => {
             total={countMapping['purchaseOrder'] || 0}
 
 
-            rate="0.43%"
+            // rate="0.43%"
             levelUp
           >
             <BiPurchaseTagAlt className='w-10 h-10' />
@@ -132,7 +132,7 @@ unitCount&&unitCount?.forEach(item => {
             total={countMapping['material'] || 0}
 
 
-            rate="0.43%"
+            // rate="0.43%"
             levelUp
           >
             <GiMaterialsScience className='w-10 h-10' />
@@ -146,7 +146,7 @@ unitCount&&unitCount?.forEach(item => {
 
 
         <Link to={"/stockjournal/view"}>
-          <CardDataStats title="Stock Journal"   total={countMapping['stockJournal'] || 0} rate="4.35%" levelUp>
+          <CardDataStats title="Stock Journal"   total={countMapping['stockJournal'] || 0}  levelUp>
 
             <IoJournalOutline className='w-10 h-10' />
 
@@ -155,14 +155,14 @@ unitCount&&unitCount?.forEach(item => {
 
 
         <Link to={"/configurator/location"}>
-          <CardDataStats title="Locations"  total={countMapping['location'] || 0} rate="2.59%" levelUp>
+          <CardDataStats title="Locations"  total={countMapping['location'] || 0}  levelUp>
             <IoLocationOutline className='w-10 h-10' />
 
           </CardDataStats>
         </Link>
 
         <Link to={"/auth/signup"}>
-          <CardDataStats title="Total Users"  total={countMapping['user'] || 0} rate="0.95%" levelDown>
+          <CardDataStats title="Total Users"  total={countMapping['user'] || 0}  levelDown>
             <FaRegUserCircle className='w-10 h-10' />
 
           </CardDataStats>

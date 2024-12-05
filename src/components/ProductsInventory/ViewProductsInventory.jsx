@@ -17,11 +17,12 @@ const ViewProductsInventory = () => {
     const { token } = currentUser;
     // const location = useSelector(state => state?.nonPersisted?.location);
     // const description = useSelector(state => state?.nonPersisted?.material);
-    // const theme = useSelector(state => state?.persisted?.theme);
+    const theme = useSelector(state => state?.persisted?.theme);
 
 
     const [locationValue, setLocationValue] = useState(null);
     const [descriptionValue, setDescriptionValue] = useState(null);
+    const customStyles = createCustomStyles(theme?.mode);
 
     useEffect(() => {
 
@@ -163,7 +164,7 @@ const handlePageChange = (newPage) => {
             <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">
-                        {startingSerialNumber + index}
+                        {startingSerialNumber + index+1}
                     </p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
@@ -261,6 +262,7 @@ const handlePageChange = (newPage) => {
                                             <Field
                                                 name="ProductId"
                                                 component={ReactSelect}
+                                                styles={customStyles}
                                                 options={[{ label: 'View All Products', value: null }, ...formattedProductId]}
                                                 // styles={customStyles}
                                                 placeholder="Select Product Id"
@@ -274,7 +276,7 @@ const handlePageChange = (newPage) => {
                                                 name="address"
                                                 component={ReactSelect}
                                                 options={[{ label: 'View All Locations', value: null }, ...formattedLocation]}
-                                                // styles={customStyles}
+                                                styles={customStyles}
                                                 placeholder="Select Location"
                                                 value={formattedLocation.find(option => option.value === values.Location)}
                                                 onChange={option => setFieldValue('address', option ? option.value : '')}
@@ -306,7 +308,7 @@ const handlePageChange = (newPage) => {
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Opening Balance</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Purchase</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Sale</th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">(Branch Transfer Inward)</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Branch Transfer Inward</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Branch Transfer Outward</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Closing Balance (Sale+Transfer)</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">In Progress Orders</th>

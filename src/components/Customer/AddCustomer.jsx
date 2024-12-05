@@ -6,13 +6,14 @@ import ReactSelect from 'react-select';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import { useSelector } from 'react-redux';
 import useCustomer from '../../hooks/useCustomer';
-
+import { customStyles as createCustomStyles } from '../../Constants/utils';
 const AddCustomer = () => {
   const customerGroup = useSelector(
     (state) => state?.nonPersisted?.customerGroup,
   );
   const [selectedOption, setSelectedOption] = useState(null);
   const [customerGroupList, setCustomerGroupList] = useState([]);
+  const theme = useSelector(state => state?.persisted?.theme);
   const {
     Customer,
     edit,
@@ -42,26 +43,8 @@ const AddCustomer = () => {
     { value: 'BrandC', label: 'Brand C' },
   ];
 
-  const customStyles = {
-    control: (provided) => ({
-      ...provided,
-      minHeight: '50px',
-      fontSize: '16px',
-    }),
-    valueContainer: (provided) => ({
-      ...provided,
-      padding: '10px 14px',
-    }),
-    input: (provided) => ({
-      ...provided,
-      fontSize: '16px',
-    }),
-    singleValue: (provided) => ({
-      ...provided,
-      fontSize: '16px',
-    }),
-  };
-
+ 
+  const customStyles = createCustomStyles(theme?.mode);
   const formik = useFormik({
     initialValues: {
       customerName: '',
@@ -167,6 +150,8 @@ const AddCustomer = () => {
                     </label>
                     <ReactSelect
                       name="customerGroup"
+
+                      styles={customStyles}
                       value={
                         customerGroupList?.find(
                           (option) =>
@@ -181,7 +166,7 @@ const AddCustomer = () => {
                       } // Keep the whole object here
                       options={customerGroupList}
                       onBlur={formik.handleBlur}
-                      styles={customStyles}
+                    
                       className="bg-white dark:bg-form-input"
                       classNamePrefix="react-select"
                       placeholder="select"
