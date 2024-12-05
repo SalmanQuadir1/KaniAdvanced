@@ -22,6 +22,7 @@ const useProduct = ({referenceImages,actualImages,productIdField}) => {
     const [Product, setProduct] = useState([]);
     const [edit, setEdit] = useState(false);
     const [productId, setproductId] = useState([])
+    const [errorMessage, seterrorMessage] = useState('')
 
     const [productList, setproductList] = useState([])
     const [Location, setLocation] = useState([])
@@ -342,7 +343,7 @@ hsnCodes:"",
                 getProduct(pagination.currentPage || 1); // Refresh product list
             } else {
                 
-                
+                seterrorMessage(data)
                 toast.error(data.message || "An error occurred while saving the product.");
             }
         } catch (error) {
@@ -431,7 +432,8 @@ hsnCodes:"",
         getProductList,
         productList,
         getLocation,
-        Location
+        Location,
+        errorMessage
       
     };
 };
