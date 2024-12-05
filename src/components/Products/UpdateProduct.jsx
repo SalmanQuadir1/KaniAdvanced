@@ -82,7 +82,25 @@ const UpdateProduct = () => {
 
 
 
-    
+    const handleRemoveImage = (indexToRemove) => {
+        setPreviews((prevPreviews) => {
+            const updatedPreviews = [...prevPreviews];
+            // Revoke the object URL to release memory
+            URL.revokeObjectURL(updatedPreviews[indexToRemove].url);
+            updatedPreviews.splice(indexToRemove, 1);
+            return updatedPreviews;
+        });
+    };
+    const handleRemoveActual = (indexToRemove) => {
+        setPreviewsActual((prevPreviewsActual) => {
+            const updatedPreviewsActual = [...prevPreviewsActual];
+            // Revoke the object URL to release memory
+            URL.revokeObjectURL(updatedPreviewsActual[indexToRemove].url);
+            updatedPreviewsActual.splice(indexToRemove, 1);
+            return updatedPreviewsActual;
+        });
+    };
+
 
     const handleUpdateSubmit = async (values, { setSubmitting }) => {
         console.log(values, "Submitted values:");
@@ -482,7 +500,7 @@ const UpdateProduct = () => {
                                                 />
                                             </div> */}
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white">Product Group</label>
+                                                <label className="mb-2.5 block text-black dark:text-white">Product Group <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                 <div className="bg-white dark:bg-form-Field">
                                                     <ReactSelect
                                                         name="productGroup"
@@ -501,7 +519,7 @@ const UpdateProduct = () => {
 
                                             <div className="flex-1 min-w-[300px]">
                                                 <label className="mb-2.5 block text-black dark:text-white">
-                                                    Color Group
+                                                    Color Group <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span>
                                                 </label>
                                                 <div className="z-20 bg-transparent dark:bg-form-field">
                                                     <ReactSelect
@@ -532,7 +550,7 @@ const UpdateProduct = () => {
 
                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Product Category </label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Product Category <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                 <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                     <ReactSelect
                                                         name="productCategory"
@@ -551,7 +569,7 @@ const UpdateProduct = () => {
                                                 </div>
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> HSN Code</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> HSN Code <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                 <ReactSelect
                                                     name="hsnCode"
                                                     value={hsnOptions?.find(option => option.value === values.hsnCode?.id) || null}
@@ -662,7 +680,7 @@ const UpdateProduct = () => {
 
                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Design Name </label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Design Name  <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                 <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                     <ReactSelect
                                                         name="design"
@@ -686,7 +704,7 @@ const UpdateProduct = () => {
                                                 </div>
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Color Name</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Color Name <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                 <Field
                                                     name='colorName'
                                                     type="text"
@@ -701,7 +719,7 @@ const UpdateProduct = () => {
 
                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Style </label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Style <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                 <div className="relative z-20 bg-transparent dark:bg-form-Field">
                                                     <ReactSelect
                                                         name="styles"
@@ -725,13 +743,20 @@ const UpdateProduct = () => {
                                                 </div>
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Size(in cms) </label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Size(in cms) <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                 <div className="relative z-20 bg-transparent dark:bg-form-Field">
                                                     <ReactSelect
                                                         name="sizes"
                                                         value={sizeOptions?.find(option => option.value === values.sizes?.id) || null}
                                                         onChange={(option) => setFieldValue('sizes', option ? option.sizeid : null)}
                                                         options={sizeOptions}
+                                                        styles={{
+                                                            ...customStyles,
+                                                            menuPortal: (base) => ({
+                                                                ...base,
+                                                                zIndex: 9999,  // Set high z-index to make sure the dropdown appears above other components
+                                                            }),
+                                                        }}
                                                         // styles={customStyles} // Pass custom styles here
                                                         className="bg-white dark:bg-form-Field"
                                                         classNamePrefix="react-select"
@@ -1931,7 +1956,7 @@ const UpdateProduct = () => {
                                                                         />
                                                                         {/* Cancel Button */}
                                                                         <button
-                                                                            // onClick={() => handleRemoveImage(index)}
+                                                                            onClick={() => handleRemoveImage(index)}
                                                                             className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                                                                         >
                                                                             &times;
@@ -2032,7 +2057,7 @@ const UpdateProduct = () => {
                                                                 ))}
                                                                 {/* Cancel Button */}
                                                                 <button
-                                                                    // onClick={() => handleRemoveImage(index)}
+                                                                    onClick={() => handleRemoveImage(index)}
                                                                     className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                                                                 >
                                                                     &times;
@@ -2090,7 +2115,7 @@ const UpdateProduct = () => {
                                         </div>
 
                                         <div className="flex-1 min-w-[300px]">
-                                            <label className="mb-2.5 block text-black dark:text-white"> Supplier</label>
+                                            <label className="mb-2.5 block text-black dark:text-white"> Supplier <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                             <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                 <ReactSelect
                                                     name="supplier"
@@ -2120,7 +2145,7 @@ const UpdateProduct = () => {
 
 
                                         <div className="flex-1 min-w-[300px]">
-                                            <label className="mb-2.5 block text-black dark:text-white"> Supplier Code </label>
+                                            <label className="mb-2.5 block text-black dark:text-white"> Supplier Code <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                             <div className=" bg-transparent dark:bg-form-Field">
 
 

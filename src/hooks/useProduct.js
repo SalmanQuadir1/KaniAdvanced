@@ -33,7 +33,7 @@ const useProduct = ({referenceImages,actualImages,productIdField}) => {
         productGroup: {},
 
         colors: {
-            id: 0, // Default value
+             // Default value
           },
         productCategory: {
 
@@ -41,7 +41,7 @@ const useProduct = ({referenceImages,actualImages,productIdField}) => {
         design: {
 
         },
-        hsnCode: { id: 0 },
+        hsnCode: {  },
         
         colorName: "",
         styles: {

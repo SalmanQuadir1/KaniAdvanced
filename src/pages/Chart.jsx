@@ -12,6 +12,7 @@ import { GiMaterialsScience } from "react-icons/gi";
 import { IoJournalOutline } from "react-icons/io5";
 import { IoLocationOutline } from "react-icons/io5";
 import { FaRegUserCircle } from "react-icons/fa";
+import { RiAlignItemBottomFill } from "react-icons/ri";
 import { Link } from 'react-router-dom';
 import { Count } from '../Constants/utils';
 const Chart = () => {
@@ -68,35 +69,49 @@ unitCount&&unitCount?.forEach(item => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="" />
-      <h3 className="text-4xl dark:text-white">Dashboard</h3>
-      <div className="grid grid-cols-1 gap-4 my-10 md:grid-cols-2 md:gap-6 xl:grid-cols-3 2xl:gap-7.5">
+     
+      <h3 className="text-2xl text-center dark:text-white font-extrabold">DASHBOARD</h3>
+      <div className="grid grid-cols-4 gap-3 my-4 md:grid-cols-4 md:gap-3 xl:grid-cols-4 2xl:gap-7.5">
+      <Link to={"/product/viewProducts"}>
+          <CardDataStats
+            title="Products"
+            total={countMapping['products'] || 0}
+
+
+            // rate="0.43%"
+            levelUp
+          >
+            <RiAlignItemBottomFill className='w-13 h-10' />
+          </CardDataStats>
+        </Link>
+
+        <Link to={"/inventory/viewProductInventory"}>
+          <CardDataStats
+            title="Inventory"
+            total={countMapping['inventory'] || 0}
+
+
+            // rate="0.43%"
+            levelDown
+          >
+            <SiHomeassistantcommunitystore className='w-10 h-10' />
+
+          </CardDataStats>
+        </Link> 
         <Link to={"/configurator/addunit"}>
           <CardDataStats
             title="Units"
             total={countMapping['unit'] || 0}
 
 
-            rate="0.43%"
+            // rate="0.43%"
             levelUp
           >
             <LuScale className='w-10 h-10' />
           </CardDataStats>
         </Link>
 
-        <Link to={"/inventory/viewMaterialInventory"}>
-          <CardDataStats
-            title="Inventory"
-            total={countMapping['inventory'] || 0}
-
-
-            rate="0.43%"
-            levelUp
-          >
-            <SiHomeassistantcommunitystore className='w-10 h-10' />
-
-          </CardDataStats>
-        </Link>
+       
 
         <Link to={"/material/viewPurchase"}>
           <CardDataStats
@@ -104,7 +119,7 @@ unitCount&&unitCount?.forEach(item => {
             total={countMapping['purchaseOrder'] || 0}
 
 
-            rate="0.43%"
+            // rate="0.43%"
             levelUp
           >
             <BiPurchaseTagAlt className='w-10 h-10' />
@@ -117,7 +132,7 @@ unitCount&&unitCount?.forEach(item => {
             total={countMapping['material'] || 0}
 
 
-            rate="0.43%"
+            // rate="0.43%"
             levelUp
           >
             <GiMaterialsScience className='w-10 h-10' />
@@ -131,7 +146,7 @@ unitCount&&unitCount?.forEach(item => {
 
 
         <Link to={"/stockjournal/view"}>
-          <CardDataStats title="Stock Journal"   total={countMapping['stockJournal'] || 0} rate="4.35%" levelUp>
+          <CardDataStats title="Stock Journal"   total={countMapping['stockJournal'] || 0}  levelUp>
 
             <IoJournalOutline className='w-10 h-10' />
 
@@ -140,14 +155,14 @@ unitCount&&unitCount?.forEach(item => {
 
 
         <Link to={"/configurator/location"}>
-          <CardDataStats title="Locations"  total={countMapping['location'] || 0} rate="2.59%" levelUp>
+          <CardDataStats title="Locations"  total={countMapping['location'] || 0}  levelUp>
             <IoLocationOutline className='w-10 h-10' />
 
           </CardDataStats>
         </Link>
 
         <Link to={"/auth/signup"}>
-          <CardDataStats title="Total Users"  total={countMapping['user'] || 0} rate="0.95%" levelDown>
+          <CardDataStats title="Total Users"  total={countMapping['user'] || 0}  levelDown>
             <FaRegUserCircle className='w-10 h-10' />
 
           </CardDataStats>

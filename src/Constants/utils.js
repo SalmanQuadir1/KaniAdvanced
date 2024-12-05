@@ -28,9 +28,11 @@ export const ADD_LOCATIONINVENTORY_URL = `${BASE_URL}/productInventory`;
 export const GET_INVENTORYLOCATION = `${BASE_URL}/productInventory/getByProduct`;
 
 
+export const GETDESCRIPTIONS = `${BASE_URL}/products/all-products`;
+
 //inventory
 
-export const GET_INVENTORY = `${BASE_URL}/productInventory/getAll`;
+export const GET_INVENTORY = `${BASE_URL}/productInventory/search`;
 
 
 

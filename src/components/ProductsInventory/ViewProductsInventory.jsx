@@ -7,6 +7,8 @@ import Pagination from '../Pagination/Pagination';
 import { useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
 import { GET_INVENTORY, customStyles as createCustomStyles } from '../../Constants/utils';
+import { Field, Form, Formik } from 'formik';
+import useProduct from '../../hooks/useProduct';
 
 
 const ViewProductsInventory = () => {
@@ -15,13 +17,25 @@ const ViewProductsInventory = () => {
     const { token } = currentUser;
     // const location = useSelector(state => state?.nonPersisted?.location);
     // const description = useSelector(state => state?.nonPersisted?.material);
-    // const theme = useSelector(state => state?.persisted?.theme);
+    const theme = useSelector(state => state?.persisted?.theme);
 
-    // const [locationValue, setLocationValue] = useState(null);
-    // const [descriptionValue, setDescriptionValue] = useState(null);
+
+    const [locationValue, setLocationValue] = useState(null);
+    const [descriptionValue, setDescriptionValue] = useState(null);
+    const customStyles = createCustomStyles(theme?.mode);
+
+    useEffect(() => {
+
+
+     
+    }, [])
+    const referenceImages = [];
+    const actualImages = [];
 
     // const { inventoryMaterial, ViewInventory, handleDelete, handleUpdate, handlePageChange, pagination } = useInventoryMaterial
-const [inventory, setinventory] = useState()
+    const {  productId, getProductId,getLocation,Location } = useProduct({ referenceImages, actualImages });
+
+    const [inventory, setinventory] = useState()
 
 
 const [pagination, setPagination] = useState({
@@ -32,43 +46,50 @@ const [pagination, setPagination] = useState({
 });
 
 
+useEffect(() => {
+    getLocation(),
+    getProductId();
+}, []);
 
 
+console.log(Location,productId,"proooooooooo");
 
-
-const ViewInventory = async (page) => {
+const formattedProductId = productId.map(id => ({
+    label: id,
+    value: id
+}));
+const formattedLocation = Location.map(id => ({
+    label: id.address,
+    value: id.address
+}));
+const ViewInventory = async (page, filters = {}) => {
+    console.log("iam here");
+    console.log(filters,"filllllllll");
     try {
-
-        const response = await fetch(`${GET_INVENTORY}?page=${page || 1}`, {
-            method: "GET",
+        const response = await fetch(`${GET_INVENTORY}?page=${page||1}`, {
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
-
+            body: JSON.stringify(filters)
         });
-
         const data = await response.json();
-        console.log(data,"ll");
-       
+        console.log(data,"pr datatata")
 
-        if (response.ok) {
-            setinventory(data);
-            setPagination({
-                totalItems: data.totalElements,
-                data: data,
-                totalPages: data.totalPages,
-                currentPage: data.number + 1,
-            });
-
-        } else {
-            toast.error(`${data.errorMessage}`);
-        }
+        setinventory(data?.content);
+        setPagination({
+            totalItems: data?.totalElements,
+            data: data?.content,
+            totalPages: data?.totalPages,
+            currentPage: data?.number + 1,
+            itemsPerPage: data.size
+        });
     } catch (error) {
-        console.error(error);
-        toast.error("An error occurred");
+        console.log(error);
+        toast.error("Failed to fetch Product");
     }
-}
+};
 
 useEffect(() => {
  ViewInventory()
@@ -136,18 +157,24 @@ const handlePageChange = (newPage) => {
         console.log(pagination,"pagg");
 
        console.log(startingSerialNumber,"starrrrr");
+       console.log(inventory,"umer shah");
         
         
-      return    inventory.content.map((item, index) => (
+      return    inventory.map((item, index) => (
             <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">
-                        {startingSerialNumber + index}
+                        {startingSerialNumber + index+1}
                     </p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">
                         {item.productDescription}
+                    </p>
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">
+                        {item.productId}
                     </p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
@@ -199,6 +226,14 @@ const handlePageChange = (newPage) => {
             </tr>
         ));
     };
+    const handleSubmit = (values) => {
+        const filters = {
+            productId: values.ProductId || undefined,
+            address:values.address||undefined
+        };
+        ViewInventory(pagination.currentPage, filters);
+    };
+
 
     return (
         <DefaultLayout>
@@ -211,52 +246,69 @@ const handlePageChange = (newPage) => {
                             Total PO: {pagination.totalItems}
                         </p>
                     </div>
-                    {/* <div className='items-center justify-center'>
-                        <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-                            <div className="flex-1 min-w-[300px]">
-                                <label className="mb-2.5 block text-black dark:text-white">Location</label>
-                                <ReactSelect
-                                    name="locationId"
-                                    value={locationValue}
-                                    onChange={option => setLocationValue(option)}
-                                    options={locationSel}
-                                    styles={customStyles}
-                                    placeholder="Select Location"
-                                />
-                            </div>
-                            <div className="flex-1 min-w-[300px]">
-                                <label className="mb-2.5 block text-black dark:text-white">Description</label>
-                                <ReactSelect
-                                    name="description"
-                                    value={descriptionValue}
-                                    onChange={option => setDescriptionValue(option)}
-                                    options={descriptionSel}
-                                    styles={customStyles}
-                                    placeholder="Select Description"
-                                />
-                            </div>
-                        </div>
-                        <div className="flex justify-center">
-                            <button
-                                onClick={handleSearchChange}
-                                className="bg-blue-500 hover:bg-blue-600 text-white font-bold h-12 w-[150px] rounded-lg"
-                            >
-                                Search
-                            </button>
-                        </div>
-                    </div> */}
+                    <div className='items-center justify-center'>
+                        <Formik
+                            initialValues={{
+                                ProductId: '',
+                                address:""
+                            }}
+                            onSubmit={handleSubmit}
+                        >
+                            {({ setFieldValue, values }) => (
+                                <Form>
+                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
+                                        <div className="flex-1 min-w-[300px]">
+                                            <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
+                                            <Field
+                                                name="ProductId"
+                                                component={ReactSelect}
+                                                styles={customStyles}
+                                                options={[{ label: 'View All Products', value: null }, ...formattedProductId]}
+                                                // styles={customStyles}
+                                                placeholder="Select Product Id"
+                                                value={formattedProductId.find(option => option.value === values.ProductId)}
+                                                onChange={option => setFieldValue('ProductId', option ? option.value : '')}
+                                            />
+                                        </div>
+                                        <div className="flex-1 min-w-[300px]">
+                                            <label className="mb-2.5 block text-black dark:text-white">Location</label>
+                                            <Field
+                                                name="address"
+                                                component={ReactSelect}
+                                                options={[{ label: 'View All Locations', value: null }, ...formattedLocation]}
+                                                styles={customStyles}
+                                                placeholder="Select Location"
+                                                value={formattedLocation.find(option => option.value === values.Location)}
+                                                onChange={option => setFieldValue('address', option ? option.value : '')}
+                                            />
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="flex justify-center">
+                                        <button
+                                            type="submit"
+                                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold h-12 w-[150px] rounded-lg"
+                                        >
+                                            Search
+                                        </button>
+                                    </div>
+                                </Form>
+                            )}
+                        </Formik>
+                    </div>
                     <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                         <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
                             <table className="min-w-full leading-normal">
                                 <thead>
                                     <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">SNO</th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Desc.</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Id</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Location</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Opening Balance</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Purchase</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Sale</th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">(Branch Transfer Inward)</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Branch Transfer Inward</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Branch Transfer Outward</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Closing Balance (Sale+Transfer)</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">In Progress Orders</th>
