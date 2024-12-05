@@ -47,7 +47,7 @@ const ViewProduct = () => {
         getProduct();
         getProductId();
     }, []);
-    console.log(productId, "lo");
+  
 
     const formattedProductId = productId.map(id => ({
         label: id,
@@ -58,7 +58,7 @@ const ViewProduct = () => {
 
     const openBOMModal = (bomData) => {
 
-        console.log(bomData, "siriiiiiii");
+       
         setSelectedBOMData(bomData);
         setIsModalOpen(true);
     };
@@ -74,7 +74,7 @@ const ViewProduct = () => {
 
        
         const getInventory = async () => {
-            console.log("iam here");
+         
             try {
                 const response = await fetch(`${GET_INVENTORYLOCATION}/${id}`, {
                     method: "GET",
@@ -84,7 +84,7 @@ const ViewProduct = () => {
                     }
                 });
                 const data = await response.json();
-                console.log(data,"pr")
+            
     
                 // setLocation(data);
                 setSelectedINVENTORYData(data);
@@ -134,7 +134,7 @@ const ViewProduct = () => {
 
 
         }
-        console.log(Product[0].inventoryStatus,"inventtttttttt");
+  
 
 
 
@@ -172,8 +172,8 @@ const ViewProduct = () => {
                                 onClick={() => openBOMModal(item.bom)}
                             > */}
                             <div className='flex flex-col gap-2'>
-                                <span onClick={() => openBOMModal(item.bom)} className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer"> VIEW BOM</span>
-                                <span onClick={() => handleUpdateBom(item?.bom?.id)} className=" bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400 cursor-pointer">UPDATE BOM</span>
+                                <span onClick={() => openBOMModal(item.bom)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer"> VIEW BOM</span>
+                                <span onClick={() => handleUpdateBom(item?.bom?.id)} className=" bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer">UPDATE BOM</span>
                             </div>
 
                             {/* </button> */}
@@ -193,9 +193,9 @@ const ViewProduct = () => {
                                 className="bg-blue-500 hover:bg-blue-600 text-white font-bold h-10 w-[100px] rounded-lg"
                                 onClick={() => openBOMModal(item.bom)}
                             > */}
-                            <div className='flex flex-col gap-2'>
-                                <span onClick={() => openINVENTORYModal(item.id)} className="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer"> VIEW INVENTORY</span>
-                                <span onClick={() => handleUpdateBom(item?.id)} className=" bg-red-100 text-red-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400 cursor-pointer">UPDATE INVENTORY</span>
+                            <div className='flex flex-col gap-2 mx-3'>
+                                <span onClick={() => openINVENTORYModal(item.id)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[110px]"> VIEW INVENTORY</span>
+                                <span onClick={() => handleUpdateBom(item?.id)} className=" bg-red-100 text-red-800 text-[10px] font-medium me-2  text-center py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400 cursor-pointer w-[110px]">UPDATE INVENTORY</span>
                             </div>
 
                             {/* </button> */}
@@ -238,9 +238,9 @@ const ViewProduct = () => {
                     {/* BOM Modal */}
                     {isModalOpen && (
                         <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50">
-                            <div className="bg-white rounded p-6 shadow-lg  w-[700px] h-[500px] mt-[50px]">
+                            <div className="bg-white rounded p-6 shadow-lg ml-[100px]  w-[700px] h-[400px] mt-[50px]">
                                 <div className="text-right">
-                                    <button onClick={closeBOMModal} className="text-xl font-bold">&times;</button>
+                                    <button color='red' onClick={closeBOMModal} className="text-red-500  text-xl  font-bold">&times;</button>
                                 </div>
                                 <h2 className="text-xl mb-4">BOM Details</h2>
                                 <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
@@ -293,7 +293,7 @@ const ViewProduct = () => {
                         <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50">
                             <div className="bg-white rounded p-6 shadow-lg ml-[200px]  w-[870px] h-[400px] mt-[120px]">
                                 <div className="text-right">
-                                    <button onClick={closeINVENTORYModal} className="text-xl font-bold">&times;</button>
+                                    <button onClick={closeINVENTORYModal} className="text-red-500 text-xl  font-bold">&times;</button>
                                 </div>
                                 <h2 className="text-xl mb-4">Inventory  Details</h2>
                                 <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">

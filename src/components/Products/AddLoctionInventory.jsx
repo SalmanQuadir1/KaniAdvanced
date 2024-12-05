@@ -29,7 +29,7 @@ const AddLocationInventory = () => {
     const [rows, setRows] = useState([{ id: Date.now(), selectedOption1: null, selectedOption2: "", selectedOption3: "", numOfLooms: 0 }]);
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
-
+const [errorMessage, seterrorMessage] = useState("")
 
 
 
@@ -90,7 +90,10 @@ const AddLocationInventory = () => {
                 navigate("/product/viewProducts")
                 // Call resetForm and setCurrentSupplier with proper state updates
             } else {
-                toast.error(`${data.errorMessage}`);
+                seterrorMessage(data)
+                console.log(data.errorMessage,"data");
+                toast.error(data.errorMessage || "Please Fill All The Fields");
+
             }
         } catch (error) {
             console.error(error); // Log the error for debugging
@@ -234,6 +237,10 @@ const AddLocationInventory = () => {
                                                                                 setRows(newRows);
                                                                             }}
                                                                         />
+
+{
+                                                                        errorMessage.openingBalance&&<h5 className="text-red-500">{errorMessage.openingBalance}</h5>
+                                                                    }
                                                                     </td>
 
                                                                     <td className="px-2 py-2 border-b">
