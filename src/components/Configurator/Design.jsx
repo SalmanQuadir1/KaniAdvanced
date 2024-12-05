@@ -29,7 +29,7 @@ const Design = () => {
                         const errors = {};
                        
                         if (!values.designName) {
-                            errors.designName = 'Required';
+                            errors.designName = 'Design Name Is Required';
                         }
                         return errors;
                     }}
@@ -55,7 +55,7 @@ const Design = () => {
                                                     placeholder="Enter Design Name"
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                 />
-                                                <ErrorMessage name="design" component="div" className="text-red-500" />
+                                                <ErrorMessage name="designName" component="div" className="text-red-500" />
                                             </div>
                                         </div>
                                         <button type="submit" className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4">
