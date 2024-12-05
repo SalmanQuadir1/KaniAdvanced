@@ -69,9 +69,9 @@ unitCount&&unitCount?.forEach(item => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="" />
-      <h3 className="text-4xl dark:text-white">Dashboard</h3>
-      <div className="grid grid-cols-2 gap-4 my-10 md:grid-cols-2 md:gap-6 xl:grid-cols-3 2xl:gap-7.5">
+     
+      <h3 className="text-2xl text-center dark:text-white font-extrabold">DASHBOARD</h3>
+      <div className="grid grid-cols-4 gap-3 my-4 md:grid-cols-4 md:gap-3 xl:grid-cols-4 2xl:gap-7.5">
       <Link to={"/product/viewProducts"}>
           <CardDataStats
             title="Products"
@@ -81,7 +81,7 @@ unitCount&&unitCount?.forEach(item => {
             // rate="0.43%"
             levelUp
           >
-            <RiAlignItemBottomFill className='w-10 h-10' />
+            <RiAlignItemBottomFill className='w-13 h-10' />
           </CardDataStats>
         </Link>
 

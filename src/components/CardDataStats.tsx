@@ -18,20 +18,20 @@ const CardDataStats: React.FC<CardDataStatsProps> = ({
   children,
 }) => {
   return (
-    <div className="rounded-sm border border-stroke bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
-      <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
+    <div className="rounded-sm border flex flex-row items-center border-stroke md:h-[110px] md:w-[220px] bg-white py-6 px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark">
+      <div className="flex h-15 w-[300px] items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4">
         {children}
       </div>
 
-      <div className="mt-4 flex items-end justify-between">
+      <div className="mt-4 flex flex-row items-end justify-between ml-[70px]">
         <div>
-          <h4 className="text-title-md font-bold text-black dark:text-white">
+          <h4 className="text-title-md font-bold text-slate-800 dark:text-white text-center">
             {total}
           </h4>
-          <span className="text-sm font-medium">{title}</span>
+          <span className="text-sm font-semibold mt-3">{title}</span>
         </div>
 
-        <span
+        {/* <span
           className={`flex items-center gap-1 text-sm font-medium ${
             levelUp && 'text-meta-3'
           } ${levelDown && 'text-meta-5'} `}
@@ -68,7 +68,7 @@ const CardDataStats: React.FC<CardDataStatsProps> = ({
               />
             </svg>
           )}
-        </span>
+        </span> */}
       </div>
     </div>
   );
