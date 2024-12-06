@@ -349,10 +349,7 @@ const UpdateProduct = () => {
                 id: values.design?.id,
                 // designName: values.design?.designName || "" 
             },
-            // hsnCode: { 
-            //     id: values.hsnCode?.id , 
-            //     // hsnCodeName: values.hsnCode?.hsnCodeName || "" 
-            // },
+           
             hsnCode: {
 
                 id: values.hsnCode?.id, // Only the `id` is sent
@@ -485,20 +482,7 @@ const UpdateProduct = () => {
                                     <div className="p-6.5">
                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                             {/* Product Group Field */}
-                                            {/* <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white">
-                                                    Product Group
-                                                </label>
-                                                <Field
-                                                    name="productGroup"
-                                                    type="text"
-                                                    readOnly
-                                                    placeholder="Product Group"
-                                                    value={values.productGroup}
-                                                     onChange={(option) => setFieldValue('productGroup', option ? option.productGroup : null)}
-                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
-                                                />
-                                            </div> */}
+                                           
                                             <div className="flex-1 min-w-[300px]">
                                                 <label className="mb-2.5 block text-black dark:text-white">Product Group <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                 <div className="bg-white dark:bg-form-Field">
@@ -694,13 +678,7 @@ const UpdateProduct = () => {
                                                         isDisabled={true}  // This makes the select readonly
 
                                                     />
-                                                    {/* <span className="absolute top-1/2 right-4 z-30 -translate-y-1/2">
-                                                        <svg className="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <g opacity="0.8">
-                                                                <path fillRule="evenodd" clipRule="evenodd" d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z" fill=""></path>
-                                                            </g>
-                                                        </svg>
-                                                    </span> */}
+                                                   
                                                 </div>
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
@@ -1009,15 +987,7 @@ const UpdateProduct = () => {
                                                 </div>
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
-                                                    {/* <div className="flex-1 min-w-[300px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white"> Weight(gms) </label>
-                                                        <Field
-                                                            name='weight'
-                                                            type="text"
-                                                            placeholder="Enter your first name"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div> */}
+                                                    
                                                     <div className="flex-1 min-w-[300px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> Units</label>
                                                         <Field
@@ -1195,15 +1165,7 @@ const UpdateProduct = () => {
 
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
-                                                    {/* <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Weight(gms) </label>
-            <Field
-                name='weight'
-                type="text"
-                placeholder="Enter your first name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div> */}
+                                                   
         <div className="flex-1 min-w-[300px]">
             <label className="mb-2.5 block text-black dark:text-white"> Units</label>
             <Field
@@ -1363,15 +1325,7 @@ const UpdateProduct = () => {
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
 
 
-                                                    {/* <div className="flex-1 min-w-[300px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white"> Weight(gms)</label>
-                                                        <Field
-                                                            name='weight'
-                                                            type="text"
-                                                            placeholder="Enter your last name"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div> */}
+                                                   
                                                     <div className="flex-1 min-w-[300px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> Units </label>
                                                         <Field
@@ -1556,15 +1510,7 @@ const UpdateProduct = () => {
 
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
-                                                    {/* <div className="flex-1 min-w-[300px]">
-            <label className="mb-2.5 block text-black dark:text-white"> Weight(gms) </label>
-            <Field
-                name='weight'
-                type="text"
-                placeholder="Enter your first name"
-                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-            />
-        </div> */}
+                                                   
         <div className="flex-1 min-w-[300px]">
             <label className="mb-2.5 block text-black dark:text-white"> Units</label>
             <Field
@@ -2127,13 +2073,7 @@ const UpdateProduct = () => {
                                                     classNamePrefix="react-select"
                                                     placeholder="Select supplier Name"
                                                 />
-                                                {/* <span className="absolute top-1/2 right-4 z-30 -translate-y-1/2">
-                                                    <svg className="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <g opacity="0.8">
-                                                            <path fillRule="evenodd" clipRule="evenodd" d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z" fill=""></path>
-                                                        </g>
-                                                    </svg>
-                                                </span> */}
+                                               
                                             </div>
                                         </div>
 
