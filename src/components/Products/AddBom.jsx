@@ -160,14 +160,14 @@ const AddBOM = () => {
                                                 </div>
                                             </div>
                                             <div className="overflow-x-scroll md:overflow-x-visible  md:overflow-y-visible -mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
-                                                <div className="min-w-full shadow-md rounded-lg">
-                                                    <table className="table-fixed w-full">
+                                                <div className="md:min-w-full min-w-[200px] shadow-md rounded-lg">
+                                                    <table className="table-fixed md:w-full w-[390px]">
                                                         <thead>
-                                                            <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                                                <th className="md:px-5 md:py-3 px-1 py-2 border-b-2 border-gray-200 bg-gray-100 text-left  text-[10px] md:font-semibold text-gray-700 uppercase tracking-wider w-[100px]" style={{ minWidth: '250px' }}>PRODUCT LIST <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
-                                                                <th className="md:px-5 md:py-3 px-2 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">UNIT OF MEASURE <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
-                                                                <th className="md:px-5 md:py-3 px-2 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">QUANTITY <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
-                                                                <th className="md:px-5 md:py-3 px-2 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Action</th>
+                                                            <tr className='px-8 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
+                                                                <th className="md:px-5 md:py-3 px-1 py-2 border-b-2 border-gray-200 bg-gray-100 text-left  text-[10px] md:text-md md:font-semibold text-gray-700 uppercase tracking-wider w-[100px] md:w-[300px]" style={{ minWidth: '250px' }}>PRODUCT LIST <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
+                                                                <th className="md:px-5 md:py-3 px-2 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-[10px] md:text-md  font-semibold text-gray-700 uppercase tracking-wider  w-[100px] md:w-[200px] ">UNIT OF M <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
+                                                                <th className="md:px-5 md:py-3 px-2 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-[10px] md:text-md font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[200px]">QUANTITY <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
+                                                                <th className="md:px-5 md:py-3 px-2 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-[10px]  md:text-md font-semibold text-gray-700 uppercase tracking-wider md:w-[100px]">Action</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
