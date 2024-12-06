@@ -201,7 +201,7 @@ const AddBOM = () => {
                                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                                             onChange={(e) => {
                                                                                 const newRows = [...rows];
-                                                                                const numOfLoomss = parseInt(e.target.value, 10);
+                                                                                const numOfLoomss = (e.target.value);
                                                                                 newRows[index].selectedOption2 = numOfLoomss;
                                                                                 // newRows[index].selectedOption2 = generateWorkerOptions(
                                                                                 //     newRows[index].selectedOption2.label || '',
