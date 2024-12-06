@@ -278,7 +278,15 @@ const AddProduct = () => {
 
 
     const changeTextColor = () => {
-        setIsOptionSelected(true);
+        setIsOptionSelected(true);console.log(productGroup, 'productGroup');
+console.log(colorGroup, 'colorGroup');
+console.log(productCategory, 'productCategory');
+console.log(design, 'design');
+console.log(style, 'style');
+console.log(size, 'size');
+console.log(hsnCode, 'hsnCode');
+console.log(supplier, 'supplier');
+console.log(theme, 'theme');
     };
 
     const [productIdField, setproductIdField] = useState("")
