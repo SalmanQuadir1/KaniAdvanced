@@ -104,7 +104,7 @@ const [errorMessage, seterrorMessage] = useState("")
     };
     return (
         <DefaultLayout>
-            <Breadcrumb pageName="Product /ADD PRODUCT INVENTORY" />
+            <Breadcrumb  pageName="Product /ADD PRODUCT INVENTORY" />
             <div>
                 <Formik
                     initialValues={{
@@ -155,7 +155,7 @@ const [errorMessage, seterrorMessage] = useState("")
                             <div className="flex flex-col gap-9">
                                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                                        <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
+                                        <h3 className="md:font-medium text-slate-500 text-center text-md md:text-xl dark:text-white">
                                             Add PRODUCT INVENTORY
                                         </h3>
                                     </div>
@@ -171,13 +171,13 @@ const [errorMessage, seterrorMessage] = useState("")
 
 
                                             <div className='text-center flex justify-between'>
-                                                <h2 className='text-2xl'>ADD PRODUCT INVENTORY</h2>
+                                                <h2 className='text-sm md:text-2xl'>ADD PRODUCT INVENTORY</h2>
 
                                                 <div className='text-end'>
                                                     <button
                                                         type="button"
                                                         onClick={addRow}
-                                                        className="flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+                                                        className="flex items-center px-1 md:px-4 py-1 md:py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
                                                     >
                                                         <IoMdAdd className="mr-2" size={20} />
                                                         Add Row
@@ -190,10 +190,10 @@ const [errorMessage, seterrorMessage] = useState("")
                                                     <table className="table-fixed w-full">
                                                         <thead>
                                                             <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" style={{ minWidth: '250px' }}>LOCATION <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
-                                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">OPENING BALANCE <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
+                                                                <th className="md:px-5 md:py-3 px-2 py-1border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[130px]" style={{ minWidth: '250px' }}>LOCATION <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
+                                                                <th className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px]">OPENING BALANCE <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
 
-                                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Action</th>
+                                                                <th className="md:px-5 md:py-3 px-1 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Action</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -259,7 +259,7 @@ const [errorMessage, seterrorMessage] = useState("")
                                         </>
 
                                         <div className="flex justify-center mt-4 items-center">
-                                            <button type="submit" className="flex w-[300px] justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4">
+                                            <button type="submit" className="flex md:w-[300px] w-[220px]  justify-center rounded bg-primary p-3 font-medium text-sm text-gray hover:bg-opacity-90 mt-4">
                                                 Add PRODUCT INVENTORY
                                             </button>
                                         </div>

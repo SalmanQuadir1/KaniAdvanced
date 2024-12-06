@@ -145,13 +145,13 @@ const AddBOM = () => {
 
 
                                             <div className='text-center flex justify-between'>
-                                                <h2 className='text-2xl'>ADD BILL OF MATERIAL</h2>
+                                                <h2 className=' text-sm md:text-2xl'>ADD BILL OF MATERIAL</h2>
 
                                                 <div className='text-end'>
                                                     <button
                                                         type="button"
                                                         onClick={addRow}
-                                                        className="flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+                                                        className="flex items-center px-2 py-1 md:px-4 md:py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
                                                     >
                                                         <IoMdAdd className="mr-2" size={20} />
                                                         Add Row
@@ -164,10 +164,10 @@ const AddBOM = () => {
                                                     <table className="table-fixed w-full">
                                                         <thead>
                                                             <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" style={{ minWidth: '250px' }}>PRODUCT LIST <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
-                                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">UNIT OF MEASURE <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
-                                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">QUANTITY <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
-                                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Action</th>
+                                                                <th className="md:px-5 md:py-3 px-1 py-2 border-b-2 border-gray-200 bg-gray-100 text-left  text-[10px] md:font-semibold text-gray-700 uppercase tracking-wider w-[100px]" style={{ minWidth: '250px' }}>PRODUCT LIST <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
+                                                                <th className="md:px-5 md:py-3 px-2 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">UNIT OF MEASURE <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
+                                                                <th className="md:px-5 md:py-3 px-2 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">QUANTITY <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
+                                                                <th className="md:px-5 md:py-3 px-2 py-2 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Action</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
