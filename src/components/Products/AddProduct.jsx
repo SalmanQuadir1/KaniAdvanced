@@ -1741,7 +1741,7 @@ console.log(errorMessage,"error");
                                             <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex flex-col space-y-4">
                                                     {/* Upload Field */}
-                                                    <div className="flex-1 min-w-[400px] max-w-[600px]">
+                                                    <div className="flex-1 max-w-[370px] md:min-w-[400px] md:max-w-[600px]">
                                                         <label className="mb-2.5 block text-black dark:text-white">
                                                             Reference Image <span className="text-meta-1">*</span>
                                                         </label>
@@ -1831,7 +1831,7 @@ console.log(errorMessage,"error");
 
                                                 <div className="flex-1 min-w-[300px]">
                                                     {/* Upload Field */}
-                                                    <div className="flex-1 min-w-[400px] max-w-[600px]">
+                                                    <div className="max-w-[370px] md:min-w-[400px] md:max-w-[600px]">
                                                         <label className="mb-2.5 block text-black dark:text-white">
                                                             Actual Image <span className="text-meta-1">*</span>
                                                         </label>

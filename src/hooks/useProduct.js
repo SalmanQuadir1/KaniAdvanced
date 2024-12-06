@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { ADD_PRODUCT_URL, DELETE_PRODUCT_URL, GET_PRODUCT_URL, UPDATE_PRODUCT_URL,GET_PRODUCTID_URL, VIEW_ALL_LOCATIONS } from '../Constants/utils';
+import { ADD_PRODUCT_URL, DELETE_PRODUCT_URL, GET_PRODUCT_URL, UPDATE_PRODUCT_URL,GET_PRODUCTID_URL, VIEW_ALL_LOCATIONS, GET_PRODUCTIDINVENTORY_URL, DELETEINVENTORY_PRODUCT_URL } from '../Constants/utils';
 import { fetchunit } from '../redux/Slice/UnitSlice';
 import { fetchcolorGroup } from '../redux/Slice/ColorGroupSlice';
 import ProductGroup, { fetchProductGroup } from '../redux/Slice/ProductGroup';
@@ -25,6 +25,7 @@ const useProduct = ({referenceImages,actualImages,productIdField}) => {
     const [Product, setProduct] = useState([]);
     const [edit, setEdit] = useState(false);
     const [productId, setproductId] = useState([])
+    const [inventoryproductId, setinventoryproductId] = useState([])
     const [errorMessage, seterrorMessage] = useState('')
 
     const [productList, setproductList] = useState([])
@@ -194,6 +195,26 @@ hsnCodes:"",
             toast.error("Failed to fetch Product");
         }
     };
+    const getInventoryProductId = async () => {
+        console.log("iam here");
+        try {
+            const response = await fetch(`${GET_PRODUCTIDINVENTORY_URL}`, {
+                method: "GET",
+                headers: {
+                    // "Content-Type": "multipart/form-data",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data,"pr datatata")
+
+            setinventoryproductId(data);
+         
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch Product");
+        }
+    };
 
     const getLocation = async () => {
         console.log("iam here");
@@ -264,6 +285,37 @@ hsnCodes:"",
                 }
             } else {
                 toast.error(`${data.errorMessage}`);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("An error occurred");
+        }
+    };
+    const handleInventoryDelete = async (e, id) => {
+        e.preventDefault();
+        try {
+            const response = await fetch(`${DELETEINVENTORY_PRODUCT_URL}${id}`, {
+                method: 'DELETE',
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            if (response.ok) {
+                toast.success(`${data.message}`);
+
+                // Check if the current page becomes empty
+                const isCurrentPageEmpty = Product.length === 1;
+
+                if (isCurrentPageEmpty && pagination.currentPage > 1) {
+                    const previousPage = pagination.currentPage - 1;
+                    handlePageChange(previousPage);
+                } else {
+                    navigate("/inventory/viewProductInventory")
+                }
+            } else {
+                toast.error(`${data?.message}`);
             }
         } catch (error) {
             console.error(error);
@@ -436,7 +488,10 @@ hsnCodes:"",
         productList,
         getLocation,
         Location,
-        errorMessage
+        errorMessage,
+        getInventoryProductId,
+        inventoryproductId,
+        handleInventoryDelete
       
     };
 };

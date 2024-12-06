@@ -6,6 +6,7 @@ import { SIGNIN_URL } from '../../Constants/utils';
 import './style.css'; // Ensure custom styling if needed
 import backgroundImage from '/img/loginimg.jpg';
 import logoImage from '/img/bg123.png';
+import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import the eye icons
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ const SignIn = () => {
     username: '',
     password: '',
   });
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false); // State for password visibility toggle
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,10 +39,13 @@ const SignIn = () => {
         dispatch(signInSuccess(data));
         navigate('/');
       } else {
+        console.log("i am here");
         setError('Invalid Credentials');
       }
     } catch (error) {
       dispatch(signInFailure());
+      setError('Invalid Credentials');
+      console.log("i am not here");
       console.error(error);
     }
   };
@@ -108,7 +113,7 @@ const SignIn = () => {
               />
             </div>
 
-            <div>
+            <div className="relative">
               <label className="block text-gray-700 text-sm font-medium mb-2">
                 Password
               </label>
@@ -117,10 +122,17 @@ const SignIn = () => {
                 onChange={(e) =>
                   setformData({ ...formData, password: e.target.value })
                 }
-                type="password"
+                type={isPasswordVisible ? 'text' : 'password'}
                 placeholder="6+ Characters, 1 Capital letter"
                 className="w-full px-4 py-3 rounded border border-gray-300 focus:outline-none focus:border-primary transition"
               />
+              {/* Eye Icon for toggling password visibility */}
+              <span
+                onClick={() => setIsPasswordVisible(!isPasswordVisible)}
+                className="absolute right-3 top-2/3 transform -translate-y-1/2 cursor-pointer"
+              >
+                {isPasswordVisible ? <FaEyeSlash /> : <FaEye />}
+              </span>
             </div>
 
             <button
@@ -149,4 +161,3 @@ const SignIn = () => {
 };
 
 export default SignIn;
-

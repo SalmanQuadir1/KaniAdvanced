@@ -26,7 +26,7 @@ export const DELETE_LOCATION_URL = `${BASE_URL}/location/delete/`;
 export const ADD_LOCATIONINVENTORY_URL = `${BASE_URL}/productInventory`;
 
 export const GET_INVENTORYLOCATION = `${BASE_URL}/productInventory/getByProduct`;
-
+export const DELETEINVENTORY_PRODUCT_URL = `${BASE_URL}/productInventory/delete/`;
 
 export const GETDESCRIPTIONS = `${BASE_URL}/products/all-products`;
 
@@ -176,6 +176,8 @@ export const UPDATE_PRODUCT_URL = `${BASE_URL}/products/update-product`;
 export const VIEW_ALL_PRODUCT = `${BASE_URL}/products/viewAll`;
 export const DELETE_PRODUCT_URL = `${BASE_URL}/products/`;
 export const GET_PRODUCTID_URL = `${BASE_URL}/products`;
+
+export const GET_PRODUCTIDINVENTORY_URL = `${BASE_URL}/products/inventoryProductIds`;
 //PRODUCT
 export const ADD_HSNCODE_URL = `${BASE_URL}/hsncode`;
 export const GET_HSNCODE_URL = `${BASE_URL}/hsncode`;
