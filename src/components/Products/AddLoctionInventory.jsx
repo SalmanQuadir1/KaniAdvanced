@@ -190,8 +190,8 @@ const [errorMessage, seterrorMessage] = useState("")
                                                     <table className="table-fixed w-full">
                                                         <thead>
                                                             <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                                                <th className="md:px-5 md:py-3 px-2 py-1border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[130px]" style={{ minWidth: '250px' }}>LOCATION <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
-                                                                <th className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px]">OPENING BALANCE <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
+                                                                <th className="md:px-5 md:py-3 px-2 py-1border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[130px] md:w-[300px]" style={{ minWidth: '250px' }}>LOCATION <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
+                                                                <th className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[300px]">OPENING BALANCE <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
 
                                                                 <th className="md:px-5 md:py-3 px-1 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Action</th>
                                                             </tr>
