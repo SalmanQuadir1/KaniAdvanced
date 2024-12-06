@@ -95,7 +95,7 @@ const Budget = () => {
             <Breadcrumb pageName="Configurator/Add Budget" />
             <div>
 
-            <Formik
+                <Formik
                     initialValues={currentBudget}
                     enableReinitialize={true}
                     // validationSchema={validationSchema}
@@ -112,70 +112,70 @@ const Budget = () => {
                                             Add Budget
                                         </h3>
                                     </div>
-                              
-                                        <div className="p-6.5">
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
+
+                                    <div className="p-6.5">
+                                        <div className="mb-4.5 flex flex-wrap gap-6">
+                                            <div className="flex-1 min-w-[300px]">
+                                                <label className="mb-2.5 block text-black dark:text-white">  </label>
+
                                                 <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">  </label>
-                                                   
-                                                        <div className="flex-1 min-w-[300px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white">Product Group</label>
-                                                            <ReactSelect
-                                                                name="productGroup"
-                                                                styles={customStyles}
-                                                                value={productOptions?.find(option => option.value === values?.productGroup?.id) || null}
-                                                                onChange={(option) => setFieldValue('productGroup', option ? option.productObject : null)} // Keep the whole object here
-                                                                options={productOptions}
-                                                                className="bg-white dark:bg-form-Field"
-                                                                classNamePrefix="react-select"
-                                                                placeholder="Select productGroup"
-                                                            />
-                                                            <ErrorMessage name="productGroup" component="div" className="text-red-600 text-sm" />
+                                                    <label className="mb-2.5 block text-black dark:text-white">Product Group</label>
+                                                    <ReactSelect
+                                                        name="productGroup"
+                                                        styles={customStyles}
+                                                        value={productOptions?.find(option => option.value === values?.productGroup?.id) || null}
+                                                        onChange={(option) => setFieldValue('productGroup', option ? option.productObject : null)} // Keep the whole object here
+                                                        options={productOptions}
+                                                        className="bg-white dark:bg-form-Field"
+                                                        classNamePrefix="react-select"
+                                                        placeholder="Select productGroup"
+                                                    />
+                                                    <ErrorMessage name="productGroup" component="div" className="text-red-600 text-sm" />
 
-                                                            <ErrorMessage name="productGroup" component="div" className="text-red-600 text-sm" />
-                                                        </div>
-
-                                                    
+                                                    <ErrorMessage name="productGroup" component="div" className="text-red-600 text-sm" />
                                                 </div>
 
 
-                                                
-                                                <div className="flex-1 min-w-[300px] mt-2">
+                                            </div>
 
-                                                    <div className="relative z-20 bg-transparent dark:bg-form-Field">
-                                                        <div className="flex-1 min-w-[300px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white">Order Type</label>
-                                                            <ReactSelect
-                                                               styles={customStyles}
-                                                                name="orderType"
-                                                                value={orderOptions?.find(option => option?.value === values?.orderType?.id) || null}
-                                                                onChange={(option) => setFieldValue('orderType', option ? option.orderObject : null)} // Keep the whole object here
-                                                                options={orderOptions}
-                                                                className="bg-white dark:bg-form-Field"
-                                                                classNamePrefix="react-select"
-                                                                placeholder="Select Order Type"
-                                                            />
-                                                            <ErrorMessage name="orderType" component="div" className="text-red-600 text-sm" />
 
-                                                            <ErrorMessage name="unit.id" component="div" className="text-red-600 text-sm" />
-                                                        </div>
 
+                                            <div className="flex-1 min-w-[300px] mt-2">
+
+                                                <div className="relative z-20 bg-transparent dark:bg-form-Field">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">Order Type</label>
+                                                        <ReactSelect
+                                                            styles={customStyles}
+                                                            name="orderType"
+                                                            value={orderOptions?.find(option => option?.value === values?.orderType?.id) || null}
+                                                            onChange={(option) => setFieldValue('orderType', option ? option.orderObject : null)} // Keep the whole object here
+                                                            options={orderOptions}
+                                                            className="bg-white dark:bg-form-Field"
+                                                            classNamePrefix="react-select"
+                                                            placeholder="Select Order Type"
+                                                        />
+                                                        <ErrorMessage name="orderType" component="div" className="text-red-600 text-sm" />
+
+                                                        <ErrorMessage name="unit.id" component="div" className="text-red-600 text-sm" />
                                                     </div>
+
                                                 </div>
                                             </div>
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Current Budget</label>
-                                                    <Field
-                                                        name='currentBudget'
-                                                        type="number"
-                                                        placeholder="Enter current Budget"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Start Date</label>
-                                                    {/* <input
+                                        </div>
+                                        <div className="mb-4.5 flex flex-wrap gap-6">
+                                            <div className="flex-1 min-w-[300px]">
+                                                <label className="mb-2.5 block text-black dark:text-white"> Current Budget</label>
+                                                <Field
+                                                    name='currentBudget'
+                                                    type="number"
+                                                    placeholder="Enter current Budget"
+                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                />
+                                            </div>
+                                            <div className="flex-1 min-w-[300px]">
+                                                <label className="mb-2.5 block text-black dark:text-white"> Start Date</label>
+                                                {/* <input
                                                     placeholder='Select  Date'
                                                     type="text"
                                                     name='startDate'
@@ -183,55 +183,56 @@ const Budget = () => {
                                                     value={dateSelected}
                                                     className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                                                 /> */}
-                                                   <Field
-                                                        name='startDate'
-                                                        type="date"
-                                                        placeholder="Enter Start Date"
-                                                        className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
+                                                <Field
+                                                    name='startDate'
+                                                    type="date"
+                                                    placeholder="Enter Start Date"
+                                                    className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                />
                                             </div>
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
+                                        </div>
+                                        <div className="mb-4.5 flex flex-wrap gap-6">
 
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> To Date</label>
-                                                    <Field
-                                                        name='toDate'
-                                                        type="date"
-                                                        placeholder="Enter To Date"
-                                                        className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Revised Budget</label>
-                                                    <Field
-                                                        name='revisedBudget'
-                                                        type="number"
-                                                        placeholder="Enter Revised Budget"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
+                                            <div className="flex-1 min-w-[300px]">
+                                                <label className="mb-2.5 block text-black dark:text-white"> To Date</label>
+                                                <Field
+                                                    name='toDate'
+                                                    type="date"
+                                                    placeholder="Enter To Date"
+                                                    className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                />
                                             </div>
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Revised Date</label>
-                                                    <Field
-                                                        name='revisedDate'
-                                                        type="date"
-                                                        placeholder="Enter RevisedDate"
-                                                        className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-
+                                            <div className="flex-1 min-w-[300px]">
+                                                <label className="mb-2.5 block text-black dark:text-white"> Revised Budget</label>
+                                                <Field
+                                                    name='revisedBudget'
+                                                    type="number"
+                                                    placeholder="Enter Revised Budget"
+                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="mb-4.5 flex flex-wrap gap-6">
+                                            <div className="flex-1 min-w-[300px]">
+                                                <label className="mb-2.5 block text-black dark:text-white"> Revised Date</label>
+                                                <Field
+                                                    name='revisedDate'
+                                                    type="date"
+                                                    placeholder="Enter RevisedDate"
+                                                    className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                />
                                             </div>
 
+                                        </div>
 
 
-                                            <button  type="submit" className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4">
-                                                Add Budget
+                                        <div className="flex justify-center mt-4 items-center">
+                                            <button type="submit" className="flex md:w-[240px] w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90">
+                                                ADD BUDGET
                                             </button>
                                         </div>
-                          
+                                    </div>
+
 
                                 </div>
                                 {!edit && (
@@ -250,7 +251,7 @@ const Budget = () => {
                                 )}
 
 
-                                
+
                             </div>
 
                         </Form>
