@@ -1854,7 +1854,7 @@ const UpdateProduct = () => {
                                                                         ref.referenceImage != null &&
 
                                                                                 <img
-                                                                                    className="h-10 w-10 rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                                                                                    className="h-20 w-20  transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
                                                                                     crossOrigin="use-credentials"
                                                                                     src={`${GET_IMAGE}/products/getimages/${ref.referenceImage}`}
                                                                                     alt="Product Image"
@@ -1993,7 +1993,7 @@ const UpdateProduct = () => {
                                                                         ref.actualImage != null &&
 
                                                                                 <img
-                                                                                    className="h-10 w-10 rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                                                                                    className="h-20 w-20  transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
                                                                                     crossOrigin="use-credentials"
                                                                                     src={`${GET_IMAGE}/products/getimages/${ref.actualImage}`}
                                                                                     alt="Product Image"

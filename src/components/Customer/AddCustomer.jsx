@@ -131,7 +131,7 @@ const AddCustomer = () => {
                     <input
                       type="text"
                       name="customerName"
-                      placeholder="customerName"
+                      placeholder="Customer Name"
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       value={formik.values.customerName}
@@ -149,7 +149,7 @@ const AddCustomer = () => {
                       Customer Group
                     </label>
                     <ReactSelect
-                      name="customerGroup"
+                      name="customerGroup" 
 
                       styles={customStyles}
                       value={
@@ -188,7 +188,7 @@ const AddCustomer = () => {
                     <input
                       type="text"
                       name="countryName"
-                      placeholder="countryName Name"
+                      placeholder="Country Name"
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       value={formik.values.countryName}
@@ -386,12 +386,12 @@ const AddCustomer = () => {
                 <div className="mb-4.5 flex flex-wrap gap-6">
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      INSTA Id
+                      Instagram Id
                     </label>
                     <input
                       type="text"
                       name="instaId"
-                      placeholder="INSTA Id"
+                      placeholder="INSTAGRAM Id"
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
                       value={formik.values.instaId}
