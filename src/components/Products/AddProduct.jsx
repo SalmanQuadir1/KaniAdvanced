@@ -28,8 +28,7 @@ const AddProduct = () => {
 
 
     const [vaaluee, setvaaluee] = useState({})
-    // const [images, setimages] = useState([])
-
+    
 
 
 
@@ -56,17 +55,7 @@ const AddProduct = () => {
 
 
 
-    // const [preview, setPreview] = useState(null);
-
-    // // Handle file selection and preview
-    // const handleFileChange = (event) => {
-    //   const file = event.target.files[0];
-    //   if (file) {
-    //     setPreview(URL.createObjectURL(file)); // Generate a preview URL
-    //   } else {
-    //     setPreview(null); // Reset preview if no file is selected
-    //   }
-    // };
+   
 
     const [previews, setPreviews] = useState([]);
     const [previewsActual, setPreviewsActual] = useState([]);
@@ -108,14 +97,7 @@ const AddProduct = () => {
     }, [previews]);
 
 
-    // useEffect(() => {
-    //     if (referenceImages&& actualImages) {
-    //         setimages((prevImages) => [
-    //             ...prevImages,
-    //             { referenceImages, actualImages }, // Combine both images into one object
-    //         ]);
-    //     }
-    // }, [referenceImages, actualImages]);
+    
 
 
 
@@ -1478,15 +1460,7 @@ console.log(errorMessage,"error");
 
 
                                                     <div className="mb-4.5 flex flex-wrap gap-6">
-                                                        {/* <div className="flex-1 min-w-[300px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white"> Weight(gms) </label>
-                                                        <Field
-                                                            name='weight'
-                                                            type="text"
-                                                            placeholder="Enter your first name"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div> */}
+                                                     
                                                         <div className="flex-1 min-w-[300px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> Units</label>
                                                             <Field
