@@ -71,7 +71,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
       {/* <!-- SIDEBAR HEADER --> */}
       <div className="flex items-center justify-between  px-6  lg:py-6.5 bg-graydark">
 
-        <NavLink to="/" className='flex justify-center mx-auto '>
+
+        <NavLink to="/" className='flex justify-center mx-auto md:h-[70px] h-[100px] '>
           <img src={Logo} className='w-20 h-22 justify-center rounded-full mb-[-20px] ' alt="Logo" />
           {/* <h2 className='mt-7 ml-4 text-3xl text-slate-300 font-bold stroke-form-input'>KANI</h2> */}
         </NavLink>
