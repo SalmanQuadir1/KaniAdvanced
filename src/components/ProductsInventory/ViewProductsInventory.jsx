@@ -140,24 +140,38 @@ const handlePageChange = (newPage) => {
     //     ViewInventory(1, locationLabel, descriptionLabel);
     // };
 
+    // const renderTableRows = () => {
+    //     if (!inventory ) {
+    //         return (
+    //             <tr className='bg-white dark:bg-slate-700 dark:text-white'>
+    //                 <td colSpan="6" className="px-5 py-5 border-b border-gray-200 text-sm">
+    //                     <p className="text-gray-900 whitespace-no-wrap text-center">No Data Found</p>
+    //                 </td>
+    //             </tr>
+    //         );
+    //     }
+
+    //     // const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
+    //     const startingSerialNumber = 0
+
+    //     console.log(pagination,"pagg");
+
+    //    console.log(startingSerialNumber,"starrrrr");
+    //    console.log(inventory,"umer shah");
+
     const renderTableRows = () => {
-        if (!inventory ) {
+        if (!inventory || inventory.length === 0) {
             return (
-                <tr className='bg-white dark:bg-slate-700 dark:text-white'>
-                    <td colSpan="6" className="px-5 py-5 border-b border-gray-200 text-sm">
+                <tr className="bg-white dark:bg-slate-700 dark:text-white">
+                    <td colSpan="12" className="px-5 py-5 border-b border-gray-200 text-sm">
                         <p className="text-gray-900 whitespace-no-wrap text-center">No Data Found</p>
                     </td>
                 </tr>
             );
         }
-
-        // const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
-        const startingSerialNumber = 0
-
-        console.log(pagination,"pagg");
-
-       console.log(startingSerialNumber,"starrrrr");
-       console.log(inventory,"umer shah");
+    
+        const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage;
+    
         
         
       return    inventory.map((item, index) => (
@@ -322,6 +336,7 @@ const handlePageChange = (newPage) => {
                             </table>
                         </div>
                         <Pagination totalPages={pagination.totalPages} currentPage={pagination.currentPage} handlePageChange={handlePageChange} />
+                   
                     </div>
                 </div>
             </div>
