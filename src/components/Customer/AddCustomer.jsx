@@ -149,8 +149,8 @@ const AddCustomer = () => {
                       Customer Group
                     </label>
                     <ReactSelect
-                      name="customerGroup"
-placeholder="Customer Group"
+                      name="customerGroup" 
+
                       styles={customStyles}
                       value={
                         customerGroupList?.find(
