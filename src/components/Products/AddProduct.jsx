@@ -1457,7 +1457,7 @@ console.log(errorMessage,"error");
                                                         <div className="flex-1 min-w-[300px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> Fabric Cost </label>
                                                             <Field
-                                                                name='fabricWeave'
+                                                                name='fabricCost'
                                                                 type="text"
                                                                 placeholder="Enter Fabric Cost"
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
@@ -1466,7 +1466,7 @@ console.log(errorMessage,"error");
                                                         <div className="flex-1 min-w-[300px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> Embroidery Cost</label>
                                                             <Field
-                                                                name='fabricCode'
+                                                                name='EmbroideryCost'
                                                                 type="text"
                                                                 placeholder="Enter Embroidery Cost"
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
