@@ -27,7 +27,7 @@ const Size = () => {
                     enableReinitialize={true}
                     validate={values => {
                         const errors = {};
-                       
+
                         if (!values.sizeName) {
                             errors.sizeName = 'Required';
                         }
@@ -42,7 +42,7 @@ const Size = () => {
                                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                                         <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                                        {edit ? "UPDATE SIZE" : "ADD SIZE"}
+                                            {edit ? "UPDATE SIZE" : "ADD SIZE"}
                                         </h3>
                                     </div>
                                     <div className="p-6.5">
@@ -58,32 +58,34 @@ const Size = () => {
                                                 <ErrorMessage name="sizeName" component="div" className="text-red-500" />
                                             </div>
                                         </div>
-                                        <button type="submit" className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4">
-                                        {edit ? "UPDATE SIZE" : "CREATE SIZE"}
-                                        </button>
+                                        <div className="flex justify-center mt-4 items-center">
+                                            <button type="submit" className="flex md:w-[180px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90">
+                                                {edit ? "UPDATE SIZE" : "CREATE SIZE"}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                                 {!edit && (
-                                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                                     <div className="border-b border-stroke py-4 px-2 dark:border-strokedark">
-                                         <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                                             <ViewTable
-                                                 units={Size}
-                                                 pagination={pagination}
-                                                 totalItems={pagination.totalItems}
-                                                 title={'Size'}
-                                                 handleDelete={handleDelete}
-                                                 handleUpdate={handleUpdate}
-                                             />
-                                             <Pagination
-                                                 totalPages={pagination.totalPages}
-                                                 currentPage={pagination.currentPage}
-                                                 handlePageChange={handlePageChange}
-                                             />
-                                         </h3>
-                                     </div>
-                                 </div>
-                             )}
+                                    <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                                        <div className="border-b border-stroke py-4 px-2 dark:border-strokedark">
+                                            <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
+                                                <ViewTable
+                                                    units={Size}
+                                                    pagination={pagination}
+                                                    totalItems={pagination.totalItems}
+                                                    title={'Size'}
+                                                    handleDelete={handleDelete}
+                                                    handleUpdate={handleUpdate}
+                                                />
+                                                <Pagination
+                                                    totalPages={pagination.totalPages}
+                                                    currentPage={pagination.currentPage}
+                                                    handlePageChange={handlePageChange}
+                                                />
+                                            </h3>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </Form>
                     )}

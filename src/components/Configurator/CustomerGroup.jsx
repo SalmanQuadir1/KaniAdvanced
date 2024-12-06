@@ -59,9 +59,11 @@ const CustomerGroup = () => {
                                             <ErrorMessage name="customerGroupName" component="div" className="text-red-500" />
                                         </div>
                                     </div>
-                                    <button type="submit" className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4">
+                                    <div className="flex justify-center mt-4 items-center">
+                                    <button type="submit" className="flex md:w-[240px] w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90">
                                     {edit ? "UPDATE CUSTOMER GROUP" : "CREATE CUSTOMER GROUP"}
                                     </button>
+                                    </div>
                                 </div>
                             </div>
                             {!edit && (

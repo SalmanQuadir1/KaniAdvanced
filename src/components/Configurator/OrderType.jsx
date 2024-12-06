@@ -65,12 +65,14 @@ const Design = () => {
                           />
                         </div>
                       </div>
+                      <div className="flex justify-center mt-4 items-center">
                       <button
                         type="submit"
-                        className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4"
+                        className="flex md:w-[180px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                       >
                         {edit ? 'UPDATE ORDER TYPE' : 'CREATE ORDER TYPE'}
                       </button>
+                      </div>
                     </div>
                   </div>
                   {!edit && (
