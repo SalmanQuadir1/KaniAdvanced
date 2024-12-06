@@ -102,6 +102,9 @@ const UpdateProduct = () => {
     };
 
 
+
+    
+
     const handleUpdateSubmit = async (values, { setSubmitting }) => {
         console.log(values, "Submitted values:");
 
