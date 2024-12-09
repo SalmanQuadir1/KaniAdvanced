@@ -2060,33 +2060,44 @@ const UpdateProduct = () => {
 
                                         </div>
 
-                                        <div className="flex-1 min-w-[300px]">
-                                            <label className="mb-2.5 block text-black dark:text-white"> Supplier <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
-                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
-                                                <ReactSelect
-                                                    name="supplier"
-                                                    value={supplierNameOptions?.find(option => option.value === values.supplier?.id) || null}
-                                                    onChange={(option) => setFieldValue('supplier', option ? option.suplierid : null)}
-                                                    options={supplierNameOptions}
-                                                    styles={customStyles} // Pass custom styles here
-                                                    className="bg-white dark:bg-form-Field"
-                                                    classNamePrefix="react-select"
-                                                    placeholder="Select supplier Name"
-                                                />
-                                               
-                                            </div>
-                                        </div>
 
-                                        <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Status</label>
-                                                <Field
-                                                    name='barcode'
-                                                    type="text"
-                                                    placeholder="Enter Barcode"
-                                                    // value={product.barcode}
-                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                />
-                                            </div>
+                                        <div className="mb-4.5 flex flex-wrap gap-6">
+    {/* Container for Supplier and Product Status */}
+    <div className="flex flex-1 flex-col md:flex-row gap-6">
+        {/* Supplier Field */}
+        <div className="flex-1 min-w-[300px]">
+            <label className="mb-2.5 block text-black dark:text-white">
+                Supplier 
+                <span className="text-red-700 text-xl mt-[40px] justify-center items-center"> *</span>
+            </label>
+            <div className="z-20 bg-transparent dark:bg-form-Field">
+                <ReactSelect
+                    name="supplier"
+                    value={supplierNameOptions?.find(option => option.value === values.supplier?.id) || null}
+                    onChange={(option) => setFieldValue('supplier', option ? option.suplierid : null)}
+                    options={supplierNameOptions}
+                    styles={customStyles} // Pass custom styles here
+                    className="bg-white dark:bg-form-Field"
+                    classNamePrefix="react-select"
+                    placeholder="Select supplier Name"
+                />
+            </div>
+        </div>
+
+        {/* Product Status Field */}
+        <div className="flex-1 min-w-[300px]">
+            <label className="mb-2.5 block text-black dark:text-white">Product Status</label>
+            <Field
+                name="productStatus"
+                type="text"
+                placeholder="Enter Product Status"
+                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+            />
+        </div>
+    </div>
+</div>
+
+
 
 
 
