@@ -378,6 +378,7 @@ const UpdateProduct = () => {
             embroideryCost: values.embroideryCost || 0,
             totalCost: values.totalCost || 0,
             kaniColors: values.kaniColors || "",
+            productStatus: values.productStatus || "",
             mrp: values.mrp || 0,
             wholesalePrice: values.wholesalePrice || 0,
             usdPrice: values.usdPrice || 0,
@@ -451,6 +452,7 @@ const UpdateProduct = () => {
                         fabricWeave: product?.fabricWeave || '',
                         fabricCode: product?.fabricCode || '',
                         fabricCost: product?.fabricCost || '',
+                        productStatus: product?.productStatus || '',
                         supplier: product?.supplier || { id: 0 },
                         supplierCode: product?.supplierCode || { id: 0 },
                         embroideryCost: product?.embroideryCost || '',
@@ -2085,7 +2087,7 @@ const UpdateProduct = () => {
         </div>
 
         {/* Product Status Field */}
-        <div className="flex-1 min-w-[300px]">
+        {/* <div className="flex-1 min-w-[300px]">
             <label className="mb-2.5 block text-black dark:text-white">Product Status</label>
             <Field
                 name="productStatus"
@@ -2093,7 +2095,18 @@ const UpdateProduct = () => {
                 placeholder="Enter Product Status"
                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
             />
-        </div>
+        </div> */}
+        <div className="flex-1 min-w-[300px]">
+                                                    <label className="mb-2 block text-black dark:text-white"> Product Status</label>
+                                                    <Field
+                                                        name='productStatus'
+                                                        type="text"
+                                                        placeholder="Enter Product Status"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 mt-[6px] px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                    />
+                                                    {/* <ErrorMessage name="productStatus" component="div" className="text-red-500" /> */}
+
+                                                </div>
     </div>
 </div>
 
