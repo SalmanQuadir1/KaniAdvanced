@@ -2077,7 +2077,16 @@ const UpdateProduct = () => {
                                             </div>
                                         </div>
 
-
+                                        <div className="flex-1 min-w-[300px]">
+                                                <label className="mb-2.5 block text-black dark:text-white"> Status</label>
+                                                <Field
+                                                    name='barcode'
+                                                    type="text"
+                                                    placeholder="Enter Barcode"
+                                                    // value={product.barcode}
+                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                />
+                                            </div>
 
 
 
