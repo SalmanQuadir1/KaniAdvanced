@@ -28,7 +28,7 @@ const AddProduct = () => {
 
 
     const [vaaluee, setvaaluee] = useState({})
-    
+
 
 
 
@@ -55,7 +55,7 @@ const AddProduct = () => {
 
 
 
-   
+
 
     const [previews, setPreviews] = useState([]);
     const [previewsActual, setPreviewsActual] = useState([]);
@@ -97,7 +97,7 @@ const AddProduct = () => {
     }, [previews]);
 
 
-    
+
 
 
 
@@ -260,15 +260,15 @@ const AddProduct = () => {
 
 
     const changeTextColor = () => {
-        setIsOptionSelected(true);console.log(productGroup, 'productGroup');
-console.log(colorGroup, 'colorGroup');
-console.log(productCategory, 'productCategory');
-console.log(design, 'design');
-console.log(style, 'style');
-console.log(size, 'size');
-console.log(hsnCode, 'hsnCode');
-console.log(supplier, 'supplier');
-console.log(theme, 'theme');
+        setIsOptionSelected(true); console.log(productGroup, 'productGroup');
+        console.log(colorGroup, 'colorGroup');
+        console.log(productCategory, 'productCategory');
+        console.log(design, 'design');
+        console.log(style, 'style');
+        console.log(size, 'size');
+        console.log(hsnCode, 'hsnCode');
+        console.log(supplier, 'supplier');
+        console.log(theme, 'theme');
     };
 
     const [productIdField, setproductIdField] = useState("")
@@ -283,7 +283,7 @@ console.log(theme, 'theme');
     } = useProduct({ referenceImages, actualImages, productIdField });
 
 
-console.log(errorMessage,"error");
+    console.log(errorMessage, "error");
 
 
     useEffect(() => {
@@ -338,7 +338,7 @@ console.log(errorMessage,"error");
                         // if (!values.barcode || values.barcode === " ") {
                         //     errors.barcode = 'bar code Cannot Be Null';
                         // }
-                        
+
 
                         if (values) {
 
@@ -390,7 +390,7 @@ console.log(errorMessage,"error");
                                                             placeholder="Select Product Group"
                                                         />
                                                     </div>
-                                                   
+
                                                 </div>
 
 
@@ -407,7 +407,7 @@ console.log(errorMessage,"error");
                                                             classNamePrefix="react-select"
                                                             placeholder="Select Color Group"
                                                         />
-                                                        
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -582,7 +582,7 @@ console.log(errorMessage,"error");
                                                             classNamePrefix="react-select"
                                                             placeholder="Select Design"
                                                         />
-                                                       
+
                                                     </div>
                                                 </div>
                                                 <div className="flex-1 min-w-[300px]">
@@ -647,7 +647,7 @@ console.log(errorMessage,"error");
                                                                     ...base,
                                                                     zIndex: 9999,  // Set high z-index to make sure the dropdown appears above other components
                                                                 }),
-                                                            }} 
+                                                            }}
                                                             // styles={customStyles} // Pass custom styles here
                                                             className="bg-white dark:bg-form-Field"
                                                             classNamePrefix="react-select"
@@ -1460,7 +1460,7 @@ console.log(errorMessage,"error");
 
 
                                                     <div className="mb-4.5 flex flex-wrap gap-6">
-                                                     
+
                                                         <div className="flex-1 min-w-[300px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> Units</label>
                                                             <Field
@@ -1896,7 +1896,7 @@ console.log(errorMessage,"error");
 
 
 
-                                                
+
 
 
 
@@ -1911,26 +1911,39 @@ console.log(errorMessage,"error");
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                 />
                                             </div>
-                                            <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Supplier <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
-                                                <div className=" z-20 bg-transparent dark:bg-form-Field">
-                                                    <ReactSelect
-                                                        name="supplier"
-                                                        value={supplierNameOptions?.find(option => option.value === values.supplier?.id) || null}
-                                                        onChange={(option) => setFieldValue('supplier', option ? option.suplierid : null)}
-                                                        options={supplierNameOptions}
-                                                        styles={customStyles} // Pass custom styles here
-                                                        className="bg-white dark:bg-form-Field"
-                                                        classNamePrefix="react-select"
-                                                        placeholder="Select supplier Name"
-                                                    />
-                                                    {/* <span className="absolute top-1/2 right-4 z-30 -translate-y-1/2">
+                                            <div className="mb-4.5 flex flex-wrap gap-6">
+                                                <div className="flex-1 min-w-[300px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Supplier <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                    <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                        <ReactSelect
+                                                            name="supplier"
+                                                            value={supplierNameOptions?.find(option => option.value === values.supplier?.id) || null}
+                                                            onChange={(option) => setFieldValue('supplier', option ? option.suplierid : null)}
+                                                            options={supplierNameOptions}
+                                                            styles={customStyles} // Pass custom styles here
+                                                            className="bg-white dark:bg-form-Field"
+                                                            classNamePrefix="react-select"
+                                                            placeholder="Select supplier Name"
+                                                        />
+                                                        {/* <span className="absolute top-1/2 right-4 z-30 -translate-y-1/2">
                                                     <svg className="fill-current" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <g opacity="0.8">
                                                             <path fillRule="evenodd" clipRule="evenodd" d="M5.29289 8.29289C5.68342 7.90237 6.31658 7.90237 6.70711 8.29289L12 13.5858L17.2929 8.29289C17.6834 7.90237 18.3166 7.90237 18.7071 8.29289C19.0976 8.68342 19.0976 9.31658 18.7071 9.70711L12.7071 15.7071C12.3166 16.0976 11.6834 16.0976 11.2929 15.7071L5.29289 9.70711C4.90237 9.31658 4.90237 8.68342 5.29289 8.29289Z" fill=""></path>
                                                         </g>
                                                     </svg>
                                                 </span> */}
+                                                    </div>
+                                                </div>
+                                                <div className="flex-1 min-w-[300px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Product Status</label>
+                                                    <Field
+                                                        name='productStatus'
+                                                        type="text"
+                                                        placeholder="Enter Product Status"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                    />
+                                                    <ErrorMessage name="productStatus" component="div" className="text-red-500" />
+
                                                 </div>
                                             </div>
 
@@ -1960,6 +1973,7 @@ console.log(errorMessage,"error");
 
 
                                                 </div>
+
                                             </div>
 
 

@@ -12,7 +12,7 @@ import { IoIosAdd } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-const ViewProduct = () => {
+const ViewProduct = () => { 
     const navigate = useNavigate();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
@@ -390,7 +390,7 @@ const ViewProduct = () => {
                                     <div className="flex justify-center">
                                         <button
                                             type="submit"
-                                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold h-12 w-[150px] rounded-lg"
+                                            className="flex md:w-[240px] w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                         >
                                             Search
                                         </button>
