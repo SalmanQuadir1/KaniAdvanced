@@ -74,6 +74,7 @@ const useProduct = ({referenceImages,actualImages,productIdField}) => {
 
 
     gstDetails:"",
+    productStatus:"",
  
 hsnCodes:"",
  
