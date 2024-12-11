@@ -2,7 +2,7 @@ import React from 'react'
 import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik,Form } from 'formik'
- import Flatpickr from 'react-flatpickr';
+//  import Flatpickr from 'react-flatpickr';
  import ReactSelect from 'react-select';
 
 
@@ -124,17 +124,12 @@ const ViewOrder = () => {
                       <label className="mb-2.5 block text-black dark:text-white">
                         From Date
                       </label>
-                      <Flatpickr
-                        name="fromDate"
-                        value={values.fromDate}
-                        onChange={(date) => setFieldValue('fromDate', date[0])} // Only selecting the first date
-                        onBlur={handleBlur}
-                        options={{
-                          dateFormat: 'Y-m-d', // You can format as needed
-                        }}
-                        className="bg-white dark:bg-form-input"
-                        placeholder="Select From Date"
-                      />
+                      <Field
+                            name='fromDate'
+                            type="date"
+                            placeholder="Enter Purchase Order Date"
+                            className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
                     </div>
 
 
@@ -142,17 +137,12 @@ const ViewOrder = () => {
                       <label className="mb-2.5 block text-black dark:text-white">
                         To Date
                       </label>
-                      <Flatpickr
-                        name="orderDate"
-                        className="form-control" // You can add classes to style
-                        value={values.orderDate}
-                        onChange={date => setFieldValue("orderDate", date[0])} // Update Formik value
-                        options={{
-                          dateFormat: "Y-m-d", // Customize date format
-                          placeholder: "Select Date",
-                        }}
-                        placeholder="Select To Date"
-                      />
+                      <Field
+                            name='toDate'
+                            type="date"
+                            placeholder="Enter Purchase Order Date"
+                            className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
                     </div>
                                     </div>
 
