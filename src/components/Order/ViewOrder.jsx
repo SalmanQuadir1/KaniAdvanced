@@ -7,15 +7,7 @@ import { Field, Formik,Form } from 'formik'
 
 
 
- const dateOptions = [
-  { value: '2024-12-01', label: '2024-12-01' },
-  { value: '2024-12-02', label: '2024-12-02' },
-  { value: '2024-12-03', label: '2024-12-03' },
-  { value: '2024-12-04', label: '2024-12-04' },
-  { value: '2024-12-05', label: '2024-12-05' },
-  { value: '2024-12-06', label: '2024-12-06' },
-  { value: '2024-12-07', label: '2024-12-07' },
-]
+ 
 
  const customStyles = {
   control: (provided) => ({
