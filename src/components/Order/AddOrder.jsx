@@ -42,6 +42,8 @@ const AddOrder = () => {
 
   console.log(productId, "looool");
 
+  const [prodIdModal, setprodIdModal] = useState([])
+
   useEffect(() => {
     if (orderTypee) {
       const formattedOptions = orderTypee.map(order => ({
@@ -124,6 +126,15 @@ const AddOrder = () => {
     setIsModalOpen(true);
 
   };
+
+
+  const handleModalSubmit = (values) => {
+    console.log(values, "japnam");
+    setprodIdModal([values])
+    setIsModalOpen(false)
+
+  }
+
   const handleSubmit = (values, { setSubmitting }) => {
 
     console.log(values, "kiki");
@@ -133,7 +144,7 @@ const AddOrder = () => {
     //   console.log('Form Submitted:', values);
     // }, 400);
   };
-
+  console.log(prodIdModal, "proddidmodal");
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Order/Create Order" />
@@ -316,6 +327,9 @@ const AddOrder = () => {
                     </div>
 
 
+
+
+
                     {orderType && (
                       <div >
 
@@ -366,6 +380,8 @@ const AddOrder = () => {
                       />
                       <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
                     </div> */}
+
+
                     <div className="flex-1 min-w-[200px] mt-11">
                       <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
                       <ReactSelect
@@ -384,7 +400,7 @@ const AddOrder = () => {
                     </div>
 
 
-                    {orderType && (
+                    {/* {prodIdModal && (
                       <div
                         className="inline-block max-w-screen-md shadow-md rounded-lg overflow-hidden mt-7 ml-11"
                       >
@@ -462,12 +478,12 @@ const AddOrder = () => {
                           </table>
                         </div>
                       </div>
-                    )}
+                    )} */}
 
 
 
 
-                    {1 == 1 && (
+                    {prodIdModal.length > 0 && (
 
                       <div className="  shadow-md rounded-lg  mt-3 overflow-scroll">
                         <table className="min-w-full leading-normal overflow-auto">
@@ -540,9 +556,145 @@ const AddOrder = () => {
                             </tr>
                           </thead>
                           <tbody>
-                            {/* {values.materialPos.map((item, index) => ( */}
+                            {prodIdModal.map((item, index) => (
+                              <tr key={item.id} className='bg-white dark:bg-slate-700 dark:text-white px-5 py-3'>
+                                <td className="px-5 py-5 border-b border-gray-200  text-sm">
 
-                            {/* ))} */}
+
+                                  <div >
+
+                                    <Field
+                                      name="employeeName"
+                                      value={item?.productId}
+                                      placeholder="Enter Prchase Order"
+                                      className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                    />
+                                    <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                  </div>
+                                </td>
+                                <td className="px-5 py-5 border-b border-gray-200  text-sm">
+
+
+                                  <div >
+
+                                    <Field
+                                      name="employeeName"
+                                      value={item?.productId}
+                                      placeholder="Enter Prchase Order"
+                                      className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                    />
+                                    <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                  </div>
+                                </td>
+                                <td className="px-5 py-5 border-b border-gray-200  text-sm">
+
+
+                                  <div >
+
+                                    <Field
+                                      name="employeeName"
+                                      value={item?.productId}
+                                      placeholder="Enter Prchase Order"
+                                      className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                    />
+                                    <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                  </div>
+                                </td>
+                                <td className="px-5 py-5 border-b border-gray-200  text-sm">
+
+
+                                  <div >
+
+                                    <Field
+                                      name="employeeName"
+                                      value={item?.productId}
+                                      placeholder="Enter Prchase Order"
+                                      className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                    />
+                                    <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                  </div>
+                                </td>
+
+                                <td className="px-5 py-5 border-b border-gray-200  text-sm">
+
+
+                                  <div >
+
+                                    <Field
+                                      name="employeeName"
+                                      value={item?.productId}
+                                      placeholder="Enter Prchase Order"
+                                      className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                    />
+                                    <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                  </div>
+                                </td>
+                                <td className="px-5 py-5 border-b border-gray-200  text-sm">
+
+
+                                  <div >
+
+                                    <Field
+                                      name="employeeName"
+                                      value={item?.productId}
+                                      placeholder="Enter Prchase Order"
+                                      className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                    />
+                                    <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                  </div>
+                                </td>
+                                <td className="px-5 py-5 border-b border-gray-200  text-sm">
+
+
+                                  <div >
+
+                                    <Field
+                                      name="employeeName"
+                                      value={item?.productId}
+                                      placeholder="Enter Prchase Order"
+                                      className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                    />
+                                    <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                  </div>
+                                </td>
+                                <td className="px-5 py-5 border-b border-gray-200  text-sm">
+
+
+                                  <div >
+
+                                    <Field
+                                      type="date"
+                                      name="employeeName"
+
+                                      placeholder="Enter Prchase Order"
+                                      className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                    />
+                                    <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                  </div>
+                                </td>
+                                <td className="px-5 py-5 border-b border-gray-200  text-sm">
+
+
+                                  <div >
+
+                                    <Field
+                                      type="date"
+                                      name="employeeName"
+
+                                      placeholder="Enter Prchase Order"
+                                      className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                    />
+                                    <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                  </div>
+                                </td>
+                                {/* <td className="px-5 py-5 border-b border-gray-200  text-sm">
+                                  <p className="text-gray-900 whitespace-no-wrap">{item?.orderType?.orderTypeName}</p>
+                                </td> */}
+                              </tr>
+
+                            ))}
+
+
                           </tbody>
                         </table>
                       </div>
@@ -593,25 +745,19 @@ const AddOrder = () => {
               </div>
 
 
-              <Modal
-                isOpen={isModalOpen}
-                onRequestClose={() => setIsModalOpen(false)}
-                prodIdd={prodIdd}
-                GET_PRODUCTBYID_URL={GET_PRODUCTBYID_URL}
-                initialValues={{ orderCategory: '', productId: '' }}  // Ensure initial values are passed
-                onSubmit={(values) => {
-                  console.log("Form submitted:", values);
-                  // Handle form submission logic here
-                  // For example, make an API call, and then close the modal
-                  setIsModalOpen(false);
-                }}
-                width="70%"
-                height="80%"
-                style={{ marginLeft: '70px', marginRight: '0' }}  // Add this line
-              />
             </Form>
           )}
         </Formik>
+        <Modal
+          isOpen={isModalOpen}
+          onRequestClose={() => setIsModalOpen(false)}
+          prodIdd={prodIdd}
+          GET_PRODUCTBYID_URL={GET_PRODUCTBYID_URL}
+          onSubmit={handleModalSubmit}
+          width="70%"
+          height="80%"
+          style={{ marginLeft: '70px', marginRight: '0' }}  // Add this line
+        />
       </div>
     </DefaultLayout>
   );
