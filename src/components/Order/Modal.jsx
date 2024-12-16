@@ -1,22 +1,69 @@
 import React, { useEffect, useState } from 'react';
-import { Field, ErrorMessage, Formik } from 'formik';
+import { Field, ErrorMessage, Formik, Form } from 'formik';
 import ReactSelect from 'react-select';
 
-const Modal = ({ isOpen, onRequestClose, initialValues, onSubmit, width = "400px", height = "auto" }) => {
-  const [formData, setFormData] = useState(initialValues || {});
+import { toast } from 'react-toastify';
+import { useDispatch, useSelector } from 'react-redux';
+import { GET_IMAGE } from '../../Constants/utils';
+import { useNavigate, useNavigation } from 'react-router-dom';
+
+const Modal = ({ isOpen, onRequestClose, prodIdd, width = "400px", height = "auto", GET_PRODUCTBYID_URL }) => {
+  const { currentUser } = useSelector((state) => state?.persisted?.user);
+  const { token } = currentUser;
+const navigate = useNavigate();
+  const [products, setproducts] = useState([])
+
+  console.log(prodIdd, "kikio");
+
   const productgrp = [
-    { value: 'BrandA', label: 'Brand A' },
-    { value: 'BrandB', label: 'Brand B' },
-    { value: 'BrandC', label: 'Brand C' },
+    { value: 'Embroidery', label: 'Embroidery' },
+    { value: 'Dyeing', label: 'Dyeing' },
+    { value: 'Plain Order', label: 'Plain Order' },
   ];
 
+
+
   useEffect(() => {
-    setFormData(initialValues || {});
-  }, [initialValues]);
+    getProduct()
+
+  }, [prodIdd]);
+  const getProduct = async () => {
+
+    try {
+      const response = await fetch(`${GET_PRODUCTBYID_URL}/${prodIdd}`, {
+        method: "GET",
+        headers: {
+          // "Content-Type": "multipart/form-data",
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      console.log(`${GET_PRODUCTBYID_URL}/${prodIdd}`, "urll");
+      console.log(data, "kiki");
+
+      setproducts(data);
+
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to fetch Product");
+    }
+  };
+
+  // console.log(products, "umer shah");
+
+
+
+
+  console.log(products, "gggggg");
 
   const handleBackdropClick = () => {
     onRequestClose();
   };
+
+  const handleSubmit = () => {
+    console.log("submited");
+  }
+
 
   return (
     <>
@@ -29,13 +76,13 @@ const Modal = ({ isOpen, onRequestClose, initialValues, onSubmit, width = "400px
         >
           <div
             className="bg-white p-8 rounded-lg shadow-lg relative overflow-y-auto"
-            style={{ 
-              width, 
+            style={{
+              width,
               height,
-              position: 'absolute', 
-              right: '50px', 
-              top: '50px', 
-              transform: 'none' 
+              position: 'absolute',
+              right: '50px',
+              top: '50px',
+              transform: 'none'
             }}
             onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
           >
@@ -52,327 +99,471 @@ const Modal = ({ isOpen, onRequestClose, initialValues, onSubmit, width = "400px
               </h3>
             </div>
             <Formik
-              initialValues={formData}
-              onSubmit={(values, actions) => {
-                onSubmit(values);
-                actions.setSubmitting(false);
+              initialValues={{
+                productId: products.productId || '',
+                orderCatagory: products.orderCatagory || '',
+                weight: products.finishedWeight || '',
+                warpColors: products.warpColors || '',
+                weftColors: products.weftColors || '',
+                weave: products.weave || '',
+                warpYarn: products.warpYarn || '',
+                weftYarn: products.weftYarn || '',
+                pixAndReed: products.pixAndReed || '',
+                deying: '',
+                cost: products.cost || '',
+                mrp: products.mrp || '',
+                wPrice: products.wholesalePrice || '',
               }}
-            >
-              {({ values, handleSubmit, handleBlur, setFieldValue }) => (
-                <form onSubmit={handleSubmit}>
-                  <div className="flex flex-wrap gap-4">
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label className="mb-1 block text-black dark:text-[rgb(200,200,200)]">Order Category</label>
-                      <ReactSelect
-                        name="orderCatagory"
-                        value={productgrp.find(option => option.value === values.orderCatagory)}
-                        onChange={(option) => setFieldValue('orderCatagory', option.value)}
-                        onBlur={handleBlur}
-                        options={productgrp}
-                        className="bg-white dark:bg-form-input"
-                        classNamePrefix="react-select"
-                        placeholder="Select"
-                      />
-                      <ErrorMessage name="orderCatagory" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label htmlFor="productId" className="mb-3">Product ID</label>
-                      <Field
-                        type="text"
-                        id="productId"
-                        name="productId"
-                       className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
-                      <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
+              validate={values => {
+                const errors = {};
+                if (!values.productId) {
+                    errors.productId = 'Product ID is required';
+                }
+                if (!values.orderCatagory) {
+                    errors.orderCatagory = 'Order Category is required';
+                }
+                return errors;
+            }}
+            onSubmit={(values, { setSubmitting }) => {
+              handleSubmit(values);
+              setSubmitting(false); // Stop Formik loader
+            }}
+          >
+            {({ isSubmitting,values }) => (
+                 <Form>
+                  <div>
+                    <div className="flex flex-wrap gap-4">
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label className="mb-1 block text-black dark:text-[rgb(200,200,200)]">Order Category</label>
+                        <ReactSelect
+                          name="orderCatagory"
+                          value={productgrp.find(option => option.value === values.orderCatagory)}
+                          onChange={(option) => setFieldValue('orderCatagory', option.value)}
+                        
+                          options={productgrp}
+                          className="bg-white dark:bg-form-input"
+                          classNamePrefix="react-select"
+                          placeholder="Select"
+                        />
+                        <ErrorMessage name="orderCatagory" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label htmlFor="productId" className="mb-3">Product ID</label>
+                        <Field
+                          type="text"
+                          value={products?.productId}
+                          disabled
+                          id="productId"
+                          name="productId"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
+                      </div>
+
+
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label htmlFor="barCode" className="mb-2">BarCode</label>
+                        <Field
+                          type="text"
+                          id="barCode"
+                          value={products?.barcode}
+                          disabled
+                          name="barCode"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="barCode" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label className="mb-1 block text-black dark:text-[rgb(200,200,200)]">Color Group</label>
+                        <Field
+                          type="text"
+                          id="barCode"
+                          value={products?.colors?.colorName}
+                          disabled
+                          name="colorGroup"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="colorGroup" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label className="mb-2.5 block text-black dark:text-[rgb(200,200,200)]">Product Group</label>
+                        <Field
+                          type="text"
+                          id="barCode"
+                          value={products?.productGroup?.productGroupName}
+                          disabled
+                          name="productGroup"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="productGroup" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label className="mb-2.5 block text-black dark:text-[rgb(200,200,200)]">Product Category</label>
+                        <Field
+                          type="text"
+                          id="barCode"
+                          value={products?.productCategory?.productCategoryName}
+                          disabled
+                          name="productCategory"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="productCatagory" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label className=" block text-black dark:text-[rgb(200,200,200)]">Design Name</label>
+                        <Field
+                          type="text"
+                          id="barCode"
+                          value={products?.design?.designName}
+                          disabled
+                          name="designName"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="designName" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label htmlFor="hsnCode" className="mb-2">HSN Code</label>
+                        <Field
+                          type="text"
+                          id="hsnCode"
+                          value={products?.hsnCode?.hsnCodeName}
+                          disabled
+                          name="hsnCode"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="hsnCode" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label htmlFor="colorName" className="mb-2">Color Name</label>
+                        <Field
+                          type="text"
+                          id="colorName"
+                          value={products?.colorName}
+                          name="colorName"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="colorName" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label className="mb-1 block text-black dark:text-[rgb(200,200,200)]">Style</label>
+                        <Field
+                          type="text"
+                          id="style"
+                          value={products?.styles?.stylesName}
+                          disabled
+                          name="style"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="style" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label className="mb-2.5 block text-black dark:text-[rgb(200,200,200)]">Size (in cms)</label>
+                        <Field
+                          type="text"
+                          id="size"
+                          value={products?.sizes?.sizesName}
+                          disabled
+                          name="size"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="size" component="div" className="text-red-600 text-sm" />
+                      </div>
+
+
+
+
+
+
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label className="mb-2.5 block text-black dark:text-[rgb(200,200,200)]">Units</label>
+                        <Field
+                          type="text"
+                          id="units"
+                          value={products?.units}
+                          disabled
+                          name="units"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+
+
+                        <ErrorMessage name="units" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label htmlFor="hsnCode" className="mb-2">Weight(gms)</label>
+                        <Field
+                          type="text"
+                          disabled
+                          id="weight"
+                          value={products?.finishedWeight}
+                          name="weight"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="weight" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label htmlFor="hsnCode" className="mb-2">Warp Colors</label>
+                        <Field
+                          type="text"
+                          id="warp"
+                          disabled
+                          value={products?.warpColors}
+                          name="warp"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="warp" component="div" className="text-red-600 text-sm" />
+                      </div>
+
+
+
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label htmlFor="hsnCode" className="mb-2">Weft Colors</label>
+                        <Field
+                          type="text"
+                          id="weft"
+                          value={products?.weftColors}
+                          name="weft"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="weft" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label htmlFor="hsnCode" className="mb-2">Weave</label>
+                        <Field
+                          type="text"
+                          id="weave"
+                          value={products?.weave}
+                          name="weave"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="weave" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label htmlFor="hsnCode" className="mb-2">Warp Yarn</label>
+                        <Field
+                          type="text"
+                          id="WarpYarn"
+                          value={products?.warpYarn}
+                          name="WarpYarn"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="WarpYarn" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label htmlFor="hsnCode" className="mb-2">Weft Yarn</label>
+                        <Field
+                          type="text"
+                          id="WeftYarn"
+                          value={products?.weftYarn}
+                          name="WeftYarn"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="WeftYarn" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label htmlFor="hsnCode" className="mb-2">Pic & Read</label>
+                        <Field
+                          type="text"
+                          id="pic"
+
+                          value={products?.pixAndReed}
+
+                          name="pic"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="pic" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label htmlFor="hsnCode" className="mb-2">Deying Cost</label>
+                        <Field
+                          type="text"
+                          id="deying"
+                          name="deying"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="deying" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label htmlFor="hsnCode" className="mb-2"> Cost</label>
+                        <Field
+                          disabled
+                          type="text"
+                          id="cost"
+                          name="cost"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="cost" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px] mt-4">
+                        <label htmlFor="hsnCode" className="mb-2"> MRP</label>
+                        <Field
+                          disabled
+                          type="text"
+                          id="mrp"
+                          name="mro"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="mrp" component="div" className="text-red-600 text-sm" />
+                      </div>
+
+
+
+
+
+
+
+
+                      <div className="flex-1  min-w-[300px] mt-4">
+                        <label htmlFor="hsnCode" className="mb-2"> Wholesale Price</label>
+                        <Field
+                          type="text"
+                          disabled
+                          id="wPrice"
+                          name="wPrice"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="wPrice" component="div" className="text-red-600 text-sm" />
+                      </div>
+
+
+
+
+
+
+
+
+
+
+
+
                     </div>
 
-                   
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label htmlFor="barCode" className="mb-2">BarCode</label>
-                      <Field
-                        type="text"
-                        id="barCode"
-                        name="barCode"
-                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
-                      <ErrorMessage name="barCode" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label className="mb-1 block text-black dark:text-[rgb(200,200,200)]">Color Group</label>
-                      <ReactSelect
-                        name="colorGroup"
-                        value={productgrp.find(option => option.value === values.colorGroup)}
-                        onChange={(option) => setFieldValue('colorGroup', option.value)}
-                        onBlur={handleBlur}
-                        options={productgrp}
-                        className="bg-white dark:bg-form-input"
-                        classNamePrefix="react-select"
-                        placeholder="Select"
-                      />
-                      <ErrorMessage name="colorGroup" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label className="mb-2.5 block text-black dark:text-[rgb(200,200,200)]">Product Group</label>
-                      <ReactSelect
-                        name="productGroup"
-                        value={productgrp.find(option => option.value === values.productGroup)}
-                        onChange={(option) => setFieldValue('productGroup', option.value)}
-                        onBlur={handleBlur}
-                        options={productgrp}
-                        className="bg-white dark:bg-form-input"
-                        classNamePrefix="react-select"
-                        placeholder="Select"
-                      />
-                      <ErrorMessage name="productGroup" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label className="mb-2.5 block text-black dark:text-[rgb(200,200,200)]">Product Category</label>
-                      <ReactSelect
-                        name="productCatagory"
-                        value={productgrp.find(option => option.value === values.productCatagory)}
-                        onChange={(option) => setFieldValue('productCatagory', option.value)}
-                        onBlur={handleBlur}
-                        options={productgrp}
-                        className="bg-white dark:bg-form-input"
-                        classNamePrefix="react-select"
-                        placeholder="Select"
-                      />
-                      <ErrorMessage name="productCatagory" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label className=" block text-black dark:text-[rgb(200,200,200)]">Design Name</label>
-                      <ReactSelect
-                        name="designName"
-                        value={productgrp.find(option => option.value === values.designName)}
-                        onChange={(option) => setFieldValue('designName', option.value)}
-                        onBlur={handleBlur}
-                        options={productgrp}
-                        className="bg-white dark:bg-form-input"
-                        classNamePrefix="react-select"
-                        placeholder="Select"
-                      />
-                      <ErrorMessage name="designName" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label htmlFor="hsnCode" className="mb-2">HSN Code</label>
-                      <Field
-                        type="text"
-                        id="hsnCode"
-                        name="hsnCode"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
-                      <ErrorMessage name="hsnCode" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label htmlFor="colorName" className="mb-2">Color Name</label>
-                      <Field
-                        type="text"
-                        id="colorName"
-                        name="colorName"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
-                      <ErrorMessage name="colorName" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label className="mb-1 block text-black dark:text-[rgb(200,200,200)]">Style</label>
-                      <ReactSelect
-                        name="style"
-                        value={productgrp.find(option => option.value === values.style)}
-                        onChange={(option) => setFieldValue('style', option.value)}
-                        onBlur={handleBlur}
-                        options={productgrp}
-                        className="bg-white dark:bg-form-input"
-                        classNamePrefix="react-select"
-                        placeholder="Select"
-                      />
-                      <ErrorMessage name="style" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label className="mb-2.5 block text-black dark:text-[rgb(200,200,200)]">Size (in cms)</label>
-                      <ReactSelect
-                        name="size"
-                        value={productgrp.find(option => option.value === values.size)}
-                        onChange={(option) => setFieldValue('size', option.value)}
-                        onBlur={handleBlur}
-                        options={productgrp}
-                        className="bg-white dark:bg-form-input"
-                        classNamePrefix="react-select"
-                        placeholder="Select"
-                      />
-                      <ErrorMessage name="size" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label className="mb-2.5 block text-black dark:text-[rgb(200,200,200)]">Units</label>
-                      <ReactSelect
-                        name="units"
-                        value={productgrp.find(option => option.value === values.units)}
-                        onChange={(option) => setFieldValue('units', option.value)}
-                        onBlur={handleBlur}
-                        options={productgrp}
-                        className="bg-white dark:bg-form-input"
-                        classNamePrefix="react-select"
-                        placeholder="Select"
-                      /> 
 
-                      
-                      <ErrorMessage name="units" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label htmlFor="hsnCode" className="mb-2">Weight(gms)</label>
-                      <Field
-                        type="text"
-                        id="weight"
-                        name="weight"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
-                      <ErrorMessage name="weight" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label htmlFor="hsnCode" className="mb-2">Warp Colors</label>
-                      <Field
-                        type="text"
-                        id="warp"
-                        name="warp"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
-                      <ErrorMessage name="warp" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label htmlFor="hsnCode" className="mb-2">Weft Colors</label>
-                      <Field
-                        type="text"
-                        id="weft"
-                        name="weft"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
-                      <ErrorMessage name="weft" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label htmlFor="hsnCode" className="mb-2">Weave</label>
-                      <Field
-                        type="text"
-                        id="weave"
-                        name="weave"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
-                      <ErrorMessage name="weave" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label htmlFor="hsnCode" className="mb-2">Warp Yarn</label>
-                      <Field
-                        type="text"
-                        id="WarpYarn"
-                        name="WarpYarn"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
-                      <ErrorMessage name="WarpYarn" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label htmlFor="hsnCode" className="mb-2">Weft Yarn</label>
-                      <Field
-                        type="text"
-                        id="WeftYarn"
-                        name="WeftYarn"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
-                      <ErrorMessage name="WeftYarn" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label htmlFor="hsnCode" className="mb-2">Pic & Read</label>
-                      <Field
-                        type="text"
-                        id="pic"
-                        name="pic"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
-                      <ErrorMessage name="pic" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label htmlFor="hsnCode" className="mb-2">Deying Cost</label>
-                      <Field
-                        type="text"
-                        id="deying"
-                        name="deying"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
-                      <ErrorMessage name="deying" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label htmlFor="hsnCode" className="mb-2"> Cost</label>
-                      <Field
-                        type="text"
-                        id="cost"
-                        name="cost"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
-                      <ErrorMessage name="cost" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label htmlFor="hsnCode" className="mb-2"> MRP</label>
-                      <Field
-                        type="text"
-                        id="mrp"
-                        name="mro"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
-                      <ErrorMessage name="mrp" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex-1 min-w-[300px] mt-4">
-                      <label htmlFor="hsnCode" className="mb-2"> Wholesale Price</label>
-                      <Field
-                        type="text"
-                        id="wPrice"
-                        name="wPrice"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
-                      <ErrorMessage name="wPrice" component="div" className="text-red-600 text-sm" />
-                    </div>
-                    <div className="flex">
-                        <div className="flex-1 min-w-[300px] mt-4">
-                          <label htmlFor="referenceImages" className="mb-2"> Reference Images </label>
-                          <img src={values.referenceImages} alt="Reference Images" className="mt-1" style={{ maxWidth: '100%', height: 'auto' }} />
-                          <ErrorMessage name="referenceImages" component="div" className="text-red-600 text-sm" />
+                    <div className="flex mt-5 gap-3">
+
+                      <div className=" flex-1 p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark flex flex-row">
+                        {/* Grid Layout */}
+                        <div className="flex flex-col grid-cols-3">
+
+                          <div className="flex flex-row gap-4 ">
+
+                            {/* Image Preview */}
+                            {products?.images?.map((ref) => (
+                              <>
+                                {
+                                  ref.referenceImage != null &&
+
+                                  <img
+                                    className="h-20 w-20  transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                                    crossOrigin="use-credentials"
+                                    src={`${GET_IMAGE}/products/getimages/${ref.referenceImage}`}
+                                    alt="Product Image"
+                                  />
+                                }
+                              </>
+                            ))}
+                            {/* Cancel Button */}
+                            <button
+                              type="button" // Not a native form submission button
+                              className="px-4 py-2 bg-blue-500 text-white rounded"
+                              onClick={handleSubmit} // Formik's submission process is triggered here
+                            >
+                              Submit
+                            </button>
+                          </div>
+
                         </div>
-                        <div className="flex-1 min-w-[300px] mt-4">
-                          <label htmlFor="actualImages" className="mb-2"> Actual Images </label>
-                          <img src={values.actualImages} alt="Actual Images" className="mt-1" style={{ maxWidth: '100%', height: 'auto' }} />
-                          <ErrorMessage name="actualImages" component="div" className="text-red-600 text-sm" />
+                      </div>
+
+
+
+
+
+
+
+
+
+
+
+                      <div className=" flex-1 p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark flex flex-row">
+                        {/* Grid Layout */}
+                        <div className="flex flex-col grid-cols-3">
+
+                          <div className="flex flex-row gap-4 ">
+                            {/* Image Preview */}
+                            {products?.images?.map((ref) => (
+                              <>
+                                {
+                                  ref.actualImage != null &&
+
+                                  <img
+                                    className="h-20 w-20  transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                                    crossOrigin="use-credentials"
+                                    src={`${GET_IMAGE}/products/getimages/${ref.actualImage}`}
+                                    alt="Product Image"
+                                  />
+                                }
+                              </>
+                            ))}
+                            {/* Cancel Button */}
+                            <button
+                              onClick={() => handleRemoveImage(index)}
+                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              &times;
+                            </button>
+                          </div>
+
                         </div>
                       </div>
 
-                     
-
-                      
 
 
+
+
+
+                    </div>
+
+
+                    <div className="mb-6">
+                      <label className="mb-2.5 block text-black dark:text-black mt-7">Weaver/Embroider</label>
+                      <Field
+
+                        name="weiver"
+                        value={products?.supplier?.name}
+                        disabled
+                        placeholder="Type your message"
+                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-black dark:focus:border-primary"
+                      />
+                    </div>
+
+                    <div className="mb-6">
+                      <label className="mb-2.5 block text-black dark:text-black mt-7">Weaver Code</label>
+                      <Field
+
+                        disabled
+                        value={products?.supplierCode?.supplierCode}
+                        name="weiverCode"
+                        placeholder="Type your message"
+                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-black dark:focus:border-primary"
+                      />
+                    </div>
+
+
+                    <div className="flex justify-end mt-6">
+                      <button
+                      onSubmit={(e)=>console.log("heyyyyy")}
+                        type="submit"
+                        className="px-4 py-2 bg-blue-500 text-white rounded"
+                        disabled={isSubmitting}
+                      >
+                        {isSubmitting ? 'Submitting...' : 'Add'}
+                      </button>
+                    </div>
                   </div>
+                  </Form>
+              
 
 
-                  <div className="mb-6">
-                          <label className="mb-2.5 block text-black dark:text-black mt-7">Weaver/Embroider</label>
-                          <textarea
-                              rows={3}
-                              name="weiver"
-                              placeholder="Type your message"
-                              className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-black dark:focus:border-primary"
-                          ></textarea>
-                      </div>
-                  
-                      <div className="mb-6">
-                          <label className="mb-2.5 block text-black dark:text-black mt-7">Weaver Code</label>
-                          <textarea
-                              rows={3}
-                              name="weiverCode"
-                              placeholder="Type your message"
-                              className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-black dark:focus:border-primary"
-                          ></textarea>
-                      </div>
-                  
-
-                  <div className="flex justify-end mt-6">
-                    <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">Add</button>
-                  </div>
-                </form>
               )}
             </Formik>
           </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { VIEW_ALL_ORDERTYPE } from "../Constants/utils";
+import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE } from "../Constants/utils";
 
 const useorder = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
@@ -11,6 +11,7 @@ const useorder = () => {
     const [currentorderType, setCurrentorderType] = useState({
         orderTypeName:"",
     });
+    const [productId, setproductId] = useState([])
 
     const [pagination, setPagination] = useState({
         totalItems: 0,
@@ -48,6 +49,26 @@ const useorder = () => {
             toast.error("Failed to fetch orderType");
         }
     };
+    const getprodId = async () => {
+        try {
+            const response = await fetch(`${GET_PRODUCTIDD_URL}/all-productsIds`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data,"dataaaaaassss");
+            setproductId(data);
+          
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch orderType");
+        }
+    };
+
+
 
     const handleDelete = async (e, id) => {
         e.preventDefault();
@@ -139,7 +160,9 @@ console.log(item,"hey");
         handleUpdate,
         handleSubmit,
         handlePageChange,
-        getorderType
+        getorderType,
+        productId,
+        getprodId
     };
 };
 
