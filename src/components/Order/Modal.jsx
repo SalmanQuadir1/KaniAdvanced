@@ -7,13 +7,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GET_IMAGE } from '../../Constants/utils';
 import { useNavigate, useNavigation } from 'react-router-dom';
 
-const Modal = ({ isOpen, onRequestClose, prodIdd, width = "400px", height = "auto", GET_PRODUCTBYID_URL }) => {
+const Modal = ({ isOpen, onRequestClose,onSubmit, prodIdd, width = "400px", height = "auto", GET_PRODUCTBYID_URL }) => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const { token } = currentUser;
 const navigate = useNavigate();
   const [products, setproducts] = useState([])
 
-  console.log(prodIdd, "kikio");
+
 
   const productgrp = [
     { value: 'Embroidery', label: 'Embroidery' },
@@ -38,8 +38,8 @@ const navigate = useNavigate();
         }
       });
       const data = await response.json();
-      console.log(`${GET_PRODUCTBYID_URL}/${prodIdd}`, "urll");
-      console.log(data, "kiki");
+     
+
 
       setproducts(data);
 
@@ -54,15 +54,17 @@ const navigate = useNavigate();
 
 
 
-  console.log(products, "gggggg");
+
 
   const handleBackdropClick = () => {
     onRequestClose();
   };
 
-  const handleSubmit = () => {
-    console.log("submited");
-  }
+  const handleSubmit = (values) => {
+    onSubmit(values);
+    console.log(values,"vall"); // The submitted data
+    // You can now send this data to your API
+  };
 
 
   return (
@@ -101,8 +103,10 @@ const navigate = useNavigate();
             <Formik
               initialValues={{
                 productId: products.productId || '',
+                barCode:products?.barcode||'',
                 orderCatagory: products.orderCatagory || '',
                 weight: products.finishedWeight || '',
+                colorGroup: products?.colors?.colorName||'',
                 warpColors: products.warpColors || '',
                 weftColors: products.weftColors || '',
                 weave: products.weave || '',
@@ -114,22 +118,24 @@ const navigate = useNavigate();
                 mrp: products.mrp || '',
                 wPrice: products.wholesalePrice || '',
               }}
-              validate={values => {
-                const errors = {};
-                if (!values.productId) {
-                    errors.productId = 'Product ID is required';
-                }
-                if (!values.orderCatagory) {
-                    errors.orderCatagory = 'Order Category is required';
-                }
-                return errors;
-            }}
+              enableReinitialize={true}
+            //   validate={values => {
+            //     const errors = {};
+            //     if (!values.productId) {
+            //         errors.productId = 'Product ID is required';
+            //     }
+            //     if (!values.orderCatagory) {
+            //         errors.orderCatagory = 'Order Category is required';
+            //     }
+            //     return errors;
+            // }}
             onSubmit={(values, { setSubmitting }) => {
+          
               handleSubmit(values);
               setSubmitting(false); // Stop Formik loader
             }}
           >
-            {({ isSubmitting,values }) => (
+            {({ isSubmitting,values,setFieldValue }) => (
                  <Form>
                   <div>
                     <div className="flex flex-wrap gap-4">
@@ -233,6 +239,8 @@ const navigate = useNavigate();
                         />
                         <ErrorMessage name="hsnCode" component="div" className="text-red-600 text-sm" />
                       </div>
+
+
                       <div className="flex-1 min-w-[300px] mt-4">
                         <label htmlFor="colorName" className="mb-2">Color Name</label>
                         <Field
@@ -463,9 +471,9 @@ const navigate = useNavigate();
                             ))}
                             {/* Cancel Button */}
                             <button
-                              type="button" // Not a native form submission button
+                              type="Submit" // Not a native form submission button
                               className="px-4 py-2 bg-blue-500 text-white rounded"
-                              onClick={handleSubmit} // Formik's submission process is triggered here
+                            // Formik's submission process is triggered here
                             >
                               Submit
                             </button>
