@@ -177,6 +177,9 @@ export const VIEW_ALL_PRODUCT = `${BASE_URL}/products/viewAll`;
 export const DELETE_PRODUCT_URL = `${BASE_URL}/products/`;
 export const GET_PRODUCTID_URL = `${BASE_URL}/products`;
 
+export const GET_PRODUCTIDD_URL = `${BASE_URL}/products`;
+
+
 export const GET_PRODUCTIDINVENTORY_URL = `${BASE_URL}/products/inventoryProductIds`;
 //PRODUCT
 export const ADD_HSNCODE_URL = `${BASE_URL}/hsncode`;
