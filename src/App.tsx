@@ -55,7 +55,7 @@ import UpdateMaterialPo from './components/PuchaseOrder/UpdateMaterialPo.jsx';
 
 import AddOrder from './components/Order/AddOrder.jsx';
 import ViewOrder from './components/Order/ViewOrder.jsx';
-
+import UpdateOrder from './components/Order/UpdateOrder.jsx';
 
 
 import AddCustomer from './components/Customer/AddCustomer';
@@ -227,6 +227,16 @@ function App() {
               <>
                 <PageTitle title="View Product" />
                 <UpdateProduct />
+              </>
+            }
+          />
+
+<Route
+            path="/order/updateOrder/:id"
+            element={
+              <>
+                <PageTitle title="View Order" />
+                <UpdateOrder/>
               </>
             }
           />
