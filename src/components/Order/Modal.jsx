@@ -7,10 +7,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GET_IMAGE } from '../../Constants/utils';
 import { useNavigate, useNavigation } from 'react-router-dom';
 
-const Modall = ({ isOpen, onRequestClose,onSubmit, prodIdd, width = "400px", height = "auto", GET_PRODUCTBYID_URL }) => {
+const Modall = ({ isOpen, onRequestClose, onSubmit, prodIdd, width = "400px", height = "auto", GET_PRODUCTBYID_URL }) => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const { token } = currentUser;
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const [products, setproducts] = useState([])
 
 
@@ -19,6 +19,13 @@ const navigate = useNavigate();
     { value: 'Embroidery', label: 'Embroidery' },
     { value: 'Dyeing', label: 'Dyeing' },
     { value: 'Plain Order', label: 'Plain Order' },
+  ];
+
+
+  const unitsOption = [
+    { value: 'pcs', label: 'pcs' },
+    { value: 'Mtrs', label: 'Mtrs' },
+
   ];
 
 
@@ -38,7 +45,7 @@ const navigate = useNavigate();
         }
       });
       const data = await response.json();
-     
+
 
 
       setproducts(data);
@@ -62,7 +69,7 @@ const navigate = useNavigate();
 
   const handleSubmit = (values) => {
     onSubmit(values);
-    console.log(values,"vall"); // The submitted data
+    console.log(values, "vall"); // The submitted data
     // You can now send this data to your API
   };
 
@@ -102,11 +109,13 @@ const navigate = useNavigate();
             </div>
             <Formik
               initialValues={{
+                id: products.id || '',
                 productId: products.productId || '',
-                barCode:products?.barcode||'',
+                barCode: products?.barcode || '',
                 orderCatagory: products.orderCatagory || '',
                 weight: products.finishedWeight || '',
-                colorGroup: products?.colors?.colorName||'',
+                units: products.units || '',
+                colorGroup: products?.colors?.colorName || '',
                 warpColors: products.warpColors || '',
                 weftColors: products.weftColors || '',
                 weave: products.weave || '',
@@ -121,20 +130,20 @@ const navigate = useNavigate();
               enableReinitialize={true}
               validate={values => {
                 const errors = {};
-              
+
                 if (!values.orderCatagory) {
-                    errors.orderCatagory = 'Order Category is required';
+                  errors.orderCatagory = 'Order Category is required';
                 }
                 return errors;
-            }}
-            onSubmit={(values, { setSubmitting }) => {
-          
-              handleSubmit(values);
-              setSubmitting(false); // Stop Formik loader
-            }}
-          >
-            {({ isSubmitting,values,setFieldValue }) => (
-                 <Form>
+              }}
+              onSubmit={(values, { setSubmitting }) => {
+
+                handleSubmit(values);
+                setSubmitting(false); // Stop Formik loader
+              }}
+            >
+              {({ isSubmitting, values, setFieldValue }) => (
+                <Form>
                   <div>
                     <div className="flex flex-wrap gap-4">
                       <div className="flex-1 min-w-[300px] mt-4">
@@ -143,7 +152,7 @@ const navigate = useNavigate();
                           name="orderCatagory"
                           value={productgrp.find(option => option.value === values.orderCatagory)}
                           onChange={(option) => setFieldValue('orderCatagory', option.value)}
-                        
+
                           options={productgrp}
                           className="bg-white dark:bg-form-input"
                           classNamePrefix="react-select"
@@ -283,17 +292,21 @@ const navigate = useNavigate();
                       <div className="flex-1 min-w-[300px] mt-4">
                         <label className="mb-2.5 block text-black dark:text-[rgb(200,200,200)]">Units</label>
                         <Field
-                          type="text"
+                          as="select" // Use 'as' to render a select element
                           id="units"
-                          value={products?.units}
-                          disabled
                           name="units"
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-
-
+                        >
+                          <option value="" label="Select a unit" />
+                          {unitsOption?.map((unit) => (
+                            <option key={unit.value} value={unit.value}>
+                              {unit.label}
+                            </option>
+                          ))}
+                        </Field>
                         <ErrorMessage name="units" component="div" className="text-red-600 text-sm" />
                       </div>
+
                       <div className="flex-1 min-w-[300px] mt-4">
                         <label htmlFor="hsnCode" className="mb-2">Weight(gms)</label>
                         <Field
@@ -557,7 +570,7 @@ const navigate = useNavigate();
 
                     <div className="flex justify-end mt-6">
                       <button
-                      onSubmit={(e)=>console.log("heyyyyy")}
+                        onSubmit={(e) => console.log("heyyyyy")}
                         type="submit"
                         className="px-4 py-2 bg-blue-500 text-white rounded"
                         disabled={isSubmitting}
@@ -566,8 +579,8 @@ const navigate = useNavigate();
                       </button>
                     </div>
                   </div>
-                  </Form>
-              
+                </Form>
+
 
 
               )}
