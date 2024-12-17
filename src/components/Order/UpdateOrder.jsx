@@ -179,7 +179,9 @@ const UpdateOrder = () => {
                         <label className="mb-2.5 block text-black dark:text-white">Order Type</label>
                         <ReactSelect
                           name="orderType"
+                          // value={orderTypeOptions?.find(option => option.value === values.orderType?.id) || null}
                           value={orderTypeOptions?.find(option => option.value === values.orderType?.id) || null}
+                                
                           onChange={(option) => setFieldValue('orderType', option ? option.orderTypeObject : null)}
                           options={orderTypeOptions}
                           styles={customStyles}
