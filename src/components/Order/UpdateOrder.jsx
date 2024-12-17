@@ -174,14 +174,32 @@ const UpdateOrder = () => {
                     </h3>
                   </div>
                   <div className="p-6.5">
+                    
                     <div className="flex flex-wrap gap-4">
+
+                    <div className="flex-1 min-w-[200px]">
+                        <label className="mb-2.5 block text-black dark:text-white">Order No</label>
+                        <ReactSelect
+                          name="orderType"
+                          // value={orderTypeOptions?.find(option => option.value === values.orderType?.id) || null}
+                          // onChange={(option) => setFieldValue('orderType', option ? option.orderTypeObject : null)}
+                          // options={orderTypeOptions}
+                          styles={customStyles}
+                          className="bg-white dark:bg-form-Field"
+                          classNamePrefix="react-select"
+                          placeholder="Select Order Type"
+                        />
+                        <ErrorMessage name="orderType" component="div" className="text-red-600 text-sm" />
+                      </div>
+
+
+
+
                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Order Type</label>
                         <ReactSelect
                           name="orderType"
-                          // value={orderTypeOptions?.find(option => option.value === values.orderType?.id) || null}
                           value={orderTypeOptions?.find(option => option.value === values.orderType?.id) || null}
-                                
                           onChange={(option) => setFieldValue('orderType', option ? option.orderTypeObject : null)}
                           options={orderTypeOptions}
                           styles={customStyles}
@@ -198,19 +216,7 @@ const UpdateOrder = () => {
                       )}
 
 
-                      <div className="flex-1 min-w-[200px]">
-
-                        <div className="flex-1 min-w-[200px]">
-                          <label className="mb-2.5 block text-black dark:text-white"> Order Date</label>
-                          <Field
-                            name='orderDate'
-                            type="date"
-                            placeholder="Enter Order Date"
-                            className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                          />
-                        </div>
-                        <ErrorMessage name="orderDate" component="div" className="text-red-600 text-sm" />
-                      </div>
+                     
                     </div>
 
                     {(values.orderType.orderTypeName === "RetailClients" || values.orderType.orderTypeName === "WSClients") && (
@@ -285,8 +291,24 @@ const UpdateOrder = () => {
 
                     )}
                     <div className="flex flex-wrap gap-4">
+
+                    <div className="flex-1 min-w-[200px]">
+
+                    <div className="flex-1 min-w-[300px] mt-4">
+                        <label className="mb-2.5 block text-black dark:text-white"> Order Date</label>
+                        <Field
+                          name='orderDate'
+                          type="date"
+                          placeholder="Enter Order Date"
+                          className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                        />
+                      </div>
+                      <ErrorMessage name="orderDate" component="div" className="text-red-600 text-sm" />
+                      </div>
+
+
                       <div className="flex-1 min-w-[300px] mt-4">
-                        <label className="mb-2.5 block text-black dark:text-white">Shipping Date</label>
+                        <label className="mb-2.5 block text-black dark:text-white">Expected Receiving Date</label>
                         <Field
                           name='shippingDate'
                           type="date"
@@ -296,7 +318,12 @@ const UpdateOrder = () => {
                         <ErrorMessage name="shippingDate" component="div" className="text-red-600 text-sm" />
                       </div>
 
-                      <div className="flex-1 min-w-[300px] mt-4">
+                     
+                    </div>
+                    <div className="flex flex-wrap gap-4">
+
+
+                    <div className="flex-1 min-w-[300px] mt-4">
                         <label className="mb-2.5 block text-black dark:text-white">Tags</label>
                         <ReactSelect
                           name="tags"
@@ -311,7 +338,6 @@ const UpdateOrder = () => {
                         />
                         <ErrorMessage name="tags" component="div" className="text-red-600 text-sm" />
                       </div>
-                    </div>
 
                     <div className="flex-1 min-w-[300px] mt-4">
                       <label className="mb-2.5 block text-black dark:text-white">Logo No</label>
@@ -326,6 +352,8 @@ const UpdateOrder = () => {
                         </label>
                       </div>
                       <ErrorMessage name="logoNo" component="div" className="text-red-600 text-sm" />
+                    </div>
+
                     </div>
 
 
