@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GET_IMAGE } from '../../Constants/utils';
 import { useNavigate, useNavigation } from 'react-router-dom';
 
-const Modal = ({ isOpen, onRequestClose,onSubmit, prodIdd, width = "400px", height = "auto", GET_PRODUCTBYID_URL }) => {
+const Modall = ({ isOpen, onRequestClose,onSubmit, prodIdd, width = "400px", height = "auto", GET_PRODUCTBYID_URL }) => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const { token } = currentUser;
 const navigate = useNavigate();
@@ -119,16 +119,14 @@ const navigate = useNavigate();
                 wPrice: products.wholesalePrice || '',
               }}
               enableReinitialize={true}
-            //   validate={values => {
-            //     const errors = {};
-            //     if (!values.productId) {
-            //         errors.productId = 'Product ID is required';
-            //     }
-            //     if (!values.orderCatagory) {
-            //         errors.orderCatagory = 'Order Category is required';
-            //     }
-            //     return errors;
-            // }}
+              validate={values => {
+                const errors = {};
+              
+                if (!values.orderCatagory) {
+                    errors.orderCatagory = 'Order Category is required';
+                }
+                return errors;
+            }}
             onSubmit={(values, { setSubmitting }) => {
           
               handleSubmit(values);
@@ -581,4 +579,4 @@ const navigate = useNavigate();
   );
 };
 
-export default Modal;
+export default Modall;

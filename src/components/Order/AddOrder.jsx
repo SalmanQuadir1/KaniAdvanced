@@ -10,7 +10,9 @@ import * as Yup from 'yup';
 import useorder from '../../hooks/useOrder';
 import useProduct from '../../hooks/useProduct';
 import { GET_PRODUCTBYID_URL } from '../../Constants/utils';
-import { IoMdAdd, IoMdTrash } from "react-icons/io";
+import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
+import Modall from './Modal';
+import SupplierModal from './SupplierModal';
 const AddOrder = () => {
   const [orderType, setOrderType] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,7 +20,13 @@ const AddOrder = () => {
   const [prodIdOptions, setprodIdOptions] = useState([])
   const [prodIdd, setprodIdd] = useState("")
 
+  const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
 
+  const [suppliers, setSuppliers] = useState([
+    { id: 1, name: "Supplier A" },
+    { id: 2, name: "Supplier B" },
+    { id: 3, name: "Supplier C" },
+  ])
   const {
     getorderType,
     orderTypee,
@@ -26,6 +34,43 @@ const AddOrder = () => {
     getprodId
 
   } = useorder();
+
+
+  const [selectedSuppliers, setSelectedSuppliers] = useState([]);
+
+
+  const handleCheckboxChange = (supplierId) => {
+    setSelectedSuppliers((prev) =>
+      prev.includes(supplierId)
+        ? prev.filter((id) => id !== supplierId) // Remove if already selected
+        : [...prev, supplierId] // Add if not selected
+    );
+  };
+
+  const openSupplierModal = () => {
+    console.log("opening supplier  modal");
+    setIsSupplierModalOpen(true);
+  };
+
+
+  console.log(isSupplierModalOpen, "ll");
+
+  console.log(isModalOpen, "jj");
+
+
+  // Close modal
+  const closeSupplierModal = () => {
+    setIsSupplierModalOpen(false);
+  };
+
+
+  const handleSupplierModalSubmit = () => {
+    console.log("Selected Suppliers:", selectedSuppliers);
+    closeSupplierModal();
+  };
+
+
+
 
 
 
@@ -119,21 +164,26 @@ const AddOrder = () => {
   });
 
   const handleProductIdChange = (option, setFieldValue) => {
-    console.log(option, "optionnnnnnn");
+
+
+
     setFieldValue('productId', option.prodId);
     setprodIdd(option.prodId)
-
+    console.log("opennnnnnnn");
     setIsModalOpen(true);
+    setIsSupplierModalOpen(false)
 
   };
 
 
   const handleModalSubmit = (values) => {
-    console.log(values, "japnam");
-    setprodIdModal([values])
+
+
+    setprodIdModal((prevValues) => [...prevValues, values])
     setIsModalOpen(false)
 
   }
+
 
   const handleSubmit = (values, { setSubmitting }) => {
 
@@ -578,12 +628,12 @@ const AddOrder = () => {
                                   <div >
 
                                     <Field
-                                      name="employeeName"
-                                      value={item?.productId}
-                                      placeholder="Enter Prchase Order"
+                                      name="orderCatagory"
+                                      value={item?.orderCatagory || ""}
+                                      placeholder="Enter Order Category"
                                       className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                     />
-                                    <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                    <ErrorMessage name="orderCatagory" component="div" className="text-red-600 text-sm" />
                                   </div>
                                 </td>
                                 <td className="px-5 py-5 border-b border-gray-200  text-sm">
@@ -592,12 +642,12 @@ const AddOrder = () => {
                                   <div >
 
                                     <Field
-                                      name="employeeName"
-                                      value={item?.productId}
-                                      placeholder="Enter Prchase Order"
+                                      name="clientOrderQty"
+                                      // value={item?.productId}
+                                      placeholder="Enter Client Order Qty"
                                       className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                     />
-                                    <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                    <ErrorMessage name="clientOrderQty" component="div" className="text-red-600 text-sm" />
                                   </div>
                                 </td>
                                 <td className="px-5 py-5 border-b border-gray-200  text-sm">
@@ -606,12 +656,12 @@ const AddOrder = () => {
                                   <div >
 
                                     <Field
-                                      name="employeeName"
-                                      value={item?.productId}
-                                      placeholder="Enter Prchase Order"
+                                      name="Units"
+                                      // value={item?.productId}
+                                      placeholder="Enter Units"
                                       className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                     />
-                                    <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                    <ErrorMessage name="Units" component="div" className="text-red-600 text-sm" />
                                   </div>
                                 </td>
 
@@ -621,12 +671,12 @@ const AddOrder = () => {
                                   <div >
 
                                     <Field
-                                      name="employeeName"
-                                      value={item?.productId}
-                                      placeholder="Enter Prchase Order"
+                                      name="InStockQty"
+                                      // value={item?.productId}
+                                      placeholder="Enter In Stock Qty"
                                       className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                     />
-                                    <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                    <ErrorMessage name="InStockQty" component="div" className="text-red-600 text-sm" />
                                   </div>
                                 </td>
                                 <td className="px-5 py-5 border-b border-gray-200  text-sm">
@@ -635,12 +685,12 @@ const AddOrder = () => {
                                   <div >
 
                                     <Field
-                                      name="employeeName"
-                                      value={item?.productId}
-                                      placeholder="Enter Prchase Order"
+                                      name="QtyToManufacture"
+                                      // value={item?.productId}
+                                      placeholder="Enter Qty To Manufacture"
                                       className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                     />
-                                    <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                    <ErrorMessage name="QtyToManufacture" component="div" className="text-red-600 text-sm" />
                                   </div>
                                 </td>
                                 <td className="px-5 py-5 border-b border-gray-200  text-sm">
@@ -649,27 +699,12 @@ const AddOrder = () => {
                                   <div >
 
                                     <Field
-                                      name="employeeName"
-                                      value={item?.productId}
-                                      placeholder="Enter Prchase Order"
+                                      name="Value"
+                                      // value={item?.productId}
+                                      placeholder="Enter Value"
                                       className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                     />
-                                    <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
-                                  </div>
-                                </td>
-                                <td className="px-5 py-5 border-b border-gray-200  text-sm">
-
-
-                                  <div >
-
-                                    <Field
-                                      type="date"
-                                      name="employeeName"
-
-                                      placeholder="Enter Prchase Order"
-                                      className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                                    />
-                                    <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                    <ErrorMessage name="Value" component="div" className="text-red-600 text-sm" />
                                   </div>
                                 </td>
                                 <td className="px-5 py-5 border-b border-gray-200  text-sm">
@@ -679,12 +714,108 @@ const AddOrder = () => {
 
                                     <Field
                                       type="date"
-                                      name="employeeName"
+                                      name="ClientShippingDate"
 
-                                      placeholder="Enter Prchase Order"
+                                      placeholder="Enter Client Shipping Date"
                                       className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                     />
-                                    <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                    <ErrorMessage name="ClientShippingDate" component="div" className="text-red-600 text-sm" />
+                                  </div>
+                                </td>
+                                <td className="px-5 py-5 border-b border-gray-200  text-sm">
+                                  <div >
+
+                                    <Field
+                                      type="date"
+                                      name="Expected Date"
+
+                                      placeholder="Enter Expected Date"
+                                      className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                    />
+                                    <ErrorMessage name="ExpectedDate" component="div" className="text-red-600 text-sm" />
+                                  </div>
+                                </td>
+                                <td className="px-5 py-5 border-b border-gray-200  text-sm">
+
+                                  <td className="px-5 py-5   text-sm">
+                                    <div >
+                                      <IoIosAdd size={30} onClick={openSupplierModal} />
+                                    </div>
+                                  </td>
+                                </td>
+
+
+
+
+                                <td className="px-5 py-5 border-b border-gray-200  text-sm">
+
+                                  <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+                                    <div
+                                      className="inline-block min-w-full shadow-md rounded-lg overflow-hidden"
+                                    >
+                                      <table className="min-w-full leading-normal">
+                                        <thead>
+                                          <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
+                                            <th
+
+                                              className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                            >
+                                              Weaver/Embroider Name
+                                            </th>
+                                            <th
+
+                                              className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                            >
+                                              Weaver/Embroider Quantity
+                                            </th>
+
+                                            <th
+
+                                              className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                            >
+                                              Action
+                                            </th>
+
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {/* {data?.map((item, index) => (
+                                    <tr key={item.id} className='bg-white dark:bg-slate-700 dark:text-white px-5 py-3'>
+                                        <td className="px-5 py-5 border-b border-gray-200  text-sm">
+                                            <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
+                                        </td>
+                                        <td className="px-5 py-5 border-b border-gray-200  text-sm">
+                                            <p className="text-gray-900 whitespace-no-wrap">{item?.orderType?.orderTypeName}</p>
+                                        </td>
+                                        <td className="px-5 py-5 border-b border-gray-200  text-sm">
+                                            <p className="text-gray-900 whitespace-no-wrap">{item.productGroup.productGroupName}</p>
+                                        </td>
+                                        <td className="px-5 py-5 border-b border-gray-200  text-sm">
+                                            <p className="text-gray-900 whitespace-no-wrap">{item.currentBudget}</p>
+                                        </td>
+                                        <td className="px-5 py-5 border-b border-gray-200  text-sm">
+                                            <p className="text-gray-900 whitespace-no-wrap">{item.revisedBudget}</p>
+                                        </td>
+                                        <td className="px-5 py-5 border-b border-gray-200  text-sm">
+                                            <p className="text-gray-900 whitespace-no-wrap">{item.startDate}</p>
+                                        </td>
+                                        <td className="px-5 py-5 border-b border-gray-200  text-sm">
+                                            <p className="text-gray-900 whitespace-no-wrap">{item.toDate}</p>
+                                        </td>
+                                        <td className="px-5 py-5  border-b border-gray-200  text-sm">
+                                            <p className="flex text-gray-900 whitespace-no-wrap">
+                                                <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={(e) => handleUpdate(e, item)} title='Edit Unit' />  |
+                                                <FiTrash2 size={17} className='text-red-500  hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Unit' />
+                                            </p>
+                                        </td>
+                                    </tr>
+                                ))} */}
+
+
+
+                                        </tbody>
+                                      </table>
+                                    </div>
                                   </div>
                                 </td>
                                 {/* <td className="px-5 py-5 border-b border-gray-200  text-sm">
@@ -748,7 +879,17 @@ const AddOrder = () => {
             </Form>
           )}
         </Formik>
-        <Modal
+        {isSupplierModalOpen && (
+          <SupplierModal
+            suppliers={suppliers}
+            selectedSuppliers={selectedSuppliers}
+            handleCheckboxChange={handleCheckboxChange}
+            closeModal={closeSupplierModal}
+            handleSubmit={handleSupplierModalSubmit}
+          />
+        )}
+
+        <Modall
           isOpen={isModalOpen}
           onRequestClose={() => setIsModalOpen(false)}
           prodIdd={prodIdd}
@@ -758,6 +899,8 @@ const AddOrder = () => {
           height="80%"
           style={{ marginLeft: '70px', marginRight: '0' }}  // Add this line
         />
+
+
       </div>
     </DefaultLayout>
   );
