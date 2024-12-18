@@ -49,6 +49,7 @@ const Modall = ({ isOpen, onRequestClose, onSubmit, prodIdd, width = "400px", he
 
 
       setproducts(data);
+      console.log(data,"datsaaaaa");
 
     } catch (error) {
       console.error(error);
@@ -276,7 +277,7 @@ const Modall = ({ isOpen, onRequestClose, onSubmit, prodIdd, width = "400px", he
                         <Field
                           type="text"
                           id="size"
-                          value={products?.sizes?.sizesName}
+                          value={products?.sizes?.sizeName}
                           disabled
                           name="size"
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -397,6 +398,7 @@ const Modall = ({ isOpen, onRequestClose, onSubmit, prodIdd, width = "400px", he
                           type="text"
                           id="deying"
                           name="deying"
+                          value={products?.dyeingCost}
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
                         <ErrorMessage name="deying" component="div" className="text-red-600 text-sm" />
@@ -407,6 +409,7 @@ const Modall = ({ isOpen, onRequestClose, onSubmit, prodIdd, width = "400px", he
                           disabled
                           type="text"
                           id="cost"
+                          value={products?.cost}
                           name="cost"
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
@@ -418,6 +421,7 @@ const Modall = ({ isOpen, onRequestClose, onSubmit, prodIdd, width = "400px", he
                           disabled
                           type="text"
                           id="mrp"
+                          value={products?.mrp}
                           name="mro"
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
