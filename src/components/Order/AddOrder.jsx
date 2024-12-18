@@ -13,6 +13,7 @@ import { GET_PRODUCTBYID_URL } from '../../Constants/utils';
 import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import Modall from './Modal';
 import SupplierModal from './SupplierModal';
+import { FiTrash2 } from 'react-icons/fi';
 const AddOrder = () => {
   const [orderType, setOrderType] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,7 +22,7 @@ const AddOrder = () => {
   const [prodIdd, setprodIdd] = useState("")
 
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
-
+  const [suppId, setsuppId] = useState()
   const [suppliers, setSuppliers] = useState([
     { id: 1, name: "Supplier A" },
     { id: 2, name: "Supplier B" },
@@ -40,6 +41,7 @@ const AddOrder = () => {
 
 
   const handleCheckboxChange = (supplierId) => {
+    console.log(supplierId, "shahumer");
     setSelectedSuppliers((prev) =>
       prev.includes(supplierId)
         ? prev.filter((id) => id !== supplierId) // Remove if already selected
@@ -47,9 +49,13 @@ const AddOrder = () => {
     );
   };
 
-  const openSupplierModal = () => {
+  console.log(selectedSuppliers, "selecteddddddddd Suppliersss");
+
+  const openSupplierModal = (id) => {
     console.log("opening supplier  modal");
     setIsSupplierModalOpen(true);
+    console.log(id, "ghson");
+    setsuppId(id)
   };
 
 
@@ -127,9 +133,9 @@ const AddOrder = () => {
   };
 
   const productgrp = [
-    { value: 'BrandA', label: 'Brand A' },
-    { value: 'BrandB', label: 'Brand B' },
-    { value: 'BrandC', label: 'Brand C' },
+    { value: 'KLC', label: 'KLC' },
+    { value: 'CLIENT', label: 'CLIENT' },
+    { value: 'NO T&L', label: 'NO T&L' },
   ];
 
   const customStyles = {
@@ -739,7 +745,7 @@ const AddOrder = () => {
 
                                   <td className="px-5 py-5   text-sm">
                                     <div >
-                                      <IoIosAdd size={30} onClick={openSupplierModal} />
+                                      <IoIosAdd size={30} onClick={() => openSupplierModal(item?.id)} />
                                     </div>
                                   </td>
                                 </td>
@@ -779,37 +785,33 @@ const AddOrder = () => {
                                           </tr>
                                         </thead>
                                         <tbody>
-                                          {/* {data?.map((item, index) => (
-                                    <tr key={item.id} className='bg-white dark:bg-slate-700 dark:text-white px-5 py-3'>
-                                        <td className="px-5 py-5 border-b border-gray-200  text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
-                                        </td>
-                                        <td className="px-5 py-5 border-b border-gray-200  text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">{item?.orderType?.orderTypeName}</p>
-                                        </td>
-                                        <td className="px-5 py-5 border-b border-gray-200  text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">{item.productGroup.productGroupName}</p>
-                                        </td>
-                                        <td className="px-5 py-5 border-b border-gray-200  text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">{item.currentBudget}</p>
-                                        </td>
-                                        <td className="px-5 py-5 border-b border-gray-200  text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">{item.revisedBudget}</p>
-                                        </td>
-                                        <td className="px-5 py-5 border-b border-gray-200  text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">{item.startDate}</p>
-                                        </td>
-                                        <td className="px-5 py-5 border-b border-gray-200  text-sm">
-                                            <p className="text-gray-900 whitespace-no-wrap">{item.toDate}</p>
-                                        </td>
-                                        <td className="px-5 py-5  border-b border-gray-200  text-sm">
-                                            <p className="flex text-gray-900 whitespace-no-wrap">
-                                                <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={(e) => handleUpdate(e, item)} title='Edit Unit' />  |
-                                                <FiTrash2 size={17} className='text-red-500  hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Unit' />
-                                            </p>
-                                        </td>
-                                    </tr>
-                                ))} */}
+                                          {selectedSuppliers?.map((item, index) => (
+                                            <tr key={item.id} className='bg-white dark:bg-slate-700 dark:text-white px-5 py-3'>
+                                              <td className="px-5 py-5 border-b border-gray-200  text-sm">
+                                                <p className="text-gray-900 whitespace-no-wrap">{item}</p>
+                                              </td>
+
+                                              <td className="px-5 py-5 border-b border-gray-200  text-sm">
+                                                <div >
+
+                                                  <Field
+                                                    name="quantity"
+                                                    // value={item?.productId}
+                                                    placeholder="Enter quantity"
+                                                    className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                                  />
+                                                  <ErrorMessage name="quantity" component="div" className="text-red-600 text-sm" />
+                                                </div>
+
+                                              </td>
+                                              <td className="px-5 py-5  border-b border-gray-200  text-sm">
+                                                <p className="flex text-gray-900 whitespace-no-wrap">
+                                                  {/* <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={(e) => handleUpdate(e, item)} title='Edit Unit' />  | */}
+                                                  <FiTrash2 size={17} className='text-red-500  hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Unit' />
+                                                </p>
+                                              </td>
+                                            </tr>
+                                          ))}
 
 
 
@@ -882,6 +884,7 @@ const AddOrder = () => {
         {isSupplierModalOpen && (
           <SupplierModal
             suppliers={suppliers}
+            id={suppId}
             selectedSuppliers={selectedSuppliers}
             handleCheckboxChange={handleCheckboxChange}
             closeModal={closeSupplierModal}

@@ -53,7 +53,7 @@ import MaterialPo from './components/PuchaseOrder/MaterialPo';
 import ViewMaterialPo from './components/PuchaseOrder/ViewMaterialPo';
 import UpdateMaterialPo from './components/PuchaseOrder/UpdateMaterialPo.jsx';
 
-import AddOrder from './components/Order/AddOrder.jsx';
+import AddOrder from './components/Order/AddOrder';
 import ViewOrder from './components/Order/ViewOrder.jsx';
 import UpdateOrder from './components/Order/UpdateOrder.jsx';
 

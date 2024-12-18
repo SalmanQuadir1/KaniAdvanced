@@ -62,7 +62,7 @@ const useProduct = ({referenceImages,actualImages,productIdField}) => {
         //     }
         // ],      
         productDescription: "",
-        supplier: {},
+        supplier: [],
          supplierCode: {},
         warpColors: "",
     weftColors: "",

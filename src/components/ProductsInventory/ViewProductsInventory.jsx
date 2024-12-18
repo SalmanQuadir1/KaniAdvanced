@@ -9,6 +9,7 @@ import ReactSelect from 'react-select';
 import { GET_INVENTORY, customStyles as createCustomStyles } from '../../Constants/utils';
 import { Field, Form, Formik } from 'formik';
 import useProduct from '../../hooks/useProduct';
+import { toast } from 'react-toastify';
 
 
 const ViewProductsInventory = () => {
@@ -174,7 +175,7 @@ const handlePageChange = (newPage) => {
     
         
         
-      return    inventory.map((item, index) => (
+      return    inventory?.map((item, index) => (
             <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">
