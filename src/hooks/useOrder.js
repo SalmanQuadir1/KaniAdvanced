@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE } from "../Constants/utils";
+import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE ,VIEW_ALL_ORDERS } from "../Constants/utils";
 
 const useorder = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const [orderTypee, setorderType] = useState([]);
+    const [Order, setOrder] = useState([]);
     const [edit, setEdit] = useState(false);
     const [currentorderType, setCurrentorderType] = useState({
         orderTypeName:"",
@@ -145,17 +146,97 @@ console.log(item,"hey");
         }
     };
 
-    const handlePageChange = (newPage) => {
 
-        setPagination((prev) => ({ ...prev, currentPage: newPage }));
-        getorderType(newPage); // API is 0-indexed for pages
+    //  const getOrder = async (page, filters = {}) => {
+    //         console.log("Viewwwww");
+    //         console.log(filters,"filllllllll");
+    //         try {
+    //             const response = await fetch(`${ VIEW_ALL_ORDERS}?page=${page||1}`, {
+    //                 method: "POST",
+    //                 headers: {
+    //                     "Content-Type": "application/json",
+    //                     "Authorization": `Bearer ${token}`
+    //                 },
+    //                 body: JSON.stringify(filters)
+    //             });
+    //             const data = await response.json();
+    //             console.log(data,"pr datatata")
+    
+    //             setOrder(data?.content);
+    //             setPagination({
+    //                 totalItems: data?.totalElements,
+    //                 data: data?.content,
+    //                 totalPages: data?.totalPages,
+    //                 currentPage: data?.number + 1,
+    //                 itemsPerPage: data.size
+    //             });
+    //         } catch (error) {
+    //             console.log(error);
+    //             toast.error("Failed to fetch Order");
+    //         }
+    //     };
+       
+    const getOrder = async (page, filters = {}) => {
+        console.log("Fetching orders for page", page); // Log the page number being requested
+    
+        try {
+            const response = await fetch(`${VIEW_ALL_ORDERS}?page=${page || 1}`, {
+                method: "GET", // GET method
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+    
+            const textResponse = await response.text(); // Get the raw text response
+            console.log("Raw Response Text:", textResponse); // Log raw response before parsing
+    
+            // Try parsing the response only if it's valid JSON
+            try {
+                const data = JSON.parse(textResponse); // Try parsing as JSON
+                console.log("Parsed Response:", data);
+    
+                if (data?.content) {
+                    setOrder(data.content); // Update orders state
+                } else {
+                    console.log("No orders found in the response");
+                    setOrder([]); // Set an empty state
+                }
+    
+                // Update pagination state
+                setPagination({
+                    totalItems: data?.totalElements || 0,
+                    data: data?.content || [],
+                    totalPages: data?.totalPages || 0,
+                    currentPage: data?.number + 1 || 1,
+                    itemsPerPage: data?.size || 0,
+                });
+            } catch (parseError) {
+                console.error("Error parsing response as JSON:", parseError);
+                toast.error("Invalid response format.");
+            }
+        } catch (error) {
+            console.error("Error fetching orders:", error);
+            toast.error("Failed to fetch orders");
+            setOrder([]); // Reset to an empty state in case of an error
+        }
     };
+    
+    const handlePageChange = (newPage) => {
+        console.log("Page change requested:", newPage);
+    
+        setPagination((prev) => ({ ...prev, currentPage: newPage }));
+        getOrder(newPage); // Correct function name and 1-indexed for user interaction
+    };
+    
 
     return {
+        Order,
         orderTypee,
         edit,
         currentorderType,
         pagination,
+        getOrder,
         handleDelete,
         handleUpdate,
         handleSubmit,

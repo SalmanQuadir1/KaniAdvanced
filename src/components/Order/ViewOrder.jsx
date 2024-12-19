@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik,Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
  import ReactSelect from 'react-select';
+import useorder from '../../hooks/useOrder';
+import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import Pagination from '../Pagination/Pagination';
 
 
 
@@ -37,6 +40,79 @@ import { Field, Formik,Form } from 'formik'
 
 
 const ViewOrder = () => {
+
+  const { Order, getOrder, pagination ,handlePageChange } = useorder();
+
+ useEffect(() => {
+        getOrder();
+        
+    }, []);
+
+const renderTableRows = () => {
+  console.log(Order); 
+        if (!Order || !Order.length) {
+            return (
+                <tr className='bg-white dark:bg-slate-700 dark:text-white'>
+                    <td colSpan="6" className="px-5 py-5 border-b border-gray-200 text-sm">
+                        <p className="text-gray-900 whitespace-no-wrap text-center">No Order Found</p>
+                    </td>
+                </tr>
+            );
+        }
+
+        const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
+
+     
+  
+
+
+
+        return Order.map((item, index) => (
+          
+            <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
+                </td>
+                
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                <p className="text-gray-900 whitespace-no-wrap">{item?.orderNo}</p>
+
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item.customerName}</p>
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item.productId}</p>
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item.name}</p>
+                </td>
+
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item.orderDate}</p>
+                </td>
+
+               
+
+
+
+              
+
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="flex text-gray-900 whitespace-no-wrap">
+                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={(e) => handleUpdate(e, item)} title='Edit Product' />  |
+                        <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' />
+                    </p>
+                </td>
+            </tr>
+        ));
+    };
+
+
+
+
+
+
   return (
     <DefaultLayout>
        <Breadcrumb pageName="Order/ View Order" />
@@ -191,12 +267,12 @@ const ViewOrder = () => {
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
-                                {/* <tbody>
+                                <tbody>
                                     {renderTableRows()}
-                                </tbody> */}
+                                </tbody>
                             </table>
                         </div>
-                        {/* <Pagination totalPages={pagination.totalPages} currentPage={pagination.currentPage} handlePageChange={handlePageChange} /> */}
+                        <Pagination totalPages={pagination.totalPages} currentPage={pagination.currentPage} handlePageChange={handlePageChange} />
                     </div>
 
 

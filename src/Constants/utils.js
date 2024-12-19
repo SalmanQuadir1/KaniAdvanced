@@ -179,6 +179,9 @@ export const GET_PRODUCTID_URL = `${BASE_URL}/products`;
 
 export const GET_PRODUCTIDD_URL = `${BASE_URL}/products`;
 
+//ORDER
+export const VIEW_ALL_ORDERS = `${BASE_URL}/order/viewAll`;
+
 
 export const GET_PRODUCTIDINVENTORY_URL = `${BASE_URL}/products/inventoryProductIds`;
 //PRODUCT
