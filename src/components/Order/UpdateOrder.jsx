@@ -188,6 +188,7 @@ const UpdateOrder = () => {
                           className="bg-white dark:bg-form-Field"
                           classNamePrefix="react-select"
                           placeholder="Select Order Type"
+                          isDisabled={true}
                         />
                         <ErrorMessage name="orderType" component="div" className="text-red-600 text-sm" />
                       </div>
@@ -205,6 +206,7 @@ const UpdateOrder = () => {
                           styles={customStyles}
                           className="bg-white dark:bg-form-Field"
                           classNamePrefix="react-select"
+                          isDisabled={true}
                           placeholder="Select Order Type"
                         />
                         <ErrorMessage name="orderType" component="div" className="text-red-600 text-sm" />
@@ -315,6 +317,7 @@ const UpdateOrder = () => {
                           placeholder="Enter Shipping Date"
                           className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                         />
+                 
                         <ErrorMessage name="shippingDate" component="div" className="text-red-600 text-sm" />
                       </div>
 
@@ -353,6 +356,26 @@ const UpdateOrder = () => {
                       </div>
                       <ErrorMessage name="logoNo" component="div" className="text-red-600 text-sm" />
                     </div>
+
+{/* <div className="flex-1 min-w-[300px] mt-4">
+  <label className="mb-2.5 block text-black dark:text-white">Logo No</label>
+  <div className="flex flex-row items-center space-x-4">
+    <label className="flex items-center">
+      <Field type="radio" name="logoNo" value="Yes" />
+      <span className="ml-1">Yes</span>
+    </label>
+    <label className="flex items-center">
+      <Field type="radio" name="logoNo" value="No" />
+      <span className="ml-1">No</span>
+    </label>
+  </div>
+  <ErrorMessage
+    name="logoNo"
+    component="div"
+    className="text-red-600 text-sm"
+  />
+</div> */}
+
 
                     </div>
 
