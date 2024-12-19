@@ -183,8 +183,8 @@ const AddBOM = () => {
                                                                                 setRows(newRows);
                                                                             }}
                                                                             classNamePrefix="react-select"
-                                                                            options={productList.map(product => ({
-                                                                                label: product.productDescription,
+                                                                            options={productList?.map(product => ({
+                                                                                label: product.productId,
                                                                                 value: product.id
                                                                             }))}
                                                                             // options={productList.productDescription}
