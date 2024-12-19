@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE ,VIEW_ALL_ORDERS } from "../Constants/utils";
-import { GET_PRODUCTIDD_URL, VIEW_ALL_CUSTOMER, VIEW_ALL_ORDERTYPE } from "../Constants/utils";
+import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE ,VIEW_ALL_ORDERS,VIEW_ALL_CUSTOMER, } from "../Constants/utils";
+// import { GET_PRODUCTIDD_URL, VIEW_ALL_CUSTOMER, VIEW_ALL_ORDERTYPE } from "../Constants/utils";
 
 const useorder = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
