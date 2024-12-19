@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE ,VIEW_ALL_ORDERS } from "../Constants/utils";
+import { GET_PRODUCTIDD_URL, VIEW_ALL_CUSTOMER, VIEW_ALL_ORDERTYPE } from "../Constants/utils";
 
 const useorder = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const [orderTypee, setorderType] = useState([]);
     const [Order, setOrder] = useState([]);
+    const [customer, setcustomer] = useState([])
     const [edit, setEdit] = useState(false);
     const [currentorderType, setCurrentorderType] = useState({
         orderTypeName:"",
@@ -38,6 +40,31 @@ const useorder = () => {
             const data = await response.json();
             console.log(data,"dataaaaaa");
             setorderType(data);
+            setPagination({
+                totalItems: data.totalElements,
+                pagUnitList: data.content,
+                totalPages: data.totalPages,
+                currentPage: data.number + 1,
+                itemsPerPage: data.size
+            });
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch orderType");
+        }
+    };
+
+    const getCustomer = async (page) => {
+        try {
+            const response = await fetch(`${VIEW_ALL_CUSTOMER}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data,"dataaaaaa");
+            setcustomer(data);
             setPagination({
                 totalItems: data.totalElements,
                 pagUnitList: data.content,
@@ -243,7 +270,9 @@ console.log(item,"hey");
         handlePageChange,
         getorderType,
         productId,
-        getprodId
+        getprodId,
+        getCustomer,
+        customer
     };
 };
 
