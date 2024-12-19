@@ -163,6 +163,7 @@ export const DELETE_BUDGET_URL = `${BASE_URL}/budget/`;
 //BUDGET
 export const ADD_CUSTOMER_URL = `${BASE_URL}/customer`;
 export const GET_CUSTOMER_URL = `${BASE_URL}/customer`;
+
 export const UPDATE_CUSTOMER_URL = `${BASE_URL}/customer`;
 export const VIEW_ALL_CUSTOMER = `${BASE_URL}/customer/viewAll`;
 export const DELETE_CUSTOMER_URL = `${BASE_URL}/customer/`;
