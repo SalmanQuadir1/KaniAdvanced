@@ -54,6 +54,7 @@ const ViewOrder = () => {
         
     }, []);
 
+    console.log(order,"order");
     useEffect(() => {
             if (supplier.data) {
                 const formattedOptions = supplier.data.map(supp => ({
