@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE ,VIEW_ALL_ORDERS,VIEW_ALL_CUSTOMER, } from "../Constants/utils";
+import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE ,VIEW_ALL_ORDERS,VIEW_ALL_CUSTOMER, ADD_ORDER_URL, } from "../Constants/utils";
 import { useNavigate } from 'react-router-dom';
 import { fetchorder } from '../redux/Slice/OrderNo';
 // import { GET_PRODUCTIDD_URL, VIEW_ALL_CUSTOMER, VIEW_ALL_ORDERTYPE } from "../Constants/utils";
@@ -37,9 +37,37 @@ useEffect(() => {
         dispatch(fetchorder(token))
     }, []);
 
+    const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+        console.log(values, "logg");
+        try {
+            const url =`${ADD_ORDER_URL}` ;
+            const method =  "POST";
 
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(values)
+            });
 
-
+            const data = await response.json();
+            if (response.ok) {
+                toast.success(`Order Added successfully`);
+                resetForm();
+               
+                // getSize(pagination.currentPage); // Fetch updated Size
+            } else {
+                toast.error(`${data.errorMessage}`);
+            }
+        } catch (error) {
+            console.error(error, response);
+            toast.error("An error occurred");
+        } finally {
+            setSubmitting(false);
+        }
+    };
     const getorderType = async (page) => {
         try {
             const response = await fetch(`${VIEW_ALL_ORDERTYPE}?page=${page}`, {
@@ -168,40 +196,40 @@ const handleUpdate = (e, item) => {
 
 
 
-    const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-        console.log(values, "logg");
-        try {
-            const url = edit ? `${UPDATE_ORDERTYPE_URL}/${currentorderType.id}` : ADD_ORDERTYPE_URL;
-            const method = edit ? "PUT" : "POST";
+    // const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    //     console.log(values, "logg");
+    //     try {
+    //         const url = edit ? `${UPDATE_ORDERTYPE_URL}/${currentorderType.id}` : ADD_ORDERTYPE_URL;
+    //         const method = edit ? "PUT" : "POST";
 
-            const response = await fetch(url, {
-                method: method,
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify(values)
-            });
+    //         const response = await fetch(url, {
+    //             method: method,
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 "Authorization": `Bearer ${token}`
+    //             },
+    //             body: JSON.stringify(values)
+    //         });
 
-            const data = await response.json();
-            if (response.ok) {
-                toast.success(`orderType ${edit ? 'updated' : 'added'} successfully`);
-                resetForm();
-                setEdit(false);
-                setCurrentorderType({
-                    orderTypeName: ""
-                });
-                // getorderType(pagination.currentPage); // Fetch updated orderType
-            } else {
-                toast.error(`${data.errorMessage}`);
-            }
-        } catch (error) {
-            console.error(error, response);
-            toast.error("An error occurred");
-        } finally {
-            setSubmitting(false);
-        }
-    };
+    //         const data = await response.json();
+    //         if (response.ok) {
+    //             toast.success(`orderType ${edit ? 'updated' : 'added'} successfully`);
+    //             resetForm();
+    //             setEdit(false);
+    //             setCurrentorderType({
+    //                 orderTypeName: ""
+    //             });
+    //             // getorderType(pagination.currentPage); // Fetch updated orderType
+    //         } else {
+    //             toast.error(`${data.errorMessage}`);
+    //         }
+    //     } catch (error) {
+    //         console.error(error, response);
+    //         toast.error("An error occurred");
+    //     } finally {
+    //         setSubmitting(false);
+    //     }
+    // };
 
 
     //  const getOrder = async (page, filters = {}) => {

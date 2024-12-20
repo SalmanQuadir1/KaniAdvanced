@@ -42,7 +42,8 @@ const AddOrder = () => {
     productId,
     getprodId,
     getCustomer,
-    customer
+    customer,
+    handleSubmit
 
 
 
@@ -53,15 +54,13 @@ const AddOrder = () => {
   const [selectedSuppliers, setSelectedSuppliers] = useState([]);
 
 
-  const handleCheckboxChange = (productId, supplier) => {
-    setSupplierSelections((prev) => {
-      const currentSuppliers = prev[productId] || [];
-      const updatedSuppliers = currentSuppliers.includes(supplier.supplierName)
-        ? currentSuppliers.filter((s) => s !== supplier.supplierName) // Remove if already selected
-        : [...currentSuppliers, supplier.supplierName]; // Add new selection
-  
-      return { ...prev, [productId]: updatedSuppliers };
-    });
+  const handleCheckboxChange = (supplierId) => {
+    console.log(supplierId, "shahumer");
+    setSelectedSuppliers((prev) =>
+      prev.includes(supplierId)
+        ? prev.filter((id) => id !== supplierId) // Remove if already selected
+        : [...prev, supplierId] // Add if not selected
+    );
   };
 
   console.log(selectedSuppliers, "selecteddddddddd Suppliersss");
@@ -273,15 +272,7 @@ console.log("opennnnnnnn");
 
 
 
-  const handleSubmit = (values, { setSubmitting }) => {
-
-    console.log(values, "kiki");
-    // setTimeout(() => {
-    //   alert(JSON.stringify(values, null, 2));
-    //   setSubmitting(false);
-    //   console.log('Form Submitted:', values);
-    // }, 400);
-  };
+ 
   console.log(prodIdModal, "proddidmodal");
   // console.log("Initial Values: ", prodIdModal?.map(item => ({
   //   products: { id: item?.productId || "" },
