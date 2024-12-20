@@ -20,7 +20,7 @@ const UpdateOrder = () => {
   const [orderTypeOptions, setorderTypeOptions] = useState([])
   const [prodIdOptions, setprodIdOptions] = useState([])
   const [prodIdd, setprodIdd] = useState("")
-
+ const [order, setOrder] = useState(null); // To store fetched product data
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
   const [suppId, setsuppId] = useState()
   const [suppliers, setSuppliers] = useState([
@@ -92,6 +92,34 @@ const UpdateOrder = () => {
   }, [])
 
   console.log(productId, "looool");
+
+  //  const getOrderById = async () => {
+  //         try {
+  //             const response = await fetch(`${GET_PRODUCTBYID_URL}/${id}`, {
+  //                 method: 'GET',
+  //                 headers: {
+  //                     Authorization: `Bearer ${token}`,
+  //                 },
+  //             });
+  
+  //             if (!response.ok) {
+  //                 throw new Error('Failed to fetch product');
+  //             }
+  
+  //             const data = await response.json();
+  //             setOrder(data); // Store fetched product
+  //         } catch (error) {
+  //             console.error('Error fetching product:', error);
+  //         } finally {
+  //             setIsLoading(false); // Stop loader
+  //         }
+  //     };
+  //     console.log(order, 'hloooooo')
+  
+  //     // Fetch data when component mounts
+  //     useEffect(() => {
+  //         getOrderById();
+  //     }, [id]);
 
   const [prodIdModal, setprodIdModal] = useState([])
 
@@ -268,19 +296,7 @@ const UpdateOrder = () => {
                       )}
 
 
-                      {/* <div className="flex-1 min-w-[200px]">
-
-                        <div className="flex-1 min-w-[200px]">
-                          <label className="mb-2.5 block text-black dark:text-white"> Order Date</label>
-                          <Field
-                            name='orderDate'
-                            type="date"
-                            placeholder="Enter Order Date"
-                            className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                          />
-                        </div>
-                        <ErrorMessage name="orderDate" component="div" className="text-red-600 text-sm" />
-                      </div> */}
+                      
                     </div>
 
                     {(values.orderType.orderTypeName === "RetailClients" || values.orderType.orderTypeName === "WSClients") && (
@@ -355,16 +371,7 @@ const UpdateOrder = () => {
 
                     )}
                     <div className="flex flex-wrap gap-4">
-                      {/* <div className="flex-1 min-w-[300px] mt-4">
-                        <label className="mb-2.5 block text-black dark:text-white">Shipping Date</label>
-                        <Field
-                          name='shippingDate'
-                          type="date"
-                          placeholder="Enter Shipping Date"
-                          className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="shippingDate" component="div" className="text-red-600 text-sm" />
-                      </div> */}
+                     
 
 <div className="flex-1 min-w-[200px]">
 
@@ -381,21 +388,7 @@ const UpdateOrder = () => {
                       </div>
 
 
-                      {/* <div className="flex-1 min-w-[300px] mt-4">
-                        <label className="mb-2.5 block text-black dark:text-white">Tags</label>
-                        <ReactSelect
-                          name="tags"
-                          value={productgrp.find(option => option.value === values.tags)}
-                          onChange={(option) => setFieldValue('tags', option.value)}
-                          onBlur={handleBlur}
-                          options={productgrp}
-                          styles={customStyles}
-                          className="bg-white dark:bg-form-input"
-                          classNamePrefix="react-select"
-                          placeholder="Select"
-                        />
-                        <ErrorMessage name="tags" component="div" className="text-red-600 text-sm" />
-                      </div> */}
+                     
                       <div className="flex-1 min-w-[300px] mt-4">
                         <label className="mb-2.5 block text-black dark:text-white">Expected Receiving Date</label>
                         <Field
@@ -409,20 +402,7 @@ const UpdateOrder = () => {
                       </div>
                     </div>
 
-                    {/* <div className="flex-1 min-w-[300px] mt-4">
-                      <label className="mb-2.5 block text-black dark:text-white">Logo No</label>
-                      <div>
-                        <label className="flex items-center">
-                          <Field type="radio" name="logoNo" value="Yes" />
-                          <span className="ml-1">Yes</span>
-                        </label>
-                        <label className="flex items-center">
-                          <Field type="radio" name="logoNo" value="No" />
-                          <span className="ml-1">No</span>
-                        </label>
-                      </div>
-                      <ErrorMessage name="logoNo" component="div" className="text-red-600 text-sm" />
-                    </div> */}
+                  
                      <div className="flex flex-wrap gap-4">
                      <div className="flex-1 min-w-[300px] mt-4">
                         <label className="mb-2.5 block text-black dark:text-white">Tags</label>
@@ -482,38 +462,7 @@ const UpdateOrder = () => {
 
                     )}
 
-                    {/* <div className="flex-1 min-w-[200px] mt-11">
-                      <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
-                      <ReactSelect
-                        name="productId"
-                        value={productgrp.find(option => option.value === values.productId)}
-                        onChange={(option) => setFieldValue('productId', option.value)}
-                        onBlur={handleBlur}
-                        options={productgrp}
-                        styles={customStyles}
-                        className="bg-white dark:bg-form-input"
-                        classNamePrefix="react-select"
-                        placeholder="Select"
-                      />
-                      <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
-                    </div> */}
-                    {/* <div className="flex-1 min-w-[200px] mt-11">
-                      <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
-                      <ReactSelect
-                        name="productId"
-                        value={productgrp.find(option => option.value === values.productId)}
-                        onChange={(option) => handleProductIdChange(option, setFieldValue)}
-                        onBlur={handleBlur}
-                        options={productgrp}
-                        styles={customStyles}
-                        className="bg-white dark:bg-form-input"
-                        classNamePrefix="react-select"
-                        placeholder="Select"
-
-                      />
-                      <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
-                    </div> */}
-
+                    
 
                     <div className="flex-1 min-w-[200px] mt-11">
                       <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
@@ -531,88 +480,6 @@ const UpdateOrder = () => {
                       />
                       <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
                     </div>
-
-
-                    {/* {prodIdModal && (
-                      <div
-                        className="inline-block max-w-screen-md shadow-md rounded-lg overflow-hidden mt-7 ml-11"
-                      >
-                        <div className="overflow-x-auto max-w-full">
-                          <table className="min-w-full leading-normal">
-                            <thead>
-                              <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
-                                  Product Id
-                                </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
-                                  Order Category
-                                </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
-                                  Client Order Qty
-                                </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
-                                  Units
-                                </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
-                                  In Stock Qty
-                                </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
-                                  Qty To Manufacture
-                                </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
-                                  Value
-                                </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
-                                  Client Shipping Date
-                                </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
-                                  Expected Date
-                                </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
-                                  Add Weaver/Embroider
-                                </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
-                                  Weaver/Embroider Details
-                                </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
-                                  Action
-                                </th>
-
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100"
-                                ></th>
-                              </tr>
-                            </thead>
-
-                          </table>
-                        </div>
-                      </div>
-                    )} */}
-
 
 
 

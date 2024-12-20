@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik,Form } from 'formik'
@@ -7,6 +7,8 @@ import { Field, Formik,Form } from 'formik'
 import useorder from '../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import Pagination from '../Pagination/Pagination';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -41,12 +43,39 @@ import Pagination from '../Pagination/Pagination';
 
 const ViewOrder = () => {
 
-  const { Order, getOrder, pagination ,handlePageChange } = useorder();
-
+  const { Order, getOrder, pagination ,handlePageChange ,handleUpdate} = useorder();
+  const [supplierNameOptions, setsupplierNameOptions] = useState([])
+  const [orderNameOptions, setorderNameOptions] = useState([])
+  const supplier = useSelector(state => state?.nonPersisted?.supplier);
+  const order = useSelector(state => state?.nonPersisted?.order);
+  const navigate = useNavigate();
  useEffect(() => {
         getOrder();
         
     }, []);
+
+    useEffect(() => {
+            if (supplier.data) {
+                const formattedOptions = supplier.data.map(supp => ({
+                    value: supp.id,
+                    label: supp?.name,
+                    supplierNameObject: supp,
+                    suplierid: { id: supp.id }
+                }));
+                setsupplierNameOptions(formattedOptions);
+            }
+        }, [supplier.data]);
+        useEffect(() => {
+          if (order.data) {
+              const formattedOptions = order.data.map(ord => ({
+                  value: ord.id,
+                  label: ord?.name,
+                  orderNameObject: ord,
+                  orderid: { id: ord.id }
+              }));
+              setorderNameOptions(formattedOptions);
+          }
+      }, [supplier.data]);
 
 const renderTableRows = () => {
   console.log(Order); 
@@ -119,7 +148,7 @@ const renderTableRows = () => {
        <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
        <div className="pt-5">
        <div className='flex justify-between'>
-                        <h2 className="text-xl font-semibold leading-tight">View Products</h2>
+                        <h2 className="text-xl font-semibold leading-tight">View Order</h2>
                         {/* <p className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium bg-success text-success dark:bg-white dark:text-slate-800`}>
                             TOTAL PRODUCTS: {pagination.totalItems}
                         </p> */}
@@ -149,16 +178,17 @@ const renderTableRows = () => {
                                             />
                                         </div> */}
                                         <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Order id</label>
+                        <label className="mb-2.5 block text-black dark:text-white">Order No</label>
                         <ReactSelect
-                          name="orderType"
-                          value={productgrp.find(option => option.value === values.orderType)}
+                          name="orderNo"
+                          value={orderNameOptions.find(option => option.value === values.orderNo)}
                           onChange={(option) => {
                             setFieldValue('orderType', option.value);
                             setOrderType(option.value);
                           }}
                           onBlur={handleBlur}
-                          options={productgrp}
+                          // options={productgrp}
+                          options={orderNameOptions}
                           styles={customStyles}
                           className="bg-white dark:bg-form-input"
                           classNamePrefix="react-select"
@@ -167,24 +197,25 @@ const renderTableRows = () => {
                         
                       </div>
 
-                      <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Supplier</label>
-                        <ReactSelect
-                          name="orderType"
-                          value={productgrp.find(option => option.value === values.orderType)}
-                          onChange={(option) => {
-                            setFieldValue('orderType', option.value);
-                            setOrderType(option.value);
-                          }}
-                          onBlur={handleBlur}
-                          options={productgrp}
-                          styles={customStyles}
-                          className="bg-white dark:bg-form-input"
-                          classNamePrefix="react-select"
-                          placeholder="Select"
-                        />
-                        
-                      </div>
+                    
+                              <div className="flex-1 min-w-[300px]">
+            <label className="mb-2.5 block text-black dark:text-white">
+                Supplier 
+                <span className="text-red-700 text-xl mt-[40px] justify-center items-center"> *</span>
+            </label>
+            <div className="z-20 bg-transparent dark:bg-form-Field">
+                <ReactSelect
+                    name="supplier"
+                    value={supplierNameOptions?.find(option => option.value === values.supplier?.id) || null}
+                    onChange={(option) => setFieldValue('supplier', option ? option.suplierid : null)}
+                    options={supplierNameOptions}
+                    styles={customStyles} // Pass custom styles here
+                    className="bg-white dark:bg-form-Field"
+                    classNamePrefix="react-select"
+                    placeholder="Select supplier Name"
+                />
+            </div>
+        </div>
                                     </div>
 
                                     <div className="mb-4.5 flex flex-wrap gap-6 mt-12">

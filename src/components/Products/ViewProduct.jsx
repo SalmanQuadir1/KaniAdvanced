@@ -26,12 +26,6 @@ const ViewProduct = () => {
     const [selectedBOMData, setSelectedBOMData] = useState(null);
 
 
-
-
-
-
-
-
     const [isINVENTORYModalOpen, setIsINVENTORYModalOpen] = useState(false);
     const [selectedINVENTORYData, setSelectedINVENTORYData] = useState(null);
 

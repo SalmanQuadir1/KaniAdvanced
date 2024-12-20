@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE ,VIEW_ALL_ORDERS,VIEW_ALL_CUSTOMER, } from "../Constants/utils";
+import { useNavigate } from 'react-router-dom';
+import { fetchorder } from '../redux/Slice/OrderNo';
 // import { GET_PRODUCTIDD_URL, VIEW_ALL_CUSTOMER, VIEW_ALL_ORDERTYPE } from "../Constants/utils";
 
 const useorder = () => {
@@ -15,6 +17,8 @@ const useorder = () => {
         orderTypeName:"",
     });
     const [productId, setproductId] = useState([])
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const [pagination, setPagination] = useState({
         totalItems: 0,
@@ -27,6 +31,14 @@ const useorder = () => {
     useEffect(() => {
         getorderType(pagination.currentPage);
     }, [currentorderType]);
+
+useEffect(() => {
+        
+        dispatch(fetchorder(token))
+    }, []);
+
+
+
 
     const getorderType = async (page) => {
         try {
@@ -131,12 +143,30 @@ const useorder = () => {
         }
     };
 
-    const handleUpdate = (e, item) => {
-        e.preventDefault();
-        setEdit(true);
-console.log(item,"hey");
-        setCurrentorderType(item);
-    };
+//     const handleUpdate = (e, item) => {
+//         e.preventDefault();
+//         setEdit(true);
+// console.log(item,"hey");s
+//         setCurrentorderType(item);
+//     };
+
+const handleUpdate = (e, item) => {
+    e.preventDefault();
+    console.log("Item passed to handleUpdate:", item);
+
+    const uniqueId = item.id || item.orderNo || item.productId;
+
+    if (uniqueId) {
+        console.log("Navigating to:", `/Order/updateorder/${uniqueId}`);
+        navigate(`/Order/updateorder/${uniqueId}`);
+    } else {
+        console.error("Item or its unique identifier is missing");
+        toast.error("Unable to update: Item or ID is missing.");
+    }
+};
+
+
+
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         console.log(values, "logg");
