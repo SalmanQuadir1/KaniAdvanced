@@ -60,7 +60,7 @@ console.log(supplierList,"listttt");
               <input
                 type="checkbox"
                 checked={selectedSuppliers.includes(supplier?.supplierName)}
-                onChange={() => handleCheckboxChange(supplier?.supplierName)}
+                onChange={() => handleCheckboxChange(supplier)}
               />
               <label>{supplier?.supplierName}</label>
             </li>
