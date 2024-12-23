@@ -98,7 +98,7 @@ const Modall = ({ isOpen, onRequestClose, onSubmit, prodIdd, width = "400px", he
           >
             <button
               className="absolute top-0 right-0 m-3 text-gray-600 hover:text-gray-800"
-              onClick={onRequestClose}
+              onClick={handleBackdropClick}
               aria-label="Close modal"
             >
               &times;

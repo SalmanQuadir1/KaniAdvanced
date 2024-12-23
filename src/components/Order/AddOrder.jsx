@@ -631,38 +631,7 @@ console.log("opennnnnnnn");
 
                       )}
 
-                      {/* <div className="flex-1 min-w-[200px] mt-11">
-                      <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
-                      <ReactSelect
-                        name="productId"
-                        value={productgrp.find(option => option.value === values.productId)}
-                        onChange={(option) => setFieldValue('productId', option.value)}
-                        onBlur={handleBlur}
-                        options={productgrp}
-                        styles={customStyles}
-                        className="bg-white dark:bg-form-input"
-                        classNamePrefix="react-select"
-                        placeholder="Select"
-                      />
-                      <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
-                    </div> */}
-                      {/* <div className="flex-1 min-w-[200px] mt-11">
-                      <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
-                      <ReactSelect
-                        name="productId"
-                        value={productgrp.find(option => option.value === values.productId)}
-                        onChange={(option) => handleProductIdChange(option, setFieldValue)}
-                        onBlur={handleBlur}
-                        options={productgrp}
-                        styles={customStyles}
-                        className="bg-white dark:bg-form-input"
-                        classNamePrefix="react-select"
-                        placeholder="Select"
-
-                      />
-                      <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
-                    </div> */}
-
+                     
 
                       <div className="flex-1 min-w-[200px] mt-11">
                         <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
