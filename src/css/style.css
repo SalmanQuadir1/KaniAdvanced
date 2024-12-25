@@ -8,6 +8,45 @@
   }
 }
 
+/* For the entire scrollbar track */
+div::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+  height: 8px; /* Height of the scrollbar for horizontal scrolling */
+}
+
+/* For the scrollbar itself */
+div::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #4b5563, #3f4f67); /* Gradient color */
+  border-radius: 4px; /* Rounded corners */
+}
+
+/* For the scrollbar track (the background behind the scrollbar) */
+div::-webkit-scrollbar-track {
+  background: #f3f4f6; /* Light gray color for contrast */
+  border-radius: 4px; /* Rounded corners */
+}
+
+/* Add hover effect for the scrollbar */
+div::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #1f2937, #4b5563); /* Darker gradient on hover */
+}
+
+/* Optional: Style horizontal scrollbar if necessary */
+table::-webkit-scrollbar {
+  height: 8px;
+}
+
+table::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+
+table::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 4px;
+}
+
+
 @layer components {
 }
 

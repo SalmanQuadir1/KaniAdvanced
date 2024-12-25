@@ -7,7 +7,6 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/themes/material_blue.css'; // Import a Flatpickr theme
 import Modal from './Modal';
 import * as Yup from 'yup';
-import { MdDelete } from "react-icons/md";
 import useorder from '../../hooks/useOrder';
 import useProduct from '../../hooks/useProduct';
 import { GET_INVENTORYLOCATION, GET_PRODUCTBYID_URL } from '../../Constants/utils';
@@ -53,62 +52,25 @@ const AddOrder = () => {
 
 
   const [selectedSuppliers, setSelectedSuppliers] = useState([]);
-  const [selectedRowId, setSelectedRowId] = useState(null);
 
-  console.log(selectedRowId, "umerr rowwid");
-  const handleCheckboxChange = (selectedRowId, supplierId) => {
-    setSelectedSuppliers((prev) => {
-      const updated = [...prev];
-      const rowIndex = updated.findIndex(
-        (row) => row.selectedRowId === selectedRowId
-      );
 
-      if (rowIndex !== -1) {
-        // Update supplierIds for the existing row
-        const supplierExists = updated[rowIndex].supplierIds.some(
-          (s) => s.supplierId === supplierId
-        );
-
-        if (supplierExists) {
-          // Remove the supplier if already exists
-          updated[rowIndex].supplierIds = updated[rowIndex].supplierIds.filter(
-            (s) => s.supplierId !== supplierId
-          );
-        } else {
-          // Add new supplier to the row
-          updated[rowIndex].supplierIds.push({
-            supplierId,
-            supplierName: "", // Optional: default supplier name if needed
-          });
-        }
-      } else {
-        // Add a new row with the selected supplier
-        updated.push({
-          selectedRowId,
-          supplierIds: [{ supplierId, supplierName: "" }],
-        });
-      }
-      return updated;
-    });
+  const handleCheckboxChange = (supplierId) => {
+    console.log(supplierId, "shahumer");
+    setSelectedSuppliers((prev) =>
+      prev.includes(supplierId)
+        ? prev.filter((id) => id !== supplierId) // Remove if already selected
+        : [...prev, supplierId] // Add if not selected
+    );
   };
-
-
-
-
-
-
-
 
   console.log(selectedSuppliers, "selecteddddddddd Suppliersss");
 
-  const openSupplierModal = (id, rowIndex) => {
-    console.log("opening supplier modal");
+  const openSupplierModal = (id) => {
+    console.log("opening supplier  modal");
     setIsSupplierModalOpen(true);
     console.log(id, "ghson");
-    setsuppId(id); // For specific supplier modal logic
-    setSelectedRowId(rowIndex); // Store the row index
+    setsuppId(id)
   };
-
 
 
   console.log(isSupplierModalOpen, "ll");
@@ -147,6 +109,7 @@ const AddOrder = () => {
   console.log(productId, "looool");
 
   const [prodIdModal, setprodIdModal] = useState([])
+
   useEffect(() => {
     if (orderTypee) {
       const formattedOptions = orderTypee.map(order => ({
@@ -244,12 +207,12 @@ const AddOrder = () => {
 
   const handleProductIdChange = (option, setFieldValue) => {
 
-    console.log(option, "mein hun option");
+console.log(option,"mein hun option");
 
-    setFieldValue('productId', option.prodId);
+setFieldValue('productId', option.prodId);
 
-    setprodIdd(option?.prodId)
-    console.log("opennnnnnnn");
+setprodIdd(option?.prodId)
+console.log("opennnnnnnn");
     setIsModalOpen(true);
     setIsSupplierModalOpen(false)
 
@@ -309,54 +272,26 @@ const AddOrder = () => {
 
 
 
-
+ 
   console.log(prodIdModal, "proddidmodal");
   // console.log("Initial Values: ", prodIdModal?.map(item => ({
   //   products: { id: item?.productId || "" },
   //   orderCategory: item?.orderCatagory || "",
   //   clientOrderQuantity: item?.clientOrderQuantity || "",
   // })));
-  const handleDeleteSupplier = (rowIndex, supplierIndex) => {
-    setSelectedSuppliers((prev) => {
-      const updated = [...prev];
-      const row = updated.find((row) => row.selectedRowId === rowIndex);
-
-      if (row) {
-        // Remove the supplier at supplierIndex
-        row.supplierIds.splice(supplierIndex, 1);
-
-        // If no suppliers remain for this row, remove the row completely
-        if (row.supplierIds.length === 0) {
-          return updated.filter((r) => r.selectedRowId !== rowIndex);
-        }
-      }
-
-      return updated;
-    });
-
-    // Optional: Reset the form field values for the deleted supplier
-    setFieldValue(`orderProducts[${rowIndex}].productSuppliers`, (prev) =>
-      prev.filter((_, idx) => idx !== supplierIndex)
-    );
-  };
-  const handleDeleteRow = (index) => {
-    const updatedRows = prodIdModal.filter((_, i) => i !== index);
-    setprodIdModal(updatedRows);
-  };
-
 
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Order/Create Order" />
       <div>
 
-
+        
         <Formik
           initialValues={{
             orderType: '',
             orderDate: '',
             shippingDate: '',
-            tagsAndLabels: '',
+            tags: '',
             logoNo: '',
             productId: '',
             clientInstruction: '',
@@ -400,25 +335,17 @@ const AddOrder = () => {
                 setFieldValue(`orderProducts[${index}].units`, item.units || "");
               });
             }, [prodIdModal, setFieldValue])
-
             useEffect(() => {
               // Automatically populate supplier fields for each product
               prodIdModal.forEach((_, productIndex) => {
-                const productSuppliers = selectedSuppliers.find(
-                  (supplierRow) => supplierRow.selectedRowId === productIndex
-                )?.supplierIds;
-
-                if (productSuppliers) {
-                  productSuppliers.forEach((supplier, supplierIndex) => {
-                    setFieldValue(
-                      `orderProducts[${productIndex}].productSuppliers[${supplierIndex}].supplier.id`,
-                      supplier?.supplierId?.id || "" // Ensure correct path to supplier ID
-                    );
-                  });
-                }
+                selectedSuppliers?.forEach((supplier, supplierIndex) => {
+                  setFieldValue(
+                    `orderProducts[${productIndex}].productSuppliers[${supplierIndex}].supplier.id`,
+                    supplier.id || ""
+                  );
+                });
               });
             }, [prodIdModal, selectedSuppliers, setFieldValue]);
-
 
 
 
@@ -580,9 +507,9 @@ const AddOrder = () => {
                         <div className="flex-1 min-w-[300px] mt-4">
                           <label className="mb-2.5 block text-black dark:text-white">Tags</label>
                           <ReactSelect
-                            name="tagsAndLabels"
+                            name="tags"
                             value={productgrp.find(option => option.value === values.tags)}
-                            onChange={(option) => setFieldValue('tagsAndLabels', option.value)}
+                            onChange={(option) => setFieldValue('tags', option.value)}
                             onBlur={handleBlur}
                             options={productgrp}
                             styles={customStyles}
@@ -590,7 +517,7 @@ const AddOrder = () => {
                             classNamePrefix="react-select"
                             placeholder="Select"
                           />
-                          <ErrorMessage name="tagsAndLabels" component="div" className="text-red-600 text-sm" />
+                          <ErrorMessage name="tags" component="div" className="text-red-600 text-sm" />
                         </div>
                       </div>
 
@@ -704,7 +631,7 @@ const AddOrder = () => {
 
                       )}
 
-
+                     
 
                       <div className="flex-1 min-w-[200px] mt-11">
                         <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
@@ -965,13 +892,7 @@ const AddOrder = () => {
 
                                     <td className="px-5 py-5   text-sm">
                                       <div >
-                                        <IoIosAdd size={30} onClick={() => {
-                                          setSelectedRowId(index)
-                                          openSupplierModal(item?.id, index)
-
-                                        }
-
-                                        } />
+                                        <IoIosAdd size={30} onClick={() => openSupplierModal(item?.id)} />
                                       </div>
                                     </td>
                                   </td>
@@ -1011,69 +932,46 @@ const AddOrder = () => {
                                             </tr>
                                           </thead>
                                           <tbody>
-                                            {selectedSuppliers
-                                              .find((supplierRow) => supplierRow.selectedRowId === index)
-                                              ?.supplierIds.map((supplier, supplierIndex) => (
-                                                <tr
-                                                  key={`supplier-row-${index}-${supplierIndex}`}
-                                                  className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3"
-                                                >
-                                                  {/* Supplier Name Field */}
-                                                  <td
-                                                    key={`supplier-${supplierIndex}`}
-                                                    className="px-5 py-5 border-b border-gray-200 text-sm"
-                                                  >
-                                                    <Field
-                                                      name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`}
-                                                      placeholder="Supplier Name"
-                                                      value={supplier?.supplierId?.supplierName || ""}
-                                                      onChange={(e) =>
-                                                        setFieldValue(
-                                                          `orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`,
-                                                          e.target.value
-                                                        )
-                                                      }
-                                                      className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                                                    />
-                                                    <ErrorMessage
-                                                      name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`}
-                                                      component="div"
-                                                      className="text-red-600 text-sm"
-                                                    />
-                                                  </td>
 
-                                                  {/* Supplier Quantity Field */}
-                                                  <td
-                                                    key={`quantity-${supplierIndex}`}
-                                                    className="px-5 py-5 border-b border-gray-200 text-sm"
-                                                  >
+                                            {selectedSuppliers?.map((supplier, supplierIndex) => (
+                                              <tr key={supplierIndex} className='bg-white dark:bg-slate-700 dark:text-white px-5 py-3'>
+                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                  <Field
+                                                    name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`}
+                                                    placeholder="Supplier Name"
+                                                    value={supplier.supplierName || ""}
+                                                    onChange={(e) =>
+                                                      setFieldValue(`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`, e.target.value)
+                                                    }
+                                                    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                                  />
+                                                  <ErrorMessage name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`} component="div" className="text-red-600 text-sm" />
+                                                </td>
+
+                                                <td className="px-5 py-5 border-b border-gray-200  text-sm">
+                                                  <div >
+
                                                     <Field
                                                       name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
                                                       placeholder="Supplier Quantity"
                                                       className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                                     />
-                                                    <ErrorMessage
-                                                      name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
-                                                      component="div"
-                                                      className="text-red-600 text-sm"
-                                                    />
-                                                  </td>
+                                                    <ErrorMessage name="quantity" component="div" className="text-red-600 text-sm" />
+                                                  </div>
 
-                                                  {/* Delete Button */}
-                                                  <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                    < MdDelete size={20} className='text-red-500 ' onClick={() => handleDeleteSupplier(index, supplierIndex)} />
+                                                </td>
+                                                <td className="px-5 py-5  border-b border-gray-200  text-sm">
+                                                  <p className="flex text-gray-900 whitespace-no-wrap">
+                                                    {/* <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={(e) => handleUpdate(e, item)} title='Edit Unit' />  | */}
+                                                    <FiTrash2 size={17} className='text-red-500  hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Unit' />
+                                                  </p>
+                                                </td>
+                                              </tr>
+                                            ))}
 
-                                                  </td>
-                                                </tr>
-                                              ))}
+
+
                                           </tbody>
-
-
-
-
-
-
-
                                         </table>
                                       </div>
                                     </div>
@@ -1081,15 +979,7 @@ const AddOrder = () => {
                                   {/* <td className="px-5 py-5 border-b border-gray-200  text-sm">
                                   <p className="text-gray-900 whitespace-no-wrap">{item?.orderType?.orderTypeName}</p>
                                 </td> */}
-                                
-                                    <td className="px-5 py-5 border-b items-center justify-center mt-[100px]">
-
-                                      <MdDelete className='text-red-700' size={30} onClick={() => handleDeleteRow(index)} />
-
-                                    </td>
-                                
                                 </tr>
-
 
                               ))}
 
@@ -1151,7 +1041,6 @@ const AddOrder = () => {
         {isSupplierModalOpen && (
           <SupplierModal
             suppliers={suppliers}
-            selectedRowId={selectedRowId}
             id={suppId}
             selectedSuppliers={selectedSuppliers}
             handleCheckboxChange={handleCheckboxChange}
