@@ -17,6 +17,7 @@ import SupplierModal from './SupplierModal';
 import { FiTrash2 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
+import { customStyles as createCustomStyles } from '../../Constants/utils';
 const AddOrder = () => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const [supplierSelections, setSupplierSelections] = useState({});
@@ -210,27 +211,8 @@ const AddOrder = () => {
     { value: 'Retail-Delhi', label: 'Retail-Delhi' },
     { value: 'Retail-SXR', label: 'Retail-SXR' },
   ];
-
-  const customStyles = {
-    control: (provided) => ({
-      ...provided,
-      minHeight: '50px',
-      fontSize: '16px',
-    }),
-    valueContainer: (provided) => ({
-      ...provided,
-      padding: '10px 14px',
-    }),
-    input: (provided) => ({
-      ...provided,
-      fontSize: '16px',
-    }),
-    singleValue: (provided) => ({
-      ...provided,
-      fontSize: '16px',
-    }),
-  };
-
+  const theme = useSelector(state => state?.persisted?.theme);
+  const customStyles = createCustomStyles(theme?.mode);
   // const validationSchema = Yup.object().shape({
   //   orderType: Yup.string().required('Order Type is required'),
   //   orderDate: Yup.date().required('Order Date is required'),
@@ -420,20 +402,23 @@ const AddOrder = () => {
             }, [prodIdModal, selectedSuppliers, setFieldValue]);
 
 
-
-
-
-
-
             return (
               <Form>
                 <div className="flex flex-col gap-9">
                   {/* Form fields */}
                   <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                      <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                        Add Order
+                      <h3
+                        className="font-medium text-slate-500 text-center text-xl dark:text-white"
+                        style={{
+                          fontFamily: "'Poppins', sans-serif",
+                          letterSpacing: '0.05em',
+                          marginBottom: '1rem',
+                        }}
+                      >
+                        ADD ORDER
                       </h3>
+
                     </div>
                     <div className="p-6.5">
                       <div className="flex flex-wrap gap-4">
@@ -856,6 +841,7 @@ const AddOrder = () => {
                                     <div >
 
                                       <Field
+                                      type="number"
                                         name={`orderProducts[${index}].clientOrderQuantity`}
                                         // value={item?.productId}
                                         placeholder="Enter Client Order Qty"
@@ -887,6 +873,8 @@ const AddOrder = () => {
                                       <Field
                                         name={`orderProducts[${index}].inStockQuantity`}
                                         // value={item?.productId}
+                                        type="number"
+                                        
                                         placeholder="Enter In Stock Qty"
                                         className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                       />
@@ -913,6 +901,7 @@ const AddOrder = () => {
                                       <Field
                                         name={`orderProducts[${index}].quantityToManufacture`}
                                         // value={item?.productId}
+                                        type="number"
                                         placeholder="Enter Qty To Manufacture"
                                         className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                       />
@@ -927,6 +916,7 @@ const AddOrder = () => {
                                       <Field
                                         name={`orderProducts[${index}].value`}
                                         // value={item?.productId}
+                                        type="number"
                                         placeholder="Enter Value"
                                         className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                       />
@@ -1050,6 +1040,7 @@ const AddOrder = () => {
                                                     <Field
                                                       name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
                                                       placeholder="Supplier Quantity"
+                                                      type="number"
                                                       className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                                     />
                                                     <ErrorMessage
@@ -1081,13 +1072,13 @@ const AddOrder = () => {
                                   {/* <td className="px-5 py-5 border-b border-gray-200  text-sm">
                                   <p className="text-gray-900 whitespace-no-wrap">{item?.orderType?.orderTypeName}</p>
                                 </td> */}
-                                
-                                    <td className="px-5 py-5 border-b items-center justify-center mt-[100px]">
 
-                                      <MdDelete className='text-red-700' size={30} onClick={() => handleDeleteRow(index)} />
+                                  <td className="px-5 py-5 border-b items-center justify-center mt-[100px]">
 
-                                    </td>
-                                
+                                    <MdDelete className='text-red-700' size={30} onClick={() => handleDeleteRow(index)} />
+
+                                  </td>
+
                                 </tr>
 
 
@@ -1161,6 +1152,7 @@ const AddOrder = () => {
         )}
 
         <Modall
+        setIsModalOpen={setIsModalOpen}
           isOpen={isModalOpen}
           onRequestClose={() => setIsModalOpen(false)}
           prodIdd={prodIdd}
