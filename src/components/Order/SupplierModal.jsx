@@ -36,9 +36,7 @@ const SupplierModal = ({
 
     getSupplier();
   }, [id, token]);
-  console.log(supplierList,'supplierlisttttt');
-  console.log(selectedSuppliers,'selectedSuppliers');
-  console.log(selectedRowId,'selectedRowId'); 
+
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">

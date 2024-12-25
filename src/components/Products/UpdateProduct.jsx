@@ -115,7 +115,7 @@ const UpdateProduct = () => {
         const product = {
             ...values,
             productGroup: { id: values.productGroup?.id || 0 },
-            supplier: { id: values.supplier?.id || 0 },
+            supplier: values.supplier?.map((supplier) => ({ id: supplier.id })) || [],
             supplierCode: { id: values.supplierCode?.id || 0 },
         };
 

@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GET_IMAGE } from '../../Constants/utils';
 import { useNavigate, useNavigation } from 'react-router-dom';
 
-const Modall = ({ isOpen,setIsModalOpen, onRequestClose, onSubmit, prodIdd, width = "400px", height = "auto", GET_PRODUCTBYID_URL }) => {
+const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, width = "400px", height = "auto", GET_PRODUCTBYID_URL }) => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const { token } = currentUser;
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ const Modall = ({ isOpen,setIsModalOpen, onRequestClose, onSubmit, prodIdd, widt
 
 
       setproducts(data);
-      console.log(data,"datsaaaaa");
+     
 
     } catch (error) {
       console.error(error);
@@ -72,7 +72,7 @@ const Modall = ({ isOpen,setIsModalOpen, onRequestClose, onSubmit, prodIdd, widt
 
   const handleSubmit = (values) => {
     onSubmit(values);
-    console.log(values, "vall"); // The submitted data
+  
     // You can now send this data to your API
   };
 
@@ -99,10 +99,10 @@ const Modall = ({ isOpen,setIsModalOpen, onRequestClose, onSubmit, prodIdd, widt
             onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
           >
             <button
-            
+
               className="absolute text-2xl top-0 right-0 m-3 text-gray-600 hover:text-gray-800 dark:text-red-600"
               onClick={handleBackdropClick}
-             
+
             >
               &times;
             </button>
@@ -118,7 +118,7 @@ const Modall = ({ isOpen,setIsModalOpen, onRequestClose, onSubmit, prodIdd, widt
                 barCode: products?.barcode || '',
                 orderCatagory: products.orderCatagory || '',
                 weight: products.finishedWeight || '',
-                units:  '',
+                units: '',
                 colorGroup: products?.colors?.colorName || '',
                 warpColors: products.warpColors || '',
                 weftColors: products.weftColors || '',
@@ -136,7 +136,7 @@ const Modall = ({ isOpen,setIsModalOpen, onRequestClose, onSubmit, prodIdd, widt
                 const errors = {};
 
                 if (!values.orderCatagory) {
-            
+
                   errors.orderCatagory = 'Order Category is required';
                 }
                 if (!values.units) {
@@ -260,6 +260,7 @@ const Modall = ({ isOpen,setIsModalOpen, onRequestClose, onSubmit, prodIdd, widt
                         <label htmlFor="colorName" className="mb-2">Color Name</label>
                         <Field
                           type="text"
+                          disabled
                           id="colorName"
                           value={products?.colorName}
                           name="colorName"
@@ -347,6 +348,7 @@ const Modall = ({ isOpen,setIsModalOpen, onRequestClose, onSubmit, prodIdd, widt
                         <Field
                           type="text"
                           id="weft"
+                          disabled
                           value={products?.weftColors}
                           name="weft"
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -358,6 +360,7 @@ const Modall = ({ isOpen,setIsModalOpen, onRequestClose, onSubmit, prodIdd, widt
                         <Field
                           type="text"
                           id="weave"
+                          disabled
                           value={products?.weave}
                           name="weave"
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -369,6 +372,7 @@ const Modall = ({ isOpen,setIsModalOpen, onRequestClose, onSubmit, prodIdd, widt
                         <Field
                           type="text"
                           id="WarpYarn"
+                          disabled
                           value={products?.warpYarn}
                           name="WarpYarn"
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -380,6 +384,7 @@ const Modall = ({ isOpen,setIsModalOpen, onRequestClose, onSubmit, prodIdd, widt
                         <Field
                           type="text"
                           id="WeftYarn"
+                          disabled
                           value={products?.weftYarn}
                           name="WeftYarn"
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -391,6 +396,7 @@ const Modall = ({ isOpen,setIsModalOpen, onRequestClose, onSubmit, prodIdd, widt
                         <Field
                           type="text"
                           id="pic"
+                          disabled
 
                           value={products?.pixAndReed}
 
@@ -405,6 +411,7 @@ const Modall = ({ isOpen,setIsModalOpen, onRequestClose, onSubmit, prodIdd, widt
                           type="text"
                           id="deying"
                           name="deying"
+                          disabled
                           value={products?.dyeingCost}
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
@@ -468,7 +475,7 @@ const Modall = ({ isOpen,setIsModalOpen, onRequestClose, onSubmit, prodIdd, widt
                     </div>
 
 
-                            <label>Reference Images</label>
+                    <label>Reference Images</label>
                     <div className="flex mt-5 gap-3 ">
 
                       <div className=" flex-1 p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-black dark:border-strokedark flex flex-row">
@@ -516,7 +523,7 @@ const Modall = ({ isOpen,setIsModalOpen, onRequestClose, onSubmit, prodIdd, widt
 
 
                       <div className=" flex-1 p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-black dark:border-strokedark flex flex-row">
-                     
+
                         {/* Grid Layout */}
                         <div className="flex flex-col grid-cols-3">
 
@@ -537,8 +544,8 @@ const Modall = ({ isOpen,setIsModalOpen, onRequestClose, onSubmit, prodIdd, widt
                               </>
                             ))}
                             {/* Cancel Button */}
-                           
-                          
+
+
                           </div>
 
                         </div>
@@ -554,15 +561,42 @@ const Modall = ({ isOpen,setIsModalOpen, onRequestClose, onSubmit, prodIdd, widt
 
                     <div className="mb-6">
                       <label className="mb-2.5 block text-black dark:text-white mt-7">Supplier</label>
-                      <Field
-type="select"
-                        name="weiver"
-                        styles={customStyles}
-                        value={products?.supplier?.name}
-                        disabled
-                        placeholder="Type your message"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:bg-black dark:border-form-strokedark dark:bg-form-input dark:text-black dark:focus:border-primary"
+                      <ReactSelect
+                        isMulti // Allow multiple selections
+                        name="supplier"
+                        value={
+                          products?.supplier?.map((supplier) => ({
+                            value: supplier.id,
+                            label: supplier.name,
+                          })) || []
+                        }
+                        isDisabled // Make the select field read-only
+                        options={products?.supplier?.map((supplier) => ({
+                          value: supplier.id,
+                          label: supplier.name,
+                        })) || []}
+                        placeholder="Select Supplier"
+                        styles={{
+                          control: (base) => ({
+                            ...base,
+                            backgroundColor: "rgba(226, 232, 240)", // Example for light bg
+                            borderColor: "#CBD5E1", // Stroke color
+                            color: "black",
+                            cursor: "not-allowed",
+                          }),
+                          singleValue: (base) => ({
+                            ...base,
+                            color: "black",
+                          }),
+                          multiValue: (base) => ({
+                            ...base,
+                            backgroundColor: "#CBD5E1",
+                          }),
+                        }}
+                        classNamePrefix="react-select"
+                        className="w-full rounded border-[1.5px] bg-slate-200 py-2 px-5 text-black dark:text-white transition dark:bg-black dark:border-form-strokedark"
                       />
+
                     </div>
 
                     <div className="mb-6">
@@ -574,14 +608,14 @@ type="select"
                         value={products?.supplierCode?.supplierCode}
                         name="weiverCode"
                         placeholder="Type your message"
-                        className="w-full dark:bg-black rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary dark:text-white active:border-primary disabled:cursor-default dark:border-form-strokedark  dark:text-black dark:focus:border-primary"
+                        className="w-full dark:bg-black bg-slate-200 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary dark:text-white active:border-primary disabled:cursor-default dark:border-form-strokedark  dark:text-black dark:focus:border-primary"
                       />
                     </div>
 
 
                     <div className="flex justify-end mt-6">
                       <button
-                        onSubmit={(e) => console.log("heyyyyy")}
+                        // onSubmit={(e) => console.log("heyyyyy")}
                         type="submit"
                         className="px-4 py-2 bg-blue-500 text-white rounded"
                         disabled={isSubmitting}
