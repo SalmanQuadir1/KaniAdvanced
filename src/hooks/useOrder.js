@@ -117,24 +117,42 @@ useEffect(() => {
             toast.error("Failed to fetch orderType");
         }
     };
+    // const getprodId = async () => {
+    //     try {
+    //         const response = await fetch(`${GET_PRODUCTIDD_URL}/all-productsIds`, {
+    //             method: "GET",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 "Authorization": `Bearer ${token}`
+    //             }
+    //         });
+    //         const data = await response.json();
+    //         console.log(data,"dataaaaaassss");
+    //         setproductId(data);
+          
+    //     } catch (error) {
+    //         console.error(error);
+    //         toast.error("Failed to fetch orderType");
+    //     }
+    // };
     const getprodId = async () => {
         try {
-            const response = await fetch(`${GET_PRODUCTIDD_URL}/all-productsIds`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                }
-            });
-            const data = await response.json();
-            console.log(data,"dataaaaaassss");
-            setproductId(data);
-          
+          const response = await fetch(`${GET_PRODUCTIDD_URL}/all-productsIds`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`,
+            },
+          });
+          const data = await response.json();
+          console.log(data, "Fetched Product IDs");
+          setproductId(data); // Update the state with fetched data
         } catch (error) {
-            console.error(error);
-            toast.error("Failed to fetch orderType");
+          console.error(error);
+          toast.error("Failed to fetch Product IDs");
         }
-    };
+      };
+      
 
 
 
