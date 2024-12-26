@@ -38,7 +38,8 @@ useEffect(() => {
     }, []);
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-        console.log(values, "logg");
+        console.log(values,"valuuuueee");
+      
         try {
             const url =`${ADD_ORDER_URL}` ;
             const method =  "POST";
@@ -56,6 +57,7 @@ useEffect(() => {
             if (response.ok) {
                 toast.success(`Order Added successfully`);
                 resetForm();
+                navigate("/Order/addOrder")
                
                 // getSize(pagination.currentPage); // Fetch updated Size
             } else {
