@@ -115,7 +115,7 @@ const UpdateProduct = () => {
         const product = {
             ...values,
             productGroup: { id: values.productGroup?.id || 0 },
-            supplier: values.supplier.map((supp) => ({ id: supp.id })),
+            supplier: values?.supplier?.map((supp) => ({ id: supp?.id })),
             supplierCode: { id: values.supplierCode?.id || 0 },
         };
         console.log(product,'jugnioo');
@@ -390,7 +390,7 @@ const UpdateProduct = () => {
             productDescription: values.productDescription || "",
             supplier: {
                 // name: values.supplier?.name || ""
-                id: values.supplier?.id,
+                id: values?.supplier?.id,
             },
             supplierCode: {
                 // supplierCode: values.supplierCode?.supplierCode || ""
@@ -2080,7 +2080,7 @@ const UpdateProduct = () => {
                                                         <ReactSelect
                                                             isMulti
                                                             name="supplier"
-                                                            value={values.supplier} // Use values.supplier directly
+                                                            value={values?.supplier?.name} // Use values.supplier directly
                                                             onChange={(selectedOptions) => {
                                                                 setFieldValue(
                                                                     'supplier',
