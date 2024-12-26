@@ -296,7 +296,7 @@ const AddOrder = () => {
   // console.log("Initial Values: ", prodIdModal?.map(item => ({
   //   products: { id: item?.productId || "" },
   //   orderCategory: item?.orderCatagory || "",
-  //   clientOrderQuantity: item?.clientOrderQuantity || "",
+  //   orderQuantity: item?.orderQuantity || "",
   // })));
   const handleDeleteSupplier = (rowIndex, supplierIndex) => {
     setSelectedSuppliers((prev) => {
@@ -343,11 +343,13 @@ const AddOrder = () => {
             productId: '',
             clientInstruction: '',
             customer: '',
+            purchaseOrderNo:"",
+            customisationDetails:"",
 
             orderProducts: [{
               products: { id: '' },
               orderCategory: '',
-              clientOrderQuantity: '',
+              orderQuantity: '',
               units: '',
               value: '',
               inStockQuantity: '',
@@ -378,7 +380,7 @@ const AddOrder = () => {
               prodIdModal.forEach((item, index) => {
                 setFieldValue(`orderProducts[${index}].products.id`, item?.id || "");
                 setFieldValue(`orderProducts[${index}].orderCategory`, item.orderCatagory || "");
-                setFieldValue(`orderProducts[${index}].clientOrderQuantity`, item.clientOrderQuantity || "");
+                setFieldValue(`orderProducts[${index}].orderQuantity`, item.orderQuantity || "");
                 setFieldValue(`orderProducts[${index}].units`, item.units || "");
               });
             }, [prodIdModal, setFieldValue])
@@ -506,7 +508,7 @@ const AddOrder = () => {
                                 <div className="flex-1 min-w-[200px] mt-7">
                                   <label className="mb-2.5 block text-black dark:text-white">Customer Purchase Order No</label>
                                   <Field
-                                    name="purchaseOrder"
+                                    name="purchaseOrderNo"
                                     placeholder="Enter Prchase Order"
                                     className="bg-white dark:bg-form-input w-full rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                   />
@@ -861,7 +863,7 @@ const AddOrder = () => {
                                         }}
                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                       />
-                                      <ErrorMessage name="orderCatagory" component="div" className="text-red-600 text-sm" />
+                                      <ErrorMessage name="orderCategory" component="div" className="text-red-600 text-sm" />
                                     </div>
                                   </td>
 
@@ -873,7 +875,7 @@ const AddOrder = () => {
 
                                       <Field
                                         type="number"
-                                        name={`orderProducts[${index}].clientOrderQuantity`}
+                                        name={`orderProducts[${index}].orderQuantity`}
                                         // value={item?.productId}
                                         placeholder="Enter Client Order Qty"
                                         className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
