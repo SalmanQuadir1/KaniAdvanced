@@ -343,8 +343,8 @@ const AddOrder = () => {
             productId: '',
             clientInstruction: '',
             customer: '',
-            purchaseOrderNo:"",
-            customisationDetails:"",
+            purchaseOrderNo: "",
+            customisationDetails: "",
 
             orderProducts: [{
               products: { id: '' },
@@ -517,22 +517,22 @@ const AddOrder = () => {
                                 <div className="flex-1 min-w-[200px] mt-7">
                                   <label className="mb-2.5 block text-black dark:text-white">PO Date</label>
                                   <Field name="poDate">
-                              {({ field, form }) => (
-                                <ReactDatePicker
-                                  {...field}
-                                  selected={(field.value && new Date(field.value)) || null}
-                                  onChange={(date) =>
-                                    form.setFieldValue(
-                                      "poDate",
-                                      date ? date.toISOString().split("T")[0] : "" // Format to yyyy-MM-dd
-                                    )
-                                  }
-                                  dateFormat="yyyy-MM-dd" // Display format in the picker
-                                  placeholderText="Select Purchase Order Date"
-                                  className="form-datepicker w-[430px] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                />
-                              )}
-                            </Field>
+                                    {({ field, form }) => (
+                                      <ReactDatePicker
+                                        {...field}
+                                        selected={(field.value && new Date(field.value)) || null}
+                                        onChange={(date) =>
+                                          form.setFieldValue(
+                                            "poDate",
+                                            date ? date.toISOString().split("T")[0] : "" // Format to yyyy-MM-dd
+                                          )
+                                        }
+                                        dateFormat="yyyy-MM-dd" // Display format in the picker
+                                        placeholderText="Select Purchase Order Date"
+                                        className="form-datepicker w-[430px] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                      />
+                                    )}
+                                  </Field>
                                   <ErrorMessage name="poDate" component="div" className="text-red-600 text-sm" />
                                 </div>
                               </div>
@@ -572,26 +572,28 @@ const AddOrder = () => {
                           )
                         );
                       })()}
+
+
                       <div className="flex flex-wrap gap-4">
                         <div className="flex-1 min-w-[300px] mt-4">
                           <label className="mb-2.5 block text-black dark:text-white">Shipping Date</label>
                           <Field name="shippingDate">
-                              {({ field, form }) => (
-                                <ReactDatePicker
-                                  {...field}
-                                  selected={(field.value && new Date(field.value)) || null}
-                                  onChange={(date) =>
-                                    form.setFieldValue(
-                                      "shippingDate",
-                                      date ? date.toISOString().split("T")[0] : "" // Format to yyyy-MM-dd
-                                    )
-                                  }
-                                  dateFormat="yyyy-MM-dd" // Display format in the picker
-                                  placeholderText="Select Order Date"
-                                  className="form-datepicker w-[430px] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                />
-                              )}
-                            </Field>
+                            {({ field, form }) => (
+                              <ReactDatePicker
+                                {...field}
+                                selected={(field.value && new Date(field.value)) || null}
+                                onChange={(date) =>
+                                  form.setFieldValue(
+                                    "shippingDate",
+                                    date ? date.toISOString().split("T")[0] : "" // Format to yyyy-MM-dd
+                                  )
+                                }
+                                dateFormat="yyyy-MM-dd" // Display format in the picker
+                                placeholderText="Select Order Date"
+                                className="form-datepicker w-[430px] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                              />
+                            )}
+                          </Field>
                           <ErrorMessage name="shippingDate" component="div" className="text-red-600 text-sm" />
                         </div>
 
@@ -961,26 +963,40 @@ const AddOrder = () => {
 
                                     <div >
 
-                                      <Field
-                                        type="date"
-                                        name={`orderProducts[${index}].clientShippingDate`}
 
-                                        placeholder="Enter Client Shipping Date"
-                                        className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                                      />
+                                      <div
+                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus-within:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus-within:border-primary"
+                                        onClick={(e) => e.stopPropagation()} // Prevents event bubbling
+                                      >
+                                        <ReactDatePicker
+                                          selected={values.orderProducts[index]?.clientShippingDate || null}
+                                          onChange={(date) => setFieldValue(`orderProducts[${index}].clientShippingDate`, date ? date.toISOString().split("T")[0] : "")}
+                                          dateFormat="yyyy-MM-dd"
+                                          placeholderText="Enter Client Shipping Date"
+                                          className="w-full bg-transparent outline-none"
+                                          wrapperClassName="w-full"
+                                        />
+                                      </div>
+
                                       <ErrorMessage name="ClientShippingDate" component="div" className="text-red-600 text-sm" />
                                     </div>
                                   </td>
                                   <td className="px-5 py-5 border-b border-gray-200  text-sm">
                                     <div >
+                                      <div
+                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus-within:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus-within:border-primary"
+                                        onClick={(e) => e.stopPropagation()} // Prevents event bubbling
+                                      >
 
-                                      <Field
-                                        type="date"
-                                        name={`orderProducts[${index}].expectedDate`}
-
-                                        placeholder="Enter Expected Date"
-                                        className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                                      />
+                                        <ReactDatePicker
+                                          selected={values.orderProducts[index]?.expectedDate || null}
+                                          onChange={(date) => setFieldValue(`orderProducts[${index}].expectedDate`, date ? date.toISOString().split("T")[0] : "")}
+                                          dateFormat="yyyy-MM-dd"
+                                          placeholderText="Enter Client expected Date"
+                                          className="w-full bg-transparent outline-none"
+                                          wrapperClassName="w-full"
+                                        />
+                                      </div>
                                       <ErrorMessage name="ExpectedDate" component="div" className="text-red-600 text-sm" />
                                     </div>
                                   </td>
@@ -1139,20 +1155,31 @@ const AddOrder = () => {
                         <ErrorMessage name="clientInstruction" component="div" className="text-red-600 text-sm" />
                       </div>
 
-                      {(values.orderType.orderTypeName === "RetailClients" || values.orderType.orderTypeName === "WSClients") && (
-                        <div className="flex-1 min-w-[200px] mt-11">
-                          <label className="mb-2.5 block text-black dark:text-white">Customisation Details</label>
-                          <Field
-                            as="textarea"
-                            name="customisationDetails"
-                            placeholder="Enter client instruction"
-                            className="bg-white dark:bg-form-input w-full rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                          />
-                          <ErrorMessage name="customisationDetails" component="div" className="text-red-600 text-sm" />
-                        </div>
+                      {(() => {
+                        const selectedOrderType = orderTypeOptions.find(
+                          (option) => option.value === values.orderType?.id
+                        );
 
+                        return (
+                          selectedOrderType &&
+                          (selectedOrderType.label === "RetailClients" || selectedOrderType.label === "WSClients") && (
 
-                      )}
+                            <div className="flex-1 min-w-[200px] mt-11">
+                            <label className="mb-2.5 block text-black dark:text-white">Customisation Details</label>
+                            <Field
+                              as="textarea"
+                              name="customisationDetails"
+                              placeholder="Enter client instruction"
+                              className="bg-white dark:bg-form-input w-full rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                            />
+                            <ErrorMessage name="customisationDetails" component="div" className="text-red-600 text-sm" />
+                          </div>
+
+                          )
+                        );
+                      })()}
+
+                   
 
 
 
@@ -1161,7 +1188,7 @@ const AddOrder = () => {
                         className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4"
                         disabled={isSubmitting}
                       >
-                        Add Order Group
+                        Add Order
                       </button>
                     </div>
                   </div>
