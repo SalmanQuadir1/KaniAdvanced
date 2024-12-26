@@ -48,7 +48,7 @@ const UpdateOrder = () => {
 
 
   const handleCheckboxChange = (supplierId) => {
-    console.log(supplierId, "shahumer");
+    console.log(supplierId, "sssspppp");
     setSelectedSuppliers((prev) =>
       prev.includes(supplierId)
         ? prev.filter((id) => id !== supplierId) // Remove if already selected
@@ -306,6 +306,8 @@ const UpdateOrder = () => {
             units: order?.orderProducts?.[0]?.units || '',
             clientShippingDate: order?.orderProducts?.[0]?.clientShippingDate || '',
             expectedDate: order?.orderProducts?.[0]?.expectedDate || '',
+            supplierName: order?.orderProducts?.[0]?.productSuppliers?.[0]?.supplier?.name || '',
+            supplierOrderQty: order?.orderProducts?.[0]?.productSuppliers?.[0]?.supplierOrderQty || 0, // Safely accessing supplierOrderQty
 
             //productId: order?.productId || '',
             // productId: order?.orderProducts?.products?.productId || '',
@@ -801,14 +803,14 @@ const UpdateOrder = () => {
                                     <ErrorMessage name="ExpectedDate" component="div" className="text-red-600 text-sm" />
                                   </div>
                                 </td>
-                                {/* <td className="px-5 py-5 border-b border-gray-200  text-sm">
+                                <td className="px-5 py-5 border-b border-gray-200  text-sm">
 
                                   <td className="px-5 py-5   text-sm">
                                     <div >
                                       <IoIosAdd size={30} onClick={() => openSupplierModal(item?.id)} />
                                     </div>
                                   </td>
-                                </td> */}
+                                </td>
 
 
 
@@ -849,9 +851,10 @@ const UpdateOrder = () => {
                                                                                         <tr >
                                                                                           <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                                             <Field
-                                                                                              name="employeeName"
+                                                                                              name="supplierName"
                                                                                               placeholder="Supplier Name"
                                                                                               // value={supplier.supplierName || ""}
+                                                                                              value={values.supplierName}
                                                                                               // onChange={(e) =>
                                                                                               //   setFieldValue(`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`, e.target.value)
                                                                                               // }
@@ -867,6 +870,7 @@ const UpdateOrder = () => {
                                                                                                 name="supplierQuantity"
                                                                                                 placeholder="Supplier Quantity"
                                                                                                 className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                                                                                value={values.supplierOrderQty}                                                                                              
                                                                                               />
                                                                                               {/* <ErrorMessage name="quantity" component="div" className="text-red-600 text-sm" /> */}
                                                                                             </div>
@@ -881,11 +885,18 @@ const UpdateOrder = () => {
                                                                                         </tr>
                                                                                       {/* ))} */}
 
+
+
+
+
                                         </tbody>
                                       </table>
                                     </div>
                                   </div>
                                 </td>
+
+
+                                
                                 {/* <td className="px-5 py-5 border-b border-gray-200  text-sm">
                                   <p className="text-gray-900 whitespace-no-wrap">{item?.orderType?.orderTypeName}</p>
                                 </td> */}
