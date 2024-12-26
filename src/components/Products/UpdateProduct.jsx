@@ -115,9 +115,10 @@ const UpdateProduct = () => {
         const product = {
             ...values,
             productGroup: { id: values.productGroup?.id || 0 },
-            supplier: values.supplier?.map((supplier) => ({ id: supplier.id })) || [],
+            supplier: values.supplier.map((supp) => ({ id: supp.id })),
             supplierCode: { id: values.supplierCode?.id || 0 },
         };
+        console.log(product,'jugnioo');
 
         // Append product data as JSON
         formData.append("product", JSON.stringify(product));
@@ -453,7 +454,10 @@ const UpdateProduct = () => {
                         fabricCode: product?.fabricCode || '',
                         fabricCost: product?.fabricCost || '',
                         productStatus: product?.productStatus || '',
-                        supplier: product?.supplier || { id: 0 },
+                        supplier: product?.supplier?.map((supp) => ({
+                            value: supp.id,
+                            label: supp.name,
+                        })) || [],
                         supplierCode: product?.supplierCode || { id: 0 },
                         embroideryCost: product?.embroideryCost || '',
                         totalCost: product?.totalCost || '',
@@ -2074,23 +2078,20 @@ const UpdateProduct = () => {
                                                     </label>
                                                     <div className="z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
-                                                            isMulti // Enable multi-selection
+                                                            isMulti
                                                             name="supplier"
-                                                            value={product?.supplier?.map((selectedSupplier) => ({
-                                                                value: selectedSupplier.id,
-                                                                label: supplierNameOptions.find(option => option.value === selectedSupplier.id)?.label || 'Unknown',
-                                                            })) || []} // Map selected supplier IDs to ReactSelect format
+                                                            value={values.supplier} // Use values.supplier directly
                                                             onChange={(selectedOptions) => {
                                                                 setFieldValue(
                                                                     'supplier',
-                                                                    selectedOptions?.map(option => ({
-                                                                        id: option.value, // Map to your desired structure
-                                                                        name: option.label, // Include other fields if needed
-                                                                    })) || [] // Handle empty selection
+                                                                    selectedOptions.map((option) => ({
+                                                                        id: option.value, // Map to backend-friendly format
+                                                                        name: option.label,
+                                                                    }))
                                                                 );
                                                             }}
                                                             options={supplierNameOptions}
-                                                            styles={customStyles} // Pass custom styles here
+                                                            styles={customStyles}
                                                             className="bg-white dark:bg-form-Field"
                                                             classNamePrefix="react-select"
                                                             placeholder="Select Supplier Name"
