@@ -470,7 +470,7 @@ const AddOrder = () => {
                                 />
                               )}
                             </Field>
-                          </div>;
+                          </div>
                           <ErrorMessage name="orderDate" component="div" className="text-red-600 text-sm" />
                         </div>
                       </div>
