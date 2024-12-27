@@ -325,6 +325,7 @@ hsnCodes:"",
     };
 
     const handleUpdate = (e, item) => {
+        console.log(item,"jjhh");
        
         e.preventDefault();
         if (item && item.id) {

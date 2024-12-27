@@ -182,7 +182,7 @@ function App() {
             path="/Order/addOrder"
             element={
               <>
-                <PageTitle title="Calendar " />
+                <PageTitle title="Add Order" />
                 <AddOrder />
               </>
             }

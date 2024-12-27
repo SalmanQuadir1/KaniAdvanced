@@ -112,13 +112,15 @@ const UpdateProduct = () => {
         const formData = new FormData();
 
         // Map the necessary fields to create the product object
+        console.log(values, "umershahkkk");
         const product = {
             ...values,
             productGroup: { id: values.productGroup?.id || 0 },
             supplier: values?.supplier?.map((supp) => ({ id: supp?.id })),
             supplierCode: { id: values.supplierCode?.id || 0 },
         };
-        console.log(product,'jugnioo');
+
+        console.log(product, 'jugnioo');
 
         // Append product data as JSON
         formData.append("product", JSON.stringify(product));
@@ -454,10 +456,7 @@ const UpdateProduct = () => {
                         fabricCode: product?.fabricCode || '',
                         fabricCost: product?.fabricCost || '',
                         productStatus: product?.productStatus || '',
-                        supplier: product?.supplier?.map((supp) => ({
-                            value: supp.id,
-                            label: supp.name,
-                        })) || [],
+                        supplier: product?.supplier,
                         supplierCode: product?.supplierCode || { id: 0 },
                         embroideryCost: product?.embroideryCost || '',
                         totalCost: product?.totalCost || '',
@@ -2080,15 +2079,26 @@ const UpdateProduct = () => {
                                                         <ReactSelect
                                                             isMulti
                                                             name="supplier"
-                                                            value={values?.supplier?.name} // Use values.supplier directly
+                                                            value={values?.supplier?.map((supp) => ({
+                                                                value: supp.id, // Map to value
+                                                                label: supp.name, // Map to label
+                                                            }))} // Correctly map both value and label
                                                             onChange={(selectedOptions) => {
-                                                                setFieldValue(
-                                                                    'supplier',
-                                                                    selectedOptions.map((option) => ({
-                                                                        id: option.value, // Map to backend-friendly format
-                                                                        name: option.label,
-                                                                    }))
-                                                                );
+                                                                const existingSuppliers = values.supplier || [];
+                                                                const newSuppliers = selectedOptions.map((option) => ({
+                                                                    id: option.value,
+                                                                    name: option.label,
+                                                                }));
+
+                                                                const mergedSuppliers = [
+                                                                    ...existingSuppliers,
+                                                                    ...newSuppliers.filter(
+                                                                        (newSupplier) =>
+                                                                            !existingSuppliers.some((existing) => existing.id === newSupplier.id)
+                                                                    ),
+                                                                ];
+
+                                                                setFieldValue('supplier', mergedSuppliers);
                                                             }}
                                                             options={supplierNameOptions}
                                                             styles={customStyles}
@@ -2096,6 +2106,7 @@ const UpdateProduct = () => {
                                                             classNamePrefix="react-select"
                                                             placeholder="Select Supplier Name"
                                                         />
+
                                                     </div>
 
                                                 </div>
