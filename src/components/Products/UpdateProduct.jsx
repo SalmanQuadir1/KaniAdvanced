@@ -2084,21 +2084,16 @@ const UpdateProduct = () => {
                                                                 label: supp.name, // Map to label
                                                             }))} // Correctly map both value and label
                                                             onChange={(selectedOptions) => {
-                                                                const existingSuppliers = values.supplier || [];
-                                                                const newSuppliers = selectedOptions.map((option) => ({
+                                                                console.log(selectedOptions, "selected options");
+
+                                                                // Map selected options to the supplier format
+                                                                const updatedSuppliers = selectedOptions.map((option) => ({
                                                                     id: option.value,
                                                                     name: option.label,
                                                                 }));
 
-                                                                const mergedSuppliers = [
-                                                                    ...existingSuppliers,
-                                                                    ...newSuppliers.filter(
-                                                                        (newSupplier) =>
-                                                                            !existingSuppliers.some((existing) => existing.id === newSupplier.id)
-                                                                    ),
-                                                                ];
-
-                                                                setFieldValue('supplier', mergedSuppliers);
+                                                                // Set the updated suppliers directly
+                                                                setFieldValue('supplier', updatedSuppliers);
                                                             }}
                                                             options={supplierNameOptions}
                                                             styles={customStyles}
@@ -2106,6 +2101,7 @@ const UpdateProduct = () => {
                                                             classNamePrefix="react-select"
                                                             placeholder="Select Supplier Name"
                                                         />
+
 
                                                     </div>
 
