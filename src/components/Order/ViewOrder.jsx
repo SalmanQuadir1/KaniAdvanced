@@ -3,12 +3,14 @@ import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik,Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
+import { VIEW_ALL_ORDERS } from "../../Constants/utils";
  import ReactSelect from 'react-select';
 import useorder from '../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import Pagination from '../Pagination/Pagination';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 
 
@@ -43,20 +45,28 @@ import { useNavigate } from 'react-router-dom';
 
 const ViewOrder = () => {
 
-  const { Order, getOrder, pagination ,handlePageChange ,handleUpdate} = useorder();
-
+  const { handlePageChange ,handleUpdate} = useorder();
+  const { currentUser } = useSelector((state) => state?.persisted?.user);
+  const { token } = currentUser;
+const [Order, setOrder] = useState()
 
   const [supplierNameOptions, setsupplierNameOptions] = useState([])
   const [orderNameOptions, setorderNameOptions] = useState([])
   const supplier = useSelector(state => state?.nonPersisted?.supplier);
   const order = useSelector(state => state?.nonPersisted?.order);
   const navigate = useNavigate();
- useEffect(() => {
-        getOrder();
+//  useEffect(() => {
+//         getOrder();
         
-    }, []);
+//     }, []);
+const [pagination, setPagination] = useState({
+    totalItems: 0,
+    data: [],
+    totalPages: 0,
+    currentPage: 1,
+});
 
-    console.log(order,"order");
+  
     useEffect(() => {
             if (supplier.data) {
                 const formattedOptions = supplier.data.map(supp => ({
@@ -68,6 +78,62 @@ const ViewOrder = () => {
                 setsupplierNameOptions(formattedOptions);
             }
         }, [supplier.data]);
+
+
+
+
+        const getOrder = async (page, filters = {}) => {
+            console.log("Fetching orders for page", page); // Log the page number being requested
+        
+            try {
+                const response = await fetch(`${VIEW_ALL_ORDERS}?page=${page || 1}`, {
+                    method: "POST", // GET method
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(filters)
+                });
+        
+                const textResponse = await response.text(); // Get the raw text response
+                console.log("Raw Response Text:", textResponse); // Log raw response before parsing
+        
+                // Try parsing the response only if it's valid JSON
+                try {
+                    const data = JSON.parse(textResponse); // Try parsing as JSON
+                    console.log("Parsed Response:", data);
+        
+                    if (data?.content) {
+                        setOrder(data.content); // Update orders state
+                    } else {
+                        console.log("No orders found in the response");
+                        setOrder([]); // Set an empty state
+                    }
+        
+                    // Update pagination state
+                    setPagination({
+                        totalItems: data?.totalElements || 0,
+                        data: data?.content || [],
+                        totalPages: data?.totalPages || 0,
+                        currentPage: data?.number + 1 || 1,
+                        itemsPerPage: data?.size || 0,
+                    });
+                } catch (parseError) {
+                    console.error("Error parsing response as JSON:", parseError);
+                    toast.error("Invalid response format.");
+                }
+            } catch (error) {
+                console.error("Error fetching orders:", error);
+                toast.error("Failed to fetch orders");
+                setOrder([]); // Reset to an empty state in case of an error
+            }
+        };
+
+        useEffect(() => {
+            getOrder()
+           }, [])
+
+        console.log(order,"heyorder");
 
         
       //   console.log(order)
@@ -98,6 +164,8 @@ const renderTableRows = () => {
         const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
 
      
+        
+      
   
 
 
@@ -144,9 +212,22 @@ const renderTableRows = () => {
     };
 
 
+    const handleSubmit = (values) => {
+        const filters = {
+         
 
 
 
+            orderNo: values.orderNo || undefined,
+            supplierName: values.supplierName || undefined,
+           
+            fromDate: values.fromDate || undefined,
+            toDate:values.toDate || undefined,
+            customerName:values.customerName || undefined,
+        };
+        getOrder(filters);
+        // ViewInventory(pagination.currentPage, filters);
+    };
 
   return (
     <DefaultLayout>
@@ -164,9 +245,15 @@ const renderTableRows = () => {
                     <div className='items-center justify-center'>
                         <Formik
                             initialValues={{
-                                ProductId: '',
+                                orderNo: '',
+                                supplierName: "string",
+                               
+                                fromDate: "",
+                                toDate: "",
+                                customerName:""
+                              
                             }}
-                            // onSubmit={handleSubmit}
+                            onSubmit={handleSubmit}
                         >
                             {({ setFieldValue, values ,handleBlur }) => (
                                 <Form>
