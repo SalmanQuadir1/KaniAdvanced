@@ -40,8 +40,8 @@ const UpdateOrder = () => {
     orderTypee,
     productId,
     customer,
-    getprodId
-
+    getprodId,
+    getCustomer,
   } = useorder();
 
 
@@ -92,6 +92,8 @@ const UpdateOrder = () => {
   useEffect(() => {
     getorderType();
     getprodId();
+    getCustomer();
+
 
 
 
@@ -342,6 +344,9 @@ const UpdateOrder = () => {
       // customer: {
       //   id: 1, // Replace with the actual customer ID from your `values`
       // },
+      customer: {
+        id: values.customer?.id || null, // Dynamically include the customer ID or set to null if not available
+      },
       orderType: {
         id: values.orderType?.id || 4, // Replace with the actual Order Type ID
       },
@@ -387,7 +392,7 @@ const UpdateOrder = () => {
           initialValues={{
             orderNo: order?.orderNo || '', 
             orderType: order?.orderType || '',
-            // customer: order?.customer?.customerName || '',
+            customer: order?.customer?.customerName || '',
             purchaseOrderNo:order?.purchaseOrderNo || '',
             poDate:order?.poDate || '',
             salesChannel:order?.salesChannel || '',
@@ -484,11 +489,13 @@ const UpdateOrder = () => {
                           <ReactSelect
                             name="Customer"
                            
-                            onChange={(option) => setFieldValue('orderType', option ? option.orderTypeObject : null)}
+                            // onChange={(option) => setFieldValue('orderType', option ? option.orderTypeObject : null)}
                             // options={orderTypeOptions}
                             styles={customStyles}
                             className="bg-white dark:bg-form-Field"
-                            value={order?.customer?.customerName ? { label: order.customer.customerName, value: order.customer.customerName } : null} // Display customer name
+                            value={customerOptions?.find(option => option.value === values.customer?.id) || null}
+                            onChange={(option) => setFieldValue('customer', option ? { id: option.value } : null)}
+                            //value={order?.customer?.customerName ? { label: order.customer.customerName, value: order.customer.customerName } : null} // Display customer name
                             //value={customerOptions?.find(option => option.value === values.customer?.id) || null}
                             options={customerOptions}
                             classNamePrefix="react-select"
@@ -676,7 +683,7 @@ const UpdateOrder = () => {
 
 
 
-                    {prodIdModal .length > 0   && (
+                    {prodIdModal   && (
 
                       <div className="  shadow-md rounded-lg  mt-3 overflow-scroll">
                         <table className="min-w-full leading-normal overflow-auto">
