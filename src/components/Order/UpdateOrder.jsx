@@ -339,9 +339,9 @@ const UpdateOrder = () => {
       createdBy: "Admin", // Replace with a dynamic value if available
       employeeName: values.employeeName,
       salesChannel: values.salesChannel,
-      customer: {
-        id: 1, // Replace with the actual customer ID from your `values`
-      },
+      // customer: {
+      //   id: 1, // Replace with the actual customer ID from your `values`
+      // },
       orderType: {
         id: values.orderType?.id || 4, // Replace with the actual Order Type ID
       },
@@ -387,7 +387,7 @@ const UpdateOrder = () => {
           initialValues={{
             orderNo: order?.orderNo || '', 
             orderType: order?.orderType || '',
-            customer: order?.customer?.customerName || '',
+            // customer: order?.customer?.customerName || '',
             purchaseOrderNo:order?.purchaseOrderNo || '',
             poDate:order?.poDate || '',
             salesChannel:order?.salesChannel || '',
