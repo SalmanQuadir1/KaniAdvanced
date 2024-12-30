@@ -129,7 +129,7 @@ const ViewProduct = () => {
 
         }
   
-
+console.log(Product,"prooodudctcttc");
 
 
         return Product.map((item, index) => (

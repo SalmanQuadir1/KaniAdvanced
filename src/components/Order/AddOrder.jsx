@@ -349,7 +349,7 @@ const AddOrder = () => {
             orderProducts: [{
               products: { id: '' },
               orderCategory: '',
-              orderQuantity: '',
+              clientOrderQuantity: '',
               units: '',
               value: '',
               inStockQuantity: '',
@@ -380,7 +380,7 @@ const AddOrder = () => {
               prodIdModal.forEach((item, index) => {
                 setFieldValue(`orderProducts[${index}].products.id`, item?.id || "");
                 setFieldValue(`orderProducts[${index}].orderCategory`, item.orderCatagory || "");
-                setFieldValue(`orderProducts[${index}].orderQuantity`, item.orderQuantity || "");
+                setFieldValue(`orderProducts[${index}].clientOrderQuantity`, item.clientOrderQuantity || "");
                 setFieldValue(`orderProducts[${index}].units`, item.units || "");
               });
             }, [prodIdModal, setFieldValue])
@@ -470,7 +470,7 @@ const AddOrder = () => {
                                 />
                               )}
                             </Field>
-                          </div>;
+                          </div>
                           <ErrorMessage name="orderDate" component="div" className="text-red-600 text-sm" />
                         </div>
                       </div>
@@ -877,7 +877,7 @@ const AddOrder = () => {
 
                                       <Field
                                         type="number"
-                                        name={`orderProducts[${index}].orderQuantity`}
+                                        name={`orderProducts[${index}].clientOrderQuantity`}
                                         // value={item?.productId}
                                         placeholder="Enter Client Order Qty"
                                         className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"

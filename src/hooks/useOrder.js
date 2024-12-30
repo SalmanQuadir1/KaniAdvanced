@@ -57,7 +57,7 @@ useEffect(() => {
             if (response.ok) {
                 toast.success(`Order Added successfully`);
                 resetForm();
-                navigate("/Order/addOrder")
+                navigate("/Order/addOrder") 
                
                 // getSize(pagination.currentPage); // Fetch updated Size
             } else {
