@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE ,VIEW_ALL_ORDERS,VIEW_ALL_CUSTOMER, ADD_ORDER_URL, } from "../Constants/utils";
+import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE ,VIEW_ALL_ORDERS,VIEW_ALL_CUSTOMER, ADD_ORDER_URL, VIEW_ORDERNO, VIEW_ALL_SUPPLIER_URL, } from "../Constants/utils";
 import { useNavigate } from 'react-router-dom';
 import { fetchorder } from '../redux/Slice/OrderNo';
 // import { GET_PRODUCTIDD_URL, VIEW_ALL_CUSTOMER, VIEW_ALL_ORDERTYPE } from "../Constants/utils";
@@ -10,8 +10,10 @@ const useorder = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const [orderTypee, setorderType] = useState([]);
+    const [orderNo, setorderNo] = useState([])
     const [Order, setOrder] = useState([]);
     const [customer, setcustomer] = useState([])
+    const [supplier, setSupplier] = useState([])
     const [edit, setEdit] = useState(false);
     const [currentorderType, setCurrentorderType] = useState({
         orderTypeName:"",
@@ -56,8 +58,8 @@ useEffect(() => {
             const data = await response.json();
             if (response.ok) {
                 toast.success(`Order Added successfully`);
+                navigate("/Order/ViewOrder") 
                 resetForm();
-                navigate("/Order/addOrder") 
                
                 // getSize(pagination.currentPage); // Fetch updated Size
             } else {
@@ -70,6 +72,9 @@ useEffect(() => {
             setSubmitting(false);
         }
     };
+
+
+
     const getorderType = async (page) => {
         try {
             const response = await fetch(`${VIEW_ALL_ORDERTYPE}?page=${page}`, {
@@ -95,9 +100,9 @@ useEffect(() => {
         }
     };
 
-    const getCustomer = async (page) => {
+    const getorderNumber = async (page) => {
         try {
-            const response = await fetch(`${VIEW_ALL_CUSTOMER}`, {
+            const response = await fetch(`${VIEW_ORDERNO}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -106,19 +111,15 @@ useEffect(() => {
             });
             const data = await response.json();
             console.log(data,"dataaaaaa");
-            setcustomer(data);
-            setPagination({
-                totalItems: data.totalElements,
-                pagUnitList: data.content,
-                totalPages: data.totalPages,
-                currentPage: data.number + 1,
-                itemsPerPage: data.size
-            });
+            setorderNo(data);
+          
         } catch (error) {
             console.error(error);
-            toast.error("Failed to fetch orderType");
+            toast.error("Failed to fetch order Number");
         }
     };
+
+  
     // const getprodId = async () => {
     //     try {
     //         const response = await fetch(`${GET_PRODUCTIDD_URL}/all-productsIds`, {
@@ -329,6 +330,55 @@ const handleUpdate = (e, item) => {
             setOrder([]); // Reset to an empty state in case of an error
         }
     };
+
+
+    const getSupplier = async (page) => {
+        try {
+            const response = await fetch(`${VIEW_ALL_SUPPLIER_URL}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data,"dataaaaaa");
+            setSupplier(data);
+          
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch order Number");
+        }
+    };
+   
+    const getCustomer = async (page) => {
+        try {
+            const response = await fetch(`${VIEW_ALL_CUSTOMER}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data,"dataaaaaa");
+            setcustomer(data);
+            setPagination({
+                totalItems: data.totalElements,
+                pagUnitList: data.content,
+                totalPages: data.totalPages,
+                currentPage: data.number + 1,
+                itemsPerPage: data.size
+            });
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch orderType");
+        }
+    };
+
+
+
+
     
     const handlePageChange = (newPage) => {
         console.log("Page change requested:", newPage);
@@ -353,7 +403,11 @@ const handleUpdate = (e, item) => {
         productId,
         getprodId,
         getCustomer,
-        customer
+        customer,
+        getorderNumber,
+        orderNo,
+        getSupplier,
+        supplier
     };
 };
 
