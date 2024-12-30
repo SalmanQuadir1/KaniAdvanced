@@ -46,6 +46,8 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
         }
       });
       const data = await response.json();
+      console.log(data,'dataaaaaaaaak');
+      
 
 
 

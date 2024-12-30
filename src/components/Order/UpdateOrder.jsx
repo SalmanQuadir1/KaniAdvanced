@@ -9,13 +9,14 @@ import Modal from './Modal';
 import * as Yup from 'yup';
 import useorder from '../../hooks/useOrder';
 import useProduct from '../../hooks/useProduct';
-import { GET_PRODUCTBYID_URL , GET_ORDERBYID_URL } from '../../Constants/utils';
+import { GET_PRODUCTBYID_URL , GET_ORDERBYID_URL ,UPDATE_ORDER_URL } from '../../Constants/utils';
 import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
 import { FiTrash2 } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 const UpdateOrder = () => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const [orderType, setOrderType] = useState('');
@@ -100,7 +101,46 @@ const UpdateOrder = () => {
 
   console.log(productId, "looool");
    const { id } = useParams();
+
+
+
+   const handleUpdateSubmit = async (values) => {
+     
+                 console.log(values,"jazim");
+         try {
+             const url = `${UPDATE_ORDER_URL }/${id}`;
+    
+             const response = await fetch(url, {
+                 method: "PUT",
+                 headers: {
+                     "Content-Type": "application/json",
+                     "Authorization": `Bearer ${token}`
+                 },
+                 body: JSON.stringify(values)
+             });
+   
+             const data = await response.json();
+             if (response.ok) {
+              console.log(data,"coming ");
+             
+                 toast.success(`Order Updated successfully`);
+                 // navigate('/inventory/viewMaterialInventory');
+   
+             } else {
+                 toast.error(`${data.errorMessage}`);
+             }
+         } catch (error) {
+             console.error(error);
+             toast.error("An error occurred");
+         } finally {
+          
+         }
+   
+     };
       
+
+
+     
 
    const getOrderById = async () => {
           try {
@@ -224,7 +264,7 @@ const UpdateOrder = () => {
     shippingDate: Yup.date().required('Shipping Date is required'),
     tags: Yup.string().required('Tags are required'),
     logoNo: Yup.string().required('Logo No is required'),
-    productId: Yup.string().required('Product Id is required'),
+    // productId: Yup.string().required('Product Id is required'),
     clientInstruction: Yup.string().required('Client Instruction is required'),
     customer: orderType ? Yup.string().required('Customer is required') : Yup.string(),
   });
@@ -275,6 +315,67 @@ const UpdateOrder = () => {
   //     setprodIdOptions(formattedProdIdOptions);
   //   }
   // }, [productId]);
+
+
+  const onSubmit = async (values, e) => {
+    console.log("Form submission triggered");
+    console.log(values, "Received values from frontend");
+
+    const formattedValues = {
+      orderDate: values.orderDate,
+      value: parseFloat(values.value),
+      shippingDate: values.shippingDate,
+      expectingDate: values.expectingDate,
+      tagsAndLabels: values.tags,
+      logoNo: values.logoNo,
+      productionExecutionStatus: "In Progress", // You can change this as needed
+      productionComments: values.customisationDetails,
+      poDate: values.poDate,
+      orderCategory: values.orderCategory,
+      purchaseOrderNo: values.purchaseOrderNo,
+      clientInstruction: values.clientInstruction,
+      status: "Created", // Example static value
+      customisationDetails: values.customisationDetails,
+      createdBy: "Admin", // Replace with a dynamic value if available
+      employeeName: values.employeeName,
+      salesChannel: values.salesChannel,
+      customer: {
+        id: 1, // Replace with the actual customer ID from your `values`
+      },
+      orderType: {
+        id: values.orderType?.id || 4, // Replace with the actual Order Type ID
+      },
+      orderProducts: [
+        {
+          products: {
+            id: values.productId, // Product ID from the form values
+          },
+          clientOrderQuantity: parseFloat(values.orderQuantity),
+          orderQuantity: parseFloat(values.orderQuantity),
+          value: parseFloat(values.value),
+          inStockQuantity: parseFloat(values.inStockQuantity),
+          quantityToManufacture: parseFloat(values.quantityToManufacture),
+          clientShippingDate: values.clientShippingDate,
+          expectedDate: values.expectedDate,
+          challanNo: "CH12345", // Replace with dynamic value if available
+          challanDate: values.shippingDate,
+          productSuppliers: [
+            {
+              supplier: {
+                id: 1, // Replace with actual supplier ID
+              },
+              supplierOrderQty: parseFloat(values.supplierOrderQty),
+            },
+          ],
+        },
+      ],
+    };
+  
+    console.log(JSON.stringify(formattedValues, null, 2), "Formatted Values");
+    handleUpdateSubmit(formattedValues, e);
+};
+
+
   
   
   return (
@@ -295,7 +396,8 @@ const UpdateOrder = () => {
             orderDate: order?.orderDate || '', 
             expectingDate:order?.expectingDate || '',
             shippingDate: '',
-            tags: '',
+            // tags: '',
+            tagsAndLabels:order?.tagsAndLabels || '',
             logoNo: '',
             productId: order?.orderProducts?.[0]?.products?.id || null,
             orderCategory:order?.orderCategory || '',
@@ -427,7 +529,9 @@ const UpdateOrder = () => {
                               // value={
                               //   salesChannelOptions.find(option => option.value === values.salesChannel) || null
                               // }
-                              value={salesChannelOptions.find(option => option.value === values.salesChannelOptions)}
+                              
+                              //value={salesChannelOptions.find(option => option.value === values.salesChannelOptions)}
+                              value={salesChannelOptions.find(option => option.value === values.salesChannel) || null} // Correctly use `values.salesChannel`
                               // onChange={(option) => setFieldValue('orderType', option ? option.salesChannelOptions : null)}
                               options={salesChannelOptions} 
                               styles={customStyles}
@@ -493,8 +597,9 @@ const UpdateOrder = () => {
                      <div className="flex-1 min-w-[300px] mt-4">
                         <label className="mb-2.5 block text-black dark:text-white">Tags</label>
                         <ReactSelect
-                          name="tags"
-                          value={productgrp.find(option => option.value === values.tags)}
+                          name="tagsAndLabels"
+                          // value={productgrp.find(option => option.value === values.tags)}
+                          value={productgrp.find(option => option.value === values.tagsAndLabels) || null}
                           onChange={(option) => setFieldValue('tags', option.value)}
                           onBlur={handleBlur}
                           options={productgrp}
@@ -571,7 +676,7 @@ const UpdateOrder = () => {
 
 
 
-                    {prodIdModal && (
+                    {prodIdModal .length > 0   && (
 
                       <div className="  shadow-md rounded-lg  mt-3 overflow-scroll">
                         <table className="min-w-full leading-normal overflow-auto">
@@ -663,7 +768,8 @@ const UpdateOrder = () => {
 
 <Field
   as="select"
-  name="productId"
+   name="productId"
+  //name={`prodIdModal[${index}].productId`}
   className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
 >
  
@@ -703,7 +809,7 @@ const UpdateOrder = () => {
                                       value={values.orderQuantity}
                                       placeholder="Enter  Order Qty"
                                       className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                                     readonly
+                                      readOnly
                                     />
                                     <ErrorMessage name="clientOrderQty" component="div" className="text-red-600 text-sm" />
                                   </div>
@@ -807,7 +913,8 @@ const UpdateOrder = () => {
 
                                   <td className="px-5 py-5   text-sm">
                                     <div >
-                                      <IoIosAdd size={30} onClick={() => openSupplierModal(item?.id)} />
+                                      <IoIosAdd size={30} onClick={() => openSupplierModal(id)} />
+                                      {/* <IoIosAdd size={30} onClick={() => openSupplierModal(item?.id)} /> */}
                                     </div>
                                   </td>
                                 </td>
@@ -887,6 +994,7 @@ const UpdateOrder = () => {
 
 
 
+                                                   
 
 
                                         </tbody>
@@ -903,6 +1011,8 @@ const UpdateOrder = () => {
                               </tr>
 
                             {/* ))} */}
+
+                            
 
 
                           </tbody>
@@ -945,13 +1055,23 @@ const UpdateOrder = () => {
 
 
 
-                    <button
+                    {/* <button
                       type="submit"
                       className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4"
                       disabled={isSubmitting}
                     >
                      Update Order
-                    </button>
+                    </button> */}
+
+<div className="flex justify-center mt-4"> {/* Centering the button */}
+                                            <button
+                                                type="button" // Ensures the button does not trigger the form submission
+                                                onClick={(e) => handleUpdateSubmit(values, e)}
+                                                className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none" // Increased width
+                                            >
+                                                Update
+                                            </button>
+                                        </div>
                   </div>
                 </div>
               </div>

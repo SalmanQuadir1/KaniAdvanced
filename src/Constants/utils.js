@@ -185,6 +185,7 @@ export const VIEW_ALL_ORDERS = `${BASE_URL}/order/viewAll`;
 export const VIEW_ALL_ORDER_URL = `${BASE_URL}/order/viewAll`;
 export const ADD_ORDER_URL = `${BASE_URL}/order/add`;
 export const GET_ORDERBYID_URL = `${BASE_URL}/order/get`;
+export const UPDATE_ORDER_URL = `${BASE_URL}/order/update`;
 
 
 export const GET_PRODUCTIDINVENTORY_URL = `${BASE_URL}/products/inventoryProductIds`;
