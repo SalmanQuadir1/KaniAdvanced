@@ -286,11 +286,14 @@ const handleUpdate = (e, item) => {
     
         try {
             const response = await fetch(`${VIEW_ALL_ORDERS}?page=${page || 1}`, {
-                method: "GET", // GET method
+                method: "POST", // GET method
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
                 },
+                body:{
+                    
+                }
             });
     
             const textResponse = await response.text(); // Get the raw text response

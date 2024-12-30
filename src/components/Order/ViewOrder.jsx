@@ -44,6 +44,8 @@ import { useNavigate } from 'react-router-dom';
 const ViewOrder = () => {
 
   const { Order, getOrder, pagination ,handlePageChange ,handleUpdate} = useorder();
+
+
   const [supplierNameOptions, setsupplierNameOptions] = useState([])
   const [orderNameOptions, setorderNameOptions] = useState([])
   const supplier = useSelector(state => state?.nonPersisted?.supplier);
@@ -66,6 +68,8 @@ const ViewOrder = () => {
                 setsupplierNameOptions(formattedOptions);
             }
         }, [supplier.data]);
+
+        
       //   console.log(order)
       //   useEffect(() => {
       //     if (order.data) {

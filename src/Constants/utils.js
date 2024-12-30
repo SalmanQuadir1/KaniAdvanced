@@ -181,7 +181,7 @@ export const GET_PRODUCTID_URL = `${BASE_URL}/products`;
 export const GET_PRODUCTIDD_URL = `${BASE_URL}/products`;
 
 //ORDER
-export const VIEW_ALL_ORDERS = `${BASE_URL}/order/viewAll`;
+export const VIEW_ALL_ORDERS = `${BASE_URL}/order/search`;
 export const VIEW_ALL_ORDER_URL = `${BASE_URL}/order/viewAll`;
 export const ADD_ORDER_URL = `${BASE_URL}/order/add`;
 export const GET_ORDERBYID_URL = `${BASE_URL}/order/get`;

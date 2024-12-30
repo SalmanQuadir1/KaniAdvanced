@@ -63,6 +63,8 @@ const UpdateBom = () => {
         getBom();
     }, []);
 
+
+    console.log(productList,"productlistttttttt");
     const addRow = () => {
         setRows([...rows, { id: Date.now(), selectedOption1: null, selectedOption2: "", selectedOption3: "" }]);
     };
@@ -165,8 +167,8 @@ const UpdateBom = () => {
                                                                             setRows(newRows);
                                                                         }}
                                                                         classNamePrefix="react-select"
-                                                                        options={productList.map(product => ({
-                                                                            label: product.productDescription,
+                                                                        options={productList?.map(product => ({
+                                                                            label: product?.productId,
                                                                             value: product.id
                                                                         }))}
                                                                         placeholder="Product List"
