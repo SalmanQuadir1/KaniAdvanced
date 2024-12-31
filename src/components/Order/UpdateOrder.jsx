@@ -30,6 +30,8 @@ const UpdateOrder = () => {
   const [isLoading, setIsLoading] = useState(true); // Loader state
    const [customerOptions, setcustomerOptions] = useState([])
   const { token } = currentUser;
+
+  const [selectedRowId, setSelectedRowId] = useState(null);
   const [suppliers, setSuppliers] = useState([
     { id: 1, name: "Supplier A" },
     { id: 2, name: "Supplier B" },
@@ -752,7 +754,9 @@ const UpdateOrder = () => {
 
                               <th
                                 className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100"
-                              ></th>
+                              >
+
+                              </th>
                             </tr>
                           </thead>
                           <tbody>
@@ -795,7 +799,7 @@ const UpdateOrder = () => {
                                   <div >
 
                                     <Field
-                                      name="orderCatagory"
+                                      name="orderCategory"
                                       // value={item?.orderCatagory || ""}
                                       value={values.orderCategory}
                                       placeholder="Enter Order Category"
@@ -922,6 +926,13 @@ const UpdateOrder = () => {
                                     <div >
                                       <IoIosAdd size={30} onClick={() => openSupplierModal(id)} />
                                       {/* <IoIosAdd size={30} onClick={() => openSupplierModal(item?.id)} /> */}
+                                                                              {/* <IoIosAdd size={30} onClick={() => {
+                                                                                setSelectedRowId(index)
+                                                                                openSupplierModal(item?.id, index)
+                                      
+                                                                              }
+                                      
+                                                                              } /> */}
                                     </div>
                                   </td>
                                 </td>
@@ -1026,6 +1037,8 @@ const UpdateOrder = () => {
                         </table>
                       </div>
                     )}
+
+                    
 
 
 
