@@ -491,7 +491,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
 
 
-              <SidebarLinkGroup
+              {/* <SidebarLinkGroup
                 activeCondition={
                   pathname === '/forms' || pathname.includes('forms')
                 }
@@ -555,7 +555,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     </React.Fragment>
                   );
                 }}
-              </SidebarLinkGroup>
+              </SidebarLinkGroup> */}
 
 
 
@@ -636,7 +636,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               </SidebarLinkGroup> */}
 
               {/* Purchase */}
-              <SidebarLinkGroup
+              {/* <SidebarLinkGroup
                 activeCondition={
                   pathname === '/forms' || pathname.includes('forms')
                 }
@@ -711,7 +711,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     </React.Fragment>
                   );
                 }}
-              </SidebarLinkGroup>
+              </SidebarLinkGroup> */}
 
               {/* <!-- Menu Item Forms --> */}
 
@@ -1155,7 +1155,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
               {/* Stock Journel */}
 
-              <SidebarLinkGroup
+              {/* <SidebarLinkGroup
                 activeCondition={
                   pathname === '/forms' || pathname.includes('forms')
                 }
@@ -1229,7 +1229,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     </React.Fragment>
                   );
                 }}
-              </SidebarLinkGroup>
+              </SidebarLinkGroup> */}
 
 
 
