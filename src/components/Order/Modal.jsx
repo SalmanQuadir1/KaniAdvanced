@@ -120,7 +120,7 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
                 barCode: products?.barcode || '',
                 orderCatagory: products.orderCatagory || '',
                 weight: products.finishedWeight || '',
-                units: products.units||'',
+                units: products?.unit?.name||'',
                 colorGroup: products?.colors?.colorName || '',
                 warpColors: products.warpColors || '',
                 weftColors: products.weftColors || '',
@@ -128,7 +128,7 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
                 warpYarn: products.warpYarn || '',
                 weftYarn: products.weftYarn || '',
                 pixAndReed: products.pixAndReed || '',
-                deying: '',
+                deying: products.pixAndReed||'',
                 cost: products.cost || '',
                 mrp: products.mrp || '',
                 wPrice: products.wholesalePrice || '',
@@ -147,6 +147,7 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
                 return errors;
               }}
               onSubmit={(values, { setSubmitting }) => {
+                console.log(values,"umershah");
 
                 handleSubmit(values);
                 setSubmitting(false); // Stop Formik loader
@@ -302,22 +303,16 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
 
                       <div className="flex-1 min-w-[300px] mt-4">
                         <label className="mb-2.5 block text-black dark:text-[rgb(200,200,200)]">Units</label>
+                    
                         <Field
-                          type="text"
-                          // as="select" // Use 'as' to render a select element
-                          id="units"
-                          name="units"
-                          disabled
-                          value={products?.unit?.name}
+                         type="text"
+                         // as="select" // Use 'as' to render a select element
+                         id="units"
+                         name="units"
+                         disabled
+                         value={products?.unit?.name}
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        >
-                          {/* <option value="" label="Select a unit" />
-                          {unitsOption?.map((unit) => (
-                            <option key={unit.value} value={unit.value}>
-                              {unit.label}
-                            </option>
-                          ))} */}
-                        </Field>
+                        />
                         <ErrorMessage name="units" component="div" className="text-red-600 text-sm" />
                       </div>
 
