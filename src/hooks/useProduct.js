@@ -108,7 +108,7 @@ hsnCodes:"",
     euroPrice: 0,
     gbpPrice: 0,
     rmbPrice: 0,
-    units:{},
+    unit:{},
     gstDetails:"",
 
     });

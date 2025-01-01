@@ -829,9 +829,9 @@ const AddProduct = () => {
                                                     <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
-                                                            name="units"
-                                                            value={unitOptions?.find(option => option.value === values.units?.id) || null}
-                                                            onChange={(option) => setFieldValue('units', option ? option.unitGroupObject : null)}
+                                                            name="unit"
+                                                            value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                            onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
                                                             options={unitOptions}
                                                             styles={customStyles} // Pass custom styles here
                                                             className="bg-white dark:bg-form-Field"
@@ -1033,9 +1033,9 @@ const AddProduct = () => {
                                                     <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
-                                                            name="units"
-                                                            value={unitOptions?.find(option => option.value === values.units?.id) || null}
-                                                            onChange={(option) => setFieldValue('units', option ? option.unitGroupObject : null)}
+                                                            name="unit"
+                                                            value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                            onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
                                                             options={unitOptions}
                                                             styles={customStyles} // Pass custom styles here
                                                             className="bg-white dark:bg-form-Field"
@@ -1186,9 +1186,9 @@ const AddProduct = () => {
                                                     <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
-                                                            name="units"
-                                                            value={unitOptions?.find(option => option.value === values.units?.id) || null}
-                                                            onChange={(option) => setFieldValue('units', option ? option.unitGroupObject: null)}
+                                                            name="unit"
+                                                            value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                            onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject: null)}
                                                             options={unitOptions}
                                                             styles={customStyles} // Pass custom styles here
                                                             className="bg-white dark:bg-form-Field"
@@ -1371,9 +1371,9 @@ const AddProduct = () => {
                                                     <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
-                                                            name="units"
-                                                            value={unitOptions?.find(option => option.value === values.units?.id) || null}
-                                                            onChange={(option) => setFieldValue('units', option ? option.unitGroupObject : null)}
+                                                            name="unit"
+                                                            value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                            onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
                                                             options={unitOptions}
                                                             styles={customStyles} // Pass custom styles here
                                                             className="bg-white dark:bg-form-Field"
@@ -1568,9 +1568,9 @@ const AddProduct = () => {
                                                     <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
-                                                            name="units"
-                                                            value={unitOptions?.find(option => option.value === values.colors?.id) || null}
-                                                           onChange={(option) => setFieldValue('units', option ? option.unitGroupObject : null)}
+                                                            name="unit"
+                                                            value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                           onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
                                                             options={unitOptions}
                                                             styles={customStyles} // Pass custom styles here
                                                             className="bg-white dark:bg-form-Field"
@@ -1731,9 +1731,9 @@ const AddProduct = () => {
                                                     <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
-                                                            name="units"
-                                                            value={unitOptions?.find(option => option.value === values.colors?.id) || null}
-                                                           onChange={(option) => setFieldValue('units', option ? option.unitGroupObject : null)}
+                                                            name="unit"
+                                                            value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                           onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
                                                             options={unitOptions}
                                                             styles={customStyles} // Pass custom styles here
                                                             className="bg-white dark:bg-form-Field"
