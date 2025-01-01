@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { ADD_PRODUCT_URL, DELETE_PRODUCT_URL, GET_PRODUCT_URL, UPDATE_PRODUCT_URL,GET_PRODUCTID_URL, VIEW_ALL_LOCATIONS, GET_PRODUCTIDINVENTORY_URL, DELETEINVENTORY_PRODUCT_URL } from '../Constants/utils';
+import { ADD_PRODUCT_URL, DELETE_PRODUCT_URL, GET_PRODUCT_URL, UPDATE_PRODUCT_URL,GET_PRODUCTID_URL, VIEW_ALL_LOCATIONS, GET_PRODUCTIDINVENTORY_URL, DELETEINVENTORY_PRODUCT_URL, VIEW_ALL_ORDER_URL, VIEW_ALL_UNITS } from '../Constants/utils';
 import { fetchunit } from '../redux/Slice/UnitSlice';
 import { fetchcolorGroup } from '../redux/Slice/ColorGroupSlice';
 import ProductGroup, { fetchProductGroup } from '../redux/Slice/ProductGroup';
@@ -29,6 +29,7 @@ const useProduct = ({referenceImages,actualImages,productIdField}) => {
     const [errorMessage, seterrorMessage] = useState('')
 
     const [productList, setproductList] = useState([])
+    const [units, setunits] = useState([])
     const [Location, setLocation] = useState([])
     const [currentProduct, setCurrentProduct] = useState({
         productGroup: {},
@@ -107,7 +108,7 @@ hsnCodes:"",
     euroPrice: 0,
     gbpPrice: 0,
     rmbPrice: 0,
-    units:"",
+    units:{},
     gstDetails:"",
 
     });
@@ -210,6 +211,29 @@ hsnCodes:"",
             console.log(data,"pr datatata")
 
             setinventoryproductId(data);
+         
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch Product");
+        }
+    };
+
+
+
+    const getUnits = async () => {
+        console.log("iam here");
+        try {
+            const response = await fetch(`${VIEW_ALL_UNITS}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data,"logining unittt")
+
+            setunits(data);
          
         } catch (error) {
             console.error(error);
@@ -493,7 +517,9 @@ hsnCodes:"",
         errorMessage,
         getInventoryProductId,
         inventoryproductId,
-        handleInventoryDelete
+        handleInventoryDelete,
+        getUnits,
+        units
       
     };
 };
