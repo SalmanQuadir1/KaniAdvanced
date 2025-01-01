@@ -422,7 +422,7 @@ const UpdateOrder = () => {
             // productId: order?.orderProducts?.products?.productId || '',
           //  productId: order?.orderProducts?.[0]?.products?.productId || '',
             clientInstruction: order?.clientInstruction || '', 
-            customer: '',
+            // customer: '',
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
