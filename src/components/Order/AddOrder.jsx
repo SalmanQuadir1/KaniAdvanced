@@ -248,7 +248,7 @@ const AddOrder = () => {
     setIsModalOpen(false)
 
   }
-  console.log(prodIdModal,"kiool");
+  console.log(prodIdModal, "kiool");
 
   const openINVENTORYModal = (id) => {
 
@@ -326,11 +326,11 @@ const AddOrder = () => {
   };
   const handleDeleteRow = (index) => {
     const updatedRows = prodIdModal.filter((_, i) => i !== index);
-    console.log(updatedRows,"rowwwwwwwwwwwwws"); 
+    console.log(updatedRows, "rowwwwwwwwwwwwws");
     setprodIdModal(updatedRows);
   };
-  console.log(prodIdModal,"prodddddddddddddddddddddddddd");
-
+  console.log(prodIdModal, "prodddddddddddddddddddddddddd");
+  const [isPopulated, setIsPopulated] = useState(false);
 
   return (
     <DefaultLayout>
@@ -381,14 +381,23 @@ const AddOrder = () => {
         >
           {({ values, setFieldValue, handleBlur, isSubmitting }) => {
             useEffect(() => {
-              // Automatically populate fields based on `prodIdModal`
-              prodIdModal.forEach((item, index) => {
-                setFieldValue(`orderProducts[${index}].products.id`, item?.id || "");
-                setFieldValue(`orderProducts[${index}].orderCategory`, item.orderCatagory || "");
-                setFieldValue(`orderProducts[${index}].clientOrderQuantity`, item.clientOrderQuantity || "");
-                setFieldValue(`orderProducts[${index}].units`, item.units || "");
-              });
-            }, [prodIdModal])
+              if (prodIdModal.length > 0) {
+                console.log("ProdIdModal updated:", prodIdModal);
+
+                const updatedOrderProducts = prodIdModal.map((item) => ({
+                  products: { id: item?.id || "" },
+                  orderCategory: item.orderCatagory || "",
+                  clientOrderQuantity: item.clientOrderQuantity || "",
+                  units: item.units || "",
+                }));
+
+                setFieldValue("orderProducts", updatedOrderProducts); // Overwrite all rows at once
+              }
+            }, [prodIdModal, setFieldValue]);
+
+
+            // Run only on mount
+
 
             useEffect(() => {
               // Automatically populate supplier fields for each product
@@ -830,7 +839,7 @@ const AddOrder = () => {
                                 ></th>
                               </tr>
                             </thead>
-                            
+
                             <tbody>
 
 
