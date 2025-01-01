@@ -972,50 +972,63 @@ const UpdateOrder = () => {
                                           </tr>
                                         </thead>
                                         <tbody>
-                                           {/* {selectedSuppliers?.map((supplier, supplierIndex) => ( */}
-                                                                                        <tr >
-                                                                                          <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                                                            <Field
-                                                                                              name="supplierName"
-                                                                                              placeholder="Supplier Name"
-                                                                                              // value={supplier.supplierName || ""}
-                                                                                              value={values.supplierName}
-                                                                                              // onChange={(e) =>
-                                                                                              //   setFieldValue(`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`, e.target.value)
-                                                                                              // }
-                                                                                              className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                                                                                            />
-                                                                                            {/* <ErrorMessage name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`} component="div" className="text-red-600 text-sm" /> */}
-                                                                                          </td>
-                                          
-                                                                                          <td className="px-5 py-5 border-b border-gray-200  text-sm">
-                                                                                            <div >
-                                          
-                                                                                              <Field
-                                                                                                name="supplierQuantity"
-                                                                                                placeholder="Supplier Quantity"
-                                                                                                className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                                                                                                value={values.supplierOrderQty}                                                                                              
-                                                                                              />
-                                                                                              {/* <ErrorMessage name="quantity" component="div" className="text-red-600 text-sm" /> */}
-                                                                                            </div>
-                                          
-                                                                                          </td>
-                                                                                          <td className="px-5 py-5  border-b border-gray-200  text-sm">
-                                                                                            <p className="flex text-gray-900 whitespace-no-wrap">
-                                                                                              {/* <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={(e) => handleUpdate(e, item)} title='Edit Unit' />  | */}
-                                                                                              <FiTrash2 size={17} className='text-red-500  hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Unit' />
-                                                                                            </p>
-                                                                                          </td>
-                                                                                        </tr>
-                                                                                      {/* ))} */}
-
-
-
-                                                   
-
-
-                                        </tbody>
+                                                                                   {selectedSuppliers
+                                                                                     .find((supplierRow) => supplierRow.selectedRowId === index)
+                                                                                     ?.supplierIds.map((supplier, supplierIndex) => (
+                                                                                       <tr
+                                                                                         key={`supplier-row-${index}-${supplierIndex}`}
+                                                                                         className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3"
+                                                                                       >
+                                                                                         {/* Supplier Name Field */}
+                                                                                         <td
+                                                                                           key={`supplier-${supplierIndex}`}
+                                                                                           className="px-5 py-5 border-b border-gray-200 text-sm"
+                                                                                         >
+                                                                                           <Field
+                                                                                             name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`}
+                                                                                             placeholder="Supplier Name"
+                                                                                             value={supplier?.supplierId?.supplierName || ""}
+                                                                                             onChange={(e) =>
+                                                                                               setFieldValue(
+                                                                                                 `orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`,
+                                                                                                 e.target.value
+                                                                                               )
+                                                                                             }
+                                                                                             className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                                                                           />
+                                                                                           <ErrorMessage
+                                                                                             name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`}
+                                                                                             component="div"
+                                                                                             className="text-red-600 text-sm"
+                                                                                           />
+                                                                                         </td>
+                                       
+                                                                                         {/* Supplier Quantity Field */}
+                                                                                         <td
+                                                                                           key={`quantity-${supplierIndex}`}
+                                                                                           className="px-5 py-5 border-b border-gray-200 text-sm"
+                                                                                         >
+                                                                                           <Field
+                                                                                             name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
+                                                                                             placeholder="Supplier Quantity"
+                                                                                             type="number"
+                                                                                             className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                                                                           />
+                                                                                           <ErrorMessage
+                                                                                             name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
+                                                                                             component="div"
+                                                                                             className="text-red-600 text-sm"
+                                                                                           />
+                                                                                         </td>
+                                       
+                                                                                         {/* Delete Button */}
+                                                                                         <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                                                           < MdDelete size={20} className='text-red-500 ' onClick={() => handleDeleteSupplier(index, supplierIndex)} />
+                                       
+                                                                                         </td>
+                                                                                       </tr>
+                                                                                     ))}
+                                                                                 </tbody>
                                       </table>
                                     </div>
                                   </div>
