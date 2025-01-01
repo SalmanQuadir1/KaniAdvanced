@@ -3,7 +3,7 @@ import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { VIEW_ALL_ORDERS } from "../../Constants/utils";
+import { DELETE_ORDER_URL, VIEW_ALL_ORDERS } from "../../Constants/utils";
 import ReactSelect from 'react-select';
 import useorder from '../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -212,7 +212,39 @@ const ViewOrder = () => {
 
         const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
 
-
+        const handleDelete = async (e, id) => {
+            e.preventDefault();
+            try {
+                const response = await fetch(`${DELETE_ORDER_URL}/${id}`, { // Correct API endpoint
+                    method: 'DELETE',
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+        
+                const data = await response.json();
+                if (response.ok) {
+                    toast.success(`Order Deleted Successfully !!`);
+        
+                    // Check if the current page becomes empty
+                    const isCurrentPageEmpty = Order.length === 1;
+        
+                    if (isCurrentPageEmpty && pagination.currentPage > 1) {
+                        const previousPage = pagination.currentPage - 1;
+                        handlePageChange(previousPage); // Go to the previous page if current page becomes empty
+                    } else {
+                        getOrder(pagination.currentPage); // Refresh orders on the current page
+                    }
+                } else {
+                    toast.error(`${data.errorMessage}`);
+                }
+            } catch (error) {
+                console.error(error);
+                toast.error("An error occurred");
+            }
+        };
+        
 
 
 
