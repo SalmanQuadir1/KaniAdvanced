@@ -190,7 +190,7 @@ console.log(Product,"prooodudctcttc");
                             > */}
                             <div className='flex flex-col gap-2 mx-3'>
                                 <span onClick={() => openINVENTORYModal(item.id)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[110px]"> VIEW INVENTORY</span>
-                                <span onClick={() => handleUpdateBom(item?.id)} className=" bg-red-100 text-red-800 text-[10px] font-medium me-2  text-center py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400 cursor-pointer w-[110px]">UPDATE INVENTORY</span>
+                                {/* <span onClick={() => handleUpdateBom(item?.id)} className=" bg-red-100 text-red-800 text-[10px] font-medium me-2  text-center py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400 cursor-pointer w-[110px]">UPDATE INVENTORY</span> */}
                             </div>
 
                             {/* </button> */}

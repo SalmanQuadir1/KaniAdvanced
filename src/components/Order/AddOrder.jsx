@@ -149,6 +149,8 @@ const AddOrder = () => {
 
 
   const [prodIdModal, setprodIdModal] = useState([])
+
+
   useEffect(() => {
     if (orderTypee) {
       const formattedOptions = orderTypee.map(order => ({
@@ -324,8 +326,10 @@ const AddOrder = () => {
   };
   const handleDeleteRow = (index) => {
     const updatedRows = prodIdModal.filter((_, i) => i !== index);
+    console.log(updatedRows,"rowwwwwwwwwwwwws"); 
     setprodIdModal(updatedRows);
   };
+  console.log(prodIdModal,"prodddddddddddddddddddddddddd");
 
 
   return (
@@ -384,7 +388,7 @@ const AddOrder = () => {
                 setFieldValue(`orderProducts[${index}].clientOrderQuantity`, item.clientOrderQuantity || "");
                 setFieldValue(`orderProducts[${index}].units`, item.units || "");
               });
-            }, [prodIdModal, setFieldValue])
+            }, [prodIdModal])
 
             useEffect(() => {
               // Automatically populate supplier fields for each product
@@ -826,6 +830,7 @@ const AddOrder = () => {
                                 ></th>
                               </tr>
                             </thead>
+                            
                             <tbody>
 
 
