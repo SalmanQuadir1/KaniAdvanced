@@ -167,6 +167,13 @@ unitCount&&unitCount?.forEach(item => {
 
           </CardDataStats>
         </Link>
+
+        <Link to={"/Order/ViewOrder"}>
+          <CardDataStats title="Total Orders"  total={countMapping['orders'] || 0}  levelDown>
+            <FaRegUserCircle className='w-10 h-10' />
+
+          </CardDataStats>
+        </Link>
       </div>
     </DefaultLayout>
   );
