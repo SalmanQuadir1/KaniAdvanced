@@ -11,30 +11,10 @@ import Pagination from '../Pagination/Pagination';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import {  customStyles as createCustomStyles } from '../../Constants/utils';
 
 
 
-
-
-const customStyles = {
-    control: (provided) => ({
-        ...provided,
-        minHeight: '50px',
-        fontSize: '16px',
-    }),
-    valueContainer: (provided) => ({
-        ...provided,
-        padding: '10px 14px',
-    }),
-    input: (provided) => ({
-        ...provided,
-        fontSize: '16px',
-    }),
-    singleValue: (provided) => ({
-        ...provided,
-        fontSize: '16px',
-    }),
-};
 
 const productgrp = [
     { value: 'BrandA', label: 'Brand A' },
@@ -47,6 +27,9 @@ const ViewOrder = () => {
 
     const { handleUpdate, getorderNumber, orderNo, getSupplier, supplier, getCustomer, customer } = useorder();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
+    const theme = useSelector(state => state?.persisted?.theme);
+
+const customStyles = createCustomStyles(theme?.mode);
 
 
     const { token } = currentUser;
@@ -363,7 +346,9 @@ const ViewOrder = () => {
 
                                                 }}
                                                 onBlur={handleBlur}
-                                                options={formattedorder}
+                                                // options={formattedorder}
+
+                                                options={[{ label: 'View All Order', value: null }, ...formattedorder]}
 
                                                 styles={customStyles}
                                                 className="bg-white dark:bg-form-input"
@@ -385,7 +370,9 @@ const ViewOrder = () => {
                                                  
                                                     value={productgrp.find(option => option.value === values.customerName)}
                                                     onChange={(option) => setFieldValue('supplierName', option ? option.value : null)}
-                                                    options={formattedSupplier}
+                                                    // options={formattedSupplier}
+
+                                                    options={[{ label: 'View All Suppliers', value: null }, ...formattedSupplier]}
                                                     styles={customStyles} // Pass custom styles here
                                                     className="bg-white dark:bg-form-Field"
                                                     classNamePrefix="react-select"
@@ -434,7 +421,8 @@ const ViewOrder = () => {
                                                    
                                                 }}
                                                 onBlur={handleBlur}
-                                                options={formattedCustomer}
+                                                // options={formattedCustomer}
+                                                options={[{ label: 'View All Customers', value: null }, ...formattedCustomer]}
                                                 styles={customStyles}
                                                 className="bg-white dark:bg-form-input"
                                                 classNamePrefix="react-select"
