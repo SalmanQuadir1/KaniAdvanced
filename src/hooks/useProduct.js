@@ -93,12 +93,20 @@ hsnCodes:"",
     cost: 0,
     dyeingCost: 0,
     baseColour: "",
+
+
     embroideryColors: "",
     fabricWeave: "",
     fabricCode: "",
+
+    
     fabricCost: 0,
+
+
     embroideryCost: 0,
     totalCost: 0,
+
+
     kaniColors: "",
     mrp: 0,
     wholesalePrice: 0,

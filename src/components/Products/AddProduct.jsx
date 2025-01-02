@@ -385,6 +385,18 @@ const AddProduct = () => {
                 >
 
                     {({ setFieldValue, values }) => {
+
+
+useEffect(() => {
+    const fabricCost= parseFloat(values.fabricCost)||0;
+    const embroideryCost= parseFloat(values.embroideryCost)||0
+
+    const totalCost=fabricCost+embroideryCost
+    setFieldValue("totalCost",totalCost.toFixed(2))
+ 
+}, [values.fabricCost, values.embroideryCost])
+
+
                         // We call updateProductId every time Formik's `values` change
                         // Trigger when values change (e.g., size, color, etc.)
 
@@ -1000,6 +1012,8 @@ const AddProduct = () => {
                                                             <label className="mb-2.5 block text-black dark:text-white"> Embroidery Cost</label>
                                                             <Field
                                                                 name='embroideryCost'
+
+                                                               
                                                                 type="text"
                                                                 placeholder="Enter Embroidery Cost"
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
@@ -1008,27 +1022,37 @@ const AddProduct = () => {
                                                     </div>
 
 
+                                                    <div className="mb-4.5 flex flex-wrap gap-6">
+
+                                                    {(values.productGroup?.productGroupName === "Pashmina Embroidery" ||values.productGroup?.productGroupName === "Wool Embroidery" )&& (
+                                                        <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white"> Total Cost </label>
+                                                            <Field
+                                                                name='totalCost'
+                                                                type="text"
+                                                                placeholder="Enter Total Cost"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+
+                                                    )}
+
+
+                                                        <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white"> MRP</label>
+                                                            <Field
+                                                                name='mrp'
+                                                                type="text"
+                                                                placeholder="Enter MRP"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+                                                    </div>
+
 
 
                                                     <div className="mb-4.5 flex flex-wrap gap-6">
-                                                        {/* <div className="flex-1 min-w-[300px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white"> Weight(gms) </label>
-                                                        <Field
-                                                            name='weight'
-                                                            type="text"
-                                                            placeholder="Enter your first name"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div> */}
-                                                        {/* <div className="flex-1 min-w-[300px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white"> Units</label>
-                                                            <Field
-                                                                name='units'
-                                                                type="number"
-                                                                placeholder="Enter Units"
-                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                            />
-                                                        </div> */}
+                                                        
                                                          <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <div className=" z-20 bg-transparent dark:bg-form-Field">
@@ -1047,26 +1071,8 @@ const AddProduct = () => {
                                                 </div>
                                                     </div>
 
-                                                    <div className="mb-4.5 flex flex-wrap gap-6">
-                                                        <div className="flex-1 min-w-[300px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white"> Total Cost </label>
-                                                            <Field
-                                                                name='totalCost'
-                                                                type="text"
-                                                                placeholder="Enter Total Cost"
-                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                            />
-                                                        </div>
-                                                        <div className="flex-1 min-w-[300px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white"> MRP</label>
-                                                            <Field
-                                                                name='mrp'
-                                                                type="text"
-                                                                placeholder="Enter MRP"
-                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                            />
-                                                        </div>
-                                                    </div>
+
+
 
 
                                                     <div className="mb-4.5 flex flex-wrap gap-6">
