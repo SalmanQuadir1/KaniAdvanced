@@ -68,6 +68,7 @@ const useProduct = ({referenceImages,actualImages,productIdField}) => {
         warpColors: "",
     weftColors: "",
     warpYarn: "",
+    batch:"",
     weftYarn: "",
     weave: "",
     finishedWeight:"",
@@ -105,6 +106,7 @@ hsnCodes:"",
 
     embroideryCost: 0,
     totalCost: 0,
+    retailMrp:"",
 
 
     kaniColors: "",
