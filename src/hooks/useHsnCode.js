@@ -8,7 +8,7 @@ const useHsnCode = () => {
      const { token } = currentUser;
     const [HsnCode, setHsnCode] = useState([]);
     const [edit, setEdit] = useState(false);
-    const [currentHsnCode, setCurrentHsnCode] = useState({ hsnCodeName: '',igst:"",cgst:"",sgst:"" });
+    const [currentHsnCode, setCurrentHsnCode] = useState({ hsnCodeName: '',igst:"",cgst:"",sgst:"",productDescription:"" });
     
     const [pagination, setPagination] = useState({
         totalItems: 0,

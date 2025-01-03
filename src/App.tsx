@@ -455,10 +455,10 @@ function App() {
             }
           />
           <Route
-            path="/configurator/addhsncode"
+            path="/configurator/addgstclassification"
             element={
               <>
-                <PageTitle title="Add Hsn Code" />
+                <PageTitle title="Add Gst Classification" />
                 <HsnCode />
               </>
             }
