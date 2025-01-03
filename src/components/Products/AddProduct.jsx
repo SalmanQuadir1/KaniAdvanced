@@ -1736,7 +1736,9 @@ const AddProduct = () => {
                                                         <div className="flex-2 min-w-[250px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> Embroidery Cost</label>
                                                             <Field
-                                                                name='EmbroideryCost'
+                                                                name='embroideryCost'
+
+
                                                                 type="text"
                                                                 placeholder="Enter Embroidery Cost"
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
