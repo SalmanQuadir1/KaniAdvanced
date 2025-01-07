@@ -445,10 +445,12 @@ const UpdateOrder = () => {
             tagsAndLabels:order?.tagsAndLabels || '',
             logoNo: '',
             productId: order?.orderProducts?.[0]?.products?.id || null,
-            orderCategory:order?.orderCategory || '',
+            //orderCategory:order?.orderCategory || '',
+            orderCategory: order?.orderProducts?.[0]?.orderCategory || '',
             inStockQuantity: order?.orderProducts?.[0]?.inStockQuantity || '',
-            value:order?.value || '',
-            orderQuantity: order?.orderProducts?.[0]?.orderQuantity || '',
+            value: order?.orderProducts?.[0]?.value || '',
+            // value:order?.value || '',
+            clientOrderQuantity: order?.orderProducts?.[0]?.clientOrderQuantity || '',
             quantityToManufacture: order?.orderProducts?.[0]?.quantityToManufacture || '',
             units: order?.orderProducts?.[0]?.units || '',
             clientShippingDate: order?.orderProducts?.[0]?.clientShippingDate || '',
@@ -742,7 +744,7 @@ const UpdateOrder = () => {
                               <th
                                 className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
                               >
-                                 Order Qty
+                                Client Order Qty
                               </th>
                               <th
                                 className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
@@ -834,7 +836,7 @@ const UpdateOrder = () => {
                                 </option>
                               ))}
                             </Field>
-<ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
+                            <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
 
                                 </td>
                                 <td className="px-5 py-5 border-b border-gray-200  text-sm">
@@ -859,9 +861,10 @@ const UpdateOrder = () => {
                                   <div >
 
                                     <Field
-                                      name="orderQuantity"
+                                      name="clientOrderQuantity"
                                       // value={item?.productId}
-                                      value={values.orderQuantity}
+                                      //value={values.clientOrderQuantity}
+                                      value={order?.orderProducts?.[0]?.clientOrderQuantity  }
                                       placeholder="Enter  Order Qty"
                                       className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                       readOnly
@@ -1101,7 +1104,7 @@ const UpdateOrder = () => {
                              
                                                                  <div >
                              
-                                                                   <Field
+                                                                   {/* <Field
                                                                      name={`orderProducts[${index}].orderCategory`}
                                                                      // value={item?.orderCatagory || ""}
                                                                      placeholder="Enter Order Category"
@@ -1110,7 +1113,17 @@ const UpdateOrder = () => {
                                                                        setFieldValue(`orderProducts[${index}].orderCategory`, e.target.value); // Update the field value manually
                                                                      }}
                                                                      className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                                                                   />
+                                                                   /> */}
+                                                                   <Field
+                                                                                                           name={`orderProducts[${index}].orderCategory`}
+                                                                                                           // value={item?.orderCatagory || ""}
+                                                                                                           placeholder="Enter Order Category"
+                                                                                                           onChange={(e) => {
+                                                                                                             console.log(`Order Category: ${e.target.value}`);
+                                                                                                             setFieldValue(`orderProducts[${index}].orderCategory`, e.target.value); // Update the field value manually
+                                                                                                           }}
+                                                                                                           className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                                                                                         />
                                                                    <ErrorMessage name="orderCategory" component="div" className="text-red-600 text-sm" />
                                                                  </div>
                                                                </td>
@@ -1205,14 +1218,14 @@ const UpdateOrder = () => {
                                                                      className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus-within:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus-within:border-primary"
                                                                      onClick={(e) => e.stopPropagation()} // Prevents event bubbling
                                                                    >
-                                                                     {/* <ReactDatePicker
-                                                                       selected={values.orderProducts[index]?.clientShippingDate || null}
+                                                                     <ReactDatePicker
+                                                                       selected={values.orderProducts?.clientShippingDate || null}
                                                                        onChange={(date) => setFieldValue(`orderProducts[${index}].clientShippingDate`, date ? date.toISOString().split("T")[0] : "")}
                                                                        dateFormat="yyyy-MM-dd"
                                                                        placeholderText="Enter Client Shipping Date"
                                                                        className="w-full bg-transparent outline-none"
                                                                        wrapperClassName="w-full"
-                                                                     /> */}
+                                                                     />
                                                                    </div>
                              
                                                                    <ErrorMessage name="ClientShippingDate" component="div" className="text-red-600 text-sm" />
@@ -1225,14 +1238,15 @@ const UpdateOrder = () => {
                                                                      onClick={(e) => e.stopPropagation()} // Prevents event bubbling
                                                                    >
                              
-                                                                     {/* <ReactDatePicker
-                                                                       selected={values.orderProducts[index]?.expectedDate || null}
+                                                                     <ReactDatePicker
+                                                                       //selected={values.orderProducts[index]?.expectedDate || null}
+                                                                       selected={values.orderProducts?.expectedDate || null}
                                                                        onChange={(date) => setFieldValue(`orderProducts[${index}].expectedDate`, date ? date.toISOString().split("T")[0] : "")}
                                                                        dateFormat="yyyy-MM-dd"
-                                                                       placeholderText="Enter Client expected Date"
+                                                                       placeholderText="Enter  expected Date"
                                                                        className="w-full bg-transparent outline-none"
                                                                        wrapperClassName="w-full"
-                                                                     /> */}
+                                                                     />
                                                                    </div>
                                                                    <ErrorMessage name="ExpectedDate" component="div" className="text-red-600 text-sm" />
                                                                  </div>
