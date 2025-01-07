@@ -11,7 +11,7 @@ import { useNavigate, useNavigation } from 'react-router-dom';
 const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, width = "400px", height = "auto", GET_PRODUCTBYID_URL }) => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
-    const [rows, setRows] = useState([{ id: Date.now(), greaterthan: 0, upto: "", type: "", rate: "" }]);
+    const [rows, setRows] = useState([{ id: Date.now(), greaterThan: 0, upTo: "", type: "", gstRate: "" }]);
     const navigate = useNavigate();
     const [products, setproducts] = useState([])
 
@@ -32,21 +32,13 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
 
 
     const addRow = () => {
-        setRows([...rows, { id: Date.now(), greaterthan: 0, upto: "", type: "", rate: ""  }]);
+        setRows([...rows, { id: Date.now(), greaterThan: 0, upTo: "", type: "", gstRate: ""}]);
     };
 
 
     const deleteRow = (index) => {
         setRows(rows.filter((_, rowIndex) => rowIndex !== index));
     };
-
-    //  
-
-
-    // console.log(products, "umer shah");
-
-
-
 
 
 
@@ -56,13 +48,13 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
     };
 
     const handleSubmit = (values) => {
-        console.log(values,"jaijai");
+        console.log(values, "jaijai");
         onSubmit(rows);
         onRequestClose();
 
         // You can now send this data to your API
     };
-console.log(rows,'umershahhhhh');
+    console.log(rows, 'umershahhhhh');
 
     return (
         <>
@@ -93,11 +85,9 @@ console.log(rows,'umershahhhhh');
                         >
                             &times;
                         </button>
-                      
-                        <Formik
-                            initialValues={{
 
-                            }}
+                        <Formik
+                            initialValues={{ rows }}
                             enableReinitialize={true}
                             //   validate={values => {
                             //     const errors = {};
@@ -156,61 +146,61 @@ console.log(rows,'umershahhhhh');
                                                     <div className="overflow-x-scroll md:overflow-x-visible  md:overflow-y-visible -mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
                                                         <div className="min-w-full shadow-md rounded-lg">
                                                             <table className="table-fixed w-full">
-                                                            <thead>
-    {/* Main Headings */}
-    <tr className="px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white">
-        <th
-            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[130px] md:w-[300px]"
-            colSpan="2"
-            style={{ minWidth: "250px" }}
-        >
-            Slab-Wise Item Rate <span className="text-red-700 text-xl mt-[40px] justify-center items-center"> *</span>
-        </th>
-        <th
-            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[150px]"
-        >
-            Taxability <span className="text-red-700 text-xl mt-[40px] justify-center items-center"> *</span>
-        </th>
-        <th
-            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[150px]"
-        >
-            GST <span className="text-red-700 text-xl mt-[40px] justify-center items-center"> *</span>
-        </th>
-        <th
-            className="md:px-5 md:py-3 px-1 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-        >
-            Action
-        </th>
-    </tr>
-    {/* Subheadings */}
-    <tr className="px-5 py-3 bg-gray-200 dark:bg-slate-600 dark:text-white">
-        <th
-            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-        >
-            Greater Than
-        </th>
-        <th
-            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-        >
-            Upto
-        </th>
-        <th
-            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-        >
-            Type
-        </th>
-        <th
-            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-        >
-            Rate
-        </th>
-        <th
-            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-        >
-            {/* Placeholder for alignment */}
-        </th>
-    </tr>
-</thead>
+                                                                <thead>
+                                                                    {/* Main Headings */}
+                                                                    <tr className="px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white">
+                                                                        <th
+                                                                            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[130px] md:w-[300px]"
+                                                                            colSpan="2"
+                                                                            style={{ minWidth: "250px" }}
+                                                                        >
+                                                                            Slab-Wise Item Rate <span className="text-red-700 text-xl mt-[40px] justify-center items-center"> *</span>
+                                                                        </th>
+                                                                        <th
+                                                                            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[150px]"
+                                                                        >
+                                                                            Taxability <span className="text-red-700 text-xl mt-[40px] justify-center items-center"> *</span>
+                                                                        </th>
+                                                                        <th
+                                                                            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[150px]"
+                                                                        >
+                                                                            GST <span className="text-red-700 text-xl mt-[40px] justify-center items-center"> *</span>
+                                                                        </th>
+                                                                        <th
+                                                                            className="md:px-5 md:py-3 px-1 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                                                        >
+                                                                            Action
+                                                                        </th>
+                                                                    </tr>
+                                                                    {/* Subheadings */}
+                                                                    <tr className="px-5 py-3 bg-gray-200 dark:bg-slate-600 dark:text-white">
+                                                                        <th
+                                                                            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                                                        >
+                                                                            Greater Than
+                                                                        </th>
+                                                                        <th
+                                                                            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                                                        >
+                                                                            Upto
+                                                                        </th>
+                                                                        <th
+                                                                            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                                                        >
+                                                                            Type
+                                                                        </th>
+                                                                        <th
+                                                                            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                                                        >
+                                                                            Rate %
+                                                                        </th>
+                                                                        <th
+                                                                            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                                                        >
+                                                                            {/* Placeholder for alignment */}
+                                                                        </th>
+                                                                    </tr>
+                                                                </thead>
 
                                                                 <tbody>
                                                                     {rows.map((row, index) => (
@@ -218,13 +208,15 @@ console.log(rows,'umershahhhhh');
                                                                             <td className="px-2 py-2 border-b">
                                                                                 <Field
                                                                                     type="number"
-                                                                                    name={`rows[${index}].greaterthan`}
+                                                                                    name={`rows[${index}].greaterThan`}
+                                                                                    // value={`rows[${index}].greaterthan`}
                                                                                     placeholder="Greater Than"
                                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                                                     onChange={(e) => {
                                                                                         const newRows = [...rows];
                                                                                         const balance = parseInt(e.target.value, 10);
-                                                                                        newRows[index].greaterthan = balance;
+                                                                                        setFieldValue(`rows[${index}].greaterThan`, balance);
+                                                                                        newRows[index].greaterThan = balance;
                                                                                         // newRows[index].selectedOption2 = generateWorkerOptions(
                                                                                         //     newRows[index].selectedOption2.label || '',
                                                                                         //     values.supplierCode,
@@ -238,13 +230,15 @@ console.log(rows,'umershahhhhh');
                                                                             <td className="px-2 py-2 border-b">
                                                                                 <Field
                                                                                     type="number"
-                                                                                    name={`rows[${index}].upto`}
+                                                                                    name={`rows[${index}].upTo`}
                                                                                     placeholder="Upto"
                                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                                                     onChange={(e) => {
                                                                                         const newRows = [...rows];
                                                                                         const balance = parseInt(e.target.value, 10);
-                                                                                        newRows[index].upto = balance;
+                                                                                        setFieldValue(`rows[${index}].upTo`, balance);
+                                                                                        
+                                                                                        newRows[index].upTo = balance;
                                                                                         // newRows[index].selectedOption2 = generateWorkerOptions(
                                                                                         //     newRows[index].selectedOption2.label || '',
                                                                                         //     values.supplierCode,
@@ -267,6 +261,7 @@ console.log(rows,'umershahhhhh');
                                                                                     onChange={(e) => {
                                                                                         const newRows = [...rows];
                                                                                         const balance = (e.target.value);
+                                                                                        setFieldValue(`rows[${index}].type`, balance);
                                                                                         newRows[index].type = balance;
                                                                                         // newRows[index].selectedOption2 = generateWorkerOptions(
                                                                                         //     newRows[index].selectedOption2.label || '',
@@ -278,16 +273,17 @@ console.log(rows,'umershahhhhh');
                                                                                 />
                                                                                 <ErrorMessage name="group" component="div" className="text-red-500" />
                                                                             </td>
-                                                                            <td className="px-2 py-2 border-b">
+                                                                            <td className="px-2 py-2 border-b flex items-center">
                                                                                 <Field
                                                                                     type="text"
-                                                                                    name={`rows[${index}].rate`}
-                                                                                    placeholder="Enter Rate"
+                                                                                    name={`rows[${index}].gstRate`}
+                                                                                    placeholder="Enter Rate %"
                                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                                                     onChange={(e) => {
                                                                                         const newRows = [...rows];
                                                                                         const balance = e.target.value;
-                                                                                        newRows[index].rate = balance;
+                                                                                        setFieldValue(`rows[${index}].gstRate`, balance);
+                                                                                        newRows[index].gstRate = balance;
                                                                                         // newRows[index].selectedOption2 = generateWorkerOptions(
                                                                                         //     newRows[index].selectedOption2.label || '',
                                                                                         //     values.supplierCode,
@@ -295,7 +291,8 @@ console.log(rows,'umershahhhhh');
                                                                                         // );
                                                                                         setRows(newRows);
                                                                                     }}
-                                                                                />
+                                                                                /> 
+                                                                                <span className='items-center justify-center ml-4'>%</span>
                                                                                 <ErrorMessage name="group" component="div" className="text-red-500" />
                                                                             </td>
 

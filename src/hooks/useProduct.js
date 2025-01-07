@@ -16,7 +16,9 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-const useProduct = ({referenceImages,actualImages,productIdField}) => {
+const useProduct = ({referenceImages,actualImages,productIdField,gstDetails}) => {
+
+    console.log(gstDetails,"umerhumainnkhal");
    
 
     const navigate = useNavigate();
@@ -120,6 +122,7 @@ hsnCodes:"",
     rmbPrice: 0,
     unit:{},
     gstDetails:"",
+    slabBasedRates: [],
 
     });
     const dispatch = useDispatch();
@@ -386,12 +389,15 @@ hsnCodes:"",
             // product.productId = productIdField;
     
             // Append the product details as JSON
+            if (gstDetails && gstDetails.length > 0) {
+                product.slabBasedRates = gstDetails; // Add gstDetails to the product
+            }
+            
+            // Append the updated product to formData
             formData.append("product", JSON.stringify(product));
-           
 
             Array.from(referenceImages).forEach((file) => formData.append('referenceImages', file)); // Add files
             Array.from(actualImages).forEach((file) => formData.append('actualImages', file));
-
 
 
 
