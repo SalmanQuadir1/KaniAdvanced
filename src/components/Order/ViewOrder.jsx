@@ -111,7 +111,7 @@ const customStyles = createCustomStyles(theme?.mode);
         console.log("Fetching orders for page", page); // Log the page number being requested
 
         try {
-            const response = await fetch(`${VIEW_ALL_ORDERS}?page=${1}`, {
+            const response = await fetch(`${VIEW_ALL_ORDERS}?page=${page||1}`, {
                 method: "POST", // GET method
                 headers: {
                     "Content-Type": "application/json",

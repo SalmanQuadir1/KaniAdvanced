@@ -152,13 +152,8 @@ const AddSupplier = () => {
                         if (values.accountNo<10) {
                             errors.accountNo = 'Required';
                         }
-                        if (!values.ifscCode) {
-                            errors.ifscCode = 'Required';
-                        }
+                     
                       
-                        if (!values.emailId) {
-                            errors.emailId = 'Required';
-                        }
                         return errors;
                     }}
                     onSubmit={handleSubmit}

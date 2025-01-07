@@ -19,7 +19,7 @@ const HsnCode = () => {
     } = useHsnCode();
     return (
         <DefaultLayout>
-            <Breadcrumb pageName="Configurator/Add HsnCode" />
+            <Breadcrumb pageName="Configurator/Add Gst Classification" />
             <div>
                 <Formik
                     initialValues={currentHsnCode}
@@ -42,7 +42,7 @@ const HsnCode = () => {
                                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                                         <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                                            {edit ? "UPDATE HSN CODE" : "ADD HSN CODE"}
+                                            {edit ? "UPDATE GST CLASSIFICATION" : "ADD GST CLASSIFICATION"}
                                         </h3>
                                     </div>
                                     <div className="p-6.5">
@@ -53,7 +53,7 @@ const HsnCode = () => {
                                                     type="text"
                                                     name="hsnCodeName"
                                                     placeholder="Enter HsnCode Name"
-                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-black dark:focus:border-primary"
+                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black  outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                 />
                                                 <ErrorMessage name="hsnCodeName" component="div" className="text-red-500" />
                                             </div>
@@ -63,7 +63,7 @@ const HsnCode = () => {
                                                     type="number"
                                                     name="igst"
                                                     placeholder="Enter IGST Name"
-                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-black dark:focus:border-primary"
+                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                 />
                                                 <ErrorMessage name="igst" component="div" className="text-red-500" />
                                             </div>
@@ -75,7 +75,7 @@ const HsnCode = () => {
                                                     type="number"
                                                     name="cgst"
                                                     placeholder="Enter cgst Name"
-                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-black dark:focus:border-primary"
+                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                 />
                                                 <ErrorMessage name="cgst" component="div" className="text-red-500" />
                                             </div>
@@ -85,14 +85,30 @@ const HsnCode = () => {
                                                     type="number"
                                                     name="sgst"
                                                     placeholder="Enter SGST Name"
-                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-black dark:focus:border-primary"
+                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                 />
                                                 <ErrorMessage name="sgst" component="div" className="text-red-500" />
                                             </div>
                                         </div>
+
+
+                                        <div className="mb-4.5 flex flex-wrap gap-6">
+                                            <div className="flex-1 min-w-[300px]">
+                                                <label className="mb-2.5 block text-black dark:text-white"> Product Description</label>
+                                                <Field
+                                                 as="textarea"
+                                                    type="string"
+                                                    name="productDescription"
+                                                    placeholder="Enter Product Description"
+                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                />
+                                                <ErrorMessage name="productDescription" component="div" className="text-red-500" />
+                                            </div>
+                                           
+                                        </div>
                                         <div className="flex justify-center mt-4 items-center">
-                                            <button type="submit" className="flex md:w-[180px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90">
-                                                {edit ? "UPDATE HSN CODE" : "CREATE HSN CODE"}
+                                            <button type="submit" className="flex md:w-[240px] w-[230px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90">
+                                                {edit ? "UPDATE GST CLASSIFICATION" : "CREATE GST CLASSIFICATION"}
                                             </button>
                                         </div>
                                     </div>
@@ -105,7 +121,7 @@ const HsnCode = () => {
                                                     units={HsnCode}
                                                     pagination={pagination}
                                                     totalItems={pagination.totalItems}
-                                                    title={'HSNCODE'}
+                                                    title={'Gst Classification'}
                                                     handleDelete={handleDelete}
                                                     handleUpdate={handleUpdate}
                                                 />
