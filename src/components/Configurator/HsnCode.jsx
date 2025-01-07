@@ -94,12 +94,12 @@ const HsnCode = () => {
 
                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Product Description</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Description</label>
                                                 <Field
                                                  as="textarea"
                                                     type="string"
                                                     name="productDescription"
-                                                    placeholder="Enter Product Description"
+                                                    placeholder="Enter  Description"
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                 />
                                                 <ErrorMessage name="productDescription" component="div" className="text-red-500" />

@@ -8,7 +8,7 @@ import ReactSelect from 'react-select';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import useProduct from '../../hooks/useProduct';
 import { useSelector } from 'react-redux';
-
+import Modall from "./Modall.jsx"
 import { customStyles as createCustomStyles } from '../../Constants/utils';
 const AddProduct = () => {
 
@@ -20,6 +20,8 @@ const AddProduct = () => {
     const [styleOptions, setstyleOptions] = useState([])
     const [sizeOptions, setsizeOptions] = useState([])
     const [hsnOptions, sethsnOptions] = useState([])
+
+    const [gstDetailModal, setgstDetailModal] = useState(false)
     const [supplierNameOptions, setsupplierNameOptions] = useState([])
     const [supplierCodeOptions, setsupplierCodeOptions] = useState([])
 
@@ -276,6 +278,13 @@ const AddProduct = () => {
         { value: 'capital Goods', label: 'capital Goods' },
     ]
 
+    const gstdetails = [
+
+        { value: 'specifySlabBasedRates', label: 'Specify Slab Based Rates' },
+        { value: 'useGstClassification', label: 'Use Gst Classification' },
+
+    ]
+
 
 
 
@@ -358,8 +367,19 @@ const AddProduct = () => {
         // Trim to remove any excess spaces
     };
 
+    const handlerateDetails = (option, setFieldValue) => {
+        setFieldValue('gstratedetails', option);
+
+        setgstDetailModal(true)
+
+    }
 
 
+const handleModalSubmit=(values)=>{
+    console.log("iam here");
+    console.log(values,"ggjio");
+
+}
 
 
 
@@ -709,70 +729,7 @@ const AddProduct = () => {
 
 
 
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> HSN Code <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
-                                                    <ReactSelect
-                                                        name="hsnCode"
-                                                        value={hsnOptions?.find(option => option.value === values.hsnCode?.id) || null}
-                                                        onChange={(option) => setFieldValue('hsnCode', option ? option.hsnObject : null)}
-                                                        options={hsnOptions}
-                                                        styles={customStyles} // Pass custom styles here
-                                                        className="bg-white dark:bg-form-Field"
-                                                        classNamePrefix="react-select"
-                                                        placeholder="Select Hsn Code"
-                                                    />
-                                                </div>
 
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> IGST (%)</label>
-                                                    <Field
-                                                        type="number"
-
-                                                        value={vaaluee?.hsnCode?.igst}
-                                                        disabled
-                                                        placeholder="Enter IGST Name"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
-                                                    />
-                                                    <ErrorMessage name="igst" component="div" className="text-red-500" />
-                                                </div>
-
-
-
-                                            </div>
-
-
-
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> CGST (%)</label>
-                                                    <Field
-                                                        type="number"
-
-                                                        disabled
-                                                        value={vaaluee?.hsnCode?.cgst}
-                                                        placeholder="Enter cgst Name"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
-                                                    />
-                                                    <ErrorMessage name="cgst" component="div" className="text-red-500" />
-                                                </div>
-
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> SGST (%)</label>
-                                                    <Field
-                                                        type="number"
-                                                        value={vaaluee?.hsnCode?.sgst}
-
-                                                        disabled
-                                                        placeholder="Enter SGST Name"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
-                                                    />
-                                                    <ErrorMessage name="sgst" component="div" className="text-red-500" />
-                                                </div>
-
-
-
-                                            </div>
 
 
 
@@ -1700,7 +1657,7 @@ const AddProduct = () => {
 
                                                     <div className="mb-4.5 flex flex-wrap gap-6">
 
-                                                       
+
                                                         <div className="flex-1 min-w-[300px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                             <div className=" z-20 bg-transparent dark:bg-form-Field">
@@ -1724,7 +1681,7 @@ const AddProduct = () => {
 
 
                                                     <div className="mb-4.5 flex flex-wrap gap-6">
-                                                    <div className="flex-2 min-w-[250px]">
+                                                        <div className="flex-2 min-w-[250px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> Fabric Cost </label>
                                                             <Field
                                                                 name='fabricCost'
@@ -1747,7 +1704,7 @@ const AddProduct = () => {
 
 
 
-                                                         <div className="flex-2 min-w-[250px]">
+                                                        <div className="flex-2 min-w-[250px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> Total Cost </label>
                                                             <Field
                                                                 name='totalCost'
@@ -1764,7 +1721,7 @@ const AddProduct = () => {
 
 
                                                     <div className="mb-4.5 flex flex-wrap gap-6">
-                                                    <div className="flex-2 min-w-[250px]">
+                                                        <div className="flex-2 min-w-[250px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> MRP</label>
                                                             <Field
                                                                 name='mrp'
@@ -1774,7 +1731,7 @@ const AddProduct = () => {
                                                             />
                                                         </div>
 
-                                                    <div className="flex-2 min-w-[250px]">
+                                                        <div className="flex-2 min-w-[250px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> Dyeing Cost </label>
                                                             <Field
                                                                 name='dyeingCost'
@@ -1786,7 +1743,7 @@ const AddProduct = () => {
                                                     </div>
 
 
-                                                   
+
 
 
                                                     <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>Pricing </h1>
@@ -1932,7 +1889,7 @@ const AddProduct = () => {
 
                                                     <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>Costing </h1>
                                                     <div className="mb-4.5 flex flex-wrap gap-6">
-                                                    <div className="flex-2 min-w-[250px]">
+                                                        <div className="flex-2 min-w-[250px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> Cost Price </label>
                                                             <Field
                                                                 name='cost'
@@ -1950,7 +1907,7 @@ const AddProduct = () => {
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                             />
                                                         </div>
-                                                    <div className="flex-2 min-w-[250px]">
+                                                        <div className="flex-2 min-w-[250px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> Dyeing Cost </label>
                                                             <Field
                                                                 name='dyeingCost'
@@ -1962,10 +1919,10 @@ const AddProduct = () => {
                                                     </div>
 
 
-                                                   
 
 
-                                                
+
+
                                                     <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>Pricing </h1>
 
 
@@ -2065,9 +2022,19 @@ const AddProduct = () => {
                                                 {values.gstDetails === "Applicable" && (
 
                                                     <>
+
+
+
+
+
+
+
+
+
+
                                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                                             {/* HSN Codes Field */}
-                                                            <div className="flex-2 min-w-[250px]">
+                                                            {/* <div className="flex-2 min-w-[250px]">
                                                                 <label className="mb-2.5 block text-black dark:text-white">HSN Codes</label>
                                                                 <Field
                                                                     name="hsnCodes"
@@ -2075,9 +2042,87 @@ const AddProduct = () => {
                                                                     placeholder="Enter HSN Code"
                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                                 />
+                                                            </div> */}
+
+                                                            <div className="mb-4.5 flex flex-wrap gap-6">
+                                                                <div className="flex-2 min-w-[250px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white"> HSN Code <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                                    <ReactSelect
+                                                                        name="hsnCode"
+                                                                        value={hsnOptions?.find(option => option.value === values.hsnCode?.id) || null}
+                                                                        onChange={(option) => setFieldValue('hsnCode', option ? option.hsnObject : null)}
+                                                                        options={hsnOptions}
+                                                                        styles={customStyles} // Pass custom styles here
+                                                                        className="bg-white dark:bg-form-Field"
+                                                                        classNamePrefix="react-select"
+                                                                        placeholder="Select Hsn Code"
+                                                                    />
+                                                                </div>
+
+                                                                <div className="flex-2 min-w-[250px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white"> IGST (%)</label>
+                                                                    <Field
+                                                                        type="number"
+
+                                                                        value={vaaluee?.hsnCode?.igst}
+                                                                        disabled
+                                                                        placeholder="Enter IGST Name"
+                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
+                                                                    />
+                                                                    <ErrorMessage name="igst" component="div" className="text-red-500" />
+                                                                </div>
+
+
+                                                                <div className="flex-2 min-w-[250px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white"> CGST (%)</label>
+                                                                    <Field
+                                                                        type="number"
+
+                                                                        disabled
+                                                                        value={vaaluee?.hsnCode?.cgst}
+                                                                        placeholder="Enter cgst Name"
+                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
+                                                                    />
+                                                                    <ErrorMessage name="cgst" component="div" className="text-red-500" />
+                                                                </div>
+
+                                                            </div>
+
+
+
+                                                            <div className="mb-4.5 flex flex-wrap gap-6">
+
+                                                                <div className="flex-2 min-w-[250px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white"> SGST (%)</label>
+                                                                    <Field
+                                                                        type="number"
+                                                                        value={vaaluee?.hsnCode?.sgst}
+
+                                                                        disabled
+                                                                        placeholder="Enter SGST Name"
+                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
+                                                                    />
+                                                                    <ErrorMessage name="sgst" component="div" className="text-red-500" />
+                                                                </div>
+
+
+
                                                             </div>
 
                                                             {/* HSN/SAC Field */}
+
+                                                            {/* GST Description Field */}
+                                                            <div className="flex-2 min-w-[250px]">
+                                                                <label className="mb-2.5 block text-black dark:text-white">GST Description</label>
+                                                                <Field
+                                                                    name="gstDescription"
+                                                                    value={vaaluee?.hsnCode?.productDescription}
+                                                                    type="text"
+                                                                    placeholder="Enter GST Description"
+                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                />
+                                                            </div>
+
                                                             <div className="flex-2 min-w-[250px]">
                                                                 <label className="mb-2.5 block text-black dark:text-white">HSN/SAC</label>
                                                                 <Field
@@ -2087,18 +2132,6 @@ const AddProduct = () => {
                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                                 />
                                                             </div>
-
-                                                            {/* GST Description Field */}
-                                                            <div className="flex-2 min-w-[250px]">
-                                                                <label className="mb-2.5 block text-black dark:text-white">GST Description</label>
-                                                                <Field
-                                                                    name="gstDescription"
-                                                                    type="text"
-                                                                    placeholder="Enter GST Description"
-                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                />
-                                                            </div>
-
                                                         </div>
 
 
@@ -2123,13 +2156,22 @@ const AddProduct = () => {
 
                                                             {/* GST Rate Field */}
                                                             <div className="flex-2 min-w-[250px]">
-                                                                <label className="mb-2.5 block text-black dark:text-white">GST Rate</label>
-                                                                <Field
-                                                                    name="gstRate"
-                                                                    type="number"
-                                                                    placeholder="Enter GST Rate"
-                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                <label className="mb-2.5 block text-black dark:text-white">GST RATE DETAILS</label>
+
+
+                                                                <ReactSelect
+
+                                                                    name="gstratedetails"
+                                                                    options={gstdetails}
+                                                                    value={gstdetails.find(option => option.value === values.gstratedetails)}
+                                                                    // onChange={(option) => setFieldValue("gstratedetails", option?.value)}
+                                                                    onChange={(option) => handlerateDetails(option, setFieldValue)}
+                                                                    styles={customStyles}
+
+                                                                    placeholder="Enter Gst Rate Details"
+
                                                                 />
+
                                                             </div>
 
                                                             {/* Type of Supply Field */}
@@ -2148,8 +2190,6 @@ const AddProduct = () => {
                                                                     placeholder="Enter Type of Supply"
 
                                                                 />
-
-
 
                                                             </div>
                                                         </div>
@@ -2455,6 +2495,17 @@ const AddProduct = () => {
                 </Formik>
 
             </div>
+            <Modall
+                setIsModalOpen={setgstDetailModal}
+                isOpen={gstDetailModal}
+                onRequestClose={() => setgstDetailModal(false)}
+                //   prodIdd={}
+                //   GET_PRODUCTBYID_URL={GET_PRODUCTBYID_URL}
+                  onSubmit={handleModalSubmit}
+                width="70%"
+                height="80%"
+                style={{ marginLeft: '70px', marginRight: '0' }}  // Add this line
+            />
         </DefaultLayout>
     )
 }
