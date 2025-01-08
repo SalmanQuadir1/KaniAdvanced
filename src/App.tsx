@@ -16,7 +16,7 @@ import AddLocationInventory from './components/Products/AddLoctionInventory.jsx'
 
 import UpdateBom from './components/Products/UpdateBom.jsx';
 import UpdateProduct from './components/Products/UpdateProduct.jsx';
-
+import UpdateLocationInventory from './components/Products/UpdateLocationInventory.jsx';
 
 
 
@@ -176,9 +176,9 @@ function App() {
               </>
             }
           />
-{/* Order */}
+          {/* Order */}
 
-<Route
+          <Route
             path="/Order/addOrder"
             element={
               <>
@@ -221,7 +221,7 @@ function App() {
               </>
             }
           />
-            <Route
+          <Route
             path="/product/updateProduct/:id"
             element={
               <>
@@ -231,12 +231,22 @@ function App() {
             }
           />
 
-<Route
+          <Route
+            path="/product/updateInventory/:id"
+            element={
+              <>
+                <PageTitle title="View Product" />
+                <UpdateLocationInventory />
+              </>
+            }
+          />
+
+          <Route
             path="/order/updateOrder/:id"
             element={
               <>
                 <PageTitle title="View Order" />
-                <UpdateOrder/>
+                <UpdateOrder />
               </>
             }
           />
