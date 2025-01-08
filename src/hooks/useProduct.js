@@ -108,7 +108,7 @@ hsnCodes:"",
 
     embroideryCost: 0,
     totalCost: 0,
-    retailMrp:"",
+    retailMrp:0,
 
 
     kaniColors: "",
