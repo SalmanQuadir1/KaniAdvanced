@@ -32,13 +32,22 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
 
 
     const addRow = () => {
-        setRows([...rows, { id: Date.now(), greaterThan: 0, upTo: "", type: "", gstRate: ""}]);
+        setRows([...rows, { id: Date.now(), greaterThan: 0, upTo: "", type: "", gstRate: "" }]);
     };
 
 
     const deleteRow = (index) => {
         setRows(rows.filter((_, rowIndex) => rowIndex !== index));
     };
+    const taxability = [
+
+
+        { value: 'Exempt', label: 'Exempt' },
+        { value: 'NilRated', label: 'Nil Rated' },
+        { value: 'NonGST', label: 'Non GST' },
+        { value: 'Taxable', label: 'Taxable' },
+
+    ]
 
 
 
@@ -158,6 +167,8 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
                                                                         </th>
                                                                         <th
                                                                             className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[150px]"
+                                                                            style={{ width: "220px" }}
+                                                                        
                                                                         >
                                                                             Taxability <span className="text-red-700 text-xl mt-[40px] justify-center items-center"> *</span>
                                                                         </th>
@@ -185,12 +196,12 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
                                                                             Upto
                                                                         </th>
                                                                         <th
-                                                                            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                                                            className="md:px-5   md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
                                                                         >
                                                                             Type
                                                                         </th>
                                                                         <th
-                                                                            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                                                            className="md:px-5 md:py-3  px-2 py-2 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
                                                                         >
                                                                             Rate %
                                                                         </th>
@@ -237,7 +248,7 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
                                                                                         const newRows = [...rows];
                                                                                         const balance = parseInt(e.target.value, 10);
                                                                                         setFieldValue(`rows[${index}].upTo`, balance);
-                                                                                        
+
                                                                                         newRows[index].upTo = balance;
                                                                                         // newRows[index].selectedOption2 = generateWorkerOptions(
                                                                                         //     newRows[index].selectedOption2.label || '',
@@ -253,6 +264,7 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
                                                                                 }
                                                                             </td>
                                                                             <td className="px-2 py-2 border-b">
+                                                                                {/* 
                                                                                 <Field
                                                                                     type="text"
                                                                                     name={`rows[${index}].type`}
@@ -270,6 +282,28 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
                                                                                         // );
                                                                                         setRows(newRows);
                                                                                     }}
+                                                                                /> */}
+
+                                                                                <ReactSelect
+                                                                                    name={`rows[${index}].type`}
+                                                                                    options={taxability}
+                                                                                    // onChange={(option) => setFieldValue("gstDetails", option?.value)}
+                                                                                    onChange={(option) => {
+                                                                                        const newRows = [...rows];
+                                                                                        const balance = (option?.value);
+                                                                                        setFieldValue(`rows[${index}].type`, balance);
+                                                                                        newRows[index].type = balance;
+                                                                                        // newRows[index].selectedOption2 = generateWorkerOptions(
+                                                                                        //     newRows[index].selectedOption2.label || '',
+                                                                                        //     values.supplierCode,
+                                                                                        //     numOfLooms
+                                                                                        // );
+                                                                                        setRows(newRows);
+                                                                                    }}
+                                                                                    styles={customStyles}
+                                                                                    className="md:w-[200px] bg-white dark:bg-form-Field"
+                                                                                    classNamePrefix="react-select"
+                                                                                    placeholder="Select GST details"
                                                                                 />
                                                                                 <ErrorMessage name="group" component="div" className="text-red-500" />
                                                                             </td>
@@ -278,7 +312,7 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
                                                                                     type="text"
                                                                                     name={`rows[${index}].gstRate`}
                                                                                     placeholder="Enter Rate %"
-                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 mb-4  px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                                                     onChange={(e) => {
                                                                                         const newRows = [...rows];
                                                                                         const balance = e.target.value;
@@ -291,7 +325,7 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
                                                                                         // );
                                                                                         setRows(newRows);
                                                                                     }}
-                                                                                /> 
+                                                                                />
                                                                                 <span className='items-center justify-center ml-4'>%</span>
                                                                                 <ErrorMessage name="group" component="div" className="text-red-500" />
                                                                             </td>
