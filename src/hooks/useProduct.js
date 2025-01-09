@@ -434,8 +434,15 @@ hsnCodes:"",
             const data = await response.json();
     
             if (response.ok) {
-                toast.success(`Product ${edit ? "updated" : "added"} successfully`);
-                resetForm(); // Reset form fields
+                setTimeout(() => {
+                    toast.success(`Product ${edit ? "updated" : "added"} successfully`);
+                }, 3000);
+                
+                // Reset the form and states
+                resetForm();
+                setReferenceImages([]); // Reset reference images
+                setActualImages([]); // Reset actual images
+                window.location.reload();  // Reset form fields
                 setEdit(false); // Reset edit state
                 getProduct(pagination.currentPage || 1); // Refresh product list
             } else {

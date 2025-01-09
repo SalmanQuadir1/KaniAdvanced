@@ -5,7 +5,7 @@ import { ErrorMessage, Field, Form, Formik } from 'formik'
 import { IoMdAdd, IoMdTrash } from "react-icons/io";
 import ReactSelect from 'react-select';
 import { useSelector } from 'react-redux';
-import { ADDBOM, ADD_LOCATIONINVENTORY_URL, GET_PRODUCTInventory_URL, customStyles as createCustomStyles } from '../../Constants/utils';
+import { ADDBOM, ADD_LOCATIONINVENTORY_URL, GET_PRODUCTInventory_URL, UPDATE_PRODUCTInventory_URL, customStyles as createCustomStyles } from '../../Constants/utils';
 import useProduct from '../../hooks/useProduct';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -27,7 +27,12 @@ const UpdateLocationInventory = () => {
 
     const { getLocation, Location } = useProduct({ referenceImages, actualImages, productIdField });
 
-    const [rows, setRows] = useState([{ id: Date.now(), selectedOption1: null, selectedOption2: "", selectedOption3: "", numOfLooms: 0 }]);
+    const [rows, setRows] = useState([{ id: Date.now(), location: null, openingBalance: null,
+        purchase: null,
+        sale: null,
+        branchTransferInwards: null,
+        branchTransferOutwards: null,
+        inProgressOrders:null }]);
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
 
@@ -58,7 +63,7 @@ const UpdateLocationInventory = () => {
                     branchTransferOutwards: inven.branchTransferOutwards ,// Default value if empty
                     purchase: inven.purchase  ,// Default value if empty
                     sale: inven.sale , // Default value if empty
-                    selectedOption3: inven.quantity  // Default value if empty
+                    selectedOption3: inven.quantity// Default value if empty
                 }));
                 setRows(initialRows);
             }
@@ -112,58 +117,53 @@ const UpdateLocationInventory = () => {
 
 
     const handleSubmit = async (values, { setSubmitting }) => {
-        const formData = {
-
-
-            locationInventory: rows.map(row => ({
-                location: { id: row.selectedOption1?.value },
-                openingBalance: row.selectedOption2
-            }))
-        }
-
-
-        console.log((formData)); // Log the formData for debugging
-
+        // Prepare the locationInventory data
+        const locationInventoryData = rows.map(row => ({
+            location: { id: row.location?.value }, // Extract the id from the selected location
+            openingBalance: row.openingBalance || 0, // Ensure a default value if empty
+            closingBalance: row.closingBalance || 0,
+            inProgressOrders: row.inProgressOrders || 0,
+            branchTransferInwards: row.branchTransferInwards || 0,
+            branchTransferOutwards: row.branchTransferOutwards || 0,
+            purchase: row.purchase || 0,
+            sale: row.sale || 0,
+        }));
+    
+        console.log("Prepared locationInventory data:", locationInventoryData);
+    
         try {
             console.log("Submitting form...");
-            const url = `${ADD_LOCATIONINVENTORY_URL}/${id}`;
-            console.log(url, "jammuu");
-            const method = "POST";
-            // Ensure token is fetched correctly
-
+            const url = `${UPDATE_PRODUCTInventory_URL}/${id}`;
             const response = await fetch(url, {
-                method: method,
+                method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify(formData) // Stringify the formData
+                body: JSON.stringify({ locationInventory: locationInventoryData }), // Send the array
             });
-
+    
             const data = await response.json();
-            console.log(data, "Response data"); // Log the response data for debugging
-
+            console.log("Response data:", data);
+    
             if (response.ok) {
-
-                toast.success(`Location added successfully`);
-                navigate("/product/viewProducts")
-                // Call resetForm and setCurrentSupplier with proper state updates
+                toast.success("Location inventory Updated successfully");
+                navigate("/product/viewProducts");
             } else {
-                seterrorMessage(data)
-                console.log(data.errorMessage, "data");
-                toast.error(data.errorMessage || "Please Fill All The Fields");
-
+                seterrorMessage(data.errorMessage || "Please fill all the fields");
+                toast.error(data.errorMessage || "An error occurred while adding inventory");
             }
         } catch (error) {
-            console.error(error); // Log the error for debugging
-            toast.error("An error occurred");
+            console.error("Error submitting form:", error);
+            toast.error("An error occurred while submitting the form");
         } finally {
             setSubmitting(false);
         }
     };
+    
     return (
         <DefaultLayout>
-            <Breadcrumb pageName="Product /ADD PRODUCT INVENTORY" />
+            <Breadcrumb pageName="PRODUCT /UPDATE INVENTORY" />
             <div>
                 <Formik
                     initialValues={{
@@ -178,7 +178,7 @@ const UpdateLocationInventory = () => {
                                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                                         <h3 className="md:font-medium text-slate-500 text-center text-md md:text-xl dark:text-white">
-                                            UPDATE PRODUCT INVENTORY
+                                            UPDATE INVENTORY
                                         </h3>
                                     </div>
                                     <div className="p-6.5">
@@ -193,7 +193,7 @@ const UpdateLocationInventory = () => {
 
 
                                             <div className='text-center flex justify-between'>
-                                                <h2 className='text-sm md:text-2xl'>UPDATE PRODUCT INVENTORY</h2>
+                                                <h2 className='text-sm md:text-2xl'>UPDATE INVENTORY</h2>
 
                                                 <div className='text-end'>
                                                     <button
@@ -433,7 +433,7 @@ const UpdateLocationInventory = () => {
 
                                         <div className="flex justify-center mt-4 items-center">
                                             <button type="submit" className="flex md:w-[300px] w-[220px]  justify-center rounded bg-primary p-3 font-medium text-sm text-gray hover:bg-opacity-90 mt-4">
-                                                Add PRODUCT INVENTORY
+                                                UPDATE INVENTORY
                                             </button>
                                         </div>
                                     </div>
