@@ -28,7 +28,7 @@ const AddProduct = () => {
     const [referenceImages, setrefImage] = useState({})
     const [actualImages, setactualImage] = useState({})
 
-
+    const [gstDetails, setgstDetails] = useState([])
 
     const [vaaluee, setvaaluee] = useState({})
 
@@ -312,7 +312,7 @@ const AddProduct = () => {
 
         handleSubmit,
 
-    } = useProduct({ referenceImages, actualImages, productIdField });
+    } = useProduct({ referenceImages, actualImages, productIdField, gstDetails });
 
 
 
@@ -368,18 +368,22 @@ const AddProduct = () => {
     };
 
     const handlerateDetails = (option, setFieldValue) => {
-        setFieldValue('gstratedetails', option);
+        console.log(option, "optoooon");
+        setFieldValue('gstratedetails', option.value);
+        if (option.value === "specifySlabBasedRates") {
 
-        setgstDetailModal(true)
+            setgstDetailModal(true)
+        }
 
     }
 
 
-const handleModalSubmit=(values)=>{
-    console.log("iam here");
-    console.log(values,"ggjio");
+    const handleModalSubmit = (values) => {
 
-}
+        console.log(values, "ggjio");
+        setgstDetails(values)
+
+    }
 
 
 
@@ -905,7 +909,7 @@ const handleModalSubmit=(values)=>{
                                                             <label className="mb-2.5 block text-black dark:text-white"> Retail Mrp</label>
                                                             <Field
                                                                 name='retailMrp'
-                                                                type="text"
+                                                                type="number"
                                                                 placeholder="Enter Retail Mrp"
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                             />
@@ -2200,6 +2204,64 @@ const handleModalSubmit=(values)=>{
 
 
 
+                                            <div className="mb-4.5  gap-6">
+                                                {
+                                                    gstDetails && gstDetails.length > 0 && gstDetails.map((gst, index) => (
+                                                        <>
+                                                            <div className="mb-4.5 flex flex-wrap gap-6">
+                                                                <div key={index} className="flex-2 min-w-[100px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">Greater Than</label>
+                                                                    <Field
+                                                                        name="greaterThan"
+                                                                        type="text"
+                                                                        value={gst?.greaterThan}
+                                                                        placeholder="Enter GBP Price"
+                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                    />
+                                                                </div>
+                                                                <div key={index} className="flex-2 min-w-[100px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">Upto</label>
+                                                                    <Field
+                                                                        name="upTo"
+                                                                        type="text"
+                                                                        value={gst?.upTo}
+                                                                        placeholder="Upto"
+                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                    />
+                                                                </div>
+                                                                <div key={index} className="flex-2 min-w-[100px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">Type</label>
+                                                                    <Field
+                                                                        name="type"
+                                                                        type="text"
+                                                                        value={gst?.type}
+                                                                        placeholder="Type"
+                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                    />
+                                                                </div>
+                                                                <div key={index} className="flex-2 min-w-[100px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">Rate</label>
+                                                                    <Field
+                                                                        name="gstRate"
+                                                                        type="text"
+                                                                        value={gst?.gstRate}
+                                                                        placeholder="rate"
+                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </>
+                                                    ))
+                                                }
+
+
+
+
+                                            </div>
+
+
+
+
 
 
 
@@ -2501,7 +2563,7 @@ const handleModalSubmit=(values)=>{
                 onRequestClose={() => setgstDetailModal(false)}
                 //   prodIdd={}
                 //   GET_PRODUCTBYID_URL={GET_PRODUCTBYID_URL}
-                  onSubmit={handleModalSubmit}
+                onSubmit={handleModalSubmit}
                 width="70%"
                 height="80%"
                 style={{ marginLeft: '70px', marginRight: '0' }}  // Add this line
