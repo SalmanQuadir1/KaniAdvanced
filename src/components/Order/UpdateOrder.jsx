@@ -428,7 +428,7 @@ const UpdateOrder = () => {
       <Breadcrumb pageName="Order/Update Order" />
       <div>
         <Formik
-        enableReinitialize
+        enableReinitialize={true}
           initialValues={{
             orderNo: order?.orderNo || '', 
             orderType: order?.orderType || '',
@@ -459,6 +459,7 @@ const UpdateOrder = () => {
               // supplierOrderQty: product.productSuppliers?.[0]?.supplierOrderQty || 0,
               productSuppliers: product.productSuppliers?.map(supplier => ({
                 supplierName: supplier.supplier?.name || '',
+                
                 supplierOrderQty: supplier.supplierOrderQty || 0,
               })) || [],
 
@@ -815,7 +816,11 @@ const UpdateOrder = () => {
                             </tr>
                           </thead>
                     <tbody>
-                    {order?.orderProducts?.map((product, index) => (
+
+                  
+
+
+                    {order?.orderProducts?.map((product, index ,item) => (
     <tr key={product.id}>
       {/* Product ID */}
       <td className="px-5 py-5 border-b border-gray-200 text-sm">
@@ -823,6 +828,7 @@ const UpdateOrder = () => {
           as="select"
           name={`orderProducts[${index}].products.id`}
           value={product.products?.id || ""}
+          isDisabled={true}
           className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
         >
           {prodIdOptions.map((option) => (
@@ -842,7 +848,7 @@ const UpdateOrder = () => {
           //value={values.orderCategory}
           value={values.orderProducts[index]?.orderCategory || ''}
           className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-          //readOnly
+          readOnly
         />
          {/* <Field
   name={`orderProducts[${index}].orderCategory`}
@@ -934,6 +940,15 @@ const UpdateOrder = () => {
       {/* Actions */}
       <td className="px-5 py-5 border-b border-gray-200 text-sm">
         <IoIosAdd size={30} onClick={() => openSupplierModal(product.id)} />
+          
+        {/* <IoIosAdd
+  size={30}
+  onClick={() => {
+    setSelectedRowId(index); // Set the current row index
+    openSupplierModal(item?.id, index); // Pass product ID and row index
+  }}
+/> */}
+
       </td>
 
 
@@ -975,8 +990,8 @@ const UpdateOrder = () => {
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                   <Field
                     name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.name`}
-                    //value={supplierData.supplier?.name || ""}
-                    //readOnly
+                     value={supplierData.supplier?.name || ""}
+                    
                     className="w-[130px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                   />
                 </td>
@@ -1019,13 +1034,18 @@ const UpdateOrder = () => {
    
 ))}
  
+ 
+
+ 
 </tbody>
 
 
 </table>
+
+
 </div>
 
-
+  
                     
 
 
