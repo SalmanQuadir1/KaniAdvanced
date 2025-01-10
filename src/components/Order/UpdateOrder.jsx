@@ -146,41 +146,66 @@ const UpdateOrder = () => {
 
 
 
-   const handleUpdateSubmit = async (values) => {
+  //  const handleUpdateSubmit = async (values) => {
      
-                 console.log(values,"jazim");
-         try {
-             const url = `${UPDATE_ORDER_URL }/${id}`;
+  //                console.log(values,"jazim");
+  //        try {
+  //            const url = `${UPDATE_ORDER_URL }/${id}`;
     
-             const response = await fetch(url, {
-                 method: "PUT",
-                 headers: {
-                     "Content-Type": "application/json",
-                     "Authorization": `Bearer ${token}`
-                 },
-                 body: JSON.stringify(values)
-             });
+  //            const response = await fetch(url, {
+  //                method: "PUT",
+  //                headers: {
+  //                    "Content-Type": "application/json",
+  //                    "Authorization": `Bearer ${token}`
+  //                },
+  //                body: JSON.stringify(values)
+  //            });
    
-             const data = await response.json();
-             if (response.ok) {
-              console.log(data,"coming ");
+  //            const data = await response.json();
+  //            if (response.ok) {
+  //             console.log(data,"coming ");
              
-                 toast.success(`Order Updated successfully`);
-                 // navigate('/inventory/viewMaterialInventory');
+  //                toast.success(`Order Updated successfully`);
+  //                // navigate('/inventory/viewMaterialInventory');
    
-             } else {
-                 toast.error(`${data.errorMessage}`);
-             }
-         } catch (error) {
-             console.error(error);
-             toast.error("An error occurred");
-         } finally {
+  //            } else {
+  //                toast.error(`${data.errorMessage}`);
+  //            }
+  //        } catch (error) {
+  //            console.error(error);
+  //            toast.error("An error occurred");
+  //        } finally {
           
-         }
+  //        }
    
-     };
+  //    };
       
-     
+  const handleUpdateSubmit = async (values) => {
+    console.log(values, "jazim");
+
+    try {
+        const url = `${UPDATE_ORDER_URL}/${id}`;
+        const response = await fetch(url, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(values)
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            console.log(data, "coming ");
+            toast.success(`Order Updated successfully`);
+        } else {
+            toast.error(`${data.errorMessage}`);
+        }
+    } catch (error) {
+        console.error(error);
+        toast.error("An error occurred");
+    }
+};
      
 
    const getOrderById = async () => {
@@ -1035,6 +1060,171 @@ const UpdateOrder = () => {
 ))}
  
  
+ {prodIdModal?.map((item, index) => {
+  // Calculate the starting index dynamically based on the length of the existing orderProducts
+  const startingIndex = order?.orderProducts?.length || 0; // Length of orderProducts
+  const adjustedIndex = startingIndex + index; // Add the current index of prodIdModal to the starting index
+
+  return (
+    <tr key={adjustedIndex} className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3">
+      <td className="px-5 py-5 border-b border-gray-200 text-sm">
+        <div>
+          <Field
+            name={`orderProducts[${adjustedIndex}].products.id`}
+            value={item?.productId || ""}
+            placeholder="Enter Purchase Order"
+            onChange={(e) => {
+              console.log(`Product ID: ${e.target.value}`);
+            }}
+            className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+          />
+          <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+        </div>
+      </td>
+
+      <td className="px-5 py-5 border-b border-gray-200 text-sm">
+        <div>
+          <Field
+            name={`orderProducts[${adjustedIndex}].orderCategory`}
+            placeholder="Enter Order Category"
+            onChange={(e) => {
+              console.log(`Order Category: ${e.target.value}`);
+              setFieldValue(`orderProducts[${adjustedIndex}].orderCategory`, e.target.value);
+            }}
+            className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+          />
+          <ErrorMessage name="orderCategory" component="div" className="text-red-600 text-sm" />
+        </div>
+      </td>
+
+      <td className="px-5 py-5 border-b border-gray-200 text-sm">
+        <div>
+          <Field
+            type="number"
+            name={`orderProducts[${adjustedIndex}].clientOrderQuantity`}
+            placeholder="Enter Client Order Qty"
+            className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+          />
+          <ErrorMessage name="clientOrderQty" component="div" className="text-red-600 text-sm" />
+        </div>
+      </td>
+
+      <td className="px-5 py-5 border-b border-gray-200  text-sm">
+ 
+ 
+ <div >
+
+   <Field
+     name={`orderProducts[${adjustedIndex}].units`}
+     // value={item?.units}
+     placeholder="Enter Units"
+     className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+   />
+   <ErrorMessage name="Units" component="div" className="text-red-600 text-sm" />
+ </div>
+</td>
+
+
+<td className="px-5 py-5 border-b border-gray-200  text-sm">
+ 
+ 
+ <div >
+
+   <Field
+     name={`orderProducts[${adjustedIndex}].inStockQuantity`}
+     // value={item?.productId}
+     type="number"
+
+     placeholder="Enter In Stock Qty"
+     className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+   />
+   <ErrorMessage name="InStockQty" component="div" className="text-red-600 text-sm" />
+ </div>
+</td>
+
+
+<td className="px-5 py-5 border-b border-gray-200  text-sm">
+ 
+ 
+                                     <div >
+ 
+                                       <Field
+                                         name={`orderProducts[${adjustedIndex}].quantityToManufacture`}
+                                         // value={item?.productId}
+                                         type="number"
+                                         placeholder="Enter Qty To Manufacture"
+                                         className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                       />
+                                       <ErrorMessage name="QtyToManufacture" component="div" className="text-red-600 text-sm" />
+                                     </div>
+                                   </td>
+
+                                   <td className="px-5 py-5 border-b border-gray-200  text-sm">
+ 
+ 
+ <div >
+
+   <Field
+     name={`orderProducts[${adjustedIndex}].value`}
+     // value={item?.productId}
+     type="number"
+     placeholder="Enter Value"
+     className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+   />
+   <ErrorMessage name="Value" component="div" className="text-red-600 text-sm" />
+ </div>
+</td>
+
+<td className="px-5 py-5 border-b border-gray-200  text-sm">
+ 
+ 
+ <div >
+
+
+   <div
+     className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus-within:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus-within:border-primary"
+     onClick={(e) => e.stopPropagation()} // Prevents event bubbling
+   >
+     <ReactDatePicker
+       selected={values.orderProducts[adjustedIndex]?.clientShippingDate || null}
+       onChange={(date) => setFieldValue(`orderProducts[${adjustedIndex}].clientShippingDate`, date ? date.toISOString().split("T")[0] : "")}
+       dateFormat="yyyy-MM-dd"
+       placeholderText="Enter Client Shipping Date"
+       className="w-full bg-transparent outline-none"
+       wrapperClassName="w-full"
+     />
+   </div>
+
+   <ErrorMessage name="ClientShippingDate" component="div" className="text-red-600 text-sm" />
+ </div>
+</td>
+
+      
+<td className="px-5 py-5 border-b border-gray-200  text-sm">
+                                     <div >
+                                       <div
+                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus-within:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus-within:border-primary"
+                                         onClick={(e) => e.stopPropagation()} // Prevents event bubbling
+                                       >
+ 
+                                         <ReactDatePicker
+                                           selected={values.orderProducts[adjustedIndex]?.expectedDate || null}
+                                           onChange={(date) => setFieldValue(`orderProducts[${adjustedIndex}].expectedDate`, date ? date.toISOString().split("T")[0] : "")}
+                                           dateFormat="yyyy-MM-dd"
+                                           placeholderText="Enter Client expected Date"
+                                           className="w-full bg-transparent outline-none"
+                                           wrapperClassName="w-full"
+                                         />
+                                       </div>
+                                       <ErrorMessage name="ExpectedDate" component="div" className="text-red-600 text-sm" />
+                                     </div>
+                                   </td>
+
+
+    </tr>
+  );
+})}
+
 
  
 </tbody>
