@@ -245,7 +245,7 @@ const AddLocationInventory = () => {
                                                                                 const newRows = [...rows];
                                                                                 const rate = parseFloat(e.target.value) || 0;
                                                                                 newRows[index].rate = rate;
-                                                                                newRows[index].value = rate * (newRows[index].selectedOption2); // Update value
+                                                                                newRows[index].value = rate * (newRows[index].selectedOption2 || 0); // Update value
                                                                                 setRows(newRows);
                                                                             }}
                                                                         />
@@ -269,7 +269,18 @@ const AddLocationInventory = () => {
                                                                     </td>
                                                                 </tr>
                                                             ))}
+                                                            {/* Total Row */}
+                                                            <tr>
+                                                                <td className="px-2 py-2 border-t font-bold text-black dark:text-white" colSpan={3}>
+                                                                    Total Values
+                                                                </td>
+                                                                <td className="px-2 py-2 border-t font-bold text-black dark:text-white">
+                                                                    {rows.reduce((total, row) => total + (row.value || 0), 0).toFixed(2)}
+                                                                </td>
+                                                                <td className="px-2 py-2 border-t"></td>
+                                                            </tr>
                                                         </tbody>
+
                                                     </table>
                                                 </div>
                                             </div>
