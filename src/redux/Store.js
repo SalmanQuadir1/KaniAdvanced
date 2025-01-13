@@ -32,6 +32,13 @@ const persistedReducer = persistReducer(
   combineReducers({
     user: userReducer,
     theme: ThemeSlice,
+    productGroup:productGroupReducer,
+    productCategory:productCategoryReducer,
+    color:ColorReducer,
+    design:designReducer,
+    style:styleReducer,
+    size:sizeReducer,
+    hsn:HsnReducer,
   })
 );
 
@@ -44,15 +51,8 @@ const rootReducer = combineReducers({
     location: LocationReducer,
     material: MaterialReducer,
     supplier: SupplierReducer,
-    color:ColorReducer,
     orderType:orderTypeReducer,
-    productGroup:productGroupReducer,
     customerGroup:customerGroupReducer,
-    productCategory:productCategoryReducer,
-    style:styleReducer,
-    design:designReducer,
-    size:sizeReducer,
-    hsn:HsnReducer,
     order:OrderReducer
 
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
-import { Field, Formik } from 'formik';
+import { ErrorMessage, Field, Formik } from 'formik';
 import { useNavigate, useParams } from 'react-router-dom';
 import { GET_IMAGE, GET_PRODUCTBYID_URL, UPDATE_PRODUCT_URL } from '../../Constants/utils';
 import { useSelector } from 'react-redux';
@@ -9,6 +9,7 @@ import ReactSelect from 'react-select';
 import { customStyles as createCustomStyles } from '../../Constants/utils';
 import useProduct from '../../hooks/useProduct';
 import { toast } from 'react-toastify';
+import Modall from './Modall';
 
 
 
@@ -23,21 +24,24 @@ const UpdateProduct = () => {
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
     const { currentUser } = useSelector((state) => state?.persisted?.user);
-    const colorGroup = useSelector(state => state?.nonPersisted?.color);
-    const design = useSelector(state => state?.nonPersisted?.design); const [designOptions, setdesignOptions] = useState([])
+
+    const colorGroup = useSelector(state => state?.persisted?.color);
+    const design = useSelector(state => state?.persisted?.design); const [designOptions, setdesignOptions] = useState([])
     const [styleOptions, setstyleOptions] = useState([])
     const [sizeOptions, setsizeOptions] = useState([])
-    const style = useSelector(state => state?.nonPersisted?.style);
-    const size = useSelector(state => state?.nonPersisted?.size);
+    const style = useSelector(state => state?.persisted?.style);
+    const size = useSelector(state => state?.persisted?.size);
     const [productCategoryOptions, setproductCategoryOptions] = useState([]);
     const [hsnOptions, sethsnOptions] = useState([]);
-    const productCategory = useSelector(state => state?.nonPersisted?.productCategory);
-    const hsnCode = useSelector(state => state?.nonPersisted?.hsn);
+    const productCategory = useSelector(state => state?.persisted?.productCategory);
+    const hsnCode = useSelector(state => state?.persisted?.hsn);
     const [supplierNameOptions, setsupplierNameOptions] = useState([])
     const [supplierCodeOptions, setsupplierCodeOptions] = useState([])
     const supplier = useSelector(state => state?.nonPersisted?.supplier);
     const [productGroupOption, setproductGroupOption] = useState([])
-    const productGroup = useSelector(state => state?.nonPersisted?.productGroup);
+    const [gstDetailModal, setgstDetailModal] = useState(false)
+    const productGroup = useSelector(state => state?.persisted?.productGroup);
+
     const [referenceImages, setrefImage] = useState({})
     const [actualImages, setactualImage] = useState({})
     const navigate = useNavigate(); // Initialize navigate
@@ -45,6 +49,7 @@ const UpdateProduct = () => {
 
     const [previews, setPreviews] = useState([]);
     const [previewsActual, setPreviewsActual] = useState([]);
+    const [gstDetails, setgstDetails] = useState([])
 
     const { token } = currentUser;
     const { id } = useParams();
@@ -189,6 +194,8 @@ const UpdateProduct = () => {
             }
 
             const data = await response.json();
+
+            console.log(data, "giu");
             setProduct(data); // Store fetched product
         } catch (error) {
             console.error('Error fetching product:', error);
@@ -214,7 +221,7 @@ const UpdateProduct = () => {
             }));
             setColorGroupOptions(formattedOptions);
         }
-    }, [colorGroup.data]);
+    }, [colorGroup]);
     useEffect(() => {
         if (productCategory.data) {
             const formattedOptions = productCategory.data.map(prodCat => ({
@@ -226,7 +233,7 @@ const UpdateProduct = () => {
             }));
             setproductCategoryOptions(formattedOptions);
         }
-    }, [productCategory.data]);
+    }, [productCategory]);
     useEffect(() => {
         if (hsnCode.data) {
             const formattedOptions = hsnCode.data.map(hsn => ({
@@ -237,7 +244,7 @@ const UpdateProduct = () => {
             }));
             sethsnOptions(formattedOptions);
         }
-    }, [hsnCode.data]);
+    }, [hsnCode]);
     useEffect(() => {
         if (design.data) {
             const formattedOptions = design.data.map(design => ({
@@ -248,7 +255,7 @@ const UpdateProduct = () => {
             }));
             setdesignOptions(formattedOptions);
         }
-    }, [design.data]);
+    }, [design]);
     useEffect(() => {
         if (style.data) {
             const formattedOptions = style.data.map(style => ({
@@ -259,7 +266,7 @@ const UpdateProduct = () => {
             }));
             setstyleOptions(formattedOptions);
         }
-    }, [style.data]);
+    }, [style]);
     useEffect(() => {
         if (size.data) {
             const formattedOptions = size.data.map(size => ({
@@ -270,7 +277,7 @@ const UpdateProduct = () => {
             }));
             setsizeOptions(formattedOptions);
         }
-    }, [size.data]);
+    }, [size]);
 
     useEffect(() => {
         if (supplier.data) {
@@ -283,35 +290,50 @@ const UpdateProduct = () => {
             setsupplierNameOptions(formattedOptions);
         }
     }, [supplier.data]);
-    useEffect(() => {
-        if (supplier.data) {
-            const formattedOptions = supplier.data.map(supp => ({
-                value: supp.id,
-                label: supp?.supplierCode,
-                supplierCodeObject: supp,
-                suplieridd: { id: supp.id }
-            }));
-            setsupplierCodeOptions(formattedOptions);
-        }
-    }, [supplier.data]);
+    // useEffect(() => {
+    //     if (supplier.data) {
+    //         const formattedOptions = supplier.data.map(supp => ({
+    //             value: supp.id,
+    //             label: supp?.supplierCode,
+    //             supplierCodeObject: supp,
+    //             suplieridd: { id: supp.id }
+    //         }));
+    //         setsupplierCodeOptions(formattedOptions);
+    //     }
+    // }, [supplier.data]);
 
 
     useEffect(() => {
-        if (productGroup.data) {
+        if (productGroup?.data && Array.isArray(productGroup.data)) {
             const formattedOptions = productGroup.data.map(product => ({
                 value: product.id,
                 label: product.productGroupName,
                 productGroupObject: product,
             }));
             setproductGroupOption(formattedOptions);
+        } else {
+            setproductGroupOption([]); // Clear options if data is unavailable
         }
-    }, [productGroup.data]);
+    }, [productGroup]);
 
 
     const gstOptions = [
 
         { value: 'Applicable', label: 'Applicable' },
         { value: 'NotApplicable', label: 'NotApplicable' },
+
+    ]
+    const supplyType = [
+
+        { value: 'Goods', label: 'Goods' },
+        { value: 'Service', label: 'Service' },
+        { value: 'capital Goods', label: 'capital Goods' },
+    ]
+
+    const gstdetails = [
+
+        { value: 'specifySlabBasedRates', label: 'Specify Slab Based Rates' },
+        { value: 'useGstClassification', label: 'Use Gst Classification' },
 
     ]
 
@@ -404,7 +426,26 @@ const UpdateProduct = () => {
         handleUpdateSubmit(formattedValues, e);
     };
 
+    const handlerateDetails = (option, setFieldValue) => {
+        console.log(option, "optoooon");
+        setFieldValue('gstratedetails', option.value);
+        if (option.value === "specifySlabBasedRates") {
 
+            setgstDetailModal(true)
+        }
+
+    }
+
+    console.log(product, "brocode");
+    console.log(productGroupOption, "codeeeee");
+
+
+    const handleModalSubmit = (values) => {
+
+        console.log(values, "ggjio");
+        setgstDetails(values)
+
+    }
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Products / UpdateProduct" />
@@ -413,7 +454,7 @@ const UpdateProduct = () => {
                     enableReinitialize // Update initial values when product data changes
                     initialValues={{
                         // id: product?.id || "",
-                        productGroup: product?.productGroup || { id: 0 },
+                        productGroup: product?.productGroup,
                         colors: product?.colors || { id: 0 },
                         // colors: product?.colors?.id || '',
 
@@ -460,6 +501,7 @@ const UpdateProduct = () => {
                         supplierCode: product?.supplierCode || { id: 0 },
                         embroideryCost: product?.embroideryCost || '',
                         totalCost: product?.totalCost || '',
+                        slabBasedRates: product?.slabBasedRates || [],
 
 
 
@@ -493,7 +535,7 @@ const UpdateProduct = () => {
                                                 <div className="bg-white dark:bg-form-Field">
                                                     <ReactSelect
                                                         name="productGroup"
-                                                        value={productGroupOption?.find(option => option.value === values.productGroup?.id) || null}
+                                                        value={productGroupOption?.find(option => option.value === values?.productGroup?.id) || null}
                                                         onChange={(option) => setFieldValue('productGroup', option ? option.productGroupObject : null)}
                                                         options={productGroupOption}
                                                         styles={customStyles}
@@ -558,7 +600,7 @@ const UpdateProduct = () => {
                                                 </div>
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> HSN Code <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> HSN Codee <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                 <ReactSelect
                                                     name="hsnCode"
                                                     value={hsnOptions?.find(option => option.value === values.hsnCode?.id) || null}
@@ -1779,6 +1821,282 @@ const UpdateProduct = () => {
 
 
 
+                                        {product.gstDetails === "Applicable" && (
+                                            <>
+
+                                                <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>Statutory Details</h1>
+
+
+                                                <div className="flex-1 min-w-[300px] mb-4">
+                                                    <label className="mb-2.5 block text-black dark:text-white">GST DETAILS</label>
+                                                    <div className="z-20 bg-transparent dark:bg-form-Field">
+                                                        <ReactSelect
+                                                            name="gstDetails"
+                                                            options={gstOptions}
+                                                            value={gstOptions.find(option => option.value === values.gstDetails)}
+                                                            onChange={(option) => setFieldValue("gstDetails", option?.value)}
+                                                            styles={customStyles}
+                                                            className="bg-white dark:bg-form-Field"
+                                                            classNamePrefix="react-select"
+                                                            placeholder="Select GST details"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className="mb-4.5  gap-6">
+                                                    {/* GST DETAILS Select */}
+
+                                                    {/* Conditional Fields based on gstDetails */}
+                                                    {values.gstDetails === "Applicable" && (
+
+                                                        <>
+
+
+
+
+
+
+
+
+
+
+                                                            <div className="mb-4.5 flex flex-wrap gap-6">
+
+
+                                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                                    <div className="flex-2 min-w-[250px]">
+                                                                        <label className="mb-2.5 block text-black dark:text-white"> HSN Code <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                                        <ReactSelect
+                                                                            name="hsnCode"
+                                                                            value={hsnOptions?.find(option => option.value === values.hsnCode?.id) || null}
+                                                                            // value={hsnOptions?.find(option => option.value === values.hsnCode?.id) || null}
+                                                                            onChange={(option) => setFieldValue('hsnCode', option ? option.hsnObject : null)}
+                                                                            options={hsnOptions}
+                                                                            styles={customStyles} // Pass custom styles here
+                                                                            className="bg-white dark:bg-form-Field"
+                                                                            classNamePrefix="react-select"
+                                                                            placeholder="Select Hsn Code"
+                                                                        />
+                                                                    </div>
+
+                                                                    <div className="flex-2 min-w-[250px]">
+                                                                        <label className="mb-2.5 block text-black dark:text-white"> IGST (%)</label>
+                                                                        <Field
+                                                                            type="number"
+                                                                            value={product.hsnCode.igst}
+
+                                                                            // value={vaaluee?.hsnCode?.igst}
+                                                                            disabled
+                                                                            placeholder="Enter IGST Name"
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
+                                                                        />
+                                                                        <ErrorMessage name="igst" component="div" className="text-red-500" />
+                                                                    </div>
+
+
+                                                                    <div className="flex-2 min-w-[250px]">
+                                                                        <label className="mb-2.5 block text-black dark:text-white"> CGST (%)</label>
+                                                                        <Field
+                                                                            type="number"
+
+                                                                            disabled
+                                                                            value={product.hsnCode.cgst}
+                                                                            // value={vaaluee?.hsnCode?.cgst}
+                                                                            placeholder="Enter cgst Name"
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
+                                                                        />
+                                                                        <ErrorMessage name="cgst" component="div" className="text-red-500" />
+                                                                    </div>
+
+                                                                </div>
+
+
+
+                                                                <div className="mb-4.5 flex flex-wrap gap-6">
+
+                                                                    <div className="flex-2 min-w-[250px]">
+                                                                        <label className="mb-2.5 block text-black dark:text-white"> SGST (%)</label>
+                                                                        <Field
+                                                                            type="number"
+                                                                            value={product.hsnCode.sgst}
+                                                                            // value={vaaluee?.hsnCode?.sgst}
+
+                                                                            disabled
+                                                                            placeholder="Enter SGST Name"
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
+                                                                        />
+                                                                        <ErrorMessage name="sgst" component="div" className="text-red-500" />
+                                                                    </div>
+
+
+
+                                                                </div>
+
+                                                                {/* HSN/SAC Field */}
+
+                                                                {/* GST Description Field */}
+                                                                <div className="flex-2 min-w-[250px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">GST Description</label>
+                                                                    <Field
+                                                                        name="gstDescription"
+                                                                        // value={vaaluee?.hsnCode?.productDescription}
+                                                                        value={product.hsnCode.productDescription}
+                                                                        type="text"
+                                                                        placeholder="Enter GST Description"
+                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                    />
+                                                                </div>
+
+                                                                <div className="flex-2 min-w-[250px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">HSN/SAC</label>
+                                                                    <Field
+                                                                        name="hsn_Sac"
+                                                                        type="text"
+                                                                        placeholder="Enter HSN/SAC"
+                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                    />
+                                                                </div>
+                                                            </div>
+
+
+                                                            <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold '>GST Rate & Related Details </h1>
+                                                            <div className="mb-4.5 flex flex-wrap gap-6">
+
+
+
+
+
+
+                                                                {/* Taxation Type Field */}
+                                                                <div className="flex-2 min-w-[250px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">Taxation Type</label>
+                                                                    <Field
+                                                                        name="taxationType"
+                                                                        type="text"
+                                                                        placeholder="Enter Taxation Type"
+                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                    />
+                                                                </div>
+
+                                                                {/* GST Rate Field */}
+                                                                <div className="flex-2 min-w-[250px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">GST RATE DETAILS</label>
+
+
+                                                                    <ReactSelect
+
+                                                                        name="gstratedetails"
+                                                                        options={gstdetails}
+                                                                        // value={gstdetails.find(option => option.value === values.gstratedetails)}
+                                                                        // onChange={(option) => setFieldValue("gstratedetails", option?.value)}
+                                                                        onChange={(option) => handlerateDetails(option, setFieldValue)}
+                                                                        styles={customStyles}
+
+                                                                        placeholder="Enter Gst Rate Details"
+
+                                                                    />
+
+                                                                </div>
+
+                                                                {/* Type of Supply Field */}
+                                                                <div className="flex-2 min-w-[250px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">Type of Supply</label>
+
+
+                                                                    <ReactSelect
+
+                                                                        name="typeOfSupply"
+                                                                        // options={supplyType}
+                                                                        // value={supplyType.find(option => option.value === values.typeOfSupply)}
+                                                                        // onChange={(option) => setFieldValue("typeOfSupply", option?.value)}
+                                                                        styles={customStyles}
+
+                                                                        placeholder="Enter Type of Supply"
+
+                                                                    />
+
+                                                                </div>
+                                                            </div>
+                                                        </>
+                                                    )}
+                                                </div>
+
+
+
+
+                                                <div className="mb-4.5 gap-6">
+                                                    {product?.slabBasedRates?.length > 0 &&
+                                                        values.slabBasedRates.map((gst, index) => (
+                                                            <div key={index} className="mb-4.5 flex flex-wrap gap-6">
+                                                                <div className="flex-2 min-w-[100px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">Greater Than</label>
+                                                                    <Field
+                                                                        name={`slabBasedRates[${index}].greaterThan`}
+                                                                        type="text"
+                                                                        value={gst?.greaterThan}
+                                                                        placeholder="Enter GBP Price"
+                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                    />
+                                                                </div>
+                                                                <div className="flex-2 min-w-[100px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">Upto</label>
+                                                                    <Field
+                                                                        name={`slabBasedRates[${index}].upTo`}
+                                                                        type="text"
+                                                                        value={gst?.upTo}
+                                                                        placeholder="Upto"
+                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                    />
+                                                                </div>
+                                                                <div className="flex-2 min-w-[100px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">Type</label>
+                                                                    <Field
+                                                                        name={`slabBasedRates[${index}].type`}
+                                                                        type="text"
+                                                                        value={gst?.type}
+                                                                        placeholder="Type"
+                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                    />
+                                                                </div>
+                                                                <div className="flex-2 min-w-[100px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">Rate</label>
+                                                                    <Field
+                                                                        name={`slabBasedRates[${index}].gstRate`}
+                                                                        type="text"
+                                                                        value={gst?.gstRate}
+                                                                        placeholder="Rate"
+                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        ))}
+                                                </div>
+
+
+
+
+                                            </>
+
+
+
+                                        )
+
+
+
+
+                                        }
+
+
+
+
+
+
+
+
+
+
+
+
 
                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                             <div className="flex flex-col space-y-4">
@@ -2181,6 +2499,17 @@ const UpdateProduct = () => {
                     )}
                 </Formik>
             </div>
+            <Modall
+                setIsModalOpen={setgstDetailModal}
+                isOpen={gstDetailModal}
+                onRequestClose={() => setgstDetailModal(false)}
+                //   prodIdd={}
+                //   GET_PRODUCTBYID_URL={GET_PRODUCTBYID_URL}
+                onSubmit={handleModalSubmit}
+                width="70%"
+                height="80%"
+                style={{ marginLeft: '70px', marginRight: '0' }}  // Add this line
+            />
         </DefaultLayout>
     );
 };

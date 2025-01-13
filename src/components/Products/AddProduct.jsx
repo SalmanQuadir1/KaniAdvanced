@@ -44,14 +44,14 @@ const AddProduct = () => {
 
 
 
-    const productGroup = useSelector(state => state?.nonPersisted?.productGroup);
-    const colorGroup = useSelector(state => state?.nonPersisted?.color);
-    const unitGroup = useSelector(state => state?.nonPersisted?.unit);
-    const productCategory = useSelector(state => state?.nonPersisted?.productCategory);
-    const design = useSelector(state => state?.nonPersisted?.design);
-    const style = useSelector(state => state?.nonPersisted?.style);
-    const size = useSelector(state => state?.nonPersisted?.size);
-    const hsnCode = useSelector(state => state?.nonPersisted?.hsn);
+    const productGroup = useSelector(state => state?.persisted?.productGroup);
+    const colorGroup = useSelector(state => state?.persisted?.color);
+    const unitGroup = useSelector(state => state?.persisted?.unit);
+    const productCategory = useSelector(state => state?.persisted?.productCategory);
+    const design = useSelector(state => state?.persisted?.design);
+    const style = useSelector(state => state?.persisted?.style);
+    const size = useSelector(state => state?.persisted?.size);
+    const hsnCode = useSelector(state => state?.persisted?.hsn);
     const supplier = useSelector(state => state?.nonPersisted?.supplier);
     const theme = useSelector(state => state?.persisted?.theme);
 
@@ -170,7 +170,7 @@ const AddProduct = () => {
             }));
             setproductCategoryOptions(formattedOptions);
         }
-    }, [productCategory.data]);
+    }, [productCategory]);
 
     useEffect(() => {
         if (design.data) {
@@ -181,7 +181,7 @@ const AddProduct = () => {
             }));
             setdesignOptions(formattedOptions);
         }
-    }, [design.data]);
+    }, [design]);
     useEffect(() => {
         if (style.data) {
             const formattedOptions = style.data.map(style => ({
@@ -191,7 +191,7 @@ const AddProduct = () => {
             }));
             setstyleOptions(formattedOptions);
         }
-    }, [style.data]);
+    }, [style]);
     useEffect(() => {
         if (size.data) {
             const formattedOptions = size.data.map(size => ({
@@ -212,7 +212,7 @@ const AddProduct = () => {
             }));
             sethsnOptions(formattedOptions);
         }
-    }, [hsnCode.data]);
+    }, [hsnCode]);
     useEffect(() => {
         if (supplier.data) {
             const formattedOptions = supplier.data.map(supp => ({
@@ -882,7 +882,7 @@ const AddProduct = () => {
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                             />
                                                         </div>
-                                                        <div className="flex-2 min-w-[250px]">
+                                                        {/* <div className="flex-2 min-w-[250px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> MRP</label>
                                                             <Field
                                                                 name='mrp'
@@ -890,7 +890,7 @@ const AddProduct = () => {
                                                                 placeholder="Enter MRP"
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                             />
-                                                        </div>
+                                                        </div> */}
                                                         <div className="flex-2 min-w-[250px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> Dyeing Cost </label>
                                                             <Field

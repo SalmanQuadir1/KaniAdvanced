@@ -26,10 +26,10 @@ const AddLocationInventory = () => {
 
     const { getLocation, Location } = useProduct({ referenceImages, actualImages, productIdField });
 
-    const [rows, setRows] = useState([{ id: Date.now(), selectedOption1: null, selectedOption2: "", selectedOption3: "", numOfLooms: 0 }]);
+    const [rows, setRows] = useState([{ id: Date.now(), selectedOption1: null, selectedOption2: "", rate: null, value: null, selectedOption3: "", numOfLooms: 0 }]);
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
-const [errorMessage, seterrorMessage] = useState("")
+    const [errorMessage, seterrorMessage] = useState("")
 
 
 
@@ -40,7 +40,7 @@ const [errorMessage, seterrorMessage] = useState("")
 
 
     const addRow = () => {
-        setRows([...rows, { id: Date.now(), selectedOption1: null, selectedOption2: null }]);
+        setRows([...rows, { id: Date.now(), selectedOption1: null, selectedOption2: null, rate: null, value: null }]);
     };
 
 
@@ -58,12 +58,14 @@ const [errorMessage, seterrorMessage] = useState("")
 
             locationInventory: rows.map(row => ({
                 location: { id: row.selectedOption1?.value },
-                openingBalance: row.selectedOption2
+                openingBalance: row.selectedOption2,
+                rate: row.rate,
+                value: row.value
             }))
         }
 
 
-        console.log((formData)); // Log the formData for debugging
+        console.log(formData, "juiiiiii"); // Log the formData for debugging
 
         try {
             console.log("Submitting form...");
@@ -91,7 +93,7 @@ const [errorMessage, seterrorMessage] = useState("")
                 // Call resetForm and setCurrentSupplier with proper state updates
             } else {
                 seterrorMessage(data)
-                console.log(data.errorMessage,"data");
+                console.log(data.errorMessage, "data");
                 toast.error(data.errorMessage || "Please Fill All The Fields");
 
             }
@@ -104,7 +106,7 @@ const [errorMessage, seterrorMessage] = useState("")
     };
     return (
         <DefaultLayout>
-            <Breadcrumb  pageName="Product /ADD PRODUCT INVENTORY" />
+            <Breadcrumb pageName="Product /ADD PRODUCT INVENTORY" />
             <div>
                 <Formik
                     initialValues={{
@@ -190,9 +192,10 @@ const [errorMessage, seterrorMessage] = useState("")
                                                     <table className="table-fixed w-full">
                                                         <thead>
                                                             <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                                                <th className="md:px-5 md:py-3 px-2 py-1border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[130px] md:w-[300px]" style={{ minWidth: '250px' }}>LOCATION <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
-                                                                <th className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[300px]">OPENING BALANCE <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
-
+                                                                <th className="md:px-5 md:py-3 px-2 py-1border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[130px] md:w-[200px]" style={{ minWidth: '250px' }}>LOCATION <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
+                                                                <th className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[200px]">OPENING BALANCE <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
+                                                                <th className="md:px-5 md:py-3 px-2 py-1border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[130px] md:w-[200px]" >Rate <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
+                                                                <th className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[200px]">Value <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
                                                                 <th className="md:px-5 md:py-3 px-1 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Action</th>
                                                             </tr>
                                                         </thead>
@@ -201,7 +204,7 @@ const [errorMessage, seterrorMessage] = useState("")
                                                                 <tr key={row.id}>
                                                                     <td className="px-2 py-2 border-b">
                                                                         <ReactSelect
-                                                                            name='location'
+                                                                            name="location"
                                                                             value={row.selectedOption1}
                                                                             onChange={(option) => {
                                                                                 const newRows = [...rows];
@@ -213,39 +216,53 @@ const [errorMessage, seterrorMessage] = useState("")
                                                                                 label: location.address,
                                                                                 value: location.id
                                                                             }))}
-                                                                            // options={productList.productDescription}
                                                                             placeholder="Location List"
                                                                             styles={customStyles}
                                                                         />
-                                                                        <ErrorMessage name="group" component="div" className="text-red-500" />
                                                                     </td>
                                                                     <td className="px-2 py-2 border-b">
                                                                         <Field
                                                                             type="number"
-                                                                            name={`rows[${index}].balance`}
-                                                                            placeholder="Enter opening Balance"
+                                                                            name={`rows[${index}].selectedOption2`}
+                                                                            placeholder="Enter Opening Balance"
                                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                                             onChange={(e) => {
                                                                                 const newRows = [...rows];
-                                                                                const balance = parseInt(e.target.value, 10);
+                                                                                const balance = parseFloat(e.target.value) || 0;
                                                                                 newRows[index].selectedOption2 = balance;
-                                                                                // newRows[index].selectedOption2 = generateWorkerOptions(
-                                                                                //     newRows[index].selectedOption2.label || '',
-                                                                                //     values.supplierCode,
-                                                                                //     numOfLooms
-                                                                                // );
+                                                                                newRows[index].value = balance * (newRows[index].rate || 0); // Update value
                                                                                 setRows(newRows);
                                                                             }}
                                                                         />
-
-{
-                                                                        errorMessage.openingBalance&&<h5 className="text-red-500">{errorMessage.openingBalance}</h5>
-                                                                    }
                                                                     </td>
-
+                                                                    <td className="px-2 py-2 border-b">
+                                                                        <Field
+                                                                            type="number"
+                                                                            name={`rows[${index}].rate`}
+                                                                            placeholder="Enter Rate"
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                                            onChange={(e) => {
+                                                                                const newRows = [...rows];
+                                                                                const rate = parseFloat(e.target.value) || 0;
+                                                                                newRows[index].rate = rate;
+                                                                                newRows[index].value = rate * (newRows[index].selectedOption2); // Update value
+                                                                                setRows(newRows);
+                                                                            }}
+                                                                        />
+                                                                    </td>
+                                                                    <td className="px-2 py-2 border-b">
+                                                                        <Field
+                                                                            type="number"
+                                                                            name={`rows[${index}].value`}
+                                                                            placeholder="Value"
+                                                                            value={row.value || 0} // Display calculated value
+                                                                            disabled
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-gray-500 outline-none transition dark:border-form-strokedark dark:bg-slate-700 dark:text-white"
+                                                                        />
+                                                                    </td>
                                                                     <td className="px-2 py-2 border-b">
                                                                         {rows.length > 1 && (
-                                                                            <button type='button' onClick={() => deleteRow(index)}>
+                                                                            <button type="button" onClick={() => deleteRow(index)}>
                                                                                 <IoMdTrash size={24} />
                                                                             </button>
                                                                         )}
