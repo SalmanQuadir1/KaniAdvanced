@@ -35,6 +35,8 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
     const [productList, setproductList] = useState([])
     const [units, setunits] = useState([])
     const [Location, setLocation] = useState([])
+
+    const [productmrp, setproductmrp] = useState([])
     const [currentProduct, setCurrentProduct] = useState({
         productGroup: {},
 
@@ -191,6 +193,11 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
             toast.error("Failed to fetch Product");
         }
     };
+
+
+   
+
+
 
     const getProductId = async () => {
         console.log("iam here");
@@ -439,8 +446,8 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
             console.log(formData, "formmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
 
             // Submit the form data
-            const url = edit ? `${UPDATE_PRODUCT_URL}/${currentProduct.id}` : ADD_PRODUCT_URL;
-            const method = edit ? "PUT" : "POST";
+            // const url = edit ? `${UPDATE_PRODUCT_URL}/${currentProduct.id}` : ADD_PRODUCT_URL;
+            // const method = edit ? "PUT" : "POST";
 
             const response = await fetch(url, {
                 method,

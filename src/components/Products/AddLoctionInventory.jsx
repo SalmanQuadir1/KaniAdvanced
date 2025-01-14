@@ -5,7 +5,7 @@ import { ErrorMessage, Field, Form, Formik } from 'formik'
 import { IoMdAdd, IoMdTrash } from "react-icons/io";
 import ReactSelect from 'react-select';
 import { useSelector } from 'react-redux';
-import { ADDBOM, ADD_LOCATIONINVENTORY_URL, customStyles as createCustomStyles } from '../../Constants/utils';
+import { ADDBOM, ADD_LOCATIONINVENTORY_URL, GET_PRODUCTBYID_URL, customStyles as createCustomStyles } from '../../Constants/utils';
 import useProduct from '../../hooks/useProduct';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -19,28 +19,50 @@ const AddLocationInventory = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const { id } = useParams()
+    const [productMrp, setproductMrp] = useState("")
 
-    const referenceImages = "";
+    const referenceImages ="";
     const actualImages = "";
     const productIdField = "";
 
-    const { getLocation, Location } = useProduct({ referenceImages, actualImages, productIdField });
-
-    const [rows, setRows] = useState([{ id: Date.now(), selectedOption1: null, selectedOption2: "", rate: null, value: null, selectedOption3: "", numOfLooms: 0 }]);
+    const { getLocation, Location, } = useProduct({ referenceImages, actualImages, productIdField });
+console.log(productMrp,"productmrp");
+    const [rows, setRows] = useState([{ id: Date.now(), selectedOption1: null, selectedOption2: "", rate: productMrp || 0, value: null, selectedOption3: "", numOfLooms: 0 }]);
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
     const [errorMessage, seterrorMessage] = useState("")
 
 
+    const getProductMrp = async (page) => {
+     
+        try {
+            const response = await fetch(`${GET_PRODUCTBYID_URL}/${id}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+             
+            });
+            const data = await response.json();
+            console.log(data, "pr datatata")
 
+            setproductMrp(data?.mrp)
+          
+        } catch (error) {
+            console.log(error);
+            toast.error("Failed to fetch Product");
+        }
+    };
 
     useEffect(() => {
         getLocation()
+        getProductMrp()
     }, [])
 
 
     const addRow = () => {
-        setRows([...rows, { id: Date.now(), selectedOption1: null, selectedOption2: null, rate: null, value: null }]);
+        setRows([...rows, { id: Date.now(), selectedOption1: null, selectedOption2: null, rate: productMrp, value: null }]);
     };
 
 
@@ -104,6 +126,13 @@ const AddLocationInventory = () => {
             setSubmitting(false);
         }
     };
+
+    useEffect(() => {
+        if (productMrp) {
+            setRows((prevRows) => prevRows.map((row) => ({ ...row, rate: productMrp })));
+        }
+    }, [productMrp]);
+    
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Product /ADD PRODUCT INVENTORY" />
@@ -239,6 +268,7 @@ const AddLocationInventory = () => {
                                                                         <Field
                                                                             type="number"
                                                                             name={`rows[${index}].rate`}
+                                                                            value={row.rate||""}
                                                                             placeholder="Enter Rate"
                                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                                             onChange={(e) => {

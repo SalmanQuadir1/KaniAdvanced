@@ -12,7 +12,7 @@ import { IoIosAdd } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
-const ViewProduct = () => { 
+const ViewProduct = () => {
     const navigate = useNavigate();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
@@ -28,20 +28,20 @@ const ViewProduct = () => {
 
     const [isINVENTORYModalOpen, setIsINVENTORYModalOpen] = useState(false);
     const [selectedINVENTORYData, setSelectedINVENTORYData] = useState(null);
+    const [mrp, setmrp] = useState(0)
 
 
 
-   
 
 
-    
-    
+
+
 
     useEffect(() => {
         getProduct();
         getProductId();
     }, []);
-  
+
 
     const formattedProductId = productId.map(id => ({
         label: id,
@@ -52,7 +52,7 @@ const ViewProduct = () => {
 
     const openBOMModal = (bomData) => {
 
-       
+
         setSelectedBOMData(bomData);
         setIsModalOpen(true);
     };
@@ -66,9 +66,9 @@ const ViewProduct = () => {
 
     const openINVENTORYModal = (id) => {
 
-       
+
         const getInventory = async () => {
-         
+
             try {
                 const response = await fetch(`${GET_INVENTORYLOCATION}/${id}`, {
                     method: "GET",
@@ -78,12 +78,12 @@ const ViewProduct = () => {
                     }
                 });
                 const data = await response.json();
-            
-    
+
+
                 // setLocation(data);
                 setSelectedINVENTORYData(data);
-                
-             
+
+
             } catch (error) {
                 console.error(error);
                 toast.error("Failed to fetch Product");
@@ -91,18 +91,19 @@ const ViewProduct = () => {
         };
 
         getInventory()
-        // useEffect(() => {
-        //     getInventory()
-        // }, [])
+            // useEffect(() => {
+            //     getInventory()
+            // }, [])
 
 
 
 
-     ;
+            ;
+        setmrp(mrp)
         setIsINVENTORYModalOpen(true);
     };
 
-    
+
     // console.log(selectedBOMData, "jijiji");
 
     const closeINVENTORYModal = () => {
@@ -129,11 +130,11 @@ const ViewProduct = () => {
 
         }
 
-        const handleUpdateInventory=(id)=>{
+        const handleUpdateInventory = (id) => {
             navigate(`/product/updateInventory/${id}`)
         }
-  
-console.log(Product,"prooodudctcttc");
+
+        console.log(Product, "prooodudctcttc");
 
 
         return Product.map((item, index) => (
@@ -152,14 +153,14 @@ console.log(Product,"prooodudctcttc");
                     </div>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                <p className="text-gray-900 whitespace-no-wrap">{item?.productId?.substring(0,14)+".."}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.productId?.substring(0, 14) + ".."}</p>
 
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.productGroup?.productGroupName.substring(0,10)+".."}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item.productGroup?.productGroupName.substring(0, 10) + ".."}</p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.productCategory?.productCategoryName.substring(0,5)+".."}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item.productCategory?.productCategoryName.substring(0, 5) + ".."}</p>
                 </td>
 
                 {/* BOM View Button */}
@@ -186,7 +187,7 @@ console.log(Product,"prooodudctcttc");
 
 
                 {
-                   item?.inventoryStatus?
+                    item?.inventoryStatus ?
                         <td className=" py-5 border-b border-gray-200 text-sm">
                             {/* <button
                                 className="bg-blue-500 hover:bg-blue-600 text-white font-bold h-10 w-[100px] rounded-lg"
