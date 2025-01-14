@@ -493,7 +493,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
                 resetForm();
                 setReferenceImages([]); // Reset reference images
                 setActualImages([]); // Reset actual images
-                window.location.reload();  // Reset form fields
+                // window.location.reload();  // Reset form fields
                 setEdit(false); // Reset edit state
                 getProduct(pagination.currentPage || 1); // Refresh product list
             } else {
@@ -503,7 +503,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
             }
         } catch (error) {
 
-            toast.error("An error occurred. Please try again.");
+            // toast.error("An error occurred. Please try again.");
         } finally {
             setSubmitting(false); // Stop the form submission spinner
         }
