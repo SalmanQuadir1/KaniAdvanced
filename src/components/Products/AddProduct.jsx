@@ -2047,7 +2047,7 @@ const AddProduct = () => {
 
                                                     <>
 
-                                                        <div className="mb-4.5">
+                                                        <div className="mb-4.5 mt-6">
                                                             {/* Conditional Rendering: GST Details or HSN Code Section */}
                                                             {/* {gstDetails && gstDetails.length > 0 ? ( */}
                                                             {values.gstratedetails === "specifySlabBasedRates"  ? (
@@ -2099,7 +2099,7 @@ const AddProduct = () => {
                                                                         </div>
                                                                     ))}
                                                                 </div>
-                                                            ) : (
+                                                            ) : values.gstratedetails === "useGstClassification" ?  (
                                                                 // Render HSN Code and Related Fields Section
                                                                 <div className="mb-4.5 flex flex-wrap gap-6">
                                                                     <div className="flex-2 min-w-[250px]">
@@ -2170,7 +2170,7 @@ const AddProduct = () => {
                                                                         />
                                                                     </div>
                                                                 </div>
-                                                            )}
+                                                            ):null}
                                                         </div>
 
 

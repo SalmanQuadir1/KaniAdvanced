@@ -423,6 +423,26 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
             if (gstDetails && gstDetails.length > 0) {
                 product.slabBasedRates = gstDetails; // Add gstDetails to the product
             }
+            if (values.gstratedetails === "specifySlabBasedRates") {
+                product.slabBasedRates = gstDetails; // Include slab-based rates
+                delete product.hsnCode; // Remove HSN-related fields if they exist
+                delete product.igst;
+                delete product.cgst;
+                delete product.sgst;
+                delete product.gstDescription;
+                delete product.hsn_Sac;
+            } else if (values.gstratedetails === "useGstClassification") {
+                // Include HSN classification details
+                product.hsnCode = values.hsnCode;
+                product.igst = values.hsnCode?.igst;
+                product.cgst = values.hsnCode?.cgst;
+                product.sgst = values.hsnCode?.sgst;
+                product.gstDescription = values.hsnCode?.productDescription;
+                product.hsn_Sac = values.hsn_Sac;
+    
+                // Remove slab-based rates if they exist
+                delete product.slabBasedRates;
+            }
 
             // Append the updated product to formData
             formData.append("product", JSON.stringify(product));
@@ -446,8 +466,8 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
             console.log(formData, "formmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
 
             // Submit the form data
-            // const url = edit ? `${UPDATE_PRODUCT_URL}/${currentProduct.id}` : ADD_PRODUCT_URL;
-            // const method = edit ? "PUT" : "POST";
+            const url = edit ? `${UPDATE_PRODUCT_URL}/${currentProduct.id}` : ADD_PRODUCT_URL;
+            const method = edit ? "PUT" : "POST";
 
             const response = await fetch(url, {
                 method,
