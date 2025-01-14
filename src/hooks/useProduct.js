@@ -434,9 +434,9 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
             } else if (values.gstratedetails === "useGstClassification") {
                 // Include HSN classification details
                 product.hsnCode = values.hsnCode;
-                product.igst = values.hsnCode?.igst;
-                product.cgst = values.hsnCode?.cgst;
-                product.sgst = values.hsnCode?.sgst;
+                // product.igst = values.hsnCode?.igst;
+                // product.cgst = values.hsnCode?.cgst;
+                // product.sgst = values.hsnCode?.sgst;
                 product.gstDescription = values.hsnCode?.productDescription;
                 product.hsn_Sac = values.hsn_Sac;
     
