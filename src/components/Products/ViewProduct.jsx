@@ -238,7 +238,7 @@ const ViewProduct = () => {
                     {/* BOM Modal */}
                     {isModalOpen && (
                         <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50">
-                            <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg md:ml-[100px]  w-[350px]  md:w-[700px] md:h-[400px] mt-[50px]">
+                            <div className="bg-slate-100 dark:bg-slate-500 border border-b-1 rounded p-6 shadow-lg md:ml-[100px]  w-[350px]  md:w-[700px] md:h-[400px] mt-[50px]">
                                 <div className="text-right">
                                     <button color='red' onClick={closeBOMModal} className="text-red-500  text-xl  font-bold">&times;</button>
                                 </div>
@@ -258,14 +258,14 @@ const ViewProduct = () => {
 
                                             {selectedBOMData?.productMaterials?.map((row, index) => (
                                                 <tr key={row.id}>
-                                                    <td className="px-2 py-2 border-b">
+                                                    <td className="px-2 py-2 border-b dark:text-white">
                                                         <p>{row?.products?.productDescription}</p>
 
                                                     </td>
-                                                    <td className="px-2 py-2 border-b">
+                                                    <td className="px-2 py-2 border-b dark:text-white">
                                                         {row.unitOfMeasurement}
                                                     </td>
-                                                    <td className="px-2 py-2 border-b">
+                                                    <td className="px-2 py-2 border-b dark:text-white">
                                                         {row.quantity}
 
                                                     </td>
@@ -290,8 +290,8 @@ const ViewProduct = () => {
 
                     {/* Inventory Modal */}
                     {isINVENTORYModalOpen && (
-                        <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50">
-                            <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px]  w-[870px] h-[400px] mt-[60px]">
+                        <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50 ">
+                            <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px]  w-[870px] h-[400px] mt-[60px] dark:bg-slate-600">
                                 <div className="text-right">
                                     <button onClick={closeINVENTORYModal} className="text-red-500 text-xl  font-bold">&times;</button>
                                 </div>
@@ -302,56 +302,49 @@ const ViewProduct = () => {
                                             <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >LOCATION</th>
                                                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">OPENING BALANCE</th>
-                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">BRANCH TRANSFER (INWARDS)</th>
-                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">BRANCH TRANSFER (OUTWARDS)</th>
-                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">CLOSING BALANCE</th>
-                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">PURCHASE</th>
-                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">SALE</th>
-                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">IN PROGRESS ORDERS</th>
+
+                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Rate</th>
+                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Value</th>
                                             </tr>
                                         </thead>
                                         <tbody>
 
 
-                                            {selectedINVENTORYData?.map((row, index) => (
-                                                <tr key={row.id}>
-                                                    <td className="px-2 py-2 border-b">
-                                                        <p>{row?.location?.address}</p>
+                                            {selectedINVENTORYData && (
+                                                <>
+                                                    {selectedINVENTORYData.map((row, index) => (
+                                                        <tr key={row.id}>
+                                                            <td className="px-2 py-2 border-b dark:text-white">
+                                                                <p>{row?.location?.address}</p>
+                                                            </td>
+                                                            <td className="px-2 py-2 border-b dark:text-white">
+                                                                <p>{row?.openingBalance}</p>
+                                                            </td>
+                                                            <td className="px-2 py-2 border-b dark:text-white">
+                                                                {row.rate}
+                                                            </td>
+                                                            <td className="px-2 py-2 border-b dark:text-white">
+                                                                {row.value}
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                    <tr>
+                                                        <td
+                                                            className="px-2 py-2 border-t font-bold text-black dark:text-white"
+                                                            colSpan={3}
+                                                        >
+                                                            Total Values
+                                                        </td>
+                                                        <td className="px-2 py-2 border-t font-bold text-black dark:text-white">
+                                                            {selectedINVENTORYData
+                                                                .reduce((total, currentRow) => total + (currentRow.value || 0), 0)
+                                                                .toFixed(2)}
+                                                        </td>
+                                                        <td className="px-2 py-2 border-t"></td>
+                                                    </tr>
+                                                </>
+                                            )}
 
-                                                    </td>
-                                                    <td className="px-2 py-2 border-b">
-                                                        <p>{row?.openingBalance}</p>
-
-                                                    </td>
-                                                    <td className="px-2 py-2 border-b">
-                                                        {row.branchTransferInwards}
-                                                    </td>
-                                                    <td className="px-2 py-2 border-b">
-                                                        {row.branchTransferOutwards}
-
-                                                    </td>
-                                                    <td className="px-2 py-2 border-b">
-                                                        {row.closingBalance}
-                                                    </td>
-                                                    <td className="px-2 py-2 border-b">
-                                                        {row.purchase}
-
-                                                    </td>
-                                                    <td className="px-2 py-2 border-b">
-                                                        {row.sale}
-
-                                                    </td>
-                                                    <td className="px-2 py-2 border-b">
-                                                        {row.inProgressOrders}
-
-                                                    </td>
-                                                    {/* <td className="px-2 py-2 border-b">
-                                                        <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' title='Delete BOM' />
-
-                                                    </td> */}
-
-                                                </tr>
-                                            ))}
 
 
                                         </tbody>
