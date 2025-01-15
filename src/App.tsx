@@ -72,7 +72,7 @@ import UpdateInventoryMaterial from './components/Inventory/UpdateInventoryMater
 
 import AddProductInventory from './components/ProductsInventory/AddProductInventory.jsx';
 import ViewProductsInventory from './components/ProductsInventory/ViewProductsInventory.jsx';
-
+import UpdateInventory from './components/ProductsInventory/UpdateInventory.jsx';
 
 
 
@@ -609,6 +609,16 @@ function App() {
               <>
                 <PageTitle title="Inventory" />
                 <AddProductInventory />
+              </>
+            }
+          />
+
+          <Route
+            path="/inventory/updateInventory/:id"
+            element={
+              <>
+                <PageTitle title="Update Inventory" />
+                <UpdateInventory />
               </>
             }
           />

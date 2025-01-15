@@ -399,9 +399,7 @@ const AddProduct = () => {
 
                         const errors = {};
 
-                        // if (!values.barcode || values.barcode === " ") {
-                        //     errors.barcode = 'bar code Cannot Be Null';
-                        // }
+                      
 
 
                         if (values) {

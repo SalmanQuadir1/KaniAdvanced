@@ -199,6 +199,8 @@ export const GET_PRODUCTIDINVENTORY_URL = `${BASE_URL}/products/inventoryProduct
 export const GET_PRODUCTInventory_URL = `${BASE_URL}/productInventory/getByProduct`;
 export const UPDATE_PRODUCTInventory_URL = `${BASE_URL}/productInventory/update`;
 
+export const UPDATE_PRODUCTInventoryy_URL = `${BASE_URL}/productInventory/updateLocation`;
+
 
 
 
