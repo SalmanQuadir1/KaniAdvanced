@@ -207,9 +207,9 @@ const UpdateInventory = () => {
 
                                                 </div>
                                             </div>
-                                            <div className="overflow-x-scroll md:overflow-x-visible  md:overflow-y-visible -mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
-                                                <div className=" overflow-x-scroll min-w-full shadow-md rounded-lg">
-                                                    <table className="overflow-x-scroll table-fixed w-full">
+                                            <div className="mx-4 sm:-mx-8 px-4 sm:px-8 py-4 ">
+                                                <div className="min-w-full shadow-md rounded-lg">
+                                                    <table className="w-full">
                                                         <thead>
                                                             <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                                                 <th className="md:px-5 md:py-3 px-2 py-1border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[130px] md:w-[150px]" >LOCATION <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
