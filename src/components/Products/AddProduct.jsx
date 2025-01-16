@@ -399,9 +399,6 @@ const AddProduct = () => {
 
                         const errors = {};
 
-                      
-
-
                         if (values) {
 
 
@@ -409,9 +406,6 @@ const AddProduct = () => {
                             // setFieldValue('productId', productIdField);
                         }
                         return errors;
-
-
-
 
 
                     }}
