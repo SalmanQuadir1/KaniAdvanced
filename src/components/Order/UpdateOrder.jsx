@@ -349,6 +349,8 @@ const UpdateOrder = () => {
 
 
   const handleModalSubmit = (values) => {
+    console.log(values,"gfdsa");
+    
 
 
     setprodIdModal((prevValues) => [...prevValues, values])
@@ -415,10 +417,19 @@ const UpdateOrder = () => {
         id: values.orderType?.id || 4, // Replace with the actual Order Type ID
       },
       orderProducts: [
-        {
-          products: {
-            id: values.productId, // Product ID from the form values
-          },
+        // {
+        //   products: {
+        //     id: values.productId, // Product ID from the form values
+        //   },
+          {
+            // products: {
+            //   id: values.products?.productId || '',  // Accessing the productId from the products object
+            // },
+
+            products: {
+              id: values.products?.id || "", // Dynamically fetch product ID
+            },
+  
           clientOrderQuantity: parseFloat(values.orderQuantity),
           orderQuantity: parseFloat(values.orderQuantity),
           value: parseFloat(values.value),
@@ -469,9 +480,18 @@ const UpdateOrder = () => {
             // tags: '',
             tagsAndLabels:order?.tagsAndLabels || '',
             logoNo: '',
-            productId: order?.orderProducts?.[0]?.products?.id || null,
+            //productId: order?.orderProducts?.[0]?.products?.id || null,
+            //orderCategory: order?.orderProducts?.[0]?.orderCategory || null,
             //orderCategory:order?.orderCategory || '',
-            orderProducts: order?.orderProducts?.map((product) => ({
+            //orderProducts: order?.orderProducts?.map((product) => ({
+              orderProducts: order?.orderProducts?.map((product) => ({
+              // products: {
+              //   id: product.products?.productId || "",   // Ensure the product ID is set
+              // },
+              products: {
+                ...product.products,
+                productId: product.products?.productId || '',  // Set initial value for productId
+              },
               orderCategory: product.orderCategory || '',
               inStockQuantity: product.inStockQuantity || '',
               clientOrderQuantity: product.clientOrderQuantity || '',
@@ -849,7 +869,32 @@ const UpdateOrder = () => {
     <tr key={product.id}>
       {/* Product ID */}
       <td className="px-5 py-5 border-b border-gray-200 text-sm">
-        <Field
+      <Field
+  name={`orderProducts[${index}].products.productId`}
+  value={values.orderProducts[index]?.products?.productId || ""}
+  onChange={(e) => {
+    const newValue = e.target.value;
+    console.log(`New Product ID: ${newValue}`);
+    setFieldValue(`orderProducts[${index}].products.productId`, newValue);  // Update the Formik state
+  }}
+  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+  placeholder="Enter Product ID"
+/>
+
+
+
+      {/* <Field
+                                        name={`orderProducts[${index}].products.id`}
+
+                                        value={item?.productId || ""}
+
+                                        placeholder="Enter Prchase Order"
+                                        onChange={(e) => {
+                                          console.log(`Product ID: ${e.target.value}`); // Log the value on change
+                                        }}
+                                        className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                      /> */}
+        {/* <Field
           as="select"
           name={`orderProducts[${index}].products.id`}
           value={product.products?.id || ""}
@@ -861,7 +906,7 @@ const UpdateOrder = () => {
               {option.label}
             </option>
           ))}
-        </Field>
+        </Field> */}
         <ErrorMessage name={`orderProducts[${index}].products.id`} component="div" className="text-red-600 text-sm" />
       </td>
 
@@ -1069,7 +1114,7 @@ const UpdateOrder = () => {
     <tr key={adjustedIndex} className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3">
       <td className="px-5 py-5 border-b border-gray-200 text-sm">
         <div>
-          <Field
+          {/* <Field
             name={`orderProducts[${adjustedIndex}].products.id`}
             value={item?.productId || ""}
             placeholder="Enter Purchase Order"
@@ -1077,14 +1122,51 @@ const UpdateOrder = () => {
               console.log(`Product ID: ${e.target.value}`);
             }}
             className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-          />
+          /> */}
+
+
+<Field
+                                        name={`orderProducts[${index}].products.id`}
+
+                                        value={item?.productId || ""}
+
+                                        placeholder="Enter Prchase Order"
+                                        // onChange={(e) => {
+                                        //   console.log(`Product ID: ${e.target.value}`); // Log the value on change
+                                        // }}
+                                        className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                      />
+                                      {/* <Field
+  name={`orderProducts[${index}].products.id`}
+  value={values.orderProducts[index]?.products?.productId || ""}
+  placeholder="Enter Purchase Order"
+  onChange={(e) => {
+    // Update the product ID in Formik state
+    setFieldValue(`orderProducts[${index}].products.productId`, e.target.value);
+  }}
+  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+/> */}
+
+
+
+           {/* <Field
+                                                  name={`orderProducts[${index}].products.id`}
+          
+                                                  value={item?.productId || ""}
+          
+                                                  placeholder="Enter Prchase Order"
+                                                  onChange={(e) => {
+                                                    console.log(`Product ID: ${e.target.value}`); // Log the value on change
+                                                  }}
+                                                  className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                                /> */}
           <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
         </div>
       </td>
 
       <td className="px-5 py-5 border-b border-gray-200 text-sm">
         <div>
-          <Field
+          {/* <Field
             name={`orderProducts[${adjustedIndex}].orderCategory`}
             placeholder="Enter Order Category"
             onChange={(e) => {
@@ -1092,7 +1174,21 @@ const UpdateOrder = () => {
               setFieldValue(`orderProducts[${adjustedIndex}].orderCategory`, e.target.value);
             }}
             className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-          />
+          /> */}
+
+                                                <Field
+                                                  name={`orderProducts[${adjustedIndex}].orderCategory`}
+                                                   value={item?.orderCatagory || ""}
+                                                  placeholder="Enter Order Category"
+                                                  onChange={(e) => {
+                                                    console.log(`Order Category: ${e.target.value}`);
+                                                    setFieldValue(`orderProducts[${adjustedIndex}].orderCategory`, e.target.value); // Update the field value manually
+                                                  }}
+                                                  readOnly
+                                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                                />
+                                         
+
           <ErrorMessage name="orderCategory" component="div" className="text-red-600 text-sm" />
         </div>
       </td>
@@ -1220,6 +1316,21 @@ const UpdateOrder = () => {
                                      </div>
                                    </td>
 
+                                     <td className="px-5 py-5 border-b border-gray-200  text-sm">
+                                   
+                                                                       <td className="px-5 py-5   text-sm">
+                                                                         <div >
+                                                                           <IoIosAdd size={30} onClick={() => {
+                                                                             setSelectedRowId(index)
+                                                                             openSupplierModal(item?.id, index)
+                                   
+                                                                           }
+                                   
+                                                                           } />
+                                                                         </div>
+                                                                       </td>
+                                                                     </td>
+                                                                       
 
     </tr>
   );
