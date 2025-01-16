@@ -453,6 +453,7 @@ const UpdateProduct = () => {
                 <Formik
                     enableReinitialize // Update initial values when product data changes
                     initialValues={{
+                        ...product,
                         // id: product?.id || "",
                         productGroup: product?.productGroup,
                         colors: product?.colors || { id: 0 },
@@ -463,7 +464,7 @@ const UpdateProduct = () => {
                         design: product?.design || { id: 0 },
                         styles: product?.styles || { id: 0 },
                         sizes: product?.sizes || { id: 1, sizeName: "3l" },
-                        gstDetails: product?.gstDetails || { id: 0 },
+                        gstDetails: product?.slabBasedRates || [],
                         hsnCodes: product?.hsnCodes || '',
                         hsn_Sac: product?.hsn_Sac || '',
                         gstDescription: product?.gstDescription || '',
@@ -1878,14 +1879,14 @@ const UpdateProduct = () => {
 
                                                                 // Render GST Details Section
                                                                 <div className="flex flex-wrap gap-6">
-                                                                    {product.slabBasedRates.map((gst, index) => (
+                                                                    {gstDetails.map((gst, index) => (
                                                                         <div key={index} className="mb-4.5 flex flex-wrap gap-6">
                                                                             <div className="flex-2 min-w-[100px]">
                                                                                 <label className="mb-2.5 block text-black dark:text-white">Greater Than</label>
                                                                                 <Field
                                                                                     name={`gstDetails[${index}].greaterThan`}
                                                                                     type="text"
-                                                                                    value={gst.greaterThan}
+                                                                                    // value={gst.greaterThan}
                                                                                     placeholder="Enter GBP Price"
                                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                                                 />
