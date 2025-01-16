@@ -172,6 +172,8 @@ export const DELETE_CUSTOMER_URL = `${BASE_URL}/customer/`;
 //PRODUCT
 export const ADD_PRODUCT_URL = `${BASE_URL}/products/add-product`;
 export const GET_PRODUCT_URL = `${BASE_URL}/products/search`;
+
+
 export const GET_PRODUCTBYID_URL = `${BASE_URL}/products`;
 export const UPDATE_PRODUCT_URL = `${BASE_URL}/products/update-product`;
 export const VIEW_ALL_PRODUCT = `${BASE_URL}/products/viewAll`;
@@ -196,6 +198,8 @@ export const UPDATE_ORDER_URL = `${BASE_URL}/order/update`;
 export const GET_PRODUCTIDINVENTORY_URL = `${BASE_URL}/products/inventoryProductIds`;
 export const GET_PRODUCTInventory_URL = `${BASE_URL}/productInventory/getByProduct`;
 export const UPDATE_PRODUCTInventory_URL = `${BASE_URL}/productInventory/update`;
+
+export const UPDATE_PRODUCTInventoryy_URL = `${BASE_URL}/productInventory/updateLocation`;
 
 
 

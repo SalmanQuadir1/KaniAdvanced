@@ -10,6 +10,7 @@ import { GET_INVENTORY, customStyles as createCustomStyles } from '../../Constan
 import { Field, Form, Formik } from 'formik';
 import useProduct from '../../hooks/useProduct';
 import { toast } from 'react-toastify';
+import { useNavigate, useNavigation } from 'react-router-dom';
 
 
 const ViewProductsInventory = () => {
@@ -19,7 +20,7 @@ const ViewProductsInventory = () => {
     // const location = useSelector(state => state?.nonPersisted?.location);
     // const description = useSelector(state => state?.nonPersisted?.material);
     const theme = useSelector(state => state?.persisted?.theme);
-
+const navigate = useNavigate()
 
     const [locationValue, setLocationValue] = useState(null);
     const [descriptionValue, setDescriptionValue] = useState(null);
@@ -35,8 +36,8 @@ const ViewProductsInventory = () => {
 
     // const { inventoryMaterial, ViewInventory, handleDelete, handleUpdate, handlePageChange, pagination } = useInventoryMaterial
     const {  inventoryproductId,handleInventoryDelete, getInventoryProductId  ,getLocation,Location } = useProduct({ referenceImages, actualImages });
-
-    const [inventory, setinventory] = useState()
+const [invenn, setinvenn] = useState([])
+    const [inventory, setinventory] = useState([])
 
 
 const [pagination, setPagination] = useState({
@@ -77,8 +78,9 @@ const ViewInventory = async (page, filters = {}) => {
         });
         const data = await response.json();
         console.log(data,"pr datatata")
+        setinvenn(data.content)
 
-        setinventory(data?.content);
+        setinventory(data.content);
         setPagination({
             totalItems: data?.totalElements,
             data: data?.content,
@@ -91,6 +93,7 @@ const ViewInventory = async (page, filters = {}) => {
         toast.error("Failed to fetch Product");
     }
 };
+console.log(invenn,"umershahk");
 
 useEffect(() => {
  ViewInventory()
@@ -102,6 +105,12 @@ const handlePageChange = (newPage) => {
     setPagination((prev) => ({ ...prev, currentPage: newPage }));
     ViewInventory(newPage); // API is 0-indexed for pages
 };
+
+const handleUpdate=(id)=>{
+    console.log(id,"kikikiki");
+    navigate(`/inventory/updateInventory/${id}`)
+
+}
 
 
 
@@ -172,7 +181,7 @@ const handlePageChange = (newPage) => {
         }
     
         const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage;
-    
+    console.log(inventory,"imvennnnnnnnnnnnnnnnnnnnnnnnnnnn");
         
         
       return    inventory?.map((item, index) => (
@@ -234,7 +243,7 @@ const handlePageChange = (newPage) => {
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
-                        {/* <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={(e) => handleUpdate(e, item)} title='Edit Inventory' />  | */}
+                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={(e) => handleUpdate(item.id)} title='Edit Inventory' />  |
                         <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleInventoryDelete(e, item?.id)} title='Delete Inventory ' />
                     </p>
                 </td>

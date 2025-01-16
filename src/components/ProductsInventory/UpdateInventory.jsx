@@ -5,13 +5,13 @@ import { ErrorMessage, Field, Form, Formik } from 'formik'
 import { IoMdAdd, IoMdTrash } from "react-icons/io";
 import ReactSelect from 'react-select';
 import { useSelector } from 'react-redux';
-import { ADDBOM, ADD_LOCATIONINVENTORY_URL, GET_PRODUCTInventory_URL, UPDATE_PRODUCTInventory_URL, UPDATE_PRODUCTInventoryy_URL, customStyles as createCustomStyles } from '../../Constants/utils';
+import { ADDBOM, ADD_LOCATIONINVENTORY_URL, GET_PRODUCTInventory_URL, UPDATE_PRODUCTInventory_URL, customStyles as createCustomStyles } from '../../Constants/utils';
 import useProduct from '../../hooks/useProduct';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 
-const UpdateLocationInventory = () => {
+const UpdateInventory = () => {
 
     const navigate = useNavigate()
 
@@ -28,9 +28,11 @@ const UpdateLocationInventory = () => {
     const { getLocation, Location } = useProduct({ referenceImages, actualImages, productIdField });
 
     const [rows, setRows] = useState([{ id: Date.now(), location: null, openingBalance: null,
-        rate: null,
-        value: null,
-         }]);
+        purchase: null,
+        sale: null,
+        branchTransferInwards: null,
+        branchTransferOutwards: null,
+        inProgressOrders:null }]);
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
 
@@ -54,12 +56,14 @@ const UpdateLocationInventory = () => {
                         label: inven.location?.address,
                         value: inven.location?.id
                     },
-                    openingBalance: inven.openingBalance , 
-                    rate:inven.rate,
-                    value:inven.value,
-                    
-                    // Default value if empty
-                 
+                    openingBalance: inven.openingBalance , // Default value if empty
+                    closingBalance: inven.closingBalance ,
+                    inProgressOrders: inven.inProgressOrders ,
+                    branchTransferInwards: inven.branchTransferInwards  ,// Default value if empty
+                    branchTransferOutwards: inven.branchTransferOutwards ,// Default value if empty
+                    purchase: inven.purchase  ,// Default value if empty
+                    sale: inven.sale , // Default value if empty
+                    selectedOption3: inven.quantity// Default value if empty
                 }));
                 setRows(initialRows);
             }
@@ -95,9 +99,11 @@ const UpdateLocationInventory = () => {
 
     const addRow = () => {
         setRows([...rows, { id: Date.now(), location: null, openingBalance: null,
-        rate: null,
-        value: null,
-       
+        purchase: null,
+        sale: null,
+        branchTransferInwards: null,
+        branchTransferOutwards: null,
+        inProgressOrders:null
     }]);
     };
 
@@ -115,16 +121,19 @@ const UpdateLocationInventory = () => {
         const locationInventoryData = rows.map(row => ({
             location: { id: row.location?.value }, // Extract the id from the selected location
             openingBalance: row.openingBalance || 0, // Ensure a default value if empty
-            rate: row.rate || 0,
-            value: row.value || 0,
-           
+            closingBalance: row.closingBalance || 0,
+            inProgressOrders: row.inProgressOrders || 0,
+            branchTransferInwards: row.branchTransferInwards || 0,
+            branchTransferOutwards: row.branchTransferOutwards || 0,
+            purchase: row.purchase || 0,
+            sale: row.sale || 0,
         }));
     
         console.log("Prepared locationInventory data:", locationInventoryData);
     
         try {
             console.log("Submitting form...");
-            const url = `${UPDATE_PRODUCTInventoryy_URL}/${id}`;
+            const url = `${UPDATE_PRODUCTInventory_URL}/${id}`;
             const response = await fetch(url, {
                 method: "PUT",
                 headers: {
@@ -138,8 +147,8 @@ const UpdateLocationInventory = () => {
             console.log("Response data:", data);
     
             if (response.ok) {
-                toast.success("Location inventory Updated successfully");
-                navigate("/product/viewProducts");
+                toast.success("inventory Updated successfully");
+                navigate("/inventory/viewProductInventory");
             } else {
                 seterrorMessage(data.errorMessage || "Please fill all the fields");
                 toast.error(data.errorMessage || "An error occurred while adding inventory");
@@ -169,7 +178,7 @@ const UpdateLocationInventory = () => {
                                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                                         <h3 className="md:font-medium text-slate-500 text-center text-md md:text-xl dark:text-white">
-                                            UPDATE INVENTORYy
+                                            UPDATE INVENTORY
                                         </h3>
                                     </div>
                                     <div className="p-6.5">
@@ -198,21 +207,20 @@ const UpdateLocationInventory = () => {
 
                                                 </div>
                                             </div>
-                                            <div className="overflow-x-scroll md:overflow-x-visible  md:overflow-y-visible -mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
-                                                <div className=" overflow-x-scroll min-w-full shadow-md rounded-lg">
-                                                    <table className="overflow-x-scroll table-fixed w-full">
+                                            <div className="mx-4 sm:-mx-8 px-4 sm:px-8 py-4 ">
+                                                <div className="min-w-full shadow-md rounded-lg">
+                                                    <table className="w-full">
                                                         <thead>
                                                             <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                                                 <th className="md:px-5 md:py-3 px-2 py-1border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[130px] md:w-[150px]" >LOCATION <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
                                                                 <th className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[130px]">OPENING BALANCE <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
+                                                                <th className="md:px-5 md:py-3 px-2 py-1border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[130px] md:w-[130px]">branch Transfer Inwards <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
+                                                                <th className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[130px]">branch Transfer Outwards <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
+                                                                <th className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[120px]">closing Balance <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
+                                                                <th className="md:px-5 md:py-3 px-1 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[120px]"> in Progress Orders</th>
+                                                                <th className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[120px]">purchase <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
 
-
-
-                                                               
-                                                                <th className="md:px-5 md:py-3 px-1 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[120px]"> Rate</th>
-                                                                <th className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[120px]">Value <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
-
-                                                                
+                                                                <th className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[120px]">sale <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></th>
                                                                 <th className="md:px-5 md:py-3 px-1 py-1 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[90px] md:w-[120px]">Action</th>
                                                             </tr>
                                                         </thead>
@@ -266,15 +274,14 @@ const UpdateLocationInventory = () => {
                                                                     <td className="px-2 py-2 border-b">
                                                                         <Field
                                                                             type="number"
-                                                                            name={`rows[${index}].rate`}
-                                                                            value={row.rate}
-                                                                            placeholder="Enter Rate"
+                                                                            name={`rows[${index}].branchTransferInwards`}
+                                                                            value={row.branchTransferInwards}
+                                                                            placeholder="Enter opening Balance"
                                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                                             onChange={(e) => {
                                                                                 const newRows = [...rows];
                                                                                 const balance = parseInt(e.target.value, 10);
-                                                                                newRows[index].rate = balance;
-                                                                                newRows[index].value = balance * (newRows[index].openingBalance || 0);
+                                                                                newRows[index].branchTransferInwards = balance;
                                                                                 // newRows[index].selectedOption2 = generateWorkerOptions(
                                                                                 //     newRows[index].selectedOption2.label || '',
                                                                                 //     values.supplierCode,
@@ -282,14 +289,6 @@ const UpdateLocationInventory = () => {
                                                                                 // );
                                                                                 setRows(newRows);
                                                                             }}
-
-                                                                            // onChange={(e) => {
-                                                                            //     const newRows = [...rows];
-                                                                            //     const rate = parseFloat(e.target.value) || 0;
-                                                                            //     newRows[index].rate = rate;
-                                                                            //     newRows[index].value = rate * (newRows[index].selectedOption2 || 0); // Update value
-                                                                            //     setRows(newRows);
-                                                                            // }}
                                                                         />
 
                                                                         {
@@ -299,28 +298,123 @@ const UpdateLocationInventory = () => {
                                                                     <td className="px-2 py-2 border-b">
                                                                         <Field
                                                                             type="number"
-                                                                            name={`rows[${index}].value`}
-                                                                            value={row.value}
-                                                                            placeholder="Enter Value"
+                                                                            name={`rows[${index}].branchTransferOutwards`}
+                                                                            value={row.branchTransferOutwards}
+                                                                            placeholder="Enter opening Balance"
                                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-                                                                            // onChange={(e) => {
-                                                                            //     const newRows = [...rows];
-                                                                            //     const balance = parseInt(e.target.value, 10);
-                                                                            //     newRows[index].value = balance;
-                                                                            //     // newRows[index].selectedOption2 = generateWorkerOptions(
-                                                                            //     //     newRows[index].selectedOption2.label || '',
-                                                                            //     //     values.supplierCode,
-                                                                            //     //     numOfLooms
-                                                                            //     // );
-                                                                            //     setRows(newRows);
-                                                                            // }}
+                                                                            onChange={(e) => {
+                                                                                const newRows = [...rows];
+                                                                                const balance = parseInt(e.target.value, 10);
+                                                                                newRows[index].branchTransferOutwards = balance;
+                                                                                // newRows[index].selectedOption2 = generateWorkerOptions(
+                                                                                //     newRows[index].selectedOption2.label || '',
+                                                                                //     values.supplierCode,
+                                                                                //     numOfLooms
+                                                                                // );
+                                                                                setRows(newRows);
+                                                                            }}
                                                                         />
 
                                                                         {
                                                                             errorMessage.openingBalance && <h5 className="text-red-500">{errorMessage.openingBalance}</h5>
                                                                         }
                                                                     </td>
-                                                                   
+                                                                    <td className="px-2 py-2 border-b">
+                                                                        <Field
+                                                                            type="number"
+                                                                            name={`rows[${index}].closingBalance`}
+                                                                            value={row.closingBalance}
+                                                                            placeholder="Enter opening Balance"
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                                            onChange={(e) => {
+                                                                                const newRows = [...rows];
+                                                                                const balance = parseInt(e.target.value, 10);
+                                                                                newRows[index].closingBalance = balance;
+                                                                                // newRows[index].selectedOption2 = generateWorkerOptions(
+                                                                                //     newRows[index].selectedOption2.label || '',
+                                                                                //     values.supplierCode,
+                                                                                //     numOfLooms
+                                                                                // );
+                                                                                setRows(newRows);
+                                                                            }}
+                                                                        />
+
+                                                                        {
+                                                                            errorMessage.openingBalance && <h5 className="text-red-500">{errorMessage.openingBalance}</h5>
+                                                                        }
+                                                                    </td>
+                                                                    <td className="px-2 py-2 border-b">
+                                                                        <Field
+                                                                            type="number"
+                                                                            name={`rows[${index}].inProgressOrders`}
+                                                                            value={row.inProgressOrders}
+                                                                            placeholder="Enter in Progress Orders"
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                                            onChange={(e) => {
+                                                                                const newRows = [...rows];
+                                                                                const balance = parseInt(e.target.value, 10);
+                                                                                newRows[index].inProgressOrders = balance;
+                                                                                // newRows[index].selectedOption2 = generateWorkerOptions(
+                                                                                //     newRows[index].selectedOption2.label || '',
+                                                                                //     values.supplierCode,
+                                                                                //     numOfLooms
+                                                                                // );
+                                                                                setRows(newRows);
+                                                                            }}
+                                                                        />
+
+                                                                        {
+                                                                            errorMessage.openingBalance && <h5 className="text-red-500">{errorMessage.openingBalance}</h5>
+                                                                        }
+                                                                    </td>
+                                                                    <td className="px-2 py-2 border-b">
+                                                                        <Field
+                                                                            type="number"
+                                                                            name={`rows[${index}].purchase`}
+                                                                            value={row.purchase}
+                                                                            placeholder="Enter purchase"
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                                            onChange={(e) => {
+                                                                                const newRows = [...rows];
+                                                                                const balance = parseInt(e.target.value, 10);
+                                                                                newRows[index].purchase = balance;
+                                                                                // newRows[index].selectedOption2 = generateWorkerOptions(
+                                                                                //     newRows[index].selectedOption2.label || '',
+                                                                                //     values.supplierCode,
+                                                                                //     numOfLooms
+                                                                                // );
+                                                                                setRows(newRows);
+                                                                            }}
+                                                                        />
+
+                                                                        {
+                                                                            errorMessage.openingBalance && <h5 className="text-red-500">{errorMessage.openingBalance}</h5>
+                                                                        }
+                                                                    </td>
+                                                                    <td className="px-2 py-2 border-b">
+                                                                        <Field
+                                                                            type="number"
+                                                                            name={`rows[${index}].sale`}
+                                                                            value={row.sale}
+                                                                            placeholder="Enter sale"
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                                            onChange={(e) => {
+                                                                                const newRows = [...rows];
+                                                                                const balance = parseInt(e.target.value, 10);
+                                                                                newRows[index].sale = balance;
+                                                                                // newRows[index].selectedOption2 = generateWorkerOptions(
+                                                                                //     newRows[index].selectedOption2.label || '',
+                                                                                //     values.supplierCode,
+                                                                                //     numOfLooms
+                                                                                // );
+                                                                                setRows(newRows);
+                                                                            }}
+                                                                        />
+
+                                                                        {
+                                                                            errorMessage.openingBalance && <h5 className="text-red-500">{errorMessage.openingBalance}</h5>
+                                                                        }
+                                                                    </td>
 
                                                                     <td className="px-2 py-2 border-b">
                                                                         {rows.length > 1 && (
@@ -331,15 +425,6 @@ const UpdateLocationInventory = () => {
                                                                     </td>
                                                                 </tr>
                                                             ))}
-                                                              <tr>
-                                                                <td className="px-2 py-2 border-t font-bold text-black dark:text-white" colSpan={3}>
-                                                                    Total Values
-                                                                </td>
-                                                                <td className="px-2 py-2 border-t font-bold text-black dark:text-white">
-                                                                    {rows.reduce((total, row) => total + (row.value || 0), 0).toFixed(2)}
-                                                                </td>
-                                                                <td className="px-2 py-2 border-t"></td>
-                                                            </tr>
                                                         </tbody>
                                                     </table>
                                                 </div>
@@ -362,4 +447,4 @@ const UpdateLocationInventory = () => {
     )
 }
 
-export default UpdateLocationInventory
+export default UpdateInventory
