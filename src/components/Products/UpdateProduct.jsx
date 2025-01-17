@@ -48,7 +48,7 @@ const UpdateProduct = () => {
     const navigate = useNavigate(); // Initialize navigate
     const {  getUnits,
         units,  } = useProduct({referenceImages,actualImages,productIdField});
-
+       
     const [previews, setPreviews] = useState([]);
     const [previewsActual, setPreviewsActual] = useState([]);
     const [gstDetails, setgstDetails] = useState([])
@@ -334,6 +334,17 @@ const UpdateProduct = () => {
             setsupplierNameOptions(formattedOptions);
         }
     }, [supplier.data]);
+    useEffect(() => {
+        if (supplier.data) {
+            const formattedOptions = supplier.data.map(supp => ({
+                value: supp.id,
+                label: supp?.supplierCode,
+                supplierCodeObject: supp,
+                suplieridd: { id: supp.id }
+            }));
+            setsupplierCodeOptions(formattedOptions);
+        }
+    }, [supplier.data]);
     // useEffect(() => {
     //     if (supplier.data) {
     //         const formattedOptions = supplier.data.map(supp => ({
@@ -481,11 +492,12 @@ const UpdateProduct = () => {
                         fabricCost: product?.fabricCost || '',
                         productStatus: product?.productStatus || '',
                         supplier: product?.supplier,
-                        supplierCode: product?.supplierCode || { id: 0 },
+                        // supplierCode: product?.supplierCode || { id: 0 },
                         embroideryCost: product?.embroideryCost || '',
                         totalCost: product?.totalCost || '',
                         slabBasedRates: product?.slabBasedRates || [],
-                        unit: product.unit || { id: 0 }
+                        unit: product.unit || { id: 0 },
+                        supplierCode:product.supplierCode|| { id: 0 }
 
                         // igst :vaaluee?.hsnCode?.igst ??product?.hsnCode?.igst ??  '',
                         // cgst :vaaluee?.hsnCode?.cgst ?? product?.hsnCode?.cgst ?? '',
