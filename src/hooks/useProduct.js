@@ -137,6 +137,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
         dispatch(fetchProductCategory(token))
         dispatch(fetchdesign(token))
         dispatch(fetchstyle(token))
+        dispatch(fetchunit(token))
         dispatch(fetchsize(token))
         dispatch(fetchHsnCode(token))
         dispatch(fetchsupplier(token))

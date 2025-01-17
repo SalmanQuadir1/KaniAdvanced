@@ -24,7 +24,7 @@ const UpdateProduct = () => {
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
     const { currentUser } = useSelector((state) => state?.persisted?.user);
-
+    const [unitOptions, setunitOptions] = useState([])
     const colorGroup = useSelector(state => state?.persisted?.color);
     const design = useSelector(state => state?.persisted?.design); const [designOptions, setdesignOptions] = useState([])
     const [styleOptions, setstyleOptions] = useState([])
@@ -46,7 +46,8 @@ const UpdateProduct = () => {
     const [referenceImages, setrefImage] = useState({})
     const [actualImages, setactualImage] = useState({})
     const navigate = useNavigate(); // Initialize navigate
-    // const {  handleUpdateSubmit } = useProduct({referenceImages,actualImages,productIdField});
+    const {  getUnits,
+        units,  } = useProduct({referenceImages,actualImages,productIdField});
 
     const [previews, setPreviews] = useState([]);
     const [previewsActual, setPreviewsActual] = useState([]);
@@ -56,7 +57,20 @@ const UpdateProduct = () => {
     const { id } = useParams();
     const productId = id;
 
+    useEffect(() => {
+        getUnits();
+    }, []); // Runs only once when the component mounts
 
+    useEffect(() => {
+        if (units) {
+            const formattedunitOptions = units.map(unitGroup => ({
+                value: unitGroup?.id,
+                label: unitGroup?.name,
+                unitGroupObject: unitGroup,
+            }));
+            setunitOptions(formattedunitOptions); // Update the state only when `units` changes
+        }
+    }, [units]); // Runs whenever `units` is updated
 
     const handleFileChange = async (event) => {
         const files = Array.from(event.target.files);
@@ -379,7 +393,7 @@ const UpdateProduct = () => {
 
 
 
-    
+
 
     const handlerateDetails = (option, setFieldValue) => {
         console.log(option, "optoooon");
@@ -397,19 +411,19 @@ const UpdateProduct = () => {
 
     const handleModalSubmit = (newValues) => {
         console.log(newValues, "Submitted GST Rates");
-    
+
         // Retrieve the current slabBasedRates from Formik
         const currentValues = formikRef.current.values.slabBasedRates || [];
-    
+
         // Merge current values with only the truly new rows
         const updatedValues = [...currentValues, ...newValues.filter(row => !currentValues.some(existing => existing.id === row.id))];
-    
+
         // Update Formik's field value with the deduplicated array
         formikRef.current.setFieldValue('slabBasedRates', updatedValues);
-    
+
         setgstDetailModal(false); // Close the modal
     };
-    
+
 
 
     return (
@@ -448,7 +462,7 @@ const UpdateProduct = () => {
                         weave: product?.weave || '',
                         warpYarn: product?.warpYarn || '',
                         weftYarn: product?.weftYarn || '',
-                        gstratedetails:product?.gstratedetails ||'',
+                        gstratedetails: product?.gstratedetails || '',
                         pixAndReed: product?.pixAndReed || '',
                         // units: product?.units || '',
                         cost: product?.cost || '',
@@ -471,13 +485,13 @@ const UpdateProduct = () => {
                         embroideryCost: product?.embroideryCost || '',
                         totalCost: product?.totalCost || '',
                         slabBasedRates: product?.slabBasedRates || [],
-
+                        unit: product.unit || { id: 0 }
 
                         // igst :vaaluee?.hsnCode?.igst ??product?.hsnCode?.igst ??  '',
                         // cgst :vaaluee?.hsnCode?.cgst ?? product?.hsnCode?.cgst ?? '',
                         // sgst :vaaluee?.hsnCode?.sgst ??product?.hsnCode?.sgst ??  '',
                         // productDescriptionn : vaaluee?.hsnCode?.productDescription ?? product?.hsnCode?.productDescription ??''
-                        
+
 
 
 
@@ -972,7 +986,7 @@ const UpdateProduct = () => {
                                                 </div>
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
-                                                    <div className="flex-1 min-w-[300px]">
+                                                    <div className="flex-2 min-w-[200px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> GBP Price </label>
                                                         <Field
                                                             name='gbpPrice'
@@ -982,7 +996,7 @@ const UpdateProduct = () => {
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
-                                                    <div className="flex-1 min-w-[300px]">
+                                                    <div className="flex-2 min-w-[200px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> RMB Price</label>
                                                         <Field
                                                             name='rmbPrice'
@@ -992,6 +1006,23 @@ const UpdateProduct = () => {
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
+
+                                                    <div className="flex-2 min-w-[200px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                                <ReactSelect
+                                                                    name="unit"
+                                                                    value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                    onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                    options={unitOptions}
+                                                                    styles={customStyles} // Pass custom styles here
+                                                                    className="bg-white dark:bg-form-Field"
+                                                                    classNamePrefix="react-select"
+                                                                    placeholder="Select Color Group"
+                                                                />
+
+                                                            </div>
+                                                        </div>
                                                 </div>
                                             </>
                                         )}
@@ -1025,15 +1056,22 @@ const UpdateProduct = () => {
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
 
-                                                    <div className="flex-1 min-w-[300px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white"> Units</label>
-                                                        <Field
-                                                            name='units'
-                                                            type="text"
-                                                            placeholder="Enter Units"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
+                                                <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                                <ReactSelect
+                                                                    name="unit"
+                                                                    value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                    onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                    options={unitOptions}
+                                                                    styles={customStyles} // Pass custom styles here
+                                                                    className="bg-white dark:bg-form-Field"
+                                                                    classNamePrefix="react-select"
+                                                                    placeholder="Select Color Group"
+                                                                />
+
+                                                            </div>
+                                                        </div>
                                                 </div>
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
@@ -1203,15 +1241,22 @@ const UpdateProduct = () => {
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
 
-                                                    <div className="flex-1 min-w-[300px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white"> Units</label>
-                                                        <Field
-                                                            name='units'
-                                                            type="text"
-                                                            placeholder="Enter Units"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
+                                                <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                                <ReactSelect
+                                                                    name="unit"
+                                                                    value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                    onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                    options={unitOptions}
+                                                                    styles={customStyles} // Pass custom styles here
+                                                                    className="bg-white dark:bg-form-Field"
+                                                                    classNamePrefix="react-select"
+                                                                    placeholder="Select Color Group"
+                                                                />
+
+                                                            </div>
+                                                        </div>
                                                 </div>
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
@@ -1363,15 +1408,22 @@ const UpdateProduct = () => {
 
 
 
-                                                    <div className="flex-1 min-w-[300px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white"> Units </label>
-                                                        <Field
-                                                            name='units'
-                                                            type="text"
-                                                            placeholder="Enter Units"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
+                                                <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                                <ReactSelect
+                                                                    name="unit"
+                                                                    value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                    onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                    options={unitOptions}
+                                                                    styles={customStyles} // Pass custom styles here
+                                                                    className="bg-white dark:bg-form-Field"
+                                                                    classNamePrefix="react-select"
+                                                                    placeholder="Select Color Group"
+                                                                />
+
+                                                            </div>
+                                                        </div>
                                                 </div>
 
 
@@ -1548,15 +1600,22 @@ const UpdateProduct = () => {
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
 
-                                                    <div className="flex-1 min-w-[300px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white"> Units</label>
-                                                        <Field
-                                                            name='units'
-                                                            type="text"
-                                                            placeholder="Enter Units"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
+                                                <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                                <ReactSelect
+                                                                    name="unit"
+                                                                    value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                    onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                    options={unitOptions}
+                                                                    styles={customStyles} // Pass custom styles here
+                                                                    className="bg-white dark:bg-form-Field"
+                                                                    classNamePrefix="react-select"
+                                                                    placeholder="Select Color Group"
+                                                                />
+
+                                                            </div>
+                                                        </div>
                                                 </div>
 
 
@@ -1691,15 +1750,22 @@ const UpdateProduct = () => {
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
 
-                                                    <div className="flex-1 min-w-[300px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white"> Units</label>
-                                                        <Field
-                                                            name='units'
-                                                            type="text"
-                                                            placeholder="Enter Units"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
+                                                <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                                <ReactSelect
+                                                                    name="unit"
+                                                                    value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                    onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                    options={unitOptions}
+                                                                    styles={customStyles} // Pass custom styles here
+                                                                    className="bg-white dark:bg-form-Field"
+                                                                    classNamePrefix="react-select"
+                                                                    placeholder="Select Color Group"
+                                                                />
+
+                                                            </div>
+                                                        </div>
                                                 </div>
 
 
@@ -1958,7 +2024,7 @@ const UpdateProduct = () => {
                                                                         <label className="mb-2.5 block text-black dark:text-white">SGST (%)</label>
                                                                         <Field
                                                                             type="number"
-                                                                            value={vaaluee?.hsnCode?.sgst ??product?.hsnCode?.sgst ??  ''}
+                                                                            value={vaaluee?.hsnCode?.sgst ?? product?.hsnCode?.sgst ?? ''}
                                                                             disabled
                                                                             placeholder="Enter SGST Name"
                                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
@@ -1969,7 +2035,7 @@ const UpdateProduct = () => {
                                                                         <label className="mb-2.5 block text-black dark:text-white">GST Description</label>
                                                                         <Field
                                                                             name="gstDescription"
-                                                                            value={vaaluee?.hsnCode?.productDescription ?? product?.hsnCode?.productDescription ??''}
+                                                                            value={vaaluee?.hsnCode?.productDescription ?? product?.hsnCode?.productDescription ?? ''}
                                                                             type="text"
                                                                             placeholder="Enter GST Description"
                                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
