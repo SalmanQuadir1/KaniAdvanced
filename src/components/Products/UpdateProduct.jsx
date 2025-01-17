@@ -137,6 +137,7 @@ const UpdateProduct = () => {
             delete product.cgst;
             delete product.sgst;
             delete product.gstDescription;
+            delete product.productDescriptionn
             delete product.hsn_Sac;
         } else if (values.gstratedetails === "useGstClassification") {
             // Include HSN classification details
@@ -144,10 +145,11 @@ const UpdateProduct = () => {
             delete product.igst;
             delete product.cgst;
             delete product.sgst;
+            delete product.productDescriptionn
             // product.igst = values.hsnCode?.igst;
             // product.cgst = values.hsnCode?.cgst;
             // product.sgst = values.hsnCode?.sgst;
-            product.gstDescription = values.hsnCode?.productDescription;
+            product.gstDescription = values.hsnCode?.productDescriptionn;
             product.hsn_Sac = values.hsn_Sac;
 
             // Remove slab-based rates if they exist
@@ -457,7 +459,7 @@ const UpdateProduct = () => {
                         euroPrice: product?.euroPrice || '',
                         gbpPrice: product?.gbpPrice || '',
                         rmbPrice: product?.rmbPrice || '',
-                        // productDescription: product?.productDescription || '',
+                        productDescription: product?.productDescription || '',
                         baseColour: product?.baseColour || '',
                         kaniColors: product?.kaniColors || '',
                         fabricWeave: product?.fabricWeave || '',
@@ -471,13 +473,11 @@ const UpdateProduct = () => {
                         slabBasedRates: product?.slabBasedRates || [],
 
 
-                        igst :product.hsnCode?.igst ?? vaaluee?.hsnCode?.igst ?? '',
-                        cgst : product.hsnCode?.cgst ?? vaaluee?.hsnCode?.cgst ?? '',
-                        sgst :product.hsnCode?.sgst ?? vaaluee?.hsnCode?.sgst ?? '',
-                        productDescription :
-                        (product.hsnCode || vaaluee?.hsnCode) 
-                            ? product.hsnCode?.productDescription ?? vaaluee?.hsnCode?.productDescription ?? ''
-                            : ''
+                        // igst :vaaluee?.hsnCode?.igst ??product?.hsnCode?.igst ??  '',
+                        // cgst :vaaluee?.hsnCode?.cgst ?? product?.hsnCode?.cgst ?? '',
+                        // sgst :vaaluee?.hsnCode?.sgst ??product?.hsnCode?.sgst ??  '',
+                        // productDescriptionn : vaaluee?.hsnCode?.productDescription ?? product?.hsnCode?.productDescription ??''
+                        
 
 
 
@@ -1914,7 +1914,7 @@ const UpdateProduct = () => {
                                                                             </div>
                                                                         ))}
                                                                 </div>
-                                                            ) : product.gstratedetails === "useGstClassification" ? (
+                                                            ) : values.gstratedetails === "useGstClassification" ? (
                                                                 // Render HSN Code and Related Fields Section
                                                                 <div className="mb-4.5 flex flex-wrap gap-6">
                                                                     <div className="flex-2 min-w-[250px]">
@@ -1936,7 +1936,7 @@ const UpdateProduct = () => {
                                                                         <label className="mb-2.5 block text-black dark:text-white">IGST (%)</label>
                                                                         <Field
                                                                             type="number"
-                                                                            value={values?.igst}
+                                                                            value={product?.hsnCode?.igst ?? vaaluee?.hsnCode?.igst ?? ''}
                                                                             disabled
                                                                             placeholder="Enter IGST Name"
                                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
@@ -1947,7 +1947,7 @@ const UpdateProduct = () => {
                                                                         <label className="mb-2.5 block text-black dark:text-white">CGST (%)</label>
                                                                         <Field
                                                                             type="number"
-                                                                            value={values?.cgst}
+                                                                            value={vaaluee?.hsnCode?.cgst ?? product?.hsnCode?.cgst ?? ''}
                                                                             disabled
                                                                             placeholder="Enter CGST Name"
                                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
@@ -1958,7 +1958,7 @@ const UpdateProduct = () => {
                                                                         <label className="mb-2.5 block text-black dark:text-white">SGST (%)</label>
                                                                         <Field
                                                                             type="number"
-                                                                            value={values?.sgst}
+                                                                            value={vaaluee?.hsnCode?.sgst ??product?.hsnCode?.sgst ??  ''}
                                                                             disabled
                                                                             placeholder="Enter SGST Name"
                                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
@@ -1969,7 +1969,7 @@ const UpdateProduct = () => {
                                                                         <label className="mb-2.5 block text-black dark:text-white">GST Description</label>
                                                                         <Field
                                                                             name="gstDescription"
-                                                                            value={values?.productDescription}
+                                                                            value={vaaluee?.hsnCode?.productDescription ?? product?.hsnCode?.productDescription ??''}
                                                                             type="text"
                                                                             placeholder="Enter GST Description"
                                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
