@@ -2527,6 +2527,7 @@ const UpdateProduct = () => {
                                                     value={supplierCodeOptions?.find(option => option.value === values.supplierCode?.id) || null}
                                                     onChange={(option) => setFieldValue('supplierCode', option ? option?.suplieridd : null)}
                                                     options={supplierCodeOptions}
+                                                    isDisabled={true} 
                                                     styles={customStyles} // Pass custom styles here
                                                     className="bg-white dark:bg-form-Field"
                                                     classNamePrefix="react-select"
