@@ -7,7 +7,7 @@ import SignIn from './pages/Authentication/SignIn.jsx';
 import SignUp from './pages/Authentication/SignUp.jsx';
 import Calendar from './pages/Calendar.js';
 import Chart from './pages/Chart.jsx';
-import Material from './components/Material/Material.jsx';
+import Material from './components/Material/Material.jsx';  
 import AddProduct from './components/Products/AddProduct.jsx';
 import ViewProduct from './components/Products/ViewProduct.jsx';
 import ExcelUploadProduct from './components/Products/ExcelUploadProduct.jsx';
