@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import { ErrorMessage, Field, Formik } from 'formik';
@@ -24,7 +24,7 @@ const UpdateProduct = () => {
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
     const { currentUser } = useSelector((state) => state?.persisted?.user);
-
+    const [unitOptions, setunitOptions] = useState([])
     const colorGroup = useSelector(state => state?.persisted?.color);
     const design = useSelector(state => state?.persisted?.design); const [designOptions, setdesignOptions] = useState([])
     const [styleOptions, setstyleOptions] = useState([])
@@ -41,12 +41,14 @@ const UpdateProduct = () => {
     const [productGroupOption, setproductGroupOption] = useState([])
     const [gstDetailModal, setgstDetailModal] = useState(false)
     const productGroup = useSelector(state => state?.persisted?.productGroup);
+    const [vaaluee, setvaaluee] = useState({})
 
     const [referenceImages, setrefImage] = useState({})
     const [actualImages, setactualImage] = useState({})
     const navigate = useNavigate(); // Initialize navigate
-    // const {  handleUpdateSubmit } = useProduct({referenceImages,actualImages,productIdField});
-
+    const {  getUnits,
+        units,  } = useProduct({referenceImages,actualImages,productIdField});
+       
     const [previews, setPreviews] = useState([]);
     const [previewsActual, setPreviewsActual] = useState([]);
     const [gstDetails, setgstDetails] = useState([])
@@ -55,7 +57,20 @@ const UpdateProduct = () => {
     const { id } = useParams();
     const productId = id;
 
+    useEffect(() => {
+        getUnits();
+    }, []); // Runs only once when the component mounts
 
+    useEffect(() => {
+        if (units) {
+            const formattedunitOptions = units.map(unitGroup => ({
+                value: unitGroup?.id,
+                label: unitGroup?.name,
+                unitGroupObject: unitGroup,
+            }));
+            setunitOptions(formattedunitOptions); // Update the state only when `units` changes
+        }
+    }, [units]); // Runs whenever `units` is updated
 
     const handleFileChange = async (event) => {
         const files = Array.from(event.target.files);
@@ -126,6 +141,35 @@ const UpdateProduct = () => {
         };
 
         console.log(product, 'jugnioo');
+        if (gstDetails && gstDetails.length > 0) {
+            product.slabBasedRates = values.slabBasedRates; // Add gstDetails to the product
+        }
+        if (values.gstratedetails === "specifySlabBasedRates") {
+            product.slabBasedRates = values.slabBasedRates; // Include slab-based rates
+            delete product.hsnCode; // Remove HSN-related fields if they exist
+            delete product.igst;
+            delete product.cgst;
+            delete product.sgst;
+            delete product.gstDescription;
+            delete product.productDescriptionn
+            delete product.hsn_Sac;
+        } else if (values.gstratedetails === "useGstClassification") {
+            // Include HSN classification details
+            product.hsnCode = values.hsnCode;
+            delete product.igst;
+            delete product.cgst;
+            delete product.sgst;
+            delete product.productDescriptionn
+            // product.igst = values.hsnCode?.igst;
+            // product.cgst = values.hsnCode?.cgst;
+            // product.sgst = values.hsnCode?.sgst;
+            product.gstDescription = values.hsnCode?.productDescriptionn;
+            product.hsn_Sac = values.hsn_Sac;
+
+            // Remove slab-based rates if they exist
+            delete product.slabBasedRates;
+        }
+
 
         // Append product data as JSON
         formData.append("product", JSON.stringify(product));
@@ -290,6 +334,17 @@ const UpdateProduct = () => {
             setsupplierNameOptions(formattedOptions);
         }
     }, [supplier.data]);
+    useEffect(() => {
+        if (supplier.data) {
+            const formattedOptions = supplier.data.map(supp => ({
+                value: supp.id,
+                label: supp?.supplierCode,
+                supplierCodeObject: supp,
+                suplieridd: { id: supp.id }
+            }));
+            setsupplierCodeOptions(formattedOptions);
+        }
+    }, [supplier.data]);
     // useEffect(() => {
     //     if (supplier.data) {
     //         const formattedOptions = supplier.data.map(supp => ({
@@ -301,6 +356,7 @@ const UpdateProduct = () => {
     //         setsupplierCodeOptions(formattedOptions);
     //     }
     // }, [supplier.data]);
+    const formikRef = useRef(null);
 
 
     useEffect(() => {
@@ -348,83 +404,7 @@ const UpdateProduct = () => {
 
 
 
-    const onSubmit = async (values, e) => {
-        console.log("Form submission triggered");
-        console.log(values, "Received values from frontend");
 
-        const formattedValues = {
-            // productId: id, // Assuming `id` is defined and corresponds to the product being updated
-            // productId: productId,
-            productGroup: {
-                id: values.productGroup?.id,
-
-                // productGroupName: values.productGroup?.productGroupName || "" 
-            },
-            colors: {
-                // id: values.colors?.id || { id: 1 }, 
-                id: values.colors?.id,
-
-            },
-            //colors: product?.colors || { id: 1, colorName: "green" },
-            productCategory: {
-                id: values.productCategory?.id,
-                // productCategoryName: values.productCategory?.productCategoryName || "" 
-            },
-            design: {
-                id: values.design?.id,
-                // designName: values.design?.designName || "" 
-            },
-
-            hsnCode: {
-
-                id: values.hsnCode?.id, // Only the `id` is sent
-            },
-
-            warpColors: values.warpColors || "",
-            weftColors: values.weftColors || "",
-            warpYarn: values.warpYarn || "",
-            weftYarn: values.weftYarn || "",
-            weave: values.weave || "",
-            finishedWeight: values.finishedWeight || null,
-            materialWeight: values.materialWeight || null,
-            gstDetails: values.gstDetails || "",
-            gstDescription: values.gstDescription || "",
-            gstRate: values.gstRate || null,
-            taxationType: values.taxationType || "",
-            typeOfSupply: values.typeOfSupply || "",
-            pixAndReed: values.pixAndReed || "",
-            cost: values.cost || 0,
-            dyeingCost: values.dyeingCost || 0,
-            baseColour: values.baseColour || "",
-            embroideryColors: values.embroideryColors || "",
-            fabricWeave: values.fabricWeave || "",
-            fabricCode: values.fabricCode || "",
-            fabricCost: values.fabricCost || 0,
-            embroideryCost: values.embroideryCost || 0,
-            totalCost: values.totalCost || 0,
-            kaniColors: values.kaniColors || "",
-            productStatus: values.productStatus || "",
-            mrp: values.mrp || 0,
-            wholesalePrice: values.wholesalePrice || 0,
-            usdPrice: values.usdPrice || 0,
-            euroPrice: values.euroPrice || 0,
-            gbpPrice: values.gbpPrice || 0,
-            rmbPrice: values.rmbPrice || 0,
-            units: values.units || "",
-            productDescription: values.productDescription || "",
-            supplier: {
-                // name: values.supplier?.name || ""
-                id: values?.supplier?.id,
-            },
-            supplierCode: {
-                // supplierCode: values.supplierCode?.supplierCode || ""
-                id: values.supplierCode?.id,
-            }
-        };
-
-        console.log(JSON.stringify(formattedValues, null, 2), "Formatted Values");
-        handleUpdateSubmit(formattedValues, e);
-    };
 
     const handlerateDetails = (option, setFieldValue) => {
         console.log(option, "optoooon");
@@ -440,17 +420,29 @@ const UpdateProduct = () => {
     console.log(productGroupOption, "codeeeee");
 
 
-    const handleModalSubmit = (values) => {
+    const handleModalSubmit = (newValues) => {
+        console.log(newValues, "Submitted GST Rates");
 
-        console.log(values, "ggjio");
-        setgstDetails(values)
+        // Retrieve the current slabBasedRates from Formik
+        const currentValues = formikRef.current.values.slabBasedRates || [];
 
-    }
+        // Merge current values with only the truly new rows
+        const updatedValues = [...currentValues, ...newValues.filter(row => !currentValues.some(existing => existing.id === row.id))];
+
+        // Update Formik's field value with the deduplicated array
+        formikRef.current.setFieldValue('slabBasedRates', updatedValues);
+
+        setgstDetailModal(false); // Close the modal
+    };
+
+
+
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Products / UpdateProduct" />
             <div>
                 <Formik
+                    innerRef={formikRef}
                     enableReinitialize // Update initial values when product data changes
                     initialValues={{
                         ...product,
@@ -464,7 +456,7 @@ const UpdateProduct = () => {
                         design: product?.design || { id: 0 },
                         styles: product?.styles || { id: 0 },
                         sizes: product?.sizes || { id: 1, sizeName: "3l" },
-                        gstDetails: product?.slabBasedRates || [],
+                        gstDetails: product?.gstDetails || [],
                         hsnCodes: product?.hsnCodes || '',
                         hsn_Sac: product?.hsn_Sac || '',
                         gstDescription: product?.gstDescription || '',
@@ -481,8 +473,9 @@ const UpdateProduct = () => {
                         weave: product?.weave || '',
                         warpYarn: product?.warpYarn || '',
                         weftYarn: product?.weftYarn || '',
+                        gstratedetails: product?.gstratedetails || '',
                         pixAndReed: product?.pixAndReed || '',
-                        units: product?.units || '',
+                        // units: product?.units || '',
                         cost: product?.cost || '',
                         mrp: product?.mrp || '',
                         dyeingCost: product?.dyeingCost || '',
@@ -499,15 +492,37 @@ const UpdateProduct = () => {
                         fabricCost: product?.fabricCost || '',
                         productStatus: product?.productStatus || '',
                         supplier: product?.supplier,
-                        supplierCode: product?.supplierCode || { id: 0 },
+                        // supplierCode: product?.supplierCode || { id: 0 },
                         embroideryCost: product?.embroideryCost || '',
                         totalCost: product?.totalCost || '',
                         slabBasedRates: product?.slabBasedRates || [],
+                        unit: product.unit || { id: 0 },
+                        supplierCode:product.supplierCode|| { id: 0 }
+
+                        // igst :vaaluee?.hsnCode?.igst ??product?.hsnCode?.igst ??  '',
+                        // cgst :vaaluee?.hsnCode?.cgst ?? product?.hsnCode?.cgst ?? '',
+                        // sgst :vaaluee?.hsnCode?.sgst ??product?.hsnCode?.sgst ??  '',
+                        // productDescriptionn : vaaluee?.hsnCode?.productDescription ?? product?.hsnCode?.productDescription ??''
 
 
 
 
 
+
+
+
+                    }}
+                    validate={values => {
+
+                        const errors = {};
+
+                        if (values) {
+
+
+                            setvaaluee(values)
+                            // setFieldValue('productId', productIdField);
+                        }
+                        return errors;
 
 
                     }}
@@ -642,15 +657,7 @@ const UpdateProduct = () => {
                                             {values.gstDetails === "Applicable" && (
                                                 <>
                                                     {/* HSN Codes Field */}
-                                                    <div className="flex-1 min-w-[300px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">HSN Codes</label>
-                                                        <Field
-                                                            name="hsnCodes"
-                                                            type="text"
-                                                            placeholder="Enter HSN Code"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
+                                                   
 
                                                     {/* HSN/SAC Field */}
                                                     <div className="flex-1 min-w-[300px]">
@@ -983,7 +990,7 @@ const UpdateProduct = () => {
                                                 </div>
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
-                                                    <div className="flex-1 min-w-[300px]">
+                                                    <div className="flex-2 min-w-[200px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> GBP Price </label>
                                                         <Field
                                                             name='gbpPrice'
@@ -993,7 +1000,7 @@ const UpdateProduct = () => {
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
-                                                    <div className="flex-1 min-w-[300px]">
+                                                    <div className="flex-2 min-w-[200px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> RMB Price</label>
                                                         <Field
                                                             name='rmbPrice'
@@ -1003,6 +1010,23 @@ const UpdateProduct = () => {
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
+
+                                                    <div className="flex-2 min-w-[200px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                                <ReactSelect
+                                                                    name="unit"
+                                                                    value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                    onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                    options={unitOptions}
+                                                                    styles={customStyles} // Pass custom styles here
+                                                                    className="bg-white dark:bg-form-Field"
+                                                                    classNamePrefix="react-select"
+                                                                    placeholder="Select Color Group"
+                                                                />
+
+                                                            </div>
+                                                        </div>
                                                 </div>
                                             </>
                                         )}
@@ -1036,15 +1060,22 @@ const UpdateProduct = () => {
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
 
-                                                    <div className="flex-1 min-w-[300px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white"> Units</label>
-                                                        <Field
-                                                            name='units'
-                                                            type="text"
-                                                            placeholder="Enter Units"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
+                                                <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                                <ReactSelect
+                                                                    name="unit"
+                                                                    value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                    onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                    options={unitOptions}
+                                                                    styles={customStyles} // Pass custom styles here
+                                                                    className="bg-white dark:bg-form-Field"
+                                                                    classNamePrefix="react-select"
+                                                                    placeholder="Select Color Group"
+                                                                />
+
+                                                            </div>
+                                                        </div>
                                                 </div>
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
@@ -1214,15 +1245,22 @@ const UpdateProduct = () => {
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
 
-                                                    <div className="flex-1 min-w-[300px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white"> Units</label>
-                                                        <Field
-                                                            name='units'
-                                                            type="text"
-                                                            placeholder="Enter Units"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
+                                                <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                                <ReactSelect
+                                                                    name="unit"
+                                                                    value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                    onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                    options={unitOptions}
+                                                                    styles={customStyles} // Pass custom styles here
+                                                                    className="bg-white dark:bg-form-Field"
+                                                                    classNamePrefix="react-select"
+                                                                    placeholder="Select Color Group"
+                                                                />
+
+                                                            </div>
+                                                        </div>
                                                 </div>
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
@@ -1374,15 +1412,22 @@ const UpdateProduct = () => {
 
 
 
-                                                    <div className="flex-1 min-w-[300px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white"> Units </label>
-                                                        <Field
-                                                            name='units'
-                                                            type="text"
-                                                            placeholder="Enter Units"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
+                                                <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                                <ReactSelect
+                                                                    name="unit"
+                                                                    value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                    onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                    options={unitOptions}
+                                                                    styles={customStyles} // Pass custom styles here
+                                                                    className="bg-white dark:bg-form-Field"
+                                                                    classNamePrefix="react-select"
+                                                                    placeholder="Select Color Group"
+                                                                />
+
+                                                            </div>
+                                                        </div>
                                                 </div>
 
 
@@ -1559,15 +1604,22 @@ const UpdateProduct = () => {
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
 
-                                                    <div className="flex-1 min-w-[300px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white"> Units</label>
-                                                        <Field
-                                                            name='units'
-                                                            type="text"
-                                                            placeholder="Enter Units"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
+                                                <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                                <ReactSelect
+                                                                    name="unit"
+                                                                    value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                    onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                    options={unitOptions}
+                                                                    styles={customStyles} // Pass custom styles here
+                                                                    className="bg-white dark:bg-form-Field"
+                                                                    classNamePrefix="react-select"
+                                                                    placeholder="Select Color Group"
+                                                                />
+
+                                                            </div>
+                                                        </div>
                                                 </div>
 
 
@@ -1702,15 +1754,22 @@ const UpdateProduct = () => {
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
 
-                                                    <div className="flex-1 min-w-[300px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white"> Units</label>
-                                                        <Field
-                                                            name='units'
-                                                            type="text"
-                                                            placeholder="Enter Units"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
+                                                <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                                <ReactSelect
+                                                                    name="unit"
+                                                                    value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                    onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                    options={unitOptions}
+                                                                    styles={customStyles} // Pass custom styles here
+                                                                    className="bg-white dark:bg-form-Field"
+                                                                    classNamePrefix="react-select"
+                                                                    placeholder="Select Color Group"
+                                                                />
+
+                                                            </div>
+                                                        </div>
                                                 </div>
 
 
@@ -1848,6 +1907,7 @@ const UpdateProduct = () => {
 
                                                     {/* GST RATE DETAILS Section (Conditional) */}
                                                     {product.gstDetails === "Applicable" && (
+
                                                         <div className="flex-1 min-w-[250px]">
                                                             <label className="mb-2.5 block text-black dark:text-white">GST RATE DETAILS</label>
                                                             <ReactSelect
@@ -1875,56 +1935,56 @@ const UpdateProduct = () => {
                                                         <div className="mb-4.5 mt-6">
                                                             {/* Conditional Rendering: GST Details or HSN Code Section */}
                                                             {/* {gstDetails && gstDetails.length > 0 ? ( */}
-                                                            {product.gstratedetails === "specifySlabBasedRates" ? (
+                                                            {values.gstratedetails === "specifySlabBasedRates" ? (
 
                                                                 // Render GST Details Section
                                                                 <div className="flex flex-wrap gap-6">
-                                                                    {gstDetails.map((gst, index) => (
-                                                                        <div key={index} className="mb-4.5 flex flex-wrap gap-6">
-                                                                            <div className="flex-2 min-w-[100px]">
-                                                                                <label className="mb-2.5 block text-black dark:text-white">Greater Than</label>
-                                                                                <Field
-                                                                                    name={`gstDetails[${index}].greaterThan`}
-                                                                                    type="text"
-                                                                                    // value={gst.greaterThan}
-                                                                                    placeholder="Enter GBP Price"
-                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                                />
+                                                                    {Array.isArray(values.slabBasedRates) &&
+                                                                        values.slabBasedRates.map((gst, index) => (
+                                                                            <div key={index} className="mb-4.5 flex flex-wrap gap-6">
+                                                                                <div className="flex-2 min-w-[100px]">
+                                                                                    <label className="mb-2.5 block text-black dark:text-white">Greater Than</label>
+                                                                                    <Field
+                                                                                        name={`slabBasedRates[${index}].greaterThan`}
+                                                                                        type="text"
+                                                                                        placeholder="Enter Greater Than Value"
+                                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                    />
+                                                                                </div>
+                                                                                <div className="flex-2 min-w-[100px]">
+                                                                                    <label className="mb-2.5 block text-black dark:text-white">Upto</label>
+                                                                                    <Field
+                                                                                        name={`slabBasedRates[${index}].upTo`}
+                                                                                        type="text"
+                                                                                        value={gst.upTo}
+                                                                                        placeholder="Upto"
+                                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                    />
+                                                                                </div>
+                                                                                <div className="flex-2 min-w-[100px]">
+                                                                                    <label className="mb-2.5 block text-black dark:text-white">Type</label>
+                                                                                    <Field
+                                                                                        name={`slabBasedRates[${index}].type`}
+                                                                                        type="text"
+                                                                                        value={gst.type}
+                                                                                        placeholder="Type"
+                                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                    />
+                                                                                </div>
+                                                                                <div className="flex-2 min-w-[100px]">
+                                                                                    <label className="mb-2.5 block text-black dark:text-white">Rate</label>
+                                                                                    <Field
+                                                                                        name={`slabBasedRates[${index}].gstRate`}
+                                                                                        type="text"
+                                                                                        value={gst.gstRate}
+                                                                                        placeholder="Rate"
+                                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                    />
+                                                                                </div>
                                                                             </div>
-                                                                            <div className="flex-2 min-w-[100px]">
-                                                                                <label className="mb-2.5 block text-black dark:text-white">Upto</label>
-                                                                                <Field
-                                                                                    name={`gstDetails[${index}].upTo`}
-                                                                                    type="text"
-                                                                                    value={gst.upTo}
-                                                                                    placeholder="Upto"
-                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                                />
-                                                                            </div>
-                                                                            <div className="flex-2 min-w-[100px]">
-                                                                                <label className="mb-2.5 block text-black dark:text-white">Type</label>
-                                                                                <Field
-                                                                                    name={`gstDetails[${index}].type`}
-                                                                                    type="text"
-                                                                                    value={gst.type}
-                                                                                    placeholder="Type"
-                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                                />
-                                                                            </div>
-                                                                            <div className="flex-2 min-w-[100px]">
-                                                                                <label className="mb-2.5 block text-black dark:text-white">Rate</label>
-                                                                                <Field
-                                                                                    name={`gstDetails[${index}].gstRate`}
-                                                                                    type="text"
-                                                                                    value={gst.gstRate}
-                                                                                    placeholder="Rate"
-                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                                />
-                                                                            </div>
-                                                                        </div>
-                                                                    ))}
+                                                                        ))}
                                                                 </div>
-                                                            ) : product.gstratedetails === "useGstClassification" ? (
+                                                            ) : values.gstratedetails === "useGstClassification" ? (
                                                                 // Render HSN Code and Related Fields Section
                                                                 <div className="mb-4.5 flex flex-wrap gap-6">
                                                                     <div className="flex-2 min-w-[250px]">
@@ -1946,7 +2006,7 @@ const UpdateProduct = () => {
                                                                         <label className="mb-2.5 block text-black dark:text-white">IGST (%)</label>
                                                                         <Field
                                                                             type="number"
-                                                                            value={product?.hsnCode?.igst}
+                                                                            value={product?.hsnCode?.igst ?? vaaluee?.hsnCode?.igst ?? ''}
                                                                             disabled
                                                                             placeholder="Enter IGST Name"
                                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
@@ -1957,7 +2017,7 @@ const UpdateProduct = () => {
                                                                         <label className="mb-2.5 block text-black dark:text-white">CGST (%)</label>
                                                                         <Field
                                                                             type="number"
-                                                                            value={product?.hsnCode?.cgst}
+                                                                            value={vaaluee?.hsnCode?.cgst ?? product?.hsnCode?.cgst ?? ''}
                                                                             disabled
                                                                             placeholder="Enter CGST Name"
                                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
@@ -1968,7 +2028,7 @@ const UpdateProduct = () => {
                                                                         <label className="mb-2.5 block text-black dark:text-white">SGST (%)</label>
                                                                         <Field
                                                                             type="number"
-                                                                            value={product?.hsnCode?.sgst}
+                                                                            value={vaaluee?.hsnCode?.sgst ?? product?.hsnCode?.sgst ?? ''}
                                                                             disabled
                                                                             placeholder="Enter SGST Name"
                                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
@@ -1979,7 +2039,7 @@ const UpdateProduct = () => {
                                                                         <label className="mb-2.5 block text-black dark:text-white">GST Description</label>
                                                                         <Field
                                                                             name="gstDescription"
-                                                                            value={product?.hsnCode?.productDescription}
+                                                                            value={vaaluee?.hsnCode?.productDescription ?? product?.hsnCode?.productDescription ?? ''}
                                                                             type="text"
                                                                             placeholder="Enter GST Description"
                                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
@@ -2459,6 +2519,7 @@ const UpdateProduct = () => {
                                                     value={supplierCodeOptions?.find(option => option.value === values.supplierCode?.id) || null}
                                                     onChange={(option) => setFieldValue('supplierCode', option ? option?.suplieridd : null)}
                                                     options={supplierCodeOptions}
+                                                    isDisabled={true} 
                                                     styles={customStyles} // Pass custom styles here
                                                     className="bg-white dark:bg-form-Field"
                                                     classNamePrefix="react-select"
@@ -2490,11 +2551,16 @@ const UpdateProduct = () => {
             </div>
             <Modall
                 setIsModalOpen={setgstDetailModal}
+
                 isOpen={gstDetailModal}
+
                 onRequestClose={() => setgstDetailModal(false)}
                 //   prodIdd={}
                 //   GET_PRODUCTBYID_URL={GET_PRODUCTBYID_URL}
-                onSubmit={handleModalSubmit}
+                onSubmit={(newValues) => {
+                    console.log(newValues, "Modal Submitted Data");
+                    handleModalSubmit(newValues);
+                }}
                 width="70%"
                 height="80%"
                 style={{ marginLeft: '70px', marginRight: '0' }}  // Add this line
