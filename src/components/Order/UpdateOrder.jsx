@@ -394,80 +394,80 @@ const UpdateOrder = () => {
   // }, [productId]);
 
 
-  const onSubmit = async (values, e) => {
-    console.log("Form submission triggered");
-    console.log(values, "Received values from frontend");
+//   const onSubmit = async (values, e) => {
+//     console.log("Form submission triggered");
+//     console.log(values, "Received values from frontend");
 
-    const formattedValues = {
-      orderDate: values.orderDate,
-      value: parseFloat(values.value),
-      shippingDate: values.shippingDate,
-      expectingDate: values.expectingDate,
-      tagsAndLabels: values.tags,
-      logoNo: values.logoNo,
-      productionExecutionStatus: "In Progress", // You can change this as needed
-      productionComments: values.customisationDetails,
-      poDate: values.poDate,
-      orderCategory: values.orderCategory,
-      purchaseOrderNo: values.purchaseOrderNo,
-      clientInstruction: values.clientInstruction,
-      status: "Created", // Example static value
-      customisationDetails: values.customisationDetails,
-      createdBy: "Admin", // Replace with a dynamic value if available
-      employeeName: values.employeeName,
-      salesChannel: values.salesChannel,
-      // customer: {
-      //   id: 1, // Replace with the actual customer ID from your `values`
-      // },
-      customer: {
-        id: values.customer?.id || null, // Dynamically include the customer ID or set to null if not available
-      },
-      orderType: {
-        id: values.orderType?.id || 4, // Replace with the actual Order Type ID
-      },
-      orderProducts: [
-        // {
-        //   products: {
-        //     id: values.productId, // Product ID from the form values
-        //   },
-          {
-            // products: {
-            //   id: values.products?.productId || '',  // Accessing the productId from the products object
-            // },
+//     const formattedValues = {
+//       orderDate: values.orderDate,
+//       value: parseFloat(values.value),
+//       shippingDate: values.shippingDate,
+//       expectingDate: values.expectingDate,
+//       tagsAndLabels: values.tags,
+//       logoNo: values.logoNo,
+//       productionExecutionStatus: "In Progress", // You can change this as needed
+//       productionComments: values.customisationDetails,
+//       poDate: values.poDate,
+//       orderCategory: values.orderCategory,
+//       purchaseOrderNo: values.purchaseOrderNo,
+//       clientInstruction: values.clientInstruction,
+//       status: "Created", // Example static value
+//       customisationDetails: values.customisationDetails,
+//       createdBy: "Admin", // Replace with a dynamic value if available
+//       employeeName: values.employeeName,
+//       salesChannel: values.salesChannel,
+//       // customer: {
+//       //   id: 1, // Replace with the actual customer ID from your `values`
+//       // },
+//       customer: {
+//         id: values.customer?.id || null, // Dynamically include the customer ID or set to null if not available
+//       },
+//       orderType: {
+//         id: values.orderType?.id || 4, // Replace with the actual Order Type ID
+//       },
+//       orderProducts: [
+//         // {
+//         //   products: {
+//         //     id: values.productId, // Product ID from the form values
+//         //   },
+//           {
+//             // products: {
+//             //   id: values.products?.productId || '',  // Accessing the productId from the products object
+//             // },
 
-            products: {
-              id: values.products?.id || "", // Dynamically fetch product ID
-            },
-            // products: {
-            //   ...product.products,
-            //   productId: product.products?.productId || '',  // Set initial value for productId
-            // },
+//             products: {
+//               id: values.products?.id || "", // Dynamically fetch product ID
+//             },
+//             // products: {
+//             //   ...product.products,
+//             //   productId: product.products?.productId || '',  // Set initial value for productId
+//             // },
   
-          clientOrderQuantity: parseFloat(values.orderQuantity),
-          orderQuantity: parseFloat(values.orderQuantity),
-          value: parseFloat(values.value),
-          inStockQuantity: parseFloat(values.inStockQuantity),
-          quantityToManufacture: parseFloat(values.quantityToManufacture),
-          clientShippingDate: values.clientShippingDate,
-          expectedDate: values.expectedDate,
-          challanNo: "CH12345", // Replace with dynamic value if available
-          challanDate: values.shippingDate,
-          productSuppliers: [
-            {
-              supplier: {
-                id: 1, // Replace with actual supplier ID
-              },
-              supplierOrderQty: parseFloat(values.supplierOrderQty),
-            },
-          ],
-        },
-      ],
+//           clientOrderQuantity: parseFloat(values.orderQuantity),
+//           orderQuantity: parseFloat(values.orderQuantity),
+//           value: parseFloat(values.value),
+//           inStockQuantity: parseFloat(values.inStockQuantity),
+//           quantityToManufacture: parseFloat(values.quantityToManufacture),
+//           clientShippingDate: values.clientShippingDate,
+//           expectedDate: values.expectedDate,
+//           challanNo: "CH12345", // Replace with dynamic value if available
+//           challanDate: values.shippingDate,
+//           productSuppliers: [
+//             {
+//               supplier: {
+//                 id: 1, // Replace with actual supplier ID
+//               },
+//               supplierOrderQty: parseFloat(values.supplierOrderQty),
+//             },
+//           ],
+//         },
+//       ],
       
-    };
+//     };
   
-    console.log(JSON.stringify(formattedValues, null, 2), "Formatted Values");
-    handleUpdateSubmit(formattedValues, e);
-};
+//     console.log(JSON.stringify(formattedValues, null, 2), "Formatted Values");
+//     handleUpdateSubmit(formattedValues, e);
+// };
 
 
   
