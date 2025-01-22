@@ -4,8 +4,12 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import { Field, Form, Formik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { ADD_CONTEMPORARY } from '../../Constants/utils';
+import { useSelector } from 'react-redux';
 
 const ExcelUploadProduct = () => {
+    const { currentUser } = useSelector((state) => state?.persisted?.user);
+    const { token } = currentUser;
     const navigate = useNavigate();
     const [selectedCategory, setSelectedCategory] = useState('');
     const categories = [
@@ -26,15 +30,20 @@ const ExcelUploadProduct = () => {
 
         try {
             const apiEndpoints = {
-                contemporary: '/api/upload/contemporary',
+                contemporary: ADD_CONTEMPORARY,
                 pashmina: '/api/upload/pashmina',
                 kani: '/api/upload/kani',
                 cotton: '/api/upload/cotton',
             };
+       
 
             const response = await fetch(apiEndpoints[selectedCategory], {
                 method: 'POST',
                 body: formData,
+                headers: {
+                    // "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
             });
 
             if (response.ok) {
