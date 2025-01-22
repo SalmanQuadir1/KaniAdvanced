@@ -100,9 +100,10 @@ const UpdateOrder = () => {
 
   console.log(selectedSuppliers, "selecteddddddddd Suppliersss");
 
-  const openSupplierModal = (id) => {
-    console.log("opening supplier  modal  after update", id);
+  const openSupplierModal = (id,rowIndex) => {
+    console.log("opening supplier  modal  after update", id,rowIndex);
     setIsSupplierModalOpen(true);
+    setSelectedRowId(rowIndex);
     console.log(id, "ghson");
     setsuppId(id)
   };
@@ -1015,7 +1016,7 @@ const UpdateOrder = () => {
 
                               {/* Actions */}
                               <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <IoIosAdd size={30} onClick={() => openSupplierModal(product?.products?.id)} />
+                                <IoIosAdd size={30} onClick={() => openSupplierModal(product?.products?.id,index)} />
 
 
                               </td>
@@ -1054,7 +1055,7 @@ const UpdateOrder = () => {
                                       </thead>
                                       <tbody>
                                         {selectedSuppliers
-                                          .find((supplierRow) => supplierRow.selectedRowId === supplierRow.selectedRowId)
+                                          .find((supplierRow) => supplierRow.selectedRowId === index)
                                           ?.supplierIds.map((supplier, supplierIndex) => (
                                             <tr
                                               key={`supplier-row-${index}-${supplierIndex}`}

@@ -332,6 +332,8 @@ const AddOrder = () => {
   console.log(prodIdModal, "prodddddddddddddddddddddddddd");
   const [isPopulated, setIsPopulated] = useState(false);
 
+console.log(selectedSuppliers,"umerumer");
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Order/Create Order" />
