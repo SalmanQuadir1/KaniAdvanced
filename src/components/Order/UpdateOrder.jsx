@@ -1057,6 +1057,76 @@ const UpdateOrder = () => {
 
 
 
+           {/* <Field
+                                                  name={`orderProducts[${index}].products.id`}
+          
+                                                  value={item?.productId || ""}
+          
+                                                  placeholder="Enter Prchase Order"
+                                                  onChange={(e) => {
+                                                    console.log(`Product ID: ${e.target.value}`); // Log the value on change
+                                                  }}
+                                                  className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                                /> */}
+          <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+        </div>
+      </td>
+
+      <td className="px-5 py-5 border-b border-gray-200 text-sm">
+        <div>
+          {/* <Field
+            name={`orderProducts[${adjustedIndex}].orderCategory`}
+            placeholder="Enter Order Category"
+            onChange={(e) => {
+              console.log(`Order Category: ${e.target.value}`);
+              setFieldValue(`orderProducts[${adjustedIndex}].orderCategory`, e.target.value);
+            }}
+            className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+          /> */}
+
+                                                <Field
+                                                  name={`orderProducts[${adjustedIndex}].orderCategory`}
+                                                   value={item?.orderCatagory || ""}
+                                                  placeholder="Enter Order Category"
+                                                  onChange={(e) => {
+                                                    console.log(`Order Category: ${e.target.value}`);
+                                                    setFieldValue(`orderProducts[${adjustedIndex}].orderCategory`, e.target.value); // Update the field value manually
+                                                  }}
+                                                  readOnly
+                                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                                />
+                                         
+
+          <ErrorMessage name="orderCategory" component="div" className="text-red-600 text-sm" />
+        </div>
+      </td>
+
+      <td className="px-5 py-5 border-b border-gray-200 text-sm">
+        <div>
+          <Field
+            type="number"
+            name={`orderProducts[${adjustedIndex}].clientOrderQuantity`}
+            placeholder="Enter Client Order Qty"
+            className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+          />
+          <ErrorMessage name="clientOrderQty" component="div" className="text-red-600 text-sm" />
+        </div>
+      </td>
+
+      <td className="px-5 py-5 border-b border-gray-200  text-sm">
+ 
+ 
+ <div >
+
+   <Field
+     name={`orderProducts[${adjustedIndex}].units`}
+     // value={item?.units}
+     placeholder="Enter Units"
+     className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+   />
+   <ErrorMessage name="Units" component="div" className="text-red-600 text-sm" />
+ </div>
+</td>
 
 
                         </tbody>
