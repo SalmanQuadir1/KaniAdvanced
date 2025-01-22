@@ -204,6 +204,7 @@ export const UPDATE_PRODUCTInventoryy_URL = `${BASE_URL}/productInventory/update
 
 
 
+export const ADD_CONTEMPORARY = `${BASE_URL}/products/upload-excel`;
 
 //PRODUCT
 export const ADD_HSNCODE_URL = `${BASE_URL}/hsncode`;
@@ -211,6 +212,8 @@ export const GET_HSNCODE_URL = `${BASE_URL}/hsncode`;
 export const UPDATE_HSNCODE_URL = `${BASE_URL}/hsncode`;
 export const VIEW_ALL_HSNCODE = `${BASE_URL}/hsncode/viewAll`;
 export const DELETE_HSNCODE_URL = `${BASE_URL}/hsncode`;
+
+
 
 //dahsboard
 
