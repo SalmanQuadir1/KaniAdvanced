@@ -31,6 +31,7 @@ import PageNotFOund from './pages/PageNotFOund.jsx';
 
 import Buttons from './pages/UiElements/Buttons.js';
 import PrivateRoute from './PrivateRoute/PrivateRoute.jsx';
+import RoleBasedRoute from './PrivateRoute/RoleBasedRoute.jsx';
 import Budget from './components/Configurator/Budget.jsx';
 
 import Size from './components/Configurator/Size.jsx';
@@ -155,11 +156,14 @@ function App() {
             path="/"
             element={
               <>
+              <RoleBasedRoute allowedRoles={["ROLE_ADMIN","ROLE_APPROVER"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <Chart />
               </>
             }
           />
+
+
           <Route
             path="/calendar"
             element={
