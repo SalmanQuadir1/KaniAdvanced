@@ -127,10 +127,10 @@ const ExcelUploadProduct = () => {
                                                         onClick={async () => {
                                                             try {
                                                                 const apiEndpoints = {
-                                                                    contemporary: '/products/downloadCp',
-                                                                    pashmina: '/samples/pashmina.xlsx',
-                                                                    kani: '/samples/kani.xlsx',
-                                                                    cotton: '/samples/cotton.xlsx',
+                                                                    contemporary: 'http://localhost:8081/products/downloadCp',
+                                                                    pashmina: 'http://localhost:8081/samples/pashmina.xlsx',
+                                                                    kani: 'http://localhost:8081/samples/kani.xlsx',
+                                                                    cotton: 'http://localhost:8081/samples/cotton.xlsx',
                                                                 };
 
                                                                 const endpoint = apiEndpoints[selectedCategory];
