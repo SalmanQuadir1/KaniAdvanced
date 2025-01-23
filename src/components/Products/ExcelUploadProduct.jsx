@@ -13,7 +13,7 @@ const ExcelUploadProduct = () => {
     const navigate = useNavigate();
     const [selectedCategory, setSelectedCategory] = useState('');
     const categories = [
-        { label: 'Contemporary', value: 'contemporary', sampleFile: '/samples/contemporary.xlsx' },
+        { label: 'Contemporary', value: 'contemporary', sampleFile: '/products/downloadCp' },
         { label: 'Pashmina', value: 'pashmina', sampleFile: '/samples/pashmina.xlsx' },
         { label: 'Kani', value: 'kani', sampleFile: '/samples/kani.xlsx' },
         { label: 'Cotton', value: 'cotton', sampleFile: '/samples/cotton.xlsx' },
@@ -124,18 +124,57 @@ const ExcelUploadProduct = () => {
                                                 <div className="flex-1 min-w-[300px]">
                                                     <button
                                                         type="button"
-                                                        onClick={() =>
-                                                            window.open(
-                                                                categories.find(
-                                                                    (cat) => cat.value === selectedCategory
-                                                                )?.sampleFile,
-                                                                '_blank'
-                                                            )
-                                                        }
+                                                        onClick={async () => {
+                                                            try {
+                                                                const apiEndpoints = {
+                                                                    contemporary: '/products/downloadCp',
+                                                                    pashmina: '/samples/pashmina.xlsx',
+                                                                    kani: '/samples/kani.xlsx',
+                                                                    cotton: '/samples/cotton.xlsx',
+                                                                };
+
+                                                                const endpoint = apiEndpoints[selectedCategory];
+
+                                                                const response = await fetch(endpoint, {
+                                                                    method: 'GET',
+                                                                    headers: {
+                                                                        Authorization: `Bearer ${token}`,
+                                                                    },
+                                                                });
+
+                                                                if (!response.ok) {
+                                                                    throw new Error('Failed to download the file');
+                                                                }
+
+                                                                // Get the file blob
+                                                                const blob = await response.blob();
+
+                                                                // Create a temporary download link
+                                                                const url = window.URL.createObjectURL(blob);
+                                                                const link = document.createElement('a');
+                                                                link.href = url;
+                                                                link.setAttribute(
+                                                                    'download',
+                                                                    `${selectedCategory}-sample.xlsx` // Filename for the downloaded file
+                                                                );
+
+                                                                // Append to the document and trigger the download
+                                                                document.body.appendChild(link);
+                                                                link.click();
+
+                                                                // Clean up
+                                                                link.parentNode.removeChild(link);
+                                                                window.URL.revokeObjectURL(url);
+                                                            } catch (error) {
+                                                                console.error('Error downloading the file:', error);
+                                                                toast.error('Failed to download the sample file.');
+                                                            }
+                                                        }}
                                                         className="bg-green-500 mb-4 text-white py-2 px-4 rounded hover:bg-green-600"
                                                     >
                                                         Download Sample File
                                                     </button>
+
                                                 </div>
                                             </>
                                         )}
