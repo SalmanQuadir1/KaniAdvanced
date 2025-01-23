@@ -4,7 +4,7 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import { Field, Form, Formik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { ADD_CONTEMPORARY } from '../../Constants/utils';
+import { ADD_CONTEMPORARY, ADD_CONTEMP_WOOL, ADD_CONTEM_SAREE, ADD_COTTON, ADD_KANI, ADD_PAPERMACHIE, ADD_PASHMINA_EMB, ADD_WOOL_EMB } from '../../Constants/utils';
 import { useSelector } from 'react-redux';
 
 const ExcelUploadProduct = () => {
@@ -13,10 +13,17 @@ const ExcelUploadProduct = () => {
     const navigate = useNavigate();
     const [selectedCategory, setSelectedCategory] = useState('');
     const categories = [
-        { label: 'Contemporary', value: 'contemporary', sampleFile: '/products/downloadCp' },
-        { label: 'Pashmina', value: 'pashmina', sampleFile: '/samples/pashmina.xlsx' },
-        { label: 'Kani', value: 'kani', sampleFile: '/samples/kani.xlsx' },
-        { label: 'Cotton', value: 'cotton', sampleFile: '/samples/cotton.xlsx' },
+        { label: 'Contemporary Pashmina', value: 'contemporary', sampleFile: '/products/downloadCp' },
+        { label: 'Pashmina Embroidery', value: 'pashmina', sampleFile: '/samples/pashmina.xlsx' },
+        { label: 'Kani', value: 'Kani', sampleFile: '/products/downloadCp' },
+        { label: 'Wool Embroidery', value: 'woolemb', sampleFile: '/samples/pashmina.xlsx' },
+
+        { label: 'Paper Machie', value: 'papermachie', sampleFile: '/products/downloadCp' },
+        { label: 'Cotton', value: 'cotton', sampleFile: '/samples/pashmina.xlsx' },
+
+
+        { label: 'Contemporary Saree', value: 'saree', sampleFile: '/samples/kani.xlsx' },
+        { label: 'Contemporary Wool', value: 'contempwool', sampleFile: '/samples/cotton.xlsx' },
     ];
 
     const handleSubmit = async (values) => {
@@ -31,9 +38,15 @@ const ExcelUploadProduct = () => {
         try {
             const apiEndpoints = {
                 contemporary: ADD_CONTEMPORARY,
-                pashmina: '/api/upload/pashmina',
-                kani: '/api/upload/kani',
-                cotton: '/api/upload/cotton',
+                pashmina: ADD_PASHMINA_EMB,
+                kani: ADD_KANI,
+
+                woolemb:ADD_WOOL_EMB,
+                papermachie:ADD_PAPERMACHIE,
+                cotton:ADD_COTTON,
+                saree:ADD_CONTEM_SAREE,
+                contempwool:ADD_CONTEMP_WOOL,
+            
             };
 
             const response = await fetch(apiEndpoints[selectedCategory], {
@@ -128,9 +141,20 @@ const ExcelUploadProduct = () => {
                                                             try {
                                                                 const apiEndpoints = {
                                                                     contemporary: 'http://localhost:8081/products/downloadCp',
-                                                                    pashmina: 'http://localhost:8081/samples/pashmina.xlsx',
-                                                                    kani: 'http://localhost:8081/samples/kani.xlsx',
-                                                                    cotton: 'http://localhost:8081/samples/cotton.xlsx',
+                                                                    pashmina: 'http://localhost:8081/uploadExcel/downloadPe',
+                                                                    kani: 'http://localhost:8081/uploadExcel/downloadKani',
+                                                                    woolemb:'http://localhost:8081/uploadExcel/downloadWe',
+                                                                    papermachie:'http://localhost:8081/uploadExcel/downloadPaper',
+                                                                    cotton:'http://localhost:8081/uploadExcel/downloadCotton',
+                                                                    saree:'http://localhost:8081/uploadExcel/downloadSaree',
+                                                                    contempwool:'http://localhost:8081/uploadExcel/downloadContempWool',
+
+
+
+
+
+
+                                                                    
                                                                 };
 
                                                                 const endpoint = apiEndpoints[selectedCategory];
