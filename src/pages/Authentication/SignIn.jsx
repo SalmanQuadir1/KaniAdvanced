@@ -36,7 +36,12 @@ const SignIn = () => {
       });
       const data = await res.json();
       if (res.ok) {
+
+        // console.log(res,"responseeeeeee");
         dispatch(signInSuccess(data));
+
+
+
         navigate('/');
       } else {
         console.log("i am here");

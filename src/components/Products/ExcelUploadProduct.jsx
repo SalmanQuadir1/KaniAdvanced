@@ -13,10 +13,10 @@ const ExcelUploadProduct = () => {
     const navigate = useNavigate();
     const [selectedCategory, setSelectedCategory] = useState('');
     const categories = [
-        { label: 'Contemporary', value: 'contemporary' },
-        { label: 'Pashmina', value: 'pashmina' },
-        { label: 'Kani', value: 'kani' },
-        { label: 'Cotton', value: 'cotton' },
+        { label: 'Contemporary', value: 'contemporary', sampleFile: '/samples/contemporary.xlsx' },
+        { label: 'Pashmina', value: 'pashmina', sampleFile: '/samples/pashmina.xlsx' },
+        { label: 'Kani', value: 'kani', sampleFile: '/samples/kani.xlsx' },
+        { label: 'Cotton', value: 'cotton', sampleFile: '/samples/cotton.xlsx' },
     ];
 
     const handleSubmit = async (values) => {
@@ -35,15 +35,13 @@ const ExcelUploadProduct = () => {
                 kani: '/api/upload/kani',
                 cotton: '/api/upload/cotton',
             };
-       
 
             const response = await fetch(apiEndpoints[selectedCategory], {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    // "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                }
+                    Authorization: `Bearer ${token}`,
+                },
             });
 
             if (response.ok) {
@@ -73,7 +71,7 @@ const ExcelUploadProduct = () => {
                             initialValues={{ file: null }}
                             onSubmit={handleSubmit}
                         >
-                            {({ setFieldValue, values }) => (
+                            {({ setFieldValue }) => (
                                 <Form>
                                     <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
                                         <div className="flex-1 min-w-[300px]">
@@ -103,28 +101,46 @@ const ExcelUploadProduct = () => {
                                             ))}
                                         </div>
                                         {selectedCategory && (
-                                            <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white">
-                                                    Upload Excel File
-                                                </label>
-                                                <input
-                                                    type="file"
-                                                    name="file"
-                                                    accept=".xlsx, .xls"
-                                                    onChange={(event) =>
-                                                        setFieldValue('file', event.currentTarget.files[0])
-                                                    }
-                                                    className="block w-full text-sm text-slate-500
+                                            <>
+                                                <div className="flex-1 min-w-[300px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">
+                                                        Upload Excel File
+                                                    </label>
+                                                    <input
+                                                        type="file"
+                                                        name="file"
+                                                        accept=".xlsx, .xls"
+                                                        onChange={(event) =>
+                                                            setFieldValue('file', event.currentTarget.files[0])
+                                                        }
+                                                        className="block w-full text-sm text-slate-500
                                                     file:mr-4 file:py-2 file:px-4
                                                     file:rounded-full file:border-0
                                                     file:text-sm file:font-semibold
                                                     file:bg-blue-50 file:text-blue-700
                                                     hover:file:bg-blue-100"
-                                                />
-                                            </div>
+                                                    />
+                                                </div>
+                                                <div className="flex-1 min-w-[300px]">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            window.open(
+                                                                categories.find(
+                                                                    (cat) => cat.value === selectedCategory
+                                                                )?.sampleFile,
+                                                                '_blank'
+                                                            )
+                                                        }
+                                                        className="bg-green-500 mb-4 text-white py-2 px-4 rounded hover:bg-green-600"
+                                                    >
+                                                        Download Sample File
+                                                    </button>
+                                                </div>
+                                            </>
                                         )}
                                     </div>
-                                    <button  
+                                    <button
                                         type="submit"
                                         className="bg-blue-500 mb-4 text-white py-2 px-4 rounded hover:bg-blue-600"
                                     >
