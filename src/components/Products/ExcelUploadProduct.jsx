@@ -4,7 +4,7 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import { Field, Form, Formik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { ADD_CONTEMPORARY, ADD_CONTEMP_WOOL, ADD_CONTEM_SAREE, ADD_COTTON, ADD_KANI, ADD_PAPERMACHIE, ADD_PASHMINA_EMB, ADD_WOOL_EMB } from '../../Constants/utils';
+import { ADD_CONTEMPORARY, ADD_CONTEMP_WOOL, ADD_CONTEM_SAREE, ADD_COTTON, ADD_KANI, ADD_PAPERMACHIE, ADD_PASHMINA_EMB, ADD_WOOL_EMB, BASE_URL } from '../../Constants/utils';
 import { useSelector } from 'react-redux';
 
 const ExcelUploadProduct = () => {
@@ -140,14 +140,14 @@ const ExcelUploadProduct = () => {
                                                         onClick={async () => {
                                                             try {
                                                                 const apiEndpoints = {
-                                                                    contemporary: 'http://localhost:8081/products/downloadCp',
-                                                                    pashmina: 'http://localhost:8081/uploadExcel/downloadPe',
-                                                                    kani: 'http://localhost:8081/uploadExcel/downloadKani',
-                                                                    woolemb:'http://localhost:8081/uploadExcel/downloadWe',
-                                                                    papermachie:'http://localhost:8081/uploadExcel/downloadPaper',
-                                                                    cotton:'http://localhost:8081/uploadExcel/downloadCotton',
-                                                                    saree:'http://localhost:8081/uploadExcel/downloadSaree',
-                                                                    contempwool:'http://localhost:8081/uploadExcel/downloadContempWool',
+                                                                    contemporary: `${BASE_URL}/products/downloadCp`,
+                                                                    pashmina: `${BASE_URL}/uploadExcel/downloadPe`,
+                                                                    kani: `${BASE_URL}/uploadExcel/downloadKani`,
+                                                                    woolemb:`${BASE_URL}/uploadExcel/downloadWe`,
+                                                                    papermachie:`${BASE_URL}/uploadExcel/downloadPaper`,
+                                                                    cotton:`${BASE_URL}/uploadExcel/downloadCotton`,
+                                                                    saree:`${BASE_URL}/uploadExcel/downloadSaree`,
+                                                                    contempwool:`${BASE_URL}/uploadExcel/downloadContempWool`,
 
 
 

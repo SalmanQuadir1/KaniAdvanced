@@ -182,8 +182,21 @@ export const GET_PRODUCTID_URL = `${BASE_URL}/products`;
 
 export const GET_PRODUCTIDD_URL = `${BASE_URL}/products`;
 
+
+export const GET_PRODUCTIDDD_URL = `${BASE_URL}/order`;
+
 //ORDER
 export const VIEW_ALL_ORDERS = `${BASE_URL}/order/search`;
+
+export const VIEW_CREATED_ORDERS = `${BASE_URL}/order/searchCreated`;
+
+
+
+
+
+
+
+export const VIEW_ALL_PRODID = `${BASE_URL}/order/viewCreatedProductId`;
 export const VIEW_ALL_ORDERSCREATED = `${BASE_URL}/order/search`;
 
 export const DELETE_ORDER_URL = `${BASE_URL}/order/delete`;

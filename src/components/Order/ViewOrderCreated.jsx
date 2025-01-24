@@ -3,7 +3,7 @@ import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { DELETE_ORDER_URL, VIEW_ALL_ORDERS } from "../../Constants/utils";
+import { DELETE_ORDER_URL, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS } from "../../Constants/utils";
 import ReactSelect from 'react-select';
 import useorder from '../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -25,7 +25,7 @@ const productgrp = [
 
 const ViewOrderCreated = () => {
 
-    const { handleUpdate, getorderNumber, orderNo, getSupplier, supplier, getCustomer, customer } = useorder();
+    const { handleUpdate, getorderNumber, orderNo, getSupplier,getProdId,productIdd, supplier, getCustomer, customer } = useorder();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
 
@@ -44,11 +44,12 @@ const ViewOrderCreated = () => {
         getorderNumber();
         getSupplier();
         getCustomer();
+        getProdId();
 
     }, []);
 
 
-    console.log(supplier, customer, "orderNo");
+    console.log(supplier, customer,productIdd, "orderNo");
 
     const formattedorder = orderNo.map(order => ({
         label: order,
@@ -58,6 +59,11 @@ const ViewOrderCreated = () => {
     const formattedSupplier = supplier.map(supplier => ({
         label: supplier.name,
         value: supplier.name
+    }));
+
+    const formattedProdId = productIdd.map(prod => ({
+        label: prod,
+        value: prod
     }));
     const formattedCustomer = customer.map(customer => ({
         label: customer.customerName,
@@ -111,7 +117,7 @@ const ViewOrderCreated = () => {
         console.log("Fetching orders for page", page); // Log the page number being requested
 
         try {
-            const response = await fetch(`${VIEW_ALL_ORDERS}?page=${page || 1}`, {
+            const response = await fetch(`${VIEW_CREATED_ORDERS}?page=${page || 1}`, {
                 method: "POST", // GET method
                 headers: {
                     "Content-Type": "application/json",
@@ -120,7 +126,11 @@ const ViewOrderCreated = () => {
                 body: JSON.stringify(filters)
             });
 
-            const textResponse = await response.text(); // Get the raw text response
+            const textResponse = await response.text();
+
+            console.log(textResponse,"japaaaaaaaaaaaaaaaaaan");
+            
+            // Get the raw text response
             // Log raw response before parsing
 
             // Try parsing the response only if it's valid JSON
@@ -285,8 +295,6 @@ const ViewOrderCreated = () => {
             orderNo: values.orderNo || undefined,
             supplierName: values.supplierName || undefined,
 
-            fromDate: values.fromDate || undefined,
-            toDate: values.toDate || undefined,
             customerName: values.customerName || undefined,
         };
         getOrder(pagination.currentPage, filters);
@@ -310,11 +318,11 @@ const ViewOrderCreated = () => {
                         <Formik
                             initialValues={{
                                 orderNo: '',
+                                customerName: "",
                                 supplierName: "",
+                                productId:""
 
-                                fromDate: "",
-                                toDate: "",
-                                customerName: ""
+                                
 
                             }}
                             onSubmit={handleSubmit}
@@ -374,17 +382,17 @@ const ViewOrderCreated = () => {
 
                                     <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
                                         <div className="flex-1 min-w-[200px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">Customer</label>
+                                            <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
                                             <ReactSelect
-                                                name="customerName"
-                                                value={productgrp.find(option => option.value === values.customerName)}
+                                                name="ProductId"
+                                                value={productIdd.find(option => option.value === values.ProductId)}
                                                 onChange={(option) => {
-                                                    setFieldValue('customerName', option.value);
+                                                    setFieldValue('productId', option.value);
 
                                                 }}
                                                 onBlur={handleBlur}
                                                 // options={formattedCustomer}
-                                                options={[{ label: 'View All Customers', value: null }, ...formattedCustomer]}
+                                                options={[{ label: 'View All Product Id', value: null }, ...formattedProdId]}
                                                 styles={customStyles}
                                                 className="bg-white dark:bg-form-input"
                                                 classNamePrefix="react-select"

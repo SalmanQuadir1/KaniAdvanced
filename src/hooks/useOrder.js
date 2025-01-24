@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE ,VIEW_ALL_ORDERS,VIEW_ALL_CUSTOMER, ADD_ORDER_URL, VIEW_ORDERNO, VIEW_ALL_SUPPLIER_URL, } from "../Constants/utils";
+import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE ,VIEW_ALL_ORDERS,VIEW_ALL_CUSTOMER, ADD_ORDER_URL, VIEW_ORDERNO, VIEW_ALL_SUPPLIER_URL, VIEW_ALL_PRODID, GET_PRODUCTIDDD_URL, } from "../Constants/utils";
 import { useNavigate } from 'react-router-dom';
 import { fetchorder } from '../redux/Slice/OrderNo';
 // import { GET_PRODUCTIDD_URL, VIEW_ALL_CUSTOMER, VIEW_ALL_ORDERTYPE } from "../Constants/utils";
@@ -121,41 +121,25 @@ useEffect(() => {
     };
 
   
-    // const getprodId = async () => {
-    //     try {
-    //         const response = await fetch(`${GET_PRODUCTIDD_URL}/all-productsIds`, {
-    //             method: "GET",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 "Authorization": `Bearer ${token}`
-    //             }
-    //         });
-    //         const data = await response.json();
-    //         console.log(data,"dataaaaaassss");
-    //         setproductId(data);
-          
-    //     } catch (error) {
-    //         console.error(error);
-    //         toast.error("Failed to fetch orderType");
-    //     }
-    // };
     const getprodId = async () => {
         try {
-          const response = await fetch(`${GET_PRODUCTIDD_URL}/all-productsIds`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`,
-            },
-          });
-          const data = await response.json();
-          console.log(data, "Fetched Product IDs");
-          setproductId(data); // Update the state with fetched data
+            const response = await fetch(`${GET_PRODUCTIDD_URL}/all-productsIds`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data,"dataaaaaassss");
+            setproductId(data);
+          
         } catch (error) {
-          console.error(error);
-          toast.error("Failed to fetch Product IDs");
+            console.error(error);
+            toast.error("Failed to fetch orderType");
         }
-      };
+    };
+   
       
 
 
@@ -380,7 +364,8 @@ const handleUpdate = (e, item) => {
 
     const getProdId = async (page) => {
         try {
-            const response = await fetch(`${VIEW_ALL_CUSTOMER}`, {
+            
+            const response = await fetch(`${GET_PRODUCTIDDD_URL}/viewCreatedProductId`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -389,7 +374,7 @@ const handleUpdate = (e, item) => {
             });
             const data = await response.json();
             console.log(data,"dataaaaaa");
-            setcustomer(data);
+            setproductIdd(data);
             setPagination({
                 totalItems: data.totalElements,
                 pagUnitList: data.content,
@@ -435,7 +420,8 @@ const handleUpdate = (e, item) => {
         orderNo,
         getSupplier,
         supplier,
-        getProdId
+        getProdId,
+        productIdd
     };
 };
 
