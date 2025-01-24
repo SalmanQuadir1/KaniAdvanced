@@ -123,7 +123,7 @@ const ViewOrderCreated = () => {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
                 },
-                body: JSON.stringify(filters)
+                body:JSON.stringify(filters)
             });
 
             const textResponse = await response.text();
@@ -296,6 +296,7 @@ const ViewOrderCreated = () => {
             supplierName: values.supplierName || undefined,
 
             customerName: values.customerName || undefined,
+            productId:values.productId||undefined
         };
         getOrder(pagination.currentPage, filters);
         // ViewInventory(pagination.currentPage, filters);
@@ -320,7 +321,7 @@ const ViewOrderCreated = () => {
                                 orderNo: '',
                                 customerName: "",
                                 supplierName: "",
-                                productId:""
+                                ProductId:""
 
                                 
 
@@ -385,7 +386,7 @@ const ViewOrderCreated = () => {
                                             <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
                                             <ReactSelect
                                                 name="ProductId"
-                                                value={productIdd.find(option => option.value === values.ProductId)}
+                                                value={formattedProdId.find(option => option.value === values.ProductId)}
                                                 onChange={(option) => {
                                                     setFieldValue('productId', option.value);
 
