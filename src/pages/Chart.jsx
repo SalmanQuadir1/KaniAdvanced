@@ -94,7 +94,7 @@ const Chart = () => {
                 <RiAlignItemBottomFill className='w-13 h-10' />
               </CardDataStats>
             </Link>
-            <Link to={"/product/viewProducts"}>
+            <Link to={"/order/created"}>
               <CardDataStats
                 title="Orders Pending For Production Approval"
                 total={countMapping['products'] || 0}

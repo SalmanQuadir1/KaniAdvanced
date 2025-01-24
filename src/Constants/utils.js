@@ -184,6 +184,7 @@ export const GET_PRODUCTIDD_URL = `${BASE_URL}/products`;
 
 //ORDER
 export const VIEW_ALL_ORDERS = `${BASE_URL}/order/search`;
+export const VIEW_ALL_ORDERSCREATED = `${BASE_URL}/order/search`;
 
 export const DELETE_ORDER_URL = `${BASE_URL}/order/delete`;
 export const VIEW_ALL_ORDER_URL = `${BASE_URL}/order/viewAll`;

@@ -25,7 +25,7 @@ const CardDataStats: React.FC<CardDataStatsProps> = ({
 
       <div className="mt-4 flex flex-row items-end justify-between ml-[70px]">
         <div>
-          <h4 className="text-title-md font-bold text-slate-800 dark:text-white text-center">
+          <h4 className="text-title-md font-bold text-slate-800 mt-[-50px] dark:text-white text-center">
             {total}
           </h4>
         </div>
@@ -34,7 +34,7 @@ const CardDataStats: React.FC<CardDataStatsProps> = ({
       </div>
       <div>
 
-      <h2 className="text-xs font-semibold mt-3 ml-[-70px]">{title}</h2>
+      <h2 className="text-xs font-semibold mt-[50px] ml-[-70px]">{title}</h2>
       </div>
     </div>
   );

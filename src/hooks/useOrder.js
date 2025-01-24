@@ -13,6 +13,7 @@ const useorder = () => {
     const [orderNo, setorderNo] = useState([])
     const [Order, setOrder] = useState([]);
     const [customer, setcustomer] = useState([])
+    const [productIdd, setproductIdd] = useState([])
     const [supplier, setSupplier] = useState([])
     const [edit, setEdit] = useState(false);
     const [currentorderType, setCurrentorderType] = useState({
@@ -377,6 +378,32 @@ const handleUpdate = (e, item) => {
     };
 
 
+    const getProdId = async (page) => {
+        try {
+            const response = await fetch(`${VIEW_ALL_CUSTOMER}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data,"dataaaaaa");
+            setcustomer(data);
+            setPagination({
+                totalItems: data.totalElements,
+                pagUnitList: data.content,
+                totalPages: data.totalPages,
+                currentPage: data.number + 1,
+                itemsPerPage: data.size
+            });
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch orderType");
+        }
+    };
+
+
 
 
     
@@ -407,7 +434,8 @@ const handleUpdate = (e, item) => {
         getorderNumber,
         orderNo,
         getSupplier,
-        supplier
+        supplier,
+        getProdId
     };
 };
 

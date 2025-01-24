@@ -58,6 +58,9 @@ import UpdateMaterialPo from './components/PuchaseOrder/UpdateMaterialPo.jsx';
 
 import AddOrder from './components/Order/AddOrder';
 import ViewOrder from './components/Order/ViewOrder.jsx';
+import ViewOrderCreated from './components/Order/ViewOrderCreated.jsx';
+
+
 import UpdateOrder from './components/Order/UpdateOrder.jsx';
 
 
@@ -197,8 +200,18 @@ function App() {
             path="/Order/viewOrder"
             element={
               <>
-                <PageTitle title="Profile " />
+                <PageTitle title="View Order " />
                 <ViewOrder />
+              </>
+            }
+          />
+
+<Route
+            path="/Order/created"
+            element={
+              <>
+                <PageTitle title="View Order Created " />
+                <ViewOrderCreated />
               </>
             }
           />
