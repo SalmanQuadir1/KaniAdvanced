@@ -131,7 +131,7 @@ const ViewOrderCreated = () => {
             console.log(textResponse,"japaaaaaaaaaaaaaaaaaan");
             
             // Get the raw text response
-            // Log raw response before parsing
+            // Log raw response before parsing   
 
             // Try parsing the response only if it's valid JSON
             try {
