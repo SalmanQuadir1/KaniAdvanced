@@ -56,14 +56,19 @@ const ExcelUploadProduct = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-
-            if (response.ok) {
+            if (response.ok) { // `response.ok` is true for status codes in the 200–299 range
                 toast.success('File uploaded successfully!');
             } else {
-                toast.error('Failed to upload the file.');
+                const errorData = await response.json(); // Parse the response body as JSON
+                const errorMessage = errorData.message || 'An error occurred'; // Use `message` or fallback
+              
+                toast.error(errorMessage); // Display the error message in a toast
             }
+
+         
+          
         } catch (error) {
-            console.error(error);
+            console.error(error.message,"errorrrrr");
             toast.error('An error occurred during upload.');
         }
     };
