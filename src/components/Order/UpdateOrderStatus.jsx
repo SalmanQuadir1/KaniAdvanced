@@ -10,16 +10,17 @@ import * as Yup from 'yup';
 import useorder from '../../hooks/useOrder';
 import ReactDatePicker from "react-datepicker";
 import useProduct from '../../hooks/useProduct';
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL } from '../../Constants/utils';
+import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL } from '../../Constants/utils';
 import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
 import { FiTrash2 } from 'react-icons/fi';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useNavigation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { MdDelete } from 'react-icons/md';
 const UpdateOrderStaus = () => {
+  const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const [orderType, setOrderType] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -126,6 +127,7 @@ const UpdateOrderStaus = () => {
     console.log("Selected Suppliers:", selectedSuppliers);
     closeSupplierModal();
   };
+  
 
 
 
@@ -147,6 +149,59 @@ const UpdateOrderStaus = () => {
 
   console.log(productId, "looool");
   const { id } = useParams();
+
+
+
+
+  const handleSubmit = async (values) => {
+    // Map selected row IDs to the desired format
+    const selectedProducts = values.selectedRows.map((productId) => ({
+      id: productId,
+    }));
+
+    // Prepare the final data
+    const finalData = {
+      orderProducts: selectedProducts, // Include the selected rows
+    };
+
+    // Log the data to check the format
+    console.log(finalData, "finalData");
+
+
+
+
+    try {
+      const url = `${UPDATE_ORDERCREATED_ALL}/${id}`;
+      const method = "POST";
+
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(finalData)
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        toast.success(`Order Updated  successfully`);
+        resetForm();
+        setEdit(false);
+
+        // getCurrency(pagination.currentPage); // Fetch updated Currency
+      } else {
+        toast.error(`${data.errorMessage}`);
+      }
+    } catch (error) {
+      console.error(error, response);
+      toast.error("An error occurred");
+    } finally {
+      setSubmitting(false);
+    }
+
+    // You can now send `finalData` to the backend or do any other operation with it
+  };
 
 
 
@@ -369,40 +424,41 @@ const UpdateOrderStaus = () => {
 
 
 
-  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-    console.log(values, "logg");
-    try {
-        const url = edit ? `${UPDATE_CURRENCY_URL}/${currentCurrency.id}` : ADD_CURRENCY_URL;
-        const method = edit ? "PUT" : "POST";
+  // const handleSubmit = async (values) => {
+  //   console.log(values, "valuessss");
 
-        const response = await fetch(url, {
-            method: method,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify(values)
-        });
+  // try {
+  //   const url = ADD_CURRENCY_URL;
+  //   const method = "POST";
 
-        const data = await response.json();
-        if (response.ok) {
-            toast.success(`Currency ${edit ? 'updated' : 'added'} successfully`);
-            resetForm();
-            setEdit(false);
-            setCurrentCurrency({
-                CurrencyName: ""
-            });
-            // getCurrency(pagination.currentPage); // Fetch updated Currency
-        } else {
-            toast.error(`${data.errorMessage}`);
-        }
-    } catch (error) {
-        console.error(error, response);
-        toast.error("An error occurred");
-    } finally {
-        setSubmitting(false);
-    }
-};
+  //   const response = await fetch(url, {
+  //     method: method,
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       "Authorization": `Bearer ${token}`
+  //     },
+  //     body: JSON.stringify(values)
+  //   });
+
+  //   const data = await response.json();
+  //   if (response.ok) {
+  //     toast.success(`Currency ${edit ? 'updated' : 'added'} successfully`);
+  //     resetForm();
+  //     setEdit(false);
+  //     setCurrentCurrency({
+  //       CurrencyName: ""
+  //     });
+  //     // getCurrency(pagination.currentPage); // Fetch updated Currency
+  //   } else {
+  //     toast.error(`${data.errorMessage}`);
+  //   }
+  // } catch (error) {
+  //   console.error(error, response);
+  //   toast.error("An error occurred");
+  // } finally {
+  //   setSubmitting(false);
+  // }
+  // };
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Order/Update Order" />
@@ -411,6 +467,7 @@ const UpdateOrderStaus = () => {
           onSubmit={handleSubmit}
           enableReinitialize={true}
           initialValues={{
+            selectedRows: [],
             orderNo: order?.orderNo || '',
 
 
@@ -447,7 +504,7 @@ const UpdateOrderStaus = () => {
             // customer: '',
           }}
 
-          // validationSchema={validationSchema}
+        // validationSchema={validationSchema}
         >
           {({ values, setFieldValue }) => {
 
@@ -504,249 +561,153 @@ const UpdateOrderStaus = () => {
 
 
 
-                      <div className="  shadow-md rounded-lg  mt-3 overflow-scroll">
+                      <div className="shadow-md rounded-lg mt-3 overflow-scroll">
                         <table className="min-w-full leading-normal overflow-auto">
                           <thead>
-                            <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                              <th
-                                className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider "
-                              >
+                            <tr className="bg-slate-300 dark:bg-slate-700 dark:text-white">
+                              <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                Select
+                              </th>
+                              <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Order No
                               </th>
-
-                              <th
-                                className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider "
-                              >
+                              <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Product Id
                               </th>
-                              <th
-                                className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                              >
+                              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Order Category
                               </th>
-                              <th
-                                className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                              >
+                              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Client Order Qty
                               </th>
-                              <th
-                                className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                              >
+                              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Units
                               </th>
-                              {/* <th
-                              className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                            >
-                              In Stock Qty
-                            </th>
-                            <th
-                              className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                            >
-                              Qty To Manufacture
-                            </th>
-                            <th
-                              className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                            >
-                              Value
-                            </th>
-                            <th
-                              className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                            >
-                              Client Shipping Date
-                            </th>
-                            <th
-                              className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                            >
-                              Expected Date
-                            </th> */}
-                              {/* <th
-                                className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                              >
-                                Add Weaver/Embroider
-                              </th> */}
-                              {/* <th
-                              className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                            >
-                              Supplier Details
-                            </th>
-                            <th
-                              className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                            >
-                              Action
-                            </th> */}
-
-                              <th
-                                className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100"
-                              >
+                              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                Action
                               </th>
                             </tr>
                           </thead>
                           <tbody>
-
-
-
-
-                            {order?.orderProducts?.map((product, index, item) => (
+                            {order?.orderProducts?.map((product, index) => (
                               <tr key={product.id}>
+                                {/* Radio Button */}
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    type="checkbox"
+                                    name="selectedRows"
+                                    value={product.id} // Value of the checkbox (product ID)
+                                    checked={values.selectedRows.includes(product.id)} // Check if product ID is in selectedRows
+                                    onChange={(e) => {
+                                      const checked = e.target.checked;
+                                      if (checked) {
+                                        // If checked, add the product ID to selectedRows
+                                        setFieldValue("selectedRows", [...values.selectedRows, product.id]);
+                                      } else {
+                                        // If unchecked, remove the product ID from selectedRows
+                                        setFieldValue("selectedRows", values.selectedRows.filter(id => id !== product.id));
+                                      }
+                                    }}
+                                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                                  />
+                                </td>
+
                                 {/* Product ID */}
-                                <td className="px-5 py-5 border-b border-gray-200 text-sm ">
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <ReactSelect
                                     name="orderNo"
-                                    // value={orderTypeOptions?.find(option => option.value === values.orderType?.id) || null}
-                                    // onChange={(option) => setFieldValue('orderType', option ? option.orderTypeObject : null)}
-                                    // options={orderTypeOptions}
-                                    value={order?.orderNo ? { label: order.orderNo, value: order.orderNo } : null} // Display orderNo
+                                    value={order?.orderNo ? { label: order.orderNo, value: order.orderNo } : null}
                                     styles={customStyles}
                                     className="bg-white dark:bg-form-Field w-[180px]"
                                     classNamePrefix="react-select"
                                     placeholder="Select Order Type"
-
-
                                     isDisabled={true}
                                   />
-
-
-
-
-                                  <ErrorMessage name={`orderProducts[${index}].products.id`} component="div" className="text-red-600 text-sm" />
+                                  <ErrorMessage
+                                    name={`orderProducts[${index}].products.id`}
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
                                 </td>
+
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <Field
                                     name={`orderProducts[${index}].products.productId`}
-                                    // value={values.orderProducts[index]?.products?.productId || ""}
                                     onChange={(e) => {
                                       const newValue = e.target.value;
                                       console.log(`New Product ID: ${newValue}`);
-                                      setFieldValue(`orderProducts[${index}].products.productId`, newValue);  // Update the Formik state
+                                      setFieldValue(
+                                        `orderProducts[${index}].products.productId`,
+                                        newValue
+                                      );
                                     }}
                                     className="w-[150px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                     placeholder="Enter Product ID"
                                   />
-
-
-                                  <ErrorMessage name={`orderProducts[${index}].orderCategory`} component="div" className="text-red-600 text-sm" />
+                                  <ErrorMessage
+                                    name={`orderProducts[${index}].orderCategory`}
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
                                 </td>
 
                                 {/* Order Category */}
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <Field
                                     name={`orderProducts[${index}].orderCategory`}
-                                    //value={product.orderCategory || ""}
-                                    //value={values.orderCategory}
-                                    value={values.orderProducts[index]?.orderCategory || ''}
+                                    value={values.orderProducts[index]?.orderCategory || ""}
                                     className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                     readOnly
                                   />
-
-
-                                  <ErrorMessage name={`orderProducts[${index}].orderCategory`} component="div" className="text-red-600 text-sm" />
+                                  <ErrorMessage
+                                    name={`orderProducts[${index}].orderCategory`}
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
                                 </td>
 
                                 {/* Client Order Quantity */}
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <Field
                                     name={`orderProducts[${index}].clientOrderQuantity`}
-                                    //value={product.clientOrderQuantity || ""}
                                     className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                  //readOnly
                                   />
-                                  <ErrorMessage name={`orderProducts[${index}].clientOrderQuantity`} component="div" className="text-red-600 text-sm" />
+                                  <ErrorMessage
+                                    name={`orderProducts[${index}].clientOrderQuantity`}
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
                                 </td>
 
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <Field
                                     name={`orderProducts[${index}].units`}
-                                    //value={product.units || ""}
                                     className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                  //readOnly
                                   />
-                                  <ErrorMessage name={`orderProducts[${index}].value`} component="div" className="text-red-600 text-sm" />
+                                  <ErrorMessage
+                                    name={`orderProducts[${index}].value`}
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
                                 </td>
-                                {/* 
-                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <Field
-                                  name={`orderProducts[${index}].inStockQuantity`}
-                                  //value={values.orderProducts[index]?.orderCategory || ''}
-                                  //value={product.inStockQuantity || ""}
-                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                //readOnly
-                                />
-                                <ErrorMessage name={`orderProducts[${index}].value`} component="div" className="text-red-600 text-sm" />
-                              </td>
-
-                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <Field
-                                  name={`orderProducts[${index}].quantityToManufacture`}
-                                  //value={product.quantityToManufacture || ""}
-                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                //readOnly
-                                />
-                                <ErrorMessage name={`orderProducts[${index}].value`} component="div" className="text-red-600 text-sm" />
-                              </td> */}
 
 
-                                {/* Value */}
-                                {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <Field
-                                  name={`orderProducts[${index}].value`}
-                                  //value={product.value || ""}
-                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                //readOnly
-                                />
-                                <ErrorMessage name={`orderProducts[${index}].value`} component="div" className="text-red-600 text-sm" />
-                              </td> */}
-
-                                {/* Client Shipping Date */}
-                                {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <Field
-                                  type="date"
-                                  name={`orderProducts[${index}].clientShippingDate`}
-                                  //value={product.clientShippingDate || ""}
-                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                //readOnly
-                                />
-                                <ErrorMessage name={`orderProducts[${index}].clientShippingDate`} component="div" className="text-red-600 text-sm" />
-                              </td> */}
-
-                                {/* Expected Date */}
-                                {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <Field
-                                  type="date"
-                                  name={`orderProducts[${index}].expectedDate`}
-                                  //value={product.expectedDate || ""}
-                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                //readOnly
-                                />
-                                <ErrorMessage name={`orderProducts[${index}].expectedDate`} component="div" className="text-red-600 text-sm" />
-                              </td> */}
-
-                                {/* Actions */}
-                                {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <IoIosAdd size={30} onClick={() => openSupplierModal(product?.products?.id, index)} />
-
-
-                              </td> */}
-
-
-
+                                <td
+                                  className="px-5 py-5 border-b border-gray-200 text-sm"
+                                  colSpan={2} // Use colSpan to span across multiple columns
+                                >
+                                     <div className="flex items-center gap-2">
+                                <span onClick={() => navigate(`/order/modifyorderproduct/${product?.id}`)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"> VIEW ORDER PRODUCT</span>
+                                <span onClick={() => handleUpdateBom(item?.bom?.id)} className=" bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]">VIEW PRODUCT DETAILS</span>
+                            </div>
+                                </td>
 
                               </tr>
-
-
                             ))}
-
-
-
-
-
-
                           </tbody>
-
-
                         </table>
-
-
                       </div>
+
 
 
 
