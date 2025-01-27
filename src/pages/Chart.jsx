@@ -137,45 +137,14 @@ const Chart = () => {
 
 
 
-            <Link to={"/material/viewPurchase"}>
-              <CardDataStats
-                title="Purchase"
-                total={countMapping['purchaseOrder'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <BiPurchaseTagAlt className='w-10 h-10' />
-
-              </CardDataStats>
-            </Link>
-            <Link to={"/material/addmaterial"}>
-              <CardDataStats
-                title="Material"
-                total={countMapping['material'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <GiMaterialsScience className='w-10 h-10' />
-
-              </CardDataStats>
-
-            </Link>
+         
+        
 
 
 
 
 
-            <Link to={"/stockjournal/view"}>
-              <CardDataStats title="Stock Journal" total={countMapping['stockJournal'] || 0} levelUp>
-
-                <IoJournalOutline className='w-10 h-10' />
-
-              </CardDataStats>
-            </Link>
+           
 
 
             <Link to={"/configurator/location"}>

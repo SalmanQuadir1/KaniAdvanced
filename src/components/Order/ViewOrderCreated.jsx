@@ -25,7 +25,7 @@ const productgrp = [
 
 const ViewOrderCreated = () => {
 
-    const { handleUpdate, getorderNumber, orderNo, getSupplier,getProdId,productIdd, supplier, getCustomer, customer } = useorder();
+    const { handleUpdate, getorderNumber, orderNo, getSupplier, getProdId, productIdd, supplier, getCustomer, customer } = useorder();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
 
@@ -49,7 +49,7 @@ const ViewOrderCreated = () => {
     }, []);
 
 
-    console.log(supplier, customer,productIdd, "orderNo");
+    console.log(supplier, customer, productIdd, "orderNo");
 
     const formattedorder = orderNo.map(order => ({
         label: order,
@@ -123,13 +123,13 @@ const ViewOrderCreated = () => {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
                 },
-                body:JSON.stringify(filters)
+                body: JSON.stringify(filters)
             });
 
             const textResponse = await response.text();
 
-            console.log(textResponse,"japaaaaaaaaaaaaaaaaaan");
-            
+            console.log(textResponse, "japaaaaaaaaaaaaaaaaaan");
+
             // Get the raw text response
             // Log raw response before parsing   
 
@@ -259,13 +259,24 @@ const ViewOrderCreated = () => {
                     <p className="text-gray-900 whitespace-no-wrap">{item.customerName}</p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.productId}</p>
-                </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.name}</p>
+                    {item.products &&
+                        item.products.map((prodId, index) => (
+                            <p key={index} className="text-gray-900 whitespace-nowrap">
+                                {prodId?.productId}
+                            </p>
+                        ))}
                 </td>
 
-               
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    {item.products &&
+                        item.products.map((prodId, index) => (
+                            <p key={index} className="text-gray-900 whitespace-nowrap">
+                                {prodId.productStatus}
+                            </p>
+                        ))}
+                </td>
+
+
 
 
 
@@ -275,7 +286,7 @@ const ViewOrderCreated = () => {
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
-                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updateorder/${item?.id}`)} title='Edit Order' />  |
+                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updateorderCreated/${item?.id}`)} title='Edit Order' />  |
                         <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' />
                     </p>
                 </td>
@@ -296,7 +307,7 @@ const ViewOrderCreated = () => {
             supplierName: values.supplierName || undefined,
 
             customerName: values.customerName || undefined,
-            productId:values.productId||undefined
+            productId: values.productId || undefined
         };
         getOrder(pagination.currentPage, filters);
         // ViewInventory(pagination.currentPage, filters);
@@ -321,9 +332,9 @@ const ViewOrderCreated = () => {
                                 orderNo: '',
                                 customerName: "",
                                 supplierName: "",
-                                ProductId:""
+                                ProductId: ""
 
-                                
+
 
                             }}
                             onSubmit={handleSubmit}
@@ -331,7 +342,7 @@ const ViewOrderCreated = () => {
                             {({ setFieldValue, values, handleBlur }) => (
                                 <Form>
                                     <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-                                        
+
                                         <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Order No</label>
                                             <ReactSelect
@@ -378,7 +389,7 @@ const ViewOrderCreated = () => {
                                         </div>
                                     </div>
 
-                                   
+
 
 
                                     <div className="mb-4.5 flex flex-wrap gap-6 mt-12">

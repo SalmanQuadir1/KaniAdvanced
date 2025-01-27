@@ -179,7 +179,7 @@ const ExcelUploadProduct = () => {
                                                                 link.href = url;
                                                                 link.setAttribute(
                                                                     'download',
-                                                                    `${selectedCategory}-sample.xlsx` // Filename for the downloaded file
+                                                                    `${selectedCategory}.xlsx` // Filename for the downloaded file
                                                                 );
 
                                                                 // Append to the document and trigger the download

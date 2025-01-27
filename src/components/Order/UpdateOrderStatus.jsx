@@ -19,7 +19,7 @@ import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { MdDelete } from 'react-icons/md';
-const UpdateOrderStatus = () => {
+const UpdateOrderStaus = () => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const [orderType, setOrderType] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -593,236 +593,37 @@ const UpdateOrderStatus = () => {
                         <ErrorMessage name="orderType" component="div" className="text-red-600 text-sm" />
                       </div>
 
-                      <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Order Type</label>
-                        <ReactSelect
-                          name="orderType"
-                          value={orderTypeOptions?.find(option => option.value === values.orderType?.id) || null}
-                          onChange={(option) => setFieldValue('orderType', option ? option.orderTypeObject : null)}
-                          options={orderTypeOptions}
-                          styles={customStyles}
-                          className="bg-white dark:bg-form-Field"
-                          classNamePrefix="react-select"
-                          placeholder="Select Order Type"
-                          isDisabled={true}
-                        />
-                        <ErrorMessage name="orderType" component="div" className="text-red-600 text-sm" />
-                      </div>
-                      {values.orderType && (
-                        console.log(values.orderType, "kiki")
-
-
-                      )}
 
 
 
                     </div>
 
-                    {(values.orderType.orderTypeName === "RetailClients" || values.orderType.orderTypeName === "WSClients") && (
-
-                      <div >
-                        <div className="flex-1 min-w-[300px] mt-4">
-                          <label className="mb-2.5 block text-black dark:text-white">Customer</label>
-                          <ReactSelect
-                            name="Customer"
-
-                            // onChange={(option) => setFieldValue('orderType', option ? option.orderTypeObject : null)}
-                            // options={orderTypeOptions}
-                            styles={customStyles}
-                            className="bg-white dark:bg-form-Field"
-                            value={customerOptions?.find(option => option.value === values.customer?.id) || null}
-                            onChange={(option) => setFieldValue('customer', option ? { id: option.value } : null)}
-                            //value={order?.customer?.customerName ? { label: order.customer.customerName, value: order.customer.customerName } : null} // Display customer name
-                            //value={customerOptions?.find(option => option.value === values.customer?.id) || null}
-                            options={customerOptions}
-                            classNamePrefix="react-select"
-                            placeholder="Select Customer"
-                          />
-                          <ErrorMessage name="Customer" component="div" className="text-red-600 text-sm" />
-                        </div>
-                        <div className="flex flex-wrap gap-4">
-                          <div className="flex-1 min-w-[200px] mt-7">
-                            <label className="mb-2.5 block text-black dark:text-white">Customer Purchase Order No</label>
-                            <Field
-                              name="purchaseOrderNo"
-                              placeholder="Enter Prchase Order"
-                              className="bg-white dark:bg-form-input w-full rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                              value={values.purchaseOrderNo}
-                            />
-                            <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
-                          </div>
-                          <div className="flex-1 min-w-[200px] mt-7">
-                            <label className="mb-2.5 block text-black dark:text-white">PO Date</label>
-                            <Field
-                              name='poDate'
-                              type="date"
-                              placeholder="Enter Purchase Order Date"
-                              className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                              value={values.poDate}
-                            />
-                            <ErrorMessage name="poDate" component="div" className="text-red-600 text-sm" />
-                          </div>
-                        </div>
+                  
+                 
 
 
-                        <div className="flex flex-wrap gap-4">
-                          <div className="flex-1 min-w-[300px] mt-4">
-                            <label className="mb-2.5 block text-black dark:text-white">Sales Channel</label>
-                            <ReactSelect
-                              name="salesChannel"
-                              // value={
-                              //   salesChannelOptions.find(option => option.value === values.salesChannel) || null
-                              // }
-
-                              //value={salesChannelOptions.find(option => option.value === values.salesChannelOptions)}
-                              value={salesChannelOptions.find(option => option.value === values.salesChannel) || null} // Correctly use `values.salesChannel`
-                              // onChange={(option) => setFieldValue('orderType', option ? option.salesChannelOptions : null)}
-                              options={salesChannelOptions}
-                              styles={customStyles}
-                              className="bg-white dark:bg-form-Field"
-                              classNamePrefix="react-select"
-                              placeholder="Select Customer"
-                            />
-                            <ErrorMessage name="Customer" component="div" className="text-red-600 text-sm" />
-                          </div>
-
-
-                          <div className="flex-1 min-w-[200px] mt-4">
-                            <label className="mb-2.5 block text-black dark:text-white">Employee Name</label>
-                            <Field
-                              name="employeeName"
-                              placeholder="Enter Employee Name"
-                              className="bg-white dark:bg-form-input w-full rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                              value={values.employeeName}
-                            />
-                            <ErrorMessage name="employeeName" component="div" className="text-red-600 text-sm" />
-                          </div>
-                        </div>
-
-                      </div>
-
-                    )}
-                    <div className="flex flex-wrap gap-4">
-
-
-                      <div className="flex-1 min-w-[200px]">
-
-                        <div className="flex-1 min-w-[300px] mt-4">
-                          <label className="mb-2.5 block text-black dark:text-white"> Order Date</label>
-                          <Field
-                            name='orderDate'
-                            type="date"
-                            placeholder="Enter Order Date"
-                            className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-
-                          />
-                        </div>
-                        <ErrorMessage name="orderDate" component="div" className="text-red-600 text-sm" />
-                      </div>
-
-
-
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label className="mb-2.5 block text-black dark:text-white">Expected Receiving Date</label>
-                        <Field
-                          name='expectingDate'
-                          type="date"
-                          placeholder="Enter Shipping Date"
-
-                          className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                        />
-
-                        <ErrorMessage name="shippingDate" component="div" className="text-red-600 text-sm" />
-                      </div>
-                    </div>
-
-
-                    <div className="flex flex-wrap gap-4">
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label className="mb-2.5 block text-black dark:text-white">Tags</label>
-                        <ReactSelect
-                          name="tagsAndLabels"
-                          // value={productgrp.find(option => option.value === values.tags)}
-                          value={productgrp.find(option => option.value === values.tagsAndLabels) || null}
-                          onChange={(option) => setFieldValue('tags', option.value)}
-                          onBlur={handleBlur}
-                          options={productgrp}
-                          styles={customStyles}
-                          className="bg-white dark:bg-form-input"
-                          classNamePrefix="react-select"
-                          placeholder="Select"
-                        />
-                        <ErrorMessage name="tags" component="div" className="text-red-600 text-sm" />
-                      </div>
-
-
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label className="mb-2.5 block text-black dark:text-white">Logo No</label>
-                        <div>
-                          <label className="flex items-center">
-                            <Field type="radio" name="logoNo" value="Yes" />
-                            <span className="ml-1">Yes</span>
-                          </label>
-                          <label className="flex items-center">
-                            <Field type="radio" name="logoNo" value="No" />
-                            <span className="ml-1">No</span>
-                          </label>
-                        </div>
-                        <ErrorMessage name="logoNo" component="div" className="text-red-600 text-sm" />
-                      </div>
-
-                    </div>
+                  
 
 
 
 
 
 
-                    {orderType && (
-                      <div >
-
-                        <div className="flex flex-wrap gap-4">
-                          <div className="flex-1 min-w-[200px] mt-7">
-                            <label className="mb-2.5 block text-black dark:text-white">Employee Name</label>
-                            <Field
-                              name="employeeName"
-                              placeholder="Enter Prchase Order"
-                              className="bg-white dark:bg-form-input w-full rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                            />
-                            <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
-                          </div>
-
-                        </div>
-                      </div>
-
-                    )}
+                
 
 
-
-                    <div className="flex-1 min-w-[200px] mt-11">
-                      <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
-                      <ReactSelect
-                        name="productId"
-                        // value={prodIdOptions?.find(option => option.value === values.productId?.id) || null}
-                        // values={values.productId}
-                        // value={prodIdOptions?.find(option => option.value === values.productId) || null}
-                        value={prodIdOptions?.find(option => option.value === values.productId) || null}
-                        onChange={(option) => handleProductIdChange(option, setFieldValue)}
-
-                        options={prodIdOptions}
-                        styles={customStyles}
-                        className="bg-white dark:bg-form-Field"
-                        classNamePrefix="react-select"
-                        placeholder="Select ProductId"
-                      />
-                      <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
-                    </div>
 
 
                     <div className="  shadow-md rounded-lg  mt-3 overflow-scroll">
                       <table className="min-w-full leading-normal overflow-auto">
                         <thead>
                           <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
+                          <th
+                              className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider "
+                            >
+                             Order No
+                            </th>
+
                             <th
                               className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider "
                             >
@@ -1412,33 +1213,9 @@ const UpdateOrderStatus = () => {
 
 
 
-                    <div className="flex-1 min-w-[200px] mt-11">
-                      <label className="mb-2.5 block text-black dark:text-white">Client Instruction</label>
-                      <Field
-                        as="textarea"
-                        name="clientInstruction"
-                        placeholder="Enter client instruction"
-                        value={values.clientInstruction} // Bind to Formik state
-                        className="bg-white dark:bg-form-input w-full rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                      />
-                      <ErrorMessage name="clientInstruction" component="div" className="text-red-600 text-sm" />
-                    </div>
+                  
 
-                    {(values.orderType.orderTypeName === "RetailClients" || values.orderType.orderTypeName === "WSClients") && (
-                      <div className="flex-1 min-w-[200px] mt-11">
-                        <label className="mb-2.5 block text-black dark:text-white">Customisation Details</label>
-                        <Field
-                          as="textarea"
-                          name="customisationDetails"
-                          placeholder="Enter client instruction"
-                          className="bg-white dark:bg-form-input w-full rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                          value={values.customisationDetails}
-                        />
-                        <ErrorMessage name="customisationDetails" component="div" className="text-red-600 text-sm" />
-                      </div>
-
-
-                    )}
+                   
 
 
 
@@ -1496,4 +1273,4 @@ const UpdateOrderStatus = () => {
   );
 };
 
-export default UpdateOrderStatus;
+export default UpdateOrderStaus;
