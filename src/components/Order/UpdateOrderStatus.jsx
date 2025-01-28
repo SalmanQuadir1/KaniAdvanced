@@ -172,7 +172,7 @@ const UpdateOrderStaus = () => {
 
     try {
       const url = `${UPDATE_ORDERCREATED_ALL}/${id}`;
-      const method = "POST";
+      const method = "PUT";
 
       const response = await fetch(url, {
         method: method,
@@ -185,9 +185,9 @@ const UpdateOrderStaus = () => {
 
       const data = await response.json();
       if (response.ok) {
-        toast.success(`Order Updated  successfully`);
-        resetForm();
-        setEdit(false);
+        toast.success(`Order Status Updated  successfully`);
+     
+  
 
         // getCurrency(pagination.currentPage); // Fetch updated Currency
       } else {
@@ -196,9 +196,7 @@ const UpdateOrderStaus = () => {
     } catch (error) {
       console.error(error, response);
       toast.error("An error occurred");
-    } finally {
-      setSubmitting(false);
-    }
+    } 
 
     // You can now send `finalData` to the backend or do any other operation with it
   };
@@ -206,65 +204,9 @@ const UpdateOrderStaus = () => {
 
 
 
+    
 
-  //                console.log(values,"jazim");
-  //        try {
-  //            const url = `${UPDATE_ORDER_URL }/${id}`;
 
-  //            const response = await fetch(url, {
-  //                method: "PUT",
-  //                headers: {
-  //                    "Content-Type": "application/json",
-  //                    "Authorization": `Bearer ${token}`
-  //                },
-  //                body: JSON.stringify(values)
-  //            });
-
-  //            const data = await response.json();
-  //            if (response.ok) {
-  //             console.log(data,"coming ");
-
-  //                toast.success(`Order Updated successfully`);
-  //                // navigate('/inventory/viewMaterialInventory');
-
-  //            } else {
-  //                toast.error(`${data.errorMessage}`);
-  //            }
-  //        } catch (error) {
-  //            console.error(error);
-  //            toast.error("An error occurred");
-  //        } finally {
-
-  //        }
-
-  //    };
-
-  const handleUpdateSubmit = async (values) => {
-    console.log(values, "jazim");
-
-    try {
-      const url = `${UPDATE_ORDER_URL}/${id}`;
-      const response = await fetch(url, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(values)
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        console.log(data, "coming ");
-        toast.success(`Order Updated successfully`);
-      } else {
-        toast.error(`${data.errorMessage}`);
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("An error occurred");
-    }
-  };
 
 
   const getOrderById = async () => {
@@ -332,36 +274,10 @@ const UpdateOrderStaus = () => {
 
 
 
-  const customModalStyles = {
-    content: {
-      top: '50%',
-      left: '50%',
-      right: 'auto',
-      bottom: 'auto',
-      marginRight: '-50%',
-      width: '50%',
-      height: '70%',
-      transform: 'translate(-50%, -50%)',
-    },
-  };
 
-  const productgrp = [
-    { value: 'KLC', label: 'KLC' },
-    { value: 'CLIENT', label: 'CLIENT' },
-    { value: 'NO T&L', label: 'NO T&L' },
-  ];
 
-  const salesChannelOptions = [
-    { value: 'WS-Domestic', label: 'WS-Domestic' },
-    { value: 'Websale', label: 'Websale' },
-    { value: 'Social Media', label: 'Social Media' },
-    { value: 'Shop-in-Shop', label: 'Shop-in-Shop' },
-    { value: 'WS-International', label: 'WS-International' },
-    { value: 'Event-International', label: 'Event-International' },
-    { value: 'Event-Domestic', label: 'Event-Domestic' },
-    { value: 'Retail-Delhi', label: 'Retail-Delhi' },
-    { value: 'Retail-SXR', label: 'Retail-SXR' },
-  ];
+
+
 
   const customStyles = {
     control: (provided) => ({
@@ -383,29 +299,9 @@ const UpdateOrderStaus = () => {
     }),
   };
 
-  const validationSchema = Yup.object().shape({
-    orderType: Yup.string().required('Order Type is required'),
-    orderDate: Yup.date().required('Order Date is required'),
-    shippingDate: Yup.date().required('Shipping Date is required'),
-    tags: Yup.string().required('Tags are required'),
-    logoNo: Yup.string().required('Logo No is required'),
-    // productId: Yup.string().required('Product Id is required'),
-    clientInstruction: Yup.string().required('Client Instruction is required'),
-    customer: orderType ? Yup.string().required('Customer is required') : Yup.string(),
-  });
-
-  const handleProductIdChange = (option, setFieldValue) => {
 
 
-
-    setFieldValue('productId', option.prodId);
-    setprodIdd(option.prodId)
-    console.log("opennnnnnnn");
-    setIsModalOpen(true);
-    setIsSupplierModalOpen(false)
-
-
-  };
+ 
 
 
 
@@ -424,41 +320,7 @@ const UpdateOrderStaus = () => {
 
 
 
-  // const handleSubmit = async (values) => {
-  //   console.log(values, "valuessss");
 
-  // try {
-  //   const url = ADD_CURRENCY_URL;
-  //   const method = "POST";
-
-  //   const response = await fetch(url, {
-  //     method: method,
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       "Authorization": `Bearer ${token}`
-  //     },
-  //     body: JSON.stringify(values)
-  //   });
-
-  //   const data = await response.json();
-  //   if (response.ok) {
-  //     toast.success(`Currency ${edit ? 'updated' : 'added'} successfully`);
-  //     resetForm();
-  //     setEdit(false);
-  //     setCurrentCurrency({
-  //       CurrencyName: ""
-  //     });
-  //     // getCurrency(pagination.currentPage); // Fetch updated Currency
-  //   } else {
-  //     toast.error(`${data.errorMessage}`);
-  //   }
-  // } catch (error) {
-  //   console.error(error, response);
-  //   toast.error("An error occurred");
-  // } finally {
-  //   setSubmitting(false);
-  // }
-  // };
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Order/Update Order" />
@@ -525,9 +387,7 @@ const UpdateOrderStaus = () => {
                           <label className="mb-2.5 block text-black dark:text-white">Order No</label>
                           <ReactSelect
                             name="orderNo"
-                            // value={orderTypeOptions?.find(option => option.value === values.orderType?.id) || null}
-                            // onChange={(option) => setFieldValue('orderType', option ? option.orderTypeObject : null)}
-                            // options={orderTypeOptions}
+                           
                             value={order?.orderNo ? { label: order.orderNo, value: order.orderNo } : null} // Display orderNo
                             styles={customStyles}
                             className="bg-white dark:bg-form-Field"
@@ -723,13 +583,7 @@ const UpdateOrderStaus = () => {
 
 
 
-                      {/* <button
-                      type="submit"
-                      className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4"
-                      disabled={isSubmitting}
-                    >
-                     Update Order
-                    </button> */}
+                     
 
                       <div className="flex justify-center mt-4"> {/* Centering the button */}
                         <button
