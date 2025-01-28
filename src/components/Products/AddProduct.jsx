@@ -1121,16 +1121,6 @@ const AddProduct = () => {
                                                     </div>
 
 
-
-
-
-
-
-
-
-
-
-
                                                     <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>Pricing </h1>
 
 

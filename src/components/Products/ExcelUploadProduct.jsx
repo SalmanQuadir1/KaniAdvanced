@@ -56,8 +56,12 @@ const ExcelUploadProduct = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            if (response.ok) { // `response.ok` is true for status codes in the 200–299 range
-                toast.success('File uploaded successfully!');
+            if (response.ok) { 
+                // `response.ok` is true for status codes in the 200–299 range
+
+                const message = await response.json();
+                const messageData=message.message
+                toast.success(messageData);
             } else {
                 const errorData = await response.json(); // Parse the response body as JSON
                 const errorMessage = errorData.message || 'An error occurred'; // Use `message` or fallback
