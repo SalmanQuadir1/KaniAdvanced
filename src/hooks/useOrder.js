@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE ,VIEW_ALL_ORDERS,VIEW_ALL_CUSTOMER, ADD_ORDER_URL, VIEW_ORDERNO, VIEW_ALL_SUPPLIER_URL, } from "../Constants/utils";
+import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE ,VIEW_ALL_ORDERS,VIEW_ALL_CUSTOMER, ADD_ORDER_URL, VIEW_ORDERNO, VIEW_ALL_SUPPLIER_URL, VIEW_ALL_PRODID, GET_PRODUCTIDDD_URL, } from "../Constants/utils";
 import { useNavigate } from 'react-router-dom';
 import { fetchorder } from '../redux/Slice/OrderNo';
 // import { GET_PRODUCTIDD_URL, VIEW_ALL_CUSTOMER, VIEW_ALL_ORDERTYPE } from "../Constants/utils";
@@ -13,6 +13,7 @@ const useorder = () => {
     const [orderNo, setorderNo] = useState([])
     const [Order, setOrder] = useState([]);
     const [customer, setcustomer] = useState([])
+    const [productIdd, setproductIdd] = useState([])
     const [supplier, setSupplier] = useState([])
     const [edit, setEdit] = useState(false);
     const [currentorderType, setCurrentorderType] = useState({
@@ -120,41 +121,25 @@ useEffect(() => {
     };
 
   
-    // const getprodId = async () => {
-    //     try {
-    //         const response = await fetch(`${GET_PRODUCTIDD_URL}/all-productsIds`, {
-    //             method: "GET",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 "Authorization": `Bearer ${token}`
-    //             }
-    //         });
-    //         const data = await response.json();
-    //         console.log(data,"dataaaaaassss");
-    //         setproductId(data);
-          
-    //     } catch (error) {
-    //         console.error(error);
-    //         toast.error("Failed to fetch orderType");
-    //     }
-    // };
     const getprodId = async () => {
         try {
-          const response = await fetch(`${GET_PRODUCTIDD_URL}/all-productsIds`, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`,
-            },
-          });
-          const data = await response.json();
-          console.log(data, "Fetched Product IDs");
-          setproductId(data); // Update the state with fetched data
+            const response = await fetch(`${GET_PRODUCTIDD_URL}/all-productsIds`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data,"dataaaaaassss");
+            setproductId(data);
+          
         } catch (error) {
-          console.error(error);
-          toast.error("Failed to fetch Product IDs");
+            console.error(error);
+            toast.error("Failed to fetch orderType");
         }
-      };
+    };
+   
       
 
 
@@ -377,6 +362,33 @@ const handleUpdate = (e, item) => {
     };
 
 
+    const getProdId = async (page) => {
+        try {
+            
+            const response = await fetch(`${GET_PRODUCTIDDD_URL}/viewCreatedProductId`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data,"dataaaaaa");
+            setproductIdd(data);
+            setPagination({
+                totalItems: data.totalElements,
+                pagUnitList: data.content,
+                totalPages: data.totalPages,
+                currentPage: data.number + 1,
+                itemsPerPage: data.size
+            });
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch orderType");
+        }
+    };
+
+
 
 
     
@@ -407,7 +419,9 @@ const handleUpdate = (e, item) => {
         getorderNumber,
         orderNo,
         getSupplier,
-        supplier
+        supplier,
+        getProdId,
+        productIdd
     };
 };
 

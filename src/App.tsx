@@ -7,7 +7,7 @@ import SignIn from './pages/Authentication/SignIn.jsx';
 import SignUp from './pages/Authentication/SignUp.jsx';
 import Calendar from './pages/Calendar.js';
 import Chart from './pages/Chart.jsx';
-import Material from './components/Material/Material.jsx';  
+import Material from './components/Material/Material.jsx';
 import AddProduct from './components/Products/AddProduct.jsx';
 import ViewProduct from './components/Products/ViewProduct.jsx';
 import ExcelUploadProduct from './components/Products/ExcelUploadProduct.jsx';
@@ -58,6 +58,12 @@ import UpdateMaterialPo from './components/PuchaseOrder/UpdateMaterialPo.jsx';
 
 import AddOrder from './components/Order/AddOrder';
 import ViewOrder from './components/Order/ViewOrder.jsx';
+import UpdateOrderStatus from './components/Order/UpdateOrderStatus.jsx';
+
+
+import ViewOrderCreated from './components/Order/ViewOrderCreated.jsx';
+
+
 import UpdateOrder from './components/Order/UpdateOrder.jsx';
 
 
@@ -156,7 +162,7 @@ function App() {
             path="/"
             element={
               <>
-              <RoleBasedRoute allowedRoles={["ROLE_ADMIN","ROLE_APPROVER"]}></RoleBasedRoute>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <Chart />
               </>
@@ -197,8 +203,28 @@ function App() {
             path="/Order/viewOrder"
             element={
               <>
-                <PageTitle title="Profile " />
+                <PageTitle title="View Order " />
                 <ViewOrder />
+              </>
+            }
+          />
+
+<Route
+            path="/Order/updateorderCreated/:id"
+            element={
+              <>
+                <PageTitle title="View Order " />
+                <UpdateOrderStatus />
+              </>
+            }
+          />
+
+          <Route
+            path="/Order/created"
+            element={
+              <>
+                <PageTitle title="View Order Created " />
+                <ViewOrderCreated />
               </>
             }
           />

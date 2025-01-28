@@ -182,8 +182,26 @@ export const GET_PRODUCTID_URL = `${BASE_URL}/products`;
 
 export const GET_PRODUCTIDD_URL = `${BASE_URL}/products`;
 
+
+export const GET_PRODUCTIDDD_URL = `${BASE_URL}/order`;
+
 //ORDER
 export const VIEW_ALL_ORDERS = `${BASE_URL}/order/search`;
+
+export const VIEW_CREATED_ORDERS = `${BASE_URL}/order/searchCreated`;  
+
+export const UPDATE_ORDERCREATED_ALL= `${BASE_URL}/order/updateOrderAccepted`; 
+
+
+
+
+
+
+
+
+
+export const VIEW_ALL_PRODID = `${BASE_URL}/order/viewCreatedProductId`;
+export const VIEW_ALL_ORDERSCREATED = `${BASE_URL}/order/search`;
 
 export const DELETE_ORDER_URL = `${BASE_URL}/order/delete`;
 export const VIEW_ALL_ORDER_URL = `${BASE_URL}/order/viewAll`;
@@ -205,6 +223,14 @@ export const UPDATE_PRODUCTInventoryy_URL = `${BASE_URL}/productInventory/update
 
 
 export const ADD_CONTEMPORARY = `${BASE_URL}/products/upload-excel`;
+export const ADD_PASHMINA_EMB = `${BASE_URL}/uploadExcel/peshmina`;
+export const ADD_WOOL_EMB = `${BASE_URL}/uploadExcel/wool`;
+export const ADD_KANI = `${BASE_URL}/uploadExcel/kani`;
+export const ADD_PAPERMACHIE = `${BASE_URL}/uploadExcel/paper`;
+export const ADD_COTTON = `${BASE_URL}/uploadExcel/cotton`;
+export const ADD_CONTEM_SAREE = `${BASE_URL}/uploadExcel/saree`;
+export const ADD_CONTEMP_WOOL = `${BASE_URL}/uploadExcel/contempWool`;
+
 
 //PRODUCT
 export const ADD_HSNCODE_URL = `${BASE_URL}/hsncode`;
