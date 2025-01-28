@@ -97,7 +97,7 @@ const Chart = () => {
             <Link to={"/order/created"}>
               <CardDataStats
                 title="Orders Pending For Production Approval"
-                total={countMapping['products'] || 0}
+                total={countMapping['ordersWithCreated'] || 0}
 
 
                 // rate="0.43%"
