@@ -789,17 +789,7 @@ const UpdateOrderProduct = () => {
 
 
 
-                    <div className="flex-1 min-w-[200px] mt-11">
-                      <label className="mb-2.5 block text-black dark:text-white">Client Instruction</label>
-                      <Field
-                        as="textarea"
-                        name="clientInstruction"
-                        placeholder="Enter client instruction"
-                        value={values.clientInstruction} // Bind to Formik state
-                        className="bg-white dark:bg-form-input w-full rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                      />
-                      <ErrorMessage name="clientInstruction" component="div" className="text-red-600 text-sm" />
-                    </div>
+               
 
 
 

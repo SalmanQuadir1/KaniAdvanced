@@ -120,6 +120,19 @@ const Chart = () => {
 
               </CardDataStats>
             </Link>
+
+            <Link to={"/order/created"}>
+              <CardDataStats
+                title="Partially Approved By Production Orders"
+                total={countMapping['ordersWithCreated'] || 0}
+
+
+                // rate="0.43%"
+                levelUp
+              >
+                <RiAlignItemBottomFill className='w-10 h-10' />
+              </CardDataStats>
+            </Link>
             <Link to={"/configurator/addunit"}>
               <CardDataStats
                 title="Units"
