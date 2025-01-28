@@ -187,7 +187,7 @@ export const GET_PRODUCTIDDD_URL = `${BASE_URL}/order`;
 
 //ORDER
 export const VIEW_ALL_ORDERS = `${BASE_URL}/order/search`;
-
+   
 export const VIEW_CREATED_ORDERS = `${BASE_URL}/order/searchCreated`;  
 
 export const UPDATE_ORDERCREATED_ALL= `${BASE_URL}/order/updateOrderProductsAccepted`; 
