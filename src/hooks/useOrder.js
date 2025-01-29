@@ -15,6 +15,8 @@ const useorder = () => {
     const [customer, setcustomer] = useState([])
     const [productIdd, setproductIdd] = useState([])
     const [supplier, setSupplier] = useState([])
+
+    const [orderProduct, setorderProduct] = useState([])
     const [edit, setEdit] = useState(false);
     const [currentorderType, setCurrentorderType] = useState({
         orderTypeName:"",
@@ -140,6 +142,26 @@ useEffect(() => {
         }
     };
    
+
+
+    const getOrderProduct = async () => {
+        try {
+            const response = await fetch(`${GET_PRODUCTIDD_URL}/all-productsIds`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data,"dataaaaaassss");
+            setproductId(data);
+          
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch orderType");
+        }
+    };
       
 
 

@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 import useorder from '../../hooks/useOrder';
 import ReactDatePicker from "react-datepicker";
 import useProduct from '../../hooks/useProduct';
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL } from '../../Constants/utils';
+import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, VIEW_ORDER_PRODUCT } from '../../Constants/utils';
 import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
@@ -18,6 +18,7 @@ import { FiTrash2 } from 'react-icons/fi';
 import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import SupplierModall from './SupplierModall';
 const UpdateOrderProduct = () => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const [orderType, setOrderType] = useState('');
@@ -32,6 +33,10 @@ const UpdateOrderProduct = () => {
   const [customerOptions, setcustomerOptions] = useState([])
   const { token } = currentUser;
 
+
+
+  const [orderProduct, setorderProduct] = useState([])
+
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [suppliers, setSuppliers] = useState([
     { id: 1, name: "Supplier A" },
@@ -39,77 +44,47 @@ const UpdateOrderProduct = () => {
     { id: 3, name: "Supplier C" },
   ])
   const {
-    getorderType,
-    orderTypee,
+
     productId,
-    customer,
-    getprodId,
-    getCustomer,
+
   } = useorder();
+
+
+
+
+
+
+
+
+
+
+  const { id } = useParams();
+
+
 
 
   const [selectedSuppliers, setSelectedSuppliers] = useState([]);
 
 
-  // const handleCheckboxChange = (supplierId) => {
-  //   console.log(supplierId, "sssspppp");
-  //   setSelectedSuppliers((prev) =>
-  //     prev.includes(supplierId)
-  //       ? prev.filter((id) => id !== supplierId) // Remove if already selected
-  //       : [...prev, supplierId] // Add if not selected
-  //   );
-  // };
 
-  const handleCheckboxChange = (selectedRowId, supplierId) => {
-    setSelectedSuppliers((prev) => {
-      const updated = [...prev];
-      const rowIndex = updated.findIndex(
-        (row) => row.selectedRowId === selectedRowId
-      );
 
-      if (rowIndex !== -1) {
-        // Update supplierIds for the existing row
-        const supplierExists = updated[rowIndex].supplierIds.some(
-          (s) => s.supplierId === supplierId
-        );
-
-        if (supplierExists) {
-          // Remove the supplier if already exists
-          updated[rowIndex].supplierIds = updated[rowIndex].supplierIds.filter(
-            (s) => s.supplierId !== supplierId
-          );
-        } else {
-          // Add new supplier to the row
-          updated[rowIndex].supplierIds.push({
-            supplierId,
-            supplierName: "", // Optional: default supplier name if needed
-          });
-        }
-      } else {
-        // Add a new row with the selected supplier
-        updated.push({
-          selectedRowId,
-          supplierIds: [{ supplierId, supplierName: "" }],
-        });
-      }
-      return updated;
-    });
-  };
 
 
   console.log(selectedSuppliers, "selecteddddddddd Suppliersss");
 
-  const openSupplierModal = (id) => {
-    console.log("opening supplier  modal");
-    setIsSupplierModalOpen(true);
-    console.log(id, "ghson");
-    setsuppId(id)
-  };
+
 
 
   console.log(isSupplierModalOpen, "ll");
 
   console.log(isModalOpen, "jj");
+
+
+
+
+
+
+
 
 
   // Close modal
@@ -129,20 +104,9 @@ const UpdateOrderProduct = () => {
 
 
 
-  useEffect(() => {
-    getorderType();
-    getprodId();
-    getCustomer();
 
-
-
-
-
-
-  }, [])
 
   console.log(productId, "looool");
-  const { id } = useParams();
 
 
 
@@ -210,7 +174,7 @@ const UpdateOrderProduct = () => {
 
   const getOrderById = async () => {
     try {
-      const response = await fetch(`${GET_ORDERBYID_URL}/${id}`, {
+      const response = await fetch(`${VIEW_ORDER_PRODUCT}/${id}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -222,7 +186,7 @@ const UpdateOrderProduct = () => {
       }
 
       const data = await response.json();
-      console.log(data, "datatata")
+      console.log(data, "luciiiiferrrrrrrrrrrrrr")
       setOrder(data); // Store fetched product
     } catch (error) {
       console.error('Error fetching product:', error);
@@ -230,7 +194,7 @@ const UpdateOrderProduct = () => {
       setIsLoading(false); // Stop loader
     }
   };
-  console.log(order, 'hloooooo')
+
 
   // Fetch data when component mounts
   useEffect(() => {
@@ -239,76 +203,30 @@ const UpdateOrderProduct = () => {
 
   const [prodIdModal, setprodIdModal] = useState([])
 
-  useEffect(() => {
-    if (orderTypee) {
-      const formattedOptions = orderTypee.map(order => ({
-        value: order.id,
-        label: order?.orderTypeName,
-        orderTypeObject: order,
-        orderTypeId: { id: order.id }
-      }));
-      setorderTypeOptions(formattedOptions);
-    }
-
-    if (productId) {
-      const formattedProdIdOptions = productId.map(prodId => ({
-        value: prodId.id,
-        label: prodId?.productId,
-        prodIdObject: prodId,
-        prodId: prodId.id
-      }));
-      setprodIdOptions(formattedProdIdOptions);
-    }
-
-    if (customer) {
-      const formattedCustomerOptions = customer.map(customer => ({
-        value: customer.id,
-        label: customer?.customerName,
-        customerObject: customer,
-        customer: customer.id
-      }));
-      setcustomerOptions(formattedCustomerOptions);
-    }
-  }, [orderTypee]);
 
 
 
-  const customModalStyles = {
-    content: {
-      top: '50%',
-      left: '50%',
-      right: 'auto',
-      bottom: 'auto',
-      marginRight: '-50%',
-      width: '50%',
-      height: '70%',
-      transform: 'translate(-50%, -50%)',
-    },
-  };
 
-  // const productgrp = [
-  //   { value: 'KLC', label: 'KLC' },
-  //   { value: 'CLIENT', label: 'CLIENT' },
-  //   { value: 'NO T&L', label: 'NO T&L' },
-  // ];
 
-  const productgrp = [
+
+
+
+
+
+
+  const OrderCategoryOptions = [
     { value: 'Embroidery', label: 'Embroidery' },
     { value: 'Dyeing', label: 'Dyeing' },
-    { value: 'Plain Order', label: 'Plain Order' },
+    { value: 'PlainOrder', label: 'PlainOrder' },
+
   ];
 
 
-  const salesChannelOptions = [
-    { value: 'WS-Domestic', label: 'WS-Domestic' },
-    { value: 'Websale', label: 'Websale' },
-    { value: 'Social Media', label: 'Social Media' },
-    { value: 'Shop-in-Shop', label: 'Shop-in-Shop' },
-    { value: 'WS-International', label: 'WS-International' },
-    { value: 'Event-International', label: 'Event-International' },
-    { value: 'Event-Domestic', label: 'Event-Domestic' },
-    { value: 'Retail-Delhi', label: 'Retail-Delhi' },
-    { value: 'Retail-SXR', label: 'Retail-SXR' },
+  const ExecutionStatus = [
+    { value: 'Accepted', label: 'Accepted' },
+    { value: 'Rejected', label: 'Rejected' },
+    { value: 'NeedModification', label: 'Need Modification' },
+
   ];
 
   const customStyles = {
@@ -331,36 +249,101 @@ const UpdateOrderProduct = () => {
     }),
   };
 
-  const validationSchema = Yup.object().shape({
-    orderType: Yup.string().required('Order Type is required'),
-    orderDate: Yup.date().required('Order Date is required'),
-    shippingDate: Yup.date().required('Shipping Date is required'),
-    tags: Yup.string().required('Tags are required'),
-    logoNo: Yup.string().required('Logo No is required'),
-    // productId: Yup.string().required('Product Id is required'),
-    clientInstruction: Yup.string().required('Client Instruction is required'),
-    customer: orderType ? Yup.string().required('Customer is required') : Yup.string(),
-  });
-
-  const handleProductIdChange = (option, setFieldValue) => {
 
 
 
-    setFieldValue('productId', option.prodId);
-    setprodIdd(option.prodId)
-    console.log("opennnnnnnn");
-    setIsModalOpen(true);
-    setIsSupplierModalOpen(false)
 
 
+
+
+
+
+
+
+  useEffect(() => {
+    if (order?.productSuppliers) {
+      const initialSuppliers = order.productSuppliers.map((supplier) => ({
+        selectedRowId: supplier.productId, // Assuming there's a productId field
+        supplierId: supplier.supplier.id,
+        supplierName: supplier.supplier.name,
+        supplierOrderQty: supplier.supplierOrderQty || 0,
+      }));
+
+      setSelectedSuppliers(initialSuppliers); // Set suppliers when page loads
+    }
+  }, [order]);
+
+
+
+  const openSupplierModal = (id) => {
+    console.log("Opening supplier modal for product:", id);
+    setIsSupplierModalOpen(true);
+    setsuppId(id);
+
+    // Fetch existing suppliers based on order.productSuppliers and the selected product id
+    const existingSuppliers = order?.productSuppliers?.map((supplier) => ({
+      selectedRowId: id,
+      supplierId: supplier.supplier.id,
+      supplierName: supplier.supplier.name,
+      supplierOrderQty: supplier.supplierOrderQty|| 0,
+    })) || [];
+
+    // Set the suppliers in the modal for selection (do not modify selectedSuppliers here)
+    setsupplierList(existingSuppliers); // Assuming you have a state to hold the suppliers for the modal
   };
-  // const handleProductIdChange = (option, setFieldValue, index) => {
-  //   const productId = option.value; // Get the selected product ID
-  //   setFieldValue(`productId`, productId); // Update the selected product ID in the form state
-  //   setFieldValue(`orderProducts[${index}].products.id`, productId); // Update the product ID in the specific order product field
 
-  //   console.log(`Updated Product ID at index ${index}:`, productId); // Debugging log
-  // };
+
+
+
+
+
+  const handleCheckboxChange = (selectedRowId, supplier) => {
+    setSelectedSuppliers((prev = []) => {
+      let updated = [...prev];
+
+      // Ensure supplier exists in the list
+      const exists = updated.some(
+        (row) => row.selectedRowId === selectedRowId && row.supplierId === supplier.id
+      );
+
+      if (exists) {
+        // Remove supplier (toggle behavior)
+        updated = updated.filter(
+          (row) => !(row.selectedRowId === selectedRowId && row.supplierId === supplier.id)
+        );
+      } else {
+        // Add as a new row
+        updated.push({
+          selectedRowId,
+          supplierId: supplier.id,
+          supplierName: supplier.supplierName,
+          supplierOrderQty: 0, // Default quantity
+        });
+      }
+
+      console.log(updated, "Updated Suppliers");
+      return updated;
+    });
+  };
+
+
+  console.log(selectedSuppliers, "kikikikikikikiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -388,17 +371,6 @@ const UpdateOrderProduct = () => {
 
 
 
-
-  // useEffect(() => {
-  //   if (productId) {
-  //     const formattedProdIdOptions = productId.map(prodId => ({
-  //       value: prodId.id,
-  //       label: prodId.productId,
-  //       prodIdObject: prodId,
-  //     }));
-  //     setprodIdOptions(formattedProdIdOptions);
-  //   }
-  // }, [productId]);
 
 
   const onSubmit = async (values, e) => {
@@ -481,79 +453,45 @@ const UpdateOrderProduct = () => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Order/Update Order" />
+      <Breadcrumb pageName="Order/Update Order Product" />
       <div>
         <Formik
           enableReinitialize={true}
           initialValues={{
+
+
             orderNo: order?.orderNo || '',
-            orderType: order?.orderType || '',
-            customer: order?.customer?.customerName || '',
-            purchaseOrderNo: order?.purchaseOrderNo || '',
-            poDate: order?.poDate || '',
-            salesChannel: order?.salesChannel || '',
-            employeeName: order?.employeeName || '',
-            customisationDetails: order?.customisationDetails || '',
-            orderDate: order?.orderDate || '',
-            expectingDate: order?.expectingDate || '',
-            shippingDate: '',
-            // tags: '',
-            tagsAndLabels: order?.tagsAndLabels || '',
-            logoNo: '',
-            //productId: order?.orderProducts?.[0]?.products?.id || null,
-            //orderCategory: order?.orderProducts?.[0]?.orderCategory || null,
-            //orderCategory:order?.orderCategory || '',
-            //orderProducts: order?.orderProducts?.map((product) => ({
-            orderProducts: order?.orderProducts?.map((product) => ({
-              // products: {
-              //   id: product.products?.productId || "",   // Ensure the product ID is set
-              // },
-              products: {
-                ...product.products,
-                productId: product.products?.productId || '',  // Set initial value for productId
-              },
-              //            products: {
-              //   ...product.products,
-              //   productId: product.products?.id || '', // Use the product's id here
-              // },
-              orderCategory: product.orderCategory || '',
-              inStockQuantity: product.inStockQuantity || '',
-              clientOrderQuantity: product.clientOrderQuantity || '',
-              quantityToManufacture: product.quantityToManufacture || '',
-              units: product.units || '',
-              value: product.value || '',
-              clientShippingDate: product.clientShippingDate || '',
-              expectedDate: product.expectedDate || '',
-              // supplierName: product.productSuppliers?.supplier?.name || '', // Safely accessing supplier name
-              // supplierOrderQty: product.productSuppliers?.[0]?.supplierOrderQty || 0,
-              productSuppliers: product.productSuppliers?.map(supplier => ({
-                supplierName: supplier.supplier?.name || '',
+            orderCategory: order?.orderCategory || '',
+            productId: order?.products?.productId,
+            quantityToManufacture: order?.quantityToManufacture,
+            value: order?.value,
+            expectedDate: order?.expectedDate,
+            productStatus: "",
+            comments: "",
+            productsId: order?.products?.id,
 
-                supplierOrderQty: supplier.supplierOrderQty || 0,
-              })) || [],
 
+
+
+
+
+
+
+
+            // supplierName: product.productSuppliers?.supplier?.name || '', // Safely accessing supplier name
+            // supplierOrderQty: product.productSuppliers?.[0]?.supplierOrderQty || 0,
+            productSuppliers: order?.productSuppliers?.map(supplier => ({
+              supplierName: supplier.supplier?.name || '',
+
+              supplierOrderQty: supplier.supplierOrderQty || 0,
             })) || [],
 
-            //orderCategory: order?.orderProducts?.[0]?.orderCategory || '',
-            //inStockQuantity: order?.orderProducts?.[0]?.inStockQuantity || '',
-            //value: order?.orderProducts?.[0]?.value || '',
-            // value:order?.value || '',
-            //clientOrderQuantity: order?.orderProducts?.[0]?.clientOrderQuantity || '',
-            //quantityToManufacture: order?.orderProducts?.[0]?.quantityToManufacture || '',
-            //units: order?.orderProducts?.[0]?.units || '',
-            //clientShippingDate: order?.orderProducts?.[0]?.clientShippingDate || '',
-            //expectedDate: order?.orderProducts?.[0]?.expectedDate || '',
-            // supplierName: order?.orderProducts?.[0]?.productSuppliers?.[0]?.supplier?.name || '',
-            // supplierOrderQty: order?.orderProducts?.[0]?.productSuppliers?.[0]?.supplierOrderQty || 0, // Safely accessing supplierOrderQty
-            //orderProducts: order.orderProducts || [],
-            //productId: order?.productId || '',
-            // productId: order?.orderProducts?.products?.productId || '',
-            //  productId: order?.orderProducts?.[0]?.products?.productId || '',
 
-            clientInstruction: order?.clientInstruction || '',
+
+
             // customer: '',
           }}
-          validationSchema={validationSchema}
+          // validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {({ values, setFieldValue, handleBlur, isSubmitting }) => (
@@ -587,19 +525,17 @@ const UpdateOrderProduct = () => {
                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Order Category</label>
                         <ReactSelect
-                          name="salesChannel"
-                          value={
-                            salesChannelOptions.find((option) => option.value === values.salesChannel) || null
-                          } // Display the selected value
-                          onChange={(option) =>
-                            setFieldValue("salesChannel", option ? option.value : "")
-                          } // Update Formik value
-                          options={salesChannelOptions}
+                          name="orderCategory"
+                          value={OrderCategoryOptions.find(option => option.value === values.orderCategory) || null}
+                          onChange={(option) => setFieldValue("orderCategory", option.value)} // Store only value
+                          options={OrderCategoryOptions}
                           styles={customStyles}
                           className="bg-white dark:bg-form-Field"
                           classNamePrefix="react-select"
                           placeholder="Select Order Category"
                         />
+
+
                         <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
                       </div>
 
@@ -608,6 +544,8 @@ const UpdateOrderProduct = () => {
                         <label className="mb-2.5 block text-black dark:text-white">Product ID</label>
                         <Field
                           name="productId"
+                          value={values?.productId} // Ensure it reflects Formik state
+                          onChange={(e) => setFieldValue("productId", e.target.value)} // Update Formik state
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           placeholder="Enter Product ID"
                         />
@@ -633,10 +571,11 @@ const UpdateOrderProduct = () => {
                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Value</label>
                         <Field
-                          // name={`orderProducts[${index}].value`}
-                          //value={product.value || ""}
+                          name="productId"
+                          value={values?.value} // Ensure it reflects Formik state
+                          onChange={(e) => setFieldValue("productId", e.target.value)} // Update Formik state
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                        //readOnly
+                          placeholder="Enter Product ID"
                         />
                         <ErrorMessage name="orderNo" component="div" className="text-red-600 text-sm" />
                       </div>
@@ -647,7 +586,7 @@ const UpdateOrderProduct = () => {
                         <Field
                           type="date"
                           // name={`orderProducts[${index}].expectedDate`}
-                          //value={product.expectedDate || ""}
+                          value={values.expectedDate || ""}
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                         //readOnly
                         />
@@ -662,18 +601,18 @@ const UpdateOrderProduct = () => {
                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Execution Status</label>
                         <ReactSelect
-                          name="salesChannel"
-                          value={
-                            salesChannelOptions.find((option) => option.value === values.salesChannel) || null
-                          } // Display the selected value
+                          name="productStatus"
+                          // value={
+                          //   salesChannelOptions.find((option) => option.value === values.salesChannel) || null
+                          // } // Display the selected value
                           onChange={(option) =>
-                            setFieldValue("salesChannel", option ? option.value : "")
+                            setFieldValue("productStatus", option ? option.value : "")
                           } // Update Formik value
-                          options={salesChannelOptions}
+                          options={ExecutionStatus}
                           styles={customStyles}
                           className="bg-white dark:bg-form-Field"
                           classNamePrefix="react-select"
-                          placeholder="Select Order Category"
+                          placeholder="Execution Status"
                         />
                         <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
                       </div>
@@ -682,7 +621,7 @@ const UpdateOrderProduct = () => {
                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Comments</label>
                         <Field
-                          name="quantityToManufacture"
+                          name="productionComments"
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           readOnly // Read-only field
                         />
@@ -691,105 +630,100 @@ const UpdateOrderProduct = () => {
                     </div>
 
 
-                    <div className="flex flex-wrap gap-3">
-                      {/* Order No */}
-                      <div className="flex-1 min-w-[200px]">
+                    <div>
 
+                      <div >
+                        <IoIosAdd size={30} onClick={() => {
 
-                        <IoIosAdd size={30} onClick={() => openSupplierModal(product.id)} />
+                          openSupplierModal(values.productsId)
 
+                        }
 
-
-
-
-
-
-                        {order?.orderProducts?.map((product, index, item) => (
-                          <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-                            <div
-                              className="inline-block min-w-full shadow-md rounded-lg overflow-hidden"
-                            >
-                              <table className="min-w-full leading-normal">
-                                <thead>
-                                  <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                    <th
-
-                                      className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                    >
-                                      Supplier Name
-                                    </th>
-                                    <th
-
-                                      className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                    >
-                                      Supplier Quantity
-                                    </th>
-
-                                    <th
-
-                                      className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                    >
-                                      Action
-                                    </th>
-
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {product.productSuppliers?.map((supplierData, supplierIndex) => (
-                                    <tr key={supplierData.supplier?.id}>
-                                      {/* Supplier Name */}
-                                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                        <Field
-                                          name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.name`}
-                                          value={supplierData.supplier?.name || ""}
-
-                                          className="w-[130px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                        />
-                                      </td>
-
-                                      {/* Supplier Quantity */}
-                                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                        <Field
-                                          name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
-                                          type="number"
-                                          className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                        />
-                                        <ErrorMessage
-                                          name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
-                                          component="div"
-                                          className="text-red-600 text-sm"
-                                        />
-                                      </td>
-
-                                      {/* Actions */}
-                                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                        <FiTrash2
-                                          size={17}
-                                          className="text-red-500 hover:text-red-700 mx-2"
-                                          onClick={() =>
-                                            handleDeleteSupplier(index, supplierIndex)
-                                          }
-                                          title="Delete Supplier"
-                                        />
-                                      </td>
-                                    </tr>
-                                  ))}
-                                </tbody>
-                              </table>
-                            </div>
-                          </div>
-                        ))}
+                        } />
                       </div>
-
-
-
                     </div>
 
 
 
 
 
-               
+                    <div className="flex flex-wrap gap-3">
+                      <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+                        <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
+                          <table className="min-w-full leading-normal">
+                            <thead>
+                              <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                  Supplier Name
+                                </th>
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                  Supplier Quantity
+                                </th>
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                  Action
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {selectedSuppliers.map((supplierData, index) => (
+                                <tr key={index}>
+                                  <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                    <input
+                                      value={supplierData.supplierName} // Display only this supplier's name
+                                      readOnly
+                                      className="w-[130px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                    />
+                                  </td>
+
+                                  <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                    <Field
+                                      name={`selectedSuppliers[${index}].supplierOrderQty`}
+                                      type="number"
+                                      className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                    />
+                                  </td>
+
+                                  <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                    <FiTrash2
+                                      size={17}
+                                      className="text-red-500 hover:text-red-700 mx-2"
+                                      onClick={() => {
+                                        const updatedSuppliers = selectedSuppliers.filter((_, i) => i !== index);
+                                        setSelectedSuppliers(updatedSuppliers);
+                                      }}
+                                      title="Delete Supplier"
+                                    />
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+
+
+                          </table>
+                          {/* Add New Supplier Button */}
+
+
+                          {/* <button
+              type="button"
+              className="mt-3 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+              onClick={() => {
+                const newSupplier = { supplierName: '', supplierOrderQty: 0 };
+                setFieldValue('productSuppliers', [...values.productSuppliers, newSupplier]);
+              }}
+            >
+              Add Supplier
+            </button> */}
+
+
+                        </div>
+                      </div>
+                    </div>
+
+
+
+
+
+
 
 
 
@@ -815,7 +749,7 @@ const UpdateOrderProduct = () => {
           )}
         </Formik>
         {isSupplierModalOpen && (
-          <SupplierModal
+          <SupplierModall
             suppliers={suppliers}
             id={suppId}
             selectedSuppliers={selectedSuppliers}

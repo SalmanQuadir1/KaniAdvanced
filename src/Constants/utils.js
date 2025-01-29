@@ -203,6 +203,10 @@ export const UPDATE_ORDERCREATED_ALL= `${BASE_URL}/order/updateOrderProductsAcce
 export const VIEW_ALL_PRODID = `${BASE_URL}/order/viewCreatedProductId`;
 export const VIEW_ALL_ORDERSCREATED = `${BASE_URL}/order/search`;
 
+export const VIEW_ORDER_PRODUCT = `${BASE_URL}/order/orderProduct`;
+
+
+
 export const DELETE_ORDER_URL = `${BASE_URL}/order/delete`;
 export const VIEW_ALL_ORDER_URL = `${BASE_URL}/order/viewAll`;
 export const ADD_ORDER_URL = `${BASE_URL}/order/add`;

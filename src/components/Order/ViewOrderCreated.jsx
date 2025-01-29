@@ -65,6 +65,10 @@ const ViewOrderCreated = () => {
         label: prod,
         value: prod
     }));
+
+
+
+    
     const formattedCustomer = customer.map(customer => ({
         label: customer.customerName,
         value: customer.customerName
