@@ -121,7 +121,7 @@ const Chart = () => {
               </CardDataStats>
             </Link>
 
-            <Link to={"/order/created"}>
+            <Link to={"/order/partiallyexecuted"}>
               <CardDataStats
                 title="Partially Approved By Production Orders"
                 total={countMapping['ordersWithCreated'] || 0}

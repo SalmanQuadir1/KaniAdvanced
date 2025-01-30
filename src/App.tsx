@@ -59,6 +59,9 @@ import UpdateMaterialPo from './components/PuchaseOrder/UpdateMaterialPo.jsx';
 import AddOrder from './components/Order/AddOrder';
 import ViewOrder from './components/Order/ViewOrder.jsx';
 import UpdateOrderStatus from './components/Order/UpdateOrderStatus.jsx';
+import UpdatePartiallyOrderStatus from './components/Order/UpdatePartiallyOrderStatus.jsx';
+
+
 import UpdateOrderProduct from './components/Order/UpdateOrderProduct.jsx';
 
 
@@ -66,6 +69,7 @@ import UpdateOrderProduct from './components/Order/UpdateOrderProduct.jsx';
 
 import ViewOrderCreated from './components/Order/ViewOrderCreated.jsx';
 
+import ViewOrderPartiallyCreated from './components/Order/ViewOrderPartiallyCreated.jsx';
 
 import UpdateOrder from './components/Order/UpdateOrder.jsx';
 
@@ -212,7 +216,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/Order/updateorderCreated/:id"
             element={
               <>
@@ -222,8 +226,18 @@ function App() {
             }
           />
 
-
 <Route
+            path="/Order/updateorderPartiallyCreated/:id"
+            element={
+              <>
+                <PageTitle title="Update Order Status" />
+                <UpdatePartiallyOrderStatus />
+              </>
+            }
+          />
+
+
+          <Route
             path="/order/modifyorderproduct/:id"
             element={
               <>
@@ -239,6 +253,18 @@ function App() {
               <>
                 <PageTitle title="View Order Created " />
                 <ViewOrderCreated />
+              </>
+            }
+          />
+
+
+
+<Route
+            path="/order/partiallyexecuted"
+            element={
+              <>
+                <PageTitle title="View Order Created " />
+                <ViewOrderPartiallyCreated />
               </>
             }
           />
