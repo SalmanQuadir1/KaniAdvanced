@@ -39,9 +39,6 @@ const UpdateOrder = () => {
     { id: 3, name: "Supplier C" },
   ])
   
-
-  const [rows, setRows] = useState([{ productId: "", orderCatagory: "", barcode: "" }]);
-
   const {
     getorderType,
     orderTypee,
@@ -184,75 +181,32 @@ const UpdateOrder = () => {
    
   //    };
       
-//   const handleUpdateSubmit = async (values) => {
-//     console.log(values, "jazim");
+  const handleUpdateSubmit = async (values) => {
+    console.log(values, "jazim");
 
-//     try {
-//         const url = `${UPDATE_ORDER_URL}/${id}`;
-//         const response = await fetch(url, {
-//             method: "PUT",
-//             headers: {
-//                 "Content-Type": "application/json",
-//                 "Authorization": `Bearer ${token}`
-//             },
-//             body: JSON.stringify(values)
-//         });
+    try {
+        const url = `${UPDATE_ORDER_URL}/${id}`;
+        const response = await fetch(url, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(values)
+        });
 
-//         const data = await response.json();
-//         if (response.ok) {
-//             console.log(data, "coming ");
-//             toast.success(`Order Updated successfully`);
-//         } else {
-//             toast.error(`${data.errorMessage}`);
-//         }
-//     } catch (error) {
-//         console.error(error);
-//         toast.error("An error occurred");
-//     }
-// };
-
-
-
-
-const handleUpdateSubmit = async (values) => {
-  console.log(values, "Before appending rows"); 
-
-  // Append rows to the form values
-  const updatedValues = {
-      ...values,
-      rows: rows.map((row, index) => ({
-          orderCatagory: row.orderCatagory,
-          productId: row.productId,
-          barcode: row.barcode,
-      }))
-  };
-
-  console.log(updatedValues, "Final values before submitting"); // Debugging check
-
-  try {
-      const url = `${UPDATE_ORDER_URL}/${id}`;
-      const response = await fetch(url, {
-          method: "PUT",
-          headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(updatedValues) // Send the updated values
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-          console.log(data, "API Response");
-          toast.success(`Order Updated successfully`);
-      } else {
-          toast.error(`${data.errorMessage}`);
-      }
-  } catch (error) {
-      console.error(error);
-      toast.error("An error occurred");
-  }
+        const data = await response.json();
+        if (response.ok) {
+            console.log(data, "coming ");
+            toast.success(`Order Updated successfully`);
+        } else {
+            toast.error(`${data.errorMessage}`);
+        }
+    } catch (error) {
+        console.error(error);
+        toast.error("An error occurred");
+    }
 };
-
      
 
    const getOrderById = async () => {
