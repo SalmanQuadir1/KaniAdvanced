@@ -1,36 +1,71 @@
 import React, { useEffect, useState } from 'react';
 import { Field, ErrorMessage, Formik, Form } from 'formik';
 import ReactSelect from 'react-select';
-
+import { IoMdAdd, IoMdTrash } from "react-icons/io";
 import { toast } from 'react-toastify';
+import { customStyles as createCustomStyles } from '../../Constants/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { GET_IMAGE } from '../../Constants/utils';
 import { useNavigate, useNavigation } from 'react-router-dom';
 
-const ModalUpdate = ({ isOpen, onRequestClose, onSubmit, prodIdd, width = "400px", height = "auto", GET_PRODUCTBYID_URL }) => {
-  const { currentUser } = useSelector((state) => state?.persisted?.user);
-  const { token } = currentUser;
-  const navigate = useNavigate();
-  const [products, setproducts] = useState([])
+const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, width = "400px", height = "auto", GET_PRODUCTBYID_URL }) => {
+    const { currentUser } = useSelector((state) => state?.persisted?.user);
+    const { token } = currentUser;
+    
+    const navigate = useNavigate();
+    const [products, setproducts] = useState([])
+    const [rows, setRows] = useState([{  productId: products?.productId}]);                                                           
+  
+    const theme = useSelector(state => state?.persisted?.theme);
+
+    const productgrp = [
+        { value: 'Embroidery', label: 'Embroidery' },
+        { value: 'Dyeing', label: 'Dyeing' },
+        { value: 'Plain Order', label: 'Plain Order' },
+    ];
+
+    const customStyles = createCustomStyles(theme?.mode);
+    const unitsOption = [
+        { value: 'pcs', label: 'pcs' },
+        { value: 'Mtrs', label: 'Mtrs' },
+
+    ];
+
+
+    // const addRow = () => {
+    //     setRows([...rows, { id: Date.now(), greaterThan: 0, upTo: "", productId: products?.productId }]);
+    // };
+
+
+    const deleteRow = (index) => {
+        setRows(rows.filter((_, rowIndex) => rowIndex !== index));
+    };
+     
 
 
 
-  const productgrp = [
-    { value: 'Embroidery', label: 'Embroidery' },
-    { value: 'Dyeing', label: 'Dyeing' },
-    { value: 'Plain Order', label: 'Plain Order' },
-  ];
+
+    const handleBackdropClick = () => {
+        // setIsModalOpen(false)
+        onRequestClose();
+    };
+
+    const handleSubmit = (values) => {
+        console.log(values, "jaijai");
+        onSubmit(rows);
+        onRequestClose();
+
+        // You can now send this data to your API
+    };
+    console.log(rows, 'rrrrrrr');
 
 
-  const unitsOption = [
-    { value: 'pcs', label: 'pcs' },
-    { value: 'Mtrs', label: 'Mtrs' },
-
-  ];
+    useEffect(() => {
+      setRows([{ productId: products?.productId }]);
+    }, [products]);
 
 
-
-  useEffect(() => {
+     useEffect(() => {
     getProduct()
 
   }, [prodIdd]);
@@ -59,543 +94,210 @@ const ModalUpdate = ({ isOpen, onRequestClose, onSubmit, prodIdd, width = "400px
 
   // console.log(products, "umer shah");
 
+  
 
 
+    return (
+        <>
+            {isOpen && (
+                <div
+                    className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 mt-11 z-50  dark:bg-graydark"
+                    onClick={handleBackdropClick}
+                    role="dialog"
+                    aria-modal="true"
+                >
+                    <div
+                        className="bg-white p-8 rounded-lg shadow-lg relative overflow-y-auto  dark:bg-boxdark"
+                        style={{
+                            width,
+                            height,
+                            position: 'absolute',
+                            right: '50px',
+                            top: '50px',
+                            transform: 'none'
+                        }}
+                        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
+                    >
+                        <button
 
+                            className="absolute text-2xl top-0 right-0 m-3 text-gray-600 hover:text-gray-800 dark:text-red-600"
+                            onClick={handleBackdropClick}
 
-
-  const handleBackdropClick = () => {
-    onRequestClose();
-  };
-
-  const handleSubmit = (values) => {
-    onSubmit(values);
-    console.log(values, "vall"); // The submitted data
-    // You can now send this data to your API
-  };
-
-
-  return (
-    <>
-      {isOpen && (
-        <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 mt-11 z-50"
-          onClick={handleBackdropClick}
-          role="dialog"
-          aria-modal="true"
-        >
-          <div
-            className="bg-white p-8 rounded-lg shadow-lg relative overflow-y-auto"
-            style={{
-              width,
-              height,
-              position: 'absolute',
-              right: '50px',
-              top: '50px',
-              transform: 'none'
-            }}
-            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
-          >
-            <button
-              className="absolute top-0 right-0 m-3 text-gray-600 hover:text-gray-800"
-              onClick={onRequestClose}
-              aria-label="Close modal"
-            >
-              &times;
-            </button>
-            <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-              <h3 className="font-medium text-slate-500 text-center text-xl dark:text-black">
-                Product Detail
-              </h3>
-            </div>
-            <Formik
-              initialValues={{
-                id: products.id || '',
-                productId: products.productId || '',
-                barCode: products?.barcode || '',
-                orderCatagory: products.orderCatagory || '',
-                weight: products.finishedWeight || '',
-                // units: products.units || '',
-                units: products?.unit?.name||'',
-                colorGroup: products?.colors?.colorName || '',
-                warpColors: products.warpColors || '',
-                weftColors: products.weftColors || '',
-                weave: products.weave || '',
-                warpYarn: products.warpYarn || '',
-                weftYarn: products.weftYarn || '',
-                pixAndReed: products.pixAndReed || '',
-                deying: '',
-                cost: products.cost || '',
-                mrp: products.mrp || '',
-                wPrice: products.wholesalePrice || '',
-              }}
-              enableReinitialize={true}
-              validate={values => {
-                const errors = {};
-
-                if (!values.orderCatagory) {
-                  errors.orderCatagory = 'Order Category is required';
-                }
-                return errors;
-              }}
-              onSubmit={(values, { setSubmitting }) => {
-
-                handleSubmit(values);
-                setSubmitting(false); // Stop Formik loader
-              }}
-            >
-              {({ isSubmitting, values, setFieldValue }) => (
-                <Form>
-                  <div>
-                    <div className="flex flex-wrap gap-4">
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label className="mb-1 block text-black dark:text-[rgb(200,200,200)]">Order Category</label>
-                        <ReactSelect
-                          name="orderCatagory"
-                          value={productgrp.find(option => option.value === values.orderCatagory)}
-                          onChange={(option) => setFieldValue('orderCatagory', option.value)}
-
-                          options={productgrp}
-                          className="bg-white dark:bg-form-input"
-                          classNamePrefix="react-select"
-                          placeholder="Select"
-                        />
-                        <ErrorMessage name="orderCatagory" component="div" className="text-red-600 text-sm" />
-                      </div>
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label htmlFor="productId" className="mb-3">Product ID</label>
-                        <Field
-                          type="text"
-                          value={products?.productId}
-                          disabled
-                          id="productId"
-                          name="productId"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
-                      </div>
-
-
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label htmlFor="barCode" className="mb-2">BarCode</label>
-                        <Field
-                          type="text"
-                          id="barCode"
-                          value={products?.barcode}
-                          disabled
-                          name="barCode"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="barCode" component="div" className="text-red-600 text-sm" />
-                      </div>
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label className="mb-1 block text-black dark:text-[rgb(200,200,200)]">Color Group</label>
-                        <Field
-                          type="text"
-                          id="barCode"
-                          value={products?.colors?.colorName}
-                          disabled
-                          name="colorGroup"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="colorGroup" component="div" className="text-red-600 text-sm" />
-                      </div>
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label className="mb-2.5 block text-black dark:text-[rgb(200,200,200)]">Product Group</label>
-                        <Field
-                          type="text"
-                          id="barCode"
-                          value={products?.productGroup?.productGroupName}
-                          disabled
-                          name="productGroup"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="productGroup" component="div" className="text-red-600 text-sm" />
-                      </div>
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label className="mb-2.5 block text-black dark:text-[rgb(200,200,200)]">Product Category</label>
-                        <Field
-                          type="text"
-                          id="barCode"
-                          value={products?.productCategory?.productCategoryName}
-                          disabled
-                          name="productCategory"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="productCatagory" component="div" className="text-red-600 text-sm" />
-                      </div>
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label className=" block text-black dark:text-[rgb(200,200,200)]">Design Name</label>
-                        <Field
-                          type="text"
-                          id="barCode"
-                          value={products?.design?.designName}
-                          disabled
-                          name="designName"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="designName" component="div" className="text-red-600 text-sm" />
-                      </div>
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label htmlFor="hsnCode" className="mb-2">HSN Code</label>
-                        <Field
-                          type="text"
-                          id="hsnCode"
-                          value={products?.hsnCode?.hsnCodeName}
-                          disabled
-                          name="hsnCode"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="hsnCode" component="div" className="text-red-600 text-sm" />
-                      </div>
-
-
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label htmlFor="colorName" className="mb-2">Color Name</label>
-                        <Field
-                          type="text"
-                          id="colorName"
-                          value={products?.colorName}
-                          name="colorName"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="colorName" component="div" className="text-red-600 text-sm" />
-                      </div>
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label className="mb-1 block text-black dark:text-[rgb(200,200,200)]">Style</label>
-                        <Field
-                          type="text"
-                          id="style"
-                          value={products?.styles?.stylesName}
-                          disabled
-                          name="style"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="style" component="div" className="text-red-600 text-sm" />
-                      </div>
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label className="mb-2.5 block text-black dark:text-[rgb(200,200,200)]">Size (in cms)</label>
-                        <Field
-                          type="text"
-                          id="size"
-                          value={products?.sizes?.sizeName}
-                          disabled
-                          name="size"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="size" component="div" className="text-red-600 text-sm" />
-                      </div>
-
-
-
-
-
-
-                      {/* <div className="flex-1 min-w-[300px] mt-4">
-                        <label className="mb-2.5 block text-black dark:text-[rgb(200,200,200)]">Units</label>
-                        <Field
-                          as="select" // Use 'as' to render a select element
-                          id="units"
-                          name="units"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         >
-                          <option value="" label="Select a unit" />
-                          {unitsOption?.map((unit) => (
-                            <option key={unit.value} value={unit.value}>
-                              {unit.label}
-                            </option>
-                          ))}
-                        </Field>
-                        <ErrorMessage name="units" component="div" className="text-red-600 text-sm" />
-                      </div> */}
+                            &times;
+                        </button>
 
+                        <Formik
+                            initialValues={{ rows }}
+                            enableReinitialize={true}
+                            //   validate={values => {
+                            //     const errors = {};
 
+                            //     if (!values.orderCatagory) {
 
+                            //       errors.orderCatagory = 'Order Category is required';
+                            //     }
+                            //     // if (!values.units) {
+                            //     //   errors.units = 'unit is required';
+                            //     // }
+                            //     return errors;
+                            //   }}
+                            onSubmit={(values, { setSubmitting }) => {
+                                console.log(values, "umershah");
 
-                      <div className="flex-1 min-w-[300px] mt-4">
-                                              <label className="mb-2.5 block text-black dark:text-[rgb(200,200,200)]">Units</label>
-                                          
-                                              <Field
-                                               type="text"
-                                               // as="select" // Use 'as' to render a select element
-                                               id="units"
-                                               name="units"
-                                               disabled
-                                               value={products?.unit?.name}
-                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                                              />
-                                              <ErrorMessage name="units" component="div" className="text-red-600 text-sm" />
+                                handleSubmit(values);
+                                setSubmitting(false); // Stop Formik loader
+                            }}
+                        >
+                            {({ isSubmitting, values, setFieldValue }) => (
+                                <Form>
+                                    <div className="flex flex-col gap-9">
+                                        <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                                            <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                                                <h3 className="md:font-medium text-slate-500 text-center text-md md:text-xl dark:text-white">
+                                                    Product Detail 
+                                                </h3>
                                             </div>
-                      
+                                            <div className="p-6.5">
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
 
 
 
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label htmlFor="hsnCode" className="mb-2">Weight(gms)</label>
-                        <Field
-                          type="text"
-                          disabled
-                          id="weight"
-                          value={products?.finishedWeight}
-                          name="weight"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="weight" component="div" className="text-red-600 text-sm" />
-                      </div>
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label htmlFor="hsnCode" className="mb-2">Warp Colors</label>
-                        <Field
-                          type="text"
-                          id="warp"
-                          disabled
-                          value={products?.warpColors}
-                          name="warp"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="warp" component="div" className="text-red-600 text-sm" />
-                      </div>
+                                                </div>
 
 
-
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label htmlFor="hsnCode" className="mb-2">Weft Colors</label>
-                        <Field
-                          type="text"
-                          id="weft"
-                          value={products?.weftColors}
-                          name="weft"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="weft" component="div" className="text-red-600 text-sm" />
-                      </div>
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label htmlFor="hsnCode" className="mb-2">Weave</label>
-                        <Field
-                          type="text"
-                          id="weave"
-                          value={products?.weave}
-                          name="weave"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="weave" component="div" className="text-red-600 text-sm" />
-                      </div>
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label htmlFor="hsnCode" className="mb-2">Warp Yarn</label>
-                        <Field
-                          type="text"
-                          id="WarpYarn"
-                          value={products?.warpYarn}
-                          name="WarpYarn"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="WarpYarn" component="div" className="text-red-600 text-sm" />
-                      </div>
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label htmlFor="hsnCode" className="mb-2">Weft Yarn</label>
-                        <Field
-                          type="text"
-                          id="WeftYarn"
-                          value={products?.weftYarn}
-                          name="WeftYarn"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="WeftYarn" component="div" className="text-red-600 text-sm" />
-                      </div>
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label htmlFor="hsnCode" className="mb-2">Pic & Read</label>
-                        <Field
-                          type="text"
-                          id="pic"
-
-                          value={products?.pixAndReed}
-
-                          name="pic"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="pic" component="div" className="text-red-600 text-sm" />
-                      </div>
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label htmlFor="hsnCode" className="mb-2">Deying Cost</label>
-                        <Field
-                          type="text"
-                          id="deying"
-                          name="deying"
-                          value={products?.dyeingCost}
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="deying" component="div" className="text-red-600 text-sm" />
-                      </div>
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label htmlFor="hsnCode" className="mb-2"> Cost</label>
-                        <Field
-                          disabled
-                          type="text"
-                          id="cost"
-                          value={products?.cost}
-                          name="cost"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="cost" component="div" className="text-red-600 text-sm" />
-                      </div>
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label htmlFor="hsnCode" className="mb-2"> MRP</label>
-                        <Field
-                          disabled
-                          type="text"
-                          id="mrp"
-                          value={products?.mrp}
-                          name="mro"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="mrp" component="div" className="text-red-600 text-sm" />
-                      </div>
+                                                <>
 
 
+                                                   
+                                                    {/* <div className="overflow-x-scroll md:overflow-x-visible  md:overflow-y-visible -mx-4 sm:-mx-8 px-4 sm:px-8 py-4"> */}
+                                                    <div className="  shadow-md rounded-lg  mt-3 overflow-scroll">
+                                                    <table className="min-w-full leading-normal overflow-auto">
+                                                                <thead>
+                                                                   
+                                                                    {/* Subheadings */}
+                                                                    <tr className="px-5 py-3 bg-gray-200 dark:bg-slate-600 dark:text-white">
+                                                                        <th
+                                                                            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                                                        >
+                                                                            Order Catagory
+                                                                        </th>
+
+                                                                        <th
+                                                                            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                                                        >
+                                                                            Product Id
+                                                                        </th>
 
 
+                                                                        <th
+                                                                            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                                                        >
+                                                                           BarCode
+                                                                        </th>
+                                                                        <th
+                                                                            className="md:px-5 md:py-3 px-2 py-1 border-b-2 border-gray-200 bg-gray-200 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                                                        >
+                                                                           Color Group
+                                                                        </th>
+                                                                   
+                                                                       
+                                                                          
+                                                                    </tr>
+                                                                </thead>
 
+                                                                <tbody>
+                                                                    {rows.map((row, index) => (
+                                                                        <tr key={row.id}>
+                                                                           
+                                                                           
+                                                                            <td className="px-2 py-2 border-b">
+                                                                                {/* 
+                                                                                <Field
+                                                                                    type="text"
+                                                                                    name={`rows[${index}].type`}
+                                                                                    placeholder="Type"
+                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                                                    onChange={(e) => {
+                                                                                        const newRows = [...rows];
+                                                                                        const balance = (e.target.value);
+                                                                                        setFieldValue(`rows[${index}].type`, balance);
+                                                                                        newRows[index].type = balance;
+                                                                                        // newRows[index].selectedOption2 = generateWorkerOptions(
+                                                                                        //     newRows[index].selectedOption2.label || '',
+                                                                                        //     values.supplierCode,
+                                                                                        //     numOfLooms
+                                                                                        // );
+                                                                                        setRows(newRows);
+                                                                                    }}
+                                                                                /> */}
 
+                                                                                <ReactSelect
+                                                                                    name={`rows[${index}].orderCatagory`}
+                                                                                    options={productgrp}
+                                                                                    // onChange={(option) => setFieldValue("gstDetails", option?.value)}
+                                                                                    onChange={(option) => {
+                                                                                        const newRows = [...rows];
+                                                                                        const balance = (option?.value);
+                                                                                        setFieldValue(`rows[${index}].orderCatagory`, balance);
+                                                                                        newRows[index].orderCatagory = balance;
+                                                                                        // newRows[index].selectedOption2 = generateWorkerOptions(
+                                                                                        //     newRows[index].selectedOption2.label || '',
+                                                                                        //     values.supplierCode,
+                                                                                        //     numOfLooms
+                                                                                        // );
+                                                                                        setRows(newRows);
+                                                                                    }}
+                                                                                    styles={customStyles}
+                                                                                    className="md:w-[200px] bg-white dark:bg-form-Field"
+                                                                                    classNamePrefix="react-select"
+                                                                                    // placeholder="Select GST details"
+                                                                                />
+                                                                                <ErrorMessage name="group" component="div" className="text-red-500" />
+                                                                            </td>
+                                                                            
+                                                                            <td className="px-2 py-2 border-b">
+                                                                            <Field
+                                                             type="text"
+                                                             value={products?.productId}
+                                                             disabled
+                                                             id="productId"
+                                                             name="productId"
+                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                                                           />
+                                                                                   <ErrorMessage name="group" component="div" className="text-red-500" />
+                                                                               </td>
 
+                                                                               <td className="px-2 py-2 border-b">
+                                                                            <Field
+                                                             type="text"
+                                                             value={products?.barcode}
+                                                             disabled
+                                                             id="productId"
+                                                             name="productId"
+                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                                                           />
+                                                                                   <ErrorMessage name="group" component="div" className="text-red-500" />
+                                                                               </td>
+                                                                           
 
-                      <div className="flex-1  min-w-[300px] mt-4">
-                        <label htmlFor="hsnCode" className="mb-2"> Wholesale Price</label>
-                        <Field
-                          type="text"
-                          disabled
-                          id="wPrice"
-                          name="wPrice"
-                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                        />
-                        <ErrorMessage name="wPrice" component="div" className="text-red-600 text-sm" />
-                      </div>
+                                                                            <td className="px-2 py-2 border-b">
+                                                                                {rows.length > 1 && (
+                                                                                    <button type='button' onClick={() => deleteRow(index)}>
+                                                                                        <IoMdTrash size={24} />
+                                                                                    </button>
+                                                                                )}
+                                                                            </td>
+                                                                        </tr>
+                                                                    ))}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    {/* </div> */}
+                                                </>
 
-
-
-
-
-
-
-
-
-
-
-
-                    </div>
-
-
-                    <div className="flex mt-5 gap-3">
-
-                      <div className=" flex-1 p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark flex flex-row">
-                        {/* Grid Layout */}
-                        <div className="flex flex-col grid-cols-3">
-
-                          <div className="flex flex-row gap-4 ">
-
-                            {/* Image Preview */}
-                            {products?.images?.map((ref) => (
-                              <>
-                                {
-                                  ref.referenceImage != null &&
-
-                                  <img
-                                    className="h-20 w-20  transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
-                                    crossOrigin="use-credentials"
-                                    src={`${GET_IMAGE}/products/getimages/${ref.referenceImage}`}
-                                    alt="Product Image"
-                                  />
-                                }
-                              </>
-                            ))}
-                            {/* Cancel Button */}
-                            <button
-                              type="Submit" // Not a native form submission button
-                              className="px-4 py-2 bg-blue-500 text-white rounded"
-                            // Formik's submission process is triggered here
-                            >
-                              Submit
-                            </button>
-                          </div>
-
-                        </div>
-                      </div>
-
-
-
-
-
-
-
-
-
-
-
-                      <div className=" flex-1 p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark flex flex-row">
-                        {/* Grid Layout */}
-                        <div className="flex flex-col grid-cols-3">
-
-                          <div className="flex flex-row gap-4 ">
-                            {/* Image Preview */}
-                            {products?.images?.map((ref) => (
-                              <>
-                                {
-                                  ref.actualImage != null &&
-
-                                  <img
-                                    className="h-20 w-20  transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
-                                    crossOrigin="use-credentials"
-                                    src={`${GET_IMAGE}/products/getimages/${ref.actualImage}`}
-                                    alt="Product Image"
-                                  />
-                                }
-                              </>
-                            ))}
-                            {/* Cancel Button */}
-                            <button
-                              onClick={() => handleRemoveImage(index)}
-                              className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              &times;
-                            </button>
-                          </div>
-
-                        </div>
-                      </div>
-
-
-
-
-
-
-                    </div>
-
-
-                    <div className="mb-6">
-                      <label className="mb-2.5 block text-black dark:text-black mt-7">Weaver/Embroider</label>
-                      <Field
-
-                        name="weiver"
-                        value={products?.supplier?.name}
-                        disabled
-                        placeholder="Type your message"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-black dark:focus:border-primary"
-                      />
-                    </div>
-
-                    <div className="mb-6">
-                      <label className="mb-2.5 block text-black dark:text-black mt-7">Weaver Code</label>
-                      <Field
-
-                        disabled
-                        value={products?.supplierCode?.supplierCode}
-                        name="weiverCode"
-                        placeholder="Type your message"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-black dark:focus:border-primary"
-                      />
-                    </div>
-
-
-                    <div className="flex justify-end mt-6">
-                      <button
+                                                <div className="flex justify-center mt-4 items-center">
+                                                <button
                         onSubmit={(e) => console.log("heyyyyy")}
                         type="submit"
                         className="px-4 py-2 bg-blue-500 text-white rounded"
@@ -603,19 +305,21 @@ const ModalUpdate = ({ isOpen, onRequestClose, onSubmit, prodIdd, width = "400px
                       >
                         {isSubmitting ? 'Submitting...' : 'Add'}
                       </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </Form>
+
+
+
+                            )}
+                        </Formik>
                     </div>
-                  </div>
-                </Form>
-
-
-
-              )}
-            </Formik>
-          </div>
-        </div>
-      )}
-    </>
-  );
+                </div>
+            )}
+        </>
+    );
 };
 
-export default ModalUpdate;
+export default Modall;

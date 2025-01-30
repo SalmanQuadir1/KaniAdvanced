@@ -25,11 +25,11 @@ const UpdateOrder = () => {
   const [orderTypeOptions, setorderTypeOptions] = useState([])
   const [prodIdOptions, setprodIdOptions] = useState([])
   const [prodIdd, setprodIdd] = useState("")
- const [order, setOrder] = useState(null); // To store fetched product data
+  const [order, setOrder] = useState(null); // To store fetched product data
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
   const [suppId, setsuppId] = useState()
   const [isLoading, setIsLoading] = useState(true); // Loader state
-   const [customerOptions, setcustomerOptions] = useState([])
+  const [customerOptions, setcustomerOptions] = useState([])
   const { token } = currentUser;
 
   const [selectedRowId, setSelectedRowId] = useState(null);
@@ -38,6 +38,10 @@ const UpdateOrder = () => {
     { id: 2, name: "Supplier B" },
     { id: 3, name: "Supplier C" },
   ])
+  
+
+  const [rows, setRows] = useState([{ productId: "", orderCatagory: "", barcode: "" }]);
+
   const {
     getorderType,
     orderTypee,
@@ -180,32 +184,75 @@ const UpdateOrder = () => {
    
   //    };
       
-  const handleUpdateSubmit = async (values) => {
-    console.log(values, "jazim");
+//   const handleUpdateSubmit = async (values) => {
+//     console.log(values, "jazim");
 
-    try {
-        const url = `${UPDATE_ORDER_URL}/${id}`;
-        const response = await fetch(url, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify(values)
-        });
+//     try {
+//         const url = `${UPDATE_ORDER_URL}/${id}`;
+//         const response = await fetch(url, {
+//             method: "PUT",
+//             headers: {
+//                 "Content-Type": "application/json",
+//                 "Authorization": `Bearer ${token}`
+//             },
+//             body: JSON.stringify(values)
+//         });
 
-        const data = await response.json();
-        if (response.ok) {
-            console.log(data, "coming ");
-            toast.success(`Order Updated successfully`);
-        } else {
-            toast.error(`${data.errorMessage}`);
-        }
-    } catch (error) {
-        console.error(error);
-        toast.error("An error occurred");
-    }
+//         const data = await response.json();
+//         if (response.ok) {
+//             console.log(data, "coming ");
+//             toast.success(`Order Updated successfully`);
+//         } else {
+//             toast.error(`${data.errorMessage}`);
+//         }
+//     } catch (error) {
+//         console.error(error);
+//         toast.error("An error occurred");
+//     }
+// };
+
+
+
+
+const handleUpdateSubmit = async (values) => {
+  console.log(values, "Before appending rows"); 
+
+  // Append rows to the form values
+  const updatedValues = {
+      ...values,
+      rows: rows.map((row, index) => ({
+          orderCatagory: row.orderCatagory,
+          productId: row.productId,
+          barcode: row.barcode,
+      }))
+  };
+
+  console.log(updatedValues, "Final values before submitting"); // Debugging check
+
+  try {
+      const url = `${UPDATE_ORDER_URL}/${id}`;
+      const response = await fetch(url, {
+          method: "PUT",
+          headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(updatedValues) // Send the updated values
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+          console.log(data, "API Response");
+          toast.success(`Order Updated successfully`);
+      } else {
+          toast.error(`${data.errorMessage}`);
+      }
+  } catch (error) {
+      console.error(error);
+      toast.error("An error occurred");
+  }
 };
+
      
 
    const getOrderById = async () => {
@@ -612,7 +659,7 @@ const UpdateOrder = () => {
                       
                     </div>
 
-                   {(values.orderType.orderTypeName === "RetailClients" || values.orderType.orderTypeName === "WSClients") && (
+                    {(values.orderType.orderTypeName === "RetailClients" || values.orderType.orderTypeName === "WSClients") && (
 
                       <div >
                         <div className="flex-1 min-w-[300px] mt-4">
@@ -905,32 +952,6 @@ const UpdateOrder = () => {
   placeholder="Enter Product ID"
 />
 
-
-
-      {/* <Field
-                                        name={`orderProducts[${index}].products.id`}
-
-                                        value={item?.productId || ""}
-
-                                        placeholder="Enter Prchase Order"
-                                        onChange={(e) => {
-                                          console.log(`Product ID: ${e.target.value}`); // Log the value on change
-                                        }}
-                                        className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                                      /> */}
-        {/* <Field
-          as="select"
-          name={`orderProducts[${index}].products.id`}
-          value={product.products?.id || ""}
-          isDisabled={true}
-          className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-        >
-          {prodIdOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </Field> */}
         <ErrorMessage name={`orderProducts[${index}].products.id`} component="div" className="text-red-600 text-sm" />
       </td>
 
@@ -1175,15 +1196,25 @@ const UpdateOrder = () => {
 
 
 <Field
-  name={`orderProducts[${adjustedIndex}].products.id`} // Use dynamic name
-  value={item?.productId || ""} // Default value
-  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-  placeholder="Enter Product ID" // Optional placeholder
-  readOnly // Makes the field read-only, no input allowed
+  type="text"
+  name={`orderProducts[${adjustedIndex}].products.id`}
+  value={item?.productId || ""}
+  readOnly
+  className="w-[130px] bg-gray-200 dark:bg-gray-700 rounded border-[1.5px] border-stroke py-3 px-5 text-black dark:text-white outline-none transition focus:border-primary active:border-primary disabled:cursor-default"
 />
 
 
-                           
+
+                                      {/* <Field
+  name={`orderProducts[${index}].products.id`}
+  value={values.orderProducts[index]?.products?.productId || ""}
+  placeholder="Enter Purchase Order"
+  onChange={(e) => {
+    // Update the product ID in Formik state
+    setFieldValue(`orderProducts[${index}].products.productId`, e.target.value);
+  }}
+  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+/> */}
 
 
 
@@ -1225,32 +1256,17 @@ const UpdateOrder = () => {
                                                   readOnly
                                                   className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                                 /> */}
-                                                
-                           <Field
-                                as="select" // Change the field to a select element
-                                name={`orderProducts[${adjustedIndex}].orderCategory`}
-                                value={item?.orderCategory || ""} // Bind to Formik's state
-                                onChange={(e) => {
-                                  const selectedValue = e.target.value;
-
-                                  // Update Formik's state for this field
-                                  setFieldValue(`orderProducts[${adjustedIndex}].orderCategory`, selectedValue);
-
-                                  console.log(`Selected Order Category: ${selectedValue}`); // Debugging
-                                }}
-                                className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                              >
-                                <option value={item?.orderCategory || ""} disabled>
-                                  Select Order Category
-                                </option>
-                                {/* Map your order category options dynamically */}
-                                {productgrp.map((option) => (
-                                  <option key={option.value} value={option.value}>
-                                    {option.label}
-                                  </option>
-                                ))}
-                              </Field>
-
+                                             
+                                      <Field
+                                        name={`orderProducts[${index}].orderCategory`}
+                                        // value={item?.orderCatagory || ""}
+                                        placeholder="Enter Order Category"
+                                        onChange={(e) => {
+                                          console.log(`Order Category: ${e.target.value}`);
+                                          setFieldValue(`orderProducts[${index}].orderCategory`, e.target.value); // Update the field value manually
+                                        }}
+                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                      />
                                          
 
           <ErrorMessage name="orderCategory" component="div" className="text-red-600 text-sm" />
@@ -1394,106 +1410,6 @@ const UpdateOrder = () => {
                                                                          </div>
                                                                        </td>
                                                                      </td>
-                                                                           <td className="px-5 py-5 border-b border-gray-200  text-sm">
-                                                                     
-                                                                                                         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-                                                                                                           <div
-                                                                                                             className="inline-block min-w-full shadow-md rounded-lg overflow-hidden"
-                                                                                                           >
-                                                                                                             <table className="min-w-full leading-normal">
-                                                                                                               <thead>
-                                                                                                                 <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                                                                                                   <th
-                                                                     
-                                                                                                                     className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                                                                                                   >
-                                                                                                                     Supplier Name
-                                                                                                                   </th>
-                                                                                                                   <th
-                                                                     
-                                                                                                                     className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                                                                                                   >
-                                                                                                                     Supplier Quantity
-                                                                                                                   </th>
-                                                                     
-                                                                                                                   <th
-                                                                     
-                                                                                                                     className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                                                                                                   >
-                                                                                                                     Action
-                                                                                                                   </th>
-                                                                     
-                                                                                                                 </tr>
-                                                                                                               </thead>
-                                                                                                               <tbody>
-                                                                                                                 {selectedSuppliers
-                                                                                                                   .find((supplierRow) => supplierRow.selectedRowId === index)
-                                                                                                                   ?.supplierIds.map((supplier, supplierIndex) => (
-                                                                                                                     <tr
-                                                                                                                       key={`supplier-row-${index}-${supplierIndex}`}
-                                                                                                                       className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3"
-                                                                                                                     >
-                                                                                                                       {/* Supplier Name Field */}
-                                                                                                                       <td
-                                                                                                                         key={`supplier-${supplierIndex}`}
-                                                                                                                         className="px-5 py-5 border-b border-gray-200 text-sm"
-                                                                                                                       >
-                                                                                                                         <Field
-                                                                                                                           name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`}
-                                                                                                                           placeholder="Supplier Name"
-                                                                                                                           value={supplier?.supplierId?.supplierName || ""}
-                                                                                                                           onChange={(e) =>
-                                                                                                                             setFieldValue(
-                                                                                                                               `orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`,
-                                                                                                                               e.target.value
-                                                                                                                             )
-                                                                                                                           }
-                                                                                                                           className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                                                                                                                         />
-                                                                                                                         <ErrorMessage
-                                                                                                                           name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`}
-                                                                                                                           component="div"
-                                                                                                                           className="text-red-600 text-sm"
-                                                                                                                         />
-                                                                                                                       </td>
-                                                                     
-                                                                                                                       {/* Supplier Quantity Field */}
-                                                                                                                       <td
-                                                                                                                         key={`quantity-${supplierIndex}`}
-                                                                                                                         className="px-5 py-5 border-b border-gray-200 text-sm"
-                                                                                                                       >
-                                                                                                                         <Field
-                                                                                                                           name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
-                                                                                                                           placeholder="Supplier Quantity"
-                                                                                                                           type="number"
-                                                                                                                           className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                                                                                                                         />
-                                                                                                                         <ErrorMessage
-                                                                                                                           name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
-                                                                                                                           component="div"
-                                                                                                                           className="text-red-600 text-sm"
-                                                                                                                         />
-                                                                                                                       </td>
-                                                                     
-                                                                                                                       {/* Delete Button */}
-                                                                                                                       {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                                                                                         < MdDelete size={20} className='text-red-500 ' onClick={() => handleDeleteSupplier(index, supplierIndex)} />
-                                                                     
-                                                                                                                       </td> */}
-                                                                                                                     </tr>
-                                                                                                                   ))}
-                                                                                                               </tbody>
-                                                                     
-                                                                     
-                                                                     
-                                                                     
-                                                                     
-                                                                     
-                                                                     
-                                                                                                             </table>
-                                                                                                           </div>
-                                                                                                         </div>
-                                                                                                       </td>
                                                                        
 
     </tr>

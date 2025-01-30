@@ -33,6 +33,9 @@ const ViewOrderCreated = () => {
 
 
     const { token } = currentUser;
+
+    console.log(productIdd,"huhuuhuuuuuuuuuuuuuuuuu");
+    
     const [Order, setOrder] = useState()
 
     const [supplierNameOptions, setsupplierNameOptions] = useState([])
