@@ -195,7 +195,7 @@ export const VIEW_PARTIALLYCREATED_ORDERS = `${BASE_URL}/order/searchCreatedAndA
 
 export const UPDATE_ORDERCREATED_ALL= `${BASE_URL}/order/updateOrderProductsAccepted`; 
 
-
+export const UPDATE_ORDERPRODUCT_ALL= `${BASE_URL}/order/orderProducts`; 
 
 
 

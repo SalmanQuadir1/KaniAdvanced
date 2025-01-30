@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 import useorder from '../../hooks/useOrder';
 import ReactDatePicker from "react-datepicker";
 import useProduct from '../../hooks/useProduct';
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, VIEW_ORDER_PRODUCT } from '../../Constants/utils';
+import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, VIEW_ORDER_PRODUCT, UPDATE_ORDERPRODUCT_ALL } from '../../Constants/utils';
 import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
@@ -285,7 +285,7 @@ const UpdateOrderProduct = () => {
       selectedRowId: id,
       supplierId: supplier.supplier.id,
       supplierName: supplier.supplier.name,
-      supplierOrderQty: supplier.supplierOrderQty|| 0,
+      supplierOrderQty: supplier.supplierOrderQty || 0,
     })) || [];
 
     // Set the suppliers in the modal for selection (do not modify selectedSuppliers here)
@@ -358,15 +358,52 @@ const UpdateOrderProduct = () => {
   }
 
 
-  const handleSubmit = (values, { setSubmitting }) => {
+  const handleSubmit = async(values) => {
 
     console.log(values, "kiki");
-    // setTimeout(() => {
-    //   alert(JSON.stringify(values, null, 2));
-    //   setSubmitting(false);
-    //   console.log('Form Submitted:', values);
-    // }, 400);
+    try {
+      const url = `${UPDATE_ORDERPRODUCT_ALL}/${id}`;
+      const method ="PUT";
+
+      const response = await fetch(url, {
+          method: method,
+          headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(values)
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        toast.success(`Order Status Updated  successfully`);
+     
+  
+
+        // getCurrency(pagination.currentPage); // Fetch updated Currency
+      } else {
+        toast.error(`${data.errorMessage}`);
+      }
+    } catch (error) {
+      console.error(error, response);
+      toast.error("An error occurred");
+    } 
+
+    // You can now send `finalData` to the backend or do any other operation with it
   };
+
+
+
+
+
+
+
+
+
+   
+
+
+
   console.log(prodIdModal, "proddidmodal");
 
 
@@ -448,7 +485,7 @@ const UpdateOrderProduct = () => {
     handleUpdateSubmit(formattedValues, e);
   };
 
-
+  console.log(selectedSuppliers, "supppppppppppppppppppplierssssssssssssssssss");
 
 
   return (
@@ -460,28 +497,21 @@ const UpdateOrderProduct = () => {
           initialValues={{
 
 
-            orderNo: order?.orderNo || '',
+            // orderNo: order?.orderNo || '',
             orderCategory: order?.orderCategory || '',
             productId: order?.products?.productId,
             quantityToManufacture: order?.quantityToManufacture,
             value: order?.value,
             expectedDate: order?.expectedDate,
             productStatus: "",
-            comments: "",
+            productionComments: "",
             productsId: order?.products?.id,
-
-
-
-
-
-
-
-
-
-            // supplierName: product.productSuppliers?.supplier?.name || '', // Safely accessing supplier name
+           // supplierName: product.productSuppliers?.supplier?.name || '', // Safely accessing supplier name
             // supplierOrderQty: product.productSuppliers?.[0]?.supplierOrderQty || 0,
             productSuppliers: order?.productSuppliers?.map(supplier => ({
-              supplierName: supplier.supplier?.name || '',
+              supplier: {
+                id: supplier?.id, // Send supplier ID
+              },
 
               supplierOrderQty: supplier.supplierOrderQty || 0,
             })) || [],
@@ -623,7 +653,7 @@ const UpdateOrderProduct = () => {
                         <Field
                           name="productionComments"
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                          readOnly // Read-only field
+                          // Read-only field
                         />
                         <ErrorMessage name="quantityToManufacture" component="div" className="text-red-600 text-sm" />
                       </div>
@@ -678,10 +708,16 @@ const UpdateOrderProduct = () => {
                                   <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                     <Field
                                       name={`selectedSuppliers[${index}].supplierOrderQty`}
+                                      value={supplierData.supplierOrderQty}
                                       type="number"
                                       className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                     />
                                   </td>
+                                  <Field
+                                    name={`productSuppliers[${index}].supplier.id`}
+                                    type="hidden"
+                                    value={supplierData.supplierId} // Send Supplier ID in Form Submission
+                                  />
 
                                   <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                     <FiTrash2
@@ -733,8 +769,8 @@ const UpdateOrderProduct = () => {
 
                     <div className="flex justify-center mt-4"> {/* Centering the button */}
                       <button
-                        type="button" // Ensures the button does not trigger the form submission
-                        onClick={(e) => handleUpdateSubmit(values, e)}
+                        // type="button" // Ensures the button does not trigger the form submission
+                        // onClick={(e) => handleUpdateSubmit(values, e)}
                         className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none" // Increased width
                       >
                         Update

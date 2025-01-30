@@ -25,6 +25,7 @@ const useDesign = () => {
     }, [currentDesign]);
 
     const getDesign = async (page) => {
+        
         try {
             const response = await fetch(`${GET_DESIGN_URL}?page=${page}`, {
                 method: "GET",

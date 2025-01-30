@@ -36,6 +36,7 @@ const SupplierModall = ({
 
     getSupplier();
   }, [id, token]);
+  console.log(selectedSuppliers,"sdsdsd");
 
 
   return (
@@ -48,7 +49,7 @@ const SupplierModall = ({
               <input
                 type="checkbox"
                 checked={selectedSuppliers?.some(
-                  (row) => row.selectedRowId === selectedRowId && row.supplierId === supplier.id
+                  (row) => row.selectedRowId === selectedRowId || row.supplierId === supplier.id
                 )}
                 onChange={() => handleCheckboxChange(selectedRowId, supplier)}
               />
