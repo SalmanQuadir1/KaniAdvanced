@@ -60,6 +60,9 @@ import AddOrder from './components/Order/AddOrder';
 import ViewOrder from './components/Order/ViewOrder.jsx';
 import UpdateOrderStatus from './components/Order/UpdateOrderStatus.jsx';
 import UpdatePartiallyOrderStatus from './components/Order/UpdatePartiallyOrderStatus.jsx';
+import IssueChalaan from './components/Order/IssueChalaan.jsx';
+
+
 
 
 import UpdateOrderProduct from './components/Order/UpdateOrderProduct.jsx';
@@ -235,6 +238,17 @@ function App() {
               </>
             }
           />
+
+<Route
+            path="/order/modifyproductafterexecution/:id"
+            element={
+              <>
+                <PageTitle title="Update Order Status" />
+                <IssueChalaan/>
+              </>
+            }
+          />
+        
 
 
           <Route

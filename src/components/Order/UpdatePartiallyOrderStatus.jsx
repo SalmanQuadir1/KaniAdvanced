@@ -127,7 +127,7 @@ const UpdatePartiallyOrderStaus = () => {
     console.log("Selected Suppliers:", selectedSuppliers);
     closeSupplierModal();
   };
-  
+
 
 
 
@@ -186,8 +186,8 @@ const UpdatePartiallyOrderStaus = () => {
       const data = await response.json();
       if (response.ok) {
         toast.success(`Order Status Updated  successfully`);
-     
-  
+
+
 
         // getCurrency(pagination.currentPage); // Fetch updated Currency
       } else {
@@ -196,7 +196,7 @@ const UpdatePartiallyOrderStaus = () => {
     } catch (error) {
       console.error(error, response);
       toast.error("An error occurred");
-    } 
+    }
 
     // You can now send `finalData` to the backend or do any other operation with it
   };
@@ -204,7 +204,7 @@ const UpdatePartiallyOrderStaus = () => {
 
 
 
-    
+
 
 
 
@@ -301,7 +301,7 @@ const UpdatePartiallyOrderStaus = () => {
 
 
 
- 
+
 
 
 
@@ -315,6 +315,8 @@ const UpdatePartiallyOrderStaus = () => {
     setIsModalOpen(false)
 
   }
+
+  console.log(order,"orderrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
 
 
 
@@ -387,7 +389,7 @@ const UpdatePartiallyOrderStaus = () => {
                           <label className="mb-2.5 block text-black dark:text-white">Order No</label>
                           <ReactSelect
                             name="orderNo"
-                           
+
                             value={order?.orderNo ? { label: order.orderNo, value: order.orderNo } : null} // Display orderNo
                             styles={customStyles}
                             className="bg-white dark:bg-form-Field"
@@ -556,10 +558,26 @@ const UpdatePartiallyOrderStaus = () => {
                                   className="px-5 py-5 border-b border-gray-200 text-sm"
                                   colSpan={2} // Use colSpan to span across multiple columns
                                 >
-                                     <div className="flex items-center gap-2">
-                                <span onClick={() => navigate(`/order/modifyorderproduct/${product?.id}`)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"> VIEW ORDER PRODUCT</span>
-                                <span onClick={() => handleUpdateBom(item?.bom?.id)} className=" bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]">VIEW PRODUCT DETAILS</span>
-                            </div>
+
+
+{
+product.productStatus==="accepted"?(
+<div className="flex items-center gap-2">
+                                    <span onClick={() => navigate(`/order/modifyproductafterexecution/${product?.id}`)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"> ISSUE CHALAAN</span>
+                                    <span onClick={() => handleUpdateBom(item?.bom?.id)} className=" bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]">VIEW PRODUCT DETAILS</span>
+                                  </div>
+
+):
+<div className="flex items-center gap-2">
+                                    <span onClick={() => navigate(`/order/modifyorderproduct/${product?.id}`)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"> VIEW ORDER PRODUCT</span>
+                                    <span onClick={() => handleUpdateBom(item?.bom?.id)} className=" bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]">VIEW PRODUCT DETAILS</span>
+                                  </div>
+}
+
+                                  
+
+
+
                                 </td>
 
                               </tr>
@@ -583,7 +601,7 @@ const UpdatePartiallyOrderStaus = () => {
 
 
 
-                     
+
 
                       <div className="flex justify-center mt-4"> {/* Centering the button */}
                         <button
