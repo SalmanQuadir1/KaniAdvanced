@@ -561,7 +561,7 @@ const UpdatePartiallyOrderStaus = () => {
 
 
 {
-product.productStatus==="accepted"?(
+product.productStatus==="Accepted"?(
 <div className="flex items-center gap-2">
                                     <span onClick={() => navigate(`/order/modifyproductafterexecution/${product?.id}`)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"> ISSUE CHALAAN</span>
                                     <span onClick={() => handleUpdateBom(item?.bom?.id)} className=" bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]">VIEW PRODUCT DETAILS</span>
