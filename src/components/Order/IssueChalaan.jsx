@@ -360,7 +360,8 @@ const IssueChalaan = () => {
             challanDate3: "",
 
             challanDate4: "",
-            expectedSupplierDate:""
+            expectedSupplierDate:"",
+            updatedBy:order?.updatedBy
 
 
 
@@ -424,9 +425,10 @@ const IssueChalaan = () => {
                         <Field
                           name="productId"
                           readOnly
+                        
                           value={values?.productId} // Ensure it reflects Formik state
                           onChange={(e) => setFieldValue("productId", e.target.value)} // Update Formik state
-                          className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                          className="w-[200px] bg-gray-3 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           placeholder="Enter Product ID"
                         />
                         <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
@@ -437,7 +439,7 @@ const IssueChalaan = () => {
                         <label className="mb-2.5 block text-black dark:text-white">Quantity to Manufacture</label>
                         <Field
                           name="quantityToManufacture"
-                          className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                          className="w-[200px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           readOnly // Read-only field
                         />
                         <ErrorMessage name="quantityToManufacture" component="div" className="text-red-600 text-sm" />
