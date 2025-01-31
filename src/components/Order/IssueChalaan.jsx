@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 import useorder from '../../hooks/useOrder';
 import ReactDatePicker from "react-datepicker";
 import useProduct from '../../hooks/useProduct';
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, VIEW_ORDER_PRODUCT, UPDATE_ORDERPRODUCT_ALL } from '../../Constants/utils';
+import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, VIEW_ORDER_PRODUCT, UPDATE_ORDERPRODUCT_ALL, UPDATE_ISSUECHALLAN } from '../../Constants/utils';
 import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
@@ -93,10 +93,7 @@ const IssueChalaan = () => {
   };
 
 
-  const handleSupplierModalSubmit = () => {
-    console.log("Selected Suppliers:", selectedSuppliers);
-    closeSupplierModal();
-  };
+
 
 
 
@@ -110,66 +107,9 @@ const IssueChalaan = () => {
 
 
 
-  //  const handleUpdateSubmit = async (values) => {
 
-  //                console.log(values,"jazim");
-  //        try {
-  //            const url = `${UPDATE_ORDER_URL }/${id}`;
 
-  //            const response = await fetch(url, {
-  //                method: "PUT",
-  //                headers: {
-  //                    "Content-Type": "application/json",
-  //                    "Authorization": `Bearer ${token}`
-  //                },
-  //                body: JSON.stringify(values)
-  //            });
-
-  //            const data = await response.json();
-  //            if (response.ok) {
-  //             console.log(data,"coming ");
-
-  //                toast.success(`Order Updated successfully`);
-  //                // navigate('/inventory/viewMaterialInventory');
-
-  //            } else {
-  //                toast.error(`${data.errorMessage}`);
-  //            }
-  //        } catch (error) {
-  //            console.error(error);
-  //            toast.error("An error occurred");
-  //        } finally {
-
-  //        }
-
-  //    };
-
-  const handleUpdateSubmit = async (values) => {
-    console.log(values, "jazim");
-
-    try {
-      const url = `${UPDATE_ORDER_URL}/${id}`;
-      const response = await fetch(url, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(values)
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        console.log(data, "coming ");
-        toast.success(`Order Updated successfully`);
-      } else {
-        toast.error(`${data.errorMessage}`);
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("An error occurred");
-    }
-  };
+ 
 
 
   const getOrderById = async () => {
@@ -275,56 +215,13 @@ const IssueChalaan = () => {
 
 
 
-  const openSupplierModal = (id) => {
-    console.log("Opening supplier modal for product:", id);
-    setIsSupplierModalOpen(true);
-    setsuppId(id);
-
-    // Fetch existing suppliers based on order.productSuppliers and the selected product id
-    const existingSuppliers = order?.productSuppliers?.map((supplier) => ({
-      selectedRowId: id,
-      supplierId: supplier.supplier.id,
-      supplierName: supplier.supplier.name,
-      supplierOrderQty: supplier.supplierOrderQty || 0,
-    })) || [];
-
-    // Set the suppliers in the modal for selection (do not modify selectedSuppliers here)
-    setsupplierList(existingSuppliers); // Assuming you have a state to hold the suppliers for the modal
-  };
+ 
 
 
 
 
 
 
-  const handleCheckboxChange = (selectedRowId, supplier) => {
-    setSelectedSuppliers((prev = []) => {
-      let updated = [...prev];
-
-      // Ensure supplier exists in the list
-      const exists = updated.some(
-        (row) => row.selectedRowId === selectedRowId && row.supplierId === supplier.id
-      );
-
-      if (exists) {
-        // Remove supplier (toggle behavior)
-        updated = updated.filter(
-          (row) => !(row.selectedRowId === selectedRowId && row.supplierId === supplier.id)
-        );
-      } else {
-        // Add as a new row
-        updated.push({
-          selectedRowId,
-          supplierId: supplier.id,
-          supplierName: supplier.supplierName,
-          supplierOrderQty: 0, // Default quantity
-        });
-      }
-
-      console.log(updated, "Updated Suppliers");
-      return updated;
-    });
-  };
 
 
   console.log(selectedSuppliers, "kikikikikikikiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
@@ -360,9 +257,19 @@ const IssueChalaan = () => {
 
   const handleSubmit = async (values) => {
 
-    console.log(values, "kiki");
+
+    const formattedValues={
+      challanNo:values.challanNo,
+      challanDate: values.challanDate,
+      challanDate1: values.challanDate1,
+      challanDate2: values.challanDate2,
+      challanDate3: values.challanDate3,
+      challanDate4: values.challanDate4,
+      expectedSupplierDate: values.expectedSupplierDate
+    }
+   
     try {
-      const url = `${UPDATE_ORDERPRODUCT_ALL}/${id}`;
+      const url = `${UPDATE_ISSUECHALLAN}/${id}`;
       const method = "PUT";
 
       const response = await fetch(url, {
@@ -371,7 +278,7 @@ const IssueChalaan = () => {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-        body: JSON.stringify(values)
+        body: JSON.stringify(formattedValues)
       });
 
       const data = await response.json();
@@ -410,80 +317,7 @@ const IssueChalaan = () => {
 
 
 
-  const onSubmit = async (values, e) => {
-    console.log("Form submission triggered");
-    console.log(values, "Received values from frontend");
 
-    const formattedValues = {
-      orderDate: values.orderDate,
-      value: parseFloat(values.value),
-      shippingDate: values.shippingDate,
-      expectingDate: values.expectingDate,
-      tagsAndLabels: values.tags,
-      logoNo: values.logoNo,
-      productionExecutionStatus: "In Progress", // You can change this as needed
-      productionComments: values.customisationDetails,
-      poDate: values.poDate,
-      orderCategory: values.orderCategory,
-      purchaseOrderNo: values.purchaseOrderNo,
-      clientInstruction: values.clientInstruction,
-      status: "Created", // Example static value
-      customisationDetails: values.customisationDetails,
-      createdBy: "Admin", // Replace with a dynamic value if available
-      employeeName: values.employeeName,
-      salesChannel: values.salesChannel,
-      // customer: {
-      //   id: 1, // Replace with the actual customer ID from your `values`
-      // },
-      customer: {
-        id: values.customer?.id || null, // Dynamically include the customer ID or set to null if not available
-      },
-      orderType: {
-        id: values.orderType?.id || 4, // Replace with the actual Order Type ID
-      },
-      orderProducts: [
-        // {
-        //   products: {
-        //     id: values.productId, // Product ID from the form values
-        //   },
-        {
-          // products: {
-          //   id: values.products?.productId || '',  // Accessing the productId from the products object
-          // },
-
-          products: {
-            id: values.products?.id || "", // Dynamically fetch product ID
-          },
-          // products: {
-          //   ...product.products,
-          //   productId: product.products?.productId || '',  // Set initial value for productId
-          // },
-
-          clientOrderQuantity: parseFloat(values.orderQuantity),
-          orderQuantity: parseFloat(values.orderQuantity),
-          value: parseFloat(values.value),
-          inStockQuantity: parseFloat(values.inStockQuantity),
-          quantityToManufacture: parseFloat(values.quantityToManufacture),
-          clientShippingDate: values.clientShippingDate,
-          expectedDate: values.expectedDate,
-          challanNo: "CH12345", // Replace with dynamic value if available
-          challanDate: values.shippingDate,
-          productSuppliers: [
-            {
-              supplier: {
-                id: 1, // Replace with actual supplier ID
-              },
-              supplierOrderQty: parseFloat(values.supplierOrderQty),
-            },
-          ],
-        },
-      ],
-
-    };
-
-    console.log(JSON.stringify(formattedValues, null, 2), "Formatted Values");
-    handleUpdateSubmit(formattedValues, e);
-  };
 
   console.log(selectedSuppliers, "supppppppppppppppppppplierssssssssssssssssss");
 
@@ -501,7 +335,7 @@ const IssueChalaan = () => {
             orderCategory: order?.orderCategory || '',
             productId: order?.products?.productId,
             quantityToManufacture: order?.quantityToManufacture,
-        
+
             expectedDate: order?.expectedDate,
 
             productsId: order?.products?.id,
@@ -515,17 +349,18 @@ const IssueChalaan = () => {
               supplierOrderQty: supplier.supplierOrderQty || 0,
             })) || [],
 
-            
-challanNo:"",
-challanDate:"",
 
-challanDate1 :"",
+            challanNo: "",
+            challanDate: "",
 
-challanDate2 :"",
+            challanDate1: "",
 
-challanDate3 :"",
+            challanDate2: "",
 
-challanDate4 :"",
+            challanDate3: "",
+
+            challanDate4: "",
+            expectedSupplierDate:""
 
 
 
@@ -553,7 +388,7 @@ challanDate4 :"",
                         <label className="mb-2.5 block text-black dark:text-white">Order No</label>
                         <ReactSelect
                           name="orderNo"
-                        
+
                           value={order?.orderNo ? { label: order.orderNo, value: order.orderNo } : null} // Display orderNo
                           styles={customStyles}
                           className="bg-white dark:bg-form-Field"
@@ -573,7 +408,7 @@ challanDate4 :"",
                           onChange={(option) => setFieldValue("orderCategory", option.value)} // Store only value
                           options={OrderCategoryOptions}
                           styles={customStyles}
-                          isDisabled={true} 
+                          isDisabled={true}
                           className="bg-white dark:bg-form-Field"
                           classNamePrefix="react-select"
                           placeholder="Select Order Category"
@@ -613,7 +448,7 @@ challanDate4 :"",
 
                     <div className="flex flex-wrap gap-3 mt-5">
                       {/* Order No */}
-                   
+
 
                       {/* Order Category */}
                       <div className="flex-1 min-w-[200px]">
@@ -660,7 +495,7 @@ challanDate4 :"",
                                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                   Supplier Quantity
                                 </th>
-                               
+
                               </tr>
                             </thead>
                             <tbody>
@@ -668,7 +503,7 @@ challanDate4 :"",
                                 <tr key={index}>
                                   <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                     <input
-                                  
+
                                       value={supplierData.supplierName} // Display only this supplier's name
                                       readOnly
                                       className="w-[130px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
@@ -677,7 +512,7 @@ challanDate4 :"",
 
                                   <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                     <Field
-                                    readOnly
+                                      readOnly
                                       name={`selectedSuppliers[${index}].supplierOrderQty`}
                                       value={supplierData.supplierOrderQty}
                                       type="number"
@@ -721,9 +556,9 @@ challanDate4 :"",
                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Chalaan No</label>
                         <Field
-                          name="ChalaanNo"
-                          value={values?.value} // Ensure it reflects Formik state
-                          onChange={(e) => setFieldValue("productId", e.target.value)} // Update Formik state
+                          name="challanNo"
+                          // value={values?.value} // Ensure it reflects Formik state
+                          // onChange={(e) => setFieldValue("productId", e.target.value)} // Update Formik state
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           placeholder="Enter Product ID"
                         />
@@ -734,10 +569,10 @@ challanDate4 :"",
                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Chalaan Date</label>
                         <Field
-                        name="challanDate"
+                          name="challanDate"
                           type="date"
                           // name={`orderProducts[${index}].expectedDate`}
-                          value={values.expectedDate || ""}
+                          // value={values.expectedDate || ""}
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                         //readOnly
                         />
@@ -749,7 +584,7 @@ challanDate4 :"",
                           type="date"
                           name="challanDate1"
                           // name={`orderProducts[${index}].expectedDate`}
-                          value={values.expectedDate || ""}
+                          // value={values.expectedDate || ""}
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                         //readOnly
                         />
@@ -761,7 +596,7 @@ challanDate4 :"",
                           type="date"
                           name="challanDate2"
                           // name={`orderProducts[${index}].expectedDate`}
-                          value={values.expectedDate || ""}
+                          // value={values.expectedDate || ""}
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                         //readOnly
                         />
@@ -773,7 +608,7 @@ challanDate4 :"",
                           type="date"
                           name="challanDate3"
                           // name={`orderProducts[${index}].expectedDate`}
-                          value={values.expectedDate || ""}
+                          // value={values.expectedDate || ""}
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                         //readOnly
                         />
@@ -785,7 +620,7 @@ challanDate4 :"",
                           type="date"
                           name="challanDate4"
                           // name={`orderProducts[${index}].expectedDate`}
-                          value={values.expectedDate || ""}
+                          // value={values.expectedDate || ""}
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                         //readOnly
                         />
@@ -794,9 +629,9 @@ challanDate4 :"",
                         <label className="mb-2.5 block text-black dark:text-white">Expected Supplier Date</label>
                         <Field
                           type="date"
-                          name="challanDate5"
+                          name="expectedSupplierDate"
                           // name={`orderProducts[${index}].expectedDate`}
-                          value={values.expectedDate || ""}
+                          // value={values.expectedDate || ""}
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                         //readOnly
                         />
@@ -851,7 +686,7 @@ challanDate4 :"",
             </Form>
           )}
         </Formik>
-      
+
 
         <ModalUpdate
           isOpen={isModalOpen}

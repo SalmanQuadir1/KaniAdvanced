@@ -197,6 +197,8 @@ export const UPDATE_ORDERCREATED_ALL= `${BASE_URL}/order/updateOrderProductsAcce
 
 export const UPDATE_ORDERPRODUCT_ALL= `${BASE_URL}/order/orderProducts`; 
 
+export const UPDATE_ISSUECHALLAN= `${BASE_URL}/order/orderProductsIssue`; 
+
 
 
 
