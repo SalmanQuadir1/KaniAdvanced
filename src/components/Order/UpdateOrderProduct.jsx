@@ -358,39 +358,6 @@ const UpdateOrderProduct = () => {
   }
 
 
-  const handleSubmit = async(values) => {
-
-    console.log(values, "kiki");
-    try {
-      const url = `${UPDATE_ORDERPRODUCT_ALL}/${id}`;
-      const method ="PUT";
-
-      const response = await fetch(url, {
-          method: method,
-          headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(values)
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        toast.success(`Order Status Updated  successfully`);
-     
-  
-
-        // getCurrency(pagination.currentPage); // Fetch updated Currency
-      } else {
-        toast.error(`${data.errorMessage}`);
-      }
-    } catch (error) {
-      console.error(error, response);
-      toast.error("An error occurred");
-    } 
-
-    // You can now send `finalData` to the backend or do any other operation with it
-  };
 
 
 
@@ -400,7 +367,8 @@ const UpdateOrderProduct = () => {
 
 
 
-   
+
+
 
 
 
@@ -486,7 +454,39 @@ const UpdateOrderProduct = () => {
   };
 
   console.log(selectedSuppliers, "supppppppppppppppppppplierssssssssssssssssss");
+  const handleSubmit = async (values) => {
 
+    console.log(values, "kiki");
+    try {
+      const url = `${UPDATE_ORDERPRODUCT_ALL}/${id}`;
+      const method ="PUT";
+
+      const response = await fetch(url, {
+          method: method,
+          headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(values)
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        toast.success(`Order Status Updated  successfully`);
+
+
+
+        // getCurrency(pagination.currentPage); // Fetch updated Currency
+      } else {
+        toast.error(`${data.errorMessage}`);
+      }
+    } catch (error) {
+      console.error(error, response);
+      toast.error("An error occurred");
+    } 
+
+    // You can now send `finalData` to the backend or do any other operation with it
+  };
 
   return (
     <DefaultLayout>
@@ -506,11 +506,11 @@ const UpdateOrderProduct = () => {
             productStatus: "",
             productionComments: "",
             productsId: order?.products?.id,
-           // supplierName: product.productSuppliers?.supplier?.name || '', // Safely accessing supplier name
+            // supplierName: product.productSuppliers?.supplier?.name || '', // Safely accessing supplier name
             // supplierOrderQty: product.productSuppliers?.[0]?.supplierOrderQty || 0,
-            productSuppliers: order?.productSuppliers?.map(supplier => ({
+            productSuppliers: selectedSuppliers.map(supplier => ({
               supplier: {
-                id: supplier?.id, // Send supplier ID
+                id: supplier?.supplierId, // Send supplier ID
               },
 
               supplierOrderQty: supplier.supplierOrderQty || 0,
@@ -653,7 +653,7 @@ const UpdateOrderProduct = () => {
                         <Field
                           name="productionComments"
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                          // Read-only field
+                        // Read-only field
                         />
                         <ErrorMessage name="quantityToManufacture" component="div" className="text-red-600 text-sm" />
                       </div>
@@ -707,16 +707,21 @@ const UpdateOrderProduct = () => {
 
                                   <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                     <Field
-                                      name={`selectedSuppliers[${index}].supplierOrderQty`}
-                                      value={supplierData.supplierOrderQty}
+                                      name={`productSuppliers[${index}].supplierOrderQty`}
+                                      // value={supplierData.supplierOrderQty||""}
                                       type="number"
                                       className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                     />
                                   </td>
                                   <Field
+                                    name={`productSuppliers[${index}].supplier`}
+                                    type="hidden"
+                                    value={supplierData.supplierName}
+                                  />
+                                  <Field
                                     name={`productSuppliers[${index}].supplier.id`}
                                     type="hidden"
-                                    value={supplierData.supplierId} // Send Supplier ID in Form Submission
+                                    value={supplierData.supplierId}
                                   />
 
                                   <td className="px-5 py-5 border-b border-gray-200 text-sm">
