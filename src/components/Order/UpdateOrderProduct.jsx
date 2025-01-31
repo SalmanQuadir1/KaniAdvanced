@@ -217,7 +217,7 @@ const UpdateOrderProduct = () => {
   const OrderCategoryOptions = [
     { value: 'Embroidery', label: 'Embroidery' },
     { value: 'Dyeing', label: 'Dyeing' },
-    { value: 'PlainOrder', label: 'PlainOrder' },
+    { value: 'Plain Order', label: 'PlainOrder' },
 
   ];
 
