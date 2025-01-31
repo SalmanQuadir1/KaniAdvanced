@@ -74,6 +74,8 @@ import ViewOrderCreated from './components/Order/ViewOrderCreated.jsx';
 
 import ViewOrderPartiallyCreated from './components/Order/ViewOrderPartiallyCreated.jsx';
 
+import ViewOrderPartiallyApproved from './components/Order/ViewOrderPartiallyApproved.jsx';
+
 import UpdateOrder from './components/Order/UpdateOrder.jsx';
 
 
@@ -279,6 +281,16 @@ function App() {
               <>
                 <PageTitle title="View Order Created " />
                 <ViewOrderPartiallyCreated />
+              </>
+            }
+          />
+
+<Route
+            path="/order/partiallyApproved"
+            element={
+              <>
+                <PageTitle title="View Order Partially Approved " />
+                <ViewOrderPartiallyApproved />
               </>
             }
           />

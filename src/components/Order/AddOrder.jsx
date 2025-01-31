@@ -7,7 +7,7 @@ import flatpickr from 'flatpickr';
 import ReactDatePicker from "react-datepicker";
 import 'flatpickr/dist/themes/material_blue.css'; // Import a Flatpickr theme
 import "react-datepicker/dist/react-datepicker.css";
-
+import { format } from "date-fns";
 import Modal from './Modal';
 import * as Yup from 'yup';
 import { MdDelete } from "react-icons/md";
@@ -332,7 +332,7 @@ const AddOrder = () => {
   console.log(prodIdModal, "prodddddddddddddddddddddddddd");
   const [isPopulated, setIsPopulated] = useState(false);
 
-console.log(selectedSuppliers,"umerumer");
+  console.log(selectedSuppliers, "umerumer");
 
   return (
     <DefaultLayout>
@@ -477,10 +477,10 @@ console.log(selectedSuppliers,"umerumer");
                                   onChange={(date) =>
                                     form.setFieldValue(
                                       "orderDate",
-                                      date ? date.toISOString().split("T")[0] : "" // Format to yyyy-MM-dd
+                                      date ? format(date, "yyyy-MM-dd") : "" // Format without timezone shift
                                     )
                                   }
-                                  dateFormat="yyyy-MM-dd" // Display format in the picker
+                                  dateFormat="yyyy-MM-dd" // Display format
                                   placeholderText="Select Order Date"
                                   className="form-datepicker w-[430px] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                 />
@@ -540,7 +540,7 @@ console.log(selectedSuppliers,"umerumer");
                                         onChange={(date) =>
                                           form.setFieldValue(
                                             "poDate",
-                                            date ? date.toISOString().split("T")[0] : "" // Format to yyyy-MM-dd
+                                            date ? format(date, "yyyy-MM-dd") : ""  // Format to yyyy-MM-dd
                                           )
                                         }
                                         dateFormat="yyyy-MM-dd" // Display format in the picker
@@ -601,7 +601,7 @@ console.log(selectedSuppliers,"umerumer");
                                 onChange={(date) =>
                                   form.setFieldValue(
                                     "shippingDate",
-                                    date ? date.toISOString().split("T")[0] : "" // Format to yyyy-MM-dd
+                                    date ? format(date, "yyyy-MM-dd") : ""  // Format to yyyy-MM-dd
                                   )
                                 }
                                 dateFormat="yyyy-MM-dd" // Display format in the picker
@@ -987,7 +987,7 @@ console.log(selectedSuppliers,"umerumer");
                                       >
                                         <ReactDatePicker
                                           selected={values.orderProducts[index]?.clientShippingDate || null}
-                                          onChange={(date) => setFieldValue(`orderProducts[${index}].clientShippingDate`, date ? date.toISOString().split("T")[0] : "")}
+                                          onChange={(date) => setFieldValue(`orderProducts[${index}].clientShippingDate`, date ? format(date, "yyyy-MM-dd") : "" )}
                                           dateFormat="yyyy-MM-dd"
                                           placeholderText="Enter Client Shipping Date"
                                           className="w-full bg-transparent outline-none"
@@ -1007,7 +1007,7 @@ console.log(selectedSuppliers,"umerumer");
 
                                         <ReactDatePicker
                                           selected={values.orderProducts[index]?.expectedDate || null}
-                                          onChange={(date) => setFieldValue(`orderProducts[${index}].expectedDate`, date ? date.toISOString().split("T")[0] : "")}
+                                          onChange={(date) => setFieldValue(`orderProducts[${index}].expectedDate`,  date ? format(date, "yyyy-MM-dd") : "" )}
                                           dateFormat="yyyy-MM-dd"
                                           placeholderText="Enter Client expected Date"
                                           className="w-full bg-transparent outline-none"
