@@ -158,18 +158,83 @@ const Chart = () => {
               </CardDataStats>
             </Link>
 
+            <Link to={"/orderlist/Executed"}>
+              <CardDataStats
+                title="Approved By Production Orders"
+                total={countMapping['unit'] || 0}
+
+
+                // rate="0.43%"
+                levelUp
+              >
+                <LuScale className='w-10 h-10' />
+              </CardDataStats>
+            </Link>
+
+            <Link to={"/orderlist/Closed"}>
+              <CardDataStats
+                title="Completed Orders"
+                total={countMapping['unit'] || 0}
+
+
+                // rate="0.43%"
+                levelUp
+              >
+                <LuScale className='w-10 h-10' />
+              </CardDataStats>
+            </Link>
+
+            <Link to={"/orderlist/PartiallyClosed"}>
+              <CardDataStats
+                title="Partially Completed Orders"
+                total={countMapping['unit'] || 0}
+
+
+                // rate="0.43%"
+                levelUp
+              >
+                <LuScale className='w-10 h-10' />
+              </CardDataStats>
+            </Link>
+
+            <Link to={"/orderlist/Pending"}>
+              <CardDataStats
+                title="Pending Orders"
+                total={countMapping['unit'] || 0}
+
+
+                // rate="0.43%"
+                levelUp
+              >
+                <LuScale className='w-10 h-10' />
+              </CardDataStats>
+            </Link>
+
+            <Link to={"/orderlist/PartiallyPending"}>
+              <CardDataStats
+                title="Partially Pending Orders"
+                total={countMapping['unit'] || 0}
+
+
+                // rate="0.43%"
+                levelUp
+              >
+                <LuScale className='w-10 h-10' />
+              </CardDataStats>
+            </Link>
 
 
 
 
-         
-        
 
 
 
 
 
-           
+
+
+
+
 
 
             <Link to={"/configurator/location"}>
