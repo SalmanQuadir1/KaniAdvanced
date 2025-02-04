@@ -99,6 +99,7 @@ const UpdateOrder = () => {
 
 
   console.log(selectedSuppliers, "selecteddddddddd Suppliersss");
+  
 
   const openSupplierModal = (id) => {
     console.log("opening supplier  modal");
@@ -181,32 +182,70 @@ const UpdateOrder = () => {
    
   //    };
       
-  const handleUpdateSubmit = async (values) => {
-    console.log(values, "jazim");
+//   const handleUpdateSubmit = async (values) => {
+//     console.log(values, "jazim");
 
-    try {
-        const url = `${UPDATE_ORDER_URL}/${id}`;
-        const response = await fetch(url, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify(values)
-        });
+//     try {
+//         const url = `${UPDATE_ORDER_URL}/${id}`;
+//         const response = await fetch(url, {
+//             method: "PUT",
+//             headers: {
+//                 "Content-Type": "application/json",
+//                 "Authorization": `Bearer ${token}`
+//             },
+//             body: JSON.stringify(values)
+//         });
 
-        const data = await response.json();
-        if (response.ok) {
-            console.log(data, "coming ");
-            toast.success(`Order Updated successfully`);
-        } else {
-            toast.error(`${data.errorMessage}`);
-        }
-    } catch (error) {
-        console.error(error);
-        toast.error("An error occurred");
-    }
+//         const data = await response.json();
+//         if (response.ok) {
+//             console.log(data, "coming ");
+//             toast.success(`Order Updated successfully`);
+//         } else {
+//             toast.error(`${data.errorMessage}`);
+//         }
+//     } catch (error) {
+//         console.error(error);
+//         toast.error("An error occurred");
+//     }
+// };
+
+const handleUpdateSubmit = async (values) => {
+  console.log("Formik Values:", values);
+  console.log("prodIdModal Data:", prodIdModal);
+
+  // Merge prodIdModal into values
+  const updatedValues = {
+      ...values,
+      prodIdModal, // Ensure this is included correctly
+  };
+
+  console.log("Final Payload Being Sent:", JSON.stringify(updatedValues, null, 2));
+
+  try {
+      const url = `${UPDATE_ORDER_URL}/${id}`;
+      const response = await fetch(url, {
+          method: "PUT",
+          headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify(updatedValues)
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+          console.log("Response Data:", data);
+          toast.success(`Order Updated successfully`);
+      } else {
+          console.error("Error Response:", data);
+          toast.error(`${data.errorMessage}`);
+      }
+  } catch (error) {
+      console.error("Error:", error);
+      toast.error("An error occurred");
+  }
 };
+
      
 
    const getOrderById = async () => {
@@ -352,9 +391,10 @@ const UpdateOrder = () => {
     console.log("opennnnnnnn");
     setIsModalOpen(true);
     setIsSupplierModalOpen(false)
-    
+    console.log(option.prodId,"prddd")
 
   };
+  
   // const handleProductIdChange = (option, setFieldValue, index) => {
   //   const productId = option.value; // Get the selected product ID
   //   setFieldValue(`productId`, productId); // Update the selected product ID in the form state
@@ -402,80 +442,80 @@ const UpdateOrder = () => {
   // }, [productId]);
 
 
-  const onSubmit = async (values, e) => {
-    console.log("Form submission triggered");
-    console.log(values, "Received values from frontend");
+//   const onSubmit = async (values, e) => {
+//     console.log("Form submission triggered");
+//     console.log(values, "Received values from frontend");
 
-    const formattedValues = {
-      orderDate: values.orderDate,
-      value: parseFloat(values.value),
-      shippingDate: values.shippingDate,
-      expectingDate: values.expectingDate,
-      tagsAndLabels: values.tags,
-      logoNo: values.logoNo,
-      productionExecutionStatus: "In Progress", // You can change this as needed
-      productionComments: values.customisationDetails,
-      poDate: values.poDate,
-      orderCategory: values.orderCategory,
-      purchaseOrderNo: values.purchaseOrderNo,
-      clientInstruction: values.clientInstruction,
-      status: "Created", // Example static value
-      customisationDetails: values.customisationDetails,
-      createdBy: "Admin", // Replace with a dynamic value if available
-      employeeName: values.employeeName,
-      salesChannel: values.salesChannel,
-      // customer: {
-      //   id: 1, // Replace with the actual customer ID from your `values`
-      // },
-      customer: {
-        id: values.customer?.id || null, // Dynamically include the customer ID or set to null if not available
-      },
-      orderType: {
-        id: values.orderType?.id || 4, // Replace with the actual Order Type ID
-      },
-      orderProducts: [
-        // {
-        //   products: {
-        //     id: values.productId, // Product ID from the form values
-        //   },
-          {
-            // products: {
-            //   id: values.products?.productId || '',  // Accessing the productId from the products object
-            // },
+//     const formattedValues = {
+//       orderDate: values.orderDate,
+//       value: parseFloat(values.value),
+//       shippingDate: values.shippingDate,
+//       expectingDate: values.expectingDate,
+//       tagsAndLabels: values.tags,
+//       logoNo: values.logoNo,
+//       productionExecutionStatus: "In Progress", // You can change this as needed
+//       productionComments: values.customisationDetails,
+//       poDate: values.poDate,
+//       orderCategory: values.orderCategory,
+//       purchaseOrderNo: values.purchaseOrderNo,
+//       clientInstruction: values.clientInstruction,
+//       status: "Created", // Example static value
+//       customisationDetails: values.customisationDetails,
+//       createdBy: "Admin", // Replace with a dynamic value if available
+//       employeeName: values.employeeName,
+//       salesChannel: values.salesChannel,
+//       // customer: {
+//       //   id: 1, // Replace with the actual customer ID from your `values`
+//       // },
+//       customer: {
+//         id: values.customer?.id || null, // Dynamically include the customer ID or set to null if not available
+//       },
+//       orderType: {
+//         id: values.orderType?.id || 4, // Replace with the actual Order Type ID
+//       },
+//       orderProducts: [
+//         // {
+//         //   products: {
+//         //     id: values.productId, // Product ID from the form values
+//         //   },
+//           {
+//             // products: {
+//             //   id: values.products?.productId || '',  // Accessing the productId from the products object
+//             // },
 
-            products: {
-              id: values.products?.id || "", // Dynamically fetch product ID
-            },
-            // products: {
-            //   ...product.products,
-            //   productId: product.products?.productId || '',  // Set initial value for productId
-            // },
+//             products: {
+//               id: values.products?.id || "", // Dynamically fetch product ID
+//             },
+//             // products: {
+//             //   ...product.products,
+//             //   productId: product.products?.productId || '',  // Set initial value for productId
+//             // },
   
-          clientOrderQuantity: parseFloat(values.orderQuantity),
-          orderQuantity: parseFloat(values.orderQuantity),
-          value: parseFloat(values.value),
-          inStockQuantity: parseFloat(values.inStockQuantity),
-          quantityToManufacture: parseFloat(values.quantityToManufacture),
-          clientShippingDate: values.clientShippingDate,
-          expectedDate: values.expectedDate,
-          challanNo: "CH12345", // Replace with dynamic value if available
-          challanDate: values.shippingDate,
-          productSuppliers: [
-            {
-              supplier: {
-                id: 1, // Replace with actual supplier ID
-              },
-              supplierOrderQty: parseFloat(values.supplierOrderQty),
-            },
-          ],
-        },
-      ],
+//           clientOrderQuantity: parseFloat(values.orderQuantity),
+//           orderQuantity: parseFloat(values.orderQuantity),
+//           value: parseFloat(values.value),
+//           inStockQuantity: parseFloat(values.inStockQuantity),
+//           quantityToManufacture: parseFloat(values.quantityToManufacture),
+//           clientShippingDate: values.clientShippingDate,
+//           expectedDate: values.expectedDate,
+//           challanNo: "CH12345", // Replace with dynamic value if available
+//           challanDate: values.shippingDate,
+//           productSuppliers: [
+//             {
+//               supplier: {
+//                 id: 1, // Replace with actual supplier ID
+//               },
+//               supplierOrderQty: parseFloat(values.supplierOrderQty),
+//             },
+//           ],
+//         },
+//       ],
       
-    };
+//     };
   
-    console.log(JSON.stringify(formattedValues, null, 2), "Formatted Values");
-    handleUpdateSubmit(formattedValues, e);
-};
+//     console.log(JSON.stringify(formattedValues, null, 2), "Formatted Values");
+//     handleUpdateSubmit(formattedValues, e);
+// };
 
 
   
@@ -513,6 +553,7 @@ const UpdateOrder = () => {
                 ...product.products,
                 productId: product.products?.productId || '',  // Set initial value for productId
               },
+              
     //            products: {
     //   ...product.products,
     //   productId: product.products?.id || '', // Use the product's id here
@@ -1159,6 +1200,7 @@ const UpdateOrder = () => {
 
 
 
+
                                       {/* <Field
   name={`orderProducts[${index}].products.id`}
   value={values.orderProducts[index]?.products?.productId || ""}
@@ -1213,7 +1255,7 @@ const UpdateOrder = () => {
                                              
                                       <Field
                                         name={`orderProducts[${index}].orderCategory`}
-                                        // value={item?.orderCatagory || ""}
+                                         value={item?.orderCatagory || ""}
                                         placeholder="Enter Order Category"
                                         onChange={(e) => {
                                           console.log(`Order Category: ${e.target.value}`);
@@ -1232,7 +1274,9 @@ const UpdateOrder = () => {
           <Field
             type="number"
             name={`orderProducts[${adjustedIndex}].clientOrderQuantity`}
+
             placeholder="Enter Client Order Qty"
+            
             className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
           />
           <ErrorMessage name="clientOrderQty" component="div" className="text-red-600 text-sm" />
