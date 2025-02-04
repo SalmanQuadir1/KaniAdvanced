@@ -182,69 +182,69 @@ const UpdateOrder = () => {
    
   //    };
       
-//   const handleUpdateSubmit = async (values) => {
-//     console.log(values, "jazim");
+  const handleUpdateSubmit = async (values) => {
+    console.log(values, "jazim");
 
-//     try {
-//         const url = `${UPDATE_ORDER_URL}/${id}`;
-//         const response = await fetch(url, {
-//             method: "PUT",
-//             headers: {
-//                 "Content-Type": "application/json",
-//                 "Authorization": `Bearer ${token}`
-//             },
-//             body: JSON.stringify(values)
-//         });
+    try {
+        const url = `${UPDATE_ORDER_URL}/${id}`;
+        const response = await fetch(url, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(values)
+        });
 
-//         const data = await response.json();
-//         if (response.ok) {
-//             console.log(data, "coming ");
-//             toast.success(`Order Updated successfully`);
-//         } else {
-//             toast.error(`${data.errorMessage}`);
-//         }
-//     } catch (error) {
-//         console.error(error);
-//         toast.error("An error occurred");
-//     }
-// };
-
-const handleUpdateSubmit = async (values) => {
-  console.log("Formik Values:", values);
-  console.log("prodIdModal Data:", prodIdModal);
-
-  // Merge prodIdModal into values
-  const updatedValues = {
-      ...values,
-      prodIdModal, // Ensure this is included correctly
-  };
-
-  console.log("Final Payload Being Sent:", JSON.stringify(updatedValues, null, 2));
-
-  try {
-      const url = `${UPDATE_ORDER_URL}/${id}`;
-      const response = await fetch(url, {
-          method: "PUT",
-          headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(updatedValues)
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-          console.log("Response Data:", data);
-          toast.success(`Order Updated successfully`);
-      } else {
-          console.error("Error Response:", data);
-          toast.error(`${data.errorMessage}`);
-      }
-  } catch (error) {
-      console.error("Error:", error);
-      toast.error("An error occurred");
-  }
+        const data = await response.json();
+        if (response.ok) {
+            console.log(data, "coming ");
+            toast.success(`Order Updated successfully`);
+        } else {
+            toast.error(`${data.errorMessage}`);
+        }
+    } catch (error) {
+        console.error(error);
+        toast.error("An error occurred");
+    }
 };
+
+// const handleUpdateSubmit = async (values) => {
+//   console.log("Formik Values:", values);
+//   console.log("prodIdModal Data:", prodIdModal);
+
+//   // Merge prodIdModal into values
+//   const updatedValues = {
+//       ...values,
+//       prodIdModal, // Ensure this is included correctly
+//   };
+
+//   console.log("Final Payload Being Sent:", JSON.stringify(updatedValues, null, 2));
+
+//   try {
+//       const url = `${UPDATE_ORDER_URL}/${id}`;
+//       const response = await fetch(url, {
+//           method: "PUT",
+//           headers: {
+//               "Content-Type": "application/json",
+//               "Authorization": `Bearer ${token}`
+//           },
+//           body: JSON.stringify(updatedValues)
+//       });
+
+//       const data = await response.json();
+//       if (response.ok) {
+//           console.log("Response Data:", data);
+//           toast.success(`Order Updated successfully`);
+//       } else {
+//           console.error("Error Response:", data);
+//           toast.error(`${data.errorMessage}`);
+//       }
+//   } catch (error) {
+//       console.error("Error:", error);
+//       toast.error("An error occurred");
+//   }
+// };
 
      
 
@@ -594,6 +594,45 @@ const handleUpdateSubmit = async (values) => {
           
             clientInstruction: order?.clientInstruction || '', 
             // customer: '',
+
+
+            orderProducts: [
+              ...(order?.orderProducts?.map((product) => ({
+                products: {
+                  ...product.products,
+                  productId: product.products?.productId || '',
+                },
+                orderCategory: product.orderCategory || '',
+                inStockQuantity: product.inStockQuantity || '',
+                clientOrderQuantity: product.clientOrderQuantity || '',
+                quantityToManufacture: product.quantityToManufacture || '',
+                units: product.units || '',
+                value: product.value || '',
+                clientShippingDate: product.clientShippingDate || '',
+                expectedDate: product.expectedDate || '',
+                productSuppliers: product.productSuppliers?.map(supplier => ({
+                  supplierName: supplier.supplier?.name || '',
+                  supplierOrderQty: supplier.supplierOrderQty || 0,
+                })) || [],
+              })) || []),
+          
+              // Merge `prodIdModal` and map it correctly
+              ...(prodIdModal?.map((item, index) => ({
+                products: {
+                  productId: item.productId || '',
+                  id: item.id || '',  // Add id if available
+                },
+                orderCategory: item.orderCatagory || '',
+                inStockQuantity: '',
+                clientOrderQuantity: '',
+                quantityToManufacture: '',
+                units: '',
+                value: '',
+                clientShippingDate: '',
+                expectedDate: '',
+                productSuppliers: [],
+              })) || [])
+            ]
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
