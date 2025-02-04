@@ -10,12 +10,12 @@ import * as Yup from 'yup';
 import useorder from '../../hooks/useOrder';
 import ReactDatePicker from "react-datepicker";
 import useProduct from '../../hooks/useProduct';
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, VIEW_ORDER_PRODUCT, UPDATE_ORDERPRODUCT_ALL, UPDATE_ISSUECHALLAN } from '../../Constants/utils';
+import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, VIEW_ORDER_PRODUCT, UPDATE_ORDERPRODUCT_ALL, UPDATE_ISSUECHALLAN, UPDATE_ORDERRECIEVED } from '../../Constants/utils';
 import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
 import { FiTrash2 } from 'react-icons/fi';
-import { useParams } from 'react-router-dom';
+import { useNavigation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import SupplierModall from './SupplierModall';
@@ -38,6 +38,8 @@ const UpdateOrderRecieving = () => {
   const [orderProduct, setorderProduct] = useState([])
 
   const [selectedRowId, setSelectedRowId] = useState(null);
+
+  const navigate = useNavigation();
   const [suppliers, setSuppliers] = useState([
     { id: 1, name: "Supplier A" },
     { id: 2, name: "Supplier B" },
@@ -69,20 +71,20 @@ const UpdateOrderRecieving = () => {
   const Locations = [
     { value: 'Srinagar', label: 'Srinagar' },
     { value: 'Delhi', label: 'Delhi' },
-   
+
 
   ];
 
   const Status = [
     { value: 'Closed', label: 'Closed' },
- 
+
 
   ];
 
   const PendingStatus = [
     { value: 'Pending', label: 'Pending' },
     { value: 'ForcedClosure', label: 'Forced Closure' },
-   
+
 
   ];
 
@@ -276,20 +278,24 @@ const UpdateOrderRecieving = () => {
 
 
   const handleSubmit = async (values) => {
+   
 
 
     const formattedValues = {
-      challanNo: values.challanNo,
-      challanDate: values.challanDate,
-      challanDate1: values.challanDate1,
-      challanDate2: values.challanDate2,
-      challanDate3: values.challanDate3,
-      challanDate4: values.challanDate4,
-      expectedSupplierDate: values.expectedSupplierDate
+     
+      receivedQuantity: values.receivedQuantity,
+      receivedDate: values.receivedDate,
+
+      pendingQuantity: values.pendingQuantity,
+      defectiveQuantity: values.defectiveQuantity,
+      extraQuantity: values.extraQuantity,
+      productStatus: values.productStatus,
+      location: values.location
     }
+    console.log(formattedValues,"heyyyy");
 
     try {
-      const url = `${UPDATE_ISSUECHALLAN}/${id}`;
+      const url = `${UPDATE_ORDERRECIEVED}/${id}`;
       const method = "PUT";
 
       const response = await fetch(url, {
@@ -303,7 +309,8 @@ const UpdateOrderRecieving = () => {
 
       const data = await response.json();
       if (response.ok) {
-        toast.success(`Order Status Updated  successfully`);
+        toast.success(`Order Recieved Status Updated successfully`);
+        navigate("/order/partiallyApproved")
 
 
 
@@ -360,11 +367,11 @@ const UpdateOrderRecieving = () => {
 
             productsId: order?.products?.id,
 
-            clientOrderQuantity:order?.clientOrderQuantity,
-            units:order?.units,
-            expectedSupplierDate:order?.expectedSupplierDate,
-            updatedBy:order?.updatedBy,
-          
+            clientOrderQuantity: order?.clientOrderQuantity,
+            units: order?.units,
+            expectedSupplierDate: order?.expectedSupplierDate,
+            updatedBy: order?.updatedBy,
+
             // supplierName: product.productSuppliers?.supplier?.name || '', // Safely accessing supplier name
             // supplierOrderQty: product.productSuppliers?.[0]?.supplierOrderQty || 0,
             productSuppliers: order?.productSuppliers?.map(supplier => ({
@@ -376,16 +383,17 @@ const UpdateOrderRecieving = () => {
             })) || [],
 
 
-            challanNo: "",
-            challanDate: "",
+            receivedQuantity: "",
+            receivedDate: "",
 
-            challanDate1: "",
+            pendingQuantity: "",
 
-            challanDate2: "",
+            defectiveQuantity: "",
 
-            challanDate3: "",
+            extraQuantity: "",
 
-            challanDate4: "",
+            productStatus: "",
+            location: "",
             // expectedSupplierDate: "",
             // updatedBy: order?.updatedBy
 
@@ -483,7 +491,7 @@ const UpdateOrderRecieving = () => {
                         <Field
                           name="units"
                           className="w-[200px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                          readOnly 
+                          readOnly
                         />
                         <ErrorMessage name="units" component="div" className="text-red-600 text-sm" />
                       </div>
@@ -529,10 +537,19 @@ const UpdateOrderRecieving = () => {
                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Recieved Quantity</label>
                         <Field
-                          name="quantityToManufacture"
+                          type="number"
+                          name="receivedQuantity"
                           className="w-[200px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                          readOnly // Read-only field
+                          onChange={(e) => {
+                            const receivedQuantity = parseInt(e.target.value) || 0;
+                            const clientOrderQuantity = parseInt(values.clientOrderQuantity) || 0;
+
+                            setFieldValue("receivedQuantity", receivedQuantity);
+                            setFieldValue("pendingQuantity", Math.max(0, clientOrderQuantity - receivedQuantity));
+                            setFieldValue("extraQuantity", Math.max(0, receivedQuantity - clientOrderQuantity));
+                          }}
                         />
+
                         <ErrorMessage name="quantityToManufacture" component="div" className="text-red-600 text-sm" />
                       </div>
                       {/* Order No */}
@@ -541,9 +558,11 @@ const UpdateOrderRecieving = () => {
                         <label className="mb-2.5 block text-black dark:text-white">Recieved Date</label>
                         <Field
                           type="date"
-                          readOnly
+                          name="receivedDate"
+
+                          // name={receivedDate}
                           // name={`orderProducts[${index}].expectedDate`}
-                          value={values.expectedDate || ""}
+                          // value={values.receivedDate || ""}
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                         //readOnly
                         />
@@ -552,21 +571,22 @@ const UpdateOrderRecieving = () => {
                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Pending Quantity</label>
                         <Field
-                          name="unit"
+                          name="pendingQuantity"
                           className="w-[200px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           readOnly // Read-only field
                         />
-                        <ErrorMessage name="unit" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage name="pendingQuantity" component="div" className="text-red-600 text-sm" />
                       </div>
 
                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Defective Quantity</label>
                         <Field
-                          name="unit"
+                          type="number"
+                          name="defectiveQuantity"
                           className="w-[200px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                          readOnly // Read-only field
+                        // Read-only field
                         />
-                        <ErrorMessage name="unit" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage name="defectiveQuantity" component="div" className="text-red-600 text-sm" />
                       </div>
 
 
@@ -588,11 +608,11 @@ const UpdateOrderRecieving = () => {
                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Extra Quantity</label>
                         <Field
-                          name="quantityToManufacture"
+                          name="extraQuantity"
                           className="w-[200px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           readOnly // Read-only field
                         />
-                        <ErrorMessage name="quantityToManufacture" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage name="extraQuantity" component="div" className="text-red-600 text-sm" />
                       </div>
 
                       <div className="flex-1 min-w-[200px]">
@@ -611,7 +631,7 @@ const UpdateOrderRecieving = () => {
                           classNamePrefix="react-select"
                           placeholder="Execution Status"
                         />
-                        <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage name="location" component="div" className="text-red-600 text-sm" />
                       </div>
 
 
@@ -639,7 +659,7 @@ const UpdateOrderRecieving = () => {
 
                       {/* Order No */}
 
-                     
+
                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Last Updated By</label>
                         <Field
@@ -652,20 +672,20 @@ const UpdateOrderRecieving = () => {
                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Status</label>
                         <ReactSelect
-                          name="location"
+                          name="productStatus"
                           // value={
                           //   salesChannelOptions.find((option) => option.value === values.salesChannel) || null
                           // } // Display the selected value
                           onChange={(option) =>
-                            setFieldValue("location", option ? option.value : "")
+                            setFieldValue("productStatus", option ? option.value : "")
                           } // Update Formik value
-                          options={PendingStatus}
+                          options={values.pendingQuantity > 0 || values.defectiveQuantity > 0 ? PendingStatus : Status}
                           styles={customStyles}
                           className="bg-white dark:bg-form-Field"
                           classNamePrefix="react-select"
                           placeholder="Status"
                         />
-                        <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage name="productStatus" component="div" className="text-red-600 text-sm" />
                       </div>
 
 
@@ -755,7 +775,7 @@ const UpdateOrderRecieving = () => {
                     </div>
 
 
-                 
+
 
 
 

@@ -84,7 +84,19 @@ import ViewOrderPartiallyCreated from './components/Order/ViewOrderPartiallyCrea
 
 import ViewOrderPartiallyApproved from './components/Order/ViewOrderPartiallyApproved.jsx';
 
-import ViewOrderExecuted from './components/Order/ViewOrderPartiallyApproved.jsx';
+import ViewOrderExecuted from './components/Order/ViewOrderExecuted.jsx';
+import ViewOrderPartiallyPending from './components/Order/ViewOrderPartiallyPending.jsx';
+import ViewOrderPending from './components/Order/ViewOrderPending.jsx';
+
+import ViewOrderClosed from './components/Order/ViewOrderClosed.jsx';
+
+import ViewOrderPartiallyClosed from './components/Order/ViewOrderPartiallyClosed.jsx';
+
+
+
+
+
+
 
 
 
@@ -357,6 +369,48 @@ function App() {
               <>
                 <PageTitle title="View Order Executed" />
                 <ViewOrderExecuted />
+              </>
+            }
+          />
+
+<Route
+            path="/orderlist/PartiallyPending"
+            element={
+              <>
+                <PageTitle title="View Order Executed" />
+                <ViewOrderPartiallyPending/>
+              </>
+            }
+          />
+
+
+
+<Route
+            path="/orderlist/Pending"
+            element={
+              <>
+                <PageTitle title="View Order Executed" />
+                <ViewOrderPending/>
+              </>
+            }
+          />
+
+<Route
+            path="/orderlist/PartiallyClosed"
+            element={
+              <>
+                <PageTitle title="View Order Executed" />
+                <ViewOrderPartiallyClosed/>
+              </>
+            }
+          />
+
+<Route
+            path="/orderlist/Closed"
+            element={
+              <>
+                <PageTitle title="View Order Executed" />
+                <ViewOrderClosed/>
               </>
             }
           />

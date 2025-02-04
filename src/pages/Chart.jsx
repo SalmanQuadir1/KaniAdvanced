@@ -136,7 +136,7 @@ const Chart = () => {
             <Link to={"/order/partiallyApproved"}>
               <CardDataStats
                 title="Partially In Progress Orders"
-                total={countMapping['ordersWithCreatedAccepted'] || 0}
+                total={countMapping['ordersWithApprovedOrForcedClosure'] || 0}
 
 
                 // rate="0.43%"
@@ -161,7 +161,7 @@ const Chart = () => {
             <Link to={"/orderlist/Executed"}>
               <CardDataStats
                 title="Approved By Production Orders"
-                total={countMapping['unit'] || 0}
+                total={countMapping['ordersWithOnlyAccepted'] || 0}
 
 
                 // rate="0.43%"
@@ -213,7 +213,7 @@ const Chart = () => {
             <Link to={"/orderlist/PartiallyPending"}>
               <CardDataStats
                 title="Partially Pending Orders"
-                total={countMapping['unit'] || 0}
+                total={countMapping['ordersWithAtLeastOnePending'] || 0}
 
 
                 // rate="0.43%"

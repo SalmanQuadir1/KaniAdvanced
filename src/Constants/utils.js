@@ -188,7 +188,9 @@ export const GET_PRODUCTIDDD_URL = `${BASE_URL}/order`;
 //ORDER
 export const VIEW_ALL_ORDERS = `${BASE_URL}/order/search`;
    
-export const VIEW_CREATED_ORDERS = `${BASE_URL}/order/searchCreated`;  
+export const VIEW_CREATED_ORDERS = `${BASE_URL}/order/searchCreated`; 
+
+export const VIEW_ALLACCEPTED_ORDERS = `${BASE_URL}/order/searchAccepted`;  
 
 export const VIEW_PARTIALLYAPPROVED_ORDERS = `${BASE_URL}/order/searchApprovedAndAccepted`; 
 
@@ -196,13 +198,17 @@ export const VIEW_PARTIALLYAPPROVED_ORDERS = `${BASE_URL}/order/searchApprovedAn
 
 
 export const VIEW_PARTIALLYCREATED_ORDERS = `${BASE_URL}/order/searchCreatedAndAccepted`; 
-
+export const VIEW_PARTIALLYPENDING_ORDERS = `${BASE_URL}/order/searchPendingPartially`; 
 
 export const UPDATE_ORDERCREATED_ALL= `${BASE_URL}/order/updateOrderProductsAccepted`; 
 
 export const UPDATE_ORDERPRODUCT_ALL= `${BASE_URL}/order/orderProducts`; 
 
 export const UPDATE_ISSUECHALLAN= `${BASE_URL}/order/orderProductsIssue`; 
+export const UPDATE_ORDERRECIEVED= `${BASE_URL}/order/orderProductRecievDetail`; 
+
+
+
 
 
 
