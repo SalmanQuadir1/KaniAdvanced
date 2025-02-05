@@ -61,6 +61,9 @@ import ViewOrder from './components/Order/ViewOrder.jsx';
 import UpdateOrderStatus from './components/Order/UpdateOrderStatus.jsx';
 import UpdatePartiallyOrderStatus from './components/Order/UpdatePartiallyOrderStatus.jsx';
 import UpdatePartiallyApprovedOrder from './components/Order/UpdatePartiallyApprovedOrder.jsx';
+import UpdatePartiallyPending from './components/Order/UpdatePartiallyPending.jsx';
+
+
 import UpdateOrderRecieving from './components/Order/UpdateOrderRecieving.jsx';
 
 
@@ -290,6 +293,17 @@ function App() {
             }
           />
 
+
+<Route
+            path="/Order/updateorderPartiallyPending/:id"
+            element={
+              <>
+                <PageTitle title="Update Order Status" />
+                <UpdatePartiallyPending />
+              </>
+            }
+          />
+
           <Route
             path="/order/updateorderproduct/:id"
             element={
@@ -373,44 +387,44 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/orderlist/PartiallyPending"
             element={
               <>
                 <PageTitle title="View Order Executed" />
-                <ViewOrderPartiallyPending/>
+                <ViewOrderPartiallyPending />
               </>
             }
           />
 
 
 
-<Route
+          <Route
             path="/orderlist/Pending"
             element={
               <>
                 <PageTitle title="View Order Executed" />
-                <ViewOrderPending/>
+                <ViewOrderPending />
               </>
             }
           />
 
-<Route
+          <Route
             path="/orderlist/PartiallyClosed"
             element={
               <>
                 <PageTitle title="View Order Executed" />
-                <ViewOrderPartiallyClosed/>
+                <ViewOrderPartiallyClosed />
               </>
             }
           />
 
-<Route
+          <Route
             path="/orderlist/Closed"
             element={
               <>
                 <PageTitle title="View Order Executed" />
-                <ViewOrderClosed/>
+                <ViewOrderClosed />
               </>
             }
           />

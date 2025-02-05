@@ -19,7 +19,7 @@ import { useNavigate, useNavigation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { MdDelete } from 'react-icons/md';
-const UpdatePartiallyApprovedOrder = () => {
+const UpdatePartiallyPending = () => {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const [orderType, setOrderType] = useState('');
@@ -689,4 +689,4 @@ const UpdatePartiallyApprovedOrder = () => {
   );
 };
 
-export default UpdatePartiallyApprovedOrder;
+export default UpdatePartiallyPending;

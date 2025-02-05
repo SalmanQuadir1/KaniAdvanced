@@ -15,7 +15,7 @@ import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
 import { FiTrash2 } from 'react-icons/fi';
-import { useNavigation, useParams } from 'react-router-dom';
+import { useNavigate, useNavigation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import SupplierModall from './SupplierModall';
@@ -39,7 +39,7 @@ const UpdateOrderRecieving = () => {
 
   const [selectedRowId, setSelectedRowId] = useState(null);
 
-  const navigate = useNavigation();
+  const navigate = useNavigate();
   const [suppliers, setSuppliers] = useState([
     { id: 1, name: "Supplier A" },
     { id: 2, name: "Supplier B" },

@@ -290,7 +290,7 @@ const ViewOrderPartiallyPending = () => {
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
-                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updateorderPartiallyCreated/${item?.id}`)} title='Edit Order' />  |
+                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updateorderPartiallyPending/${item?.id}`)} title='Edit Order' />  |
                         <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' />
                     </p>
                 </td>
