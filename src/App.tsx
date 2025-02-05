@@ -89,6 +89,10 @@ import ViewOrderForcedClosure from './components/Order/ViewOrderForcedClosure.js
 import ViewOrderCreated from './components/Order/ViewOrderCreated.jsx';
 import ViewOrderApproved from './components/Order/ViewOrderApproved.jsx';
 
+import ViewChallan from './components/Order/ViewChallan.jsx';
+
+import ViewOrderRejected from './components/Order/ViewOrderRejected.jsx';
+
 
 
 import ViewOrderPartiallyCreated from './components/Order/ViewOrderPartiallyCreated.jsx';
@@ -414,6 +418,27 @@ function App() {
               <>
                 <PageTitle title="View Order Created " />
                 <ViewOrderApproved />
+              </>
+            }
+          />
+
+
+<Route
+            path="/orderlist/UpdateChallan"
+            element={
+              <>
+                <PageTitle title="View Challan " />
+                <ViewChallan />
+              </>
+            }
+          />
+
+<Route
+            path="/orderlist/RejectedOrders"
+            element={
+              <>
+                <PageTitle title="View Challan " />
+                <ViewOrderRejected />
               </>
             }
           />

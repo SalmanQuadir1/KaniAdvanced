@@ -220,7 +220,7 @@ const Chart = () => {
 
 
 
-            <Link to={"/orderlist/PartiallyClosed"}>
+            <Link to={"/orderlist/UpdateChallan"}>
               <CardDataStats
                 title="Update Challan No And Date"
                 total={countMapping['ordersWithOnlyPartiallyClosed'] || 0}
@@ -264,6 +264,20 @@ const Chart = () => {
             <Link to={"/orderlist/ForcedClosure"}>
               <CardDataStats
                 title="Forced Closed Orders"
+                total={countMapping['ordersWithForcedClosure'] || 0}
+
+
+                // rate="0.43%"
+                levelUp
+              >
+                <LuScale className='w-10 h-10' />
+              </CardDataStats>
+            </Link>
+
+
+            <Link to={"/orderlist/RejectedOrders"}>
+              <CardDataStats
+                title="Rejected By Production Orders"
                 total={countMapping['ordersWithForcedClosure'] || 0}
 
 
