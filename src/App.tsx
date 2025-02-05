@@ -62,7 +62,7 @@ import UpdateOrderStatus from './components/Order/UpdateOrderStatus.jsx';
 import UpdatePartiallyOrderStatus from './components/Order/UpdatePartiallyOrderStatus.jsx';
 import UpdatePartiallyApprovedOrder from './components/Order/UpdatePartiallyApprovedOrder.jsx';
 import UpdatePartiallyPending from './components/Order/UpdatePartiallyPending.jsx';
-
+import UpdatePartiallyClosed from './components/Order/UpdatePartiallyClosed.jsx';
 
 import UpdateOrderRecieving from './components/Order/UpdateOrderRecieving.jsx';
 
@@ -300,6 +300,18 @@ function App() {
               <>
                 <PageTitle title="Update Order Status" />
                 <UpdatePartiallyPending />
+              </>
+            }
+          />
+
+
+
+<Route
+            path="/Order/updatepartiallyClosed/:id"
+            element={
+              <>
+                <PageTitle title="Update Order Status" />
+                <UpdatePartiallyClosed/>
               </>
             }
           />

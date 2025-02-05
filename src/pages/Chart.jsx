@@ -174,7 +174,7 @@ const Chart = () => {
             <Link to={"/orderlist/Closed"}>
               <CardDataStats
                 title="Completed Orders"
-                total={countMapping['unit'] || 0}
+                total={countMapping['ordersWithOnlyClosed'] || 0}
 
 
                 // rate="0.43%"
@@ -187,7 +187,7 @@ const Chart = () => {
             <Link to={"/orderlist/PartiallyClosed"}>
               <CardDataStats
                 title="Partially Completed Orders"
-                total={countMapping['unit'] || 0}
+                total={countMapping['ordersWithOnlyPartiallyClosed'] || 0}
 
 
                 // rate="0.43%"
@@ -200,7 +200,7 @@ const Chart = () => {
             <Link to={"/orderlist/Pending"}>
               <CardDataStats
                 title="Pending Orders"
-                total={countMapping['unit'] || 0}
+                total={countMapping['ordersWithOnlyPending'] || 0}
 
 
                 // rate="0.43%"
