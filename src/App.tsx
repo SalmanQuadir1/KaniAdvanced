@@ -65,7 +65,7 @@ import UpdatePartiallyPending from './components/Order/UpdatePartiallyPending.js
 import UpdatePartiallyClosed from './components/Order/UpdatePartiallyClosed.jsx';
 
 import UpdateOrderRecieving from './components/Order/UpdateOrderRecieving.jsx';
-
+import UpdateForcedClosure from './components/Order/UpdateForcedClosure.jsx';
 
 
 
@@ -77,17 +77,27 @@ import IssueChalaan from './components/Order/IssueChalaan.jsx';
 
 
 import UpdateOrderProduct from './components/Order/UpdateOrderProduct.jsx';
+import ViewProductByOrderId from './components/Order/ViewProductByOrderId.jsx';
+
+import ViewOrderForcedClosure from './components/Order/ViewOrderForcedClosure.jsx';
+
+
 
 
 
 
 import ViewOrderCreated from './components/Order/ViewOrderCreated.jsx';
+import ViewOrderApproved from './components/Order/ViewOrderApproved.jsx';
+
+
 
 import ViewOrderPartiallyCreated from './components/Order/ViewOrderPartiallyCreated.jsx';
 
 import ViewOrderPartiallyApproved from './components/Order/ViewOrderPartiallyApproved.jsx';
 
 import ViewOrderExecuted from './components/Order/ViewOrderExecuted.jsx';
+import UpdateOrderAccepted from './components/Order/UpdateOrderAccepted.jsx';
+
 import ViewOrderPartiallyPending from './components/Order/ViewOrderPartiallyPending.jsx';
 import ViewOrderPending from './components/Order/ViewOrderPending.jsx';
 
@@ -343,6 +353,16 @@ function App() {
             }
           />
 
+<Route
+            path="/Order/updateorderForcedClosure/:id"
+            element={
+              <>
+                <PageTitle title="Update Order Status" />
+                <UpdateForcedClosure />
+              </>
+            }
+          />
+
 
 
           <Route
@@ -351,6 +371,29 @@ function App() {
               <>
                 <PageTitle title="Update Order Product " />
                 <UpdateOrderProduct />
+              </>
+            }
+          />
+
+<Route
+            path="/Order/updateorderExecuted/:id"
+            element={
+              <>
+                <PageTitle title="Update Order Product " />
+                <UpdateOrderAccepted />
+              </>
+            }
+          />
+
+
+
+
+<Route
+            path="/order/viewProduct/:id"
+            element={
+              <>
+                <PageTitle title="Update Order Product " />
+                <ViewProductByOrderId/>
               </>
             }
           />
@@ -365,6 +408,16 @@ function App() {
             }
           />
 
+<Route
+            path="/order/Approved"
+            element={
+              <>
+                <PageTitle title="View Order Created " />
+                <ViewOrderApproved />
+              </>
+            }
+          />
+
 
 
           <Route
@@ -373,6 +426,16 @@ function App() {
               <>
                 <PageTitle title="View Order Created " />
                 <ViewOrderPartiallyCreated />
+              </>
+            }
+          />
+
+<Route
+            path="/orderlist/ForcedClosure"
+            element={
+              <>
+                <PageTitle title="View Order Forced Closure " />
+                <ViewOrderForcedClosure />
               </>
             }
           />
