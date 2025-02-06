@@ -69,7 +69,7 @@ import UpdateForcedClosure from './components/Order/UpdateForcedClosure.jsx';
 import UpdateChallan from './components/Order/UpdateChallan.jsx';
 import UpdateExpectedSupplierDate from './components/Order/UpdateExpectedSupplierDate.jsx';
 
-import UpdateSupplierRecievingOrders from './components/Order/UpdateSupplierRecievingOrders.jsx';
+// import UpdateSupplierRecievingOrders from './components/Order/UpdateSupplierRecievingOrders.jsx';
 
 import ViewExpectedDateOrder from './components/Order/ViewExpectedDateOrder.jsx';
 

@@ -3,7 +3,7 @@ import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { DELETE_ORDER_URL, VIEW_ALL_ORDERS, VIEW_CHALLAN_ORDERS, VIEW_CLOSED_ORDERS, VIEW_CREATED_ORDERS, VIEW_PARTIALLYCREATED_ORDERS } from "../../Constants/utils";
+import { DELETE_ORDER_URL, VIEW_ALL_ORDERS, VIEW_CHALLAN_ORDERS, VIEW_CLOSED_ORDERS, VIEW_CREATED_ORDERS, VIEW_PARTIALLYCREATED_ORDERS, VIEW_RECIEVINGQTY_ORDERS } from "../../Constants/utils";
 import ReactSelect from 'react-select';
 import useorder from '../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -121,7 +121,7 @@ const ViewSupplierRecievingOrders = () => {
         console.log("Fetching orders for page", page); // Log the page number being requested
 
         try {
-            const response = await fetch(`${VIEW_CHALLAN_ORDERS}?page=${page || 1}`, {
+            const response = await fetch(`${VIEW_RECIEVINGQTY_ORDERS}?page=${page || 1}`, {
                 method: "POST", // GET method
                 headers: {
                     "Content-Type": "application/json",
@@ -255,17 +255,7 @@ const ViewSupplierRecievingOrders = () => {
                     <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.orderTypeName}</p>
-
-                </td>
-
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.orderNo}</p>
-
-                </td>
-
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.customerName}</p>
 
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
@@ -273,20 +263,34 @@ const ViewSupplierRecievingOrders = () => {
 
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.supplierName}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.qtyToManufacture}</p>
 
                 </td>
+
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.expectedDate}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.pendingQty}</p>
+
                 </td>
 
-                
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.updateExpectedDate}</p>
-                </td>
-             
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.receivingQty}</p>
 
-              
+                </td>
+
+
+
+
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">
+                        {item?.supplierName?.join(", ")}
+                    </p>
+                </td>
+
+
+
+
+
+
 
 
 
@@ -298,7 +302,7 @@ const ViewSupplierRecievingOrders = () => {
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
-                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updateExpectedDate/${item?.id}`)} title='Edit Order' /> 
+                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/order/updateorderproduct/${item?.id}`)} title='Edit Order' />
                         <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' />
                     </p>
                 </td>
@@ -318,7 +322,7 @@ const ViewSupplierRecievingOrders = () => {
             orderNo: values.orderNo || undefined,
             supplierName: values.supplierName || undefined,
 
-           
+
             productId: values.productId || undefined
         };
         getOrder(pagination.currentPage, filters);
@@ -342,11 +346,11 @@ const ViewSupplierRecievingOrders = () => {
                         <Formik
                             initialValues={{
                                 orderNo: '',
-                              
+
                                 supplierName: "",
                                 ProductId: "",
-                                ChallanNo:"",
-                                challanDate:""
+                                ChallanNo: "",
+                                challanDate: ""
 
 
 
@@ -426,7 +430,7 @@ const ViewSupplierRecievingOrders = () => {
                                             />
 
                                         </div>
-                                      
+
 
                                     </div>
 
@@ -454,14 +458,14 @@ const ViewSupplierRecievingOrders = () => {
 
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
 
-                                        
+
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Id</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Qty To Manufacture</th>
 
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Pending Quantity</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Recieved Quantity</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Supplier Name</th>
-   
+
 
                                         {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 
