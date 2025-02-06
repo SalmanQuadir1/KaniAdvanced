@@ -334,7 +334,7 @@ const ViewOrderPending = () => {
                         <Formik
                             initialValues={{
                                 orderNo: '',
-                                customerName: "",
+                              
                                 supplierName: "",
                                 ProductId: ""
 
@@ -416,25 +416,7 @@ const ViewOrderPending = () => {
                                             />
 
                                         </div>
-                                        <div className="flex-1 min-w-[200px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">Customer</label>
-                                            <ReactSelect
-                                                name="customerName"
-                                                value={productgrp.find(option => option.value === values.customerName)}
-                                                onChange={(option) => {
-                                                    setFieldValue('customerName', option.value);
-
-                                                }}
-                                                onBlur={handleBlur}
-                                                // options={formattedCustomer}
-                                                options={[{ label: 'View All Customers', value: null }, ...formattedCustomer]}
-                                                styles={customStyles}
-                                                className="bg-white dark:bg-form-input"
-                                                classNamePrefix="react-select"
-                                                placeholder="Select"
-                                            />
-
-                                        </div>
+                                      
 
                                     </div>
 
