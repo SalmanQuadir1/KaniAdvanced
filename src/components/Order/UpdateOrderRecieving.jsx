@@ -83,7 +83,7 @@ const UpdateOrderRecieving = () => {
 
   const PendingStatus = [
     { value: 'Pending', label: 'Pending' },
-    { value: 'ForcedClosure', label: 'Forced Closure' },
+    { value: 'Forced_Closure', label: 'Forced Closure' },
 
 
   ];

@@ -19,7 +19,7 @@ import { useNavigate, useNavigation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { MdDelete } from 'react-icons/md';
-const UpdatePartiallyOrderStaus = () => {
+const UpdatePartiallyPending = () => {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const [orderType, setOrderType] = useState('');
@@ -380,7 +380,7 @@ const UpdatePartiallyOrderStaus = () => {
                   <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                       <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                        Update Order Created
+                        Update ORDER FORM
                       </h3>
                     </div>
                     <div className="p-6.5">
@@ -560,54 +560,19 @@ const UpdatePartiallyOrderStaus = () => {
                                 >
 
 
-                                  {
-                                    product.productStatus === "Accepted" ? (
-                                      <div className="flex items-center gap-2">
-                                        <span
-                                          onClick={() => navigate(`/order/modifyproductafterexecution/${product?.id}`)}
-                                          className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
-                                        >
-                                          ISSUE CHALAAN
-                                        </span>
-                                        <span
-                                          onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
-                                          className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
-                                        >
-                                          VIEW PRODUCT DETAILS
-                                        </span>
-                                      </div>
-                                    ) : product.productStatus?.toLowerCase() === "approved" ? (  // ✅ Case-insensitive check
-                                      <div className="flex items-center gap-2">
-                                        <span
-                                          onClick={() => navigate(`/order/modifyorderproduct/${product?.id}`)}
-                                          className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
-                                        >
-                                          RECEIVING DETAILS
-                                        </span>
-                                        <span
-                                          onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
-                                          className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
-                                        >
-                                          VIEW PRODUCT DETAILS
-                                        </span>
-                                      </div>
-                                    ) : (
-                                      <div className="flex items-center gap-2">
-                                        <span
-                                          onClick={() => navigate(`/order/modifyorderproduct/${product?.id}`)}
-                                          className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
-                                        >
-                                          VIEW ORDER PRODUCT
-                                        </span>
-                                        <span
-                                          onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
-                                          className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
-                                        >
-                                          VIEW PRODUCT DETAILS
-                                        </span>
-                                      </div>
-                                    )
-                                  }
+
+                                  <div className="flex items-center gap-2">
+                                 
+                                    <span
+                                      onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
+                                      className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
+                                    >
+                                      VIEW PRODUCT DETAILS
+                                    </span>
+                                  </div>
+  
+
+
 
 
 
@@ -688,4 +653,4 @@ const UpdatePartiallyOrderStaus = () => {
   );
 };
 
-export default UpdatePartiallyOrderStaus;
+export default UpdatePartiallyPending;

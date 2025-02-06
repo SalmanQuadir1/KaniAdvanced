@@ -145,6 +145,26 @@ const Chart = () => {
                 <RiAlignItemBottomFill className='w-10 h-10' />
               </CardDataStats>
             </Link>
+
+
+            <Link to={"/order/Approved"}>
+              <CardDataStats
+                title="In Progress Orders"
+                total={countMapping['ordersWithApprovedOrForcedClosure'] || 0}
+
+
+                // rate="0.43%"
+                levelUp
+              >
+                <RiAlignItemBottomFill className='w-10 h-10' />
+              </CardDataStats>
+            </Link>
+
+
+
+
+
+
             <Link to={"/configurator/addunit"}>
               <CardDataStats
                 title="Units"
@@ -197,6 +217,22 @@ const Chart = () => {
               </CardDataStats>
             </Link>
 
+
+
+
+            <Link to={"/orderlist/UpdateChallan"}>
+              <CardDataStats
+                title="Update Challan No And Date"
+                total={countMapping['ordersWithOnlyPartiallyClosed'] || 0}
+
+
+                // rate="0.43%"
+                levelUp
+              >
+                <LuScale className='w-10 h-10' />
+              </CardDataStats>
+            </Link>
+
             <Link to={"/orderlist/Pending"}>
               <CardDataStats
                 title="Pending Orders"
@@ -214,6 +250,35 @@ const Chart = () => {
               <CardDataStats
                 title="Partially Pending Orders"
                 total={countMapping['ordersWithAtLeastOnePending'] || 0}
+
+
+                // rate="0.43%"
+                levelUp
+              >
+                <LuScale className='w-10 h-10' />
+              </CardDataStats>
+            </Link>
+
+
+
+            <Link to={"/orderlist/ForcedClosure"}>
+              <CardDataStats
+                title="Forced Closed Orders"
+                total={countMapping['ordersWithForcedClosure'] || 0}
+
+
+                // rate="0.43%"
+                levelUp
+              >
+                <LuScale className='w-10 h-10' />
+              </CardDataStats>
+            </Link>
+
+
+            <Link to={"/orderlist/RejectedOrders"}>
+              <CardDataStats
+                title="Rejected By Production Orders"
+                total={countMapping['ordersWithForcedClosure'] || 0}
 
 
                 // rate="0.43%"

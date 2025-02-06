@@ -193,7 +193,7 @@ export const VIEW_CREATED_ORDERS = `${BASE_URL}/order/searchCreated`;
 export const VIEW_ALLACCEPTED_ORDERS = `${BASE_URL}/order/searchAccepted`;  
 
 export const VIEW_PARTIALLYAPPROVED_ORDERS = `${BASE_URL}/order/searchApprovedAndAccepted`; 
-
+export const VIEW_APPROVED_ORDERS = `${BASE_URL}/order/searchApproved`; 
 export const VIEW_PARTIALLYCLOSED_ORDERS = `${BASE_URL}/order/searchPartiallyClosed`; 
 
 
@@ -205,11 +205,11 @@ export const VIEW_CLOSED_ORDERS = `${BASE_URL}/order/searchClosed`;
 export const VIEW_PENDING_ORDERS = `${BASE_URL}/order/searchPending`; 
 
 export const VIEW_PARTIALLYPENDING_ORDERS = `${BASE_URL}/order/searchPendingPartially`; 
-
+export const VIEW_FORCEDCLOSURE_ORDERS = `${BASE_URL}/order/searchForcedClosure`; 
 export const UPDATE_ORDERCREATED_ALL= `${BASE_URL}/order/updateOrderProductsAccepted`; 
 
 export const UPDATE_ORDERPRODUCT_ALL= `${BASE_URL}/order/orderProducts`; 
-
+export const VIEW_ORDERPRODUCT_ALL= `${BASE_URL}/order/orderProduct`; 
 export const UPDATE_ISSUECHALLAN= `${BASE_URL}/order/orderProductsIssue`; 
 export const UPDATE_ORDERRECIEVED= `${BASE_URL}/order/orderProductRecievDetail`; 
 
