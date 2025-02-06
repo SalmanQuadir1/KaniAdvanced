@@ -213,7 +213,7 @@ export const VIEW_ORDERPRODUCT_ALL= `${BASE_URL}/order/orderProduct`;
 export const UPDATE_ISSUECHALLAN= `${BASE_URL}/order/orderProductsIssue`; 
 
 export const UPDATE_CHALLAN= `${BASE_URL}/order/challan`; 
-
+export const UPDATE_EXPECTEDDATE= `${BASE_URL}/order/updateOrderProductExpectDate`; 
 export const UPDATE_ORDERRECIEVED= `${BASE_URL}/order/orderProductRecievDetail`; 
 
 

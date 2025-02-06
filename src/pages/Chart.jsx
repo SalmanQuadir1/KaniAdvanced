@@ -304,6 +304,21 @@ const Chart = () => {
 
 
 
+            <Link to={"/order/supplierRecievingOrders"}>
+              <CardDataStats
+                title="Supplier Recieving Orders"
+                total={countMapping['ordersWithForcedClosure'] || 0}
+
+
+                // rate="0.43%"
+                levelUp
+              >
+                <LuScale className='w-10 h-10' />
+              </CardDataStats>
+            </Link>
+
+
+
 
 
 
