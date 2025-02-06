@@ -67,6 +67,9 @@ import UpdatePartiallyClosed from './components/Order/UpdatePartiallyClosed.jsx'
 import UpdateOrderRecieving from './components/Order/UpdateOrderRecieving.jsx';
 import UpdateForcedClosure from './components/Order/UpdateForcedClosure.jsx';
 import UpdateChallan from './components/Order/UpdateChallan.jsx';
+import ViewExpectedDateOrder from './components/Order/ViewExpectedDateOrder.jsx';
+
+ViewExpectedDateOrder
 
 
 
@@ -375,6 +378,16 @@ function App() {
               <>
                 <PageTitle title="Update Challan" />
                 <UpdateChallan />
+              </>
+            }
+          />
+
+<Route
+            path="/order/supplierExpectdateUpdate"
+            element={
+              <>
+                <PageTitle title="Update Expected Date " />
+                <ViewExpectedDateOrder />
               </>
             }
           />
