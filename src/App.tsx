@@ -66,6 +66,8 @@ import UpdatePartiallyClosed from './components/Order/UpdatePartiallyClosed.jsx'
 
 import UpdateOrderRecieving from './components/Order/UpdateOrderRecieving.jsx';
 import UpdateForcedClosure from './components/Order/UpdateForcedClosure.jsx';
+import UpdateChallan from './components/Order/UpdateChallan.jsx';
+
 
 
 
@@ -363,6 +365,16 @@ function App() {
               <>
                 <PageTitle title="Update Order Status" />
                 <UpdateForcedClosure />
+              </>
+            }
+          />
+
+<Route
+            path="/Order/updateChallan/:id"
+            element={
+              <>
+                <PageTitle title="Update Challan" />
+                <UpdateChallan />
               </>
             }
           />

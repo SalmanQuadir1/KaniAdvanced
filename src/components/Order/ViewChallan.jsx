@@ -3,7 +3,7 @@ import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { DELETE_ORDER_URL, VIEW_ALL_ORDERS, VIEW_CLOSED_ORDERS, VIEW_CREATED_ORDERS, VIEW_PARTIALLYCREATED_ORDERS } from "../../Constants/utils";
+import { DELETE_ORDER_URL, VIEW_ALL_ORDERS, VIEW_CHALLAN_ORDERS, VIEW_CLOSED_ORDERS, VIEW_CREATED_ORDERS, VIEW_PARTIALLYCREATED_ORDERS } from "../../Constants/utils";
 import ReactSelect from 'react-select';
 import useorder from '../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -121,7 +121,7 @@ const ViewOrderPending = () => {
         console.log("Fetching orders for page", page); // Log the page number being requested
 
         try {
-            const response = await fetch(`${VIEW_CLOSED_ORDERS}?page=${page || 1}`, {
+            const response = await fetch(`${VIEW_CHALLAN_ORDERS}?page=${page || 1}`, {
                 method: "POST", // GET method
                 headers: {
                     "Content-Type": "application/json",
@@ -260,25 +260,23 @@ const ViewOrderPending = () => {
 
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.customerName}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.productId}</p>
+
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    {item.products &&
-                        item.products.map((prodId, index) => (
-                            <p key={index} className="text-gray-900 whitespace-nowrap">
-                                {prodId?.productId}
-                            </p>
-                        ))}
+                    <p className="text-gray-900 whitespace-no-wrap">{item.challanNo}</p>
                 </td>
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    {item.products &&
-                        item.products.map((prodId, index) => (
-                            <p key={index} className="text-gray-900 whitespace-nowrap">
-                                {prodId.productStatus}
-                            </p>
-                        ))}
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.challanDate}</p>
+
                 </td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item.expectedDate}</p>
+                </td>
+             
+
+              
 
 
 
@@ -290,7 +288,7 @@ const ViewOrderPending = () => {
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
-                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updateorderPartiallyCreated/${item?.id}`)} title='Edit Order' />  |
+                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updateChallan/${item?.id}`)} title='Edit Order' /> 
                         <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' />
                     </p>
                 </td>
@@ -310,7 +308,7 @@ const ViewOrderPending = () => {
             orderNo: values.orderNo || undefined,
             supplierName: values.supplierName || undefined,
 
-            customerName: values.customerName || undefined,
+           
             productId: values.productId || undefined
         };
         getOrder(pagination.currentPage, filters);
@@ -336,7 +334,9 @@ const ViewOrderPending = () => {
                                 orderNo: '',
                               
                                 supplierName: "",
-                                ProductId: ""
+                                ProductId: "",
+                                ChallanNo:"",
+                                challanDate:""
 
 
 
@@ -397,7 +397,7 @@ const ViewOrderPending = () => {
 
 
                                     <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-                                        <div className="flex-1 min-w-[200px]">
+                                        <div className="flex-2 md:min-w-[420px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
                                             <ReactSelect
                                                 name="ProductId"
@@ -442,9 +442,11 @@ const ViewOrderPending = () => {
                                     <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Customer</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Id</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Challan No</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Challan Date</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Expected Date</th>
+
                                         {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
