@@ -114,8 +114,8 @@ const Chart = () => {
   return (
     <DefaultLayout>
 
-      <h3 className="text-2xl text-center dark:text-white font-extrabold">DASHBOARD</h3>
-      <div className="grid grid-cols-1 gap-3 my-4 md:grid-cols-4 md:gap-3 xl:grid-cols-4 2xl:gap-7.5">
+      {/* <h3 className="text-2xl text-center dark:text-white font-extrabold">DASHBOARD</h3> */}
+      <div className="grid grid-cols-1 gap-3 my-1 md:grid-cols-4 md:gap-3 xl:grid-cols-4 2xl:gap-7.5">
 
         {(role === "ROLE_ADMIN") && (
           <>
@@ -160,7 +160,7 @@ const Chart = () => {
 
             <Link to={"/order/partiallyexecuted"}>
               <CardDataStats
-                title="Partially Approved By Production Orders"
+                title="PartiallyApproved By Production Orders"
                 total={countMapping['ordersWithCreatedAccepted'] || 0}
 
 
@@ -426,19 +426,19 @@ const Chart = () => {
 
 
 
-            <Link to={"/configurator/location"}>
+            {/* <Link to={"/configurator/location"}>
               <CardDataStats title="Locations" total={countMapping['location'] || 0} levelUp>
                 <IoLocationOutline className='w-10 h-10' />
 
               </CardDataStats>
-            </Link>
+            </Link> */}
 
-            <Link to={"/auth/signup"}>
+            {/* <Link to={"/auth/signup"}>
               <CardDataStats title="Total Users" total={countMapping['user'] || 0} levelDown>
                 <FaRegUserCircle className='w-10 h-10' />
 
               </CardDataStats>
-            </Link>
+            </Link> */}
 
             <Link to={"/Order/ViewOrder"}>
               <CardDataStats title="Total Orders" total={countMapping['orders'] || 0} levelDown>
