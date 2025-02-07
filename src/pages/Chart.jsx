@@ -260,7 +260,7 @@ const Chart = () => {
             <Link to={"/orderlist/UpdateChallan"}>
               <CardDataStats
                 title="Update Challan No And Date"
-                total={countMapping['ordersWithOnlyPartiallyClosed'] || 0}
+                total={countMapping['ordersWithApprovedChallan'] || 0}
 
 
                 // rate="0.43%"
@@ -315,7 +315,7 @@ const Chart = () => {
             <Link to={"/orderlist/RejectedOrders"}>
               <CardDataStats
                 title="Rejected By Production Orders"
-                total={countMapping['ordersWithForcedClosure'] || 0}
+                total={countMapping['ordersWithRejected'] || 0}
 
 
                 // rate="0.43%"
@@ -325,11 +325,11 @@ const Chart = () => {
               </CardDataStats>
             </Link>
 
-            
+
             <Link to={"/order/supplierExpectdateUpdate"}>
               <CardDataStats
                 title="Supplier Date Updation Orders"
-                total={countMapping['ordersWithForcedClosure'] || 0}
+                total={countMapping['approvedSupplierOrdersCount'] || 0}
 
 
                 // rate="0.43%"
@@ -344,7 +344,7 @@ const Chart = () => {
             <Link to={"/order/supplierRecievingOrders"}>
               <CardDataStats
                 title="Supplier Recieving Orders"
-                total={countMapping['ordersWithForcedClosure'] || 0}
+                total={countMapping['ordersWithSupplierReceiving'] || 0}
 
 
                 // rate="0.43%"
@@ -360,7 +360,7 @@ const Chart = () => {
             <Link to={"/order/needModification"}>
               <CardDataStats
                 title="Production Modification Orders"
-                total={countMapping['ordersWithForcedClosure'] || 0}
+                total={countMapping['ordersNeedModification'] || 0}
 
 
                 // rate="0.43%"
@@ -373,7 +373,7 @@ const Chart = () => {
             <Link to={"/order/Cancelled"}>
               <CardDataStats
                 title="Cancelled Orders"
-                total={countMapping['ordersWithForcedClosure'] || 0}
+                total={countMapping['ordersCancelled'] || 0}
 
 
                 // rate="0.43%"
@@ -384,11 +384,11 @@ const Chart = () => {
             </Link>
 
 
-            
+
             <Link to={"/order/recievedQuantity"}>
               <CardDataStats
                 title="Edit Recieved Quantity"
-                total={countMapping['ordersWithForcedClosure'] || 0}
+                total={countMapping['ordersWithPendingProducts'] || 0}
 
 
                 // rate="0.43%"
@@ -402,7 +402,7 @@ const Chart = () => {
             <Link to={"/order/updateShippingDate"}>
               <CardDataStats
                 title="Update Shipping Date"
-                total={countMapping['ordersWithForcedClosure'] || 0}
+                total={countMapping['ordersWithShippingDate'] || 0}
 
 
                 // rate="0.43%"

@@ -193,9 +193,9 @@ export const VIEW_CREATED_ORDERS = `${BASE_URL}/order/searchCreated`;
 export const VIEW_ALLACCEPTED_ORDERS = `${BASE_URL}/order/searchAccepted`;  
 
 export const VIEW_PARTIALLYAPPROVED_ORDERS = `${BASE_URL}/order/searchApprovedAndAccepted`;
- 
-export const VIEW_APPROVED_ORDERS = `${BASE_URL}/order/searchApproved`; 
 
+export const VIEW_APPROVED_ORDERS = `${BASE_URL}/order/searchApproved`; 
+export const VIEW_CANCELLED_ORDERS = `${BASE_URL}/order/searchCancelled`; 
 export const VIEW_ORDERSHIPPING_ORDERS = `${BASE_URL}/order/searchShippingDate`; 
 
 
@@ -216,6 +216,8 @@ export const VIEW_RECIEVINGQTY_ORDERS = `${BASE_URL}/order/searchSupplierReceivi
 
 export const VIEW_PENDING_ORDERS = `${BASE_URL}/order/searchPending`; 
 export const VIEW_REJECTED_ORDERS = `${BASE_URL}/order/searchRejected`; 
+
+
 
 export const VIEW_PARTIALLYPENDING_ORDERS = `${BASE_URL}/order/searchPendingPartially`; 
 export const VIEW_FORCEDCLOSURE_ORDERS = `${BASE_URL}/order/searchForcedClosure`; 
