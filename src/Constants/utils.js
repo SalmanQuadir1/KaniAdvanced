@@ -192,7 +192,8 @@ export const VIEW_CREATED_ORDERS = `${BASE_URL}/order/searchCreated`;
 
 export const VIEW_ALLACCEPTED_ORDERS = `${BASE_URL}/order/searchAccepted`;  
 
-export const VIEW_PARTIALLYAPPROVED_ORDERS = `${BASE_URL}/order/searchApprovedAndAccepted`; 
+export const VIEW_PARTIALLYAPPROVED_ORDERS = `${BASE_URL}/order/searchApprovedAndAccepted`;
+ 
 export const VIEW_APPROVED_ORDERS = `${BASE_URL}/order/searchApproved`; 
 
 export const VIEW_ORDERSHIPPING_ORDERS = `${BASE_URL}/order/searchShippingDate`; 

@@ -7,6 +7,43 @@ import { useEffect, useState } from 'react';
 import { fetchunit } from '../redux/Slice/UnitSlice';
 import { LuScale } from "react-icons/lu";
 import { SiHomeassistantcommunitystore } from "react-icons/si";
+
+
+import { AiOutlinePartition } from "react-icons/ai";
+
+
+import { RiProgress1Line } from "react-icons/ri";
+
+import { RiProgress8Fill } from "react-icons/ri";
+
+import { FcApproval } from "react-icons/fc";
+
+
+import { GrCompliance } from "react-icons/gr";
+import { MdRepartition } from "react-icons/md";
+
+import { PiGearFineFill } from "react-icons/pi";
+import { MdOutlinePendingActions } from "react-icons/md"
+
+import { MdOutlinePending } from "react-icons/md";
+
+import { LuPanelLeftClose } from "react-icons/lu";
+
+import { AiOutlineClose } from "react-icons/ai";
+
+import { CiCalendarDate } from "react-icons/ci";
+
+import { RiUserReceived2Fill } from "react-icons/ri";
+
+import { VscDiffModified } from "react-icons/vsc";
+
+import { FcCancel } from "react-icons/fc";
+
+import { MdEditSquare } from "react-icons/md";
+
+import { GrUpdate } from "react-icons/gr";
+import { MdRecommend } from "react-icons/md";
+
 import { BiPurchaseTagAlt } from "react-icons/bi";
 import { GiMaterialsScience } from "react-icons/gi";
 import { IoJournalOutline } from "react-icons/io5";
@@ -103,7 +140,7 @@ const Chart = () => {
                 // rate="0.43%"
                 levelUp
               >
-                <RiAlignItemBottomFill className='w-10 h-10' />
+                <AiOutlinePartition className='w-10 h-10' />
               </CardDataStats>
             </Link>
 
@@ -130,7 +167,7 @@ const Chart = () => {
                 // rate="0.43%"
                 levelUp
               >
-                <RiAlignItemBottomFill className='w-10 h-10' />
+                <RiProgress1Line className='w-10 h-10' />
               </CardDataStats>
             </Link>
             <Link to={"/order/partiallyApproved"}>
@@ -142,7 +179,7 @@ const Chart = () => {
                 // rate="0.43%"
                 levelUp
               >
-                <RiAlignItemBottomFill className='w-10 h-10' />
+                <RiProgress8Fill className='w-10 h-10' />
               </CardDataStats>
             </Link>
 
@@ -150,13 +187,13 @@ const Chart = () => {
             <Link to={"/order/Approved"}>
               <CardDataStats
                 title="In Progress Orders"
-                total={countMapping['ordersWithApprovedOrForcedClosure'] || 0}
+                total={countMapping['approvedOrders'] || 0}
 
 
                 // rate="0.43%"
                 levelUp
               >
-                <RiAlignItemBottomFill className='w-10 h-10' />
+                <GrCompliance className='w-10 h-10' />
               </CardDataStats>
             </Link>
 
@@ -187,7 +224,7 @@ const Chart = () => {
                 // rate="0.43%"
                 levelUp
               >
-                <LuScale className='w-10 h-10' />
+                <FcApproval className='w-10 h-10' />
               </CardDataStats>
             </Link>
 
@@ -200,7 +237,7 @@ const Chart = () => {
                 // rate="0.43%"
                 levelUp
               >
-                <LuScale className='w-10 h-10' />
+                <MdRecommend className='w-10 h-10' />
               </CardDataStats>
             </Link>
 
@@ -213,7 +250,7 @@ const Chart = () => {
                 // rate="0.43%"
                 levelUp
               >
-                <LuScale className='w-10 h-10' />
+                <MdRepartition className='w-10 h-10' />
               </CardDataStats>
             </Link>
 
@@ -229,7 +266,7 @@ const Chart = () => {
                 // rate="0.43%"
                 levelUp
               >
-                <LuScale className='w-10 h-10' />
+                <PiGearFineFill className='w-10 h-10' />
               </CardDataStats>
             </Link>
 
@@ -242,7 +279,7 @@ const Chart = () => {
                 // rate="0.43%"
                 levelUp
               >
-                <LuScale className='w-10 h-10' />
+                <MdOutlinePendingActions className='w-10 h-10' />
               </CardDataStats>
             </Link>
 
@@ -255,7 +292,7 @@ const Chart = () => {
                 // rate="0.43%"
                 levelUp
               >
-                <LuScale className='w-10 h-10' />
+                <MdOutlinePending className='w-10 h-10' />
               </CardDataStats>
             </Link>
 
@@ -270,7 +307,7 @@ const Chart = () => {
                 // rate="0.43%"
                 levelUp
               >
-                <LuScale className='w-10 h-10' />
+                <LuPanelLeftClose className='w-10 h-10' />
               </CardDataStats>
             </Link>
 
@@ -284,7 +321,7 @@ const Chart = () => {
                 // rate="0.43%"
                 levelUp
               >
-                <LuScale className='w-10 h-10' />
+                <AiOutlineClose className='w-10 h-10' />
               </CardDataStats>
             </Link>
 
@@ -298,7 +335,7 @@ const Chart = () => {
                 // rate="0.43%"
                 levelUp
               >
-                <LuScale className='w-10 h-10' />
+                <CiCalendarDate className='w-10 h-10' />
               </CardDataStats>
             </Link>
 
@@ -313,7 +350,7 @@ const Chart = () => {
                 // rate="0.43%"
                 levelUp
               >
-                <LuScale className='w-10 h-10' />
+                <RiUserReceived2Fill className='w-10 h-10' />
               </CardDataStats>
             </Link>
 
@@ -329,7 +366,7 @@ const Chart = () => {
                 // rate="0.43%"
                 levelUp
               >
-                <LuScale className='w-10 h-10' />
+                <VscDiffModified className='w-10 h-10' />
               </CardDataStats>
             </Link>
 
@@ -342,7 +379,7 @@ const Chart = () => {
                 // rate="0.43%"
                 levelUp
               >
-                <LuScale className='w-10 h-10' />
+                <FcCancel className='w-10 h-10' />
               </CardDataStats>
             </Link>
 
@@ -357,7 +394,7 @@ const Chart = () => {
                 // rate="0.43%"
                 levelUp
               >
-                <LuScale className='w-10 h-10' />
+                <MdEditSquare className='w-10 h-10' />
               </CardDataStats>
             </Link>
 
@@ -371,7 +408,7 @@ const Chart = () => {
                 // rate="0.43%"
                 levelUp
               >
-                <LuScale className='w-10 h-10' />
+                <GrUpdate className='w-10 h-10' />
               </CardDataStats>
             </Link>
 
