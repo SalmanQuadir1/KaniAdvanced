@@ -3,7 +3,7 @@ import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { DELETE_ORDER_URL, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS, VIEW_PARTIALLYCREATED_ORDERS } from "../../Constants/utils";
+import { DELETE_ORDER_URL, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS, VIEW_PARTIALLYCREATED_ORDERS, VIEW_REJECTED_ORDERS } from "../../Constants/utils";
 import ReactSelect from 'react-select';
 import useorder from '../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -121,7 +121,7 @@ const ViewOrderPending = () => {
         console.log("Fetching orders for page", page); // Log the page number being requested
 
         try {
-            const response = await fetch(`${VIEW_PENDING_ORDERS}?page=${page || 1}`, {
+            const response = await fetch(`${VIEW_REJECTED_ORDERS}?page=${page || 1}`, {
                 method: "POST", // GET method
                 headers: {
                     "Content-Type": "application/json",

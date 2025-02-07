@@ -3,7 +3,7 @@ import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { DELETE_ORDER_URL, VIEW_ALL_ORDERS, VIEW_CHALLAN_ORDERS, VIEW_CLOSED_ORDERS, VIEW_CREATED_ORDERS, VIEW_PARTIALLYCREATED_ORDERS } from "../../Constants/utils";
+import { DELETE_ORDER_URL, VIEW_ALL_ORDERS, VIEW_CHALLAN_ORDERS, VIEW_CLOSED_ORDERS, VIEW_CREATED_ORDERS, VIEW_PARTIALLYCREATED_ORDERS, VIEW_RECIEVINGQTY_ORDERS } from "../../Constants/utils";
 import ReactSelect from 'react-select';
 import useorder from '../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -23,7 +23,7 @@ const productgrp = [
 ];
 
 
-const ViewOrderPending = () => {
+const ViewSupplierRecievingOrders = () => {
 
     const { handleUpdate, getorderNumber, orderNo, getSupplier, getProdId, productIdd, supplier, getCustomer, customer } = useorder();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
@@ -121,7 +121,7 @@ const ViewOrderPending = () => {
         console.log("Fetching orders for page", page); // Log the page number being requested
 
         try {
-            const response = await fetch(`${VIEW_CHALLAN_ORDERS}?page=${page || 1}`, {
+            const response = await fetch(`${VIEW_RECIEVINGQTY_ORDERS}?page=${page || 1}`, {
                 method: "POST", // GET method
                 headers: {
                     "Content-Type": "application/json",
@@ -254,7 +254,6 @@ const ViewOrderPending = () => {
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
                 </td>
-
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.orderNo}</p>
 
@@ -264,19 +263,34 @@ const ViewOrderPending = () => {
 
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.challanNo}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.qtyToManufacture}</p>
+
                 </td>
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.challanDate}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.pendingQty}</p>
 
                 </td>
+
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.expectedDate}</p>
-                </td>
-             
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.receivingQty}</p>
 
-              
+                </td>
+
+
+
+
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">
+                        {item?.supplierName?.join(", ")}
+                    </p>
+                </td>
+
+
+
+
+
+
 
 
 
@@ -288,7 +302,7 @@ const ViewOrderPending = () => {
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
-                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updateChallan/${item?.id}`)} title='Edit Order' /> 
+                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/order/updateorderproduct/${item?.id}`)} title='Edit Order' />
                         <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' />
                     </p>
                 </td>
@@ -308,7 +322,7 @@ const ViewOrderPending = () => {
             orderNo: values.orderNo || undefined,
             supplierName: values.supplierName || undefined,
 
-           
+
             productId: values.productId || undefined
         };
         getOrder(pagination.currentPage, filters);
@@ -321,7 +335,7 @@ const ViewOrderPending = () => {
             <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
                 <div className="pt-5">
                     <div className='flex justify-between'>
-                        <h2 className="text-xl font-semibold leading-tight">View Challan</h2>
+                        <h2 className="text-xl font-semibold leading-tight">View Supplier Recieving Orders</h2>
                         {/* <p className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium bg-success text-success dark:bg-white dark:text-slate-800`}>
                             TOTAL PRODUCTS: {pagination.totalItems}
                         </p> */}
@@ -332,11 +346,11 @@ const ViewOrderPending = () => {
                         <Formik
                             initialValues={{
                                 orderNo: '',
-                              
+
                                 supplierName: "",
                                 ProductId: "",
-                                ChallanNo:"",
-                                challanDate:""
+                                ChallanNo: "",
+                                challanDate: ""
 
 
 
@@ -416,7 +430,7 @@ const ViewOrderPending = () => {
                                             />
 
                                         </div>
-                                      
+
 
                                     </div>
 
@@ -441,11 +455,17 @@ const ViewOrderPending = () => {
                                 <thead>
                                     <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
+
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
+
+
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Id</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Challan No</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Challan Date</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Expected Date</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Qty To Manufacture</th>
+
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Pending Quantity</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Recieved Quantity</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Supplier Name</th>
+
 
                                         {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 
@@ -469,4 +489,4 @@ const ViewOrderPending = () => {
     )
 }
 
-export default ViewOrderPending
+export default ViewSupplierRecievingOrders
