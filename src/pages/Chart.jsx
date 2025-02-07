@@ -320,6 +320,64 @@ const Chart = () => {
 
 
 
+            <Link to={"/order/needModification"}>
+              <CardDataStats
+                title="Production Modification Orders"
+                total={countMapping['ordersWithForcedClosure'] || 0}
+
+
+                // rate="0.43%"
+                levelUp
+              >
+                <LuScale className='w-10 h-10' />
+              </CardDataStats>
+            </Link>
+
+            <Link to={"/order/Cancelled"}>
+              <CardDataStats
+                title="Cancelled Orders"
+                total={countMapping['ordersWithForcedClosure'] || 0}
+
+
+                // rate="0.43%"
+                levelUp
+              >
+                <LuScale className='w-10 h-10' />
+              </CardDataStats>
+            </Link>
+
+
+            
+            <Link to={"/order/recievedQuantity"}>
+              <CardDataStats
+                title="Edit Recieved Quantity"
+                total={countMapping['ordersWithForcedClosure'] || 0}
+
+
+                // rate="0.43%"
+                levelUp
+              >
+                <LuScale className='w-10 h-10' />
+              </CardDataStats>
+            </Link>
+
+
+            <Link to={"/order/updateShippingDate"}>
+              <CardDataStats
+                title="Update Shipping Date"
+                total={countMapping['ordersWithForcedClosure'] || 0}
+
+
+                // rate="0.43%"
+                levelUp
+              >
+                <LuScale className='w-10 h-10' />
+              </CardDataStats>
+            </Link>
+
+
+
+
 
 
 

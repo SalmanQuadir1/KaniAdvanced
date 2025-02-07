@@ -74,9 +74,11 @@ import UpdateExpectedSupplierDate from './components/Order/UpdateExpectedSupplie
 import ViewExpectedDateOrder from './components/Order/ViewExpectedDateOrder.jsx';
 
 import ViewSupplierRecievingOrders from './components/Order/ViewSupplierRecievingOrders.jsx';
+import ViewOrderShippingDate from './components/Order/ViewOrderShippingDate.jsx';
 
+import ViewNeedModification from './components/Order/ViewNeedModification.jsx';
 
-
+import ViewOrderCancelled from './components/Order/ViewOrderCancelled.jsx';
 
 
 
@@ -89,7 +91,7 @@ import UpdateOrderProduct from './components/Order/UpdateOrderProduct.jsx';
 import ViewProductByOrderId from './components/Order/ViewProductByOrderId.jsx';
 
 import ViewOrderForcedClosure from './components/Order/ViewOrderForcedClosure.jsx';
-
+import ViewRecievedQuantity from './components/Order/ViewRecievedQuantity.jsx';
 
 
 
@@ -127,7 +129,7 @@ import ViewOrderPartiallyClosed from './components/Order/ViewOrderPartiallyClose
 
 
 import UpdateOrder from './components/Order/UpdateOrder.jsx';
-
+import UpdateOrderShippingDate from './components/Order/UpdateOrderShippingDate.jsx';
 
 import AddCustomer from './components/Customer/AddCustomer';
 import ViewCustomer from './components/Customer/ViewCustomer';
@@ -416,6 +418,37 @@ function App() {
             }
           />
 
+<Route
+            path="/order/updateShippingDate"
+            element={
+              <>
+                <PageTitle title="Update Expected Date " />
+                <ViewOrderShippingDate />
+              </>
+            }
+          />
+
+
+<Route
+            path="/order/needModification"
+            element={
+              <>
+                <PageTitle title="Need Modification " />
+                <ViewNeedModification />
+              </>
+            }
+          />
+
+<Route
+            path="/order/Cancelled"
+            element={
+              <>
+                <PageTitle title="Cancelled Orders " />
+                <ViewOrderCancelled />
+              </>
+            }
+          />
+
 
 
           <Route
@@ -510,6 +543,16 @@ function App() {
               <>
                 <PageTitle title="View Order Forced Closure " />
                 <ViewOrderForcedClosure />
+              </>
+            }
+          />
+
+<Route
+            path="/order/recievedQuantity"
+            element={
+              <>
+                <PageTitle title="View Recieved Quantity " />
+                <ViewRecievedQuantity />
               </>
             }
           />
@@ -637,6 +680,16 @@ function App() {
               <>
                 <PageTitle title="View Order" />
                 <UpdateOrder />
+              </>
+            }
+          />
+
+<Route
+            path="/Order/updateorderShippingDate/:id"
+            element={
+              <>
+                <PageTitle title="Update Order Shipping Date" />
+                <UpdateOrderShippingDate />
               </>
             }
           />

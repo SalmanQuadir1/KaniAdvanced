@@ -224,8 +224,8 @@ const UpdateOrderProduct = () => {
 
   const ExecutionStatus = [
     { value: 'Accepted', label: 'Accepted' },
-    { value: 'Rejected', label: 'Rejected' },
-    { value: 'NeedModification', label: 'Need Modification' },
+    { value: 'rejected', label: 'Rejected' },
+    { value: 'need_modification', label: 'Need Modification' },
 
   ];
 
