@@ -291,12 +291,7 @@ const ViewOrderCancelled = () => {
 
 
 
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="flex text-gray-900 whitespace-no-wrap">
-                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updatepartiallyApproved/${item?.id}`)} title='Edit Order' />  |
-                        <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' />
-                    </p>
-                </td>
+           
             </tr>
         ));
     };
@@ -468,7 +463,7 @@ const ViewOrderCancelled = () => {
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
                                         {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+                                     
                                     </tr>
                                 </thead>
                                 <tbody>
