@@ -226,7 +226,7 @@ function App() {
             path="/"
             element={
               <>
-                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER"]}></RoleBasedRoute>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER","ROLE_EXECUTOR"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <Chart />
               </>
@@ -388,7 +388,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/Order/updateExpectedDate/:id"
             element={
               <>
@@ -408,7 +408,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/order/supplierRecievingOrders"
             element={
               <>
@@ -418,7 +418,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/order/updateShippingDate"
             element={
               <>
@@ -429,7 +429,7 @@ function App() {
           />
 
 
-<Route
+          <Route
             path="/order/needModification"
             element={
               <>
@@ -439,7 +439,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/order/Cancelled"
             element={
               <>
@@ -547,7 +547,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/order/recievedQuantity"
             element={
               <>
@@ -684,7 +684,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/Order/updateorderShippingDate/:id"
             element={
               <>
