@@ -112,7 +112,7 @@ import ViewOrderPartiallyApproved from './components/Order/ViewOrderPartiallyApp
 
 import ViewOrderExecuted from './components/Order/ViewOrderExecuted.jsx';
 import UpdateOrderAccepted from './components/Order/UpdateOrderAccepted.jsx';
-
+import UpdateOrderPending from './components/Order/UpdateOrderPending.jsx';
 import ViewOrderPartiallyPending from './components/Order/ViewOrderPartiallyPending.jsx';
 import ViewOrderPending from './components/Order/ViewOrderPending.jsx';
 
@@ -467,6 +467,16 @@ function App() {
               <>
                 <PageTitle title="Update Order Product " />
                 <UpdateOrderAccepted />
+              </>
+            }
+          />
+
+<Route
+            path="/Order/updateorderPending/:id"
+            element={
+              <>
+                <PageTitle title="Update Order Pending " />
+                <UpdateOrderPending />
               </>
             }
           />
