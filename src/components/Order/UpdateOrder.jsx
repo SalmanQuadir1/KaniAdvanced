@@ -185,28 +185,28 @@ const UpdateOrder = () => {
   const handleUpdateSubmit = async (values) => {
     console.log(values, "jazim");
 
-    // try {
-    //   const url = `${UPDATE_ORDER_URL}/${id}`;
-    //   const response = await fetch(url, {
-    //     method: "PUT",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       "Authorization": `Bearer ${token}`
-    //     },
-    //     body: JSON.stringify(values)
-    //   });
+    try {
+      const url = `${UPDATE_ORDER_URL}/${id}`;
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(values)
+      });
 
-    //   const data = await response.json();
-    //   if (response.ok) {
-    //     console.log(data, "coming ");
-    //     toast.success(`Order Updated successfully`);
-    //   } else {
-    //     toast.error(`${data.errorMessage}`);
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    //   toast.error("An error occurred");
-    // }
+      const data = await response.json();
+      if (response.ok) {
+        console.log(data, "coming ");
+        toast.success(`Order Updated successfully`);
+      } else {
+        toast.error(`${data.errorMessage}`);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred");
+    }
   };
 
 
@@ -525,10 +525,37 @@ const UpdateOrder = () => {
                 value: product.value || '',
                 clientShippingDate: product.clientShippingDate || '',
                 expectedDate: product.expectedDate || '',
-                productSuppliers: product.productSuppliers?.map(supplier => ({
-                  supplierName: supplier.supplier?.name || '',
-                  supplierOrderQty: supplier.supplierOrderQty || 0,
-                })) || [],
+                // productSuppliers: product.productSuppliers?.map(supplier => ({
+                //   supplierName: supplier.supplier?.name || '',
+                //   supplierOrderQty: supplier.supplierOrderQty || 0,
+                // })) || [],
+
+                // productSuppliers: product.productSuppliers?.map((supplier) => ({
+                //   supplier: {
+                //     id: supplier?.supplier?.id || '',
+                //     name: supplier?.supplier?.name || '',
+                //   },
+                //   supplierOrderQty: supplier.supplierOrderQty || 0,
+                // })) || []
+
+                productSuppliers: [
+                  ...(product.productSuppliers?.map((supplier) => ({
+                    supplier: {
+                      id: supplier?.supplier?.id || '',
+                      name: supplier?.supplier?.name || '',
+                    },
+                    supplierOrderQty: supplier.supplierOrderQty || 0,
+                  })) || []),
+            
+                  // ✅ Add a New Supplier Entry
+                  {
+                    supplier: {
+                      id: id || '', // Supplier ID
+                    },
+                    supplierOrderQty: "",
+                  },
+                ],
+              
               })) || []),
           
               // ✅ Merge `prodIdModal` Data
@@ -1064,7 +1091,7 @@ const UpdateOrder = () => {
 
     {/* Supplier Quantity Field */}
     <td className="px-5 py-5 border-b border-gray-200 text-sm">
-      <Field
+      {/* <Field
         name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
         placeholder="Supplier Quantity"
         type="number"
@@ -1076,7 +1103,16 @@ const UpdateOrder = () => {
           )
         }
         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-      />
+      /> */}
+
+
+<Field
+  name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
+  placeholder="Supplier Quantity"
+  type="number"
+  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+/>
+
       <ErrorMessage
         name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
         component="div"
@@ -1101,41 +1137,45 @@ const UpdateOrder = () => {
 {selectedSuppliers
   .find((supplierRow) => supplierRow.selectedRowId === index)
   ?.supplierIds.map((supplier, supplierIndex) => (
-    <tr
-      key={`supplier-row-${index}-${supplierIndex}`}
-      className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3"
-    >
+    <tr key={`supplier-row-${index}-${supplierIndex}`} className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3">
+      
       {/* Supplier Name Field */}
-      <td
-        key={`supplier-${supplierIndex}`}
-        className="px-5 py-5 border-b border-gray-200 text-sm"
-      >
+      <td key={`supplier-${supplierIndex}`} className="px-5 py-5 border-b border-gray-200 text-sm">
         <Field
           name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`}
           placeholder="Supplier Name"
           value={supplier?.supplierId?.supplierName || ""}
-          onChange={(e) =>
-            setFieldValue(
-              `orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`,
-              e.target.value
-            )
-          }
-          className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+          readOnly
+          className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
         />
       </td>
 
       {/* Supplier Quantity Field */}
-      <td
-        key={`quantity-${supplierIndex}`}
-        className="px-5 py-5 border-b border-gray-200 text-sm"
-      >
+      <td key={`quantity-${supplierIndex}`} className="px-5 py-5 border-b border-gray-200 text-sm">
         <Field
           name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
           placeholder="Supplier Quantity"
           type="number"
-          className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
-          readOnly={false} // Ensures it is editable
-          disabled={false} // Ensures it is not disabled
+          value={supplier?.supplierOrderQty || ""}
+          onChange={(e) => {
+            const newQuantity = e.target.value;
+            setFieldValue(`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`, newQuantity);
+
+            // ✅ Update `selectedSuppliers`
+            setSelectedSuppliers((prevSuppliers) =>
+              prevSuppliers.map((row) =>
+                row.selectedRowId === index
+                  ? {
+                      ...row,
+                      supplierIds: row.supplierIds.map((s, i) =>
+                        i === supplierIndex ? { ...s, supplierOrderQty: newQuantity } : s
+                      ),
+                    }
+                  : row
+              )
+            );
+          }}
+          className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
         />
         <ErrorMessage
           name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
@@ -1150,6 +1190,7 @@ const UpdateOrder = () => {
       </td>
     </tr>
   ))}
+
 
 
                                       </tbody>
