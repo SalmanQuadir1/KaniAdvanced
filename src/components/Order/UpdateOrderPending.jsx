@@ -19,7 +19,7 @@ import { useNavigate, useNavigation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { MdDelete } from 'react-icons/md';
-const UpdateOrderAccepted = () => {
+const UpdateOrderPending = () => {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const [orderType, setOrderType] = useState('');
@@ -34,11 +34,7 @@ const UpdateOrderAccepted = () => {
   const [customerOptions, setcustomerOptions] = useState([])
   const { token } = currentUser;
 
-  const { user } = currentUser;
 
-  const role = user?.authorities[0].authority
-
-  console.log(role, "rolllee");
 
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [suppliers, setSuppliers] = useState([
@@ -322,9 +318,7 @@ const UpdateOrderAccepted = () => {
 
   console.log(order, "orderrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
 
-  const handleCancelOrder = () => {
-    console.log("cancelled");
-  }
+
 
 
 
@@ -566,54 +560,54 @@ const UpdateOrderAccepted = () => {
                                 >
 
 
-                                  {
-                                    product.productStatus === "Accepted" ? (
-                                      <div className="flex items-center gap-2">
-                                        <span
-                                          onClick={() => navigate(`/order/modifyproductafterexecution/${product?.id}`)}
-                                          className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
-                                        >
-                                          ISSUE CHALAAN
-                                        </span>
-                                        <span
-                                          onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
-                                          className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
-                                        >
-                                          VIEW PRODUCT DETAILS
-                                        </span>
-                                      </div>
-                                    ) : (product.productStatus?.toLowerCase() === "approved" || product.productStatus === "Pending") ? (
-                                      <div className="flex items-center gap-2">
-                                        <span
-                                          onClick={() => navigate(`/order/updateorderproduct/${product?.id}`)}
-                                          className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
-                                        >
-                                          RECEIVING DETAILS
-                                        </span>
-                                        <span
-                                          onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
-                                          className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
-                                        >
-                                          VIEW PRODUCT DETAILS
-                                        </span>
-                                      </div>
-                                    ) : (
-                                      <div className="flex items-center gap-2">
-                                        <span
-                                          onClick={() => navigate(`/order/modifyorderproduct/${product?.id}`)}
-                                          className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
-                                        >
-                                          VIEW ORDER PRODUCT
-                                        </span>
-                                        <span
-                                          onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
-                                          className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
-                                        >
-                                          VIEW PRODUCT DETAILS
-                                        </span>
-                                      </div>
-                                    )
-                                  }
+{
+  product.productStatus === "Accepted" ? (
+    <div className="flex items-center gap-2">
+      <span
+        onClick={() => navigate(`/order/modifyproductafterexecution/${product?.id}`)}
+        className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
+      >
+        ISSUE CHALAAN
+      </span>
+      <span
+        onClick={() => handleUpdateBom(item?.bom?.id)}
+        className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
+      >
+        VIEW PRODUCT DETAILS
+      </span>
+    </div>
+  ) : (product.productStatus?.toLowerCase() === "approved" || product.productStatus === "Pending") ? (  
+    <div className="flex items-center gap-2">
+      <span
+        onClick={() => navigate(`/order/updateorderproduct/${product?.id}`)}
+        className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
+      >
+        RECEIVING DETAILS
+      </span>
+      <span
+        onClick={() => handleUpdateBom(item?.bom?.id)}
+        className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
+      >
+        VIEW PRODUCT DETAILS
+      </span>
+    </div>
+  ) : (
+    <div className="flex items-center gap-2">
+      <span
+        onClick={() => navigate(`/order/modifyorderproduct/${product?.id}`)}
+        className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
+      >
+        VIEW ORDER PRODUCT
+      </span>
+      <span
+        onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
+        className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
+      >
+        VIEW PRODUCT DETAILS
+      </span>
+    </div>
+  )
+}
 
 
 
@@ -643,36 +637,20 @@ const UpdateOrderAccepted = () => {
 
 
 
-                      {
-                        role === "ROLE_EXECUTOR" ? (
-                          <div className="flex justify-center mt-4">
-                            <button
-                              onClick={() => handleCancelOrder()} // Ensure the function is executed
-                              className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none"
-                            >
-                              Cancel Order
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="flex justify-center mt-4">
-                            <button
-                              type="submit"
-                              className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none"
-                            >
-                              Accept All
-                            </button>
-                          </div>
-                        )
-                      }
 
 
 
 
+                      <div className="flex justify-center mt-4"> {/* Centering the button */}
+                        <button
+                          type="submit"
 
 
-
-
-
+                          className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none" // Increased width
+                        >
+                          Accept All
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -681,7 +659,7 @@ const UpdateOrderAccepted = () => {
               </Form>
             )
           }}
-        </Formik >
+        </Formik>
         {isSupplierModalOpen && (
           <SupplierModal
             suppliers={suppliers}
@@ -706,9 +684,9 @@ const UpdateOrderAccepted = () => {
         />
 
 
-      </div >
-    </DefaultLayout >
+      </div>
+    </DefaultLayout>
   );
 };
 
-export default UpdateOrderAccepted;
+export default UpdateOrderPending;

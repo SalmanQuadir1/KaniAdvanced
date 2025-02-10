@@ -3,7 +3,7 @@ import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { DELETE_ORDER_URL, VIEW_ALL_ORDERS, VIEW_CLOSED_ORDERS, VIEW_CREATED_ORDERS, VIEW_PARTIALLYCREATED_ORDERS } from "../../Constants/utils";
+import { DELETE_ORDER_URL, VIEW_ALL_ORDERS, VIEW_APPROVED_ORDERS, VIEW_CREATED_ORDERS, VIEW_NEEDMODIFICATION_ORDERS, VIEW_PARTIALLYAPPROVED_ORDERS } from "../../Constants/utils";
 import ReactSelect from 'react-select';
 import useorder from '../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -23,7 +23,7 @@ const productgrp = [
 ];
 
 
-const ViewOrderPending = () => {
+const ViewNeedModification = () => {
 
     const { handleUpdate, getorderNumber, orderNo, getSupplier, getProdId, productIdd, supplier, getCustomer, customer } = useorder();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
@@ -33,6 +33,9 @@ const ViewOrderPending = () => {
 
 
     const { token } = currentUser;
+
+    console.log(productIdd,"huhuuhuuuuuuuuuuuuuuuuu");
+    
     const [Order, setOrder] = useState()
 
     const [supplierNameOptions, setsupplierNameOptions] = useState([])
@@ -68,7 +71,7 @@ const ViewOrderPending = () => {
 
 
 
-
+    
     const formattedCustomer = customer.map(customer => ({
         label: customer.customerName,
         value: customer.customerName
@@ -121,7 +124,7 @@ const ViewOrderPending = () => {
         console.log("Fetching orders for page", page); // Log the page number being requested
 
         try {
-            const response = await fetch(`${VIEW_CLOSED_ORDERS}?page=${page || 1}`, {
+            const response = await fetch(`${VIEW_NEEDMODIFICATION_ORDERS}?page=${page || 1}`, {
                 method: "POST", // GET method
                 headers: {
                     "Content-Type": "application/json",
@@ -290,7 +293,7 @@ const ViewOrderPending = () => {
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
-                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updateorderClosed/${item?.id}`)} title='Edit Order' />  |
+                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updatepartiallyApproved/${item?.id}`)} title='Edit Order' />  |
                         <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' />
                     </p>
                 </td>
@@ -319,11 +322,11 @@ const ViewOrderPending = () => {
 
     return (
         <DefaultLayout>
-            <Breadcrumb pageName="Order/ Partially Approved By Production Orders" />
+            <Breadcrumb pageName="Order/ View Order" />
             <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
                 <div className="pt-5">
                     <div className='flex justify-between'>
-                        <h2 className="text-xl font-semibold leading-tight">Closed Orders</h2>
+                        <h2 className="text-xl font-semibold leading-tight">View Need Modification</h2>
                         {/* <p className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium bg-success text-success dark:bg-white dark:text-slate-800`}>
                             TOTAL PRODUCTS: {pagination.totalItems}
                         </p> */}
@@ -485,4 +488,4 @@ const ViewOrderPending = () => {
     )
 }
 
-export default ViewOrderPending
+export default ViewNeedModification

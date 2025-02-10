@@ -1,394 +1,117 @@
 import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
-
 import DefaultLayout from '../layout/DefaultLayout';
 import CardDataStats from '../components/CardDataStats';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { fetchunit } from '../redux/Slice/UnitSlice';
-import { LuScale } from "react-icons/lu";
-import { SiHomeassistantcommunitystore } from "react-icons/si";
-import { BiPurchaseTagAlt } from "react-icons/bi";
-import { GiMaterialsScience } from "react-icons/gi";
-import { IoJournalOutline } from "react-icons/io5";
-import { IoLocationOutline } from "react-icons/io5";
-import { FaRegUserCircle } from "react-icons/fa";
-import { RiAlignItemBottomFill } from "react-icons/ri";
 import { Link } from 'react-router-dom';
 import { Count } from '../Constants/utils';
+
+// Import Icons
+import { LuScale, LuPanelLeftClose } from "react-icons/lu";
+import { SiHomeassistantcommunitystore } from "react-icons/si";
+import { AiOutlinePartition, AiOutlineClose } from "react-icons/ai";
+import { RiProgress1Line, RiProgress8Fill, RiUserReceived2Fill, RiAlignItemBottomFill } from "react-icons/ri";
+import { FcApproval, FcCancel } from "react-icons/fc";
+import { GrCompliance, GrUpdate } from "react-icons/gr";
+import { MdRepartition, MdOutlinePendingActions, MdOutlinePending, MdRecommend, MdEditSquare } from "react-icons/md";
+import { PiGearFineFill } from "react-icons/pi";
+import { CiCalendarDate } from "react-icons/ci";
+import { VscDiffModified } from "react-icons/vsc";
+
 const Chart = () => {
-
-  const [unitCount, setunitCount] = useState(0)
-  // const dispatch = useDispatch();
+  const [unitCount, setUnitCount] = useState([]);
   const { currentUser } = useSelector((state) => state?.persisted?.user);
-
-  const { user } = currentUser;
-
-  const { token } = currentUser;
-  const role = user?.authorities[0].authority
-
-
-
-
-
-
+  const { user, token } = currentUser;
+  const role = user?.authorities?.map(auth => auth.authority) || [];
 
   useEffect(() => {
-
-
-    const count = async () => {
-
+    const fetchCounts = async () => {
       try {
-
         const response = await fetch(Count, {
           method: "GET",
           headers: {
-            "content-type": "Application/json",
+            "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           }
-        })
-
-        const count = await response.json();
-
-        setunitCount(count)
-
+        });
+        const data = await response.json();
+        setUnitCount(data || []);
       } catch (error) {
-        console.log(error);
-
+        console.error("Error fetching counts:", error);
       }
+    };
 
-    }
+    fetchCounts();
+  }, [token]);
 
-    count();
+  // Convert unitCount array to an object for quick lookup
+  const countMapping = unitCount.reduce((acc, item) => {
+    acc[item.tableName] = item.count;
+    return acc;
+  }, {});
 
-  }, []);
+  // Role-based card mapping
+  const roleBasedCards = {
+    ROLE_ADMIN: [
+      { title: "Products", link: "/product/viewProducts", countKey: "products", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
+      { title: "Orders Pending For Production Approval", link: "/order/created", countKey: "ordersWithCreated", icon: <AiOutlinePartition className="w-10 h-10" />, levelUp: true },
+      { title: "Inventory", link: "/inventory/viewProductInventory", countKey: "inventory", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
+      { title: "Partially Approved By Production Orders", link: "/order/partiallyexecuted", countKey: "ordersWithCreatedAccepted", icon: <RiProgress1Line className="w-10 h-10" />, levelUp: true },
+      { title: "Partially In Progress Orders", link: "/order/partiallyApproved", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
+      { title: "In Progress Orders", link: "/order/Approved", countKey: "approvedOrders", icon: <GrCompliance className="w-10 h-10" />, levelUp: true },
+      { title: "Units", link: "/configurator/addunit", countKey: "unit", icon: <LuScale className="w-10 h-10" />, levelUp: true },
+      { title: "Approved By Production Orders", link: "/orderlist/Executed", countKey: "ordersWithOnlyAccepted", icon: <FcApproval className="w-10 h-10" />, levelUp: true },
+      { title: "Completed Orders", link: "/orderlist/Closed", countKey: "ordersWithOnlyClosed", icon: <MdRecommend className="w-10 h-10" />, levelUp: true },
+      { title: "Partially Completed Orders", link: "/orderlist/PartiallyClosed", countKey: "ordersWithOnlyPartiallyClosed", icon: <MdRepartition className="w-10 h-10" />, levelUp: true },
+      { title: "Update Challan No And Date", link: "/orderlist/UpdateChallan", countKey: "ordersWithApprovedChallan", icon: <PiGearFineFill className="w-10 h-10" />, levelUp: true },
+      { title: "Pending Orders", link: "/orderlist/Pending", countKey: "ordersWithOnlyPending", icon: <MdOutlinePendingActions className="w-10 h-10" />, levelUp: true },
+      { title: "Partially Pending Orders", link: "/orderlist/PartiallyPending", countKey: "ordersWithAtLeastOnePending", icon: <MdOutlinePending className="w-10 h-10" />, levelUp: true },
+      { title: "Forced Closed Orders", link: "/orderlist/ForcedClosure", countKey: "ordersWithForcedClosure", icon: <LuPanelLeftClose className="w-10 h-10" />, levelUp: true },
+      { title: "Rejected By Production Orders", link: "/orderlist/RejectedOrders", countKey: "ordersWithRejected", icon: <AiOutlineClose className="w-10 h-10" />, levelUp: true },
+      { title: "Supplier Date Updation Orders", link: "/order/supplierExpectdateUpdate", countKey: "approvedSupplierOrdersCount", icon: <CiCalendarDate className="w-10 h-10" />, levelUp: true },
+      { title: "Supplier Receiving Orders", link: "/order/supplierRecievingOrders", countKey: "ordersWithSupplierReceiving", icon: <RiUserReceived2Fill className="w-10 h-10" />, levelUp: true },
+      { title: "Production Modification Orders", link: "/order/needModification", countKey: "ordersNeedModification", icon: <VscDiffModified className="w-10 h-10" />, levelUp: true },
+      { title: "Cancelled Orders", link: "/order/Cancelled", countKey: "ordersCancelled", icon: <FcCancel className="w-10 h-10" />, levelUp: true },
+      { title: "Edit Received Quantity", link: "/order/recievedQuantity", countKey: "ordersWithPendingProducts", icon: <MdEditSquare className="w-10 h-10" />, levelUp: true },
+      { title: "Update Shipping Date", link: "/order/updateShippingDate", countKey: "ordersWithShippingDate", icon: <GrUpdate className="w-10 h-10" />, levelUp: true },
+      { title: "Total Orders", link: "/Order/ViewOrder", countKey: "orders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true }
+    ],
+    ROLE_EXECUTOR: [
+      { title: "Total Orders", link: "/Order/ViewOrder", countKey: "orders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
+      { title: "Orders Pending For Production Approval", link: "/order/created", countKey: "ordersWithCreated", icon: <AiOutlinePartition className="w-10 h-10" />, levelUp: true },
+      { title: "Approved By Production Orders", link: "/orderlist/Executed", countKey: "ordersWithOnlyAccepted", icon: <FcApproval className="w-10 h-10" />, levelUp: true },
+      { title: "Partially Approved By Production Orders", link: "/order/partiallyexecuted", countKey: "ordersWithCreatedAccepted", icon: <RiProgress1Line className="w-10 h-10" />, levelUp: true },
+      { title: "Partially In Progress Orders", link: "/order/partiallyApproved", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
+      { title: "Partially Completed Orders", link: "/orderlist/PartiallyClosed", countKey: "ordersWithOnlyPartiallyClosed", icon: <MdRepartition className="w-10 h-10" />, levelUp: true },
+      { title: "Partially Pending Orders", link: "/orderlist/PartiallyPending", countKey: "ordersWithAtLeastOnePending", icon: <MdOutlinePending className="w-10 h-10" />, levelUp: true },
+      { title: "Rejected By Production Orders", link: "/orderlist/RejectedOrders", countKey: "ordersWithRejected", icon: <AiOutlineClose className="w-10 h-10" />, levelUp: true },
+      { title: "Production Modification Orders", link: "/order/needModification", countKey: "ordersNeedModification", icon: <VscDiffModified className="w-10 h-10" />, levelUp: true },
+      { title: "Cancelled Orders", link: "/order/Cancelled", countKey: "ordersCancelled", icon: <FcCancel className="w-10 h-10" />, levelUp: true },
 
 
-  console.log(unitCount, "heyyyy");
 
+    ]
+  };
 
-  // Check if units.data is an array and has length, or default to 0
-  const countMapping = {};
-  unitCount && unitCount?.forEach(item => {
-    countMapping[item.tableName] = item.count;
-  });
-
-
+  // Get all cards user should see based on roles
+  const cardsToShow = role.flatMap(roleName => roleBasedCards[roleName] || []);
 
   return (
     <DefaultLayout>
-
-      <h3 className="text-2xl text-center dark:text-white font-extrabold">DASHBOARD</h3>
-      <div className="grid grid-cols-1 gap-3 my-4 md:grid-cols-4 md:gap-3 xl:grid-cols-4 2xl:gap-7.5">
-
-        {(role === "ROLE_ADMIN") && (
-          <>
-            <Link to={"/product/viewProducts"}>
-              <CardDataStats
-                title="Products"
-                total={countMapping['products'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <RiAlignItemBottomFill className='w-13 h-10' />
-              </CardDataStats>
-            </Link>
-            <Link to={"/order/created"}>
-              <CardDataStats
-                title="Orders Pending For Production Approval"
-                total={countMapping['ordersWithCreated'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <RiAlignItemBottomFill className='w-10 h-10' />
-              </CardDataStats>
-            </Link>
-
-            <Link to={"/inventory/viewProductInventory"}>
-              <CardDataStats
-                title="Inventory"
-                total={countMapping['inventory'] || 0}
-
-
-                // rate="0.43%"
-                levelDown
-              >
-                <SiHomeassistantcommunitystore className='w-10 h-10' />
-
-              </CardDataStats>
-            </Link>
-
-            <Link to={"/order/partiallyexecuted"}>
-              <CardDataStats
-                title="Partially Approved By Production Orders"
-                total={countMapping['ordersWithCreatedAccepted'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <RiAlignItemBottomFill className='w-10 h-10' />
-              </CardDataStats>
-            </Link>
-            <Link to={"/order/partiallyApproved"}>
-              <CardDataStats
-                title="Partially In Progress Orders"
-                total={countMapping['ordersWithApprovedOrForcedClosure'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <RiAlignItemBottomFill className='w-10 h-10' />
-              </CardDataStats>
-            </Link>
-
-
-            <Link to={"/order/Approved"}>
-              <CardDataStats
-                title="In Progress Orders"
-                total={countMapping['ordersWithApprovedOrForcedClosure'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <RiAlignItemBottomFill className='w-10 h-10' />
-              </CardDataStats>
-            </Link>
-
-
-
-
-
-
-            <Link to={"/configurator/addunit"}>
-              <CardDataStats
-                title="Units"
-                total={countMapping['unit'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <LuScale className='w-10 h-10' />
-              </CardDataStats>
-            </Link>
-
-            <Link to={"/orderlist/Executed"}>
-              <CardDataStats
-                title="Approved By Production Orders"
-                total={countMapping['ordersWithOnlyAccepted'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <LuScale className='w-10 h-10' />
-              </CardDataStats>
-            </Link>
-
-            <Link to={"/orderlist/Closed"}>
-              <CardDataStats
-                title="Completed Orders"
-                total={countMapping['ordersWithOnlyClosed'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <LuScale className='w-10 h-10' />
-              </CardDataStats>
-            </Link>
-
-            <Link to={"/orderlist/PartiallyClosed"}>
-              <CardDataStats
-                title="Partially Completed Orders"
-                total={countMapping['ordersWithOnlyPartiallyClosed'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <LuScale className='w-10 h-10' />
-              </CardDataStats>
-            </Link>
-
-
-
-
-            <Link to={"/orderlist/UpdateChallan"}>
-              <CardDataStats
-                title="Update Challan No And Date"
-                total={countMapping['ordersWithOnlyPartiallyClosed'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <LuScale className='w-10 h-10' />
-              </CardDataStats>
-            </Link>
-
-            <Link to={"/orderlist/Pending"}>
-              <CardDataStats
-                title="Pending Orders"
-                total={countMapping['ordersWithOnlyPending'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <LuScale className='w-10 h-10' />
-              </CardDataStats>
-            </Link>
-
-            <Link to={"/orderlist/PartiallyPending"}>
-              <CardDataStats
-                title="Partially Pending Orders"
-                total={countMapping['ordersWithAtLeastOnePending'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <LuScale className='w-10 h-10' />
-              </CardDataStats>
-            </Link>
-
-
-
-            <Link to={"/orderlist/ForcedClosure"}>
-              <CardDataStats
-                title="Forced Closed Orders"
-                total={countMapping['ordersWithForcedClosure'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <LuScale className='w-10 h-10' />
-              </CardDataStats>
-            </Link>
-
-
-            <Link to={"/orderlist/RejectedOrders"}>
-              <CardDataStats
-                title="Rejected By Production Orders"
-                total={countMapping['ordersWithForcedClosure'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <LuScale className='w-10 h-10' />
-              </CardDataStats>
-            </Link>
-
-            
-            <Link to={"/order/supplierExpectdateUpdate"}>
-              <CardDataStats
-                title="Supplier Date Updation Orders"
-                total={countMapping['ordersWithForcedClosure'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <LuScale className='w-10 h-10' />
-              </CardDataStats>
-            </Link>
-
-
-
-            <Link to={"/order/supplierRecievingOrders"}>
-              <CardDataStats
-                title="Supplier Recieving Orders"
-                total={countMapping['ordersWithForcedClosure'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <LuScale className='w-10 h-10' />
-              </CardDataStats>
-            </Link>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <Link to={"/configurator/location"}>
-              <CardDataStats title="Locations" total={countMapping['location'] || 0} levelUp>
-                <IoLocationOutline className='w-10 h-10' />
-
-              </CardDataStats>
-            </Link>
-
-            <Link to={"/auth/signup"}>
-              <CardDataStats title="Total Users" total={countMapping['user'] || 0} levelDown>
-                <FaRegUserCircle className='w-10 h-10' />
-
-              </CardDataStats>
-            </Link>
-
-            <Link to={"/Order/ViewOrder"}>
-              <CardDataStats title="Total Orders" total={countMapping['orders'] || 0} levelDown>
-                <SiHomeassistantcommunitystore className='w-10 h-10' />
-
-              </CardDataStats>
-            </Link>
-
-          </>
-
-        )}
-
-        {/* {(role === "ROLE_APPROVER") && (
-          <>
-            <Link to={"/product/viewProducts"}>
-              <CardDataStats
-                title="Products"
-                total={countMapping['products'] || 0}
-
-
-                // rate="0.43%"
-                levelUp
-              >
-                <RiAlignItemBottomFill className='w-13 h-10' />
-              </CardDataStats>
-            </Link>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          </>
-
-        )} */}
+      <Breadcrumb pageName="Dashboard" />
+      <div className="grid grid-cols-1 gap-3 my-1 md:grid-cols-4 md:gap-3 xl:grid-cols-4 2xl:gap-7.5">
+        {cardsToShow.map((card, index) => (
+          <Link to={card.link} key={index}>
+            <CardDataStats
+              title={card.title}
+              total={countMapping[card.countKey] || 0}
+              levelUp={card.levelUp}
+              levelDown={card.levelDown}
+            >
+              {card.icon}
+            </CardDataStats>
+          </Link>
+        ))}
       </div>
     </DefaultLayout>
   );

@@ -74,9 +74,11 @@ import UpdateExpectedSupplierDate from './components/Order/UpdateExpectedSupplie
 import ViewExpectedDateOrder from './components/Order/ViewExpectedDateOrder.jsx';
 
 import ViewSupplierRecievingOrders from './components/Order/ViewSupplierRecievingOrders.jsx';
+import ViewOrderShippingDate from './components/Order/ViewOrderShippingDate.jsx';
 
+import ViewNeedModification from './components/Order/ViewNeedModification.jsx';
 
-
+import ViewOrderCancelled from './components/Order/ViewOrderCancelled.jsx';
 
 
 
@@ -89,7 +91,7 @@ import UpdateOrderProduct from './components/Order/UpdateOrderProduct.jsx';
 import ViewProductByOrderId from './components/Order/ViewProductByOrderId.jsx';
 
 import ViewOrderForcedClosure from './components/Order/ViewOrderForcedClosure.jsx';
-
+import ViewRecievedQuantity from './components/Order/ViewRecievedQuantity.jsx';
 
 
 
@@ -110,6 +112,9 @@ import ViewOrderPartiallyApproved from './components/Order/ViewOrderPartiallyApp
 
 import ViewOrderExecuted from './components/Order/ViewOrderExecuted.jsx';
 import UpdateOrderAccepted from './components/Order/UpdateOrderAccepted.jsx';
+import UpdateOrderPending from './components/Order/UpdateOrderPending.jsx';
+
+import UpdateClosedOrder from './components/Order/UpdateClosedOrder.jsx';
 
 import ViewOrderPartiallyPending from './components/Order/ViewOrderPartiallyPending.jsx';
 import ViewOrderPending from './components/Order/ViewOrderPending.jsx';
@@ -127,7 +132,7 @@ import ViewOrderPartiallyClosed from './components/Order/ViewOrderPartiallyClose
 
 
 import UpdateOrder from './components/Order/UpdateOrder.jsx';
-
+import UpdateOrderShippingDate from './components/Order/UpdateOrderShippingDate.jsx';
 
 import AddCustomer from './components/Customer/AddCustomer';
 import ViewCustomer from './components/Customer/ViewCustomer';
@@ -224,7 +229,7 @@ function App() {
             path="/"
             element={
               <>
-                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER"]}></RoleBasedRoute>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER","ROLE_EXECUTOR"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <Chart />
               </>
@@ -386,7 +391,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/Order/updateExpectedDate/:id"
             element={
               <>
@@ -406,12 +411,43 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/order/supplierRecievingOrders"
             element={
               <>
                 <PageTitle title="Update Expected Date " />
                 <ViewSupplierRecievingOrders />
+              </>
+            }
+          />
+
+          <Route
+            path="/order/updateShippingDate"
+            element={
+              <>
+                <PageTitle title="Update Expected Date " />
+                <ViewOrderShippingDate />
+              </>
+            }
+          />
+
+
+          <Route
+            path="/order/needModification"
+            element={
+              <>
+                <PageTitle title="Need Modification " />
+                <ViewNeedModification />
+              </>
+            }
+          />
+
+          <Route
+            path="/order/Cancelled"
+            element={
+              <>
+                <PageTitle title="Cancelled Orders " />
+                <ViewOrderCancelled />
               </>
             }
           />
@@ -434,6 +470,26 @@ function App() {
               <>
                 <PageTitle title="Update Order Product " />
                 <UpdateOrderAccepted />
+              </>
+            }
+          />
+
+<Route
+            path="/Order/updateorderPending/:id"
+            element={
+              <>
+                <PageTitle title="Update Order Pending " />
+                <UpdateOrderPending />
+              </>
+            }
+          />
+
+<Route
+            path="/Order/updateorderClosed/:id"
+            element={
+              <>
+                <PageTitle title="Update Order Pending " />
+                <UpdateClosedOrder />
               </>
             }
           />
@@ -510,6 +566,16 @@ function App() {
               <>
                 <PageTitle title="View Order Forced Closure " />
                 <ViewOrderForcedClosure />
+              </>
+            }
+          />
+
+          <Route
+            path="/order/recievedQuantity"
+            element={
+              <>
+                <PageTitle title="View Recieved Quantity " />
+                <ViewRecievedQuantity />
               </>
             }
           />
@@ -637,6 +703,16 @@ function App() {
               <>
                 <PageTitle title="View Order" />
                 <UpdateOrder />
+              </>
+            }
+          />
+
+          <Route
+            path="/Order/updateorderShippingDate/:id"
+            element={
+              <>
+                <PageTitle title="Update Order Shipping Date" />
+                <UpdateOrderShippingDate />
               </>
             }
           />
