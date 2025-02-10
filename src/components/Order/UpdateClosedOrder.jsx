@@ -19,7 +19,7 @@ import { useNavigate, useNavigation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { MdDelete } from 'react-icons/md';
-const UpdateOrderAccepted = () => {
+const UpdateClosedOrder = () => {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const [orderType, setOrderType] = useState('');
@@ -34,11 +34,7 @@ const UpdateOrderAccepted = () => {
   const [customerOptions, setcustomerOptions] = useState([])
   const { token } = currentUser;
 
-  const { user } = currentUser;
 
-  const role = user?.authorities[0].authority
-
-  console.log(role, "rolllee");
 
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [suppliers, setSuppliers] = useState([
@@ -322,9 +318,7 @@ const UpdateOrderAccepted = () => {
 
   console.log(order, "orderrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
 
-  const handleCancelOrder = () => {
-    console.log("cancelled");
-  }
+
 
 
 
@@ -386,7 +380,7 @@ const UpdateOrderAccepted = () => {
                   <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                       <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                        Update ORDER FORM
+                        Update Order  Closed
                       </h3>
                     </div>
                     <div className="p-6.5">
@@ -576,7 +570,7 @@ const UpdateOrderAccepted = () => {
                                           ISSUE CHALAAN
                                         </span>
                                         <span
-                                          onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
+                                          onClick={() => handleUpdateBom(item?.bom?.id)}
                                           className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
                                         >
                                           VIEW PRODUCT DETAILS
@@ -591,7 +585,16 @@ const UpdateOrderAccepted = () => {
                                           RECEIVING DETAILS
                                         </span>
                                         <span
-                                          onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
+                                          onClick={() => handleUpdateBom(item?.bom?.id)}
+                                          className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
+                                        >
+                                          VIEW PRODUCT DETAILS
+                                        </span>
+                                      </div>
+                                    ) : product.productStatus === "Closed" ? (
+                                      <div className="flex items-center gap-2">
+                                        <span
+                                          onClick={() => handleUpdateBom(item?.bom?.id)}
                                           className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
                                         >
                                           VIEW PRODUCT DETAILS
@@ -622,6 +625,7 @@ const UpdateOrderAccepted = () => {
 
 
 
+
                                 </td>
 
                               </tr>
@@ -643,36 +647,20 @@ const UpdateOrderAccepted = () => {
 
 
 
-                      {
-                        role === "ROLE_EXECUTOR" ? (
-                          <div className="flex justify-center mt-4">
-                            <button
-                              onClick={() => handleCancelOrder()} // Ensure the function is executed
-                              className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none"
-                            >
-                              Cancel Order
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="flex justify-center mt-4">
-                            <button
-                              type="submit"
-                              className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none"
-                            >
-                              Accept All
-                            </button>
-                          </div>
-                        )
-                      }
 
 
 
 
+                      <div className="flex justify-center mt-4"> {/* Centering the button */}
+                        <button
+                          type="submit"
 
 
-
-
-
+                          className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none" // Increased width
+                        >
+                          Accept All
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -681,7 +669,7 @@ const UpdateOrderAccepted = () => {
               </Form>
             )
           }}
-        </Formik >
+        </Formik>
         {isSupplierModalOpen && (
           <SupplierModal
             suppliers={suppliers}
@@ -706,9 +694,9 @@ const UpdateOrderAccepted = () => {
         />
 
 
-      </div >
-    </DefaultLayout >
+      </div>
+    </DefaultLayout>
   );
 };
 
-export default UpdateOrderAccepted;
+export default UpdateClosedOrder;

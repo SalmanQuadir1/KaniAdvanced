@@ -208,6 +208,7 @@ export const VIEW_PARTIALLYCLOSED_ORDERS = `${BASE_URL}/order/searchPartiallyClo
 export const VIEW_PARTIALLYCREATED_ORDERS = `${BASE_URL}/order/searchCreatedAndAccepted`; 
 
 export const VIEW_CLOSED_ORDERS = `${BASE_URL}/order/searchClosed`; 
+
 export const VIEW_CHALLAN_ORDERS = `${BASE_URL}/order/searchUpdateChallan`; 
 export const VIEW_EXPECTEDDATE_ORDERS = `${BASE_URL}/order/searchSupplierData`; 
 export const VIEW_RECIEVINGQTY_ORDERS = `${BASE_URL}/order/searchSupplierReceiving`; 
