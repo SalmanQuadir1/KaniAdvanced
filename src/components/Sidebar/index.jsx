@@ -159,6 +159,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 </svg>
                 Dashboard
               </NavLink>
+
+
+
               <SidebarLinkGroup
                 className={`${roles.some(role => ['supervsior', 'executor', 'director'].includes(role)) ? 'hidden' : 'hidden'
                   }`}
@@ -167,7 +170,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN','ROLE_ADMIN_SXR'].includes(role)) ? (
+                      {roles.some(role => ['ROLE_ADMIN', 'ROLE_ADMIN_SXR'].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
@@ -207,19 +210,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                        {roles.some(role => ['ROLE_ADMIN'].includes(role)) ?  (
-                          <li>
-                            <NavLink
-                              to="/product/addProduct"
-                              className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                (isActive && '!text-white')
-                              }
-                            >
-                              Add Products
-                            </NavLink>
-                          </li>
-                              ):null }
+                          {roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                            <li>
+                              <NavLink
+                                to="/product/addProduct"
+                                className={({ isActive }) =>
+                                  'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                  (isActive && '!text-white')
+                                }
+                              >
+                                Add Products
+                              </NavLink>
+                            </li>
+                          ) : null}
                           <li>
                             <NavLink
                               to="/product/viewProducts"
@@ -250,8 +253,22 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                   );
                 }}
               </SidebarLinkGroup>
+              {roles.some(role => ['ROLE_ADMIN_DLI'].includes(role)) ? (
 
-              {roles.some(role => ['ROLE_ADMIN','ROLE_EXECUTOR','ROLE_ADMIN_SXR'].includes(role)) ? (
+
+
+                <NavLink
+                  to="/configurator/addcustomergroup"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 
+}`}
+                >
+                  <TbReport size={24} />
+
+                  Customer group
+                </NavLink>
+              ) : null}
+
+              {roles.some(role => ['ROLE_ADMIN', 'ROLE_EXECUTOR', 'ROLE_ADMIN_SXR'].includes(role)) ? (
                 <NavLink
                   to="/Reports"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 
@@ -263,7 +280,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 </NavLink>
               ) : null}
 
-              {roles.some(role => ['ROLE_ADMIN','ROLE_EXECUTOR','ROLE_ADMIN_SXR'].includes(role)) ? (
+              {roles.some(role => ['ROLE_ADMIN', 'ROLE_EXECUTOR', 'ROLE_ADMIN_SXR'].includes(role)) ? (
                 <NavLink
                   to="/Order/ViewOrder"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 
@@ -280,7 +297,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
 
 
-              
+
 
 
               {/* inventory */}
@@ -852,11 +869,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
           {/* <!-- Others Group --> */}
           <div>
-          {roles.some(role => ['ROLE_ADMIN'].includes(role)) ?  (
-            <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
-              Auth
-            </h3>
-                ):null }
+            {roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+              <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
+                Auth
+              </h3>
+            ) : null}
 
             <ul className="mb-6 flex flex-col gap-1.5">
 
