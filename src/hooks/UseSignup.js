@@ -79,17 +79,18 @@ const useSignup = () => {
             });
 
             const data = await response.json();
-            if (response.ok) {
+            if (response?.ok) {
                 toast.success("User Added Successfully");
                 navigate("/auth/signin")
 
 
 
             } else {
+                console.log(data,"errorrr");
                 toast.error(`${data.errorMessage}`);
             }
         } catch (error) {
-            console.error(error, response);
+            console.error(error,"dd");
             toast.error("An error occurred");
         } finally {
             setSubmitting(false);
