@@ -99,12 +99,7 @@ console.log(item,"hey");
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         console.log(values,"i am here");
         try {
-            // Manually structure productGroup and orderType to send just the required ID
-            // const formattedValues = {
-            //     ...values,
-            //     productGroup: values.productGroup ? { id: values.productGroup.id } : {}, // assuming productGroup is an object with an id
-            //     orderType: values.orderType ? { id: values.orderType.id } : {}, // assuming orderType is an object with an id
-            // };
+     
     
             const url = edit ? `${UPDATE_BUDGET_URL}/${currentBudget.id}` : ADD_BUDGET_URL;
             const method = edit ? "PUT" : "POST";

@@ -39,6 +39,7 @@ const persistedReducer = persistReducer(
     style:styleReducer,
     size:sizeReducer,
     hsn:HsnReducer,
+    orderType:orderTypeReducer,
   })
 );
 
@@ -51,7 +52,7 @@ const rootReducer = combineReducers({
     location: LocationReducer,
     material: MaterialReducer,
     supplier: SupplierReducer,
-    orderType:orderTypeReducer,
+    
     customerGroup:customerGroupReducer,
     order:OrderReducer
 

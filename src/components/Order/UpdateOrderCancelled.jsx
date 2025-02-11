@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 import useorder from '../../hooks/useOrder';
 import ReactDatePicker from "react-datepicker";
 import useProduct from '../../hooks/useProduct';
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL, UPDATE_CANCELLEDORDER_ALL } from '../../Constants/utils';
+import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL } from '../../Constants/utils';
 import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
@@ -19,7 +19,7 @@ import { useNavigate, useNavigation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { MdDelete } from 'react-icons/md';
-const UpdateOrderAccepted = () => {
+const UpdateOrderCancelled = () => {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const [orderType, setOrderType] = useState('');
@@ -34,11 +34,7 @@ const UpdateOrderAccepted = () => {
   const [customerOptions, setcustomerOptions] = useState([])
   const { token } = currentUser;
 
-  const { user } = currentUser;
 
-  const role = user?.authorities[0].authority
-
-  console.log(role, "rolllee");
 
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [suppliers, setSuppliers] = useState([
@@ -170,7 +166,7 @@ const UpdateOrderAccepted = () => {
 
     // Log the data to check the format
     console.log(finalData, "finalData");
-console.log(finalData,"jump");
+
 
 
 
@@ -322,49 +318,7 @@ console.log(finalData,"jump");
 
   console.log(order, "orderrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
 
-  const handleCancelOrder = async(values) => {
-    console.log(values,"heyyy");
 
-    const selectedProducts = values.selectedRows.map((productId) => ({
-      id: productId,
-    }));
-
-    // Prepare the final data
-    const finalData = {
-      orderProducts: selectedProducts, // Include the selected rows
-    };
-
-    // Log the data to check the format
-    console.log(finalData, "finalData");
-  
-    try {
-      const url = `${UPDATE_CANCELLEDORDER_ALL}/${id}`;
-      const method = "PUT";
-
-      const response = await fetch(url, {
-        method: method,
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(finalData)
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        toast.success(`Order Status Updated  successfully`);
-
-
-
-        // getCurrency(pagination.currentPage); // Fetch updated Currency
-      } else {
-        toast.error(`${data.errorMessage}`);
-      }
-    } catch (error) {
-      console.error(error, response);
-      toast.error("An error occurred");
-    }
-  }
 
 
 
@@ -426,7 +380,7 @@ console.log(finalData,"jump");
                   <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                       <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                        Update ORDER FORM
+                        View Cancelled Orders
                       </h3>
                     </div>
                     <div className="p-6.5">
@@ -491,9 +445,7 @@ console.log(finalData,"jump");
                               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Units
                               </th>
-                              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Action
-                              </th>
+                             
                             </tr>
                           </thead>
                           <tbody>
@@ -606,54 +558,54 @@ console.log(finalData,"jump");
                                 >
 
 
-                                  {
-                                    product.productStatus === "Accepted" ? (
-                                      <div className="flex items-center gap-2">
-                                        <span
-                                          onClick={() => navigate(`/order/modifyproductafterexecution/${product?.id}`)}
-                                          className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
-                                        >
-                                          ISSUE CHALAAN
-                                        </span>
-                                        <span
-                                          onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
-                                          className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
-                                        >
-                                          VIEW PRODUCT DETAILS
-                                        </span>
-                                      </div>
-                                    ) : (product.productStatus?.toLowerCase() === "approved" || product.productStatus === "Pending") ? (
-                                      <div className="flex items-center gap-2">
-                                        <span
-                                          onClick={() => navigate(`/order/updateorderproduct/${product?.id}`)}
-                                          className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
-                                        >
-                                          RECEIVING DETAILS
-                                        </span>
-                                        <span
-                                          onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
-                                          className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
-                                        >
-                                          VIEW PRODUCT DETAILS
-                                        </span>
-                                      </div>
-                                    ) : (
-                                      <div className="flex items-center gap-2">
-                                        <span
-                                          onClick={() => navigate(`/order/modifyorderproduct/${product?.id}`)}
-                                          className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
-                                        >
-                                          VIEW ORDER PRODUCT
-                                        </span>
-                                        <span
-                                          onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
-                                          className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
-                                        >
-                                          VIEW PRODUCT DETAILS
-                                        </span>
-                                      </div>
-                                    )
-                                  }
+{
+  product.productStatus === "Accepted" ? (
+    <div className="flex items-center gap-2">
+      <span
+        onClick={() => navigate(`/order/modifyproductafterexecution/${product?.id}`)}
+        className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
+      >
+        ISSUE CHALAAN
+      </span>
+      <span
+        onClick={() => handleUpdateBom(item?.bom?.id)}
+        className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
+      >
+        VIEW PRODUCT DETAILS
+      </span>
+    </div>
+  ) : (product.productStatus?.toLowerCase() === "approved" || product.productStatus === "Pending") ? (  
+    <div className="flex items-center gap-2">
+      <span
+        onClick={() => navigate(`/order/updateorderproduct/${product?.id}`)}
+        className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
+      >
+        RECEIVING DETAILS
+      </span>
+      <span
+        onClick={() => handleUpdateBom(item?.bom?.id)}
+        className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
+      >
+        VIEW PRODUCT DETAILS
+      </span>
+    </div>
+  ) : (
+    <div className="flex items-center gap-2">
+      <span
+        onClick={() => navigate(`/order/modifyorderproduct/${product?.id}`)}
+        className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
+      >
+        VIEW ORDER PRODUCT
+      </span>
+      <span
+        onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
+        className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
+      >
+        VIEW PRODUCT DETAILS
+      </span>
+    </div>
+  )
+}
 
 
 
@@ -683,37 +635,20 @@ console.log(finalData,"jump");
 
 
 
-                      {
-                        role === "ROLE_EXECUTOR" ? (
-                          <div className="flex justify-center mt-4">
-                            <button
-                            type='button'
-                              onClick={() => handleCancelOrder(values)} // Ensure the function is executed
-                              className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none"
-                            >
-                              Cancel Order
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="flex justify-center mt-4">
-                            <button
-                              type="submit"
-                              className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none"
-                            >
-                              Accept All
-                            </button>
-                          </div>
-                        )
-                      }
 
 
 
 
+                      <div className="flex justify-center mt-4"> {/* Centering the button */}
+                        <button
+                          type="submit"
 
 
-
-
-
+                          className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none" // Increased width
+                        >
+                          Accept All
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -722,7 +657,7 @@ console.log(finalData,"jump");
               </Form>
             )
           }}
-        </Formik >
+        </Formik>
         {isSupplierModalOpen && (
           <SupplierModal
             suppliers={suppliers}
@@ -747,9 +682,9 @@ console.log(finalData,"jump");
         />
 
 
-      </div >
-    </DefaultLayout >
+      </div>
+    </DefaultLayout>
   );
 };
 
-export default UpdateOrderAccepted;
+export default UpdateOrderCancelled;

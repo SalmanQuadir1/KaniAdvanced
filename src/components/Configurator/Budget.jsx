@@ -16,14 +16,29 @@ const Budget = () => {
 
 
 
-    const productGroup = useSelector(state => state?.nonPersisted?.productGroup);
-    const orderType = useSelector(state => state?.nonPersisted?.orderType);
+    const productGroup = useSelector(state => state?.persisted?.productGroup);
+    const orderType = useSelector(state => state?.persisted?.orderType);
     const theme = useSelector(state => state?.persisted?.theme);
     const [productOptions, setproductOptions] = useState([])
     const [orderOptions, setorderOptions] = useState([])
     const [dateSelected, setDateSelected] = useState('');
 
+    const {
+        Budget,
+        edit,
+        currentBudget,
+        pagination,
+        handleDelete,
+        handleUpdate,
+        handleSubmit,
+        handlePageChange,
+        seloptions
+    } = useBudget();
+
+    
     console.log(productGroup, orderType, "heyproooo");
+    
+
 
     const customStyles = createCustomStyles(theme?.mode);
 
@@ -47,17 +62,7 @@ const Budget = () => {
             setorderOptions(formattedorderOptions);
         }
     }, [orderType.data]);
-    const {
-        Budget,
-        edit,
-        currentBudget,
-        pagination,
-        handleDelete,
-        handleUpdate,
-        handleSubmit,
-        handlePageChange,
-        seloptions
-    } = useBudget();
+   
 
 
     const flatpickrRef = useRef(null);

@@ -64,6 +64,7 @@ export const DELETE_MATERIALPO_URL = `${BASE_URL}/purchaseOrder/`;
 //signup
 
 export const SIGNUPURL = `${BASE_URL}/api/v1/auth/signup`;
+export const ROLESURL = `${BASE_URL}/user/roles`;
 
 //color url's
 export const ADD_COLOR_URL = `${BASE_URL}/colors`
@@ -195,7 +196,8 @@ export const VIEW_ALLACCEPTED_ORDERS = `${BASE_URL}/order/searchAccepted`;
 export const VIEW_PARTIALLYAPPROVED_ORDERS = `${BASE_URL}/order/searchApprovedAndAccepted`;
 
 export const VIEW_APPROVED_ORDERS = `${BASE_URL}/order/searchApproved`; 
-export const VIEW_CANCELLED_ORDERS = `${BASE_URL}/order/searchCancelled`; 
+
+export const VIEW_CANCELLED_ORDERS = `${BASE_URL}/order/searchCancel`; 
 export const VIEW_ORDERSHIPPING_ORDERS = `${BASE_URL}/order/searchShippingDate`; 
 
 
@@ -223,6 +225,7 @@ export const VIEW_REJECTED_ORDERS = `${BASE_URL}/order/searchRejected`;
 export const VIEW_PARTIALLYPENDING_ORDERS = `${BASE_URL}/order/searchPendingPartially`; 
 export const VIEW_FORCEDCLOSURE_ORDERS = `${BASE_URL}/order/searchForcedClosure`; 
 export const UPDATE_ORDERCREATED_ALL= `${BASE_URL}/order/updateOrderProductsAccepted`; 
+export const UPDATE_CANCELLEDORDER_ALL= `${BASE_URL}/order/updateOrderProductsCancelled`; 
 
 export const UPDATE_ORDERCREATEDDATE= `${BASE_URL}/order/updateShipDate`; 
 
