@@ -159,36 +159,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 </svg>
                 Dashboard
               </NavLink>
-
-              {roles.some(role => ['ROLE_ADMIN','ROLE_EXECUTOR'].includes(role)) ? (
-                <NavLink
-                  to="/Reports"
-                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 
-                  }`}
-                >
-                  <TbReport size={24} />
-
-                  Reports
-                </NavLink>
-              ) : null}
-
-              {roles.some(role => ['ROLE_ADMIN','ROLE_EXECUTOR'].includes(role)) ? (
-                <NavLink
-                  to="/Order/ViewOrder"
-                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 
-                  }`}
-                >
-                  <FcSearch size={24} />
-
-                  Search Order
-                </NavLink>
-              ) : null}
-
-
-
-
-
-
               <SidebarLinkGroup
                 className={`${roles.some(role => ['supervsior', 'executor', 'director'].includes(role)) ? 'hidden' : 'hidden'
                   }`}
@@ -197,7 +167,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN_SXR'].includes(role)) ? (
+                      {roles.some(role => ['ROLE_ADMIN','ROLE_ADMIN_SXR'].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
@@ -237,6 +207,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                        {roles.some(role => ['ROLE_ADMIN'].includes(role)) ?  (
                           <li>
                             <NavLink
                               to="/product/addProduct"
@@ -248,6 +219,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               Add Products
                             </NavLink>
                           </li>
+                              ):null }
                           <li>
                             <NavLink
                               to="/product/viewProducts"
@@ -278,6 +250,37 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                   );
                 }}
               </SidebarLinkGroup>
+
+              {roles.some(role => ['ROLE_ADMIN','ROLE_EXECUTOR','ROLE_ADMIN_SXR'].includes(role)) ? (
+                <NavLink
+                  to="/Reports"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 
+                  }`}
+                >
+                  <TbReport size={24} />
+
+                  Reports
+                </NavLink>
+              ) : null}
+
+              {roles.some(role => ['ROLE_ADMIN','ROLE_EXECUTOR','ROLE_ADMIN_SXR'].includes(role)) ? (
+                <NavLink
+                  to="/Order/ViewOrder"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 
+                  }`}
+                >
+                  <FcSearch size={24} />
+
+                  Search Order
+                </NavLink>
+              ) : null}
+
+
+
+
+
+
+              
 
 
               {/* inventory */}
@@ -313,7 +316,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN_SXR'].includes(role)) ? (
+                      {roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
@@ -397,7 +400,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN_SXR'].includes(role)) ? (
+                      {roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
@@ -481,7 +484,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN_SXR'].includes(role)) ? (
+                      {roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
@@ -688,7 +691,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN_SXR'].includes(role)) ? (
+                      {roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
@@ -768,7 +771,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN_SXR'].includes(role)) ? (
+                      {roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
@@ -867,7 +870,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN_SXR'].includes(role)) ? (
+                      {roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/auth' || pathname.includes('auth')) &&
