@@ -59,7 +59,7 @@ const useSignup = () => {
             phoneNumber: values?.phoneNumber,
             address: values?.address,
             email: values?.email,
-            role: values.role ? { id: values.role.value } : null, // Ensure role is not null
+            roleId: values.role.value , // Ensure role is not null
             username: values?.username,
         };
         console.log(formattedOptions,"heyyy");
