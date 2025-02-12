@@ -19,6 +19,7 @@ import { useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { MdDelete } from 'react-icons/md';
+import SupplierUpdate from './SupplierUpdate';
 const UpdateOrder = () => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const [orderType, setOrderType] = useState('');
@@ -1649,13 +1650,14 @@ const UpdateOrder = () => {
           )}
         </Formik>
         {isSupplierModalOpen && (
-          <SupplierModal
+          <SupplierUpdate
             suppliers={suppliers}
             id={suppId}
             selectedSuppliers={selectedSuppliers}
             selectedRowId={selectedRowId}
             handleCheckboxChange={handleCheckboxChange}
             closeModal={closeSupplierModal}
+            order={order}
             handleSubmit={handleSupplierModalSubmit}
           />
         )}
