@@ -57,6 +57,8 @@ import ViewMaterialPo from './components/PuchaseOrder/ViewMaterialPo';
 import UpdateMaterialPo from './components/PuchaseOrder/UpdateMaterialPo.jsx';
 
 import AddOrder from './components/Order/AddOrder';
+
+import Reports from './components/Reports/Reports.jsx';
 import ViewPerforma from './components/Order/ViewPerforma';
 
 
@@ -268,6 +270,15 @@ function App() {
               <>
                 <PageTitle title="Add Order" />
                 <AddOrder />
+              </>
+            }
+          />
+             <Route
+            path="/Reports"
+            element={
+              <>
+                <PageTitle title="Add Order" />
+                <Reports />
               </>
             }
           />
