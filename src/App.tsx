@@ -57,6 +57,9 @@ import ViewMaterialPo from './components/PuchaseOrder/ViewMaterialPo';
 import UpdateMaterialPo from './components/PuchaseOrder/UpdateMaterialPo.jsx';
 
 import AddOrder from './components/Order/AddOrder';
+import ViewPerforma from './components/Order/ViewPerforma';
+
+
 import ViewOrder from './components/Order/ViewOrder.jsx';
 import UpdateOrderStatus from './components/Order/UpdateOrderStatus.jsx';
 import UpdatePartiallyOrderStatus from './components/Order/UpdatePartiallyOrderStatus.jsx';
@@ -231,7 +234,7 @@ function App() {
             path="/"
             element={
               <>
-                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER","ROLE_EXECUTOR"]}></RoleBasedRoute>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER", "ROLE_EXECUTOR","ROLE_ADMIN_DLI","ROLE_ADMIN_SXR"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <Chart />
               </>
@@ -265,6 +268,16 @@ function App() {
               <>
                 <PageTitle title="Add Order" />
                 <AddOrder />
+              </>
+            }
+          />
+
+          <Route
+            path="/order/searchproforma"
+            element={
+              <>
+                <PageTitle title="View Proforma" />
+                <ViewPerforma />
               </>
             }
           />
@@ -334,7 +347,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/Order/updateCancelledOrders/:id"
             element={
               <>
@@ -486,7 +499,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/Order/updateorderPending/:id"
             element={
               <>
@@ -496,7 +509,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/Order/updateorderClosed/:id"
             element={
               <>
