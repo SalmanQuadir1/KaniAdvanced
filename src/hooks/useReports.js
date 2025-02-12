@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { GET_BUDGET_URL, DELETE_BUDGET_URL, UPDATE_BUDGET_URL, ADD_BUDGET_URL } from "../Constants/utils";
+import { GET_BUDGET_URL, DELETE_BUDGET_URL, UPDATE_BUDGET_URL, ADD_BUDGET_URL, VIEW_ALL_SUPPLIER_URL, VIEW_ORDERNO, GET_PRODUCTSID_URL, VIEW_ALL_CUSTOMER } from "../Constants/utils";
 import { fetchProductGroup } from '../redux/Slice/ProductGroup';
 import { fetchOrderType } from '../redux/Slice/OrderTypeSlice';
 import { fetchsupplier } from '../redux/Slice/SupplierSlice';
+import OrderNo from '../redux/Slice/OrderNo';
 
 const useReports = () => {
     const [productGroup, setproductGroup] = useState([])
     const { currentUser } = useSelector((state) => state?.persisted?.user);
+    const [Supplier, setSupplier] = useState([])
+    const [Customer, setCustomer] = useState([])
+    const [prodId, setprodId] = useState([])
+    const [orderNo, setorderNo] = useState([])
     const { token } = currentUser;
     const [Budget, setBudget] = useState([]);
     const [edit, setEdit] = useState(false);
@@ -19,21 +24,21 @@ const useReports = () => {
     useEffect(() => {
         dispatch(fetchProductGroup(token))
         dispatch(fetchOrderType(token))
-        dispatch(fetchsupplier(token))
+        
      
     }, []);
 
     const { data } = useSelector((state) => state?.persisted?.productGroup);
 
     const orderType= useSelector((state) => state?.persisted?.orderType?.data);
-    const Supplier= useSelector((state) => state?.nonPersisted?.supplier?.data);
+
     useEffect(() => {
    
         setproductGroup(data)
     }, [data])
     
 console.log(orderType,"heyyji");
-console.log(Supplier,"heyynoji");
+
     const [pagination, setPagination] = useState({
         totalItems: 0,
         data: [],
@@ -71,6 +76,85 @@ console.log(Supplier,"heyynoji");
         }
     };
 
+
+
+
+
+    const getSupplier = async (page) => {
+        try {
+          const response = await fetch(`${VIEW_ALL_SUPPLIER_URL}?page=${page||1}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = await response.json();
+          // console.log(data,"from url");
+          setSupplier(data);
+        
+        } catch (error) {
+          console.error(error);
+          toast.error('Failed to fetch Customer');
+        }
+      };
+
+      const getCustomer = async (page) => {
+        try {
+          const response = await fetch(`${VIEW_ALL_CUSTOMER}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = await response.json();
+          // console.log(data,"from url");
+          setCustomer(data);
+        
+        } catch (error) {
+          console.error(error);
+          toast.error('Failed to fetch Customer');
+        }
+      };
+
+      const getOrderNo = async (page) => {
+        try {
+          const response = await fetch(`${VIEW_ORDERNO}?page=${page||1}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = await response.json();
+          // console.log(data,"from url");
+          setorderNo(data);
+        
+        } catch (error) {
+          console.error(error);
+          toast.error('Failed to fetch Customer');
+        }
+      };
+      const getProdId = async (page) => {
+        try {
+          const response = await fetch(`${GET_PRODUCTSID_URL}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = await response.json();
+          // console.log(data,"from url");
+          setprodId(data);
+        
+        } catch (error) {
+          console.error(error);
+          toast.error('Failed to fetch Customer');
+        }
+      };
+
     const handleDelete = async (e, id) => {
         e.preventDefault();
         try {
@@ -104,12 +188,7 @@ console.log(Supplier,"heyynoji");
         }
     };
 
-    const handleUpdate = (e, item) => {
-        e.preventDefault();
-        setEdit(true);
-console.log(item,"hey");
-        setCurrentBudget(item);
-    };
+
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         console.log(values,"i am here");
@@ -165,7 +244,14 @@ console.log(item,"hey");
     return {
         productGroup,
         Supplier,
-        orderType
+        orderType,
+        getSupplier,
+        getOrderNo,
+        getProdId,
+        orderNo,
+        prodId,
+        getCustomer,
+        Customer
     };
 };
 

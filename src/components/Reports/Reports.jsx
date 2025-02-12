@@ -3,7 +3,7 @@ import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { DELETE_ORDER_URL, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS } from "../../Constants/utils";
+import { DELETE_ORDER_URL, DOWNLOAD_REPORT, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS } from "../../Constants/utils";
 import ReactSelect from 'react-select';
 import useorder from '../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -26,8 +26,11 @@ const productgrp = [
 
 const Reports = () => {
 
-    const { productGroup,Supplier,orderType} = useReports();
-    console.log(Supplier,"jj");
+    const { productGroup,Supplier,orderType, getSupplier,
+        getOrderNo,
+        getProdId, orderNo,
+        prodId,getCustomer,Customer} = useReports();
+   
 
   
     const { currentUser } = useSelector((state) => state?.persisted?.user);
@@ -47,37 +50,47 @@ const Reports = () => {
     // const supplier = useSelector(state => state?.nonPersisted?.supplier);
     const order = useSelector(state => state?.nonPersisted?.order);
     const navigate = useNavigate();
-    // useEffect(() => {
-    //     getorderNumber();
-    //     getSupplier();
-    //     getCustomer();
-    //     getProdId();
+    useEffect(() => {
+        getSupplier(),
+        getOrderNo(),
+        getProdId(),
+        getCustomer()
 
-    // }, []);
+    }, []);
 
- const formattedProductGroup = productGroup.map(prod => ({
+ const formattedProductGroup = productGroup?.map(prod => ({
         label: prod.productGroupName,
         value: prod.productGroupName
     }));
-    const formattedOrderType = orderType.map(type => ({
+    const formattedOrderType = orderType?.map(type => ({
         label: type.orderTypeName,
         value: type.orderTypeName
     }));
-    const formattedSupplier = Supplier.map(sup => ({
+    const formattedCustomer = Customer?.map(cust => ({
+        label: cust.customerName,
+        value: cust.customerName
+    }));
+
+
+
+    const formattedSupplier = Supplier?.map(sup => ({
         label: sup.name,
         value: sup.name
     }));
+
+
+    // console.log(Customer,"kjkjkjkj");
     // console.log(supplier, customer, productIdd, "orderNo");
 
-    // const formattedorder = orderNo.map(order => ({
-    //     label: order,
-    //     value: order
-    // }));
+    const formattedProdId = prodId.map(prodId => ({
+        label: prodId,
+        value: prodId
+    }));
 
-    // const formattedSupplier = supplier.map(supplier => ({
-    //     label: supplier.name,
-    //     value: supplier.name
-    // }));
+    const formattedOrderNo = orderNo.map(orderNo => ({
+        label: orderNo,
+        value: orderNo
+    }));
 
     // const formattedProdId = productIdd.map(prod => ({
     //     label: prod,
@@ -335,6 +348,38 @@ const Reports = () => {
         // ViewInventory(pagination.currentPage, filters);
     };
 
+   const handlegenerateReport=async(values)=>{
+
+
+    console.log(values,"lala");
+
+    try {
+        const response = await fetch(`${DOWNLOAD_REPORT}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body:{values}
+          
+        });
+        const data = await response.json();
+        if (response.ok) {
+         toast.success("report downlaoded Successfully")
+          
+       
+            // getSize(pagination.currentPage); // Fetch updated Size
+        } else {
+            toast.error(`${data.errorMessage}`);
+        }
+    } catch (error) {
+        console.error(error, response);
+        toast.error("An error occurred");
+    } finally {
+        setSubmitting(false);
+    }
+}
+
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Order/ View Order" />
@@ -351,7 +396,7 @@ const Reports = () => {
                     <div className='items-center justify-center'>
                         <Formik
                             initialValues={{
-                                orderType:'',
+                                orderTypeName:'',
                                 productGroup:"",
                                 orderNo: '',
                                 ProductId: "",
@@ -372,10 +417,10 @@ const Reports = () => {
                                             <ReactSelect
                                                 name="orderType"
                                                 // value={orderNameOptions.find(option => option.value === values.orderNo)}
-                                                // onChange={(option) => {
-                                                //     setFieldValue('orderNo', option.value);
+                                                onChange={(option) => {
+                                                    setFieldValue('orderTypeName', option.value);
 
-                                                // }}
+                                                }}
                                                 // onBlur={handleBlur}
                                                 // options={formattedorder}
 
@@ -400,7 +445,7 @@ const Reports = () => {
                                                     name="productGroup"
 
                                                     // value={productgrp.find(option => option.value === values.customerName)}
-                                                    // onChange={(option) => setFieldValue('supplierName', option ? option.value : null)}
+                                                    onChange={(option) => setFieldValue('productGroup', option ? option.value : null)}
                                                
 
                                                     options={[{ label: 'Select', value: null }, ...formattedProductGroup]}
@@ -419,14 +464,14 @@ const Reports = () => {
                                             <ReactSelect
                                                 name="orderNo"
                                                 // value={orderNameOptions.find(option => option.value === values.orderNo)}
-                                                // onChange={(option) => {
-                                                //     setFieldValue('orderNo', option.value);
+                                                onChange={(option) => {
+                                                    setFieldValue('orderNo', option.value);
 
-                                                // }}
+                                                }}
                                                 // onBlur={handleBlur}
                                                 // options={formattedorder}
 
-                                                // options={[{ label: 'View All Order', value: null }, ...formattedorder]}
+                                                options={[{ label: 'Select', value: null }, ...formattedOrderNo]}
 
                                                 styles={customStyles}
                                                 className="bg-white dark:bg-form-input"
@@ -447,7 +492,7 @@ const Reports = () => {
                                                     name="supplierName"
 
                                                     // value={productgrp.find(option => option.value === values.customerName)}
-                                                    // onChange={(option) => setFieldValue('supplierName', option ? option.value : null)}
+                                                    onChange={(option) => setFieldValue('supplierName', option ? option.value : null)}
                                                     // options={formattedSupplier}
 
                                                     options={[{ label: 'Select', value: null }, ...formattedSupplier]}
@@ -469,13 +514,13 @@ const Reports = () => {
                                             <ReactSelect
                                                 name="ProductId"
                                                 // value={formattedProdId.find(option => option.value === values.ProductId)}
-                                                // onChange={(option) => {
-                                                //     setFieldValue('productId', option.value);
+                                                onChange={(option) => {
+                                                    setFieldValue('ProductId', option.value);
 
-                                                // }}
+                                                }}
                                                 // onBlur={handleBlur}
                                                 // // options={formattedCustomer}
-                                                // options={[{ label: 'View All Product Id', value: null }, ...formattedProdId]}
+                                                options={[{ label: 'Select', value: null }, ...formattedProdId]}
                                                 styles={customStyles}
                                                 className="bg-white dark:bg-form-input"
                                                 classNamePrefix="react-select"
@@ -488,13 +533,13 @@ const Reports = () => {
                                             <ReactSelect
                                                 name="customerName"
                                                 // value={productgrp.find(option => option.value === values.customerName)}
-                                                // onChange={(option) => {
-                                                //     setFieldValue('customerName', option.value);
+                                                onChange={(option) => {
+                                                    setFieldValue('customerName', option.value);
 
-                                                // }}
+                                                }}
                                                 // onBlur={handleBlur}
                                                 // // options={formattedCustomer}
-                                                // options={[{ label: 'View All Customers', value: null }, ...formattedCustomer]}
+                                                options={[{ label: 'Select', value: null }, ...formattedCustomer]}
                                                 styles={customStyles}
                                                 className="bg-white dark:bg-form-input"
                                                 classNamePrefix="react-select"
@@ -518,7 +563,8 @@ const Reports = () => {
                                         <div>
 
                                             <button
-                                                type="submit"
+                                                type="button"
+                                                onClick={()=>handlegenerateReport(values)}
                                                 className="flex md:w-[150px] mr-4 w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                             >
                                                 Generate Report
