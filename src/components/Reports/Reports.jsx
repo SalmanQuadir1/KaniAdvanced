@@ -3,7 +3,7 @@ import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { DELETE_ORDER_URL, DOWNLOAD_REPORT, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS } from "../../Constants/utils";
+import { DELETE_ORDER_URL, DOWNLOAD_REPORT, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS, VIEW_REPORT } from "../../Constants/utils";
 import ReactSelect from 'react-select';
 import useorder from '../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -26,18 +26,18 @@ const productgrp = [
 
 const Reports = () => {
 
-    const { productGroup,Supplier,orderType, getSupplier,
+    const { productGroup, Supplier, orderType, getSupplier,
         getOrderNo,
         getProdId, orderNo,
-        prodId,getCustomer,Customer} = useReports();
-   
+        prodId, getCustomer, Customer } = useReports();
 
-  
+
+
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
 
     const customStyles = createCustomStyles(theme?.mode);
-
+const [report, setreport] = useState()
 
     const { token } = currentUser;
 
@@ -52,13 +52,13 @@ const Reports = () => {
     const navigate = useNavigate();
     useEffect(() => {
         getSupplier(),
-        getOrderNo(),
-        getProdId(),
-        getCustomer()
+            getOrderNo(),
+            getProdId(),
+            getCustomer()
 
     }, []);
 
- const formattedProductGroup = productGroup?.map(prod => ({
+    const formattedProductGroup = productGroup?.map(prod => ({
         label: prod.productGroupName,
         value: prod.productGroupName
     }));
@@ -75,9 +75,10 @@ const Reports = () => {
 
     const formattedSupplier = Supplier?.map(sup => ({
         label: sup.name,
-        value: sup.name
+        value: sup.id
     }));
 
+    console.log(Supplier,"jhjhjh");
 
     // console.log(Customer,"kjkjkjkj");
     // console.log(supplier, customer, productIdd, "orderNo");
@@ -203,12 +204,7 @@ const Reports = () => {
     //     getOrder()
     // }, [])
 
-    const handlePageChange = (newPage) => {
-        console.log("Page change requested:", newPage);
-
-        setPagination((prev) => ({ ...prev, currentPage: newPage }));
-        getOrder(newPage); // Correct function name and 1-indexed for user interaction
-    };
+ 
 
     console.log(order, "heyorder");
 
@@ -227,8 +223,8 @@ const Reports = () => {
     // }, [order.data]);
 
     const renderTableRows = () => {
-        console.log(Order);
-        if (!Order || !Order.length) {
+        console.log(report);
+        if (!report || !report.length) { 
             return (
                 <tr className='bg-white dark:bg-slate-700 dark:text-white'>
                     <td colSpan="6" className="px-5 py-5 border-b border-gray-200 text-sm">
@@ -272,6 +268,54 @@ const Reports = () => {
                 toast.error("An error occurred");
             }
         };
+        return report.map((item, index) => (
+
+            <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
+                </td>
+
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.orderNo}</p>
+
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item.customerName}</p>
+                </td>
+
+
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.products?.productId}</p>
+                </td>
+
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item.receivedQuantity}</p>
+                </td>
+              
+                
+
+               
+                {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    {item.products &&
+                        item.products.map((prodId, index) => (
+                            <p key={index} className="text-gray-900 whitespace-nowrap">
+                                {prodId?.productId}
+                            </p>
+                        ))}
+                </td> */}
+                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.orderQuantity||0}</p>
+                </td>
+              
+
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    {item.productSuppliers &&
+                        item.productSuppliers.map((supp, index) => (
+                            <p key={index} className="text-gray-900 whitespace-nowrap">
+                                {supp?.supplier?.name}
+                            </p>
+                        ))}
+                </td>
 
 
 
@@ -279,37 +323,11 @@ const Reports = () => {
 
 
 
-        // return Order.map((item, index) => (
 
-        //     <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
-        //         <td className="px-5 py-5 border-b border-gray-200 text-sm">
-        //             <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
-        //         </td>
 
-        //         <td className="px-5 py-5 border-b border-gray-200 text-sm">
-        //             <p className="text-gray-900 whitespace-no-wrap">{item?.orderNo}</p>
-
-        //         </td>
-        //         <td className="px-5 py-5 border-b border-gray-200 text-sm">
-        //             <p className="text-gray-900 whitespace-no-wrap">{item.customerName}</p>
-        //         </td>
-        //         <td className="px-5 py-5 border-b border-gray-200 text-sm">
-        //             {item.products &&
-        //                 item.products.map((prodId, index) => (
-        //                     <p key={index} className="text-gray-900 whitespace-nowrap">
-        //                         {prodId?.productId}
-        //                     </p>
-        //                 ))}
-        //         </td>
-
-        //         <td className="px-5 py-5 border-b border-gray-200 text-sm">
-        //             {item.products &&
-        //                 item.products.map((prodId, index) => (
-        //                     <p key={index} className="text-gray-900 whitespace-nowrap">
-        //                         {prodId.productStatus}
-        //                     </p>
-        //                 ))}
-        //         </td>
+           
+            </tr>
+        ));
 
 
 
@@ -318,83 +336,168 @@ const Reports = () => {
 
 
 
-
-        //         <td className="px-5 py-5 border-b border-gray-200 text-sm">
-        //             <p className="flex text-gray-900 whitespace-no-wrap">
-        //                 <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updateorderCreated/${item?.id}`)} title='Edit Order' />  |
-        //                 <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' />
-        //             </p>
-        //         </td>
-        //     </tr>
-        // ));
     };
+    const getReport = async (page, filters = {}) => {
+        console.log(filters, "filterssssssssssssssssssssssssssssssssssssssss");
+        console.log("Fetching orders for page", page); // Log the page number being requested
+
+        try {
+        const response = await fetch(`${VIEW_REPORT}?page=${page || 1}`, {
+                method: "POST", // GET method
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify(filters)
+            });
+
+            const textResponse = await response.text();
+
+            console.log(textResponse, "japaaaaaaaaaaaaaaaaaan");
+
+            // Get the raw text response
+            // Log raw response before parsing   
+
+            // Try parsing the response only if it's valid JSON
+            try {
+                const data = JSON.parse(textResponse); // Try parsing as JSON
+                console.log("Parsed Response:", data);
+
+                if (data?.content) {
+                    setreport(data.content); // Update orders state
+                } else {
+                    console.log("No orders found in the response");
+                    setreport([]); // Set an empty state
+                }
+
+                // Update pagination state
+                setPagination({
+                    totalItems: data?.totalElements || 0,
+                    data: data?.content || [],
+                    totalPages: data?.totalPages || 0,
+                    currentPage: data?.number + 1 || 1,
+                    itemsPerPage: data?.size || 0,
+                });
+            } catch (parseError) {
+                console.error("Error parsing response as JSON:", parseError);
+                toast.error("Invalid response format.");
+            }
+        } catch (error) {
+            console.error("Error fetching orders:", error);
+            toast.error("Failed to fetch orders");
+            setOrder([]); // Reset to an empty state in case of an error
+        }
+    };
+
+    useEffect(() => {
+        getReport()
+    }, [])
+
+    // const handlePageChange = (newPage) => {
+    //     console.log("Page change requested:", newPage);
+
+    //     setPagination((prev) => ({ ...prev, currentPage: newPage }));
+    //     getOrder(newPage); // Correct function name and 1-indexed for user interaction
+    // };
 
 
     const handleSubmit = (values) => {
 
         console.log(values, "valiiiiii");
-        // const filters = {
+        const filters = {
 
 
 
+            orderType: values.orderTypeName,
+            group: values.productGroup,
+            orderNo: values.orderNo ,
+            customerName: values.customerName ,
+            supplierId: values.supplierName ,
+            productId: values.productId ,
 
-        //     orderNo: values.orderNo || undefined,
-        //     supplierName: values.supplierName || undefined,
 
-        //     customerName: values.customerName || undefined,
-        //     productId: values.productId || undefined
-        // };
+            fromDate: values.fromDate,
+            toDate: values.toDate,
+
+
+        };
+        console.log(filters,"kk");
+getReport(pagination.currentPage, filters)
         // getOrder(pagination.currentPage, filters);
         // ViewInventory(pagination.currentPage, filters);
     };
 
-   const handlegenerateReport=async(values)=>{
+    const handlegenerateReport = async (values) => {
+
+        const filters = {
 
 
-    console.log(values,"lala");
 
-    try {
-        const response = await fetch(`${DOWNLOAD_REPORT}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body:{values}
-          
-        });
-        const data = await response.json();
-        if (response.ok) {
-            const blob = await response.blob();
+            orderType: values.orderTypeName,
+            group: values.productGroup,
+            orderNo: values.orderNo ,
+            customerName: values.customerName ,
+            supplierId: values.supplierName ,
+            productId: values?.productId,
 
-            // Create a temporary download link
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            // link.setAttribute('download'.pdf` // Filename for the downloaded file);
 
-            // Append to the document and trigger the download
-            document.body.appendChild(link);
-            link.click();
+            fromDate: values.fromDate,
+            toDate: values.toDate,
 
-            // Clean up
-            link.parentNode.removeChild(link);
-            window.URL.revokeObjectURL(url);
 
-         toast.success("report downlaoded Successfully")
-          
-       
-            // getSize(pagination.currentPage); // Fetch updated Size
-        } else {
-            toast.error(`${data.errorMessage}`);
+        };
+        console.log(filters, "lala");
+
+        try {
+            const response = await fetch(`${DOWNLOAD_REPORT}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body:JSON.stringify({filters})
+
+            });
+            const data = await response.json();
+            console.log(data,"datattatattatata");
+            if (response.ok) {
+                console.log(response,"afterok");
+                // const blob = await response.blob();
+
+                // // Create a temporary download link
+                // const url = window.URL.createObjectURL(blob);
+                // const link = document.createElement('a');
+                // link.href = url;
+                // // link.setAttribute('download'.pdf` // Filename for the downloaded file);
+
+                // // Append to the document and trigger the download
+                // document.body.appendChild(link);
+                // link.click();
+
+                // // Clean up
+                // link.parentNode.removeChild(link);
+                // window.URL.revokeObjectURL(url);
+
+             toast.success("report downlaoded Successfully")
+
+
+                // getSize(pagination.currentPage); // Fetch updated Size
+            } else {
+                toast.error(`${data.errorMessage}`);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("An error occurred");
+        } finally {
+            
         }
-    } catch (error) {
-        console.error(error, response);
-        toast.error("An error occurred");
-    } finally {
-        setSubmitting(false);
     }
-}
+    const handlePageChange = (newPage) => {
+        console.log("Page change requested:", newPage);
+
+        setPagination((prev) => ({ ...prev, currentPage: newPage }));
+        getReport(newPage); // Correct function name and 1-indexed for user interaction
+    };
 
     return (
         <DefaultLayout>
@@ -412,17 +515,19 @@ const Reports = () => {
                     <div className='items-center justify-center'>
                         <Formik
                             initialValues={{
-                                orderTypeName:'',
-                                productGroup:"",
+                                orderTypeName: '',
+                                productGroup: "",
                                 orderNo: '',
                                 ProductId: "",
                                 supplierName: "",
                                 customerName: "",
+                                fromDate: '',
+                                toDate: ''
 
 
 
                             }}
-                        onSubmit={handleSubmit}
+                            onSubmit={handleSubmit}
                         >
                             {({ setFieldValue, values, handleBlur }) => (
                                 <Form>
@@ -462,7 +567,7 @@ const Reports = () => {
 
                                                     // value={productgrp.find(option => option.value === values.customerName)}
                                                     onChange={(option) => setFieldValue('productGroup', option ? option.value : null)}
-                                               
+
 
                                                     options={[{ label: 'Select', value: null }, ...formattedProductGroup]}
                                                     styles={customStyles} // Pass custom styles here
@@ -566,6 +671,33 @@ const Reports = () => {
 
                                     </div>
 
+                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
+                                        <div className="flex-1 min-w-[300px]">
+                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                From Date
+                                            </label>
+                                            <Field
+                                                name='fromDate'
+                                                type="date"
+                                                placeholder="Enter From Date"
+                                                className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                            />
+                                        </div>
+
+
+                                        <div className="flex-1 min-w-[300px]">
+                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                To Date
+                                            </label>
+                                            <Field
+                                                name='toDate'
+                                                type="date"
+                                                placeholder="Enter To Date"
+                                                className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                            />
+                                        </div>
+                                    </div>
+
                                     <div className="flex justify-center">
                                         <div>
 
@@ -580,7 +712,7 @@ const Reports = () => {
 
                                             <button
                                                 type="button"
-                                                onClick={()=>handlegenerateReport(values)}
+                                                onClick={() => handlegenerateReport(values)}
                                                 className="flex md:w-[150px] mr-4 w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                             >
                                                 Generate Report
@@ -614,10 +746,13 @@ const Reports = () => {
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Customer</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Id</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Ordered Quantity</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Recieved Quantity</th>
+                                        
+                                        
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Supplier</th>
                                         {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
