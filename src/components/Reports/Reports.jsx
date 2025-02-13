@@ -365,6 +365,22 @@ const Reports = () => {
         });
         const data = await response.json();
         if (response.ok) {
+            const blob = await response.blob();
+
+            // Create a temporary download link
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            // link.setAttribute('download'.pdf` // Filename for the downloaded file);
+
+            // Append to the document and trigger the download
+            document.body.appendChild(link);
+            link.click();
+
+            // Clean up
+            link.parentNode.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
          toast.success("report downlaoded Successfully")
           
        
