@@ -427,71 +427,130 @@ getReport(pagination.currentPage, filters)
         // ViewInventory(pagination.currentPage, filters);
     };
 
+    // const handlegenerateReport = async (values) => {
+
+    //     const filters = {
+
+
+
+    //         orderType: values.orderTypeName,
+    //         group: values.productGroup,
+    //         orderNo: values.orderNo ,
+    //         customerName: values.customerName ,
+    //         supplierId: values.supplierName ,
+    //         productId: values?.productId,
+
+
+    //         fromDate: values.fromDate,
+    //         toDate: values.toDate,
+
+
+    //     };
+    //     console.log(filters, "lala");
+
+    //     try {
+    //         const response = await fetch(`${DOWNLOAD_REPORT}`, {
+    //           method: 'POST',
+    //           headers: {
+    //             'Content-Type': 'application/json',
+    //             Authorization: `Bearer ${token}`,
+    //           },
+    //           body:JSON.stringify({filters})
+
+    //         });
+    //         const data = await response.json();
+    //         console.log(data,"datattatattatata");
+    //         if (response) {
+    //             console.log(response,"afterok");
+    //             // const blob = await response.blob();
+
+    //             // // Create a temporary download link
+    //             // const url = window.URL.createObjectURL(blob);
+    //             // const link = document.createElement('a');
+    //             // link.href = url;
+    //             // // link.setAttribute('download'.pdf` // Filename for the downloaded file);
+
+    //             // // Append to the document and trigger the download
+    //             // document.body.appendChild(link);
+    //             // link.click();
+
+    //             // // Clean up
+    //             // link.parentNode.removeChild(link);
+    //             // window.URL.revokeObjectURL(url);
+
+    //          toast.success("report downlaoded Successfully")
+
+
+    //             // getSize(pagination.currentPage); // Fetch updated Size
+    //         } else {
+    //             toast.error(`${data.errorMessage}`);
+    //         }
+    //     } catch (error) {
+    //         console.error(error);
+    //         toast.error("An error occurred");
+    //     } finally {
+            
+    //     }
+    // }
+
     const handlegenerateReport = async (values) => {
-
         const filters = {
-
-
-
             orderType: values.orderTypeName,
             group: values.productGroup,
-            orderNo: values.orderNo ,
-            customerName: values.customerName ,
-            supplierId: values.supplierName ,
+            orderNo: values.orderNo,
+            customerName: values.customerName,
+            supplierId: values.supplierName,
             productId: values?.productId,
-
-
             fromDate: values.fromDate,
             toDate: values.toDate,
-
-
         };
+    
         console.log(filters, "lala");
-
+    
         try {
             const response = await fetch(`${DOWNLOAD_REPORT}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-              },
-              body:JSON.stringify({filters})
-
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ filters }), // Convert body to JSON string
             });
-            const data = await response.json();
-            console.log(data,"datattatattatata");
-            if (response.ok) {
-                console.log(response,"afterok");
-                // const blob = await response.blob();
-
-                // // Create a temporary download link
-                // const url = window.URL.createObjectURL(blob);
-                // const link = document.createElement('a');
-                // link.href = url;
-                // // link.setAttribute('download'.pdf` // Filename for the downloaded file);
-
-                // // Append to the document and trigger the download
-                // document.body.appendChild(link);
-                // link.click();
-
-                // // Clean up
-                // link.parentNode.removeChild(link);
-                // window.URL.revokeObjectURL(url);
-
-             toast.success("report downlaoded Successfully")
-
-
-                // getSize(pagination.currentPage); // Fetch updated Size
-            } else {
-                toast.error(`${data.errorMessage}`);
+    
+            if (!response.ok) {
+                const errorText = await response.text(); // Get error response as text
+                throw new Error(errorText || "Failed to download report");
             }
+    
+            const blob = await response.blob(); // Get the binary PDF file
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", "report.pdf"); // Ensure correct filename
+    
+            document.body.appendChild(link);
+            link.click();
+    
+            // Cleanup
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+    
+            toast.success("Report downloaded successfully");
         } catch (error) {
             console.error(error);
-            toast.error("An error occurred");
-        } finally {
-            
+            toast.error("An error occurred while downloading the report");
         }
-    }
+    };
+    
+
+
+
+
+
+
+
+
+
     const handlePageChange = (newPage) => {
         console.log("Page change requested:", newPage);
 
