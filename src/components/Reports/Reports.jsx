@@ -413,7 +413,7 @@ const [report, setreport] = useState()
             orderNo: values.orderNo ,
             customerName: values.customerName ,
             supplierId: values.supplierName ,
-            productId: values.productId ,
+            productId: values.ProductId ,
 
 
             fromDate: values.fromDate,
@@ -500,7 +500,7 @@ getReport(pagination.currentPage, filters)
             orderNo: values.orderNo,
             customerName: values.customerName,
             supplierId: values.supplierName,
-            productId: values?.productId,
+            productId: values?.ProductId,
             fromDate: values.fromDate,
             toDate: values.toDate,
         };
@@ -526,7 +526,7 @@ getReport(pagination.currentPage, filters)
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", "report.pdf"); // Ensure correct filename
+            // link.setAttribute("download", "report.pdf"); // Ensure correct filename
     
             document.body.appendChild(link);
             link.click();
