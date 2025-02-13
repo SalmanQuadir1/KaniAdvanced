@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+
 import ReactSelect from 'react-select';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/themes/material_blue.css'; // Import a Flatpickr theme
@@ -20,6 +21,8 @@ import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { MdDelete } from 'react-icons/md';
 import SupplierUpdate from './SupplierUpdate';
+import { useFormikContext } from "formik";
+
 const UpdateOrder = () => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const [orderType, setOrderType] = useState('');
@@ -275,6 +278,7 @@ const UpdateOrder = () => {
   }, [orderTypee]);
 
 
+  
 
   const customModalStyles = {
     content: {
@@ -389,8 +393,74 @@ const UpdateOrder = () => {
   };
   console.log(prodIdModal, "proddidmodal");
 
-
-
+  const handleDeleteSupplier = (rowIndex, supplierIndex, setFieldValue, values) => {
+    console.log("Deleting supplier at row:", rowIndex, "supplier index:", supplierIndex);
+  
+    if (!values || !values.orderProducts || !Array.isArray(values.orderProducts)) {
+      console.error("Error: orderProducts is undefined or invalid.");
+      return;
+    }
+  
+    if (!values.orderProducts[rowIndex]) {
+      console.error(`Error: orderProducts[${rowIndex}] is undefined.`);
+      return;
+    }
+  
+    setSelectedSuppliers((prev) => {
+      const updated = prev.map((row) => {
+        if (row.selectedRowId === rowIndex) {
+          const newSuppliers = row.supplierIds.filter((_, idx) => idx !== supplierIndex);
+          return { ...row, supplierIds: newSuppliers };
+        }
+        return row;
+      }).filter((row) => row.supplierIds.length > 0);
+  
+      return updated;
+    });
+  
+    // ✅ Remove the supplier from Formik field values
+    const updatedProductSuppliers = values.orderProducts[rowIndex].productSuppliers?.filter(
+      (_, idx) => idx !== supplierIndex
+    ) || [];
+  
+    setFieldValue(`orderProducts[${rowIndex}].productSuppliers`, updatedProductSuppliers);
+  };
+  
+  
+  const handleDeleteSupplierr = (rowIndex, supplierIndex, setFieldValue, values) => {
+    console.log("Deleting supplier at row:", rowIndex, "supplier index:", supplierIndex);
+  
+    if (!values || !values.orderProducts || !Array.isArray(values.orderProducts)) {
+      console.error("Error: orderProducts is undefined or invalid.");
+      return;
+    }
+  
+    if (!values.orderProducts[rowIndex]) {
+      console.error(`Error: orderProducts[${rowIndex}] is undefined.`);
+      return;
+    }
+  
+    setSelectedSuppliers((prev) => {
+      const updated = prev.map((row) => {
+        if (row.selectedRowId === rowIndex) {
+          const newSuppliers = row.supplierIds.filter((_, idx) => idx !== supplierIndex);
+          return { ...row, supplierIds: newSuppliers };
+        }
+        return row;
+      }).filter((row) => row.supplierIds.length > 0);
+  
+      return updated;
+    });
+  
+    // ✅ Remove the supplier from Formik field values
+    const updatedProductSuppliers = values.orderProducts[rowIndex].productSuppliers?.filter(
+      (_, idx) => idx !== supplierIndex
+    ) || [];
+  
+    setFieldValue(`orderProducts[${rowIndex}].productSuppliers`, updatedProductSuppliers);
+  };
+  
+  
 
   // useEffect(() => {
   //   if (productId) {
@@ -589,7 +659,9 @@ const UpdateOrder = () => {
           onSubmit={handleSubmit}
         >
           {({ values, setFieldValue, handleBlur, isSubmitting }) => (
+            
             <Form>
+              
               <div className="flex flex-col gap-9">
                 {/* Form fields */}
                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -1093,19 +1165,7 @@ const UpdateOrder = () => {
 
     {/* Supplier Quantity Field */}
     <td className="px-5 py-5 border-b border-gray-200 text-sm">
-      {/* <Field
-        name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
-        placeholder="Supplier Quantity"
-        type="number"
-        value={supplierData.supplierOrderQty || ""}
-        onChange={(e) =>
-          setFieldValue(
-            `orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`,
-            e.target.value
-          )
-        }
-        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-      /> */}
+    
 
 
 <Field
@@ -1126,12 +1186,19 @@ const UpdateOrder = () => {
 
     {/* Delete Button */}
     <td className="px-5 py-5 border-b border-gray-200 text-sm">
-      <FiTrash2
-        size={17}
-        className="text-red-500 hover:text-red-700 mx-2"
-        onClick={() => handleDeleteSupplier(index, supplierIndex)}
-        title="Delete Supplier"
-      />
+    <MdDelete
+  size={20}
+  className="text-red-500"
+  onClick={() => handleDeleteSupplierr(index, supplierIndex, setFieldValue, values)}
+/>
+
+      {/* <MdDelete
+  size={20}
+  className="text-red-500"
+  onClick={() => handleDeleteSupplier(index, supplierIndex, setFieldValue, values)}
+/> */}
+
+
     </td>
   </tr>
 ))}
@@ -1160,34 +1227,7 @@ const UpdateOrder = () => {
 
         {/* Supplier Quantity Field */}
         <td key={`quantity-${adjustedIndex}`} className="px-5 py-5 border-b border-gray-200 text-sm">
-          {/* <Field
-            name={`orderProducts[${index}].productSuppliers[${adjustedIndex}].supplierOrderQty`}
-            placeholder="Supplier Quantity"
-            type="number"
-            value={supplier?.supplierOrderQty || ""}
-            onChange={(e) => {
-              const newQuantity = e.target.value;
-              setFieldValue(
-                `orderProducts[${index}].productSuppliers[${adjustedIndex}].supplierOrderQty`,
-                newQuantity
-              );
-
-              // ✅ Update `selectedSuppliers`
-              setSelectedSuppliers((prevSuppliers) =>
-                prevSuppliers.map((row) =>
-                  row.selectedRowId === index
-                    ? {
-                        ...row,
-                        supplierIds: row.supplierIds.map((s, i) =>
-                          i === supplierIndex ? { ...s, supplierOrderQty: newQuantity } : s
-                        ),
-                      }
-                    : row
-                )
-              );
-            }}
-            className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-          /> */}
+        
           <Field
     name={`orderProducts[${index}].productSuppliers[${adjustedIndex}].supplierOrderQty`}
     placeholder="Supplier Quantity"
@@ -1201,20 +1241,7 @@ const UpdateOrder = () => {
         newQuantity
       );
 
-      // ✅ Ensure the value is stored as a number in `selectedSuppliers`
-      // setSelectedSuppliers((prevSuppliers) =>
-      //   prevSuppliers.map((row) =>
-      //     row.selectedRowId === index
-      //       ? {
-      //           ...row,
-      //           supplierIds: row.supplierIds.map((s, i) =>
-      //             //i === supplierIndex ? { ...s, supplierOrderQty: newQuantity } : s
-                
-      //           ),
-      //         }
-      //       : row
-      //   )
-      // );
+      
       setSelectedSuppliers((prevSuppliers) =>
         prevSuppliers.map((row) =>
           row.selectedRowId === index
@@ -1247,11 +1274,12 @@ const UpdateOrder = () => {
 
         {/* Delete Button */}
         <td className="px-5 py-5 border-b border-gray-200 text-sm">
-          <MdDelete
-            size={20}
-            className="text-red-500"
-            onClick={() => handleDeleteSupplier(index, adjustedIndex)}
-          />
+        <MdDelete
+  size={20}
+  className="text-red-500"
+  onClick={() => handleDeleteSupplier(index, supplierIndex, setFieldValue, values)}
+/>
+
         </td>
       </tr>
     );
