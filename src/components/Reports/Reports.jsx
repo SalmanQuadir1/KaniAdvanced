@@ -3,7 +3,7 @@ import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { DELETE_ORDER_URL, DOWNLOAD_REPORT, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS, VIEW_REPORT } from "../../Constants/utils";
+import { DELETE_ORDER_URL, DOWNLOADCSV_REPORT, DOWNLOAD_REPORT, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS, VIEW_REPORT } from "../../Constants/utils";
 import ReactSelect from 'react-select';
 import useorder from '../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -508,7 +508,55 @@ getReport(pagination.currentPage, filters)
         console.log(filters, "lala");
     
         try {
-            const response = await fetch(`${DOWNLOAD_REPORT}`, {
+            const response = await fetch(`${DOWNLOAD_REPORT}`, { 
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({ filters }), // Convert body to JSON string
+            });
+    
+            if (!response.ok) {
+                const errorText = await response.text(); // Get error response as text
+                throw new Error(errorText || "Failed to download report");
+            }
+    
+            const blob = await response.blob(); // Get the binary PDF file
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            // link.setAttribute("download", "report.pdf"); // Ensure correct filename
+    
+            document.body.appendChild(link);
+            link.click();
+    
+            // Cleanup
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+    
+            toast.success("Report downloaded successfully");
+        } catch (error) {
+            console.error(error);
+            toast.error("An error occurred while downloading the report");
+        }
+    };
+    const handlegenerateCsv = async (values) => {
+        const filters = {
+            orderType: values.orderTypeName,
+            group: values.productGroup,
+            orderNo: values.orderNo,
+            customerName: values.customerName,
+            supplierId: values.supplierName,
+            productId: values?.ProductId,
+            fromDate: values.fromDate,
+            toDate: values.toDate,
+        };
+    
+        console.log(filters, "lala");
+    
+        try {
+            const response = await fetch(`${DOWNLOADCSV_REPORT}`, { 
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -780,7 +828,8 @@ getReport(pagination.currentPage, filters)
                                         <div>
 
                                             <button
-                                                type="submit"
+                                                type="button"
+                                                onClick={() => handlegenerateCsv(values)}
                                                 className="flex md:w-[180px] w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                             >
                                                 Generate Report (csv)

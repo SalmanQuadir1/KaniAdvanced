@@ -170,7 +170,7 @@ export const VIEW_ALL_CUSTOMER = `${BASE_URL}/customer/viewAll`;
 
 
 export const DOWNLOAD_REPORT = `${BASE_URL}/report/searchReport`;
-
+export const DOWNLOADCSV_REPORT = `${BASE_URL}/report/downloadCsv`;
 export const DELETE_CUSTOMER_URL = `${BASE_URL}/customer/`;
 
 
