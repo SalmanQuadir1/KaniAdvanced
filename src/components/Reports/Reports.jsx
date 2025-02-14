@@ -562,7 +562,7 @@ getReport(pagination.currentPage, filters)
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ filters }), // Convert body to JSON string
+                body: JSON.stringify( filters ), // Convert body to JSON string
             });
     
             if (!response.ok) {
