@@ -169,8 +169,8 @@ export const UPDATE_CUSTOMER_URL = `${BASE_URL}/customer`;
 export const VIEW_ALL_CUSTOMER = `${BASE_URL}/customer/viewAll`;
 
 
-export const DOWNLOAD_REPORT = `${BASE_URL}/report/downloadOrderReport`;
-
+export const DOWNLOAD_REPORT = `${BASE_URL}/report/searchReport`;
+export const DOWNLOADCSV_REPORT = `${BASE_URL}/report/downloadCsv`;
 export const DELETE_CUSTOMER_URL = `${BASE_URL}/customer/`;
 
 
@@ -204,6 +204,8 @@ export const VIEW_PARTIALLYAPPROVED_ORDERS = `${BASE_URL}/order/searchApprovedAn
 export const VIEW_APPROVED_ORDERS = `${BASE_URL}/order/searchApproved`; 
 
 export const VIEW_CANCELLED_ORDERS = `${BASE_URL}/order/searchCancel`; 
+export const VIEW_REPORT = `${BASE_URL}/report/search`; 
+
 export const VIEW_ORDERSHIPPING_ORDERS = `${BASE_URL}/order/searchShippingDate`; 
 
 
