@@ -533,6 +533,8 @@ console.log(product,"lama");
                     // onSubmit={onSubmit}
                     onSubmit={handleUpdateSubmit}
                 >
+
+
                     {({ setFieldValue, values }) => (
                         <form>
                             <div className="flex flex-col gap-9">
@@ -1826,7 +1828,7 @@ console.log(product,"lama");
                                                     </div>
 
                                                     {/* GST RATE DETAILS Section (Conditional) */}
-                                                    {product.gstDetails.trim() === "Applicable" && (
+                                                    {product.gstDetails.trim() === "Applicable" ||values.gstDetails.trim()==="Applicable" && (
 
                                                         <div className="flex-1 min-w-[250px]">
                                                             <label className="mb-2.5 block text-black dark:text-white">GST RATE DETAILS</label>
