@@ -31,7 +31,7 @@ const Reports = () => {
         getProdId, orderNo,
         prodId, getCustomer, Customer } = useReports();
 
-
+        const [loading, setLoading] = useState(false);
 
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
