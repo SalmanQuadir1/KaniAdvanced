@@ -389,7 +389,7 @@ const UpdateProduct = () => {
     const gstdetails = [
 
         { value: 'Specify Slab Based Rates', label: 'Specify Slab Based Rates' },
-        { value: 'Use GST Classification ', label: 'Use GST Classification ' },
+        { value: 'Use GST Classification', label: 'Use GST Classification' },
 
     ]
 
@@ -419,23 +419,23 @@ const UpdateProduct = () => {
     console.log(product, "brocode");
     console.log(productGroupOption, "codeeeee");
 
-
+console.log(formikRef?.current?.values?.slabBasedRates,"hhhhhhh");
     const handleModalSubmit = (newValues) => {
         console.log(newValues, "Submitted GST Rates");
 
         // Retrieve the current slabBasedRates from Formik
         const currentValues = formikRef.current.values.slabBasedRates || [];
-
+        console.log(currentValues, "current values");
         // Merge current values with only the truly new rows
         const updatedValues = [...currentValues, ...newValues.filter(row => !currentValues.some(existing => existing.id === row.id))];
-
+console.log(updatedValues,"updatedvaluessss");
         // Update Formik's field value with the deduplicated array
         formikRef.current.setFieldValue('slabBasedRates', updatedValues);
 
         setgstDetailModal(false); // Close the modal
     };
 
-
+console.log(product,"lama");
 
     return (
         <DefaultLayout>
@@ -1904,7 +1904,7 @@ const UpdateProduct = () => {
                                                                             </div>
                                                                         ))}
                                                                 </div>
-                                                            ) : values.gstratedetails === "Use GST Classification " ? (
+                                                            ) : values.gstratedetails === "Use GST Classification" ? (
                                                                 // Render HSN Code and Related Fields Section
                                                                 <div className="mb-4.5 flex flex-wrap gap-6">
                                                                     <div className="flex-2 min-w-[250px]">

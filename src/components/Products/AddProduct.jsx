@@ -281,7 +281,7 @@ const AddProduct = () => {
     const gstdetails = [
 
         { value: 'Specify Slab Based Rates', label: 'Specify Slab Based Rates' },
-        { value: 'Use GST Classification ', label: 'Use GST Classification ' },
+        { value: 'Use GST Classification ', label: 'Use GST Classification' },
 
     ]
 
