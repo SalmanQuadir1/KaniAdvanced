@@ -1801,7 +1801,7 @@ console.log(product,"lama");
 
 
 
-                                        {product.gstDetails.trim() === "Applicable" && (
+                                        {product?.gstDetails?.trim() === "Applicable"||product?.gstDetails?.trim() === "NotApplicable" && (
                                             <>
 
                                                 <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>Statutory Details</h1>
