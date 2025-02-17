@@ -280,8 +280,8 @@ const AddProduct = () => {
 
     const gstdetails = [
 
-        { value: 'specifySlabBasedRates', label: 'Specify Slab Based Rates' },
-        { value: 'useGstClassification', label: 'Use Gst Classification' },
+        { value: 'Specify Slab Based Rates', label: 'Specify Slab Based Rates' },
+        { value: 'Use Gst Classification', label: 'Use Gst Classification' },
 
     ]
 
@@ -370,7 +370,7 @@ const AddProduct = () => {
     const handlerateDetails = (option, setFieldValue) => {
         console.log(option, "optoooon");
         setFieldValue('gstratedetails', option.value);
-        if (option.value === "specifySlabBasedRates") {
+        if (option.value === "Specify Slab Based Rates") {
 
             setgstDetailModal(true)
         }
@@ -2032,7 +2032,7 @@ const AddProduct = () => {
                                                         <div className="mb-4.5 mt-6">
                                                             {/* Conditional Rendering: GST Details or HSN Code Section */}
                                                             {/* {gstDetails && gstDetails.length > 0 ? ( */}
-                                                            {values.gstratedetails === "specifySlabBasedRates"  ? (
+                                                            {values.gstratedetails === "Specify Slab Based Rates"  ? (
 
                                                                 // Render GST Details Section
                                                                 <div className="flex flex-wrap gap-6">
@@ -2081,7 +2081,7 @@ const AddProduct = () => {
                                                                         </div>
                                                                     ))}
                                                                 </div>
-                                                            ) : values.gstratedetails === "useGstClassification" ?  (
+                                                            ) : values.gstratedetails === "Use Gst Classification" ?  (
                                                                 // Render HSN Code and Related Fields Section
                                                                 <div className="mb-4.5 flex flex-wrap gap-6">
                                                                     <div className="flex-2 min-w-[250px]">

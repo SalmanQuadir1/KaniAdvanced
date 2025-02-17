@@ -144,7 +144,7 @@ const UpdateProduct = () => {
         if (gstDetails && gstDetails.length > 0) {
             product.slabBasedRates = values.slabBasedRates; // Add gstDetails to the product
         }
-        if (values.gstratedetails === "specifySlabBasedRates") {
+        if (values.gstratedetails === "Specify Slab Based Rates") {
             product.slabBasedRates = values.slabBasedRates; // Include slab-based rates
             delete product.hsnCode; // Remove HSN-related fields if they exist
             delete product.igst;
@@ -388,8 +388,8 @@ const UpdateProduct = () => {
 
     const gstdetails = [
 
-        { value: 'specifySlabBasedRates', label: 'Specify Slab Based Rates' },
-        { value: 'useGstClassification', label: 'Use Gst Classification' },
+        { value: 'Specify Slab Based Rates', label: 'Specify Slab Based Rates' },
+        { value: 'Use Gst Classification', label: 'Use Gst Classification' },
 
     ]
 
@@ -409,7 +409,7 @@ const UpdateProduct = () => {
     const handlerateDetails = (option, setFieldValue) => {
         console.log(option, "optoooon");
         setFieldValue('gstratedetails', option.value);
-        if (option.value === "specifySlabBasedRates") {
+        if (option.value === "Specify Slab Based Rates") {
 
             setgstDetailModal(true)
         }
@@ -1855,7 +1855,7 @@ const UpdateProduct = () => {
                                                         <div className="mb-4.5 mt-6">
                                                             {/* Conditional Rendering: GST Details or HSN Code Section */}
                                                             {/* {gstDetails && gstDetails.length > 0 ? ( */}
-                                                            {values.gstratedetails === "specifySlabBasedRates" ? (
+                                                            {values.gstratedetails === "Specify Slab Based Rates" ? (
 
                                                                 // Render GST Details Section
                                                                 <div className="flex flex-wrap gap-6">
@@ -1904,7 +1904,7 @@ const UpdateProduct = () => {
                                                                             </div>
                                                                         ))}
                                                                 </div>
-                                                            ) : values.gstratedetails === "useGstClassification" ? (
+                                                            ) : values.gstratedetails === "Use Gst Classification" ? (
                                                                 // Render HSN Code and Related Fields Section
                                                                 <div className="mb-4.5 flex flex-wrap gap-6">
                                                                     <div className="flex-2 min-w-[250px]">
