@@ -554,6 +554,20 @@ const UpdateOrder = () => {
 
 
   console.log(selectedSuppliers, "umerjj");
+
+
+ const handleDeleteRow = (index) => {
+    const updatedRows = prodIdModal.filter((_, i) => i !== index);
+    console.log(updatedRows, "rowwwwwwwwwwwwws");
+    setprodIdModal(updatedRows);
+  };
+  console.log(prodIdModal, "prodddddddddddddddddddddddddd");
+  const [isPopulated, setIsPopulated] = useState(false);
+
+  console.log(selectedSuppliers, "umerumer");
+
+
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Order/Update Order" />
@@ -1582,8 +1596,12 @@ const UpdateOrder = () => {
                                   
                                                                                     {/* Delete Button */}
                                                                                     <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                                                      < MdDelete size={20} className='text-red-500 ' onClick={() => handleDeleteSupplier(index, supplierIndex)} />
-                                  
+                                                                                      {/* < MdDelete size={20} className='text-red-500 ' onClick={() => handleDeleteSupplier(index, supplierIndex)} /> */}
+                                                                                      <MdDelete
+  size={20}
+  className="text-red-500"
+  onClick={() => handleDeleteSupplier(index, supplierIndex, setFieldValue, values)}
+/>
                                                                                     </td>
                                                                                   </tr>
                                                                                 ))}
@@ -1596,9 +1614,18 @@ const UpdateOrder = () => {
                                   
                                   
                                                                           </table>
+                                                                          
                                                                         </div>
+                                                                        
                                                                       </div>
+                                                                      
                                                                     </td>
+                                                                     <td className="px-5 py-5 border-b items-center justify-center mt-[100px]">
+                                                                    
+                                                                          <MdDelete className='text-red-700' size={30} onClick={() => handleDeleteRow(index)} />
+                                                                    
+                                                                      </td>
+                                                                    
 
                               </tr>
                             );
