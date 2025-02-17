@@ -281,7 +281,7 @@ const AddProduct = () => {
     const gstdetails = [
 
         { value: 'Specify Slab Based Rates', label: 'Specify Slab Based Rates' },
-        { value: 'Use Gst Classification', label: 'Use Gst Classification' },
+        { value: 'Use GST Classification ', label: 'Use GST Classification ' },
 
     ]
 
@@ -2081,7 +2081,7 @@ const AddProduct = () => {
                                                                         </div>
                                                                     ))}
                                                                 </div>
-                                                            ) : values.gstratedetails === "Use Gst Classification" ?  (
+                                                            ) : values.gstratedetails === "Use GST Classification " ?  (
                                                                 // Render HSN Code and Related Fields Section
                                                                 <div className="mb-4.5 flex flex-wrap gap-6">
                                                                     <div className="flex-2 min-w-[250px]">

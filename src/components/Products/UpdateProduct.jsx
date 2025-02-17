@@ -389,7 +389,7 @@ const UpdateProduct = () => {
     const gstdetails = [
 
         { value: 'Specify Slab Based Rates', label: 'Specify Slab Based Rates' },
-        { value: 'Use Gst Classification', label: 'Use Gst Classification' },
+        { value: 'Use GST Classification ', label: 'Use GST Classification ' },
 
     ]
 
@@ -1801,7 +1801,7 @@ const UpdateProduct = () => {
 
 
 
-                                        {product.gstDetails === "Applicable" && (
+                                        {product.gstDetails.trim() === "Applicable" && (
                                             <>
 
                                                 <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>Statutory Details</h1>
@@ -1826,7 +1826,7 @@ const UpdateProduct = () => {
                                                     </div>
 
                                                     {/* GST RATE DETAILS Section (Conditional) */}
-                                                    {product.gstDetails === "Applicable" && (
+                                                    {product.gstDetails.trim() === "Applicable" && (
 
                                                         <div className="flex-1 min-w-[250px]">
                                                             <label className="mb-2.5 block text-black dark:text-white">GST RATE DETAILS</label>
@@ -1904,7 +1904,7 @@ const UpdateProduct = () => {
                                                                             </div>
                                                                         ))}
                                                                 </div>
-                                                            ) : values.gstratedetails === "Use Gst Classification" ? (
+                                                            ) : values.gstratedetails === "Use GST Classification " ? (
                                                                 // Render HSN Code and Related Fields Section
                                                                 <div className="mb-4.5 flex flex-wrap gap-6">
                                                                     <div className="flex-2 min-w-[250px]">
