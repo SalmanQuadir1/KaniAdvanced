@@ -27,52 +27,38 @@ const ExcelUploadBulkInventory = () => {
     ];
 
     const handleSubmit = async (values) => {
-        if (!selectedCategory) {
-            toast.error('Please select a category');
-            return;
-        }
+
 
         const formData = new FormData();
         formData.append('file', values.file);
 
         try {
-            const apiEndpoints = {
-                contemporary: ADD_CONTEMPORARY,
-                pashmina: ADD_PASHMINA_EMB,
-                kani: ADD_KANI,
+            const apiEndpoints = `${BASE_URL}/products/uploadProductInventory`
 
-                woolemb:ADD_WOOL_EMB,
-                papermachie:ADD_PAPERMACHIE,
-                cotton:ADD_COTTON,
-                saree:ADD_CONTEM_SAREE,
-                contempwool:ADD_CONTEMP_WOOL,
-            
-            };
-
-            const response = await fetch(apiEndpoints[selectedCategory], {
+            const response = await fetch(apiEndpoints, {
                 method: 'POST',
                 body: formData,
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            if (response.ok) { 
+            if (response.ok) {
                 // `response.ok` is true for status codes in the 200–299 range
 
                 const message = await response.json();
-                const messageData=message.message
+                const messageData = message.message
                 toast.success(messageData);
             } else {
                 const errorData = await response.json(); // Parse the response body as JSON
                 const errorMessage = errorData.message || 'An error occurred'; // Use `message` or fallback
-              
+
                 toast.error(errorMessage); // Display the error message in a toast
             }
 
-         
-          
+
+
         } catch (error) {
-            console.error(error.message,"errorrrrr");
+            console.error(error.message, "errorrrrr");
             toast.error('An error occurred during upload.');
         }
     };
@@ -96,94 +82,79 @@ const ExcelUploadBulkInventory = () => {
                             {({ setFieldValue }) => (
                                 <Form>
                                     <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-                                    
-                                      
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        Upload Excel File
-                                                    </label>
-                                                    <input
-                                                        type="file"
-                                                        name="file"
-                                                        accept=".xlsx, .xls"
-                                                        onChange={(event) =>
-                                                            setFieldValue('file', event.currentTarget.files[0])
-                                                        }
-                                                        className="block w-full text-sm text-slate-500
+
+
+                                        <div className="flex-1 min-w-[300px]">
+                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                Upload Excel File
+                                            </label>
+                                            <input
+                                                type="file"
+                                                name="file"
+                                                accept=".xlsx, .xls"
+                                                onChange={(event) =>
+                                                    setFieldValue('file', event.currentTarget.files[0])
+                                                }
+                                                className="block w-full text-sm text-slate-500
                                                     file:mr-4 file:py-2 file:px-4
                                                     file:rounded-full file:border-0
                                                     file:text-sm file:font-semibold
                                                     file:bg-blue-50 file:text-blue-700
                                                     hover:file:bg-blue-100"
-                                                    />
-                                                </div>
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <button
-                                                        type="button"
-                                                        onClick={async () => {
-                                                            try {
-                                                                const apiEndpoints = {
-                                                                    contemporary: `${BASE_URL}/products/downloadCp`,
-                                                                    pashmina: `${BASE_URL}/uploadExcel/downloadPe`,
-                                                                    kani: `${BASE_URL}/uploadExcel/downloadKani`,
-                                                                    woolemb:`${BASE_URL}/uploadExcel/downloadWe`,
-                                                                    papermachie:`${BASE_URL}/uploadExcel/downloadPaper`,
-                                                                    cotton:`${BASE_URL}/uploadExcel/downloadCotton`,
-                                                                    saree:`${BASE_URL}/uploadExcel/downloadSaree`,
-                                                                    contempwool:`${BASE_URL}/uploadExcel/downloadContempWool`,
+                                            />
+                                        </div>
+                                        <div className="flex-1 min-w-[300px]">
+                                            <button
+                                                type="button"
+                                                onClick={async () => {
+                                                    try {
+                                                        const apiEndpoints = `${BASE_URL}/products/downloadProductInventory`;
 
+                                                        const response = await fetch(apiEndpoints, {
+                                                            method: 'GET',
+                                                            headers: {
+                                                                Authorization: `Bearer ${token}`,
+                                                            },
+                                                        });
 
+                                                        // Check if the response is not OK (e.g., 4xx or 5xx status)
+                                                        if (!response.ok) {
+                                                            throw new Error('Failed to download the file');
+                                                        }
 
+                                                        // Get the file blob
+                                                        const blob = await response.blob();
 
+                                                        // Create a temporary download link
+                                                        const url = window.URL.createObjectURL(blob);
+                                                        const link = document.createElement('a');
+                                                        link.href = url;
 
+                                                        // Set the filename for the downloaded file
+                                                        link.setAttribute('download', 'product_inventory_sample.xlsx'); // You can customize the filename here
 
-                                                                    
-                                                                };
+                                                        // Append to the document and trigger the download
+                                                        document.body.appendChild(link);
+                                                        link.click();
 
-                                                                const endpoint = apiEndpoints[selectedCategory];
+                                                        // Clean up
+                                                        document.body.removeChild(link);
+                                                        window.URL.revokeObjectURL(url);
 
-                                                                const response = await fetch(endpoint, {
-                                                                    method: 'GET',
-                                                                    headers: {
-                                                                        Authorization: `Bearer ${token}`,
-                                                                    },
-                                                                });
+                                                        // Show success toast message
+                                                        toast.success('File downloaded successfully!');
+                                                    } catch (error) {
+                                                        console.error('Error downloading the file:', error);
+                                                        toast.error('Failed to download the sample file.');
+                                                    }
+                                                }}
+                                                className="bg-green-500 mb-4 text-white py-2 px-4 rounded hover:bg-green-600"
+                                            >
+                                                Download Sample File For Bulk Inventory
+                                            </button>
 
-                                                                if (!response.ok) {
-                                                                    throw new Error('Failed to download the file');
-                                                                }
+                                        </div>
 
-                                                                // Get the file blob
-                                                                const blob = await response.blob();
-
-                                                                // Create a temporary download link
-                                                                const url = window.URL.createObjectURL(blob);
-                                                                const link = document.createElement('a');
-                                                                link.href = url;
-                                                                link.setAttribute(
-                                                                    'download',
-                                                                    `${selectedCategory}.xlsx` // Filename for the downloaded file
-                                                                );
-
-                                                                // Append to the document and trigger the download
-                                                                document.body.appendChild(link);
-                                                                link.click();
-
-                                                                // Clean up
-                                                                link.parentNode.removeChild(link);
-                                                                window.URL.revokeObjectURL(url);
-                                                            } catch (error) {
-                                                                console.error('Error downloading the file:', error);
-                                                                toast.error('Failed to download the sample file.');
-                                                            }
-                                                        }}
-                                                        className="bg-green-500 mb-4 text-white py-2 px-4 rounded hover:bg-green-600"
-                                                    >
-                                                        Download Sample File
-                                                    </button>
-
-                                                </div>
-                                        
                                     </div>
                                     <button
                                         type="submit"
