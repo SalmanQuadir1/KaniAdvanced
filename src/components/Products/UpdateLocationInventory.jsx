@@ -55,7 +55,7 @@ const UpdateLocationInventory = () => {
                         value: inven.location?.id
                     },
                     openingBalance: inven.openingBalance , 
-                    rate:inven.rate,
+                    rate:inven.mrp,
                     value:inven.value,
                     
                     // Default value if empty

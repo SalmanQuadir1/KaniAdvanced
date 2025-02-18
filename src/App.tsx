@@ -11,6 +11,8 @@ import Material from './components/Material/Material.jsx';
 import AddProduct from './components/Products/AddProduct.jsx';
 import ViewProduct from './components/Products/ViewProduct.jsx';
 import ExcelUploadProduct from './components/Products/ExcelUploadProduct.jsx';
+import ExcelUploadBulkInventory from './components/Products/ExcelUploadBulkInventory.jsx';
+
 
 
 import AddBom from './components/Products/AddBom.jsx';
@@ -695,12 +697,24 @@ function App() {
               </>
             }
           />
+
+          {/* Excel Upload */}
           <Route
             path="/product/addExcelProduct"
             element={
               <>
                 <PageTitle title="Excel Upload Product" />
                 <ExcelUploadProduct />
+              </>
+            }
+          />
+
+<Route
+            path="/product/addBulkInventory"
+            element={
+              <>
+                <PageTitle title="Excel Upload Product" />
+                <ExcelUploadBulkInventory />
               </>
             }
           />
