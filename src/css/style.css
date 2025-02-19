@@ -45,6 +45,68 @@ table::-webkit-scrollbar-track {
   background: #f3f4f6;
   border-radius: 4px;
 }
+/* General circle style for status indicators */
+.dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+/* Status colors */
+.dot-grey {
+  background-color: #808080; /* Grey */
+}
+
+.dot-dblue {
+  background-color: #00008B; /* Dark Blue */
+}
+
+.dot-blue {
+  background-color: #0000FF; /* Blue */
+}
+
+.dot-dpink {
+  background-color: #D32F2F; /* Dark Pink */
+}
+
+.dot-pink {
+  background-color: #E91E63; /* Pink */
+}
+
+.dot-dpurple {
+  background-color: #9C27B0; /* Dark Purple */
+}
+
+.dot-purple {
+  background-color: #673AB7; /* Purple */
+}
+
+.dot-green {
+  background-color: #4CAF50; /* Green */
+}
+
+.dot-dgreen {
+  background-color: #388E3C; /* Dark Green */
+}
+
+.dot-yellow {
+  background-color: #FFEB3B; /* Yellow */
+}
+
+.dot-orange {
+  background-color: #FF5722; /* Orange */
+}
+
+.dot-black {
+  background-color: #000000; /* Black */
+}
+
+.dot-red {
+  background-color: #F44336; /* Red */
+}
+
 
 
 @layer components {

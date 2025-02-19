@@ -63,7 +63,24 @@ const MonthlyOrders = () => {
 
                     <div className="row">
                         <div className="col-md-12">
+                            <div class="float-right">
+                                Created: <span class="dot dot-grey"></span> |
+                                Executed: <span class="dot dot-dblue"></span> |
+                                PartiallyExecuted: <span class="dot dot-blue"></span> |
+                                Approved: <span class="dot dot-dpink"></span> |
+                                PartiallyApproved: <span class="dot dot-pink"></span> |
+                                Pending: <span class="dot dot-dpurple"></span> 
+                                PartiallyPending: <span class="dot dot-purple"></span> 
+                                Closed: <span class="dot dot-green"></span> 
+                                PartiallyClosed: <span class="dot dot-dgreen"></span> |
+                                ForcedClosure: <span class="dot dot-yellow"></span> |
+                                Rejected: <span class="dot dot-orange"></span> |
+                                NeedModification: <span class="dot dot-black"></span> 
+                                Cancelled: <span class="dot dot-red"></span>
+                            </div>
+
                             <h3>Monthly Orders</h3>
+
 
                             {/* Calendar View */}
                             <Calendar
