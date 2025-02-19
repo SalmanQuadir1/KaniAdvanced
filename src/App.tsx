@@ -103,7 +103,7 @@ import ViewOrderForcedClosure from './components/Order/ViewOrderForcedClosure.js
 import ViewRecievedQuantity from './components/Order/ViewRecievedQuantity.jsx';
 
 
-
+import MonthlyOrders from './components/MonthlyOrders/MonthlyOrders.jsx'
 
 
 import ViewOrderCreated from './components/Order/ViewOrderCreated.jsx';
@@ -261,6 +261,17 @@ function App() {
               <>
                 <PageTitle title="Profile " />
                 <Profile />
+              </>
+            }
+          />
+
+          {/* Calenders */}
+           <Route
+            path="/Order/monthlyorders"
+            element={
+              <>
+                <PageTitle title="Monthly Orders" />
+                <MonthlyOrders />
               </>
             }
           />
