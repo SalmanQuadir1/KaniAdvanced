@@ -696,12 +696,12 @@ console.log(finalData,"jump");
                           </div>
                         ) : (
                           <div className="flex justify-center mt-4">
-                            <button
+                            {/* <button
                               type="submit"
                               className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none"
                             >
                               Accept All
-                            </button>
+                            </button> */}
                           </div>
                         )
                       }

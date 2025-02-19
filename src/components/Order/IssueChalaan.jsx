@@ -320,7 +320,7 @@ const IssueChalaan = () => {
 
 
   console.log(selectedSuppliers, "supppppppppppppppppppplierssssssssssssssssss");
-
+console.log(order?.orderCategory,"jjhhjjhh");
 
   return (
     <DefaultLayout>
@@ -403,11 +403,11 @@ const IssueChalaan = () => {
                       {/* Order Category */}
                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Order Category</label>
-                        <ReactSelect
+                        <Field
                           name="orderCategory"
-                          value={OrderCategoryOptions.find(option => option.value === values.orderCategory) || null}
-                          onChange={(option) => setFieldValue("orderCategory", option.value)} // Store only value
-                          options={OrderCategoryOptions}
+                          value={order?.orderCategory || null}
+                          // onChange={(option) => setFieldValue("orderCategory", option.value)} // Store only value
+                         
                           styles={customStyles}
                           isDisabled={true}
                           className="bg-white dark:bg-form-Field"
@@ -417,6 +417,19 @@ const IssueChalaan = () => {
 
 
                         <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[200px]">
+                        <label className="mb-2.5 block text-black dark:text-white">Product ID</label>
+                        <Field
+                          name="orderCategory"
+                          readOnly
+                        
+                          value={order?.orderCategory || null}// Ensure it reflects Formik state
+                          // onChange={(e) => setFieldValue("productId", e.target.value)} // Update Formik state
+                          className="w-[200px] bg-gray-3 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                          placeholder="Enter Product ID"
+                        />
+                        <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
                       </div>
 
                       {/* Product ID */}
