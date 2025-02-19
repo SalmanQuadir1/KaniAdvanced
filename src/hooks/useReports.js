@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { GET_BUDGET_URL, DELETE_BUDGET_URL, UPDATE_BUDGET_URL, ADD_BUDGET_URL, VIEW_ALL_SUPPLIER_URL, VIEW_ORDERNO, GET_PRODUCTSID_URL, VIEW_ALL_CUSTOMER } from "../Constants/utils";
+import { GET_BUDGET_URL, DELETE_BUDGET_URL, UPDATE_BUDGET_URL, ADD_BUDGET_URL, VIEW_ALL_SUPPLIER_URL, VIEW_ORDERNO, GET_PRODUCTSID_URL, VIEW_ALL_CUSTOMER, VIEW_ALL_ORDERTYPE } from "../Constants/utils";
 import { fetchProductGroup } from '../redux/Slice/ProductGroup';
 import { fetchOrderType } from '../redux/Slice/OrderTypeSlice';
 import { fetchsupplier } from '../redux/Slice/SupplierSlice';
@@ -11,6 +11,7 @@ const useReports = () => {
     const [productGroup, setproductGroup] = useState([])
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const [Supplier, setSupplier] = useState([])
+    const [orderType, setorderType] = useState([])
     const [Customer, setCustomer] = useState([])
     const [prodId, setprodId] = useState([])
     const [orderNo, setorderNo] = useState([])
@@ -30,7 +31,7 @@ const useReports = () => {
 
     const { data } = useSelector((state) => state?.persisted?.productGroup);
 
-    const orderType= useSelector((state) => state?.persisted?.orderType?.data);
+    // const orderType= useSelector((state) => state?.persisted?.orderType?.data);
 
     useEffect(() => {
    
@@ -111,6 +112,24 @@ console.log(orderType,"heyyji");
           const data = await response.json();
           // console.log(data,"from url");
           setCustomer(data);
+        
+        } catch (error) {
+          console.error(error);
+          toast.error('Failed to fetch Customer');
+        }
+      };
+      const getorderType = async (page) => {
+        try {
+          const response = await fetch(`${VIEW_ALL_ORDERTYPE}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const data = await response.json();
+          // console.log(data,"from url");
+          setorderType(data);
         
         } catch (error) {
           console.error(error);
@@ -244,6 +263,7 @@ console.log(orderType,"heyyji");
     return {
         productGroup,
         Supplier,
+        getorderType,
         orderType,
         getSupplier,
         getOrderNo,

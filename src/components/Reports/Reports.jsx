@@ -29,7 +29,7 @@ const Reports = () => {
     const { productGroup, Supplier, orderType, getSupplier,
         getOrderNo,
         getProdId, orderNo,
-        prodId, getCustomer, Customer } = useReports();
+        prodId, getCustomer, Customer,getorderType } = useReports();
 
         const [loading, setLoading] = useState(false);
 
@@ -54,7 +54,8 @@ const [report, setreport] = useState()
         getSupplier(),
             getOrderNo(),
             getProdId(),
-            getCustomer()
+            getCustomer(),
+            getorderType()
 
     }, []);
 
