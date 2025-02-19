@@ -15,7 +15,7 @@ export const fetchOrderType = createAsyncThunk(
 );
 
 const OrderTypeSLice = createSlice({
-  name: "productType",
+  name: "orderType",
   initialState: {
     loading: false,
     data: null,
