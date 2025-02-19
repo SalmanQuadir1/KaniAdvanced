@@ -63,7 +63,7 @@ const [report, setreport] = useState()
         value: prod.productGroupName
     }));
     const formattedOrderType = orderType?.map(type => ({
-        label: type.orderTypeName,
+        label: type.orderTypeName, 
         value: type.orderTypeName
     }));
     const formattedCustomer = Customer?.map(cust => ({
