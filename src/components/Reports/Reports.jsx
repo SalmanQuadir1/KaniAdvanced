@@ -562,7 +562,7 @@ getReport(pagination.currentPage, filters)
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(filters ), // Convert body to JSON string
+                body: JSON.stringify(filters), // Convert body to JSON string
             });
     
             if (!response.ok) {
@@ -570,11 +570,22 @@ getReport(pagination.currentPage, filters)
                 throw new Error(errorText || "Failed to download report");
             }
     
-            const blob = await response.blob(); // Get the binary PDF file
+            const blob = await response.blob(); // Get the binary CSV file
+            
+            // Extract the filename from the Content-Disposition header
+            const disposition = response.headers.get("Content-Disposition");
+            let filename = "report.csv"; // Default filename
+            if (disposition && disposition.includes("attachment")) {
+                const match = disposition.match(/filename="(.+)"/);
+                if (match && match[1]) {
+                    filename = match[1];
+                }
+            }
+    
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            // link.setAttribute("download", "report.pdf"); // Ensure correct filename
+            link.setAttribute("download", filename); // Use the filename from the header
     
             document.body.appendChild(link);
             link.click();
@@ -589,6 +600,7 @@ getReport(pagination.currentPage, filters)
             toast.error("An error occurred while downloading the report");
         }
     };
+    
     
 
 
