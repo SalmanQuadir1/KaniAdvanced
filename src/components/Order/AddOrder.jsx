@@ -56,14 +56,21 @@ const AddOrder = () => {
 
   } = useorder();
 
+  useEffect(() => {
+
+     getorderType();
+    getCustomer();
+  
+  }, [])
+  
+
 
   useEffect(() => {
     const fetchData = async () => {
       setisLoading(true)
        // Set loading to true when data starts loading
       await getprodId();
-      await getorderType();
-      await getCustomer();
+     
       setisLoading(false)
      // Set loading to false once data is loaded
     };
@@ -75,7 +82,7 @@ const AddOrder = () => {
 
 
   console.log(productId, "proddidddddd");
-
+console.log(customer,"customer");
 
   const [selectedSuppliers, setSelectedSuppliers] = useState([]);
   const [selectedRowId, setSelectedRowId] = useState(null);
