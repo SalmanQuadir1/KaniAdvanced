@@ -459,15 +459,15 @@ const UpdateOrderProduct = () => {
     console.log(values, "kiki");
     try {
       const url = `${UPDATE_ORDERPRODUCT_ALL}/${id}`;
-      const method ="PUT";
+      const method = "PUT";
 
       const response = await fetch(url, {
-          method: method,
-          headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-          },
-          body: JSON.stringify(values)
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(values)
       });
 
       const data = await response.json();
@@ -483,10 +483,11 @@ const UpdateOrderProduct = () => {
     } catch (error) {
       console.error(error, response);
       toast.error("An error occurred");
-    } 
+    }
 
     // You can now send `finalData` to the backend or do any other operation with it
   };
+  console.log(order?.productStatus, "gigigigig");
 
   return (
     <DefaultLayout>
@@ -503,8 +504,8 @@ const UpdateOrderProduct = () => {
             quantityToManufacture: order?.quantityToManufacture,
             value: order?.value,
             expectedDate: order?.expectedDate,
-            productStatus: "",
-            productionComments: "",
+            productStatus: order?.productStatus || "",
+            productionComments: order?.productionComments || "",
             productsId: order?.products?.id,
             // supplierName: product.productSuppliers?.supplier?.name || '', // Safely accessing supplier name
             // supplierOrderQty: product.productSuppliers?.[0]?.supplierOrderQty || 0,
@@ -629,23 +630,27 @@ const UpdateOrderProduct = () => {
 
                       {/* Product ID */}
                       <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Execution Status</label>
-                        <ReactSelect
-                          name="productStatus"
-                          // value={
-                          //   salesChannelOptions.find((option) => option.value === values.salesChannel) || null
-                          // } // Display the selected value
-                          onChange={(option) =>
-                            setFieldValue("productStatus", option ? option.value : "")
-                          } // Update Formik value
-                          options={ExecutionStatus}
-                          styles={customStyles}
-                          className="bg-white dark:bg-form-Field"
-                          classNamePrefix="react-select"
-                          placeholder="Execution Status"
-                        />
-                        <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
-                      </div>
+  <label className="mb-2.5 block text-black dark:text-white">Execution Status</label>
+  <ReactSelect
+    name="productStatus"
+    value={
+      ExecutionStatus.find(
+        (option) => option.value === values.productStatus
+      ) || null // Find the selected option object from ExecutionStatus
+    }
+    onChange={(option) =>
+      setFieldValue("productStatus", option ? option.value : "")
+    } // Update Formik's value when an option is selected
+    options={ExecutionStatus}
+    styles={customStyles}
+    className="bg-white dark:bg-form-Field"
+    classNamePrefix="react-select"
+    placeholder="Execution Status"
+  />
+  <ErrorMessage name="productStatus" component="div" className="text-red-600 text-sm" />
+</div>
+
+
 
                       {/* Quantity to Manufacture */}
                       <div className="flex-1 min-w-[200px]">
