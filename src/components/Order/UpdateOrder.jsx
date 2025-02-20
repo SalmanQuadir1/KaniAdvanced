@@ -228,7 +228,7 @@ const UpdateOrder = () => {
       }
 
       const data = await response.json();
-      console.log(data, "datatata")
+      console.log(data, "datatataaaaaaaaaaaaaaaaaaaaaaaaaaa")
       setOrder(data); // Store fetched product
     } catch (error) {
       console.error('Error fetching product:', error);
@@ -236,7 +236,7 @@ const UpdateOrder = () => {
       setIsLoading(false); // Stop loader
     }
   };
-  console.log(order, 'hloooooo')
+  console.log(order?.status, 'hloooooo')
 
   // Fetch data when component mounts
   useEffect(() => {
@@ -1688,6 +1688,8 @@ const UpdateOrder = () => {
                     </button> */}
 
                     <div className="flex justify-center mt-4"> {/* Centering the button */}
+                    {
+                      order?.status==="created"&&(
                       <button
                         type="button" // Ensures the button does not trigger the form submission
                         onClick={(e) => handleUpdateSubmit(values, e)}
@@ -1695,6 +1697,9 @@ const UpdateOrder = () => {
                       >
                         Update
                       </button>
+
+                      )
+                    }
                     </div>
                   </div>
                 </div>
