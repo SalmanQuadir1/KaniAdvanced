@@ -161,9 +161,10 @@ const AddOrder = () => {
       }));
       setorderTypeOptions(formattedOptions);
     }
+    console.log(productId,"japaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
     if (productId) {
-      const formattedProdIdOptions = productId.map(prodId => ({
+      const formattedProdIdOptions = productId?.map(prodId => ({
         value: prodId.id,
         label: prodId?.productId,
         prodIdObject: prodId,
