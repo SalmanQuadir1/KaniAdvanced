@@ -7,10 +7,18 @@ import moment from 'moment';  // Import moment correctly
 import 'react-big-calendar/lib/css/react-big-calendar.css';  // Big calendar styles
 import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
+import { BASE_URL } from '../../Constants/utils';
+import { useSelector } from 'react-redux';
 
 const MonthlyOrders = () => {
     const [events, setEvents] = useState([]);
     const [contextPath, setContextPath] = useState('');
+    const { currentUser } = useSelector((state) => state?.persisted?.user);
+
+
+
+
+    const { token } = currentUser;
     const [currentDate, setCurrentDate] = useState(new Date());
 
     // Localizer setup (using moment.js)
@@ -26,12 +34,34 @@ const MonthlyOrders = () => {
 
     const fetchEventsForMonth = (date) => {
         // Format date to fetch events for the current month
-        const monthStr = format(date, 'yyyy-MM');
-
-        axios.get(`/order/getMonthlyOrders/${monthStr}`)
+        const monthStr = format(date, 'MMMMyyyy'); // 'MMMM' gives the full month name, 'yyyy' gives the year
+    
+        console.log(monthStr, "monthhh");
+    
+        // Ensure the monthStr is not encoded if you need it to be plain text (without URL encoding)
+        const url = `${BASE_URL}/order/monthly/${monthStr}`;
+    
+        console.log(url, "urrrrl");
+    
+        // Now make the API call using fetch with the token included in the headers
+        fetch(url, {
+            method: 'GET',  // Method type
+            headers: {
+                'Content-Type': 'application/json',  // Ensure the content type is JSON
+                'Authorization': `Bearer ${token}`,  // Send token in the Authorization header
+            },
+        })
             .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();  // Parse the response as JSON
+            })
+            .then((data) => {
+                console.log(data);
+    
                 // Assuming backend returns an array of orders, map them to match calendar format
-                const fetchedEvents = response.data.map((order) => {
+                const fetchedEvents = data.map((order) => {
                     return {
                         id: order.id,
                         title: order.customer ? `${order.orderNo} ${order.customer.name}` : order.orderNo,
@@ -42,11 +72,15 @@ const MonthlyOrders = () => {
                         color: '#B5651D',  // Color coding can be dynamic based on order status
                     };
                 });
-
+    
                 setEvents(fetchedEvents);  // Set events to state
             })
-            .catch(error => console.error('Error fetching events:', error));
+            .catch((error) => {
+                console.error('Error fetching events:', error);
+            });
     };
+    
+    
 
     // Handle date changes (switching months or navigating)
     const handleDateChange = (date) => {
@@ -69,13 +103,13 @@ const MonthlyOrders = () => {
                                 PartiallyExecuted: <span class="dot dot-blue"></span> |
                                 Approved: <span class="dot dot-dpink"></span> |
                                 PartiallyApproved: <span class="dot dot-pink"></span> |
-                                Pending: <span class="dot dot-dpurple"></span> 
-                                PartiallyPending: <span class="dot dot-purple"></span> 
-                                Closed: <span class="dot dot-green"></span> 
+                                Pending: <span class="dot dot-dpurple"></span>
+                                PartiallyPending: <span class="dot dot-purple"></span>
+                                Closed: <span class="dot dot-green"></span>
                                 PartiallyClosed: <span class="dot dot-dgreen"></span> |
                                 ForcedClosure: <span class="dot dot-yellow"></span> |
                                 Rejected: <span class="dot dot-orange"></span> |
-                                NeedModification: <span class="dot dot-black"></span> 
+                                NeedModification: <span class="dot dot-black"></span>
                                 Cancelled: <span class="dot dot-red"></span>
                             </div>
 
