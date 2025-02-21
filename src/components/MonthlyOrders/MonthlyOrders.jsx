@@ -16,10 +16,12 @@ const MonthlyOrders = () => {
 
     const localizer = momentLocalizer(moment);
 
+    // Fetch events based on the selected month
     useEffect(() => {
         fetchEventsForMonth(currentDate);
     }, [currentDate]);
 
+    // Fetch events for the selected month from the backend
     const fetchEventsForMonth = (date) => {
         const monthStr = format(date, 'MMMMyyyy');  // 'MMMM' gives the full month name, 'yyyy' gives the year
         const url = `${BASE_URL}/order/monthly/${monthStr}`;
@@ -38,27 +40,45 @@ const MonthlyOrders = () => {
                 return response.json();
             })
             .then((data) => {
+                // Map the fetched events into the correct format for react-big-calendar
                 const fetchedEvents = data.map((order) => {
                     return {
                         id: order.id,
                         title: order.customer ? `${order.orderNo} ${order.customer.name}` : order.orderNo,
-                        start: new Date(order.orderDate),
-                        end: new Date(order.orderDate),
+                        start: new Date(order.orderDate),  // Assuming orderDate is in a valid format
+                        end: new Date(order.orderDate),    // Adjust the end date if needed
                         url: `/Order/updateorder/${order.id}`,
                         description: order.status,
-                        color: '#B5651D',
+                        color: '#B5651D',  // You can change the color based on the order status
                     };
                 });
-                setEvents(fetchedEvents);
+
+                setEvents(fetchedEvents); // Set the events to state
             })
             .catch((error) => {
                 console.error('Error fetching events:', error);
             });
     };
 
+    // Handle date changes when user navigates the calendar
     const handleDateChange = (date) => {
         setCurrentDate(date);
         fetchEventsForMonth(date);
+    };
+
+    // Custom styles and content for agenda events
+    const eventStyleGetter = (event) => {
+        const style = {
+            backgroundColor: event.color || '#B5651D',  // Custom background color
+            borderRadius: '0px',
+            opacity: 0.8,
+            color: 'white',
+            border: 'none',
+            display: 'block',
+        };
+        return {
+            style: style,
+        };
     };
 
     return (
@@ -74,15 +94,16 @@ const MonthlyOrders = () => {
                             startAccessor="start"
                             endAccessor="end"
                             style={{ height: 500 }}
-                            views={['month', 'agenda']}
-                            onNavigate={handleDateChange}
-                            onSelectEvent={(event) => window.location.href = event.url}
+                            views={['month', 'agenda']}  // Show month and agenda views
+                            onNavigate={handleDateChange}  // Handle calendar navigation
+                            onSelectEvent={(event) => window.location.href = event.url}  // Navigate to event details
+                            eventPropGetter={eventStyleGetter}  // Custom styles for agenda events
                         />
                     </div>
 
                     {/* Right side - List View */}
                     <div className="col-md-3">
-                        <h4>Upcoming Orders</h4>
+                        <h4>List Of Orders</h4>
                         <div className="mt-5">
                             <ul className="list-group">
                                 {events.map((event) => (
