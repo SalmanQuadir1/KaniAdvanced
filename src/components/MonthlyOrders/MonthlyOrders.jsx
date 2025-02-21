@@ -59,7 +59,7 @@ const MonthlyOrders = () => {
             })
             .then((data) => {
                 console.log(data);
-    
+        
                 // Assuming backend returns an array of orders, map them to match calendar format
                 const fetchedEvents = data.map((order) => {
                     return {
