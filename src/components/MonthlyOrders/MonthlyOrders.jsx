@@ -26,7 +26,7 @@ const MonthlyOrders = () => {
         const monthStr = format(date, 'MMMMyyyy');  // 'MMMM' gives the full month name, 'yyyy' gives the year
         const url = `${BASE_URL}/order/monthly/${monthStr}`;
 
-        fetch(url, {
+        fetch(url, {   
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
