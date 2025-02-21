@@ -65,8 +65,8 @@ const MonthlyOrders = () => {
                     return {
                         id: order.id,
                         title: order.customer ? `${order.orderNo} ${order.customer.name}` : order.orderNo,
-                        start: new Date(order.shippingDate),  // Assuming shippingDate is in a valid format
-                        end: new Date(order.shippingDate),    // Adjust the end date if needed
+                        start: new Date(order.orderDate),  // Assuming shippingDate is in a valid format
+                        end: new Date(order.orderDate),    // Adjust the end date if needed
                         url: `/order/update?id=${order.id}`,
                         description: order.status,  // Custom field to display order status or other info
                         color: '#B5651D',  // Color coding can be dynamic based on order status
