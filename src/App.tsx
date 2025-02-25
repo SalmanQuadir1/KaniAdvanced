@@ -65,6 +65,9 @@ import AddOrder from './components/Order/AddOrder';
 import Reports from './components/Reports/Reports.jsx';
 import ProductReport from './components/Reports/ProductReport.jsx';
 
+import RetailWholeSaleReport from './components/Reports/RetailWholesaleReport.jsx';
+
+
 import ViewPerforma from './components/Order/ViewPerforma';
 
 
@@ -316,6 +319,16 @@ function App() {
               <>
                 <PageTitle title="Add Order" />
                 <ProductReport />
+              </>
+            }
+          />
+
+<Route
+            path="/report/wsRetailReport"
+            element={
+              <>
+                <PageTitle title="Retail WholeSale Report" />
+                <RetailWholeSaleReport />
               </>
             }
           />
