@@ -106,11 +106,11 @@ const Home = () => {
     // Role-based card mapping
     const roleBasedCards = {
         ROLE_ADMIN: [
-            { title: "Reports", link: "/product/viewProducts", countKey: "products", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
+            { title: "Reports", link: "/Reports",  icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
             { title: "Retail/WholeSale Reports", link: "/report/wsRetailReport", countKey: "proforma", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
-            { title: "Total Orders", link: "/Order/ViewOrder", countKey: "orders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
+            { title: "Orders", link: "/chart", countKey: "orders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
 
-            { title: "Upload Excel", link: "/order/created", countKey: "ordersWithCreated", icon: <AiOutlinePartition className="w-10 h-10" />, levelUp: true },
+            { title: "Upload Excel", link: "/product/addExcelProduct", countKey: "ordersWithCreated", icon: <AiOutlinePartition className="w-10 h-10" />, levelUp: true },
             { title: "Financial Reports", link: "/inventory/viewProductInventory", countKey: "inventory", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
 
 
@@ -122,7 +122,7 @@ const Home = () => {
                 levelUp: true,
                 isDownload: true // Added a flag to indicate it's a download button
             },
-            { title: "Monthly Orders", link: "/order/partiallyApproved", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
+            { title: "Monthly Orders", link: "/Order/monthlyorders", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
             { title: "Product Report", link: "/report/product", countKey: "approvedOrders", icon: <GrCompliance className="w-10 h-10" />, levelUp: true },
 
 
@@ -182,18 +182,18 @@ const Home = () => {
 
     return (
         <DefaultLayout>
-            <Breadcrumb pageName="Dashboard" />
-            <div className="grid grid-cols-1 gap-3 my-1 md:grid-cols-4 md:gap-3 xl:grid-cols-4 2xl:gap-7.5">
+            <Breadcrumb pageName="Home" />
+            <div className="grid grid-cols-1 gap-3 my-1 md:grid-cols-4 md:gap-3 xl:grid-cols-4 2xl:gap-7.5 ">
                 {cardsToShow.map((card, index) => (
                     <Link to={card.link} key={index}>
                         <div
                             key={index}
                             onClick={card.isDownload ? handleDownloadReport : null} // Apply download function only to "Customer Report"
-                            className="cursor-pointer" // Make it clear it's clickable
+                            className="cursor-pointer  flex-col mt-4 " // Make it clear it's clickable
                         >
                             <CardDataStats
                                 title={card.title}
-                                total={countMapping[card.countKey] || 0}
+                              
                                 levelUp={card.levelUp}
                                 levelDown={card.levelDown}
                             >

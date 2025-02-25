@@ -53,7 +53,8 @@ const Chart = () => {
   // Role-based card mapping
   const roleBasedCards = {
     ROLE_ADMIN: [
-      { title: "Products", link: "/product/viewProducts", countKey: "products", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
+      // { title: "Products", link: "/product/viewProducts", countKey: "products", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
+      { title: "Total Orders", link: "/Order/ViewOrder", countKey: "orders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
       { title: "Proforma", link: "/order/searchproforma", countKey: "proforma", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
       { title: "Orders Pending For Production Approval", link: "/order/created", countKey: "ordersWithCreated", icon: <AiOutlinePartition className="w-10 h-10" />, levelUp: true },
       { title: "Inventory", link: "/inventory/viewProductInventory", countKey: "inventory", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
@@ -75,7 +76,6 @@ const Chart = () => {
       { title: "Cancelled Orders", link: "/order/Cancelled", countKey: "ordersCancelled", icon: <FcCancel className="w-10 h-10" />, levelUp: true },
       { title: "Edit Received Quantity", link: "/order/recievedQuantity", countKey: "ordersWithPendingProducts", icon: <MdEditSquare className="w-10 h-10" />, levelUp: true },
       { title: "Update Shipping Date", link: "/order/updateShippingDate", countKey: "ordersWithShippingDate", icon: <GrUpdate className="w-10 h-10" />, levelUp: true },
-      { title: "Total Orders", link: "/Order/ViewOrder", countKey: "orders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
       { title: "Monthly Orders", link: "/Order/monthlyorders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true }
     ],
     ROLE_EXECUTOR: [
