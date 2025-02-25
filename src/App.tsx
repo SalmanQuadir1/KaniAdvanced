@@ -7,6 +7,8 @@ import SignIn from './pages/Authentication/SignIn.jsx';
 import SignUp from './pages/Authentication/SignUp.jsx';
 import Calendar from './pages/Calendar.js';
 import Chart from './pages/Chart.jsx';
+import Home from './pages/Home.jsx';
+
 import Material from './components/Material/Material.jsx';
 import AddProduct from './components/Products/AddProduct.jsx';
 import ViewProduct from './components/Products/ViewProduct.jsx';
@@ -61,6 +63,8 @@ import UpdateMaterialPo from './components/PuchaseOrder/UpdateMaterialPo.jsx';
 import AddOrder from './components/Order/AddOrder';
 
 import Reports from './components/Reports/Reports.jsx';
+import ProductReport from './components/Reports/ProductReport.jsx';
+
 import ViewPerforma from './components/Order/ViewPerforma';
 
 
@@ -240,7 +244,17 @@ function App() {
               <>
                 <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER", "ROLE_EXECUTOR","ROLE_ADMIN_DLI","ROLE_ADMIN_SXR"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
-                <Chart />
+                <Home />
+              </>
+            }
+          />
+             <Route
+            path="/home"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER", "ROLE_EXECUTOR","ROLE_ADMIN_DLI","ROLE_ADMIN_SXR"]}></RoleBasedRoute>
+                <PageTitle title="Dashboard" />
+                <Home />
               </>
             }
           />
@@ -292,6 +306,16 @@ function App() {
               <>
                 <PageTitle title="Add Order" />
                 <Reports />
+              </>
+            }
+          />
+
+<Route
+            path="/report/product"
+            element={
+              <>
+                <PageTitle title="Add Order" />
+                <ProductReport />
               </>
             }
           />
