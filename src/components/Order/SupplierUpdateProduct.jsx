@@ -46,27 +46,23 @@ const SupplierUpdateProduct = ({
         <ul>
           {supplierList.map((supplier) => (
             <li key={supplier.id} className="flex items-center gap-2 mb-2">
-           <input
+          <input
   type="checkbox"
   checked={
-    // Check if the supplier was newly selected in the modal
-    selectedSuppliersProduct
-      .find((row) => row.selectedRowId === selectedRowId)
-      ?.supplierIds.some(
-        (supplierObj) => supplierObj.supplierId.id === supplier.id
-      )
-    ||
-    // OR check if the supplier already exists in the product's supplier list
-    // and ensure that the supplier's name is present (truthy)
-    order?.orderProducts?.[selectedRowId]?.productSuppliers?.some(
-      (existingSupplier) =>
-        existingSupplier.supplier?.id === supplier.id &&
-        !!existingSupplier.supplier?.name
-    )
-    || false
+    selectedSuppliersProduct.some(
+      (row) =>
+        row.selectedRowId === selectedRowId &&
+        row.supplierIds.some((supplierObj) => supplierObj.supplierId === supplier.id)
+    ) ||
+    order?.orderProducts?.find(
+      (product) => product.productId === selectedRowId
+    )?.productSuppliers?.some(
+      (existingSupplier) => existingSupplier.supplier?.id === supplier.id
+    ) || false
   }
   onChange={() => handleCheckboxChangeProduct(selectedRowId, supplier)}
 />
+
 
 
 
