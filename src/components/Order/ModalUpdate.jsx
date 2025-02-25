@@ -507,13 +507,13 @@ const ModalUpdate = ({ isOpen, onRequestClose, onSubmit, prodIdd, width = "400px
                               </>
                             ))}
                             {/* Cancel Button */}
-                            <button
+                            {/* <button
                               type="Submit" // Not a native form submission button
                               className="px-4 py-2 bg-blue-500 text-white rounded"
                             // Formik's submission process is triggered here
                             >
                               Submit
-                            </button>
+                            </button> */}
                           </div>
 
                         </div>
