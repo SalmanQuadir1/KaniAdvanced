@@ -70,6 +70,7 @@ import Reports from './components/Reports/Reports.jsx';
 import ProductReport from './components/Reports/ProductReport.jsx';
 
 import RetailWholeSaleReport from './components/Reports/RetailWholesaleReport.jsx';
+import FinanceReportByDate from './components/Reports/FinanceReportByDate.jsx';
 
 
 import ViewPerforma from './components/Order/ViewPerforma';
@@ -358,6 +359,16 @@ function App() {
               <>
                 <PageTitle title="Retail WholeSale Report" />
                 <RetailWholeSaleReport />
+              </>
+            }
+          />
+
+<Route
+            path="/report/freportdate"
+            element={
+              <>
+                <PageTitle title="Retail WholeSale Report" />
+                <FinanceReportByDate />
               </>
             }
           />

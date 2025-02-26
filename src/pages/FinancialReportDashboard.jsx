@@ -8,6 +8,7 @@ import { Count, DOWNLOADCUSTOMER_REPORT } from '../Constants/utils';
 
 // Import Icons
 import { LuScale, LuPanelLeftClose } from "react-icons/lu";
+import { TbReport } from "react-icons/tb";
 import { SiHomeassistantcommunitystore } from "react-icons/si";
 import { AiOutlinePartition, AiOutlineClose } from "react-icons/ai";
 import { RiProgress1Line, RiProgress8Fill, RiUserReceived2Fill, RiAlignItemBottomFill } from "react-icons/ri";
@@ -106,9 +107,9 @@ const FinancialReportDashboard = () => {
     // Role-based card mapping
     const roleBasedCards = {
         ROLE_ADMIN: [
-            { title: "General Financial Reports", link: "/report/financial",  icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
-            { title: "Financial Reports By Date", link: "/report/wsRetailReport", countKey: "proforma", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
-            { title: "Financial Reports (On Budget Date)", link: "/chart", countKey: "orders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
+            { title: "General Financial Reports", link: "/report/financial",  icon: <TbReport className="w-10 h-10" />, levelUp: true },
+            { title: "Financial Reports By Date", link: "/report/freportdate", countKey: "proforma", icon: <TbReport className="w-10 h-10" />, levelUp: true },
+            { title: "Financial Reports (On Budget Date)", link: "/chart", countKey: "orders", icon: <TbReport className="w-10 h-10" />, levelDown: true },
 
            
 
