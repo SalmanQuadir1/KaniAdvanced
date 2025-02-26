@@ -25,17 +25,38 @@ const productgrp = [
 
 const ViewOrderCreated = () => {
 
-    const { handleUpdate, getorderNumber, orderNo, getSupplier, getProdId, productIdd, supplier, getCustomer, customer } = useorder();
+    const { handleUpdate, getorderNumber, orderNo, getSupplier,   productId,
+        getprodId, supplier, getCustomer, customer } = useorder();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
-
+    const [isLoading, setisLoading] = useState(false)
     const customStyles = createCustomStyles(theme?.mode);
+    const [prodIdOptions, setprodIdOptions] = useState([])
+    useEffect(() => {
+        getorderNumber();
+        getSupplier();
+        getCustomer();
+
+
+    }, []);
+    useEffect(() => {
+        const fetchData = async () => {
+            setisLoading(true)
+            // Set loading to true when data starts loading
+            await getprodId();
+
+            setisLoading(false)
+            // Set loading to false once data is loaded
+        };
+
+        fetchData();
+    }, []);
 
 
     const { token } = currentUser;
 
-    console.log(productIdd,"huhuuhuuuuuuuuuuuuuuuuu");
-    
+    console.log(productId, "huhuuhuuuuuuuuuuuuuuuuu");
+
     const [Order, setOrder] = useState()
 
     const [supplierNameOptions, setsupplierNameOptions] = useState([])
@@ -43,16 +64,9 @@ const ViewOrderCreated = () => {
     // const supplier = useSelector(state => state?.nonPersisted?.supplier);
     const order = useSelector(state => state?.nonPersisted?.order);
     const navigate = useNavigate();
-    useEffect(() => {
-        getorderNumber();
-        getSupplier();
-        getCustomer();
-        getProdId();
-
-    }, []);
 
 
-    console.log(supplier, customer, productIdd, "orderNo");
+    console.log(supplier, customer, productId, "orderNo");
 
     const formattedorder = orderNo.map(order => ({
         label: order,
@@ -63,15 +77,21 @@ const ViewOrderCreated = () => {
         label: supplier.name,
         value: supplier.name
     }));
-
-    const formattedProdId = productIdd.map(prod => ({
-        label: prod,
-        value: prod
-    }));
-
-
-
+    useEffect(() => {
+        if (productId) {
+            const formattedProdIdOptions = productId?.map(prodId => ({
+                value: prodId.id,
+                label: prodId?.productId,
+                prodIdObject: prodId,
+                prodId: prodId.id
+            }));
+            setprodIdOptions(formattedProdIdOptions);
+        }
+    }, [productId]);
     
+
+
+
     const formattedCustomer = customer.map(customer => ({
         label: customer.customerName,
         value: customer.customerName
@@ -81,17 +101,7 @@ const ViewOrderCreated = () => {
 
 
 
-    useEffect(() => {
-        if (supplier.data) {
-            const formattedOptions = supplier.data.map(supp => ({
-                value: supp.id,
-                label: supp?.name,
-                supplierNameObject: supp,
-                suplierid: { id: supp.id }
-            }));
-            setsupplierNameOptions(formattedOptions);
-        }
-    }, [supplier.data]);
+   
 
     console.log(supplierNameOptions, "heyyy");
 
@@ -320,6 +330,8 @@ const ViewOrderCreated = () => {
         // ViewInventory(pagination.currentPage, filters);
     };
 
+    console.log(prodIdOptions,"llkkllkk");
+
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Order/ View Order" />
@@ -402,7 +414,7 @@ const ViewOrderCreated = () => {
                                     <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
                                         <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
-                                            <ReactSelect
+                                            {/* <ReactSelect
                                                 name="ProductId"
                                                 value={formattedProdId.find(option => option.value === values.ProductId)}
                                                 onChange={(option) => {
@@ -416,6 +428,21 @@ const ViewOrderCreated = () => {
                                                 className="bg-white dark:bg-form-input"
                                                 classNamePrefix="react-select"
                                                 placeholder="Select"
+                                            /> */}
+                                            <ReactSelect
+                                                name="productId"
+                                                value={prodIdOptions.find(option => option.value === values.ProductId)}
+
+                                                onChange={(option) => {
+                                                    setFieldValue('productId', option.value);
+
+                                                }}
+                                                isLoading={isLoading}
+                                                options={prodIdOptions || "Loading"}
+                                                styles={customStyles}
+                                                className="bg-white dark:bg-form-Field"
+                                                classNamePrefix="react-select"
+                                                placeholder={isLoading ? 'Loading Products...' : 'Select ProductId'}
                                             />
 
                                         </div>
