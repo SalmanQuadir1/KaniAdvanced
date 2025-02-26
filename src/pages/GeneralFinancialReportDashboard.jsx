@@ -4,7 +4,7 @@ import CardDataStats from '../components/CardDataStats';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Count, DOWNLOADCUSTOMER_REPORT, DOWNLOADINPROGRESSORDERS_REPORT } from '../Constants/utils';
+import { Count, DOWNLOADCUSTOMER_REPORT, DOWNLOADINPROGRESSORDERS_REPORT, DOWNLOADPENDINGFINNCIALORDERS_REPORT } from '../Constants/utils';
 
 // Import Icons
 import { LuScale, LuPanelLeftClose } from "react-icons/lu";
@@ -110,7 +110,11 @@ const GeneralFinancialReportDashboard = () => {
                 downloadUrl: DOWNLOADINPROGRESSORDERS_REPORT, // Add download URL
                 icon: <RiAlignItemBottomFill className="w-10 h-10" />,
             },
-            { title: "Pending Orders Financial Report", link: "/report/wsRetailReport", countKey: "proforma", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
+            {
+                title: "Pending Orders Financial Report", levelUp: true,
+                isDownload: true,
+                downloadUrl: DOWNLOADPENDINGFINNCIALORDERS_REPORT, countKey: "proforma", icon: <RiAlignItemBottomFill className="w-10 h-10" />,
+            },
             { title: "Recieved Quantity Financial Reports", link: "/chart", countKey: "orders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
 
             { title: "Extra Quantity Financial Reports", link: "/product/addExcelProduct", countKey: "ordersWithCreated", icon: <AiOutlinePartition className="w-10 h-10" />, levelUp: true },

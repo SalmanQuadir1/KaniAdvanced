@@ -175,6 +175,8 @@ export const DOWNLOADPRODUCT_REPORT = `${BASE_URL}/report/downloadProductCsv`;
 export const DOWNLOADCUSTOMER_REPORT = `${BASE_URL}/report/downloadCustomerCsv`;
 
 export const DOWNLOADINPROGRESSORDERS_REPORT = `${BASE_URL}/report/downloadInProgressPdf`;
+export const DOWNLOADPENDINGFINNCIALORDERS_REPORT = `${BASE_URL}/report/downloadPendingPdf`;
+
 
 
 
