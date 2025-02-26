@@ -4,7 +4,7 @@ import CardDataStats from '../components/CardDataStats';
 import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Count, DOWNLOADCUSTOMER_REPORT } from '../Constants/utils';
+import { Count, DOWNLOADCUSTOMER_REPORT, DOWNLOADINPROGRESSORDERS_REPORT } from '../Constants/utils';
 
 // Import Icons
 import { LuScale, LuPanelLeftClose } from "react-icons/lu";
@@ -19,52 +19,48 @@ import { CiCalendarDate } from "react-icons/ci";
 import { VscDiffModified } from "react-icons/vsc";
 import { toast } from 'react-toastify';
 
-const Home = () => {
+const GeneralFinancialReportDashboard = () => {
     const [unitCount, setUnitCount] = useState([]);
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { user, token } = currentUser;
     const role = user?.authorities?.map(auth => auth.authority) || [];
 
 
-    const handleDownloadReport = async () => {
-
-
+    const handleDownloadReport = async (url) => {
         try {
-            const response = await fetch(`${DOWNLOADCUSTOMER_REPORT}`, {
+            const response = await fetch(`${url}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                // body: JSON.stringify(filters), // Convert body to JSON string
             });
 
             if (!response.ok) {
-                const errorText = await response.text(); // Get error response as text
+                const errorText = await response.text();
                 throw new Error(errorText || "Failed to download report");
             }
 
-            const blob = await response.blob(); // Get the binary PDF file
-
+            const blob = await response.blob();
             const disposition = response.headers.get("Content-Disposition");
-            let filename = "Customer.csv"; // Default filename
+            let filename = "Report.pdf"; // Default filename
             if (disposition && disposition.includes("attachment")) {
                 const match = disposition.match(/filename="(.+)"/);
                 if (match && match[1]) {
                     filename = match[1];
                 }
             }
-            const url = window.URL.createObjectURL(blob);
+            const urlObject = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
-            link.href = url;
-            link.setAttribute("download", filename); // Use the filename from the header
+            link.href = urlObject;
+            link.setAttribute("download", filename);
 
             document.body.appendChild(link);
             link.click();
 
             // Cleanup
             document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
+            window.URL.revokeObjectURL(urlObject);
 
             toast.success("Report downloaded successfully");
         } catch (error) {
@@ -72,6 +68,7 @@ const Home = () => {
             toast.error("An error occurred while downloading the report");
         }
     };
+
 
 
 
@@ -106,24 +103,17 @@ const Home = () => {
     // Role-based card mapping
     const roleBasedCards = {
         ROLE_ADMIN: [
-            { title: "Reports", link: "/Reports",  icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
-            { title: "Retail/WholeSale Reports", link: "/report/wsRetailReport", countKey: "proforma", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
-            { title: "Orders", link: "/chart", countKey: "orders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
-
-            { title: "Upload Excel", link: "/product/addExcelProduct", countKey: "ordersWithCreated", icon: <AiOutlinePartition className="w-10 h-10" />, levelUp: true },
-            { title: "Financial Reports", link: "/report/freports", countKey: "inventory", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
-
-
-
             {
-                title: "Customer Report",
-                countKey: "ordersWithCreatedAccepted",
-                icon: <RiProgress1Line className="w-10 h-10" />,
+                title: "In Progress Orders Financial Report",
                 levelUp: true,
-                isDownload: true // Added a flag to indicate it's a download button
+                isDownload: true,
+                downloadUrl: DOWNLOADINPROGRESSORDERS_REPORT, // Add download URL
+                icon: <RiAlignItemBottomFill className="w-10 h-10" />,
             },
-            { title: "Monthly Orders", link: "/Order/monthlyorders", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
-            { title: "Product Report", link: "/report/product", countKey: "approvedOrders", icon: <GrCompliance className="w-10 h-10" />, levelUp: true },
+            { title: "Pending Orders Financial Report", link: "/report/wsRetailReport", countKey: "proforma", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
+            { title: "Recieved Quantity Financial Reports", link: "/chart", countKey: "orders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
+
+            { title: "Extra Quantity Financial Reports", link: "/product/addExcelProduct", countKey: "ordersWithCreated", icon: <AiOutlinePartition className="w-10 h-10" />, levelUp: true },
 
 
         ],
@@ -188,12 +178,12 @@ const Home = () => {
                     <Link to={card.link} key={index}>
                         <div
                             key={index}
-                            onClick={card.isDownload ? handleDownloadReport : null} // Apply download function only to "Customer Report"
+                            onClick={card.isDownload ? () => handleDownloadReport(card.downloadUrl) : null} // Apply download function only to "Customer Report"
                             className="cursor-pointer  flex-col mt-4 " // Make it clear it's clickable
                         >
                             <CardDataStats
                                 title={card.title}
-                              
+
                                 levelUp={card.levelUp}
                                 levelDown={card.levelDown}
                             >
@@ -207,4 +197,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default GeneralFinancialReportDashboard;

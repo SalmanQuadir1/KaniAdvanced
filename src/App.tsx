@@ -8,6 +8,10 @@ import SignUp from './pages/Authentication/SignUp.jsx';
 import Calendar from './pages/Calendar.js';
 import Chart from './pages/Chart.jsx';
 import Home from './pages/Home.jsx';
+import FinancialReportDashboard from './pages/FinancialReportDashboard.jsx';
+import GeneralFinancialReportDashboard from './pages/GeneralFinancialReportDashboard.jsx';
+
+
 
 import Material from './components/Material/Material.jsx';
 import AddProduct from './components/Products/AddProduct.jsx';
@@ -261,6 +265,31 @@ function App() {
               </>
             }
           />
+
+
+<Route
+            path="/report/freports"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER", "ROLE_EXECUTOR","ROLE_ADMIN_DLI","ROLE_ADMIN_SXR"]}></RoleBasedRoute>
+                <PageTitle title="Dashboard" />
+                <FinancialReportDashboard />
+              </>
+            }
+          />
+
+
+<Route
+            path="/report/financial"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER", "ROLE_EXECUTOR","ROLE_ADMIN_DLI","ROLE_ADMIN_SXR"]}></RoleBasedRoute>
+                <PageTitle title="Dashboard" />
+                <GeneralFinancialReportDashboard />
+              </>
+            }
+          />
+
 
 
           <Route

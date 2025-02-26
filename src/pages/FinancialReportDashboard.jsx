@@ -19,7 +19,7 @@ import { CiCalendarDate } from "react-icons/ci";
 import { VscDiffModified } from "react-icons/vsc";
 import { toast } from 'react-toastify';
 
-const Home = () => {
+const FinancialReportDashboard = () => {
     const [unitCount, setUnitCount] = useState([]);
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { user, token } = currentUser;
@@ -106,25 +106,11 @@ const Home = () => {
     // Role-based card mapping
     const roleBasedCards = {
         ROLE_ADMIN: [
-            { title: "Reports", link: "/Reports",  icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
-            { title: "Retail/WholeSale Reports", link: "/report/wsRetailReport", countKey: "proforma", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
-            { title: "Orders", link: "/chart", countKey: "orders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
+            { title: "General Financial Reports", link: "/report/financial",  icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
+            { title: "Financial Reports By Date", link: "/report/wsRetailReport", countKey: "proforma", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
+            { title: "Financial Reports (On Budget Date)", link: "/chart", countKey: "orders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
 
-            { title: "Upload Excel", link: "/product/addExcelProduct", countKey: "ordersWithCreated", icon: <AiOutlinePartition className="w-10 h-10" />, levelUp: true },
-            { title: "Financial Reports", link: "/report/freports", countKey: "inventory", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
-
-
-
-            {
-                title: "Customer Report",
-                countKey: "ordersWithCreatedAccepted",
-                icon: <RiProgress1Line className="w-10 h-10" />,
-                levelUp: true,
-                isDownload: true // Added a flag to indicate it's a download button
-            },
-            { title: "Monthly Orders", link: "/Order/monthlyorders", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
-            { title: "Product Report", link: "/report/product", countKey: "approvedOrders", icon: <GrCompliance className="w-10 h-10" />, levelUp: true },
-
+           
 
         ],
         ROLE_EXECUTOR: [
@@ -207,4 +193,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default FinancialReportDashboard;
