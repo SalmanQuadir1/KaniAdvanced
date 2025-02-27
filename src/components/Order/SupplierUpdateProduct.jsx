@@ -63,6 +63,18 @@ const SupplierUpdateProduct = ({
   onChange={() => handleCheckboxChangeProduct(selectedRowId, supplier)}
 />
 
+ {/* <input
+  type="checkbox"
+  checked={
+    selectedSuppliersProduct.some(
+      (row) =>
+        row.selectedRowId === selectedRowId &&
+        row.supplierIds.some((supplierObj) => supplierObj.supplierId === supplier.id)
+    )
+  }
+  onChange={() => handleCheckboxChangeProduct(selectedRowId, supplier.id)}
+/> */}
+
 
 
 

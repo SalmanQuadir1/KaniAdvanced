@@ -71,6 +71,7 @@ const UpdateOrder = () => {
   const handleCheckboxChange = (selectedRowId, supplierId) => {
     setSelectedSuppliers((prev) => {
       const updated = [...prev];
+      
       const rowIndex = updated.findIndex(
         (row) => row.selectedRowId === selectedRowId
       );
