@@ -318,7 +318,9 @@ const OrderProforma = () => {
 
     }
 
-console.log(order,'jugnu');
+    console.log(order, 'jugnu');
+
+    
 
 
 
@@ -338,41 +340,43 @@ console.log(order,'jugnu');
 
                         orderProducts: order?.orderProducts?.map((product) => ({
 
-                            size:product?.products?.sizes?.sizeName,
-                            design:product?.products?.design?.designName,
-                            unit:product?.products?.unit?.name,
-                            qty:product?.products?.sizes?.sizeName,// clientorderquantity
-                            totalValue:""||0,
-                            taxibleValue:""||0,
-                            discountedPrice:"",
-
-
-
-
-
-
-
-
+                            size: product?.products?.sizes?.sizeName,
+                            design: product?.products?.design?.designName,
+                            unit: product?.products?.unit?.name,
+                            orderQty: product?.clientOrderQuantity,// clientorderquantity
+                            totalValue: "" || 0,
+                            taxibleValue: "" || 0,
+                            discountedPrice: "",
                             product: {
-                              
+
                                 id: product.products?.productId || '',  // Set initial value for productId
                             },
-                           
-                      
-
-
 
                         })) || [],
+                        totalUnits: "",
+                        totalUnitsValue: "",
 
 
 
-                    
+
                         // customer: '',
                     }}
 
                 // validationSchema={validationSchema}
                 >
                     {({ values, setFieldValue }) => {
+                        useEffect(() => {
+                            // Calculate the sum of orderQty when the orderProducts data is loaded or updated
+                            if (order?.orderProducts) {
+                                const totalUnits = order.orderProducts.reduce(
+                                    (sum, product) => sum + (parseInt(product.clientOrderQuantity) || 0),
+                                    0
+                                );
+                        
+                                // Set the totalUnits value in the form state
+                                setFieldValue("totalUnits", totalUnits);
+                            }
+                        }, [order?.orderProducts, setFieldValue]);
 
 
                         return (
@@ -669,25 +673,25 @@ console.log(order,'jugnu');
                                                             </th>
 
                                                             <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                            GST Tax %
+                                                                GST Tax %
                                                             </th>
                                                             <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                            Discount
+                                                                Discount
                                                             </th>
                                                             <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                            Taxable value
+                                                                Taxable value
                                                             </th>
                                                             <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                            Total Value
+                                                                Total Value
                                                             </th>
-                                                           
+
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         {order?.orderProducts?.map((product, index) => (
                                                             <tr key={product.id}>
                                                                 {/* Radio Button */}
-                                                               
+
 
                                                                 {/* Product ID */}
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
@@ -707,18 +711,18 @@ console.log(order,'jugnu');
                                                                     />
                                                                 </td>
 
-                                                              
 
-                                                                {/* Order Category */}
+
+                                                                {/* design */}
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
-                                                                        name={`orderProducts[${index}].orderCategory`}
-                                                                        value={values.orderProducts[index]?.orderCategory || ""}
+                                                                        name={`orderProducts[${index}].design`}
+                                                                        value={values.orderProducts[index]?.design || ""}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                                         readOnly
                                                                     />
                                                                     <ErrorMessage
-                                                                        name={`orderProducts[${index}].orderCategory`}
+                                                                        name={`orderProducts[${index}].design`}
                                                                         component="div"
                                                                         className="text-red-600 text-sm"
                                                                     />
@@ -738,14 +742,15 @@ console.log(order,'jugnu');
                                                                         placeholder="Enter Product ID"
                                                                     />
                                                                     <ErrorMessage
-                                                                        name={`orderProducts[${index}].orderCategory`}
+                                                                        name={`orderProducts[${index}].size`}
                                                                         component="div"
                                                                         className="text-red-600 text-sm"
                                                                     />
                                                                 </td>
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
-                                                                        name={`orderProducts[${index}].units`}
+                                                                        name={`orderProducts[${index}].unit`}
+                                                                        // value={values.orderProducts[index]?.unit || ""}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                                     />
                                                                     <ErrorMessage
@@ -758,11 +763,11 @@ console.log(order,'jugnu');
                                                                 {/* Client Order Quantity */}
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
-                                                                        name={`orderProducts[${index}].clientOrderQuantity`}
+                                                                        name={`orderProducts[${index}].orderQty`}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                                     />
                                                                     <ErrorMessage
-                                                                        name={`orderProducts[${index}].clientOrderQuantity`}
+                                                                        name={`orderProducts[${index}].orderQty`}
                                                                         component="div"
                                                                         className="text-red-600 text-sm"
                                                                     />
@@ -829,16 +834,48 @@ console.log(order,'jugnu');
                                                                     />
                                                                 </td>
 
-                                                            
 
 
-                                                            
+
+
 
                                                             </tr>
                                                         ))}
                                                     </tbody>
                                                 </table>
                                             </div>
+
+
+                                            <div className='flex justify-between mt-4'>
+                                                <h2 className='font-semibold text-2xl'>Total</h2>
+
+                                                <div className='flex gap-6'> {/* Added flex to align them horizontally */}
+                                                    <div className="flex-2 min-w-[270px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">
+                                                            Total Units
+                                                        </label>
+                                                        <Field
+                                                            name="totalUnits"
+
+                                                            type="text"
+                                                            placeholder="Enter Warp Colors"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[270px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">
+                                                            Total Value
+                                                        </label>
+                                                        <Field
+                                                            name="totalUnits"
+                                                            type="text"
+                                                            placeholder="Enter Weft Colors"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
 
 
 

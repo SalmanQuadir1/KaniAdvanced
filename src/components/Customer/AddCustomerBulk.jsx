@@ -21,7 +21,7 @@ const ExcelUploadCustomer = () => {
         formData.append('file', values.file);
 
         try {
-            const apiEndpoints = `${BASE_URL}/products/uploadProductInventory`
+            const apiEndpoints = `${BASE_URL}/uploadExcel/customer`
 
             const response = await fetch(apiEndpoints, {
                 method: 'POST',
@@ -96,7 +96,7 @@ const ExcelUploadCustomer = () => {
                                                 type="button"
                                                 onClick={async () => {
                                                     try {
-                                                        const apiEndpoints = `${BASE_URL}/products/downloadProductInventory`;
+                                                        const apiEndpoints = `${BASE_URL}/uploadExcel/downloadCustmer`;
 
                                                         const response = await fetch(apiEndpoints, {
                                                             method: 'GET',
@@ -119,7 +119,7 @@ const ExcelUploadCustomer = () => {
                                                         link.href = url;
 
                                                         // Set the filename for the downloaded file
-                                                        link.setAttribute('download', 'product_inventory_sample.xlsx'); // You can customize the filename here
+                                                        link.setAttribute('download', 'CustomerSample.xlsx'); // You can customize the filename here
 
                                                         // Append to the document and trigger the download
                                                         document.body.appendChild(link);
