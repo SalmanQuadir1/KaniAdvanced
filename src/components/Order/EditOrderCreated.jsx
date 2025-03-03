@@ -168,18 +168,7 @@ const EditOrderCreated = () => {
     console.log(Order, "heyorder");
 
 
-    //   console.log(order)
-    //   useEffect(() => {
-    //     if (order.data) {
-    //         const formattedOptions = order.data.map(ord => ({
-    //             value: ord.id,
-    //             label: ord?.name,
-    //             orderNameObject: ord,
-    //             orderid: { id: ord.id }
-    //         }));
-    //         setorderNameOptions(formattedOptions);
-    //     }
-    // }, [order.data]);
+   
 
     const renderTableRows = () => {
         console.log(Order);

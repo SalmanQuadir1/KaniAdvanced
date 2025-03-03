@@ -320,7 +320,7 @@ const OrderProforma = () => {
 
     console.log(order, 'jugnu');
 
-    
+
 
 
 
@@ -336,6 +336,7 @@ const OrderProforma = () => {
                         date: "",
                         selectedRows: [],
                         orderNo: order?.orderNo || '',
+                        currency: "",
 
 
                         orderProducts: order?.orderProducts?.map((product) => ({
@@ -347,6 +348,9 @@ const OrderProforma = () => {
                             totalValue: "" || 0,
                             taxibleValue: "" || 0,
                             discountedPrice: "",
+                            // Initialize as 0, will be updated later
+                            wholesalePrice: 0, // Default to 0 or the correct price for INR
+
                             product: {
 
                                 id: product.products?.productId || '',  // Set initial value for productId
@@ -372,11 +376,41 @@ const OrderProforma = () => {
                                     (sum, product) => sum + (parseInt(product.clientOrderQuantity) || 0),
                                     0
                                 );
-                        
+
                                 // Set the totalUnits value in the form state
                                 setFieldValue("totalUnits", totalUnits);
                             }
                         }, [order?.orderProducts, setFieldValue]);
+                        useEffect(() => {
+                            // Ensure currency is selected
+                            if (values.currency) {
+                                const selectedCurrency = values.currency;
+                                console.log(selectedCurrency, "selected currency");
+                        
+                                // Loop through the orderProducts and update wholesalePrice
+                                order?.orderProducts?.forEach((product, index) => {
+                                    if (selectedCurrency === 'INR') {
+                                        // Set INR wholesale price
+                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.wholesalePrice || 0);
+                                    } else if (selectedCurrency === 'USD') {
+                                        // Set USD price
+                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.usdPrice || 0);
+                                    }else if (selectedCurrency === 'EURO') {
+                                        // Set USD price
+                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.euroPrice || 0);
+                                    }else if (selectedCurrency === 'GBP') {
+                                        // Set USD price
+                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.gbpPrice || 0);
+                                    }else if (selectedCurrency === 'RMB') {
+                                        // Set USD price
+                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.rmbPrice || 0);
+                                    }
+                                    
+                                });
+                            }
+                        }, [values.currency, order?.orderProducts, setFieldValue]);
+                        
+
 
 
                         return (
@@ -539,7 +573,7 @@ const OrderProforma = () => {
                                                         <ReactSelect
                                                             name="currency"
                                                             value={currency.find(option => option.value === values.salesChannel)}
-                                                            onChange={(option) => setFieldValue('salesChannel', option.value)}
+                                                            onChange={(option) => setFieldValue('currency', option.value)}
 
                                                             options={currency}
                                                             styles={customStyles}
@@ -777,17 +811,26 @@ const OrderProforma = () => {
 
                                                                 {/* wholesalePrice */}
 
+
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
-                                                                        name={`orderProducts[${index}].clientOrderQuantity`}
+                                                                        name={`orderProducts[${index}].wholesalePrice`}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                                                        readOnly // If you want the field to be read-only based on your use case
                                                                     />
                                                                     <ErrorMessage
-                                                                        name={`orderProducts[${index}].clientOrderQuantity`}
+                                                                        name={`orderProducts[${index}].wholesalePrice`}
                                                                         component="div"
                                                                         className="text-red-600 text-sm"
                                                                     />
                                                                 </td>
+
+
+
+
+
+
+
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
                                                                         name={`orderProducts[${index}].clientOrderQuantity`}
