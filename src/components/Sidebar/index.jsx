@@ -493,6 +493,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             </NavLink>
                           </li>
 
+                          <li>
+                            <NavLink
+                              to="/Order/ViewOrderCreated"
+                              className={({ isActive }) =>
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                (isActive && '!text-white')
+                              }
+                            >
+                              Edit Order
+                            </NavLink>
+                          </li>
+
                         </ul>
                       </div>
                     </React.Fragment>
@@ -769,6 +781,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               }
                             >
                               Add Customer
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/customer/addCustomerBulk"
+                              className={({ isActive }) =>
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                (isActive && '!text-white')
+                              }
+                            >
+                              Add Customer Bulk
                             </NavLink>
                           </li>
                           <li>

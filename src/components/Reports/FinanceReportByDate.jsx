@@ -3,7 +3,7 @@ import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { DELETE_ORDER_URL, DOWNLOADCSV_REPORT, DOWNLOAD_REPORT, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS, VIEW_REPORT } from "../../Constants/utils";
+import { DELETE_ORDER_URL, DOWNLOADCSV_REPORT, DOWNLOADINPROGRESSBYDATE_REPORT, DOWNLOADPENDINGPDFBYDATE_REPORT, DOWNLOAD_REPORT, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS, VIEW_REPORT } from "../../Constants/utils";
 import ReactSelect from 'react-select';
 import useorder from '../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -95,7 +95,60 @@ const FinanceReportByDate = () => {
 
 
 
+    const handlegeneratepdf = async (values,url) => {
+        const filters = {
 
+            fromDate: values.fromDate,
+            toDate: values.toDate,
+        };
+
+        console.log(filters, "lala");
+
+        try {
+            const response = await fetch(`${DOWNLOADCSV_REPORT}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(filters), // Convert body to JSON string
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text(); // Get error response as text
+                throw new Error(errorText || "Failed to download report");
+            }
+
+            const blob = await response.blob(); // Get the binary CSV file
+
+            // Extract the filename from the Content-Disposition header
+            const disposition = response.headers.get("Content-Disposition");
+            let filename = "report.csv"; // Default filename
+            if (disposition && disposition.includes("attachment")) {
+                const match = disposition.match(/filename="(.+)"/);
+                if (match && match[1]) {
+                    filename = match[1];
+                }
+            }
+
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.setAttribute("download", filename); // Use the filename from the header
+
+            document.body.appendChild(link);
+            link.click();
+
+            // Cleanup
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+
+            toast.success("Report downloaded successfully");
+        } catch (error) {
+            console.error(error);
+            toast.error("An error occurred while downloading the report");
+        }
+    };
 
 
 
@@ -230,21 +283,21 @@ const FinanceReportByDate = () => {
 
                                         <button
                                             type="button"
-                                            onClick={() => handlegenerateCsv(values)}
+                                            onClick={() => handlegeneratepdf(values,DOWNLOADINPROGRESSBYDATE_REPORT)}
                                             className=" mr-3 mb-4 md:w-[260px] w-[220px] md:h-[50px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                         >
                                             In Progress Orders Financial Report
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={() => handlegenerateCsv(values)}
+                                            onClick={() => handlegeneratepdf(values,DOWNLOADPENDINGPDFBYDATE_REPORT)}
                                             className="flex mr-3 mb-4 md:w-[260px] w-[220px] md:h-[50px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                         >
                                             Pending Orders Financial Report
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={() => handlegenerateCsv(values)}
+                                            onClick={() => handlegeneratepdf(values)}
                                             className="flex mr-3  mb-4 md:w-[260px] w-[220px] md:h-[50px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                         >
                                             Extra Qty Financial Report
@@ -253,7 +306,7 @@ const FinanceReportByDate = () => {
 
                                         <button
                                             type="button"
-                                            onClick={() => handlegenerateCsv(values)}
+                                            onClick={() => handlegeneratepdf(values)}
                                             className=" mr-3 mb-4 md:w-[260px] w-[220px] md:h-[50px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                         >
                                             Received Qty Financial Report

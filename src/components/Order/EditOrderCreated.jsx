@@ -11,8 +11,7 @@ import Pagination from '../Pagination/Pagination';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { customStyles as createCustomStyles } from '../../Constants/utils';
-import { MdCreateNewFolder } from "react-icons/md";
+import {  customStyles as createCustomStyles } from '../../Constants/utils';
 
 
 
@@ -24,40 +23,16 @@ const productgrp = [
 ];
 
 
-const ViewOrderCreated = () => {
+const EditOrderCreated = () => {
 
-    const { handleUpdate, getorderNumber, orderNo, getSupplier,   productId,
-        getprodId, supplier, getCustomer, customer } = useorder();
+    const { handleUpdate, getorderNumber, orderNo, getSupplier, supplier, getCustomer, customer } = useorder();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
-    const [isLoading, setisLoading] = useState(false)
-    const customStyles = createCustomStyles(theme?.mode);
-    const [prodIdOptions, setprodIdOptions] = useState([])
-    useEffect(() => {
-        getorderNumber();
-        getSupplier();
-        getCustomer();
 
-
-    }, []);
-    useEffect(() => {
-        const fetchData = async () => {
-            setisLoading(true)
-            // Set loading to true when data starts loading
-            await getprodId();
-
-            setisLoading(false)
-            // Set loading to false once data is loaded
-        };
-
-        fetchData();
-    }, []);
+const customStyles = createCustomStyles(theme?.mode);
 
 
     const { token } = currentUser;
-
-    console.log(productId, "huhuuhuuuuuuuuuuuuuuuuu");
-
     const [Order, setOrder] = useState()
 
     const [supplierNameOptions, setsupplierNameOptions] = useState([])
@@ -65,9 +40,15 @@ const ViewOrderCreated = () => {
     // const supplier = useSelector(state => state?.nonPersisted?.supplier);
     const order = useSelector(state => state?.nonPersisted?.order);
     const navigate = useNavigate();
+    useEffect(() => {
+        getorderNumber();
+        getSupplier();
+        getCustomer();
+
+    }, []);
 
 
-    console.log(supplier, customer, productId, "orderNo");
+    console.log(supplier, customer, "orderNo");
 
     const formattedorder = orderNo.map(order => ({
         label: order,
@@ -78,21 +59,6 @@ const ViewOrderCreated = () => {
         label: supplier.name,
         value: supplier.name
     }));
-    useEffect(() => {
-        if (productId) {
-            const formattedProdIdOptions = productId?.map(prodId => ({
-                value: prodId.id,
-                label: prodId?.productId,
-                prodIdObject: prodId,
-                prodId: prodId.id
-            }));
-            setprodIdOptions(formattedProdIdOptions);
-        }
-    }, [productId]);
-    
-
-
-
     const formattedCustomer = customer.map(customer => ({
         label: customer.customerName,
         value: customer.customerName
@@ -102,7 +68,17 @@ const ViewOrderCreated = () => {
 
 
 
-   
+    useEffect(() => {
+        if (supplier.data) {
+            const formattedOptions = supplier.data.map(supp => ({
+                value: supp.id,
+                label: supp?.name,
+                supplierNameObject: supp,
+                suplierid: { id: supp.id }
+            }));
+            setsupplierNameOptions(formattedOptions);
+        }
+    }, [supplier.data]);
 
     console.log(supplierNameOptions, "heyyy");
 
@@ -130,12 +106,12 @@ const ViewOrderCreated = () => {
 
 
 
-    const getOrder = async (page, filters = {}) => {
-        console.log(filters, "filterssssssssssssssssssssssssssssssssssssssss");
+    const getOrder = async (page, filters={}) => {
+        console.log(filters,"filterssssssssssssssssssssssssssssssssssssssss");
         console.log("Fetching orders for page", page); // Log the page number being requested
 
         try {
-            const response = await fetch(`${VIEW_CREATED_ORDERS}?page=${page || 1}`, {
+            const response = await fetch(`${VIEW_CREATED_ORDERS}?page=${page||1}`, {
                 method: "POST", // GET method
                 headers: {
                     "Content-Type": "application/json",
@@ -144,12 +120,8 @@ const ViewOrderCreated = () => {
                 body: JSON.stringify(filters)
             });
 
-            const textResponse = await response.text();
-
-            console.log(textResponse, "japaaaaaaaaaaaaaaaaaan");
-
-            // Get the raw text response
-            // Log raw response before parsing   
+            const textResponse = await response.text(); // Get the raw text response
+            // Log raw response before parsing
 
             // Try parsing the response only if it's valid JSON
             try {
@@ -233,14 +205,14 @@ const ViewOrderCreated = () => {
                         "Authorization": `Bearer ${token}`,
                     },
                 });
-
+        
                 const data = await response.json();
                 if (response.ok) {
                     toast.success(`Order Deleted Successfully !!`);
-
+        
                     // Check if the current page becomes empty
                     const isCurrentPageEmpty = Order.length === 1;
-
+        
                     if (isCurrentPageEmpty && pagination.currentPage > 1) {
                         const previousPage = pagination.currentPage - 1;
                         handlePageChange(previousPage); // Go to the previous page if current page becomes empty
@@ -255,7 +227,7 @@ const ViewOrderCreated = () => {
                 toast.error("An error occurred");
             }
         };
-
+        
 
 
 
@@ -277,24 +249,15 @@ const ViewOrderCreated = () => {
                     <p className="text-gray-900 whitespace-no-wrap">{item.customerName}</p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    {item.products &&
-                        item.products.map((prodId, index) => (
-                            <p key={index} className="text-gray-900 whitespace-nowrap">
-                                {prodId?.productId}
-                            </p>
-                        ))}
+                    <p className="text-gray-900 whitespace-no-wrap">{item.productId}</p>
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item.name}</p>
                 </td>
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    {item.products &&
-                        item.products.map((prodId, index) => (
-                            <p key={index} className="text-gray-900 whitespace-nowrap">
-                                {prodId.productStatus}
-                            </p>
-                        ))}
+                    <p className="text-gray-900 whitespace-no-wrap">{item.orderDate}</p>
                 </td>
-
-
 
 
 
@@ -304,8 +267,7 @@ const ViewOrderCreated = () => {
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
-                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updateorderCreated/${item?.id}`)} title='Edit Order' />  |
-                        <MdCreateNewFolder size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/generateProforma/${item?.id}`)} title='Create proforma' /> 
+                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={()=>navigate(`/Order/updateorder/${item?.id}`)} title='Edit Product' />  |
                         <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' />
                     </p>
                 </td>
@@ -322,25 +284,24 @@ const ViewOrderCreated = () => {
 
 
 
-            orderNo: values.orderNo || undefined,
-            supplierName: values.supplierName || undefined,
+            orderNo:values.orderNo || undefined,
+            supplierName:values.supplierName || undefined,
 
-            customerName: values.customerName || undefined,
-            productId: values.productId || undefined
+            fromDate:values.fromDate || undefined,
+            toDate:values.toDate || undefined,
+            customerName:values.customerName || undefined,
         };
-        getOrder(pagination.currentPage, filters);
+        getOrder(pagination.currentPage,filters);
         // ViewInventory(pagination.currentPage, filters);
     };
 
-    console.log(prodIdOptions,"llkkllkk");
-
     return (
         <DefaultLayout>
-            <Breadcrumb pageName="Order/ View Order" />
+            <Breadcrumb pageName="Order/ Edit Order" />
             <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
                 <div className="pt-5">
                     <div className='flex justify-between'>
-                        <h2 className="text-xl font-semibold leading-tight">View Order</h2>
+                        <h2 className="text-xl font-semibold leading-tight">Edit Order</h2>
                         {/* <p className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium bg-success text-success dark:bg-white dark:text-slate-800`}>
                             TOTAL PRODUCTS: {pagination.totalItems}
                         </p> */}
@@ -351,11 +312,11 @@ const ViewOrderCreated = () => {
                         <Formik
                             initialValues={{
                                 orderNo: '',
-                                customerName: "",
                                 supplierName: "",
-                                ProductId: ""
 
-
+                                fromDate: "",
+                                toDate: "",
+                                customerName: ""
 
                             }}
                             onSubmit={handleSubmit}
@@ -363,7 +324,18 @@ const ViewOrderCreated = () => {
                             {({ setFieldValue, values, handleBlur }) => (
                                 <Form>
                                     <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-
+                                        {/* <div className="flex-1 min-w-[300px]">
+                                            <label className="mb-2.5 block text-black dark:text-white">Order Id</label>
+                                            <Field
+                                                name="orderId"
+                                                // component={ReactSelect}
+                                                // options={[{ label: 'View All Products', value: null }, ...formattedProductId]}
+                                                // styles={customStyles}
+                                                placeholder="Select Product Id"
+                                                // value={formattedProductId.find(option => option.value === values.ProductId)}
+                                                // onChange={option => setFieldValue('ProductId', option ? option.value : '')}
+                                            />
+                                        </div> */}
                                         <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Order No</label>
                                             <ReactSelect
@@ -395,7 +367,7 @@ const ViewOrderCreated = () => {
                                             <div className="z-20 bg-transparent dark:bg-form-Field">
                                                 <ReactSelect
                                                     name="supplierName"
-
+                                                 
                                                     value={productgrp.find(option => option.value === values.customerName)}
                                                     onChange={(option) => setFieldValue('supplierName', option ? option.value : null)}
                                                     // options={formattedSupplier}
@@ -410,44 +382,35 @@ const ViewOrderCreated = () => {
                                         </div>
                                     </div>
 
+                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
+                                        <div className="flex-1 min-w-[300px]">
+                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                From Date
+                                            </label>
+                                            <Field
+                                                name='fromDate'
+                                                type="date"
+                                                placeholder="Enter Purchase Order Date"
+                                                className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                            />
+                                        </div>
 
+
+                                        <div className="flex-1 min-w-[300px]">
+                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                To Date
+                                            </label>
+                                            <Field
+                                                name='toDate'
+                                                type="date"
+                                                placeholder="Enter Purchase Order Date"
+                                                className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                            />
+                                        </div>
+                                    </div>
 
 
                                     <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-                                        <div className="flex-1 min-w-[200px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
-                                            {/* <ReactSelect
-                                                name="ProductId"
-                                                value={formattedProdId.find(option => option.value === values.ProductId)}
-                                                onChange={(option) => {
-                                                    setFieldValue('productId', option.value);
-
-                                                }}
-                                                onBlur={handleBlur}
-                                                // options={formattedCustomer}
-                                                options={[{ label: 'View All Product Id', value: null }, ...formattedProdId]}
-                                                styles={customStyles}
-                                                className="bg-white dark:bg-form-input"
-                                                classNamePrefix="react-select"
-                                                placeholder="Select"
-                                            /> */}
-                                            <ReactSelect
-                                                name="productId"
-                                                value={prodIdOptions.find(option => option.value === values.ProductId)}
-
-                                                onChange={(option) => {
-                                                    setFieldValue('productId', option.value);
-
-                                                }}
-                                                isLoading={isLoading}
-                                                options={prodIdOptions || "Loading"}
-                                                styles={customStyles}
-                                                className="bg-white dark:bg-form-Field"
-                                                classNamePrefix="react-select"
-                                                placeholder={isLoading ? 'Loading Products...' : 'Select ProductId'}
-                                            />
-
-                                        </div>
                                         <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Customer</label>
                                             <ReactSelect
@@ -455,7 +418,7 @@ const ViewOrderCreated = () => {
                                                 value={productgrp.find(option => option.value === values.customerName)}
                                                 onChange={(option) => {
                                                     setFieldValue('customerName', option.value);
-
+                                                   
                                                 }}
                                                 onBlur={handleBlur}
                                                 // options={formattedCustomer}
@@ -494,9 +457,9 @@ const ViewOrderCreated = () => {
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Customer</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Id</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Supplier</th>
                                         {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
-
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider ">Order Date </th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
@@ -517,4 +480,4 @@ const ViewOrderCreated = () => {
     )
 }
 
-export default ViewOrderCreated
+export default EditOrderCreated

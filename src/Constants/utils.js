@@ -181,6 +181,13 @@ export const DOWNLOADPENDINGFINNCIALORDERS_REPORT = `${BASE_URL}/report/download
 
 
 export const DOWNLOADCSV_REPORT = `${BASE_URL}/report/downloadCsv`;
+export const DOWNLOADPENDINGPDFBYDATE_REPORT = `${BASE_URL}/report/downloadPendingPdf`;
+export const DOWNLOADINPROGRESSBYDATE_REPORT = `${BASE_URL}/report/downloadInProgressPdf`;
+
+
+
+
+
 export const DELETE_CUSTOMER_URL = `${BASE_URL}/customer/`;
 
 

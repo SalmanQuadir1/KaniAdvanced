@@ -77,7 +77,13 @@ import ViewPerforma from './components/Order/ViewPerforma';
 
 
 import ViewOrder from './components/Order/ViewOrder.jsx';
+
+import EditOrderCreated from './components/Order/EditOrderCreated.jsx';
+
 import UpdateOrderStatus from './components/Order/UpdateOrderStatus.jsx';
+import OrderProforma from './components/Order/Proforma/OrderProforma.jsx';
+
+
 import UpdatePartiallyOrderStatus from './components/Order/UpdatePartiallyOrderStatus.jsx';
 import UpdatePartiallyApprovedOrder from './components/Order/UpdatePartiallyApprovedOrder.jsx';
 import UpdatePartiallyPending from './components/Order/UpdatePartiallyPending.jsx';
@@ -156,6 +162,9 @@ import UpdateOrder from './components/Order/UpdateOrder.jsx';
 import UpdateOrderShippingDate from './components/Order/UpdateOrderShippingDate.jsx';
 
 import AddCustomer from './components/Customer/AddCustomer';
+import ExcelUploadCustomer from './components/Customer/AddCustomerBulk.jsx';
+
+
 import ViewCustomer from './components/Customer/ViewCustomer';
 import UpdateCustomer from './components/Customer/UpdateCustomer';
 import CreateMaterialInventory from './components/Inventory/CreateMaterialInventory.jsx';
@@ -392,6 +401,16 @@ function App() {
             }
           />
 
+<Route
+            path="/Order/ViewOrderCreated"
+            element={
+              <>
+                <PageTitle title="Edit Order " />
+                <EditOrderCreated />
+              </>
+            }
+          />
+
           <Route
             path="/Order/updateorderCreated/:id"
             element={
@@ -401,6 +420,19 @@ function App() {
               </>
             }
           />
+
+<Route
+            path="/Order/generateProforma/:id"
+            element={
+              <>
+                <PageTitle title="Create Order Proforma" />
+                <OrderProforma />
+              </>
+            }
+          />
+
+
+
 
           <Route
             path="/Order/updateorderPartiallyCreated/:id"
@@ -1109,6 +1141,18 @@ function App() {
               </>
             }
           />
+
+<Route
+            path="/customer/addCustomerBulk"
+            element={
+              <>
+                <PageTitle title="Add Customer" />
+                <ExcelUploadCustomer />
+              </>
+            }
+          />
+
+
           <Route
             path="/customer/viewCustomer"
             element={
