@@ -213,6 +213,9 @@ export const GET_PRODUCTIDDD_URL = `${BASE_URL}/order`;
 export const VIEW_ALL_ORDERS = `${BASE_URL}/order/search`;
    
 export const VIEW_CREATED_ORDERS = `${BASE_URL}/order/searchCreated`; 
+export const EDIT_CREATED_ORDERS = `${BASE_URL}/order/searchCreatedEditOrder`; 
+
+
 
 export const VIEW_ALLACCEPTED_ORDERS = `${BASE_URL}/order/searchAccepted`;  
 
