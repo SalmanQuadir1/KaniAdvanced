@@ -626,6 +626,9 @@ const UpdateOrder = () => {
 
 
 
+  
+  
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Order/Update Order" />
@@ -789,6 +792,8 @@ const UpdateOrder = () => {
                     </div>
 
                     {(values.orderType.orderTypeName === "RetailClients" || values.orderType.orderTypeName === "WSClients") && (
+
+
 
                       <div >
                         <div className="flex-1 min-w-[300px] mt-4">
@@ -1107,7 +1112,7 @@ const UpdateOrder = () => {
                               </td>
 
                               {/* Client Order Quantity */}
-                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                              {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                 <Field
                                   name={`orderProducts[${index}].clientOrderQuantity`}
                                   //value={product.clientOrderQuantity || ""}
@@ -1115,7 +1120,24 @@ const UpdateOrder = () => {
                                 //readOnly
                                 />
                                 <ErrorMessage name={`orderProducts[${index}].clientOrderQuantity`} component="div" className="text-red-600 text-sm" />
-                              </td>
+                              </td> */}
+
+<td className="px-5 py-5 border-b border-gray-200 text-sm">
+  <Field
+    name={`orderProducts[${index}].clientOrderQuantity`}
+    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+    onChange={(e) => {
+      const value = e.target.value;
+      setFieldValue(`orderProducts[${index}].clientOrderQuantity`, value);
+      setFieldValue(`orderProducts[${index}].quantityToManufacture`, value);
+    }}
+  />
+  <ErrorMessage
+    name={`orderProducts[${index}].clientOrderQuantity`}
+    component="div"
+    className="text-red-600 text-sm"
+  />
+</td>
 
                               <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                 <Field
@@ -1127,7 +1149,7 @@ const UpdateOrder = () => {
                                 <ErrorMessage name={`orderProducts[${index}].value`} component="div" className="text-red-600 text-sm" />
                               </td>
 
-                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                              {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                 <Field
                                   name={`orderProducts[${index}].inStockQuantity`}
                                   //value={values.orderProducts[index]?.orderCategory || ''}
@@ -1136,9 +1158,27 @@ const UpdateOrder = () => {
                                 //readOnly
                                 />
                                 <ErrorMessage name={`orderProducts[${index}].value`} component="div" className="text-red-600 text-sm" />
-                              </td>
+                              </td> */}
 
-                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
+<td className="px-5 py-5 border-b border-gray-200 text-sm">
+  <Field
+    name={`orderProducts[${index}].inStockQuantity`}
+    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+    onChange={(e) => {
+      const value = Number(e.target.value) || 0; // Convert input to number
+      const initialQuantityToManufacture = values.orderProducts[index]?.clientOrderQuantity || 0; // Keep original value from clientOrderQuantity
+
+      // Ensure new value is not negative
+      const newQuantityToManufacture = Math.max(0, initialQuantityToManufacture - value);
+
+      setFieldValue(`orderProducts[${index}].inStockQuantity`, value);
+      setFieldValue(`orderProducts[${index}].quantityToManufacture`, newQuantityToManufacture);
+    }}
+  />
+  <ErrorMessage name={`orderProducts[${index}].inStockQuantity`} component="div" className="text-red-600 text-sm" />
+</td>
+
+                              {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                 <Field
                                   name={`orderProducts[${index}].quantityToManufacture`}
                                   //value={product.quantityToManufacture || ""}
@@ -1146,7 +1186,16 @@ const UpdateOrder = () => {
                                 //readOnly
                                 />
                                 <ErrorMessage name={`orderProducts[${index}].value`} component="div" className="text-red-600 text-sm" />
-                              </td>
+                              </td> */}
+
+
+<td className="px-5 py-5 border-b border-gray-200 text-sm">
+  <Field
+    name={`orderProducts[${index}].quantityToManufacture`}
+    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+  />
+  <ErrorMessage name={`orderProducts[${index}].quantityToManufacture`} component="div" className="text-red-600 text-sm" />
+</td>
 
 
                               {/* Value */}
