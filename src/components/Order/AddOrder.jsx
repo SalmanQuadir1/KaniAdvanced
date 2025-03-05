@@ -60,23 +60,23 @@ const AddOrder = () => {
 
     getorderType();
     getCustomer();
-    getprodId();
+   
   }, [])
 
 
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setisLoading(true)
-      // Set loading to true when data starts loading
-      await getprodId();
+ useEffect(() => {
+        const fetchData = async () => {
+            setisLoading(true)
+            // Set loading to true when data starts loading
+            await getprodId();
 
-      setisLoading(false)
-      // Set loading to false once data is loaded
-    };
+            setisLoading(false)
+            // Set loading to false once data is loaded
+        };
 
-    fetchData();
-  }, []);
+        fetchData();
+    }, []);
 
 
 
@@ -200,7 +200,7 @@ const AddOrder = () => {
       }));
       setcustomerOptions(formattedCustomerOptions);
     }
-  }, [orderTypee]);
+  }, [orderTypee,productId]);
 
 
 
