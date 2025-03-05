@@ -58,21 +58,21 @@ const AddOrder = () => {
 
   useEffect(() => {
 
-     getorderType();
+    getorderType();
     getCustomer();
-  
+    getprodId();
   }, [])
-  
+
 
 
   useEffect(() => {
     const fetchData = async () => {
       setisLoading(true)
-       // Set loading to true when data starts loading
+      // Set loading to true when data starts loading
       await getprodId();
-     
+
       setisLoading(false)
-     // Set loading to false once data is loaded
+      // Set loading to false once data is loaded
     };
 
     fetchData();
@@ -82,7 +82,7 @@ const AddOrder = () => {
 
 
   console.log(productId, "proddidddddd");
-console.log(customer,"customer");
+  console.log(customer, "customer");
 
   const [selectedSuppliers, setSelectedSuppliers] = useState([]);
   const [selectedRowId, setSelectedRowId] = useState(null);
@@ -262,13 +262,19 @@ console.log(customer,"customer");
 
 
   const handleModalSubmit = (values) => {
+    console.log(values, "jump");
+    setprodIdModal((prevValues) => {
+      console.log(prevValues, "jumpss");
+      // Ensure that previous values are preserved and the new ones are added.
+      return [...prevValues, {
+        ...values,
+        // Ensure any additional data you need to keep is added
+      }];
+    });
 
-
-    setprodIdModal((prevValues) => [...prevValues, values])
-    setIsModalOpen(false)
-
+    setIsModalOpen(false); // Close modal
   }
-  console.log(prodIdModal, "kiool");
+  console.log(prodIdModal, "jumper");
 
   const openINVENTORYModal = (id) => {
 
@@ -402,20 +408,30 @@ console.log(customer,"customer");
           onSubmit={handleSubmit}
         >
           {({ values, setFieldValue, handleBlur, isSubmitting }) => {
+
             useEffect(() => {
               if (prodIdModal.length > 0) {
                 console.log("ProdIdModal updated:", prodIdModal);
 
-                const updatedOrderProducts = prodIdModal.map((item) => ({
+                const updatedOrderProducts = prodIdModal.map((item, index) => ({
                   products: { id: item?.id || "" },
-                  orderCategory: item.orderCatagory || "",
-                  clientOrderQuantity: item.clientOrderQuantity || "",
-                  units: item.units || "",
+                  orderCategory: item?.orderCatagory || "",
+                  clientOrderQuantity: values?.orderProducts[index]?.clientOrderQuantity || "",  // Correctly referencing the specific index
+                  inStockQuantity: values?.orderProducts[index]?.inStockQuantity || "",
+                  quantityToManufacture: values?.orderProducts[index]?.quantityToManufacture || "",
+                  clientShippingDate: values?.orderProducts[index]?.clientShippingDate || "",
+                  expectedDate: values?.orderProducts[index]?.expectedDate || "",
+                  value: values?.orderProducts[index]?.value || "", // Add any other fields you need here
+                  units: item?.units || "",
+                 
                 }));
 
-                setFieldValue("orderProducts", updatedOrderProducts); // Overwrite all rows at once
+                console.log(updatedOrderProducts, "Updated Order Products");
+
+                setFieldValue("orderProducts", updatedOrderProducts);  // Update the Formik field with the modified data
               }
             }, [prodIdModal, setFieldValue]);
+
 
 
             // Run only on mount
@@ -438,6 +454,15 @@ console.log(customer,"customer");
                 }
               });
             }, [prodIdModal, selectedSuppliers, setFieldValue]);
+
+            useEffect(() => {
+              values.orderProducts.forEach((product, index) => {
+                if (product.clientOrderQuantity && product.inStockQuantity !== undefined) {
+                  const quantityToManufacture = product.clientOrderQuantity - product.inStockQuantity;
+                  setFieldValue(`orderProducts[${index}].quantityToManufacture`, quantityToManufacture);
+                }
+              });
+            }, [values.orderProducts, setFieldValue]);
 
 
             return (
@@ -770,7 +795,7 @@ console.log(customer,"customer");
 
                           onChange={(option) => handleProductIdChange(option, setFieldValue)}
                           isLoading={isLoading}
-                          options={prodIdOptions||"Loading"}
+                          options={prodIdOptions || "Loading"}
                           styles={customStyles}
                           className="bg-white dark:bg-form-Field"
                           classNamePrefix="react-select"
@@ -913,13 +938,14 @@ console.log(customer,"customer");
                                     <div >
 
                                       <Field
-                                        type="number"
                                         name={`orderProducts[${index}].clientOrderQuantity`}
                                         // value={item?.productId}
-                                        placeholder="Enter Client Order Qty"
+                                        type="number"
+
+                                        placeholder="Enter In Stock Qty"
                                         className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                       />
-                                      <ErrorMessage name="clientOrderQty" component="div" className="text-red-600 text-sm" />
+                                      <ErrorMessage name="clientOrderQuantity" component="div" className="text-red-600 text-sm" />
                                     </div>
                                   </td>
                                   <td className="px-5 py-5 border-b border-gray-200  text-sm">

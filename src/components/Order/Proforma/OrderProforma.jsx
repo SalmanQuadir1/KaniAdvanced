@@ -44,6 +44,41 @@ const OrderProforma = () => {
         { value: 'KWD', label: 'KWD' },
         { value: 'AED', label: 'AED' },
     ];
+
+    const modeOfShipmentOptions = [
+        { value: 'Courier', label: 'Courier' },
+        { value: 'Commercial', label: 'Commercial' },
+
+    ];
+
+
+    const ShippingAccountOptions = [
+        { value: 'KLC', label: 'KLC' },
+        { value: 'CLIENT', label: 'CLIENT' },
+        { value: 'KLC FREE SHIPPING', label: 'KLC FREE SHIPPING' },
+
+    ];
+    const labelOptions = [
+        { value: 'KLC', label: 'KLC' },
+        { value: 'CLIENT', label: 'CLIENT' },
+        { value: 'No Label', label: 'No Label' },
+
+    ];
+    const tagOptions = [
+        { value: 'KLC', label: 'KLC' },
+        { value: 'CLIENT', label: 'CLIENT' },
+        { value: 'No Tags', label: 'No Tags' },
+
+    ];
+    const logoOptions = [
+        { value: 'KLC', label: 'KLC' },
+        { value: 'CLIENT', label: 'CLIENT' },
+        { value: 'No Logo', label: 'No Logo' },
+
+    ];
+
+
+
     const {
         getorderType,
         orderTypee,
@@ -155,53 +190,7 @@ const OrderProforma = () => {
 
 
 
-    const handleSubmit = async (values) => {
-        // Map selected row IDs to the desired format
-        const selectedProducts = values.selectedRows.map((productId) => ({
-            id: productId,
-        }));
-
-        // Prepare the final data
-        const finalData = {
-            orderProducts: selectedProducts, // Include the selected rows
-        };
-
-        // Log the data to check the format
-        console.log(finalData, "finalData");
-
-
-
-
-        try {
-            const url = `${UPDATE_ORDERCREATED_ALL}/${id}`;
-            const method = "PUT";
-
-            const response = await fetch(url, {
-                method: method,
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify(finalData)
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                toast.success(`Order Status Updated  successfully`);
-
-
-
-                // getCurrency(pagination.currentPage); // Fetch updated Currency
-            } else {
-                toast.error(`${data.errorMessage}`);
-            }
-        } catch (error) {
-            console.error(error, response);
-            toast.error("An error occurred");
-        }
-
-        // You can now send `finalData` to the backend or do any other operation with it
-    };
+  
 
 
 
@@ -321,7 +310,64 @@ const OrderProforma = () => {
     console.log(order, 'jugnu');
 
 
-
+    const handleSubmit = async (values) => {
+        console.log(values);
+    
+        // Assuming the structure of `values.orderProducts` is similar to what you provided
+        const proformaProducts = values.orderProducts.map((product) => {
+            console.log(product,"jj");
+            return {
+                product: {
+                    id: product.product.id // Assuming you need the id of the product
+                },
+                orderQty: parseInt(product.orderQty), // Convert to an integer, if needed
+                rate: product.wholesalePrice, // Using wholesalePrice as the rate
+                totalPrice: product.totalValue, // Using totalValue as the totalPrice
+                totalValue: product.totalValue, // Total value is the same
+                taxibleValue: product.taxibleValue, // Assuming this value is correct
+                gstTax: product.gstTax, // GST tax is already provided
+                discount: product.discount, // Assuming there's a discount property in the product
+                tax: product.gstTax * 0.1, // Assuming tax is calculated as 10% of GST tax (modify based on actual logic)
+                discountedPrice: product.totalValue - product.discount // Assuming discounted price is totalValue minus discount
+            };
+        });
+    
+        // Prepare the final data with proformaProduct
+        const finalData = {
+            proformaProduct: proformaProducts, // Replacing orderProducts with proformaProduct
+        };
+    
+        // Log the finalData to check the format
+        console.log(finalData, "finalData");
+    
+        // try {
+        //     const url = `${UPDATE_ORDERCREATED_ALL}/${id}`;
+        //     const method = "PUT";
+    
+        //     const response = await fetch(url, {
+        //         method: method,
+        //         headers: {
+        //             "Content-Type": "application/json",
+        //             "Authorization": `Bearer ${token}`
+        //         },
+        //         body: JSON.stringify(finalData)
+        //     });
+    
+        //     const data = await response.json();
+        //     if (response.ok) {
+        //         toast.success(`Order Status Updated successfully`);
+        //         // getCurrency(pagination.currentPage); // Fetch updated Currency (if needed)
+        //     } else {
+        //         toast.error(`${data.errorMessage}`);
+        //     }
+        // } catch (error) {
+        //     console.error(error);
+        //     toast.error("An error occurred");
+        // }
+    
+        // You can now send `finalData` to the backend or do any other operation with it
+    };
+    
 
 
 
@@ -349,22 +395,39 @@ const OrderProforma = () => {
                             taxibleValue: "" || 0,
                             discountedPrice: "",
                             // Initialize as 0, will be updated later
-                            wholesalePrice: 0, // Default to 0 or the correct price for INR
+                            wholesalePrice: 0,
+
+
+                            // Default to 0 or the correct price for INR
 
                             product: {
 
-                                id: product.products?.productId || '',  // Set initial value for productId
+                                id: product.products?.id || '',  // Set initial value for productId
                             },
 
                         })) || [],
                         totalUnits: "",
                         totalUnitsValue: "",
+                        modeOfShipment: "",
+                        gst: "",
+                        shippingAccount: "",
+                        courierCharges: "",
+                        advanceReceived: "",
+                        total: "",
+
+                        outstandingBalance: 0,
+                        labels: "",
+                        tags: "",
+                        logo: "",
+                        clothBags: ""
+
 
 
 
 
                         // customer: '',
                     }}
+
 
                 // validationSchema={validationSchema}
                 >
@@ -381,12 +444,14 @@ const OrderProforma = () => {
                                 setFieldValue("totalUnits", totalUnits);
                             }
                         }, [order?.orderProducts, setFieldValue]);
+
+
                         useEffect(() => {
                             // Ensure currency is selected
                             if (values.currency) {
                                 const selectedCurrency = values.currency;
                                 console.log(selectedCurrency, "selected currency");
-                        
+
                                 // Loop through the orderProducts and update wholesalePrice
                                 order?.orderProducts?.forEach((product, index) => {
                                     if (selectedCurrency === 'INR') {
@@ -395,21 +460,131 @@ const OrderProforma = () => {
                                     } else if (selectedCurrency === 'USD') {
                                         // Set USD price
                                         setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.usdPrice || 0);
-                                    }else if (selectedCurrency === 'EURO') {
+                                    } else if (selectedCurrency === 'EURO') {
                                         // Set USD price
                                         setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.euroPrice || 0);
-                                    }else if (selectedCurrency === 'GBP') {
+                                    } else if (selectedCurrency === 'GBP') {
                                         // Set USD price
                                         setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.gbpPrice || 0);
-                                    }else if (selectedCurrency === 'RMB') {
+                                    } else if (selectedCurrency === 'RMB') {
                                         // Set USD price
                                         setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.rmbPrice || 0);
                                     }
-                                    
+
                                 });
                             }
                         }, [values.currency, order?.orderProducts, setFieldValue]);
-                        
+
+
+                        useEffect(() => {
+                            if (values.modeOfShipment) {
+                                console.log(values.modeOfShipment, "kkllkkll");
+                                if (values.modeOfShipment === 'Courier') {
+                                    // If mode of shipment is Courier, sum all GST values
+                                    const totalGstTax = values.orderProducts.reduce((sum, product) => {
+                                        return sum + (product.gstTax || 0);
+                                    }, 0);
+                                    setFieldValue('gst', totalGstTax);
+                                    const totalWithGst = values.orderProducts.reduce((sum, product) => {
+                                        return sum + (product.totalValue || 0);
+                                    }, 0);
+                                    setFieldValue('total', totalWithGst + totalGstTax); // Adding GST to the total
+                                } else if (values.modeOfShipment === 'Commercial') {
+                                    // If mode of shipment is Commercial, set GST to 0 and recalculate total
+                                    setFieldValue('gst', 0);
+                                    const totalWithoutGst = values.orderProducts.reduce((sum, product) => {
+                                        return sum + (product.totalValue || 0);
+                                    }, 0);
+                                    setFieldValue('total', totalWithoutGst); // No GST, only totalValue sum
+                                }
+                            }
+                        }, [values.modeOfShipment, values.orderProducts, setFieldValue]);
+
+
+
+
+
+
+
+                        useEffect(() => {
+                            // Calculate the sum of totalValue for all products whenever orderProducts changes
+                            const totalValueSum = values.orderProducts.reduce((sum, product) => {
+                                const totalProductValue = product.totalValue || 0; // Ensure you have a totalValue field for each product
+                                return sum + totalProductValue;
+                            }, 0);
+
+                            // Update Formik's totalUnitsValue field with the total value sum
+                            setFieldValue("totalUnitsValue", totalValueSum);
+                            setFieldValue("total", totalValueSum);
+                        }, [values.orderProducts, setFieldValue]);
+
+
+                        const calculateValues = (index, wholesalePrice, orderQty, discount) => {
+                            // Ensure currentRate is properly fetched or defined
+                            const currentRate = values.currentRate || 1; // Default to 1 if no rate is defined
+
+                            // Calculate 'num' properly using currentRate
+                            let num = 1 / currentRate;
+                            num = Math.round(num * 1000);  // Round if needed
+
+                            const discountedPrice = wholesalePrice * (1 - discount / 100); // Apply discount
+                            const taxableValue = discountedPrice;
+                            const totalValue = taxableValue * orderQty;
+
+                            let gstTax = 0;
+                            if (taxableValue >= num) {
+                                const prodUnit = values.orderProducts[index]?.unit;
+                                if (prodUnit === 'Mtrs') {
+                                    gstTax = (totalValue * 5) / 100;
+                                } else {
+                                    gstTax = (totalValue * 12) / 100;
+                                }
+                            } else {
+                                gstTax = (totalValue * 5) / 100;
+                            }
+
+                            // Update Formik values for the current product
+                            setFieldValue(`orderProducts[${index}].gstTax`, gstTax);
+                            setFieldValue(`orderProducts[${index}].taxibleValue`, taxableValue);
+                            setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
+                        };
+
+                        useEffect(() => {
+                            // Step 1: Get the current total from the form state
+                            let currentTotal = values.total || 0;
+
+                            // Step 2: Check if shippingAccount is 'KLC' and courierCharges > 0
+                            if (values.shippingAccount === 'KLC' && values.courierCharges > 0) {
+                                // Add courier charges to the total if shippingAccount is 'KLC'
+                                currentTotal += parseFloat(values.courierCharges);
+                            }
+
+                            // Step 3: Update the total field
+                            setFieldValue('total', currentTotal);
+
+                        }, [values.shippingAccount, values.courierCharges, setFieldValue]);
+
+                        useEffect(() => {
+                            // Step 1: Calculate the sum of totalValue for all products again
+                            let currentTotal = values.total || 0;
+
+                            // Step 2: Subtract advanceReceived from the totalProductValue
+                            let updatedTotal = currentTotal - parseFloat(values.advanceReceived || 0); // Ensure advanceReceived is treated as a number
+
+                            // Step 3: Update outstandingBalance
+                            setFieldValue('outstandingBalance', updatedTotal);
+
+                        }, [values.advanceReceived, values.orderProducts, setFieldValue]);
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -437,11 +612,11 @@ const OrderProforma = () => {
                                                         {({ field, form }) => (
                                                             <ReactDatePicker
                                                                 {...field}
-                                                                selected={(field.value && new Date(field.value)) || null}
+                                                                selected={field.value ? new Date(field.value) : null} // Convert string to Date object if value exists
                                                                 onChange={(date) =>
                                                                     form.setFieldValue(
-                                                                        "fate",
-                                                                        date ? format(date, "yyyy-MM-dd") : "" // Format without timezone shift
+                                                                        "date",
+                                                                        date // Format date to "yyyy-MM-dd"
                                                                     )
                                                                 }
                                                                 dateFormat="yyyy-MM-dd" // Display format
@@ -621,6 +796,8 @@ const OrderProforma = () => {
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
+
+
                                                     <div className="flex items-center">
                                                         <Field
                                                             type="radio"
@@ -799,6 +976,14 @@ const OrderProforma = () => {
                                                                     <Field
                                                                         name={`orderProducts[${index}].orderQty`}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                                                        onBlur={() =>
+                                                                            calculateValues(
+                                                                                index,
+                                                                                values.orderProducts[index]?.wholesalePrice,
+                                                                                values.orderProducts[index]?.orderQty,
+                                                                                values.orderProducts[index]?.discount || 0
+                                                                            )
+                                                                        }
                                                                     />
                                                                     <ErrorMessage
                                                                         name={`orderProducts[${index}].orderQty`}
@@ -833,9 +1018,10 @@ const OrderProforma = () => {
 
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
-                                                                        name={`orderProducts[${index}].clientOrderQuantity`}
+                                                                        name={`orderProducts[${index}].gstTax`}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                                     />
+
                                                                     <ErrorMessage
                                                                         name={`orderProducts[${index}].clientOrderQuantity`}
                                                                         component="div"
@@ -844,11 +1030,19 @@ const OrderProforma = () => {
                                                                 </td>
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
-                                                                        name={`orderProducts[${index}].clientOrderQuantity`}
+                                                                        name={`orderProducts[${index}].discount`}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                                                        onBlur={() =>
+                                                                            calculateValues(
+                                                                                index,
+                                                                                values.orderProducts[index]?.wholesalePrice,
+                                                                                values.orderProducts[index]?.orderQty,
+                                                                                values.orderProducts[index]?.discount || 0
+                                                                            )
+                                                                        }
                                                                     />
                                                                     <ErrorMessage
-                                                                        name={`orderProducts[${index}].clientOrderQuantity`}
+                                                                        name={`orderProducts[${index}].discount`}
                                                                         component="div"
                                                                         className="text-red-600 text-sm"
                                                                     />
@@ -856,8 +1050,9 @@ const OrderProforma = () => {
 
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
-                                                                        name={`orderProducts[${index}].clientOrderQuantity`}
+                                                                        name={`orderProducts[${index}].taxibleValue`}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                                                        readOnly
                                                                     />
                                                                     <ErrorMessage
                                                                         name={`orderProducts[${index}].clientOrderQuantity`}
@@ -867,11 +1062,12 @@ const OrderProforma = () => {
                                                                 </td>
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
-                                                                        name={`orderProducts[${index}].clientOrderQuantity`}
+                                                                        name={`orderProducts[${index}].totalValue`}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                                                        readOnly
                                                                     />
                                                                     <ErrorMessage
-                                                                        name={`orderProducts[${index}].clientOrderQuantity`}
+                                                                        name={`orderProducts[${index}].totalValue`}
                                                                         component="div"
                                                                         className="text-red-600 text-sm"
                                                                     />
@@ -892,34 +1088,267 @@ const OrderProforma = () => {
                                             <div className='flex justify-between mt-4'>
                                                 <h2 className='font-semibold text-2xl'>Total</h2>
 
-                                                <div className='flex gap-6'> {/* Added flex to align them horizontally */}
-                                                    <div className="flex-2 min-w-[270px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">
-                                                            Total Units
-                                                        </label>
-                                                        <Field
-                                                            name="totalUnits"
 
-                                                            type="text"
-                                                            placeholder="Enter Warp Colors"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
-                                                        />
+
+
+                                                <div className='flex-col gap-6'>
+                                                    {/* Added flex to align them horizontally */}
+
+                                                    <div className='flex gap-4'>
+                                                        <div className="flex-2 min-w-[270px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                                Total Units
+                                                            </label>
+                                                            <Field
+                                                                name="totalUnits"
+
+                                                                type="text"
+                                                                placeholder="Enter Warp Colors"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+                                                        <div className="flex-1 min-w-[270px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                                Total Value
+                                                            </label>
+                                                            <Field
+                                                                name="totalUnitsValue"
+                                                                type="text"
+                                                                placeholder="Enter Weft Colors"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
                                                     </div>
-                                                    <div className="flex-1 min-w-[270px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">
-                                                            Total Value
-                                                        </label>
-                                                        <Field
-                                                            name="totalUnits"
-                                                            type="text"
-                                                            placeholder="Enter Weft Colors"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
-                                                        />
+
+
+
+                                                    {/* Added flex to align them horizontally */}
+                                                    <div className='flex gap-4 mt-3'>
+                                                        <div className="flex-2 min-w-[270px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                                Mode Of Shipment
+                                                            </label>
+                                                            <ReactSelect
+                                                                name="modeOfShipment"
+                                                                // value={
+                                                                //     modeOfShipmentOptions?.find(option => option.value === values.orderType.id) || null
+                                                                // }
+                                                                onChange={(option) =>
+                                                                    setFieldValue('modeOfShipment', option.value) // Send only ID
+                                                                }
+                                                                options={modeOfShipmentOptions}
+                                                                styles={customStyles}
+                                                                className="bg-white dark:bg-form-Field"
+                                                                classNamePrefix="react-select"
+                                                                placeholder="Select Order Type"
+                                                            />
+                                                        </div>
+                                                        <div className="flex-1 min-w-[270px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                                GST
+                                                            </label>
+                                                            <Field
+                                                                name="gst"
+                                                                type="text"
+                                                                placeholder="Enter Weft Colors"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
                                                     </div>
+
+
+
+
+
+
+
+
+
+
+
+                                                    <div className='flex gap-4 mt-3'>
+
+
+                                                        <div className="flex-2 min-w-[270px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                                Shipping Account
+                                                            </label>
+                                                            <ReactSelect
+                                                                name="shippingAccount"
+                                                                value={ShippingAccountOptions?.find(option => option.value === values.shippingAccount) || null}
+                                                                onChange={(option) => setFieldValue('shippingAccount', option.value)} // Save the selected shipping account
+                                                                options={ShippingAccountOptions}
+                                                                styles={customStyles}
+                                                                className="bg-white dark:bg-form-Field"
+                                                                classNamePrefix="react-select"
+                                                                placeholder="Select Shipping Account"
+                                                            />
+                                                        </div>
+
+                                                        {/* Courier Charges Field */}
+                                                        <div className="flex-1 min-w-[270px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                                Courier Charges
+                                                            </label>
+                                                            <Field
+                                                                name="courierCharges"
+                                                                type="number"
+                                                                placeholder="Enter Courier Charges"
+                                                                value={values.courierCharges}
+                                                                onChange={(e) => setFieldValue('courierCharges', e.target.value)} // Use setFieldValue directly
+                                                                disabled={values.shippingAccount !== 'KLC'} // Disable if shippingAccount is not "KLC"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+
+                                                    </div>
+                                                    <div className='flex justify-end gap-4 mt-3'>
+
+                                                        <div className="flex-end min-w-[270px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                                Invoice Total
+                                                            </label>
+                                                            <Field
+                                                                name="total"
+                                                                type="text"
+                                                                placeholder="Total"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+                                                    </div>
+
+
+
+
+
+                                                    <div className='flex justify-end gap-4 mt-3'>
+
+                                                        <div className="flex-end min-w-[270px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                                Advance Recieved
+                                                            </label>
+                                                            <Field
+                                                                name="advanceReceived"
+                                                                type="text"
+                                                                placeholder="Total"
+
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className='flex justify-end gap-4 mt-3'>
+
+                                                        <div className="flex-end min-w-[270px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                                Outstanding Balance
+                                                            </label>
+                                                            <Field
+                                                                name="outstandingBalance"
+                                                                type="text"
+                                                                placeholder="Total"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+                                                    </div>
+
+
+
                                                 </div>
+
+
+
+
+
+
+
+
+
+                                            </div>
+                                            <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                                                <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
+                                                    PACKING INSTRUCTION
+                                                </h3>
                                             </div>
 
+                                            <div className='flex gap-4 mt-3'>
 
+
+                                                <div className="flex-2 min-w-[270px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">
+                                                        Labels
+                                                    </label>
+                                                    <ReactSelect
+                                                        name="labels"
+                                                        value={labelOptions?.find(option => option.value === values.labels) || null}
+                                                        onChange={(option) => setFieldValue('labels', option.value)} // Save the selected shipping account
+                                                        options={labelOptions}
+                                                        styles={customStyles}
+                                                        className="bg-white dark:bg-form-Field"
+                                                        classNamePrefix="react-select"
+                                                        placeholder="Select Shipping Account"
+                                                    />
+                                                </div>
+                                                <div className="flex-2 min-w-[270px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">
+                                                        Tags
+                                                    </label>
+                                                    <ReactSelect
+                                                        name="tags"
+                                                        value={tagOptions?.find(option => option.value === values.tags) || null}
+                                                        onChange={(option) => setFieldValue('tags', option.value)} // Save the selected shipping account
+                                                        options={tagOptions}
+                                                        styles={customStyles}
+                                                        className="bg-white dark:bg-form-Field"
+                                                        classNamePrefix="react-select"
+                                                        placeholder="Select Shipping Account"
+                                                    />
+                                                </div>
+
+                                                <div className="flex-2 min-w-[270px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">
+                                                        Logo
+                                                    </label>
+                                                    <ReactSelect
+                                                        name="logo"
+                                                        value={logoOptions?.find(option => option.value === values.logo) || null}
+                                                        onChange={(option) => setFieldValue('logo', option.value)} // Save the selected shipping account
+                                                        options={logoOptions}
+                                                        styles={customStyles}
+                                                        className="bg-white dark:bg-form-Field"
+                                                        classNamePrefix="react-select"
+                                                        placeholder="Select Logo"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className='flex gap-4 mt-5'>
+                                                <div className="flex items-center">
+                                                    <label>Cloth Bag</label>
+                                                    <Field
+                                                        type="radio"
+                                                        name="clothBags"
+                                                        value="Yes"
+                                                        className="mr-2 ml-4"
+                                                    />
+                                                    <label className="text-black dark:text-white">Yes</label>
+                                                </div>
+
+                                                {/* Economy checkbox */}
+                                                <div className="flex items-center">
+                                                    <Field
+                                                        type="radio"
+                                                        name="clothBags"
+                                                        value="No"
+                                                        className="mr-2"
+                                                    />
+                                                    <label className="text-black dark:text-white">No</label>
+                                                </div>
+
+                                                {/* Priority checkbox */}
+
+
+
+
+                                            </div>
 
 
 
@@ -944,7 +1373,7 @@ const OrderProforma = () => {
 
                                                     className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none" // Increased width
                                                 >
-                                                    Accept All
+                                                    Create Proforma
                                                 </button>
                                             </div>
                                         </div>
