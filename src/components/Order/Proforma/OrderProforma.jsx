@@ -9,7 +9,7 @@ import 'flatpickr/dist/themes/material_blue.css'; // Import a Flatpickr theme
 
 import useorder from '../../../hooks/useOrder';
 
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL, GET_PID, ADD_ORDERPROFORMA } from '../../../Constants/utils';
+import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL, GET_PID, ADD_ORDERPROFORMA, GET_IMAGE } from '../../../Constants/utils';
 
 
 import { FiTrash2 } from 'react-icons/fi';
@@ -968,21 +968,15 @@ const OrderProforma = () => {
 
                                                                 {/* Product ID */}
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                                    <ReactSelect
-                                                                        name="orderNo"
-                                                                        value={order?.orderNo ? { label: order.orderNo, value: order.orderNo } : null}
-                                                                        styles={customStyles}
-                                                                        className="bg-white dark:bg-form-Field w-[180px]"
-                                                                        classNamePrefix="react-select"
-                                                                        placeholder="Select Order Type"
-                                                                        isDisabled={true}
-                                                                    />
-                                                                    <ErrorMessage
-                                                                        name={`orderProducts[${index}].products.id`}
-                                                                        component="div"
-                                                                        className="text-red-600 text-sm"
-                                                                    />
-                                                                </td>
+                    <div className="relative group">
+                        <img
+                            className="h-10 w-10 rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                            crossOrigin="use-credentials"
+                            src={`${GET_IMAGE}/products/getimages/${product?.products?.images[0]?.referenceImage}`}
+                            alt="Product Image"
+                        />
+                    </div>
+                </td>
 
 
 
