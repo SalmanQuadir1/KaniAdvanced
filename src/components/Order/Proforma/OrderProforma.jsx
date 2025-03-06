@@ -339,11 +339,11 @@ const OrderProforma = () => {
             });
 
             const data = await response.json();
-            if (response.message) {
+            if (response?.message) {
                 toast.success(response?.message);
                 // getCurrency(pagination.currentPage); // Fetch updated Currency (if needed)
             } else {
-                toast.error(`${data.errorMessage}`);
+                toast.error(`${data?.errorMessage}`);
             }
         } catch (error) {
             console.error(error);
