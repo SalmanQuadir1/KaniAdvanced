@@ -327,7 +327,7 @@ const OrderProforma = () => {
 
         try {
             const url = `${ADD_ORDERPROFORMA}`;
-            const method = "POST";
+            const method = "PUT";
 
             const response = await fetch(url, {
                 method: method,
@@ -339,12 +339,10 @@ const OrderProforma = () => {
             });
 
             const data = await response.json();
-            if (response?.message) {
-                toast.success(response?.message);
+           
+                toast.success("response?.message");
                 // getCurrency(pagination.currentPage); // Fetch updated Currency (if needed)
-            } else {
-                toast.error(`${data?.errorMessage}`);
-            }
+          
         } catch (error) {
             console.error(error);
             toast.error("An error occurred");
