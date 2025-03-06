@@ -436,6 +436,17 @@ const OrderProforma = () => {
                 // validationSchema={validationSchema}
                 >
                     {({ values, setFieldValue }) => {
+
+                        useEffect(() => {
+                            // Calculate the sum of orderQty when the orderProducts data is loaded or updated
+                            if (values.currency==="INR") {
+                               
+                                setFieldValue("rate", 1);
+                            }
+                        }, [values.currency, setFieldValue]);
+
+
+
                         useEffect(() => {
                             // Calculate the sum of orderQty when the orderProducts data is loaded or updated
                             if (order?.orderProducts) {
@@ -491,7 +502,7 @@ const OrderProforma = () => {
                                     const totalWithGst = values.orderProducts.reduce((sum, product) => {
                                         return sum + (product.totalValue || 0);
                                     }, 0);
-                                    setFieldValue('total', totalWithGst + Taxx); 
+                                    setFieldValue('total', totalWithGst + Taxx);
                                     setTotall(totalWithGst + Taxx)// Adding GST to the total
                                 } else if (values.modeOfShipment === 'Commercial') {
                                     // If mode of shipment is Commercial, set GST to 0 and recalculate total
@@ -499,7 +510,7 @@ const OrderProforma = () => {
                                     const totalWithoutGst = values.orderProducts.reduce((sum, product) => {
                                         return sum + (product.totalValue || 0);
                                     }, 0);
-                                    
+
                                     setFieldValue('total', totalWithoutGst); // No GST, only totalValue sum
                                 }
                             }
@@ -586,22 +597,22 @@ const OrderProforma = () => {
                         useEffect(() => {
                             // Step 1: Get the current total from the form state (starting fresh)
                             let currentTotal = values.total || 0;
-                        
+
                             // Step 2: Check if shippingAccount is 'KLC' and courierCharges > 0
                             if (values.shippingAccount === 'KLC' && values.courierCharges >= 0) {
                                 // Add courier charges to the total if shippingAccount is 'KLC'
-                                currentTotal = parseFloat(values.courierCharges)+Totall;
+                                currentTotal = parseFloat(values.courierCharges) + Totall;
                             } else if (values.shippingAccount !== 'KLC' || values.courierCharges <= 0) {
                                 // If courierCharges is 0 or shippingAccount is not 'KLC', don't add any courier charges
                                 // Ensure courier charges don't affect the total when shippingAccount isn't 'KLC'
                                 currentTotal = currentTotal - (parseFloat(values.courierCharges) || 0); // Subtract the previous courierCharges if needed
                             }
-                        
+
                             // Step 3: Update the total field
                             setFieldValue('total', currentTotal);
-                        
+
                         }, [values.shippingAccount, values.courierCharges, setFieldValue]);
-                        
+
 
 
                         // for advance
