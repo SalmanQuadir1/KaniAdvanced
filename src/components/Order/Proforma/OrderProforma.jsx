@@ -588,6 +588,7 @@ const OrderProforma = () => {
                             setFieldValue(`orderProducts[${index}].taxibleValue`, taxableValue);
                             setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
                             setFieldValue('gst', Tax);
+                            setFieldValue('total',Tax+totalValue)
                             setTaxx(Tax)
                             console.log("Tax:", Tax);
                             console.log("GST Tax (Calculated):", gstTax);
