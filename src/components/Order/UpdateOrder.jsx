@@ -1476,7 +1476,7 @@ const UpdateOrder = () => {
                                   </div>
                                 </td>
 
-                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <div>
                                     <Field
                                       type="number"
@@ -1486,7 +1486,25 @@ const UpdateOrder = () => {
                                     />
                                     <ErrorMessage name="clientOrderQty" component="div" className="text-red-600 text-sm" />
                                   </div>
-                                </td>
+                                </td> */}
+
+
+<td className="px-5 py-5 border-b border-gray-200 text-sm">
+  <div>
+    <Field
+      type="number"
+      name={`orderProducts[${adjustedIndex}].clientOrderQuantity`}
+      placeholder="Enter Client Order Qty"
+      onChange={(e) => {
+        const value = Number(e.target.value);
+        setFieldValue(`orderProducts[${adjustedIndex}].clientOrderQuantity`, value);
+        setFieldValue(`orderProducts[${adjustedIndex}].quantityToManufacture`, value);
+      }}
+      className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+    />
+    <ErrorMessage name={`orderProducts[${adjustedIndex}].clientOrderQuantity`} component="div" className="text-red-600 text-sm" />
+  </div>
+</td>
 
                                 <td className="px-5 py-5 border-b border-gray-200  text-sm">
 
@@ -1504,7 +1522,7 @@ const UpdateOrder = () => {
                                 </td>
 
 
-                                <td className="px-5 py-5 border-b border-gray-200  text-sm">
+                                {/* <td className="px-5 py-5 border-b border-gray-200  text-sm">
 
 
                                   <div >
@@ -1519,10 +1537,31 @@ const UpdateOrder = () => {
                                     />
                                     <ErrorMessage name="InStockQty" component="div" className="text-red-600 text-sm" />
                                   </div>
-                                </td>
+                                </td> */}
 
 
-                                <td className="px-5 py-5 border-b border-gray-200  text-sm">
+<td className="px-5 py-5 border-b border-gray-200 text-sm">
+  <div>
+    <Field
+      type="number"
+      name={`orderProducts[${adjustedIndex}].inStockQuantity`}
+      placeholder="Enter In Stock Qty"
+      onChange={(e) => {
+        const inStockValue = Number(e.target.value);
+        const clientOrderValue = Number(values.orderProducts[adjustedIndex]?.clientOrderQuantity || 0);
+        const newQuantityToManufacture = Math.max(clientOrderValue - inStockValue, 0);
+
+        setFieldValue(`orderProducts[${adjustedIndex}].inStockQuantity`, inStockValue);
+        setFieldValue(`orderProducts[${adjustedIndex}].quantityToManufacture`, newQuantityToManufacture);
+      }}
+      className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+    />
+    <ErrorMessage name={`orderProducts[${adjustedIndex}].inStockQuantity`} component="div" className="text-red-600 text-sm" />
+  </div>
+</td>
+
+
+                                {/* <td className="px-5 py-5 border-b border-gray-200  text-sm">
 
 
                                   <div >
@@ -1536,7 +1575,20 @@ const UpdateOrder = () => {
                                     />
                                     <ErrorMessage name="QtyToManufacture" component="div" className="text-red-600 text-sm" />
                                   </div>
-                                </td>
+                                </td> */}
+
+<td className="px-5 py-5 border-b border-gray-200 text-sm">
+  <div>
+    <Field
+      type="number"
+      name={`orderProducts[${adjustedIndex}].quantityToManufacture`}
+      placeholder="Enter Qty To Manufacture"
+      readOnly
+      className="w-[130px] bg-gray-200 dark:bg-gray-700 rounded border-[1.5px] border-stroke py-3 px-5 text-black dark:text-white outline-none transition focus:border-primary active:border-primary disabled:cursor-default"
+    />
+    <ErrorMessage name={`orderProducts[${adjustedIndex}].quantityToManufacture`} component="div" className="text-red-600 text-sm" />
+  </div>
+</td>
 
                                 <td className="px-5 py-5 border-b border-gray-200  text-sm">
 
