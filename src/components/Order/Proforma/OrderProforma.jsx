@@ -25,6 +25,8 @@ const OrderProforma = () => {
     const [orderTypeOptions, setorderTypeOptions] = useState([])
     const [prodIdOptions, setprodIdOptions] = useState([])
     const [prodIdd, setprodIdd] = useState("")
+    const [Taxx, setTaxx] = useState(0)
+    const [Totall, setTotall] = useState(0)
     const [order, setOrder] = useState(null); // To store fetched product data
     const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
     const [suppId, setsuppId] = useState()
@@ -190,7 +192,7 @@ const OrderProforma = () => {
 
 
 
-  
+
 
 
 
@@ -312,10 +314,10 @@ const OrderProforma = () => {
 
     const handleSubmit = async (values) => {
         console.log(values);
-    
+
         // Assuming the structure of `values.orderProducts` is similar to what you provided
         const proformaProducts = values.orderProducts.map((product) => {
-            console.log(product,"jj");
+            console.log(product, "jj");
             return {
                 product: {
                     id: product.product.id // Assuming you need the id of the product
@@ -331,19 +333,19 @@ const OrderProforma = () => {
                 discountedPrice: product.totalValue - product.discount // Assuming discounted price is totalValue minus discount
             };
         });
-    
+
         // Prepare the final data with proformaProduct
         const finalData = {
             proformaProduct: proformaProducts, // Replacing orderProducts with proformaProduct
         };
-    
+
         // Log the finalData to check the format
         console.log(finalData, "finalData");
-    
+
         // try {
         //     const url = `${UPDATE_ORDERCREATED_ALL}/${id}`;
         //     const method = "PUT";
-    
+
         //     const response = await fetch(url, {
         //         method: method,
         //         headers: {
@@ -352,7 +354,7 @@ const OrderProforma = () => {
         //         },
         //         body: JSON.stringify(finalData)
         //     });
-    
+
         //     const data = await response.json();
         //     if (response.ok) {
         //         toast.success(`Order Status Updated successfully`);
@@ -364,10 +366,10 @@ const OrderProforma = () => {
         //     console.error(error);
         //     toast.error("An error occurred");
         // }
-    
+
         // You can now send `finalData` to the backend or do any other operation with it
     };
-    
+
 
 
 
@@ -383,6 +385,7 @@ const OrderProforma = () => {
                         selectedRows: [],
                         orderNo: order?.orderNo || '',
                         currency: "",
+                        rate: "",
 
 
                         orderProducts: order?.orderProducts?.map((product) => ({
@@ -393,6 +396,7 @@ const OrderProforma = () => {
                             orderQty: product?.clientOrderQuantity,// clientorderquantity
                             totalValue: "" || 0,
                             taxibleValue: "" || 0,
+                            gstTax: "",
                             discountedPrice: "",
                             // Initialize as 0, will be updated later
                             wholesalePrice: 0,
@@ -445,7 +449,7 @@ const OrderProforma = () => {
                             }
                         }, [order?.orderProducts, setFieldValue]);
 
-
+                        // for wholesale price by crrency
                         useEffect(() => {
                             // Ensure currency is selected
                             if (values.currency) {
@@ -475,26 +479,27 @@ const OrderProforma = () => {
                             }
                         }, [values.currency, order?.orderProducts, setFieldValue]);
 
-
+                        // for mode of shipment gst and total
                         useEffect(() => {
                             if (values.modeOfShipment) {
                                 console.log(values.modeOfShipment, "kkllkkll");
                                 if (values.modeOfShipment === 'Courier') {
+                                    console.log(values?.gst, "gsttststst");
                                     // If mode of shipment is Courier, sum all GST values
-                                    const totalGstTax = values.orderProducts.reduce((sum, product) => {
-                                        return sum + (product.gstTax || 0);
-                                    }, 0);
-                                    setFieldValue('gst', totalGstTax);
+
+                                    setFieldValue('gst', Taxx);
                                     const totalWithGst = values.orderProducts.reduce((sum, product) => {
                                         return sum + (product.totalValue || 0);
                                     }, 0);
-                                    setFieldValue('total', totalWithGst + totalGstTax); // Adding GST to the total
+                                    setFieldValue('total', totalWithGst + Taxx); 
+                                    setTotall(totalWithGst + Taxx)// Adding GST to the total
                                 } else if (values.modeOfShipment === 'Commercial') {
                                     // If mode of shipment is Commercial, set GST to 0 and recalculate total
                                     setFieldValue('gst', 0);
                                     const totalWithoutGst = values.orderProducts.reduce((sum, product) => {
                                         return sum + (product.totalValue || 0);
                                     }, 0);
+                                    
                                     setFieldValue('total', totalWithoutGst); // No GST, only totalValue sum
                                 }
                             }
@@ -504,7 +509,7 @@ const OrderProforma = () => {
 
 
 
-
+                        // for total and total units
 
                         useEffect(() => {
                             // Calculate the sum of totalValue for all products whenever orderProducts changes
@@ -518,52 +523,88 @@ const OrderProforma = () => {
                             setFieldValue("total", totalValueSum);
                         }, [values.orderProducts, setFieldValue]);
 
-
-                        const calculateValues = (index, wholesalePrice, orderQty, discount) => {
+                        // for gst cakculate and taxble 
+                        const calculateValues = (index, wholesalePrice, orderQty, discount, currentRate) => {
                             // Ensure currentRate is properly fetched or defined
-                            const currentRate = values.currentRate || 1; // Default to 1 if no rate is defined
+                            currentRate = wholesalePrice || wholesalePrice || 1; // Default to 1 if no rate is defined
+                            console.log("current rate:", currentRate);
+                            // Calculate 'num' based on current rate
+                            // Round if needed
 
-                            // Calculate 'num' properly using currentRate
-                            let num = 1 / currentRate;
-                            num = Math.round(num * 1000);  // Round if needed
+                            // Apply the discount to get the discounted price
+                            const discountAmount = wholesalePrice * (discount / 100);
+                            const discountedPrice = wholesalePrice - discountAmount; // Apply discount to wholesale price
 
-                            const discountedPrice = wholesalePrice * (1 - discount / 100); // Apply discount
-                            const taxableValue = discountedPrice;
+                            // Set taxable value to discounted price
+                            const taxableValue = currentRate - discount;
+
+                            // Calculate total value based on order quantity
                             const totalValue = taxableValue * orderQty;
 
+                            console.log("Wholesale Price:", wholesalePrice);
+                            console.log("Discounted Price:", discountedPrice);
+                            console.log("Taxable Value:", taxableValue);
+                            console.log("Order Quantity:", orderQty);
+                            let num = 1 / currentRate;
+                            num = Math.round(num * 1000);
+
+                            // Determine the GST tax rate based on taxable value and product unit
                             let gstTax = 0;
+                            let Tax = 0;
+
+                            // If taxable value >= num, apply unit-based GST rates
                             if (taxableValue >= num) {
+                                // Check if the product unit is 'Mtrs' or others
                                 const prodUnit = values.orderProducts[index]?.unit;
                                 if (prodUnit === 'Mtrs') {
-                                    gstTax = (totalValue * 5) / 100;
+                                    gstTax = 5
+                                    Tax = (totalValue * 5) / 100;  // Apply 5% GST for meters
                                 } else {
-                                    gstTax = (totalValue * 12) / 100;
+                                    gstTax = 12
+                                    Tax = (totalValue * 12) / 100;   // Apply 12% GST for other units
                                 }
                             } else {
-                                gstTax = (totalValue * 5) / 100;
+                                // Apply 5% GST if taxable value is below 'num'
+                                gstTax = 5
+                                Tax = (totalValue * 5) / 100;
                             }
 
                             // Update Formik values for the current product
                             setFieldValue(`orderProducts[${index}].gstTax`, gstTax);
                             setFieldValue(`orderProducts[${index}].taxibleValue`, taxableValue);
                             setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
+                            setFieldValue('gst', Tax);
+                            setTaxx(Tax)
+                            console.log("Tax:", Tax);
+                            console.log("GST Tax (Calculated):", gstTax);
+                            console.log("Total Value (Calculated):", totalValue);
                         };
 
+
+
+                        // fro total based on courrier
                         useEffect(() => {
-                            // Step 1: Get the current total from the form state
+                            // Step 1: Get the current total from the form state (starting fresh)
                             let currentTotal = values.total || 0;
-
+                        
                             // Step 2: Check if shippingAccount is 'KLC' and courierCharges > 0
-                            if (values.shippingAccount === 'KLC' && values.courierCharges > 0) {
+                            if (values.shippingAccount === 'KLC' && values.courierCharges >= 0) {
                                 // Add courier charges to the total if shippingAccount is 'KLC'
-                                currentTotal += parseFloat(values.courierCharges);
+                                currentTotal = parseFloat(values.courierCharges)+Totall;
+                            } else if (values.shippingAccount !== 'KLC' || values.courierCharges <= 0) {
+                                // If courierCharges is 0 or shippingAccount is not 'KLC', don't add any courier charges
+                                // Ensure courier charges don't affect the total when shippingAccount isn't 'KLC'
+                                currentTotal = currentTotal - (parseFloat(values.courierCharges) || 0); // Subtract the previous courierCharges if needed
                             }
-
+                        
                             // Step 3: Update the total field
                             setFieldValue('total', currentTotal);
-
+                        
                         }, [values.shippingAccount, values.courierCharges, setFieldValue]);
+                        
 
+
+                        // for advance
                         useEffect(() => {
                             // Step 1: Calculate the sum of totalValue for all products again
                             let currentTotal = values.total || 0;
@@ -763,7 +804,7 @@ const OrderProforma = () => {
                                                             Rate
                                                         </label>
                                                         <Field
-                                                            name="weftColors"
+                                                            name="rate"
                                                             type="Number"
                                                             placeholder="Enter Rate"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
@@ -1023,7 +1064,7 @@ const OrderProforma = () => {
                                                                     />
 
                                                                     <ErrorMessage
-                                                                        name={`orderProducts[${index}].clientOrderQuantity`}
+                                                                        name={`orderProducts[${index}].gstTax`}
                                                                         component="div"
                                                                         className="text-red-600 text-sm"
                                                                     />
