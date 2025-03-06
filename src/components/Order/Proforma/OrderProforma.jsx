@@ -327,7 +327,7 @@ const OrderProforma = () => {
 
         try {
             const url = `${ADD_ORDERPROFORMA}`;
-            const method = "PUT";
+            const method = "POST";
 
             const response = await fetch(url, {
                 method: method,
