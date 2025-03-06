@@ -443,6 +443,9 @@ const OrderProforma = () => {
                                
                                 setFieldValue("rate", 1);
                             }
+                            else{
+                                setFieldValue("rate", '');
+                            }
                         }, [values.currency, setFieldValue]);
 
 
