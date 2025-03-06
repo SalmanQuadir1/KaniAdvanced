@@ -339,10 +339,12 @@ const OrderProforma = () => {
             });
 
             const data = await response.json();
-           
-                toast.success("response?.message");
+            if (response.ok) {
+                toast.success(`Proforma Added successfully`);
                 // getCurrency(pagination.currentPage); // Fetch updated Currency (if needed)
-          
+            } else {
+                toast.error(`${data.errorMessage}`);
+            }
         } catch (error) {
             console.error(error);
             toast.error("An error occurred");
