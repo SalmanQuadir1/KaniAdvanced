@@ -448,96 +448,6 @@ const OrderProforma = () => {
                             }
                         }, [values.currency, setFieldValue]);
 
-
-
-                        useEffect(() => {
-                            // Calculate the sum of orderQty when the orderProducts data is loaded or updated
-                            if (order?.orderProducts) {
-                                const totalUnits = order.orderProducts.reduce(
-                                    (sum, product) => sum + (parseInt(product.clientOrderQuantity) || 0),
-                                    0
-                                );
-
-                                // Set the totalUnits value in the form state
-                                setFieldValue("totalUnits", totalUnits);
-                            }
-                        }, [order?.orderProducts, setFieldValue]);
-
-                        // for wholesale price by crrency
-                        useEffect(() => {
-                            // Ensure currency is selected
-                            if (values.currency) {
-                                const selectedCurrency = values.currency;
-                                console.log(selectedCurrency, "selected currency");
-
-                                // Loop through the orderProducts and update wholesalePrice
-                                order?.orderProducts?.forEach((product, index) => {
-                                    if (selectedCurrency === 'INR') {
-                                        // Set INR wholesale price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.wholesalePrice || 0);
-                                    } else if (selectedCurrency === 'USD') {
-                                        // Set USD price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.usdPrice || 0);
-                                    } else if (selectedCurrency === 'EURO') {
-                                        // Set USD price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.euroPrice || 0);
-                                    } else if (selectedCurrency === 'GBP') {
-                                        // Set USD price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.gbpPrice || 0);
-                                    } else if (selectedCurrency === 'RMB') {
-                                        // Set USD price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.rmbPrice || 0);
-                                    }
-
-                                });
-                            }
-                        }, [values.currency, order?.orderProducts, setFieldValue]);
-
-                        // for mode of shipment gst and total
-                        useEffect(() => {
-                            if (values.modeOfShipment) {
-                                console.log(values.modeOfShipment, "kkllkkll");
-                                if (values.modeOfShipment === 'Courier') {
-                                    console.log(values?.gst, "gsttststst");
-                                    // If mode of shipment is Courier, sum all GST values
-
-                                    setFieldValue('gst', Taxx);
-                                    const totalWithGst = values.orderProducts.reduce((sum, product) => {
-                                        return sum + (product.totalValue || 0);
-                                    }, 0);
-                                    setFieldValue('total', totalWithGst + Taxx);
-                                    setTotall(totalWithGst + Taxx)// Adding GST to the total
-                                } else if (values.modeOfShipment === 'Commercial') {
-                                    // If mode of shipment is Commercial, set GST to 0 and recalculate total
-                                    setFieldValue('gst', 0);
-                                    const totalWithoutGst = values.orderProducts.reduce((sum, product) => {
-                                        return sum + (product.totalValue || 0);
-                                    }, 0);
-
-                                    setFieldValue('total', totalWithoutGst); // No GST, only totalValue sum
-                                }
-                            }
-                        }, [values.modeOfShipment, values.orderProducts, setFieldValue]);
-
-
-
-
-
-                        // for total and total units
-
-                        useEffect(() => {
-                            // Calculate the sum of totalValue for all products whenever orderProducts changes
-                            const totalValueSum = values.orderProducts.reduce((sum, product) => {
-                                const totalProductValue = product.totalValue || 0; // Ensure you have a totalValue field for each product
-                                return sum + totalProductValue;
-                            }, 0);
-
-                            // Update Formik's totalUnitsValue field with the total value sum
-                            setFieldValue("totalUnitsValue", totalValueSum);
-                            setFieldValue("total", totalValueSum);
-                        }, [values.orderProducts, setFieldValue]);
-
-                        // for gst cakculate and taxble 
                         const calculateValues = (index, wholesalePrice, orderQty, discount, currentRate) => {
                             // Ensure currentRate is properly fetched or defined
                             currentRate = wholesalePrice || wholesalePrice || 1; // Default to 1 if no rate is defined
@@ -589,11 +499,103 @@ const OrderProforma = () => {
                             setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
                             setFieldValue('gst', Tax);
                             setFieldValue('total',Tax+totalValue)
+                            console.log(Tax+totalValue,"jujujuju");
+                            console.log(values.total,"umer shah");
                             setTaxx(Tax)
                             console.log("Tax:", Tax);
                             console.log("GST Tax (Calculated):", gstTax);
                             console.log("Total Value (Calculated):", totalValue);
                         };
+
+                        useEffect(() => {
+                            // Calculate the sum of orderQty when the orderProducts data is loaded or updated
+                            if (order?.orderProducts) {
+                                const totalUnits = order.orderProducts.reduce(
+                                    (sum, product) => sum + (parseInt(product.clientOrderQuantity) || 0),
+                                    0
+                                );
+
+                                // Set the totalUnits value in the form state
+                                setFieldValue("totalUnits", totalUnits);
+                            }
+                        }, [order?.orderProducts, setFieldValue]);
+
+                        // for wholesale price by crrency
+                        useEffect(() => {
+                            // Ensure currency is selected
+                            if (values.currency) {
+                                const selectedCurrency = values.currency;
+                                console.log(selectedCurrency, "selected currency");
+
+                                // Loop through the orderProducts and update wholesalePrice
+                                order?.orderProducts?.forEach((product, index) => {
+                                    if (selectedCurrency === 'INR') {
+                                        // Set INR wholesale price
+                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.wholesalePrice || 0);
+                                    } else if (selectedCurrency === 'USD') {
+                                        // Set USD price
+                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.usdPrice || 0);
+                                    } else if (selectedCurrency === 'EURO') {
+                                        // Set USD price
+                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.euroPrice || 0);
+                                    } else if (selectedCurrency === 'GBP') {
+                                        // Set USD price
+                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.gbpPrice || 0);
+                                    } else if (selectedCurrency === 'RMB') {
+                                        // Set USD price
+                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.rmbPrice || 0);
+                                    }
+
+                                });
+                            }
+                        }, [values.currency, order?.orderProducts, setFieldValue]);
+
+                        // for mode of shipment gst and total
+                        useEffect(() => {
+                            if (values.modeOfShipment) {
+                                console.log(values.modeOfShipment, "kkllkkll");
+                                if (values.modeOfShipment === 'Courier'||values.modeOfShipment === '') {
+                                    console.log(values?.gst, "gsttststst");
+                                    // If mode of shipment is Courier, sum all GST values
+
+                                    setFieldValue('gst', Taxx);
+                                    const totalWithGst = values.orderProducts.reduce((sum, product) => {
+                                        return sum + (product.totalValue || 0);
+                                    }, 0);
+                                    setFieldValue('total', totalWithGst + Taxx);
+                                    setTotall(totalWithGst + Taxx)// Adding GST to the total
+                                } else if (values.modeOfShipment === 'Commercial') {
+                                    // If mode of shipment is Commercial, set GST to 0 and recalculate total
+                                    setFieldValue('gst', 0);
+                                    const totalWithoutGst = values.orderProducts.reduce((sum, product) => {
+                                        return sum + (product.totalValue || 0);
+                                    }, 0);
+
+                                    setFieldValue('total', totalWithoutGst); // No GST, only totalValue sum
+                                }
+                            }
+                        }, [values.modeOfShipment, values.orderProducts, setFieldValue]);
+
+
+
+
+
+                        // for total and total units
+
+                        useEffect(() => {
+                            // Calculate the sum of totalValue for all products whenever orderProducts changes
+                            const totalValueSum = values.orderProducts.reduce((sum, product) => {
+                                const totalProductValue = product.totalValue || 0; // Ensure you have a totalValue field for each product
+                                return sum + totalProductValue;
+                            }, 0);
+
+                            // Update Formik's totalUnitsValue field with the total value sum
+                            setFieldValue("totalUnitsValue", totalValueSum);
+                            setFieldValue("total", totalValueSum);
+                        }, [values.orderProducts, setFieldValue]);
+
+                        // for gst cakculate and taxble 
+                      
 
 
 
