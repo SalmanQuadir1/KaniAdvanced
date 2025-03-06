@@ -415,7 +415,7 @@ const OrderProforma = () => {
                         modeOfShipment: "",
                         gst: "",
                         shippingAccount: "",
-                        courierCharges: "",
+                        courierCharges: 0,
                         advanceReceived: "",
                         total: "",
 
