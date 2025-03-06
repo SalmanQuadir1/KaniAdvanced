@@ -141,7 +141,7 @@ const OrderProforma = () => {
                 });
                 const data = await response.json();
                 console.log(data, "piddd");
-                setPid(data?.orderProforma?.pid);
+                setPid(data?.pid);
 
             } catch (error) {
                 console.error(error);
