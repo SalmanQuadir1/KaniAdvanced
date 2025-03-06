@@ -9,7 +9,7 @@ import 'flatpickr/dist/themes/material_blue.css'; // Import a Flatpickr theme
 
 import useorder from '../../../hooks/useOrder';
 
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL } from '../../../Constants/utils';
+import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL, GET_PID, ADD_ORDERPROFORMA } from '../../../Constants/utils';
 
 
 import { FiTrash2 } from 'react-icons/fi';
@@ -21,6 +21,7 @@ const OrderProforma = () => {
     const navigate = useNavigate();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const [orderType, setOrderType] = useState('');
+    const [Pid, setPid] = useState('')
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [orderTypeOptions, setorderTypeOptions] = useState([])
     const [prodIdOptions, setprodIdOptions] = useState([])
@@ -94,78 +95,15 @@ const OrderProforma = () => {
     const [selectedSuppliers, setSelectedSuppliers] = useState([]);
 
 
-    // const handleCheckboxChange = (supplierId) => {
-    //   console.log(supplierId, "sssspppp");
-    //   setSelectedSuppliers((prev) =>
-    //     prev.includes(supplierId)
-    //       ? prev.filter((id) => id !== supplierId) // Remove if already selected
-    //       : [...prev, supplierId] // Add if not selected
-    //   );
-    // };
-    const handleCheckboxChange = (selectedRowId, supplierId) => {
-        setSelectedSuppliers((prev) => {
-            const updated = [...prev];
-            const rowIndex = updated.findIndex(
-                (row) => row.selectedRowId === selectedRowId
-            );
-
-            if (rowIndex !== -1) {
-                // Update supplierIds for the existing row
-                const supplierExists = updated[rowIndex].supplierIds.some(
-                    (s) => s.supplierId === supplierId
-                );
-
-                if (supplierExists) {
-                    // Remove the supplier if already exists
-                    updated[rowIndex].supplierIds = updated[rowIndex].supplierIds.filter(
-                        (s) => s.supplierId !== supplierId
-                    );
-                } else {
-                    // Add new supplier to the row
-                    updated[rowIndex].supplierIds.push({
-                        supplierId,
-                        supplierName: "", // Optional: default supplier name if needed
-                    });
-                }
-            } else {
-                // Add a new row with the selected supplier
-                updated.push({
-                    selectedRowId,
-                    supplierIds: [{ supplierId, supplierName: "" }],
-                });
-            }
-            console.log(updated, "updatedddddddddddddddddddddd");
-            return updated;
-        });
-    };
 
 
-    console.log(selectedSuppliers, "selecteddddddddd Suppliersss");
-
-    const openSupplierModal = (id, rowIndex) => {
-        console.log("opening supplier  modal  after update", id, rowIndex);
-        setIsSupplierModalOpen(true);
-        setSelectedRowId(rowIndex);
-        console.log(id, "ghson");
-        setsuppId(id)
-    };
 
 
-    console.log(isSupplierModalOpen, "ll");
-
-    console.log(isModalOpen, "jj");
 
 
-    // Close modal
-    const closeSupplierModal = () => {
-        setIsSupplierModalOpen(false);
-    };
 
 
-    const handleSupplierModalSubmit = () => {
-        console.log("Selected Suppliers:", selectedSuppliers);
-        closeSupplierModal();
-    };
+
 
 
 
@@ -190,8 +128,29 @@ const OrderProforma = () => {
     const { id } = useParams();
 
 
+    //pid generate
+    useEffect(() => {
+        const getPid = async (page) => {
+            try {
+                const response = await fetch(`${GET_PID}/${id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                console.log(data, "piddd");
+                setPid(data?.orderProforma?.pid);
 
+            } catch (error) {
+                console.error(error);
+                toast.error("Failed to fetch orderType");
+            }
+        };
+        getPid();
 
+    }, [])
 
 
 
@@ -299,24 +258,17 @@ const OrderProforma = () => {
 
 
 
-    const handleModalSubmit = (values) => {
-        console.log(values, "gfdsa");
-
-
-
-        setprodIdModal((prevValues) => [...prevValues, values])
-        setIsModalOpen(false)
-
-    }
+  
 
     console.log(order, 'jugnu');
 
 
     const handleSubmit = async (values) => {
-        console.log(values);
+        console.log('values==========', values);
 
         // Assuming the structure of `values.orderProducts` is similar to what you provided
         const proformaProducts = values.orderProducts.map((product) => {
+            const gstTax = values?.modeOfShipment === 'Courier' ?  product.gstTax:0;
             console.log(product, "jj");
             return {
                 product: {
@@ -327,7 +279,7 @@ const OrderProforma = () => {
                 totalPrice: product.totalValue, // Using totalValue as the totalPrice
                 totalValue: product.totalValue, // Total value is the same
                 taxibleValue: product.taxibleValue, // Assuming this value is correct
-                gstTax: product.gstTax, // GST tax is already provided
+                gstTax: gstTax, // GST tax is already provided
                 discount: product.discount, // Assuming there's a discount property in the product
                 tax: product.gstTax * 0.1, // Assuming tax is calculated as 10% of GST tax (modify based on actual logic)
                 discountedPrice: product.totalValue - product.discount // Assuming discounted price is totalValue minus discount
@@ -336,36 +288,67 @@ const OrderProforma = () => {
 
         // Prepare the final data with proformaProduct
         const finalData = {
+            order: {
+                id: order?.id
+              },
+            //   "pid": "WSPI-12345-02-24",
+            pid: values.pid,
+            paymentTerms: values.paymentTerms,
+            currency: values.currency,
+            freightTerms: values.freightTerms,
+            shipVia: values.shipVia,
+            date: values.date,
+            courierCharges: values.courierCharges,
+            advanceReceived: values.advanceReceived,
+            clothBags: values.clothBags,
+            total: values.total,
+            //   carrier: values.carrier,
+            service: values.service,
+            modeOfShipment: values.modeOfShipment,
+            rate: values.rate,
+            gst: values.gst,
+            totalUnits: values.totalUnits,
+
+
+
+            totalUnitsValue: values.totalUnitsValue,
+            outstandingBalance: values.outstandingBalance,
+            //   discount: values.discount,
+            //   totalRateValue: values.totalRateValue,
+            shippingAccount: values.shippingAccount,
+            labels: values.labels,
+            tags: values.tags,
+            logo: values.logo,
             proformaProduct: proformaProducts, // Replacing orderProducts with proformaProduct
         };
 
         // Log the finalData to check the format
         console.log(finalData, "finalData");
 
-        // try {
-        //     const url = `${UPDATE_ORDERCREATED_ALL}/${id}`;
-        //     const method = "PUT";
+        try {
+            const url = `${ADD_ORDERPROFORMA}`;
+            const method = "POST";
 
-        //     const response = await fetch(url, {
-        //         method: method,
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             "Authorization": `Bearer ${token}`
-        //         },
-        //         body: JSON.stringify(finalData)
-        //     });
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(finalData)
+            });
 
-        //     const data = await response.json();
-        //     if (response.ok) {
-        //         toast.success(`Order Status Updated successfully`);
-        //         // getCurrency(pagination.currentPage); // Fetch updated Currency (if needed)
-        //     } else {
-        //         toast.error(`${data.errorMessage}`);
-        //     }
-        // } catch (error) {
-        //     console.error(error);
-        //     toast.error("An error occurred");
-        // }
+            const data = await response.json();
+            if (response.ok) {
+                toast.success(`Proforma Added successfully`);
+                // getCurrency(pagination.currentPage); // Fetch updated Currency (if needed)
+            } else {
+                toast.error(`${data.errorMessage}`);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("An error occurred");
+        }
 
         // You can now send `finalData` to the backend or do any other operation with it
     };
@@ -382,10 +365,29 @@ const OrderProforma = () => {
                     enableReinitialize={true}
                     initialValues={{
                         date: "",
+                        billTo: order?.customer?.billTo,
+                        billtoEmail: order?.customer?.email,
+                        shipTo: order?.customer?.shippingAddress,
+                        shipToEmail: order?.customer?.email,
+
+                        poDate: order?.poDate,
+                        paymentTerms: "",
+                        shipDate: order?.shippingDate,
+                        freightTerms: "",
+                        shipVia: "",
+                        service: "",
+
+
+
+
+
+
+
                         selectedRows: [],
                         orderNo: order?.orderNo || '',
                         currency: "",
                         rate: "",
+                        pid: Pid,
 
 
                         orderProducts: order?.orderProducts?.map((product) => ({
@@ -439,11 +441,11 @@ const OrderProforma = () => {
 
                         useEffect(() => {
                             // Calculate the sum of orderQty when the orderProducts data is loaded or updated
-                            if (values.currency==="INR") {
-                               
+                            if (values.currency === "INR") {
+
                                 setFieldValue("rate", 1);
                             }
-                            else{
+                            else {
                                 setFieldValue("rate", '');
                             }
                         }, [values.currency, setFieldValue]);
@@ -498,9 +500,9 @@ const OrderProforma = () => {
                             setFieldValue(`orderProducts[${index}].taxibleValue`, taxableValue);
                             setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
                             setFieldValue('gst', Tax);
-                            setFieldValue('total',Tax+totalValue)
-                            console.log(Tax+totalValue,"jujujuju");
-                            console.log(values.total,"umer shah");
+                            setFieldValue('total', Tax + totalValue)
+                            console.log(Tax + totalValue, "jujujuju");
+                            console.log(values.total, "umer shah");
                             setTaxx(Tax)
                             console.log("Tax:", Tax);
                             console.log("GST Tax (Calculated):", gstTax);
@@ -554,7 +556,7 @@ const OrderProforma = () => {
                         useEffect(() => {
                             if (values.modeOfShipment) {
                                 console.log(values.modeOfShipment, "kkllkkll");
-                                if (values.modeOfShipment === 'Courier'||values.modeOfShipment === '') {
+                                if (values.modeOfShipment === 'Courier' || values.modeOfShipment === '') {
                                     console.log(values?.gst, "gsttststst");
                                     // If mode of shipment is Courier, sum all GST values
 
@@ -595,7 +597,7 @@ const OrderProforma = () => {
                         }, [values.orderProducts, setFieldValue]);
 
                         // for gst cakculate and taxble 
-                      
+
 
 
 
@@ -671,56 +673,51 @@ const OrderProforma = () => {
                                                             <ReactDatePicker
                                                                 {...field}
                                                                 selected={field.value ? new Date(field.value) : null} // Convert string to Date object if value exists
-                                                                onChange={(date) =>
-                                                                    form.setFieldValue(
-                                                                        "date",
-                                                                        date // Format date to "yyyy-MM-dd"
-                                                                    )
-                                                                }
+                                                                onChange={(date) => {
+                                                                    // Format date to 'yyyy-MM-dd' format before setting it in the form state
+                                                                    const formattedDate = date ? date.toISOString().split('T')[0] : ''; // This gives 'YYYY-MM-DD'
+                                                                    form.setFieldValue("date", formattedDate);
+                                                                }}
                                                                 dateFormat="yyyy-MM-dd" // Display format
                                                                 placeholderText=" Date"
                                                                 className="form-datepicker w-[270px] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                             />
                                                         )}
                                                     </Field>
+
                                                 </div>
                                                 <ErrorMessage name="orderDate" component="div" className="text-red-600 text-sm" />
 
 
 
 
-                                                <div className="flex-2 min-w-[200px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Order No</label>
-                                                    <ReactSelect
-                                                        name="orderNo"
-
-                                                        value={order?.orderNo ? { label: order.orderNo, value: order.orderNo } : null} // Display orderNo
-                                                        styles={customStyles}
-                                                        className="bg-white dark:bg-form-Field w-[270px]"
-                                                        classNamePrefix="react-select"
-                                                        placeholder="Select Order Type"
-
-
-                                                        isDisabled={true}
+                                                <div className="flex-2 min-w-[270px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">PI</label>
+                                                    <Field
+                                                        name="pid"
+                                                        type="text"
+                                                        placeholder="pid"
+                                                        readOnly
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                     <ErrorMessage name="orderType" component="div" className="text-red-600 text-sm" />
                                                 </div>
 
-                                                <div className="flex-2 min-w-[300px]">
+                                                <div className="flex-2 min-w-[270px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">
                                                         Bill To
                                                     </label>
                                                     <Field
-                                                        name="warpColors"
+                                                        name="billTo"
                                                         type="text"
-                                                        placeholder="Enter Warp Colors"
+                                                        placeholder="bill To"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
 
 
                                             </div>
-                                            <div className="mb-4.5 flex flex-wrap gap-6 mt-3">
+                                            <div className="mb-4.5 flex flex-wrap gap-4 mt-3">
 
                                                 <div className="flex-2 min-w-[270px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">
@@ -729,7 +726,7 @@ const OrderProforma = () => {
                                                         Bill To Email
                                                     </label>
                                                     <Field
-                                                        name="weftColors"
+                                                        name="billtoEmail"
                                                         type="text"
                                                         placeholder="Enter Weft Colors"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
@@ -743,18 +740,18 @@ const OrderProforma = () => {
                                                         Ship To
                                                     </label>
                                                     <Field
-                                                        name="warpColors"
+                                                        name="shipTo"
                                                         type="text"
                                                         placeholder="Enter Warp Colors"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
-                                                <div className="flex-1 min-w-[270px]">
+                                                <div className="flex-2 min-w-[270px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">
                                                         Ship To Email
                                                     </label>
                                                     <Field
-                                                        name="weftColors"
+                                                        name="shipToEmail"
                                                         type="text"
                                                         placeholder="Enter Weft Colors"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
@@ -767,9 +764,10 @@ const OrderProforma = () => {
                                                             PO/Date
                                                         </label>
                                                         <Field
-                                                            name="warpColors"
+                                                            name="poDate"
                                                             type="text"
-                                                            placeholder="Enter Warp Colors"
+                                                            placeholder="poDate"
+                                                            readOnly
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -778,9 +776,9 @@ const OrderProforma = () => {
                                                             Payment Terms
                                                         </label>
                                                         <Field
-                                                            name="weftColors"
+                                                            name="paymentTerms"
                                                             type="text"
-                                                            placeholder="Enter Weft Colors"
+                                                            placeholder="payment Terms"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -790,9 +788,10 @@ const OrderProforma = () => {
                                                             Ship Date
                                                         </label>
                                                         <Field
-                                                            name="weftColors"
+                                                            name="shipDate"
                                                             type="text"
-                                                            placeholder="Enter Weft Colors"
+                                                            placeholder="shippingDate"
+                                                            readOnly
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -833,9 +832,9 @@ const OrderProforma = () => {
                                                             Freight Terms
                                                         </label>
                                                         <Field
-                                                            name="Freight Terms"
+                                                            name="freightTerms"
                                                             type="text"
-                                                            placeholder="Enter Freight Terms"
+                                                            placeholder="freightTerms "
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -848,9 +847,9 @@ const OrderProforma = () => {
                                                             Ship Via
                                                         </label>
                                                         <Field
-                                                            name="warpColors"
+                                                            name="shipVia"
                                                             type="text"
-                                                            placeholder="Enter Warp Colors"
+                                                            placeholder="shipVia"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -859,7 +858,7 @@ const OrderProforma = () => {
                                                     <div className="flex items-center">
                                                         <Field
                                                             type="radio"
-                                                            name="shipVia"
+                                                            name="service"
                                                             value="Service"
                                                             className="mr-2"
                                                         />
@@ -870,7 +869,7 @@ const OrderProforma = () => {
                                                     <div className="flex items-center">
                                                         <Field
                                                             type="radio"
-                                                            name="shipVia"
+                                                            name="service"
                                                             value="Economy"
                                                             className="mr-2"
                                                         />
@@ -881,7 +880,7 @@ const OrderProforma = () => {
                                                     <div className="flex items-center">
                                                         <Field
                                                             type="radio"
-                                                            name="shipVia"
+                                                            name="service"
                                                             value="Priority"
                                                             className="mr-2"
                                                         />
@@ -940,10 +939,15 @@ const OrderProforma = () => {
                                                             <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                                                 WholeSale Price
                                                             </th>
-
-                                                            <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                                            {
+                                                                values?.modeOfShipment === 'Courier' &&(
+                                                                    <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                                                 GST Tax %
                                                             </th>
+                                                                )
+                                                            }
+
+                                                            
                                                             <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                                                 Discount
                                                             </th>
@@ -1071,8 +1075,8 @@ const OrderProforma = () => {
 
 
 
-
-
+                                                                {
+                                                                values?.modeOfShipment === 'Courier' &&(
 
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
@@ -1086,6 +1090,9 @@ const OrderProforma = () => {
                                                                         className="text-red-600 text-sm"
                                                                     />
                                                                 </td>
+                                                                )}
+
+
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
                                                                         name={`orderProducts[${index}].discount`}

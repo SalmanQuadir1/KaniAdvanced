@@ -215,7 +215,7 @@ export const VIEW_ALL_ORDERS = `${BASE_URL}/order/search`;
 export const VIEW_CREATED_ORDERS = `${BASE_URL}/order/searchCreated`; 
 export const EDIT_CREATED_ORDERS = `${BASE_URL}/order/searchCreatedEditOrder`; 
 
-
+export const GET_PID = `${BASE_URL}/order/generateOrderProforma`; 
 
 export const VIEW_ALLACCEPTED_ORDERS = `${BASE_URL}/order/searchAccepted`;  
 
@@ -253,6 +253,9 @@ export const VIEW_REJECTED_ORDERS = `${BASE_URL}/order/searchRejected`;
 export const VIEW_PARTIALLYPENDING_ORDERS = `${BASE_URL}/order/searchPendingPartially`; 
 export const VIEW_FORCEDCLOSURE_ORDERS = `${BASE_URL}/order/searchForcedClosure`; 
 export const UPDATE_ORDERCREATED_ALL= `${BASE_URL}/order/updateOrderProductsAccepted`; 
+export const ADD_ORDERPROFORMA= `${BASE_URL}/order/saveOrderProforma`; 
+
+
 export const UPDATE_CANCELLEDORDER_ALL= `${BASE_URL}/order/updateOrderProductsCancelled`; 
 
 export const UPDATE_ORDERCREATEDDATE= `${BASE_URL}/order/updateShipDate`; 

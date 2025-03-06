@@ -382,6 +382,7 @@ const handleUpdate = (e, item) => {
             toast.error("Failed to fetch orderType");
         }
     };
+  
 
 
     const getProdId = async (page) => {
