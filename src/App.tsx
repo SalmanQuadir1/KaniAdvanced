@@ -57,6 +57,8 @@ import Location from './components/Configurator/Location.jsx';
 import Supplier from './components/Configurator/Supplier.jsx';
 
 import AddSupplier from './components/Supplier/AddSupplier.jsx';
+import AddBulkSupplier from './components/Supplier/AddBulkSupplier.jsx';
+
 import ViewSupplier from './components/Supplier/ViewSupplier.jsx';
 import UpdateSupplier from './components/Supplier/UpdateSupplier.jsx';
 
@@ -432,7 +434,7 @@ function App() {
               </>
             }
           />
-             <Route
+          <Route
             path="/Order/generateRetailProforma/:id"
             element={
               <>
@@ -1129,6 +1131,16 @@ function App() {
               <>
                 <PageTitle title="Add Supplier" />
                 <AddSupplier />
+              </>
+            }
+          />
+
+          <Route
+            path="/supplier/addBulkSupplier"
+            element={
+              <>
+                <PageTitle title="Add Bulk Supplier" />
+                <AddBulkSupplier />
               </>
             }
           />

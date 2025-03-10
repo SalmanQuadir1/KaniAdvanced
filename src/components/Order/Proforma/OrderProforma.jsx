@@ -1089,6 +1089,7 @@ const OrderProforma = () => {
 
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
+                                                                    type="number"
                                                                         name={`orderProducts[${index}].discount`}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                                         onBlur={() =>

@@ -122,7 +122,7 @@ const Home = () => {
                 levelUp: true,
                 isDownload: true // Added a flag to indicate it's a download button
             },
-            { title: "Monthly Orders", link: "/Order/monthlyorders", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
+            { title: "Monthly Order Calender", link: "/Order/monthlyorders", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
             { title: "Product Report", link: "/report/product", countKey: "approvedOrders", icon: <GrCompliance className="w-10 h-10" />, levelUp: true },
 
 
