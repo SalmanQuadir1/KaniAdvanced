@@ -23,6 +23,10 @@ const ViewProduct = () => {
     const { Product, handleDelete, handleUpdate, handlePageChange, pagination, getProduct, productId, getProductId, getBOMData } = useProduct({ referenceImages, actualImages });
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const [isImagesModalOpen, setisImagesModalOpen] = useState(false)
+
+    const [Images, setImages] = useState(null)
     const [selectedBOMData, setSelectedBOMData] = useState(null);
 
 
@@ -56,6 +60,17 @@ const ViewProduct = () => {
         setSelectedBOMData(bomData);
         setIsModalOpen(true);
     };
+
+    const openImageModal = (Images) => {
+        console.log("image modeel before");
+
+
+        setisImagesModalOpen(true);
+        setImages(Images);
+       
+    };
+
+
     // console.log(selectedBOMData, "jijiji");
 
     const closeBOMModal = () => {
@@ -151,6 +166,10 @@ const ViewProduct = () => {
                             alt="Product Image"
                         />
                     </div>
+                </td>
+                <td className="px-1 py-5 border-b border-gray-200 text-sm">
+                    <span onClick={() => openImageModal(item?.images)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[200px]"> VIEW IMAGES</span>
+
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.productId?.substring(0, 14) + ".."}</p>
@@ -287,6 +306,44 @@ const ViewProduct = () => {
                         </div>
                     )}
 
+                    {isImagesModalOpen && (
+                        console.log("heyy")
+                    
+                     
+                //     <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50 ">
+                //     <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px]  w-[870px] h-[400px] mt-[60px] dark:bg-slate-600">
+                //         <div className="text-right">
+                //             <button onClick={setisImagesModalOpen(false)} className="text-red-500 text-xl  font-bold">&times;</button>
+                //         </div>
+                //         <h2 className="text-2xl text-center mb-4 font-extrabold">INVENTORY  DETAILS</h2>
+                //         <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
+                //             <table className="min-w-full leading-normal">
+                //                 <thead>
+                //                     <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
+                //                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >LOCATION</th>
+                //                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">OPENING BALANCE</th>
+
+                //                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Rate</th>
+                //                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Value</th>
+                //                     </tr>
+                //                 </thead>
+                //                 <tbody>
+
+
+                                 
+
+
+
+                //                 </tbody>
+                //             </table>
+                //         </div>
+
+                //         {/* <pre>{JSON.stringify(selectedBOMData, null, 2)}</pre> */}
+                //     </div>
+                // </div>
+
+                    )}
+
 
                     {/* Inventory Modal */}
                     {isINVENTORYModalOpen && (
@@ -399,6 +456,7 @@ const ViewProduct = () => {
                                     <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">IMAGE</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[220px]">View Images</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">PRODUCT ID</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">PRODUCT GROUP</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">CATEGORY</th>

@@ -447,6 +447,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
 
             // Append the updated product to formData
             formData.append("product", JSON.stringify(product));
+            console.log(referenceImages,"reffferrreffefefefefefefefffffffffffff=================");
 
             Array.from(referenceImages).forEach((file) => formData.append('referenceImages', file)); // Add files
             Array.from(actualImages).forEach((file) => formData.append('actualImages', file));
@@ -488,7 +489,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
             if (response.ok) {
                 setTimeout(() => {
                     toast.success(`Product ${edit ? "updated" : "added"} successfully`);
-                }, 3000);
+                }, 1000);
 
                 // Reset the form and states
                 resetForm();
