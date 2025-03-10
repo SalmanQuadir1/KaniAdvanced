@@ -258,7 +258,7 @@ const OrderProforma = () => {
 
 
 
-  
+
 
     console.log(order, 'jugnu');
 
@@ -268,7 +268,7 @@ const OrderProforma = () => {
 
         // Assuming the structure of `values.orderProducts` is similar to what you provided
         const proformaProducts = values.orderProducts.map((product) => {
-            const gstTax = values?.modeOfShipment === 'Courier' ?  product.gstTax:0;
+            const gstTax = values?.modeOfShipment === 'Courier' ? product.gstTax : 0;
             console.log(product, "jj");
             return {
                 product: {
@@ -290,7 +290,7 @@ const OrderProforma = () => {
         const finalData = {
             order: {
                 id: order?.id
-              },
+            },
             //   "pid": "WSPI-12345-02-24",
             pid: values.pid,
             paymentTerms: values.paymentTerms,
@@ -940,14 +940,14 @@ const OrderProforma = () => {
                                                                 WholeSale Price
                                                             </th>
                                                             {
-                                                                values?.modeOfShipment === 'Courier' &&(
+                                                                values?.modeOfShipment === 'Courier' && (
                                                                     <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                                GST Tax %
-                                                            </th>
+                                                                        GST Tax %
+                                                                    </th>
                                                                 )
                                                             }
 
-                                                            
+
                                                             <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                                                 Discount
                                                             </th>
@@ -968,15 +968,15 @@ const OrderProforma = () => {
 
                                                                 {/* Product ID */}
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <div className="relative group">
-                        <img
-                            className="h-10 w-10 rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
-                            crossOrigin="use-credentials"
-                            src={`${GET_IMAGE}/products/getimages/${product?.products?.images[0]?.referenceImage}`}
-                            alt="Product Image"
-                        />
-                    </div>
-                </td>
+                                                                    <div className="relative group">
+                                                                        <img
+                                                                            className="h-10 w-10 rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                                                                            crossOrigin="use-credentials"
+                                                                            src={`${GET_IMAGE}/products/getimages/${product?.products?.images[0]?.referenceImage}`}
+                                                                            alt="Product Image"
+                                                                        />
+                                                                    </div>
+                                                                </td>
 
 
 
@@ -1070,26 +1070,26 @@ const OrderProforma = () => {
 
 
                                                                 {
-                                                                values?.modeOfShipment === 'Courier' &&(
+                                                                    values?.modeOfShipment === 'Courier' && (
+
+                                                                        <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                                            <Field
+                                                                                name={`orderProducts[${index}].gstTax`}
+                                                                                className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                                                            />
+
+                                                                            <ErrorMessage
+                                                                                name={`orderProducts[${index}].gstTax`}
+                                                                                component="div"
+                                                                                className="text-red-600 text-sm"
+                                                                            />
+                                                                        </td>
+                                                                    )}
+
 
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
-                                                                        name={`orderProducts[${index}].gstTax`}
-                                                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                                                    />
-
-                                                                    <ErrorMessage
-                                                                        name={`orderProducts[${index}].gstTax`}
-                                                                        component="div"
-                                                                        className="text-red-600 text-sm"
-                                                                    />
-                                                                </td>
-                                                                )}
-
-
-                                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                                    <Field
-                                                                    type="number"
+                                                                        type="number"
                                                                         name={`orderProducts[${index}].discount`}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                                         onBlur={() =>
