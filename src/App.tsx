@@ -82,6 +82,8 @@ import EditOrderCreated from './components/Order/EditOrderCreated.jsx';
 
 import UpdateOrderStatus from './components/Order/UpdateOrderStatus.jsx';
 import OrderProforma from './components/Order/Proforma/OrderProforma.jsx';
+import RetailOrderProforma from './components/Order/Proforma/RetailOrderProforma.jsx';
+
 
 
 import UpdatePartiallyOrderStatus from './components/Order/UpdatePartiallyOrderStatus.jsx';
@@ -259,17 +261,17 @@ function App() {
             path="/"
             element={
               <>
-                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER", "ROLE_EXECUTOR","ROLE_ADMIN_DLI","ROLE_ADMIN_SXR"]}></RoleBasedRoute>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <Home />
               </>
             }
           />
-             <Route
+          <Route
             path="/home"
             element={
               <>
-                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER", "ROLE_EXECUTOR","ROLE_ADMIN_DLI","ROLE_ADMIN_SXR"]}></RoleBasedRoute>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <Home />
               </>
@@ -277,11 +279,11 @@ function App() {
           />
 
 
-<Route
+          <Route
             path="/report/freports"
             element={
               <>
-                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER", "ROLE_EXECUTOR","ROLE_ADMIN_DLI","ROLE_ADMIN_SXR"]}></RoleBasedRoute>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <FinancialReportDashboard />
               </>
@@ -289,11 +291,11 @@ function App() {
           />
 
 
-<Route
+          <Route
             path="/report/financial"
             element={
               <>
-                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER", "ROLE_EXECUTOR","ROLE_ADMIN_DLI","ROLE_ADMIN_SXR"]}></RoleBasedRoute>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <GeneralFinancialReportDashboard />
               </>
@@ -322,7 +324,7 @@ function App() {
           />
 
           {/* Calenders */}
-           <Route
+          <Route
             path="/Order/monthlyorders"
             element={
               <>
@@ -342,7 +344,7 @@ function App() {
               </>
             }
           />
-             <Route
+          <Route
             path="/Reports"
             element={
               <>
@@ -352,7 +354,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/report/product"
             element={
               <>
@@ -362,7 +364,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/report/wsRetailReport"
             element={
               <>
@@ -372,7 +374,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/report/freportdate"
             element={
               <>
@@ -401,7 +403,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/Order/ViewOrderCreated"
             element={
               <>
@@ -421,12 +423,21 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/Order/generateProforma/:id"
             element={
               <>
                 <PageTitle title="Create Order Proforma" />
                 <OrderProforma />
+              </>
+            }
+          />
+             <Route
+            path="/Order/generateRetailProforma/:id"
+            element={
+              <>
+                <PageTitle title="Create Retail Order Proforma" />
+                <RetailOrderProforma />
               </>
             }
           />
@@ -829,7 +840,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/product/addBulkInventory"
             element={
               <>
@@ -1142,7 +1153,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/customer/addCustomerBulk"
             element={
               <>

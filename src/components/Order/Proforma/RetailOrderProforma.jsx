@@ -17,7 +17,7 @@ import { useNavigate, useNavigation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { MdDelete } from 'react-icons/md';
-const OrderProforma = () => {
+const RetailOrderProforma = () => {
     const navigate = useNavigate();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const [orderType, setOrderType] = useState('');
@@ -25,12 +25,13 @@ const OrderProforma = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [orderTypeOptions, setorderTypeOptions] = useState([])
     const [prodIdOptions, setprodIdOptions] = useState([])
-    const [prodIdd, setprodIdd] = useState("")
-    const [Taxx, setTaxx] = useState(0)
+    const [Total, setTotal] = useState(0)
+    const [gst, setgst] = useState(0)
+  
     const [Totall, setTotall] = useState(0)
     const [order, setOrder] = useState(null); // To store fetched product data
-    const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
-    const [suppId, setsuppId] = useState()
+
+
     const [isLoading, setIsLoading] = useState(true); // Loader state
     const [customerOptions, setcustomerOptions] = useState([])
     const { token } = currentUser;
@@ -258,7 +259,7 @@ const OrderProforma = () => {
 
 
 
-  
+
 
     console.log(order, 'jugnu');
 
@@ -268,7 +269,7 @@ const OrderProforma = () => {
 
         // Assuming the structure of `values.orderProducts` is similar to what you provided
         const proformaProducts = values.orderProducts.map((product) => {
-            const gstTax = values?.modeOfShipment === 'Courier' ?  product.gstTax:0;
+            const gstTax = values?.modeOfShipment === 'Courier' ? product.gstTax : 0;
             console.log(product, "jj");
             return {
                 product: {
@@ -290,7 +291,7 @@ const OrderProforma = () => {
         const finalData = {
             order: {
                 id: order?.id
-              },
+            },
             //   "pid": "WSPI-12345-02-24",
             pid: values.pid,
             paymentTerms: values.paymentTerms,
@@ -386,7 +387,8 @@ const OrderProforma = () => {
                         selectedRows: [],
                         orderNo: order?.orderNo || '',
                         currency: "",
-                        rate: "",
+                        //here mrp is rate
+                        currentrate: "",
                         pid: Pid,
 
 
@@ -399,9 +401,11 @@ const OrderProforma = () => {
                             totalValue: "" || 0,
                             taxibleValue: "" || 0,
                             gstTax: "",
-                            discountedPrice: "",
+                            discount: 0,
+                            discountedPrice: 0,
+
                             // Initialize as 0, will be updated later
-                            wholesalePrice: 0,
+                            rate: 0,
 
 
                             // Default to 0 or the correct price for INR
@@ -440,71 +444,73 @@ const OrderProforma = () => {
                     {({ values, setFieldValue }) => {
 
                         useEffect(() => {
-                            // Calculate the sum of orderQty when the orderProducts data is loaded or updated
-                            if (values.currency === "INR") {
+                            // Check if currentrate is available and the currency is INR
+                            if (values.currency) {
+                                console.log(values.currentrate, "hh");
+                                // Loop through the orderProducts and update the rate based on currentrate
+                                order?.orderProducts?.forEach((product, index) => {
+                                    // Calculate the new rate: rate / currentrate
+                                    const newRate = product?.products?.retailMrp / values.currentrate || 0;
 
-                                setFieldValue("rate", 1);
+                                    // Update the rate for the product
+                                    setFieldValue(`orderProducts[${index}].rate`, newRate);
+                                });
                             }
-                            else {
-                                setFieldValue("rate", '');
-                            }
-                        }, [values.currency, setFieldValue]);
+                        }, [values.currency, values.currentrate, order?.orderProducts, setFieldValue]);
 
-                        const calculateValues = (index, wholesalePrice, orderQty, discount, currentRate) => {
-                            // Ensure currentRate is properly fetched or defined
-                            currentRate = wholesalePrice || wholesalePrice || 1; // Default to 1 if no rate is defined
-                            console.log("current rate:", currentRate);
-                            // Calculate 'num' based on current rate
-                            // Round if needed
 
-                            // Apply the discount to get the discounted price
-                            const discountAmount = wholesalePrice * (discount / 100);
-                            const discountedPrice = wholesalePrice - discountAmount; // Apply discount to wholesale price
+                        const calculateValues = (index, rate, orderQty, discount, currentRate) => {
 
-                            // Set taxable value to discounted price
-                            const taxableValue = currentRate - discount;
 
-                            // Calculate total value based on order quantity
-                            const totalValue = taxableValue * orderQty;
+                            console.log("current rate:", rate);
+                            console.log("discount:", discount);
+                            console.log("quantity=======",orderQty);
+                           
+                            let discountedPricee = (discount * rate) / 100;
+                            console.log("discountedPrice (calculated):", discountedPricee);
 
-                            console.log("Wholesale Price:", wholesalePrice);
-                            console.log("Discounted Price:", discountedPrice);
-                            console.log("Taxable Value:", taxableValue);
-                            console.log("Order Quantity:", orderQty);
-                            let num = 1 / currentRate;
-                            num = Math.round(num * 1000);
+                            // Subtract the discounted price from the original rate to get the final discounted price
+                            discountedPricee = rate - discountedPricee;
+                            console.log("final discountedPrice:", discountedPricee);
+                            setFieldValue(`orderProducts[${index}].discountedPrice`, discountedPricee);
 
-                            // Determine the GST tax rate based on taxable value and product unit
-                            let gstTax = 0;
-                            let Tax = 0;
+                            const discountedValue=  discountedPricee*orderQty
+                            console.log("discountedprice&&&&quantity&&&&",discountedPricee,orderQty);
 
-                            // If taxable value >= num, apply unit-based GST rates
-                            if (taxableValue >= num) {
+                           
+                            setFieldValue('total', discountedValue)
+                            setFieldValue('outstandingBalance', discountedValue);
+                            setTotal(discountedValue)
+                            console.log("discountedValue=========",discountedValue);
+
+                 
+
+                            let taxableValue =0;
+                         
+                            if (discountedPricee >= 1000) {
                                 // Check if the product unit is 'Mtrs' or others
                                 const prodUnit = values.orderProducts[index]?.unit;
                                 if (prodUnit === 'Mtrs') {
-                                    gstTax = 5
-                                    Tax = (totalValue * 5) / 100;  // Apply 5% GST for meters
+                                   taxableValue= Math.floor((discountedPricee/105)*100) // Apply 5% GST for meters
                                 } else {
-                                    gstTax = 12
-                                    Tax = (totalValue * 12) / 100;   // Apply 12% GST for other units
+                                    taxableValue= Math.floor((discountedPricee/112)*100)  // Apply 12% GST for other units
                                 }
-                            } else {
-                                // Apply 5% GST if taxable value is below 'num'
-                                gstTax = 5
-                                Tax = (totalValue * 5) / 100;
+                            } else if (discountedPricee < 1000) {
+                       
+                                taxableValue= Math.floor((discountedPricee/105)*100)
                             }
+                            var totalValue=Math.floor(taxableValue*orderQty)
 
-                            // Update Formik values for the current product
-                            setFieldValue(`orderProducts[${index}].gstTax`, gstTax);
+                 
                             setFieldValue(`orderProducts[${index}].taxibleValue`, taxableValue);
                             setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
-                            setFieldValue('gst', Tax);
-                            setFieldValue('total', Tax + totalValue)
-                            console.log(Tax + totalValue, "jujujuju");
-                            console.log(values.total, "umer shah");
-                            setTaxx(Tax)
-                            console.log("Tax:", Tax);
+
+                            const gst = discountedValue-totalValue
+
+                            
+                            setFieldValue('gst', gst);
+                            setgst(gst)
+                       
                             console.log("GST Tax (Calculated):", gstTax);
                             console.log("Total Value (Calculated):", totalValue);
                         };
@@ -529,28 +535,17 @@ const OrderProforma = () => {
                                 const selectedCurrency = values.currency;
                                 console.log(selectedCurrency, "selected currency");
 
-                                // Loop through the orderProducts and update wholesalePrice
-                                order?.orderProducts?.forEach((product, index) => {
-                                    if (selectedCurrency === 'INR') {
+                                // Loop through the orderProducts and update wholesalePrice only if the selected currency is INR
+                                if (selectedCurrency) {
+                                    order?.orderProducts?.forEach((product, index) => {
                                         // Set INR wholesale price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.wholesalePrice || 0);
-                                    } else if (selectedCurrency === 'USD') {
-                                        // Set USD price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.usdPrice || 0);
-                                    } else if (selectedCurrency === 'EURO') {
-                                        // Set USD price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.euroPrice || 0);
-                                    } else if (selectedCurrency === 'GBP') {
-                                        // Set USD price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.gbpPrice || 0);
-                                    } else if (selectedCurrency === 'RMB') {
-                                        // Set USD price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.rmbPrice || 0);
-                                    }
-
-                                });
+                                        setFieldValue(`orderProducts[${index}].rate`, product?.products?.retailMrp
+                                            || 0);
+                                    });
+                                }
                             }
                         }, [values.currency, order?.orderProducts, setFieldValue]);
+
 
                         // for mode of shipment gst and total
                         useEffect(() => {
@@ -558,14 +553,15 @@ const OrderProforma = () => {
                                 console.log(values.modeOfShipment, "kkllkkll");
                                 if (values.modeOfShipment === 'Courier' || values.modeOfShipment === '') {
                                     console.log(values?.gst, "gsttststst");
+                                    setFieldValue("gst",gst)
+                                    setFieldValue("total",Total)
+                                    setFieldValue('outstandingBalance', Total)
                                     // If mode of shipment is Courier, sum all GST values
 
-                                    setFieldValue('gst', Taxx);
-                                    const totalWithGst = values.orderProducts.reduce((sum, product) => {
-                                        return sum + (product.totalValue || 0);
-                                    }, 0);
-                                    setFieldValue('total', totalWithGst + Taxx);
-                                    setTotall(totalWithGst + Taxx)// Adding GST to the total
+                                   
+                                 
+                                   
+
                                 } else if (values.modeOfShipment === 'Commercial') {
                                     // If mode of shipment is Commercial, set GST to 0 and recalculate total
                                     setFieldValue('gst', 0);
@@ -573,7 +569,9 @@ const OrderProforma = () => {
                                         return sum + (product.totalValue || 0);
                                     }, 0);
 
-                                    setFieldValue('total', totalWithoutGst); // No GST, only totalValue sum
+                                    setFieldValue('total', totalWithoutGst);
+                                    setFieldValue('outstandingBalance', totalWithoutGst)
+                                    ; // No GST, only totalValue sum
                                 }
                             }
                         }, [values.modeOfShipment, values.orderProducts, setFieldValue]);
@@ -593,7 +591,7 @@ const OrderProforma = () => {
 
                             // Update Formik's totalUnitsValue field with the total value sum
                             setFieldValue("totalUnitsValue", totalValueSum);
-                            setFieldValue("total", totalValueSum);
+                            // setFieldValue("total", totalValueSum);
                         }, [values.orderProducts, setFieldValue]);
 
                         // for gst cakculate and taxble 
@@ -609,8 +607,9 @@ const OrderProforma = () => {
                             // Step 2: Check if shippingAccount is 'KLC' and courierCharges > 0
                             if (values.shippingAccount === 'KLC' && values.courierCharges >= 0) {
                                 // Add courier charges to the total if shippingAccount is 'KLC'
-                                currentTotal = parseFloat(values.courierCharges) + Totall;
+                                currentTotal = parseFloat(values.courierCharges) + Total;
                             } else if (values.shippingAccount !== 'KLC' || values.courierCharges <= 0) {
+                                setFieldValue('courierCharges', 0);
                                 // If courierCharges is 0 or shippingAccount is not 'KLC', don't add any courier charges
                                 // Ensure courier charges don't affect the total when shippingAccount isn't 'KLC'
                                 currentTotal = currentTotal - (parseFloat(values.courierCharges) || 0); // Subtract the previous courierCharges if needed
@@ -618,6 +617,7 @@ const OrderProforma = () => {
 
                             // Step 3: Update the total field
                             setFieldValue('total', currentTotal);
+                            setFieldValue('outstandingBalance', currentTotal);
 
                         }, [values.shippingAccount, values.courierCharges, setFieldValue]);
 
@@ -634,7 +634,7 @@ const OrderProforma = () => {
                             // Step 3: Update outstandingBalance
                             setFieldValue('outstandingBalance', updatedTotal);
 
-                        }, [values.advanceReceived, values.orderProducts, setFieldValue]);
+                        }, [values.advanceReceived,  setFieldValue]);
 
 
 
@@ -820,7 +820,7 @@ const OrderProforma = () => {
                                                             Rate
                                                         </label>
                                                         <Field
-                                                            name="rate"
+                                                            name="currentrate"
                                                             type="Number"
                                                             placeholder="Enter Rate"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
@@ -937,19 +937,16 @@ const OrderProforma = () => {
                                                                 Qty
                                                             </th>
                                                             <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                                WholeSale Price
+                                                                MRP
                                                             </th>
-                                                            {
-                                                                values?.modeOfShipment === 'Courier' &&(
-                                                                    <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                                GST Tax %
-                                                            </th>
-                                                                )
-                                                            }
+                                                         
 
-                                                            
+
                                                             <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                                Discount
+                                                                Discount %
+                                                            </th>
+                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                                                Discounted Price
                                                             </th>
                                                             <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                                                 Taxable value
@@ -968,15 +965,15 @@ const OrderProforma = () => {
 
                                                                 {/* Product ID */}
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <div className="relative group">
-                        <img
-                            className="h-10 w-10 rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
-                            crossOrigin="use-credentials"
-                            src={`${GET_IMAGE}/products/getimages/${product?.products?.images[0]?.referenceImage}`}
-                            alt="Product Image"
-                        />
-                    </div>
-                </td>
+                                                                    <div className="relative group">
+                                                                        <img
+                                                                            className="h-10 w-10 rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                                                                            crossOrigin="use-credentials"
+                                                                            src={`${GET_IMAGE}/products/getimages/${product?.products?.images[0]?.referenceImage}`}
+                                                                            alt="Product Image"
+                                                                        />
+                                                                    </div>
+                                                                </td>
 
 
 
@@ -1035,7 +1032,7 @@ const OrderProforma = () => {
                                                                         onBlur={() =>
                                                                             calculateValues(
                                                                                 index,
-                                                                                values.orderProducts[index]?.wholesalePrice,
+                                                                                values.orderProducts[index]?.rate,
                                                                                 values.orderProducts[index]?.orderQty,
                                                                                 values.orderProducts[index]?.discount || 0
                                                                             )
@@ -1055,12 +1052,12 @@ const OrderProforma = () => {
 
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
-                                                                        name={`orderProducts[${index}].wholesalePrice`}
+                                                                        name={`orderProducts[${index}].rate`}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                                         readOnly // If you want the field to be read-only based on your use case
                                                                     />
                                                                     <ErrorMessage
-                                                                        name={`orderProducts[${index}].wholesalePrice`}
+                                                                        name={`orderProducts[${index}].rate`}
                                                                         component="div"
                                                                         className="text-red-600 text-sm"
                                                                     />
@@ -1069,32 +1066,18 @@ const OrderProforma = () => {
 
 
 
-                                                                {
-                                                                values?.modeOfShipment === 'Courier' &&(
-
-                                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                                    <Field
-                                                                        name={`orderProducts[${index}].gstTax`}
-                                                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                                                    />
-
-                                                                    <ErrorMessage
-                                                                        name={`orderProducts[${index}].gstTax`}
-                                                                        component="div"
-                                                                        className="text-red-600 text-sm"
-                                                                    />
-                                                                </td>
-                                                                )}
+                                                             
 
 
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
+                                                                        type="number"
                                                                         name={`orderProducts[${index}].discount`}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                                         onBlur={() =>
                                                                             calculateValues(
                                                                                 index,
-                                                                                values.orderProducts[index]?.wholesalePrice,
+                                                                                values.orderProducts[index]?.rate,
                                                                                 values.orderProducts[index]?.orderQty,
                                                                                 values.orderProducts[index]?.discount || 0
                                                                             )
@@ -1102,6 +1085,26 @@ const OrderProforma = () => {
                                                                     />
                                                                     <ErrorMessage
                                                                         name={`orderProducts[${index}].discount`}
+                                                                        component="div"
+                                                                        className="text-red-600 text-sm"
+                                                                    />
+                                                                </td>
+
+                                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                                    <Field
+                                                                        name={`orderProducts[${index}].discountedPrice`}
+                                                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                                                    // onBlur={() =>
+                                                                    //     calculateValues(
+                                                                    //         index,
+                                                                    //         values.orderProducts[index]?.wholesalePrice,
+                                                                    //         values.orderProducts[index]?.orderQty,
+                                                                    //         values.orderProducts[index]?.discount || 0
+                                                                    //     )
+                                                                    // }
+                                                                    />
+                                                                    <ErrorMessage
+                                                                        name={`orderProducts[${index}].discountedPrice`}
                                                                         component="div"
                                                                         className="text-red-600 text-sm"
                                                                     />
@@ -1454,4 +1457,4 @@ const OrderProforma = () => {
     );
 };
 
-export default OrderProforma;
+export default RetailOrderProforma;

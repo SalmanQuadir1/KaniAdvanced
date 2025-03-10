@@ -26,7 +26,7 @@ const productgrp = [
 
 const ViewOrderCreated = () => {
 
-    const { handleUpdate, getorderNumber, orderNo, getSupplier,   productId,
+    const { handleUpdate, getorderNumber, orderNo, getSupplier, productId,
         getprodId, supplier, getCustomer, customer } = useorder();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
@@ -89,7 +89,7 @@ const ViewOrderCreated = () => {
             setprodIdOptions(formattedProdIdOptions);
         }
     }, [productId]);
-    
+
 
 
 
@@ -102,7 +102,7 @@ const ViewOrderCreated = () => {
 
 
 
-   
+
 
     console.log(supplierNameOptions, "heyyy");
 
@@ -196,18 +196,7 @@ const ViewOrderCreated = () => {
     console.log(Order, "heyorder");
 
 
-    //   console.log(order)
-    //   useEffect(() => {
-    //     if (order.data) {
-    //         const formattedOptions = order.data.map(ord => ({
-    //             value: ord.id,
-    //             label: ord?.name,
-    //             orderNameObject: ord,
-    //             orderid: { id: ord.id }
-    //         }));
-    //         setorderNameOptions(formattedOptions);
-    //     }
-    // }, [order.data]);
+
 
     const renderTableRows = () => {
         console.log(Order);
@@ -304,17 +293,39 @@ const ViewOrderCreated = () => {
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
-                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updateorderCreated/${item?.id}`)} title='Edit Order' />  |
+                        <FiEdit
+                            size={17}
+                            className="text-teal-500 hover:text-teal-700 mx-2"
+                            onClick={() => navigate(`/Order/updateorderCreated/${item?.id}`)}
+                            title="Edit Order"
+                        />
+                        |
                         {
-                            item.orderTypeName==="RetailClients"||item.orderTypeName==="WSClients"&&(
-
-                                <MdCreateNewFolder size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/generateProforma/${item?.id}`)} title='Create proforma' /> 
-                            )
-
+                            item.orderTypeName === "WSClients" ? (
+                                <MdCreateNewFolder
+                                    size={17}
+                                    className="text-teal-500 hover:text-teal-700 mx-2"
+                                    onClick={() => navigate(`/Order/generateProforma/${item?.id}`)}
+                                    title="Create proforma"
+                                />
+                            ) : item.orderTypeName === "RetailClients" ? (
+                                <MdCreateNewFolder
+                                    size={17}
+                                    className="text-teal-500 hover:text-teal-700 mx-2"
+                                    onClick={() => navigate(`/Order/generateRetailProforma/${item?.id}`)} // Navigate to a different page for RetailClients
+                                    title="Create proforma"
+                                />
+                            ) : null
                         }
-                        <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' />
+                        <FiTrash2
+                            size={17}
+                            className="text-red-500 hover:text-red-700 mx-2"
+                            onClick={(e) => handleDelete(e, item?.id)}
+                            title="Delete Product"
+                        />
                     </p>
                 </td>
+
             </tr>
         ));
     };
@@ -338,7 +349,7 @@ const ViewOrderCreated = () => {
         // ViewInventory(pagination.currentPage, filters);
     };
 
-    console.log(prodIdOptions,"llkkllkk");
+    console.log(prodIdOptions, "llkkllkk");
 
     return (
         <DefaultLayout>
