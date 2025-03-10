@@ -66,9 +66,11 @@ const ViewProduct = () => {
 
 
         setisImagesModalOpen(true);
+        console.log(isImagesModalOpen, "afterimage");
         setImages(Images);
-       
+
     };
+    console.log(Images, "image huuuun===============================================");
 
 
     // console.log(selectedBOMData, "jijiji");
@@ -157,10 +159,10 @@ const ViewProduct = () => {
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
                 </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                <td className="px-1 py-5 border-b border-gray-200 text-sm">
                     <div className="relative group">
                         <img
-                            className="h-10 w-10 rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                            className="h-[50px] w-[50px] rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
                             crossOrigin="use-credentials"
                             src={`${GET_IMAGE}/products/getimages/${item?.images[0]?.referenceImage}`}
                             alt="Product Image"
@@ -307,40 +309,69 @@ const ViewProduct = () => {
                     )}
 
                     {isImagesModalOpen && (
-                        console.log("heyy")
-                    
-                     
-                //     <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50 ">
-                //     <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px]  w-[870px] h-[400px] mt-[60px] dark:bg-slate-600">
-                //         <div className="text-right">
-                //             <button onClick={setisImagesModalOpen(false)} className="text-red-500 text-xl  font-bold">&times;</button>
-                //         </div>
-                //         <h2 className="text-2xl text-center mb-4 font-extrabold">INVENTORY  DETAILS</h2>
-                //         <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
-                //             <table className="min-w-full leading-normal">
-                //                 <thead>
-                //                     <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                //                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >LOCATION</th>
-                //                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">OPENING BALANCE</th>
-
-                //                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Rate</th>
-                //                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Value</th>
-                //                     </tr>
-                //                 </thead>
-                //                 <tbody>
 
 
-                                 
+                        <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center z-50">
+                            <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px] w-[870px] h-[400px] mt-[60px] dark:bg-slate-600 overflow-auto">
+                                <div className="text-right">
+                                    <button onClick={() => setisImagesModalOpen(false)} className="text-red-500 text-xl font-bold">&times;</button>
+                                </div>
+                                <h2 className="text-2xl text-center mb-4 font-extrabold">LIST OF IMAGES</h2>
+
+                                {/* Reference Images Section */}
+                                <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden mb-4">
+                                    <h1>Reference Images</h1>
+                                    <div className="flex overflow-x-auto space-x-4 py-2">
+                                        {
+                                            Images.map((image, index) => {
+                                                // Check if the referenceImage is not null or undefined before rendering
+                                                if (image?.referenceImage) {
+                                                    return (
+                                                        <img
+                                                            key={index}
+                                                            className="h-[200px] w-[200px] rounded-lg transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                                                            crossOrigin="use-credentials"
+                                                            src={`${GET_IMAGE}/products/getimages/${image.referenceImage}`}
+                                                            alt="Product Image"
+                                                        />
+                                                    );
+                                                }
+                                                return null; // Return null if referenceImage is null or undefined
+                                            })
+                                        }
+                                    </div>
+                                </div>
+
+                                {/* Actual Images Section */}
+                                <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden mb-4">
+                                    <h1>Actual Images</h1>
+                                    <div className="flex overflow-x-auto space-x-4 py-2">
+                                        {
+                                            Images.map((image, index) => {
+                                                // Check if the actualImage is not null or undefined before rendering
+                                                if (image?.actualImage) {
+                                                    return (
+                                                        <img
+                                                            key={index}
+                                                            className="h-[200px] w-[200px] rounded-lg transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                                                            crossOrigin="use-credentials"
+                                                            src={`${GET_IMAGE}/products/getimages/${image.actualImage}`}
+                                                            alt="Product Image"
+                                                        />
+                                                    );
+                                                }
+                                                return null; // Return null if actualImage is null or undefined
+                                            })
+                                        }
+                                    </div>
+                                </div>
+
+                                {/* <pre>{JSON.stringify(selectedBOMData, null, 2)}</pre> */}
+                            </div>
+                        </div>
 
 
 
-                //                 </tbody>
-                //             </table>
-                //         </div>
-
-                //         {/* <pre>{JSON.stringify(selectedBOMData, null, 2)}</pre> */}
-                //     </div>
-                // </div>
 
                     )}
 
