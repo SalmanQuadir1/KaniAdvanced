@@ -84,6 +84,7 @@ import EditOrderCreated from './components/Order/EditOrderCreated.jsx';
 
 import UpdateOrderStatus from './components/Order/UpdateOrderStatus.jsx';
 import OrderProforma from './components/Order/Proforma/OrderProforma.jsx';
+import UpdateOrderProforma from './components/Order/Proforma/UpdateOrderProforma.jsx';
 import RetailOrderProforma from './components/Order/Proforma/RetailOrderProforma.jsx';
 
 
@@ -440,6 +441,16 @@ function App() {
               <>
                 <PageTitle title="Create Retail Order Proforma" />
                 <RetailOrderProforma />
+              </>
+            }
+          />
+
+<Route
+            path="/Order/updateOrderProforma/:id"
+            element={
+              <>
+                <PageTitle title="Create Order Proforma" />
+                <UpdateOrderProforma />
               </>
             }
           />
