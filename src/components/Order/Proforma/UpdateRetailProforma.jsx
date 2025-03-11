@@ -9,7 +9,7 @@ import 'flatpickr/dist/themes/material_blue.css'; // Import a Flatpickr theme
 
 import useorder from '../../../hooks/useOrder';
 
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL,GET_PROFORMAID_URL,UPDATE_PROFORMA_URL ,UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL, GET_PID, ADD_ORDERPROFORMA, GET_IMAGE } from '../../../Constants/utils';
+import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL,UPDATE_PROFORMA_URL ,GET_PROFORMAID_URL,UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL, GET_PID, ADD_ORDERPROFORMA, GET_IMAGE } from '../../../Constants/utils';
 
 
 import { FiTrash2 } from 'react-icons/fi';
@@ -17,10 +17,7 @@ import { useNavigate, useNavigation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { MdDelete } from 'react-icons/md';
-
-
-
-const UpdateOrderProforma = () => {
+const UpdateRetailProforma = () => {
     const navigate = useNavigate();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const [orderType, setOrderType] = useState('');
@@ -28,17 +25,20 @@ const UpdateOrderProforma = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [orderTypeOptions, setorderTypeOptions] = useState([])
     const [prodIdOptions, setprodIdOptions] = useState([])
-    const [prodIdd, setprodIdd] = useState("")
-    const [Taxx, setTaxx] = useState(0)
+    const [Total, setTotal] = useState(0)
+    const [gst, setgst] = useState(0)
+  
     const [Totall, setTotall] = useState(0)
     const [order, setOrder] = useState(null); // To store fetched product data
-    const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
-    const [suppId, setsuppId] = useState()
+    const [orderProforma,setOrderProforma] = useState(null)
+    
+
+
     const [isLoading, setIsLoading] = useState(true); // Loader state
     const [customerOptions, setcustomerOptions] = useState([])
     const { token } = currentUser;
 
-    const [orderProforma,setOrderProforma] = useState(null)
+
 
     const [selectedRowId, setSelectedRowId] = useState(null);
     const currency = [
@@ -261,40 +261,37 @@ const UpdateOrderProforma = () => {
 
 
 
-  
+
 
     console.log(order, 'jugnu');
 
-
-
- const getOrderProformaById = async () => {
-    try {
-      const response = await fetch(`${GET_PROFORMAID_URL}/${id}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch product');
-      }
-
-      const data = await response.json();
-      console.log(data, "datatata")
-      setOrderProforma(data); // Store fetched product
-    } catch (error) {
-      console.error('Error fetching product:', error);
-    } finally {
-      setIsLoading(false); // Stop loader
-    }
-  };
-  console.log(orderProforma, 'hhhhhiiii')
-   useEffect(() => {
-    getOrderProformaById();
-    }, [id]);
-
-
+    const getOrderProformaById = async () => {
+        try {
+          const response = await fetch(`${GET_PROFORMAID_URL}/${id}`, {
+            method: 'GET',
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+    
+          if (!response.ok) {
+            throw new Error('Failed to fetch product');
+          }
+    
+          const data = await response.json();
+          console.log(data, "datatata")
+          setOrderProforma(data); // Store fetched product
+        } catch (error) {
+          console.error('Error fetching product:', error);
+        } finally {
+          setIsLoading(false); // Stop loader
+        }
+      };
+      console.log(orderProforma, 'hhhhhiiii')
+       useEffect(() => {
+        getOrderProformaById();
+        }, [id]);
+    
 
 
     // const handleSubmit = async (values) => {
@@ -302,7 +299,7 @@ const UpdateOrderProforma = () => {
 
     //     // Assuming the structure of `values.orderProducts` is similar to what you provided
     //     const proformaProducts = values.orderProducts.map((product) => {
-    //         const gstTax = values?.modeOfShipment === 'Courier' ?  product.gstTax:0;
+    //         const gstTax = values?.modeOfShipment === 'Courier' ? product.gstTax : 0;
     //         console.log(product, "jj");
     //         return {
     //             product: {
@@ -324,7 +321,7 @@ const UpdateOrderProforma = () => {
     //     const finalData = {
     //         order: {
     //             id: order?.id
-    //           },
+    //         },
     //         //   "pid": "WSPI-12345-02-24",
     //         pid: values.pid,
     //         paymentTerms: values.paymentTerms,
@@ -388,82 +385,84 @@ const UpdateOrderProforma = () => {
     // };
 
 
-    const handleSubmit = async (values) => {
-        console.log('Updating Proforma with values:', values);
-    
-        // Format `orderProducts` into `proformaProduct` array
-        const proformaProducts = values.orderProducts.map((product) => {
-            const gstTax = values?.modeOfShipment === 'Courier' ? product.gstTax : 0;
-    
-            return {
-                product: { id: product.product.id },
-                orderQty: parseInt(product.orderQty),
-                rate: product.wholesalePrice,
-                totalPrice: product.totalValue,
-                totalValue: product.totalValue,
-                taxibleValue: product.taxibleValue,
-                gstTax: gstTax,
-                discount: product.discount,
-                tax: product.gstTax * 0.1,
-                discountedPrice: product.totalValue - product.discount,
-            };
-        });
-    
-        // Final payload for update
-        const updatedData = {
-            order: { id: order?.id },
-            pid: values.pid,
-            paymentTerms: values.paymentTerms,
-            currency: values.currency,
-            freightTerms: values.freightTerms,
-            shipVia: values.shipVia,
-            date: values.date,
-            courierCharges: values.courierCharges,
-            advanceReceived: values.advanceReceived,
-            clothBags: values.clothBags,
-            total: values.total,
-            service: values.service,
-            modeOfShipment: values.modeOfShipment,
-            rate: values.rate,
-            gst: values.gst,
-            totalUnits: values.totalUnits,
-            totalUnitsValue: values.totalUnitsValue,
-            outstandingBalance: values.outstandingBalance,
-            shippingAccount: values.shippingAccount,
-            labels: values.labels,
-            tags: values.tags,
-            logo: values.logo,
-            proformaProduct: proformaProducts, // Replacing orderProducts with proformaProduct
-        };
-    
-        console.log("Sending Update Request:", updatedData);
-    
-        try {
-            const url = `${UPDATE_PROFORMA_URL}/${id}`; // Use correct update endpoint
-            const method = "PUT"; // Use PUT for updating
-    
-            const response = await fetch(url, {
-                method: method,
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                },
-                body: JSON.stringify(updatedData),
+
+     const handleSubmit = async (values) => {
+            console.log('Updating Proforma with values:', values);
+        
+            // Format `orderProducts` into `proformaProduct` array
+            const proformaProducts = values.orderProducts.map((product) => {
+                const gstTax = values?.modeOfShipment === 'Courier' ? product.gstTax : 0;
+        
+                return {
+                    product: { id: product.product.id },
+                    orderQty: parseInt(product.orderQty),
+                    rate: product.wholesalePrice,
+                    totalPrice: product.totalValue,
+                    totalValue: product.totalValue,
+                    taxibleValue: product.taxibleValue,
+                    gstTax: gstTax,
+                    discount: product.discount,
+                    tax: product.gstTax * 0.1,
+                    discountedPrice: product.totalValue - product.discount,
+                };
             });
-    
-            const data = await response.json();
-            if (response.ok) {
-                toast.success(`Proforma updated successfully`);
-                //navigate(`/proforma-view/${id}`); // Redirect to the updated proforma view
-            } else {
-                toast.error(`${data.errorMessage}`);
+        
+            // Final payload for update
+            const updatedData = {
+                order: { id: order?.id },
+                pid: values.pid,
+                paymentTerms: values.paymentTerms,
+                currency: values.currency,
+                freightTerms: values.freightTerms,
+                shipVia: values.shipVia,
+                date: values.date,
+                courierCharges: values.courierCharges,
+                advanceReceived: values.advanceReceived,
+                clothBags: values.clothBags,
+                total: values.total,
+                service: values.service,
+                modeOfShipment: values.modeOfShipment,
+                rate: values.rate,
+                gst: values.gst,
+                totalUnits: values.totalUnits,
+                totalUnitsValue: values.totalUnitsValue,
+                outstandingBalance: values.outstandingBalance,
+                shippingAccount: values.shippingAccount,
+                labels: values.labels,
+                tags: values.tags,
+                logo: values.logo,
+                proformaProduct: proformaProducts, // Replacing orderProducts with proformaProduct
+            };
+        
+            console.log("Sending Update Request:", updatedData);
+        
+            try {
+                const url = `${UPDATE_PROFORMA_URL}/${id}`; // Use correct update endpoint
+                const method = "PUT"; // Use PUT for updating
+        
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(updatedData),
+                });
+        
+                const data = await response.json();
+                if (response.ok) {
+                    toast.success(`Proforma updated successfully`);
+                    //navigate(`/proforma-view/${id}`); // Redirect to the updated proforma view
+                } else {
+                    toast.error(`${data.errorMessage}`);
+                }
+            } catch (error) {
+                console.error(error);
+                toast.error("An error occurred while updating the proforma");
             }
-        } catch (error) {
-            console.error(error);
-            toast.error("An error occurred while updating the proforma");
-        }
-    };
-    
+        };
+
+
 
     return (
         <DefaultLayout>
@@ -472,6 +471,80 @@ const UpdateOrderProforma = () => {
                 <Formik
                     onSubmit={handleSubmit}
                     enableReinitialize={true}
+                    // initialValues={{
+                    //     date: "",
+                    //     billTo: order?.customer?.billTo,
+                    //     billtoEmail: order?.customer?.email,
+                    //     shipTo: order?.customer?.shippingAddress,
+                    //     shipToEmail: order?.customer?.email,
+
+                    //     poDate: order?.poDate,
+                    //     paymentTerms: "",
+                    //     shipDate: order?.shippingDate,
+                    //     freightTerms: "",
+                    //     shipVia: "",
+                    //     service: "",
+
+
+
+
+
+
+
+                    //     selectedRows: [],
+                    //     orderNo: order?.orderNo || '',
+                    //     currency: "",
+                    //     //here mrp is rate
+                    //     currentrate: "",
+                    //     pid: Pid,
+
+
+                    //     orderProducts: order?.orderProducts?.map((product) => ({
+
+                    //         size: product?.products?.sizes?.sizeName,
+                    //         design: product?.products?.design?.designName,
+                    //         unit: product?.products?.unit?.name,
+                    //         orderQty: product?.clientOrderQuantity,// clientorderquantity
+                    //         totalValue: "" || 0,
+                    //         taxibleValue: "" || 0,
+                    //         gstTax: "",
+                    //         discount: 0,
+                    //         discountedPrice: 0,
+
+                    //         // Initialize as 0, will be updated later
+                    //         rate: 0,
+
+
+                    //         // Default to 0 or the correct price for INR
+
+                    //         product: {
+
+                    //             id: product.products?.id || '',  // Set initial value for productId
+                    //         },
+
+                    //     })) || [],
+                    //     totalUnits: "",
+                    //     totalUnitsValue: "",
+                    //     modeOfShipment: "",
+                    //     gst: "",
+                    //     shippingAccount: "",
+                    //     courierCharges: 0,
+                    //     advanceReceived: "",
+                    //     total: "",
+
+                    //     outstandingBalance: 0,
+                    //     labels: "",
+                    //     tags: "",
+                    //     logo: "",
+                    //     clothBags: ""
+
+
+
+
+
+                    //     // customer: '',
+                    // }}
+
                     initialValues={{
                         gst: orderProforma?.gst,
                         date: orderProforma?.date,
@@ -571,79 +644,76 @@ const UpdateOrderProforma = () => {
                     {({ values, setFieldValue }) => {
 
                         useEffect(() => {
-                            // Calculate the sum of orderQty when the orderProducts data is loaded or updated
-                            if (values.currency === "INR") {
+                            // Check if currentrate is available and the currency is INR
+                            if (values.currency) {
+                                console.log(values.currentrate, "hh");
+                                // Loop through the orderProducts and update the rate based on currentrate
+                                order?.orderProducts?.forEach((product, index) => {
+                                    // Calculate the new rate: rate / currentrate
+                                    const newRate = product?.products?.retailMrp / values.currentrate || 0;
 
-                                setFieldValue("rate", 1);
+                                    // Update the rate for the product
+                                    setFieldValue(`orderProducts[${index}].rate`, newRate);
+                                });
                             }
-                            else {
-                                setFieldValue("rate", '');
-                            }
-                        }, [values.currency, setFieldValue]);
+                        }, [values.currency, values.currentrate, order?.orderProducts, setFieldValue]);
 
-                      
-                        
-                            const calculateValues = (index, wholesalePrice, orderQty, discount, currentRate) => {
-                                // Ensure currentRate is properly fetched or defined
-                                currentRate = wholesalePrice || wholesalePrice || 1; // Default to 1 if no rate is defined
-                                console.log("current rate:", currentRate);
-                                // Calculate 'num' based on current rate
-                                // Round if needed
-    
-                                // Apply the discount to get the discounted price
-                                const discountAmount = wholesalePrice * (discount / 100);
-                                const discountedPrice = wholesalePrice - discountAmount; // Apply discount to wholesale price
-    
-                                // Set taxable value to discounted price
-                                const taxableValue = currentRate - discount;
-    
-                                // Calculate total value based on order quantity
-                                const totalValue = taxableValue * orderQty;
-    
-                                console.log("Wholesale Price:", wholesalePrice);
-                                console.log("Discounted Price:", discountedPrice);
-                                console.log("Taxable Value:", taxableValue);
-                                console.log("Order Quantity:", orderQty);
-                                let num = 1 / currentRate;
-                                num = Math.round(num * 1000);
-    
-                                // Determine the GST tax rate based on taxable value and product unit
-                                let gstTax = 0;
-                                let Tax = 0;
-    
-                                // If taxable value >= num, apply unit-based GST rates
-                                if (taxableValue >= num) {
-                                    // Check if the product unit is 'Mtrs' or others
-                                    const prodUnit = values.orderProducts[index]?.unit;
-                                    if (prodUnit === 'Mtrs') {
-                                        gstTax = 5
-                                        Tax = (totalValue * 5) / 100;  // Apply 5% GST for meters
-                                    } else {
-                                        gstTax = 12
-                                        Tax = (totalValue * 12) / 100;   // Apply 12% GST for other units
-                                    }
+
+                        const calculateValues = (index, rate, orderQty, discount, currentRate) => {
+
+
+                            console.log("current rate:", rate);
+                            console.log("discount:", discount);
+                            console.log("quantity=======",orderQty);
+                           
+                            let discountedPricee = (discount * rate) / 100;
+                            console.log("discountedPrice (calculated):", discountedPricee);
+
+                            // Subtract the discounted price from the original rate to get the final discounted price
+                            discountedPricee = rate - discountedPricee;
+                            console.log("final discountedPrice:", discountedPricee);
+                            setFieldValue(`orderProducts[${index}].discountedPrice`, discountedPricee);
+
+                            const discountedValue=  discountedPricee*orderQty
+                            console.log("discountedprice&&&&quantity&&&&",discountedPricee,orderQty);
+
+                           
+                            setFieldValue('total', discountedValue)
+                            setFieldValue('outstandingBalance', discountedValue);
+                            setTotal(discountedValue)
+                            console.log("discountedValue=========",discountedValue);
+
+                 
+
+                            let taxableValue =0;
+                         
+                            if (discountedPricee >= 1000) {
+                                // Check if the product unit is 'Mtrs' or others
+                                const prodUnit = values.orderProducts[index]?.unit;
+                                if (prodUnit === 'Mtrs') {
+                                   taxableValue= Math.floor((discountedPricee/105)*100) // Apply 5% GST for meters
                                 } else {
-                                    // Apply 5% GST if taxable value is below 'num'
-                                    gstTax = 5
-                                    Tax = (totalValue * 5) / 100;
+                                    taxableValue= Math.floor((discountedPricee/112)*100)  // Apply 12% GST for other units
                                 }
-    
-                                // Update Formik values for the current product
-                                setFieldValue(`orderProducts[${index}].gstTax`, gstTax);
-                                setFieldValue(`orderProducts[${index}].taxibleValue`, taxableValue);
-                                setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
-                                setFieldValue('gst', Tax);
-                                setFieldValue('total', Tax + totalValue)
-                                console.log(Tax + totalValue, "jujujuju");
-                                console.log(values.total, "umer shah");
-                                setTaxx(Tax)
-                                console.log("Tax:", Tax);
-                                console.log("GST Tax (Calculated):", gstTax);
-                                console.log("Total Value (Calculated):", totalValue);
-                            };
+                            } else if (discountedPricee < 1000) {
+                       
+                                taxableValue= Math.floor((discountedPricee/105)*100)
+                            }
+                            var totalValue=Math.floor(taxableValue*orderQty)
 
-                        
-                        
+                 
+                            setFieldValue(`orderProducts[${index}].taxibleValue`, taxableValue);
+                            setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
+
+                            const gst = discountedValue-totalValue
+
+                            
+                            setFieldValue('gst', gst);
+                            setgst(gst)
+                       
+                            console.log("GST Tax (Calculated):", gstTax);
+                            console.log("Total Value (Calculated):", totalValue);
+                        };
 
                         useEffect(() => {
                             // Calculate the sum of orderQty when the orderProducts data is loaded or updated
@@ -665,28 +735,17 @@ const UpdateOrderProforma = () => {
                                 const selectedCurrency = values.currency;
                                 console.log(selectedCurrency, "selected currency");
 
-                                // Loop through the orderProducts and update wholesalePrice
-                                order?.orderProducts?.forEach((product, index) => {
-                                    if (selectedCurrency === 'INR') {
+                                // Loop through the orderProducts and update wholesalePrice only if the selected currency is INR
+                                if (selectedCurrency) {
+                                    order?.orderProducts?.forEach((product, index) => {
                                         // Set INR wholesale price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.wholesalePrice || 0);
-                                    } else if (selectedCurrency === 'USD') {
-                                        // Set USD price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.usdPrice || 0);
-                                    } else if (selectedCurrency === 'EURO') {
-                                        // Set USD price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.euroPrice || 0);
-                                    } else if (selectedCurrency === 'GBP') {
-                                        // Set USD price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.gbpPrice || 0);
-                                    } else if (selectedCurrency === 'RMB') {
-                                        // Set USD price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.rmbPrice || 0);
-                                    }
-
-                                });
+                                        setFieldValue(`orderProducts[${index}].rate`, product?.products?.retailMrp
+                                            || 0);
+                                    });
+                                }
                             }
                         }, [values.currency, order?.orderProducts, setFieldValue]);
+
 
                         // for mode of shipment gst and total
                         useEffect(() => {
@@ -694,15 +753,15 @@ const UpdateOrderProforma = () => {
                                 console.log(values.modeOfShipment, "kkllkkll");
                                 if (values.modeOfShipment === 'Courier' || values.modeOfShipment === '') {
                                     console.log(values?.gst, "gsttststst");
+                                    setFieldValue("gst",gst)
+                                    setFieldValue("total",Total)
+                                    setFieldValue('outstandingBalance', Total)
                                     // If mode of shipment is Courier, sum all GST values
-console.log(Taxx,"jannhhh=================");
 
-                                    setFieldValue('gst', Taxx);
-                                    const totalWithGst = values.orderProducts.reduce((sum, product) => {
-                                        return sum + (product.totalValue || 0);
-                                    }, 0);
-                                    setFieldValue('total', totalWithGst + Taxx);
-                                    setTotall(totalWithGst + Taxx)// Adding GST to the total
+                                   
+                                 
+                                   
+
                                 } else if (values.modeOfShipment === 'Commercial') {
                                     // If mode of shipment is Commercial, set GST to 0 and recalculate total
                                     setFieldValue('gst', 0);
@@ -710,7 +769,9 @@ console.log(Taxx,"jannhhh=================");
                                         return sum + (product.totalValue || 0);
                                     }, 0);
 
-                                    setFieldValue('total', totalWithoutGst); // No GST, only totalValue sum
+                                    setFieldValue('total', totalWithoutGst);
+                                    setFieldValue('outstandingBalance', totalWithoutGst)
+                                    ; // No GST, only totalValue sum
                                 }
                             }
                         }, [values.modeOfShipment, values.orderProducts, setFieldValue]);
@@ -730,7 +791,7 @@ console.log(Taxx,"jannhhh=================");
 
                             // Update Formik's totalUnitsValue field with the total value sum
                             setFieldValue("totalUnitsValue", totalValueSum);
-                            setFieldValue("total", totalValueSum);
+                            // setFieldValue("total", totalValueSum);
                         }, [values.orderProducts, setFieldValue]);
 
                         // for gst cakculate and taxble 
@@ -746,8 +807,9 @@ console.log(Taxx,"jannhhh=================");
                             // Step 2: Check if shippingAccount is 'KLC' and courierCharges > 0
                             if (values.shippingAccount === 'KLC' && values.courierCharges >= 0) {
                                 // Add courier charges to the total if shippingAccount is 'KLC'
-                                currentTotal = parseFloat(values.courierCharges) + Totall;
+                                currentTotal = parseFloat(values.courierCharges) + Total;
                             } else if (values.shippingAccount !== 'KLC' || values.courierCharges <= 0) {
+                                setFieldValue('courierCharges', 0);
                                 // If courierCharges is 0 or shippingAccount is not 'KLC', don't add any courier charges
                                 // Ensure courier charges don't affect the total when shippingAccount isn't 'KLC'
                                 currentTotal = currentTotal - (parseFloat(values.courierCharges) || 0); // Subtract the previous courierCharges if needed
@@ -755,6 +817,7 @@ console.log(Taxx,"jannhhh=================");
 
                             // Step 3: Update the total field
                             setFieldValue('total', currentTotal);
+                            setFieldValue('outstandingBalance', currentTotal);
 
                         }, [values.shippingAccount, values.courierCharges, setFieldValue]);
 
@@ -771,7 +834,7 @@ console.log(Taxx,"jannhhh=================");
                             // Step 3: Update outstandingBalance
                             setFieldValue('outstandingBalance', updatedTotal);
 
-                        }, [values.advanceReceived, values.orderProducts, setFieldValue]);
+                        }, [values.advanceReceived,  setFieldValue]);
 
 
 
@@ -792,7 +855,7 @@ console.log(Taxx,"jannhhh=================");
                                     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                                         <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                                             <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                                            Update Order Proforma
+                                                Create Order Proforma Information
                                             </h3>
                                         </div>
                                         <div className="p-6.5">
@@ -848,7 +911,6 @@ console.log(Taxx,"jannhhh=================");
                                                         name="billTo"
                                                         type="text"
                                                         placeholder="bill To"
-                                                        readOnly
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -867,7 +929,6 @@ console.log(Taxx,"jannhhh=================");
                                                         name="billtoEmail"
                                                         type="text"
                                                         placeholder="Enter Weft Colors"
-                                                        readOnly
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -882,7 +943,6 @@ console.log(Taxx,"jannhhh=================");
                                                         name="shipTo"
                                                         type="text"
                                                         placeholder="Enter Warp Colors"
-                                                        readOnly
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -894,7 +954,6 @@ console.log(Taxx,"jannhhh=================");
                                                         name="shipToEmail"
                                                         type="text"
                                                         placeholder="Enter Weft Colors"
-                                                         readOnly
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -955,17 +1014,16 @@ console.log(Taxx,"jannhhh=================");
                                                             placeholder="Select"
                                                         /> */}
 
-<ReactSelect
-    name="currency"
-    value={currency.find(option => option.value === values.currency)}
-    onChange={(option) => setFieldValue("currency", option.value)}
-    options={currency}
-    styles={customStyles}
-    className="bg-white dark:bg-form-input"
-    classNamePrefix="react-select"
-    placeholder={values.currency || "Select"} // Set backend value as placeholder
-/>
-
+                                                        <ReactSelect
+                                                            name="currency"
+                                                            value={currency.find(option => option.value === values.currency)}
+                                                            onChange={(option) => setFieldValue("currency", option.value)}
+                                                            options={currency}
+                                                            styles={customStyles}
+                                                            className="bg-white dark:bg-form-input"
+                                                            classNamePrefix="react-select"
+                                                            placeholder={values.currency || "Select"} // Set backend value as placeholder
+                                                        />
                                                         <ErrorMessage name="tags" component="div" className="text-red-600 text-sm" />
                                                     </div>
                                                     <div className="flex-1 min-w-[270px]">
@@ -1090,19 +1148,16 @@ console.log(Taxx,"jannhhh=================");
                                                                 Qty
                                                             </th>
                                                             <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                                WholeSale Price
+                                                                MRP
                                                             </th>
-                                                            {
-                                                                values?.modeOfShipment === 'Courier' &&(
-                                                                    <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                                GST Tax %
-                                                            </th>
-                                                                )
-                                                            }
+                                                         
 
-                                                            
+
                                                             <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                                Discount
+                                                                Discount %
+                                                            </th>
+                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                                                Discounted Price
                                                             </th>
                                                             <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                                                 Taxable value
@@ -1121,15 +1176,15 @@ console.log(Taxx,"jannhhh=================");
 
                                                                 {/* Product ID */}
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <div className="relative group">
-                        <img
-                            className="h-10 w-10 rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
-                            crossOrigin="use-credentials"
-                            src={`${GET_IMAGE}/products/getimages/${product?.products?.images[0]?.referenceImage}`}
-                            alt="Product Image"
-                        />
-                    </div>
-                </td>
+                                                                    <div className="relative group">
+                                                                        <img
+                                                                            className="h-10 w-10 rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                                                                            crossOrigin="use-credentials"
+                                                                            src={`${GET_IMAGE}/products/getimages/${product?.products?.images[0]?.referenceImage}`}
+                                                                            alt="Product Image"
+                                                                        />
+                                                                    </div>
+                                                                </td>
 
 
 
@@ -1188,7 +1243,7 @@ console.log(Taxx,"jannhhh=================");
                                                                         onBlur={() =>
                                                                             calculateValues(
                                                                                 index,
-                                                                                values.orderProducts[index]?.wholesalePrice,
+                                                                                values.orderProducts[index]?.rate,
                                                                                 values.orderProducts[index]?.orderQty,
                                                                                 values.orderProducts[index]?.discount || 0
                                                                             )
@@ -1208,12 +1263,12 @@ console.log(Taxx,"jannhhh=================");
 
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
-                                                                        name={`orderProducts[${index}].wholesalePrice`}
+                                                                        name={`orderProducts[${index}].rate`}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                                         readOnly // If you want the field to be read-only based on your use case
                                                                     />
                                                                     <ErrorMessage
-                                                                        name={`orderProducts[${index}].wholesalePrice`}
+                                                                        name={`orderProducts[${index}].rate`}
                                                                         component="div"
                                                                         className="text-red-600 text-sm"
                                                                     />
@@ -1222,33 +1277,18 @@ console.log(Taxx,"jannhhh=================");
 
 
 
-                                                                {
-                                                                values?.modeOfShipment === 'Courier' &&(
-
-                                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                                    <Field
-                                                                        name={`orderProducts[${index}].gstTax`}
-                                                                        
-                                                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                                                    />
-
-                                                                    <ErrorMessage
-                                                                        name={`orderProducts[${index}].gstTax`}
-                                                                        component="div"
-                                                                        className="text-red-600 text-sm"
-                                                                    />
-                                                                </td>
-                                                                )}
+                                                             
 
 
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
+                                                                        type="number"
                                                                         name={`orderProducts[${index}].discount`}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                                         onBlur={() =>
                                                                             calculateValues(
                                                                                 index,
-                                                                                values.orderProducts[index]?.wholesalePrice,
+                                                                                values.orderProducts[index]?.rate,
                                                                                 values.orderProducts[index]?.orderQty,
                                                                                 values.orderProducts[index]?.discount || 0
                                                                             )
@@ -1256,6 +1296,26 @@ console.log(Taxx,"jannhhh=================");
                                                                     />
                                                                     <ErrorMessage
                                                                         name={`orderProducts[${index}].discount`}
+                                                                        component="div"
+                                                                        className="text-red-600 text-sm"
+                                                                    />
+                                                                </td>
+
+                                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                                    <Field
+                                                                        name={`orderProducts[${index}].discountedPrice`}
+                                                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                                                    // onBlur={() =>
+                                                                    //     calculateValues(
+                                                                    //         index,
+                                                                    //         values.orderProducts[index]?.wholesalePrice,
+                                                                    //         values.orderProducts[index]?.orderQty,
+                                                                    //         values.orderProducts[index]?.discount || 0
+                                                                    //     )
+                                                                    // }
+                                                                    />
+                                                                    <ErrorMessage
+                                                                        name={`orderProducts[${index}].discountedPrice`}
                                                                         component="div"
                                                                         className="text-red-600 text-sm"
                                                                     />
@@ -1362,9 +1422,8 @@ console.log(Taxx,"jannhhh=================");
                                                             </label>
                                                             <Field
                                                                 name="gst"
-                                                                type="number"
-                                                                placeholder="Enter Gst"
-                                                                
+                                                                type="text"
+                                                                placeholder="Enter Weft Colors"
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                             />
                                                         </div>
@@ -1395,7 +1454,7 @@ console.log(Taxx,"jannhhh=================");
                                                                 styles={customStyles}
                                                                 className="bg-white dark:bg-form-Field"
                                                                 classNamePrefix="react-select"
-                                                                placeholder={values.shippingAccount || "Select Shipping Account"}
+                                                                placeholder="Select Shipping Account"
                                                             />
                                                         </div>
 
@@ -1581,17 +1640,7 @@ console.log(Taxx,"jannhhh=================");
 
 
                                             <div className="flex justify-center mt-4"> {/* Centering the button */}
-                                                {/* <button
-                                                    type="submit"
-
-
-                                                    className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none" // Increased width
-                                                >
-                                                    Update Proforma
-                                                </button> */}
-
-
-<button
+                                            <button
                         type="button" // Ensures the button does not trigger the form submission
                         onClick={(e) => handleSubmit(values, e)}
                         className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none" // Increased width
@@ -1618,4 +1667,4 @@ console.log(Taxx,"jannhhh=================");
     );
 };
 
-export default UpdateOrderProforma;
+export default UpdateRetailProforma;

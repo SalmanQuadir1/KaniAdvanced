@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customStyles as createCustomStyles } from '../../Constants/utils';
+import { MdCreateNewFolder } from 'react-icons/md';
 
 
 
@@ -299,8 +300,40 @@ const ViewOrderApproved = () => {
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
-                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updateOrderProforma/${item?.id}`)} title='Edit Order' />  |
-                        <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' />
+
+
+                    <MdCreateNewFolder
+    size={17}
+    className="text-teal-500 hover:text-teal-700 mx-2"
+    onClick={() => {
+        if (item.orderTypeName === "WSClients") {
+            navigate(`/Order/updateOrderProforma/${item?.id}`); // Navigate to WSClients page
+        } else if (item.orderTypeName === "RetailClients") {
+            navigate(`/Order/updateRetailProforma/${item?.id}`); // Navigate to RetailClients page
+        }
+    }}
+    title="Edit Order"
+/>
+
+                        {/* <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updateOrderProforma/${item?.id}`)} title='Edit Order' />   */}
+                             {/* {
+                                                        item.orderTypeName === "WSClients" ? (
+                                                            <MdCreateNewFolder
+                                                                size={17}
+                                                                className="text-teal-500 hover:text-teal-700 mx-2"
+                                                                onClick={() => navigate(`/Order/updateOrderProforma${item?.id}`)}
+                                                                title="Create proforma"
+                                                            />
+                                                        ) : item.orderTypeName === "RetailClients" ? (
+                                                            <MdCreateNewFolder
+                                                                size={17}
+                                                                className="text-teal-500 hover:text-teal-700 mx-2"
+                                                                onClick={() => navigate(`/Order/generateRetailProforma/${item?.id}`)} // Navigate to a different page for RetailClients
+                                                                title="Create proforma"
+                                                            />
+                                                        ) : null
+                                                    } */}
+                        {/* <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' /> */}
                     </p>
                 </td>
             </tr>
