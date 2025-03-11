@@ -281,14 +281,14 @@ const ViewOrderApproved = () => {
                         ))}
                 </td>
 
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     {item.products &&
                         item.products.map((prodId, index) => (
                             <p key={index} className="text-gray-900 whitespace-nowrap">
                                 {prodId.productStatus}
                             </p>
                         ))}
-                </td>
+                </td> */}
 
 
 
@@ -444,7 +444,7 @@ const ViewOrderApproved = () => {
                                         {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Id</th>
                                         
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+                                        {/* <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th> */}
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
