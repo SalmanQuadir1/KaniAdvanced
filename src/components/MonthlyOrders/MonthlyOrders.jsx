@@ -108,8 +108,8 @@ const MonthlyOrders = () => {
                     label: 'Orders per Day',
                     data,
                     fill: false,
-                    backgroundColor: '#FF1493',
-                    borderColor: '#FF1493',
+                    backgroundColor: 'blue',
+                    borderColor: 'blue',
                     tension: 0.1,
                 },
             ],
@@ -191,7 +191,7 @@ const MonthlyOrders = () => {
                 {/* Line Chart */}
                 <div className="row mt-5">
                     <div className="col-md-12">
-                        <h4 className="text-center">Orders per Day (Line Graph)</h4>
+                        <h4 className="text-center text-2xl font-semibold">Orders per Day (Line Graph)</h4>
                         <Line data={prepareChartData()} options={{
                             responsive: true,
                             plugins: {
@@ -215,7 +215,14 @@ const MonthlyOrders = () => {
                                 y: {
                                     title: {
                                         display: true,
-                                        text: 'Orders Count',
+                                        text: 'Cumulative Orders Count',
+                                    },
+                                    ticks: {
+                                        stepSize: 1, // Ensure the Y-axis increments by 1
+                                        beginAtZero: true, // Start the scale at 0
+                                        callback: function(value) {
+                                            return Number.isInteger(value) ? value : null; // Display only integer values
+                                        },
                                     },
                                 },
                             },
