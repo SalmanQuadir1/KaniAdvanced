@@ -7,6 +7,11 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import { BASE_URL } from '../../Constants/utils';
 import { useSelector } from 'react-redux';
+import { Line } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+
+// Register Chart.js components
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const MonthlyOrders = () => {
     const [events, setEvents] = useState([]);
@@ -55,10 +60,8 @@ const MonthlyOrders = () => {
                 return response.json();
             })
             .then((data) => {
-                console.log(data,"kkkkkk");
                 const fetchedEvents = data.map((order) => {
-                    // Normalize the status name by replacing spaces with underscores
-                    const normalizedStatus = order?.status
+                    const normalizedStatus = order?.status;
                     const color = statusColorMapping[normalizedStatus] || '#B5651D';  // Default to a fallback color if status is not mapped
 
                     return {
@@ -81,6 +84,36 @@ const MonthlyOrders = () => {
     const handleDateChange = (date) => {
         setCurrentDate(date);
         fetchEventsForMonth(date);
+    };
+
+    // Prepare data for the Line Chart
+    const prepareChartData = () => {
+        const dailyCounts = {};
+        events.forEach((event) => {
+            const dateKey = format(event.start, 'MM/dd/yyyy');
+            if (dailyCounts[dateKey]) {
+                dailyCounts[dateKey]++;
+            } else {
+                dailyCounts[dateKey] = 1;
+            }
+        });
+
+        const labels = Object.keys(dailyCounts);
+        const data = Object.values(dailyCounts);
+
+        return {
+            labels,
+            datasets: [
+                {
+                    label: 'Orders per Day',
+                    data,
+                    fill: false,
+                    backgroundColor: '#FF1493',
+                    borderColor: '#FF1493',
+                    tension: 0.1,
+                },
+            ],
+        };
     };
 
     return (
@@ -128,7 +161,7 @@ const MonthlyOrders = () => {
 
                     {/* Right side - List View */}
                     <div className="col-md-3">
-                        <h4 className='font-semibold text-center mt-4'>List Of Monthly  Orders</h4>
+                        <h4 className='font-semibold text-center mt-4'>List Of Monthly Orders</h4>
                         <div className="mt-5">
                             <ul className="list-group">
                                 {events.map((event) => (
@@ -152,6 +185,41 @@ const MonthlyOrders = () => {
                                 ))}
                             </ul>
                         </div>
+                    </div>
+                </div>
+
+                {/* Line Chart */}
+                <div className="row mt-5">
+                    <div className="col-md-12">
+                        <h4 className="text-center">Orders per Day (Line Graph)</h4>
+                        <Line data={prepareChartData()} options={{
+                            responsive: true,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Orders per Day',
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: (tooltipItem) => `Orders: ${tooltipItem.raw}`,
+                                    },
+                                },
+                            },
+                            scales: {
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Date',
+                                    },
+                                },
+                                y: {
+                                    title: {
+                                        display: true,
+                                        text: 'Orders Count',
+                                    },
+                                },
+                            },
+                        }} />
                     </div>
                 </div>
             </div>
