@@ -4,44 +4,35 @@
 
 @layer base {
   body {
-    @apply font-satoshi font-normal text-base text-body bg-whiten relative z-1;
+    @apply font-satoshi font-normal text-base text-body bg-white relative z-1;
     font-family: 'Raleway', sans-serif;
-
   }
-
 }
 
-/* For the entire scrollbar track */
-div::-webkit-scrollbar {
+/* Global Scrollbar Styling */
+*::-webkit-scrollbar {
   width: 8px;
-  /* Width of the scrollbar */
   height: 8px;
-  /* Height of the scrollbar for horizontal scrolling */
 }
 
-/* For the scrollbar itself */
-div::-webkit-scrollbar-thumb {
+/* Scrollbar Thumb Styling */
+*::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #4b5563, #3f4f67);
-  /* Gradient color */
   border-radius: 4px;
-  /* Rounded corners */
 }
 
-/* For the scrollbar track (the background behind the scrollbar) */
-div::-webkit-scrollbar-track {
+/* Scrollbar Track Styling */
+*::-webkit-scrollbar-track {
   background: #f3f4f6;
-  /* Light gray color for contrast */
   border-radius: 4px;
-  /* Rounded corners */
 }
 
-/* Add hover effect for the scrollbar */
-div::-webkit-scrollbar-thumb:hover {
+/* Hover Effect for Scrollbar */
+*::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #1f2937, #4b5563);
-  /* Darker gradient on hover */
 }
 
-/* Optional: Style horizontal scrollbar if necessary */
+/* Optional Horizontal Scrollbar Styling */
 table::-webkit-scrollbar {
   height: 8px;
 }
@@ -56,7 +47,7 @@ table::-webkit-scrollbar-track {
   border-radius: 4px;
 }
 
-/* General circle style for status indicators */
+/* Circle Style for Status Indicators */
 .dot {
   display: inline-block;
   width: 12px;
@@ -65,101 +56,37 @@ table::-webkit-scrollbar-track {
   margin-right: 5px;
 }
 
-/* Status colors */
-.dot-grey {
-  background-color: #808080;
-  /* Grey */
+/* Status Colors */
+.dot-grey { background-color: #808080; }
+.dot-dblue { background-color: #00008B; }
+.dot-blue { background-color: #0000FF; }
+.dot-dpink { background-color: #D32F2F; }
+.dot-pink { background-color: #E91E63; }
+.dot-dpurple { background-color: #9C27B0; }
+.dot-purple { background-color: #673AB7; }
+.dot-green { background-color: #4CAF50; }
+.dot-dgreen { background-color: #388E3C; }
+.dot-yellow { background-color: #FFEB3B; }
+.dot-orange { background-color: #FF5722; }
+.dot-black { background-color: #000000; }
+.dot-red { background-color: #F44336; }
+
+/* Hide Scrollbar for Specific Elements */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-.dot-dblue {
-  background-color: #00008B;
-  /* Dark Blue */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* For IE and Edge */
+  scrollbar-width: none;     /* For Firefox */
 }
 
-.dot-blue {
-  background-color: #0000FF;
-  /* Blue */
+/* Adjusting Chat and Inbox Height */
+.chat-height, .inbox-height {
+  @apply h-[calc(100vh_-_8.125rem)] lg:h-[calc(100vh_-_5.625rem)];
 }
 
-.dot-dpink {
-  background-color: #D32F2F;
-  /* Dark Pink */
-}
-
-.dot-pink {
-  background-color: #E91E63;
-  /* Pink */
-}
-
-.dot-dpurple {
-  background-color: #9C27B0;
-  /* Dark Purple */
-}
-
-.dot-purple {
-  background-color: #673AB7;
-  /* Purple */
-}
-
-.dot-green {
-  background-color: #4CAF50;
-  /* Green */
-}
-
-.dot-dgreen {
-  background-color: #388E3C;
-  /* Dark Green */
-}
-
-.dot-yellow {
-  background-color: #FFEB3B;
-  /* Yellow */
-}
-
-.dot-orange {
-  background-color: #FF5722;
-  /* Orange */
-}
-
-.dot-black {
-  background-color: #000000;
-  /* Black */
-}
-
-.dot-red {
-  background-color: #F44336;
-  /* Red */
-}
-
-
-
-@layer components {}
-
-@layer utilities {
-
-  /* Chrome, Safari and Opera */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    /* IE and Edge */
-    scrollbar-width: none;
-    /* Firefox */
-  }
-
-  .chat-height {
-    @apply h-[calc(100vh_-_8.125rem)] lg:h-[calc(100vh_-_5.625rem)];
-  }
-
-  .inbox-height {
-    @apply h-[calc(100vh_-_8.125rem)] lg:h-[calc(100vh_-_5.625rem)];
-  }
-}
-
-/* third-party libraries CSS */
-
+/* Checkbox styling for table */
 .tableCheckbox:checked ~ div span {
   @apply opacity-100;
 }

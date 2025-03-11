@@ -45,6 +45,7 @@ const UpdateSupplier = () => {
   useEffect(() => {
     const fetchData = async () => {
       const supplierData = await GetSupplierById(id);
+      console.log(supplierData,"umershahaa");
 
       if (supplierData) {
         setInitialValues({
@@ -66,7 +67,7 @@ const UpdateSupplier = () => {
           supplierData.groupTypes &&
             supplierData.groupTypes.map((group) => ({
               selectedOption1: groups.find(
-                (g) => g.value === group.groupTypeName,
+                (g) => g.value === group?.groupTypeName,
               ),
               selectedOption3: group.workers.map((worker) => ({
                 value: worker.workerCode,
@@ -78,8 +79,9 @@ const UpdateSupplier = () => {
         );
       }
     };
-
+    
     fetchData();
+    console.log(rows,"row===================================");
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -187,36 +189,36 @@ const UpdateSupplier = () => {
           initialValues={initialValues}
           validate={(values) => {
             const errors = {};
-            if (!values.name) {
+            if (!values?.name) {
               errors.name = 'Required';
             }
-            if (!values.phoneNumber) {
+            if (!values?.phoneNumber) {
               errors.phoneNumber = 'Required';
             }
-            if (values.phoneNumber.length < 10) {
+            if (values?.phoneNumber?.length < 10) {
               errors.phoneNumber =
                 'Phone Number Must Be Greater than 10 digits';
             }
-            if (!values.supplierCode) {
+            if (!values?.supplierCode) {
               errors.supplierCode = 'Required';
             }
-            if (!values.address) {
+            if (!values?.address) {
               errors.address = 'Required';
             }
-            if (!values.bankName) {
+            if (!values?.bankName) {
               errors.bankName = 'Required';
             }
-            if (!values.accountNo) {
+            if (!values?.accountNo) {
               errors.accountNo = 'Required';
             }
-            if (values.accountNo.length < 10) {
+            if (values?.accountNo?.length < 10) {
               errors.accountNo =
                 'Account Number Must Be Greater than 10 digits';
             }
-            if (!values.ifscCode) {
+            if (!values?.ifscCode) {
               errors.ifscCode = 'Required';
             }
-            if (!values.emailId) {
+            if (!values?.emailId) {
               errors.emailId = 'Required';
             }
             return errors;
@@ -374,7 +376,7 @@ const UpdateSupplier = () => {
                           Supplier Type
                         </label>
                         <ReactSelect
-                          isDisabled
+                          // isDisabled
                           styles={customStyles}
                           options={seloptions}
                           value={values?.supplierType}
@@ -386,7 +388,7 @@ const UpdateSupplier = () => {
                     </div>
                   </div>
 
-                  {values?.supplierType.value === 'PRODUCT' && (
+                  {values?.supplierType?.value === 'PRODUCT' && (
                     <div className="overflow-hidden w-[350px] sm:w-full ml-3 sm:ml-0 md:overflow-x-visible  md:overflow-y-visible  rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                       <div className=" flex justify-between border-b border-stroke py-4 px-6.5 dark:border-strokedark ">
                         <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">

@@ -25,8 +25,8 @@ const AddProduct = () => {
     const [supplierNameOptions, setsupplierNameOptions] = useState([])
     const [supplierCodeOptions, setsupplierCodeOptions] = useState([])
 
-    const [referenceImages, setrefImage] = useState({})
-    const [actualImages, setactualImage] = useState({})
+    const [referenceImages, setrefImage] = useState([])
+    const [actualImages, setactualImage] = useState([])
 
     const [gstDetails, setgstDetails] = useState([])
 
@@ -66,17 +66,26 @@ const AddProduct = () => {
 
 
     const handleFileChange = async (event) => {
-        const files = Array.from(event.target.files);
+        const files = Array.from(event.target.files); // Convert FileList to an array
         const newPreviews = files.map((file) => ({
             file,
             url: URL.createObjectURL(file),
-            referenceImage: file,  // Or actualImage depending on the logic
-            actualImage: file,     // Or referenceImage depending on the logic
+            referenceImage: file, // Or actualImage depending on the logic
+            actualImage: file,    // Or referenceImage depending on the logic
         }));
-        await setrefImage(files || "")
-
+    
+        // Update the referenceImages state with all selected files
+        setrefImage((prevImages) => [...prevImages, ...files]);
+    
+        // Update the previews state with all newPreviews
         setPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
     };
+    
+    // Use useEffect to log the updated state after the change
+    useEffect(() => {
+        console.log(referenceImages, "refimagessssss====================================");
+        setrefImage(referenceImages);
+    }, [referenceImages]);  //
 
 
     const handleFileChangeActual = async (event) => {
@@ -89,9 +98,14 @@ const AddProduct = () => {
             actualImage: file,     // Or referenceImage depending on the logic
         }));
         setPreviewsActual((prevPreviewsActual) => [...prevPreviewsActual, ...newPreviewsActual]);
-        await setactualImage(files || "")
+        await setactualImage((prevPreviewsActual) => [...prevPreviewsActual, ...files]);
+        console.log(actualImages,"jamshedpuuuuuuuuuuuuuuu===========");
 
     };
+    useEffect(() => {
+        console.log(actualImages, "actualImage====================================");
+        setactualImage(actualImages);
+    }, [actualImages]);
 
 
     useEffect(() => {

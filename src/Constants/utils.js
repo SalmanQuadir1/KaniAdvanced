@@ -224,6 +224,7 @@ export const VIEW_ALLACCEPTED_ORDERS = `${BASE_URL}/order/searchAccepted`;
 export const VIEW_PARTIALLYAPPROVED_ORDERS = `${BASE_URL}/order/searchApprovedAndAccepted`;
 
 export const VIEW_APPROVED_ORDERS = `${BASE_URL}/order/searchApproved`; 
+
 export const VIEW_PROFORMA = `${BASE_URL}/order/searchOrderProforma`; 
 
 export const VIEW_CANCELLED_ORDERS = `${BASE_URL}/order/searchCancel`; 

@@ -21,7 +21,7 @@ const AddBulkSupplier = () => {
         formData.append('file', values.file);
 
         try {
-            const apiEndpoints = `${BASE_URL}/uploadExcel/customer`
+            const apiEndpoints = `${BASE_URL}/uploadExcel/supplier`
 
             const response = await fetch(apiEndpoints, {
                 method: 'POST',

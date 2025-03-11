@@ -23,6 +23,10 @@ const ViewProduct = () => {
     const { Product, handleDelete, handleUpdate, handlePageChange, pagination, getProduct, productId, getProductId, getBOMData } = useProduct({ referenceImages, actualImages });
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const [isImagesModalOpen, setisImagesModalOpen] = useState(false)
+
+    const [Images, setImages] = useState(null)
     const [selectedBOMData, setSelectedBOMData] = useState(null);
 
 
@@ -56,6 +60,19 @@ const ViewProduct = () => {
         setSelectedBOMData(bomData);
         setIsModalOpen(true);
     };
+
+    const openImageModal = (Images) => {
+        console.log("image modeel before");
+
+
+        setisImagesModalOpen(true);
+        console.log(isImagesModalOpen, "afterimage");
+        setImages(Images);
+
+    };
+    console.log(Images, "image huuuun===============================================");
+
+
     // console.log(selectedBOMData, "jijiji");
 
     const closeBOMModal = () => {
@@ -142,15 +159,19 @@ const ViewProduct = () => {
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
                 </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                <td className="px-1 py-5 border-b border-gray-200 text-sm">
                     <div className="relative group">
                         <img
-                            className="h-10 w-10 rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                            className="h-[50px] w-[50px] rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
                             crossOrigin="use-credentials"
                             src={`${GET_IMAGE}/products/getimages/${item?.images[0]?.referenceImage}`}
                             alt="Product Image"
                         />
                     </div>
+                </td>
+                <td className="px-1 py-5 border-b border-gray-200 text-sm">
+                    <span onClick={() => openImageModal(item?.images)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[200px]"> VIEW IMAGES</span>
+
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.productId?.substring(0, 14) + ".."}</p>
@@ -287,6 +308,73 @@ const ViewProduct = () => {
                         </div>
                     )}
 
+                    {isImagesModalOpen && (
+
+
+                        <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center z-50">
+                            <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px] w-[870px] h-[400px] mt-[60px] dark:bg-slate-600 overflow-auto">
+                                <div className="text-right">
+                                    <button onClick={() => setisImagesModalOpen(false)} className="text-red-500 text-xl font-bold">&times;</button>
+                                </div>
+                                <h2 className="text-2xl text-center mb-4 font-extrabold">LIST OF IMAGES</h2>
+
+                                {/* Reference Images Section */}
+                                <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden mb-4">
+                                    <h1>Reference Images</h1>
+                                    <div className="flex overflow-x-auto space-x-4 py-2">
+                                        {
+                                            Images.map((image, index) => {
+                                                // Check if the referenceImage is not null or undefined before rendering
+                                                if (image?.referenceImage) {
+                                                    return (
+                                                        <img
+                                                            key={index}
+                                                            className="h-[200px] w-[200px] rounded-lg transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                                                            crossOrigin="use-credentials"
+                                                            src={`${GET_IMAGE}/products/getimages/${image.referenceImage}`}
+                                                            alt="Product Image"
+                                                        />
+                                                    );
+                                                }
+                                                return null; // Return null if referenceImage is null or undefined
+                                            })
+                                        }
+                                    </div>
+                                </div>
+
+                                {/* Actual Images Section */}
+                                <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden mb-4">
+                                    <h1>Actual Images</h1>
+                                    <div className="flex overflow-x-auto space-x-4 py-2">
+                                        {
+                                            Images.map((image, index) => {
+                                                // Check if the actualImage is not null or undefined before rendering
+                                                if (image?.actualImage) {
+                                                    return (
+                                                        <img
+                                                            key={index}
+                                                            className="h-[200px] w-[200px] rounded-lg transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                                                            crossOrigin="use-credentials"
+                                                            src={`${GET_IMAGE}/products/getimages/${image.actualImage}`}
+                                                            alt="Product Image"
+                                                        />
+                                                    );
+                                                }
+                                                return null; // Return null if actualImage is null or undefined
+                                            })
+                                        }
+                                    </div>
+                                </div>
+
+                                {/* <pre>{JSON.stringify(selectedBOMData, null, 2)}</pre> */}
+                            </div>
+                        </div>
+
+
+
+
+                    )}
+
 
                     {/* Inventory Modal */}
                     {isINVENTORYModalOpen && (
@@ -399,6 +487,7 @@ const ViewProduct = () => {
                                     <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">IMAGE</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[220px]">View Images</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">PRODUCT ID</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">PRODUCT GROUP</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">CATEGORY</th>

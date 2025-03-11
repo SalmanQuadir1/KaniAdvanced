@@ -30,14 +30,14 @@ const useSupplier = () => {
     ];
 
     const groups = [
-        { value: 'ContemporaryPashmina', label: 'Contemporary Pashmina' },
-        { value: 'PashminaEmbroidery', label: 'Pashmina Embroidery' },
+        { value: 'Contemporary Pashmina', label: 'Contemporary Pashmina' },
+        { value: 'Pashmina Embroidery', label: 'Pashmina Embroidery' },
         { value: 'Kani', label: 'Kani' },
-        { value: 'ContemporaryWool', label: 'Contemporary Wool' },
-        { value: 'WoolEmbroidery', label: 'Wool Embroidery' },
-        { value: 'PapierMache', label: 'Papier Mache' },
+        { value: 'Contemporary Wool', label: 'Contemporary Wool' },
+        { value: 'Wool Embroidery', label: 'Wool Embroidery' },
+        { value: 'Papier Mache', label: 'Papier Mache' },
         { value: 'Cotton', label: 'Cotton' },
-        { value: 'PapierMache', label: 'Papier Mache' }
+        { value: 'Papier Mache', label: 'Papier Mache' }
     ];
 
     const [pagination, setPagination] = useState({
