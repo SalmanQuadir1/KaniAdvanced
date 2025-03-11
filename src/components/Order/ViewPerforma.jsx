@@ -260,8 +260,14 @@ const ViewOrderApproved = () => {
                 </td>
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.orderNo}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.pid}</p>
 
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item.orderTypeName}</p>
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item.orderNo}</p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item.customerName}</p>
@@ -275,14 +281,14 @@ const ViewOrderApproved = () => {
                         ))}
                 </td>
 
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     {item.products &&
                         item.products.map((prodId, index) => (
                             <p key={index} className="text-gray-900 whitespace-nowrap">
                                 {prodId.productStatus}
                             </p>
                         ))}
-                </td>
+                </td> */}
 
 
 
@@ -294,8 +300,40 @@ const ViewOrderApproved = () => {
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
-                        <MdCreateNewFolder  size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updatepartiallyApproved/${item?.id}`)} title='Create/Update Performa' />  
-                       
+
+
+                    <MdCreateNewFolder
+    size={17}
+    className="text-teal-500 hover:text-teal-700 mx-2"
+    onClick={() => {
+        if (item.orderTypeName === "WSClients") {
+            navigate(`/Order/updateOrderProforma/${item?.id}`); // Navigate to WSClients page
+        } else if (item.orderTypeName === "RetailClients") {
+            navigate(`/Order/updateRetailProforma/${item?.id}`); // Navigate to RetailClients page
+        }
+    }}
+    title="Edit Order"
+/>
+
+                        {/* <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updateOrderProforma/${item?.id}`)} title='Edit Order' />   */}
+                             {/* {
+                                                        item.orderTypeName === "WSClients" ? (
+                                                            <MdCreateNewFolder
+                                                                size={17}
+                                                                className="text-teal-500 hover:text-teal-700 mx-2"
+                                                                onClick={() => navigate(`/Order/updateOrderProforma${item?.id}`)}
+                                                                title="Create proforma"
+                                                            />
+                                                        ) : item.orderTypeName === "RetailClients" ? (
+                                                            <MdCreateNewFolder
+                                                                size={17}
+                                                                className="text-teal-500 hover:text-teal-700 mx-2"
+                                                                onClick={() => navigate(`/Order/generateRetailProforma/${item?.id}`)} // Navigate to a different page for RetailClients
+                                                                title="Create proforma"
+                                                            />
+                                                        ) : null
+                                                    } */}
+                        {/* <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' /> */}
                     </p>
                 </td>
             </tr>
@@ -399,12 +437,14 @@ const ViewOrderApproved = () => {
                                 <thead>
                                     <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">PID</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order Type</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"> Order No</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Customer</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Id</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
                                         {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
-
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Id</th>
+                                        
+                                        {/* <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th> */}
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>

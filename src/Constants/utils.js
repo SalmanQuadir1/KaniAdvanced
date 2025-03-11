@@ -216,7 +216,9 @@ export const VIEW_CREATED_ORDERS = `${BASE_URL}/order/searchCreated`;
 export const EDIT_CREATED_ORDERS = `${BASE_URL}/order/searchCreatedEditOrder`; 
 
 export const GET_PID = `${BASE_URL}/order/generateOrderProforma`; 
+export const GET_PROFORMAID_URL = `${BASE_URL}/order/getOrderProforma`;
 
+export const UPDATE_PROFORMA_URL = `${BASE_URL}/order/updateOrderProforma`;
 export const VIEW_ALLACCEPTED_ORDERS = `${BASE_URL}/order/searchAccepted`;  
 
 export const VIEW_PARTIALLYAPPROVED_ORDERS = `${BASE_URL}/order/searchApprovedAndAccepted`;
