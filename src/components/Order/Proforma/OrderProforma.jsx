@@ -494,14 +494,14 @@ const OrderProforma = () => {
                                 gstTax = 5
                                 Tax = (totalValue * 5) / 100;
                             }
-
+                            const TotalValuee = Tax + totalValue
                             // Update Formik values for the current product
                             setFieldValue(`orderProducts[${index}].gstTax`, gstTax);
                             setFieldValue(`orderProducts[${index}].taxibleValue`, taxableValue);
                             setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
                             setFieldValue('gst', Tax);
-                            setFieldValue('total', Tax + totalValue)
-                            console.log(Tax + totalValue, "jujujuju");
+                            setFieldValue('total', TotalValuee)
+                            console.log(TotalValuee, "jujujuju");
                             console.log(values.total, "umer shah");
                             setTaxx(Tax)
                             console.log("Tax:", Tax);
