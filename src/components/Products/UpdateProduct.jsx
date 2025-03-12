@@ -223,7 +223,7 @@ const UpdateProduct = () => {
             if (response.ok) {
                 console.log(data, "Update response:");
                 toast.success("Product updated successfully");
-                navigate('/product/viewProducts');
+                //navigate('/product/viewProducts');
             } else {
                 console.error("Update failed. Status:", response.status, response.statusText);
                 console.error("Raw response:", data);
@@ -269,17 +269,28 @@ const UpdateProduct = () => {
     }, [id]);
 
     // Prepare color group options
+    // useEffect(() => {
+    //     if (colorGroup.data) {
+    //         const formattedOptions = colorGroup.data.map((color) => ({
+    //             value: color.id,
+    //             label: color.colorName,
+    //             colorGroupObject: color,
+    //             color: { id: color.id }
+    //         }));
+    //         setColorGroupOptions(formattedOptions);
+    //     }
+    // }, [colorGroup]);
+
     useEffect(() => {
-        if (colorGroup.data) {
+        if (colorGroup?.data) {
             const formattedOptions = colorGroup.data.map((color) => ({
                 value: color.id,
                 label: color.colorName,
-                colorGroupObject: color,
-                color: { id: color.id }
             }));
             setColorGroupOptions(formattedOptions);
         }
     }, [colorGroup]);
+    
     useEffect(() => {
         if (productCategory.data) {
             const formattedOptions = productCategory.data.map(prodCat => ({
@@ -585,7 +596,7 @@ console.log(product,"lama");
                                                     Color Group <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span>
                                                 </label>
                                                 <div className="z-20 bg-transparent dark:bg-form-field">
-                                                    <ReactSelect
+                                                    {/* <ReactSelect
                                                         name="colors"
                                                         value={
                                                             colorGroupOptions.find(option => option.value === values.colors?.id) || null
@@ -604,7 +615,21 @@ console.log(product,"lama");
                                                         className="bg-white dark:bg-form-field"
                                                         classNamePrefix="react-select"
                                                         placeholder="Select Color Group" // Static placeholder
-                                                    />
+                                                    /> */}
+
+<ReactSelect
+    name="colors"
+    value={colorGroupOptions.find(option => option.value === values.colors?.id) || null}
+    onChange={(option) => 
+        setFieldValue('colors', option ? { id: option.value, colorName: option.label } : null)
+    }
+    options={colorGroupOptions}
+    styles={customStyles}
+    className="bg-white dark:bg-form-field"
+    classNamePrefix="react-select"
+    placeholder="Select Color Group"
+/>
+
                                                 </div>
                                             </div>
 
