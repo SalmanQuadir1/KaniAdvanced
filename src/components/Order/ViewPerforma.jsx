@@ -35,8 +35,8 @@ const ViewOrderApproved = () => {
 
     const { token } = currentUser;
 
-    console.log(productIdd,"huhuuhuuuuuuuuuuuuuuuuu");
-    
+    console.log(productIdd, "huhuuhuuuuuuuuuuuuuuuuu");
+
     const [Order, setOrder] = useState()
 
     const [supplierNameOptions, setsupplierNameOptions] = useState([])
@@ -72,7 +72,7 @@ const ViewOrderApproved = () => {
 
 
 
-    
+
     const formattedCustomer = customer.map(customer => ({
         label: customer.customerName,
         value: customer.customerName
@@ -300,42 +300,42 @@ const ViewOrderApproved = () => {
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
-
-
-                    <MdCreateNewFolder
-    size={17}
-    className="text-teal-500 hover:text-teal-700 mx-2"
-    onClick={() => {
-        if (item.orderTypeName === "WSClients") {
-            navigate(`/Order/updateOrderProforma/${item?.id}`); // Navigate to WSClients page
-        } else if (item.orderTypeName === "RetailClients") {
-            navigate(`/Order/updateRetailProforma/${item?.id}`); // Navigate to RetailClients page
-        }
-    }}
-    title="Edit Order"
-/>
-
-                        {/* <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updateOrderProforma/${item?.id}`)} title='Edit Order' />   */}
-                             {/* {
-                                                        item.orderTypeName === "WSClients" ? (
-                                                            <MdCreateNewFolder
-                                                                size={17}
-                                                                className="text-teal-500 hover:text-teal-700 mx-2"
-                                                                onClick={() => navigate(`/Order/updateOrderProforma${item?.id}`)}
-                                                                title="Create proforma"
-                                                            />
-                                                        ) : item.orderTypeName === "RetailClients" ? (
-                                                            <MdCreateNewFolder
-                                                                size={17}
-                                                                className="text-teal-500 hover:text-teal-700 mx-2"
-                                                                onClick={() => navigate(`/Order/generateRetailProforma/${item?.id}`)} // Navigate to a different page for RetailClients
-                                                                title="Create proforma"
-                                                            />
-                                                        ) : null
-                                                    } */}
-                        {/* <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' /> */}
+                        {/* Check if the order proforma is not created */}
+                        {item.isOrderProformaCreated === false ? (
+                            // Check if the orderType is "WSClients" or "RetailClients"
+                            item.orderTypeName === "WSClients" ? (
+                                <MdCreateNewFolder
+                                    size={17}
+                                    className="text-teal-500 hover:text-teal-700 mx-2"
+                                    onClick={() => navigate(`/Order/generateProforma/${item?.id}`)}
+                                    title="Create Proforma"
+                                />
+                            ) : item.orderTypeName === "RetailClients" ? (
+                                <MdCreateNewFolder
+                                    size={17}
+                                    className="text-teal-500 hover:text-teal-700 mx-2"
+                                    onClick={() => navigate(`/Order/generateRetailProforma/${item?.id}`)}
+                                    title="Create Proforma"
+                                />
+                            ) : null
+                        ) : (
+                            // If proforma is created, show the Edit icon based on orderType
+                            <MdCreateNewFolder
+                                size={17}
+                                className="text-teal-500 hover:text-teal-700 mx-2"
+                                onClick={() => {
+                                    if (item.orderTypeName === "WSClients") {
+                                        navigate(`/Order/updateOrderProforma/${item?.id}`);
+                                    } else if (item.orderTypeName === "RetailClients") {
+                                        navigate(`/Order/updateRetailProforma/${item?.id}`);
+                                    }
+                                }}
+                                title="Edit Order"
+                            />
+                        )}
                     </p>
                 </td>
+
             </tr>
         ));
     };
@@ -375,10 +375,10 @@ const ViewOrderApproved = () => {
                     <div className='items-center justify-center'>
                         <Formik
                             initialValues={{
-                         
+
                                 customerName: "",
-                           
-                       
+
+
 
 
 
@@ -387,13 +387,13 @@ const ViewOrderApproved = () => {
                         >
                             {({ setFieldValue, values, handleBlur }) => (
                                 <Form>
-                                
+
 
 
 
 
                                     <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-                                     
+
                                         <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Customer</label>
                                             <ReactSelect
@@ -443,7 +443,7 @@ const ViewOrderApproved = () => {
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Customer</th>
                                         {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Id</th>
-                                        
+
                                         {/* <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th> */}
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                                     </tr>
