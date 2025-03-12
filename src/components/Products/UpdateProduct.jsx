@@ -510,7 +510,7 @@ console.log(product,"lama");
                         embroideryCost: product?.embroideryCost || '',
                         totalCost: product?.totalCost || '',
                         slabBasedRates: product?.slabBasedRates || [],
-                        unit: product.unit || { id: 0 },
+                        unit: product.unit ,
                         supplierCode:product.supplierCode|| { id: 0 }
 
                         // igst :vaaluee?.hsnCode?.igst ??product?.hsnCode?.igst ??  '',
