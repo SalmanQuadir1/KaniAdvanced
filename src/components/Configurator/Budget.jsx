@@ -138,7 +138,7 @@ const Budget = () => {
                                     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                                         <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                                             <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                                                Add Budget
+                                              {edit?"UPDATE BUDGET": "Add Budget"} 
                                             </h3>
                                         </div>
 
@@ -252,7 +252,7 @@ const Budget = () => {
 
                                             <div className="flex justify-center mt-4 items-center">
                                                 <button type="submit" className="flex md:w-[240px] w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90">
-                                                    ADD BUDGET
+                                                {edit?"UPDATE BUDGET": "ADD BUDGET"}  
                                                 </button>
                                             </div>
                                         </div>
