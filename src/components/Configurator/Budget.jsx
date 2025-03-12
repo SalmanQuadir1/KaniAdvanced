@@ -97,7 +97,7 @@ const Budget = () => {
     });
     return (
         <DefaultLayout>
-            <Breadcrumb pageName="Configurator/Add Budget" />
+            <Breadcrumb pageName= {edit?"Configurator/Update Budget":"Configurator/Add Budget"} />
             <div>
 
                 <Formik
