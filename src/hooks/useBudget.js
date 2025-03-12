@@ -10,7 +10,7 @@ const useBudget = () => {
     const { token } = currentUser;
     const [Budget, setBudget] = useState([]);
     const [edit, setEdit] = useState(false);
-    const [currentBudget, setCurrentBudget] = useState({ currentBudget: '', productGroup: {}, orderType: {}, startDate: '', toDate: "",revisedBudget:"",revisedDate:"" });
+    const [currentBudget, setCurrentBudget] = useState({ currentBudget: '', productGroup: {}, orderType: {}, startDate: '', toDate: "", revisedBudget: "", revisedDate: "" });
 
     const dispatch = useDispatch();
 
@@ -92,18 +92,18 @@ const useBudget = () => {
     const handleUpdate = (e, item) => {
         e.preventDefault();
         setEdit(true);
-console.log(item,"hey");
+        console.log(item, "hey");
         setCurrentBudget(item);
     };
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-        console.log(values,"i am here");
+        console.log(values, "i am here");
         try {
-     
-    
+
+
             const url = edit ? `${UPDATE_BUDGET_URL}/${currentBudget.id}` : ADD_BUDGET_URL;
             const method = edit ? "PUT" : "POST";
-    
+
             const response = await fetch(url, {
                 method: method,
                 headers: {
@@ -112,7 +112,7 @@ console.log(item,"hey");
                 },
                 body: JSON.stringify(values)
             });
-    
+
             const data = await response.json();
             if (response.ok) {
                 toast.success(`Budget ${edit ? 'updated' : 'added'} successfully`);
@@ -130,7 +130,7 @@ console.log(item,"hey");
                 // Optionally, refresh the budget list here
                 // getBudget(pagination.currentPage);
             } else {
-                toast.error(`${data.errorMessage}`);
+                toast.error(`${data.message}`);
             }
         } catch (error) {
             console.error(error);
@@ -139,7 +139,7 @@ console.log(item,"hey");
             setSubmitting(false);
         }
     };
-    
+
 
     const handlePageChange = (newPage) => {
 
