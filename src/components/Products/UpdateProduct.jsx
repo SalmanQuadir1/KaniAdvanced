@@ -223,7 +223,7 @@ const UpdateProduct = () => {
             if (response.ok) {
                 console.log(data, "Update response:");
                 toast.success("Product updated successfully");
-                navigate('/product/viewProducts');
+                //navigate('/product/viewProducts');
             } else {
                 console.error("Update failed. Status:", response.status, response.statusText);
                 console.error("Raw response:", data);
