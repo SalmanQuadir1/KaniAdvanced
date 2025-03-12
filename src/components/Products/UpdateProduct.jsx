@@ -154,6 +154,9 @@ const UpdateProduct = () => {
             supplierCode: { id: values.supplierCode?.id || 0 },
         };
 
+
+
+        
         console.log(product, 'jugnioo');
         if (gstDetails && gstDetails.length > 0) {
             product.slabBasedRates = values.slabBasedRates; // Add gstDetails to the product
