@@ -412,16 +412,17 @@ const AddProduct = () => {
                     validate={values => {
 
                         const errors = {};
-
+                        
                         if (values) {
 
-
+                            
                             setvaaluee(values)
                             // setFieldValue('productId', productIdField);
                         }
                         return errors;
-
-
+                        
+                      
+                        
                     }}
 
                     onSubmit={handleSubmit}
