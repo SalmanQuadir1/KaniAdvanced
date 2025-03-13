@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { GET_BUDGET_URL, DELETE_BUDGET_URL, UPDATE_BUDGET_URL, ADD_BUDGET_URL } from "../Constants/utils";
 import { fetchProductGroup } from '../redux/Slice/ProductGroup';
 import { fetchOrderType } from '../redux/Slice/OrderTypeSlice';
+import { useNavigate } from 'react-router-dom';
 
 const useBudget = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
@@ -11,7 +12,7 @@ const useBudget = () => {
     const [Budget, setBudget] = useState([]);
     const [edit, setEdit] = useState(false);
     const [currentBudget, setCurrentBudget] = useState({ currentBudget: '', productGroup: {}, orderType: {}, startDate: '', toDate: "", revisedBudget: "", revisedDate: "" });
-
+    const navigate = useNavigate()
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -140,6 +141,40 @@ const useBudget = () => {
         }
     };
 
+    const handleUpdateSubmit = async (values, idd, { setSubmitting, resetForm }) => {
+
+        try {
+
+
+            const url = `${UPDATE_BUDGET_URL}/${idd}`;
+            const method = "PUT";
+
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(values)
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                toast.success(`Budget  updated  successfully`);
+                navigate("/budget/viewBudget")
+
+
+            } else {
+                toast.error(`${data.message}`);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("An error occurred");
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
 
     const handlePageChange = (newPage) => {
 
@@ -156,6 +191,7 @@ const useBudget = () => {
         handleUpdate,
         handleSubmit,
         handlePageChange,
+        handleUpdateSubmit
     };
 };
 

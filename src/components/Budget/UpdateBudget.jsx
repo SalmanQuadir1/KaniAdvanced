@@ -7,12 +7,16 @@ import ReactSelect from 'react-select';
 import flatpickr from 'flatpickr';
 import { useSelector } from 'react-redux';
 import useBudget from '../../hooks/useBudget';
-import ViewTable from './ViewTable';
+import ViewTable from '../Configurator/ViewTable';
 import Pagination from '../Pagination/Pagination';
-import { customStyles as createCustomStyles } from '../../Constants/utils';
-import BudgetTable from "./BudgetTable"
+import { GET_BUDGET_URL, customStyles as createCustomStyles } from '../../Constants/utils';
+import BudgetTable from "../Configurator/BudgetTable"
+import { useParams } from 'react-router-dom';
 
-const Budget = () => {
+const UpdateBudget = () => {
+    const { currentUser } = useSelector((state) => state?.persisted?.user);
+    const { token } = currentUser;
+    const [Budget, setBudget] = useState()
 
 
 
@@ -24,7 +28,7 @@ const Budget = () => {
     const [dateSelected, setDateSelected] = useState('');
 
     const {
-        Budget,
+        handleUpdateSubmit,
         edit,
         currentBudget,
         pagination,
@@ -37,7 +41,31 @@ const Budget = () => {
 
 
     console.log(productGroup, orderType, "heyproooo");
+    const { id } = useParams()
+    useEffect(() => {
+        const getBudget = async (page) => {
+        console.log("jamsheddddddddddddddddddd===============");
+            try {
+                const response = await fetch(`${GET_BUDGET_URL}/${id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                console.log(data,"from url");
+                setBudget(data);
 
+
+            } catch (error) {
+                console.error(error);
+                toast.error("Failed to fetch Budget");
+            }
+        };
+
+        getBudget();
+    }, [])
 
 
     const customStyles = createCustomStyles(theme?.mode);
@@ -82,38 +110,31 @@ const Budget = () => {
         }
     }, [flatpickrRef.current]);
     console.log(Budget, "jhhhh");
-    const validationSchema = Yup.object({
-        productGroup: Yup.object({
-            id: Yup.string().required('Field is Empty'),
-            name: Yup.string().required('Field is Empty')
-        }).required('Field is Empty').nullable(),
-        // colors: Yup.object({
-        //     id: Yup.string().required('Field is Empty'),
-        //     name: Yup.string().required('Field is Empty')
-        // }).required('Field is Empty').nullable(),
-        // description: Yup.string().required('Field is Empty'),
-        // grade: Yup.string().required('Field is Empty'),
-        // materialType: Yup.object().required('Field is Empty').nullable(),
-    });
+
     return (
         <DefaultLayout>
-            <Breadcrumb pageName= {edit?"Configurator/Update Budget":"Configurator/Add Budget"} />
+            <Breadcrumb pageName="Configurator/Update Budget" />
             <div>
 
                 <Formik
-                    initialValues={currentBudget}
+                    initialValues={{
+                        currentBudget: Budget?.currentBudget || "", productGroup: Budget?.productGroup, orderType: Budget?.orderType, startDate: Budget?.startDate, toDate: Budget?.toDate, revisedBudget: Budget?.revisedBudget, revisedDate: Budget?.revisedDate
+                    }}
                     enableReinitialize={true}
                     // validationSchema={validationSchema}
-                    onSubmit={handleSubmit}
+                    onSubmit={(values, { setSubmitting, resetForm }) => {
+                        const idd = id; // `id` comes from `useParams` hook
+                        handleUpdateSubmit(values, idd, { setSubmitting, resetForm });
+                    }}
                 >
                     {({ setFieldValue, values }) => {
 
                         useEffect(() => {
                             // Check if startDate is a valid date
-                            let startDate = new Date(values.startDate);
+                            let startDate = new Date(values?.startDate);
 
-                            if (isNaN(startDate.getTime())) {
-                                console.error('Invalid start date:', values.startDate);
+                            if (isNaN(startDate?.getTime())) {
+                                console.error('Invalid start date:', values?.startDate);
                                 return;  // Exit the effect if the start date is invalid
                             }
 
@@ -126,7 +147,7 @@ const Budget = () => {
                             // Set startDate and endDate
                             setFieldValue('startDate', values.startDate); // Ensure the start date is set correctly
                             setFieldValue('toDate', startDate.toISOString().split('T')[0]); // Set the endDate to 1 year after startDate
-                        }, [values.startDate, setFieldValue]);
+                        }, [values.startDate]);
 
 
                         return (
@@ -138,7 +159,7 @@ const Budget = () => {
                                     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                                         <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                                             <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                                              {edit?"UPDATE BUDGET": "Add Budget"} 
+                                                UPDATE BUDGET
                                             </h3>
                                         </div>
 
@@ -252,27 +273,14 @@ const Budget = () => {
 
                                             <div className="flex justify-center mt-4 items-center">
                                                 <button type="submit" className="flex md:w-[240px] w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90">
-                                                {edit?"UPDATE BUDGET": "ADD BUDGET"}  
+                                                    UPDATE BUDGET
                                                 </button>
                                             </div>
                                         </div>
 
 
                                     </div>
-                                    {!edit && (
-                                        <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                                            <div className="border-b border-stroke py-4 px-2 dark:border-strokedark">
-                                                <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                                                    <BudgetTable data={Budget} totalItems={pagination.totalItems} title={'Budget'} handleDelete={handleDelete} handleUpdate={handleUpdate} pagination={pagination} />
-                                                    <Pagination
-                                                        totalPages={pagination?.totalPages}
-                                                        currentPage={pagination?.currentPage}
-                                                        handlePageChange={handlePageChange}
-                                                    />
-                                                </h3>
-                                            </div>
-                                        </div>
-                                    )}
+
 
 
 
@@ -288,4 +296,4 @@ const Budget = () => {
     )
 }
 
-export default Budget
+export default UpdateBudget

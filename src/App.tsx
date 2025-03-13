@@ -40,7 +40,10 @@ import PageNotFOund from './pages/PageNotFOund.jsx';
 import Buttons from './pages/UiElements/Buttons.js';
 import PrivateRoute from './PrivateRoute/PrivateRoute.jsx';
 import RoleBasedRoute from './PrivateRoute/RoleBasedRoute.jsx';
-import Budget from './components/Configurator/Budget.jsx';
+import Budget from './components/Budget/Budget.jsx';
+import ViewBudget from './components/Budget/ViewBudget.jsx';
+import UpdateBudget from './components/Budget/UpdateBudget.jsx';
+
 
 import Size from './components/Configurator/Size.jsx';
 import Design from './components/Configurator/Design.jsx';
@@ -446,7 +449,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/Order/updateOrderProforma/:id"
             element={
               <>
@@ -456,7 +459,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/Order/updateRetailProforma/:id"
             element={
               <>
@@ -1035,6 +1038,27 @@ function App() {
               </>
             }
           />
+          <Route
+            path="/budget/viewBudget"
+            element={
+              <>
+                <PageTitle title="View Budget" />
+                <ViewBudget />
+              </>
+            }
+          />
+          <Route
+            path="/Budget/updateBudget/:id"
+            element={
+              <>
+                <PageTitle title="View Budget" />
+                <UpdateBudget />
+              </>
+            }
+          />
+
+
+
           <Route
             path="/configurator/addSize"
             element={
