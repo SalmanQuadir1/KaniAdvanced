@@ -205,7 +205,7 @@ const ViewOrderApproved = () => {
             return (
                 <tr className='bg-white dark:bg-slate-700 dark:text-white'>
                     <td colSpan="6" className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap text-center">No Order Found</p>
+                        <p className="text-gray-900 whitespace-no-wrap text-center">No Proforma Found</p>
                     </td>
                 </tr>
             );
