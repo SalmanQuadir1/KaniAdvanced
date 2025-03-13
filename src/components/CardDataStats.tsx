@@ -34,7 +34,7 @@ const CardDataStats: React.FC<CardDataStatsProps> = ({
       </div>
       <div>
 
-      <h2 className="text-xs font-semibold mt-[50px] ml-[-70px]">{title}</h2>
+      <h2 className="text-xs font-semibold mt-[50px] ml-[-67px]">{title}</h2>
       </div>
     </div>
   );

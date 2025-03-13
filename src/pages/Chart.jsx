@@ -55,7 +55,7 @@ const Chart = () => {
     ROLE_ADMIN: [
       // { title: "Products", link: "/product/viewProducts", countKey: "products", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
       { title: "Total Orders", link: "/Order/ViewOrder", countKey: "orders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
-      { title: "Proforma", link: "/order/searchproforma", countKey: "totalOrderProforma", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
+      { title: "Proforma", link: "/order/searchproforma", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
       { title: "Orders Pending For Production Approval", link: "/order/created", countKey: "ordersWithCreated", icon: <AiOutlinePartition className="w-10 h-10" />, levelUp: true },
       { title: "Inventory", link: "/inventory/viewProductInventory", countKey: "inventory", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
       { title: "Partially Approved By Production Orders", link: "/order/partiallyexecuted", countKey: "ordersWithCreatedAccepted", icon: <RiProgress1Line className="w-10 h-10" />, levelUp: true },
@@ -139,7 +139,7 @@ const Chart = () => {
           <Link to={card.link} key={index}>
             <CardDataStats
               title={card.title}
-              total={countMapping[card.countKey] || 0}
+              total={countMapping[card.countKey] }
               levelUp={card.levelUp}
               levelDown={card.levelDown}
             >
