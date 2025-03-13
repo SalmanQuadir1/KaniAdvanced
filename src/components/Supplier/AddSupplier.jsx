@@ -125,35 +125,46 @@ const AddSupplier = () => {
                     }}
                     validate={values => {
                         const errors = {};
+                    
+                        // Validate name
                         if (!values.name) {
                             errors.name = 'Required';
                         }
+                    
+                        // Validate phone number
                         if (!values.phoneNumber) {
                             errors.phoneNumber = 'Required';
+                        } else if (values.phoneNumber.length < 10) {
+                            errors.phoneNumber = 'Phone Number must be at least 10 digits';
                         }
-                        if (values.phoneNumber<10) {
-                            errors.phoneNumber = 'Phone Number Must Be Greater than 10 digit';
-                        }
+                    
+                        // Validate supplier code
                         if (!values.supplierCode) {
                             errors.supplierCode = 'Required';
                         }
+                    
+                        // Validate address
                         if (!values.address) {
                             errors.address = 'Required';
                         }
+                    
+                        // Validate bank name
                         if (!values.bankName) {
                             errors.bankName = 'Required';
                         }
+                    
+                        // Validate account number
                         if (!values.accountNo) {
                             errors.accountNo = 'Required';
-
+                        } else if (values.accountNo.length < 16) {
+                            errors.accountNo = 'Account Number must be at least 16 digits';
                         }
-          
-                        
-                        if (values.accountNo<10) {
-                            errors.accountNo = 'Required';
+                    
+                        // Validate IFSC code
+                        if (!values.ifscCode) {
+                            errors.ifscCode = 'Required';
                         }
-                     
-                      
+                    
                         return errors;
                     }}
                     onSubmit={handleSubmit}
