@@ -453,28 +453,29 @@ const UpdateSupplier = () => {
                                   </td>
                                   <td className="px-2 py-2 border-b">
                                     <ReactSelect
+                                    className='overflow-auto'
                                       styles={workerSelectStyles}
-                                      options={
-                                        row.selectedOption1
-                                          ? generateWorkerOptions(
-                                              row.selectedOption1.label,
-                                              initialValues.supplierCode,
-                                              row.numOfLooms,
-                                            )
-                                          : []
-                                      }
+                                      // options={
+                                      //   row.selectedOption1
+                                      //     ? generateWorkerOptions(
+                                      //         row.selectedOption1.label,
+                                      //         initialValues.supplierCode,
+                                      //         row.numOfLooms,
+                                      //       )
+                                      //     : []
+                                      // }
                                       value={row.selectedOption3}
                                       isMulti
-                                      onChange={(option) => {
-                                        const newRows = [...rows];
-                                        newRows[index].selectedOption3 = option;
-                                        setRows(newRows);
-                                      }}
-                                      isDisabled={row.readonly}
-                                      components={{
-                                        DropdownIndicator: () => null,
-                                        ClearIndicator: () => null,
-                                      }}
+                                      // onChange={(option) => {
+                                      //   const newRows = [...rows];
+                                      //   newRows[index].selectedOption3 = option;
+                                      //   setRows(newRows);
+                                      // }}
+                                      // isDisabled={row.readonly}
+                                      // components={{
+                                      //   DropdownIndicator: () => null,
+                                      //   ClearIndicator: () => null,
+                                      // }}
                                     />
                                   </td>
                                   <td className="px-2 py-2 border-b">
