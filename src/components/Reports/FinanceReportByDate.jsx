@@ -95,7 +95,7 @@ const FinanceReportByDate = () => {
 
 
 
-    const handlegeneratepdf = async (values,urlll) => {
+    const handlegeneratepdf = async (values,urlll,name) => {
 
         if (!values.fromDate || !values.toDate) {
             toast.error("Please specify both From and To dates");
@@ -139,7 +139,7 @@ const FinanceReportByDate = () => {
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", filename); // Use the filename from the header
+            link.setAttribute("download", name); // Use the filename from the header
 
             document.body.appendChild(link);
             link.click();
@@ -323,14 +323,14 @@ const FinanceReportByDate = () => {
 
                                         <button
                                             type="button"
-                                            onClick={() => handlegeneratepdf(values,DOWNLOADINPROGRESSBYDATE_REPORT)}
+                                            onClick={() => handlegeneratepdf(values,DOWNLOADINPROGRESSBYDATE_REPORT,"InProgressOrders")}
                                             className=" mr-3 mb-4 md:w-[260px] w-[220px] md:h-[50px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                         >
                                             In Progress Orders Financial Report
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={() => handlegeneratepdf(values,DOWNLOADPENDINGPDFBYDATE_REPORT)}
+                                            onClick={() => handlegeneratepdf(values,DOWNLOADPENDINGPDFBYDATE_REPORT,"PendingOrders")}
                                             className="flex mr-3 mb-4 md:w-[260px] w-[220px] md:h-[50px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                         >
                                             Pending Orders Financial Report
