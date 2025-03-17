@@ -3,7 +3,7 @@ import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form, ErrorMessage } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { DELETE_ORDER_URL, DOWNLOADCSV_REPORT, DOWNLOADINPROGRESSBYDATE_REPORT, DOWNLOADPENDINGPDFBYDATE_REPORT, DOWNLOAD_REPORT, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS, VIEW_REPORT } from "../../Constants/utils";
+import { DELETE_ORDER_URL, DOWNLOADCSV_REPORT, DOWNLOADINPROGRESSBYDATECSV_REPORT, DOWNLOADINPROGRESSBYDATE_REPORT, DOWNLOADPENDINGORDERCSV_REPORT, DOWNLOADPENDINGPDFBYDATE_REPORT, DOWNLOAD_REPORT, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS, VIEW_REPORT } from "../../Constants/utils";
 import ReactSelect from 'react-select';
 import useorder from '../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -95,7 +95,7 @@ const FinanceReportByDate = () => {
 
 
 
-    const handlegeneratepdf = async (values,url) => {
+    const handlegeneratepdf = async (values,urlll) => {
 
         if (!values.fromDate || !values.toDate) {
             toast.error("Please specify both From and To dates");
@@ -110,7 +110,7 @@ const FinanceReportByDate = () => {
         console.log(filters, "lala");
 
         try {
-            const response = await fetch(`${DOWNLOADCSV_REPORT}`, {
+            const response = await fetch(`${urlll}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -157,64 +157,81 @@ const FinanceReportByDate = () => {
 
 
 
-    const handlegenerateCsv = async (values) => {
+    const handlegenerateCsv = async (values, urll,namee) => {
+        // Validate that both fromDate and toDate are provided
         if (!values.fromDate || !values.toDate) {
             toast.error("Please specify both From and To dates");
             return;
         }
+    
+        // Prepare filters to send to the backend
         const filters = {
-
             fromDate: values.fromDate,
             toDate: values.toDate,
         };
-
-        console.log(filters, "lala");
-
+    
         try {
-            const response = await fetch(`${DOWNLOADCSV_REPORT}`, {
+            // Make the request to the backend for CSV report
+            const response = await fetch(urll, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(filters), // Convert body to JSON string
+                body: JSON.stringify(filters), // Send filters in the request body
             });
-
+    
+            // Check if the response is successful
             if (!response.ok) {
                 const errorText = await response.text(); // Get error response as text
                 throw new Error(errorText || "Failed to download report");
             }
-
-            const blob = await response.blob(); // Get the binary CSV file
-
-            // Extract the filename from the Content-Disposition header
+    
+            // Try to extract the Content-Disposition header from the response
             const disposition = response.headers.get("Content-Disposition");
-            let filename = "report.csv"; // Default filename
+    
+            console.log("Content-Disposition header:", disposition);
+    
+            // Fallback if filename extraction failed
+            let filename = "report.csv"; // Default filename if header is missing
+    
             if (disposition && disposition.includes("attachment")) {
                 const match = disposition.match(/filename="(.+)"/);
                 if (match && match[1]) {
-                    filename = match[1];
+                    filename = match[1]; // Extracted filename from header
                 }
             }
-
-            const url = window.URL.createObjectURL(blob);
+    
+            // Get the binary content (CSV file)
+            const blob = await response.blob();
+    
+            // Create an object URL for the blob (CSV file)
+            const objectUrl = window.URL.createObjectURL(blob);
+    
+            // Create an anchor element to trigger the download
             const link = document.createElement("a");
-            link.href = url;
-            link.setAttribute("download", filename); // Use the filename from the header
-
+            link.href = objectUrl;
+            link.setAttribute("download", namee); // Use the extracted filename
+    
+            // Append the link to the document and trigger the click event to start the download
             document.body.appendChild(link);
             link.click();
-
-            // Cleanup
+    
+            // Clean up by removing the link and revoking the object URL
             document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-
+            window.URL.revokeObjectURL(objectUrl);
+    
+            // Show a success message
             toast.success("Report downloaded successfully");
+    
         } catch (error) {
             console.error(error);
             toast.error("An error occurred while downloading the report");
         }
     };
+    
+    
+    
 
 
 
@@ -347,14 +364,14 @@ const FinanceReportByDate = () => {
 
                                         <button
                                             type="button"
-                                            onClick={() => handlegenerateCsv(values)}
+                                            onClick={() => handlegenerateCsv(values,DOWNLOADINPROGRESSBYDATECSV_REPORT,"InProgressOrdersCsv")}
                                             className="flex mr-3 mb-4 md:w-[260px] w-[220px] md:h-[50px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                         >
                                             In Progress Orders Report(csv)
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={() => handlegenerateCsv(values)}
+                                            onClick={() => handlegenerateCsv(values,DOWNLOADPENDINGORDERCSV_REPORT,"pendingOrdersReportCsv")}
                                             className="flex mr-3  mb-4 md:w-[260px] w-[220px] md:h-[50px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                         >
                                             Pending Orders Report(csv)

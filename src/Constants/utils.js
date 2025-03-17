@@ -188,6 +188,9 @@ export const DOWNLOADPENDINGPDFBYDATE_REPORT = `${BASE_URL}/report/downloadPendi
 
 export const DOWNLOADINPROGRESSBYDATE_REPORT = `${BASE_URL}/report/downloadInProgressPdf`;
 
+export const DOWNLOADINPROGRESSBYDATECSV_REPORT = `${BASE_URL}/report/downloadInProgressCsv`;
+
+export const DOWNLOADPENDINGORDERCSV_REPORT = `${BASE_URL}/report/downloadPendingCsv`;
 
 
 
