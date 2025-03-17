@@ -410,7 +410,7 @@ console.log(order?.orderCategory,"jjhhjjhh");
                          
                           styles={customStyles}
                           isDisabled={true}
-                          className="bg-white dark:bg-form-Field"
+                          className="w-[200px] bg-gray-3 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           classNamePrefix="react-select"
                           placeholder="Select Order Category"
                         />
@@ -418,7 +418,7 @@ console.log(order?.orderCategory,"jjhhjjhh");
 
                         <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
                       </div>
-                      <div className="flex-1 min-w-[200px]">
+                      {/* <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Product ID</label>
                         <Field
                           name="orderCategory"
@@ -430,7 +430,7 @@ console.log(order?.orderCategory,"jjhhjjhh");
                           placeholder="Enter Product ID"
                         />
                         <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
-                      </div>
+                      </div> */}
 
                       {/* Product ID */}
                       <div className="flex-1 min-w-[200px]">
