@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
-import { Field, Formik, Form } from 'formik'
+import { Field, Formik, Form, ErrorMessage } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
 import { DELETE_ORDER_URL, DOWNLOADCSV_REPORT, DOWNLOADINPROGRESSBYDATE_REPORT, DOWNLOADPENDINGPDFBYDATE_REPORT, DOWNLOAD_REPORT, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS, VIEW_REPORT } from "../../Constants/utils";
 import ReactSelect from 'react-select';
@@ -96,6 +96,11 @@ const FinanceReportByDate = () => {
 
 
     const handlegeneratepdf = async (values,url) => {
+
+        if (!values.fromDate || !values.toDate) {
+            toast.error("Please specify both From and To dates");
+            return;
+        }
         const filters = {
 
             fromDate: values.fromDate,
@@ -153,6 +158,10 @@ const FinanceReportByDate = () => {
 
 
     const handlegenerateCsv = async (values) => {
+        if (!values.fromDate || !values.toDate) {
+            toast.error("Please specify both From and To dates");
+            return;
+        }
         const filters = {
 
             fromDate: values.fromDate,
@@ -242,6 +251,18 @@ const FinanceReportByDate = () => {
 
 
                             }}
+                            validate={values => {
+                                const errors = {};
+        
+                                if (!values.fromDate || values.fromDate === " ") {
+                                    errors.fromDate = 'Please Specify Date';
+                                }
+                                if (!values.toDate || values.toDate === " ") {
+                                    errors.toDate = 'Please Specify Date';
+                                }
+        
+                                return errors;
+                            }}
 
                         >
                             {({ setFieldValue, values, handleBlur }) => (
@@ -260,6 +281,7 @@ const FinanceReportByDate = () => {
                                                 placeholder="Enter From Date"
                                                 className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                             />
+                                             <ErrorMessage name="fromDate" component="div" className="text-red-500" />
                                         </div>
 
 
@@ -273,6 +295,7 @@ const FinanceReportByDate = () => {
                                                 placeholder="Enter To Date"
                                                 className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                             />
+                                             <ErrorMessage name="toDate" component="div" className="text-red-500" />
                                         </div>
                                     </div>
 
