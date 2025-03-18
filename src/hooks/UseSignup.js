@@ -87,7 +87,8 @@ const useSignup = () => {
 
             } else {
                 console.log(data,"errorrr");
-                toast.error(`${data.errorMessage}`);
+                const errorMessages = Object.values(data);
+                toast.error(`${errorMessages}`);
             }
         } catch (error) {
             console.error(error,"dd");
