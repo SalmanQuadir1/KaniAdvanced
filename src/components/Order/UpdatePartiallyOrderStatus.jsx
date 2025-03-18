@@ -456,20 +456,22 @@ const UpdatePartiallyOrderStaus = () => {
                                 {/* Radio Button */}
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <Field
+                                  readOnly
+                                  isDisabled
                                     type="checkbox"
                                     name="selectedRows"
                                     value={product.id} // Value of the checkbox (product ID)
-                                    checked={values.selectedRows.includes(product.id)} // Check if product ID is in selectedRows
-                                    onChange={(e) => {
-                                      const checked = e.target.checked;
-                                      if (checked) {
-                                        // If checked, add the product ID to selectedRows
-                                        setFieldValue("selectedRows", [...values.selectedRows, product.id]);
-                                      } else {
-                                        // If unchecked, remove the product ID from selectedRows
-                                        setFieldValue("selectedRows", values.selectedRows.filter(id => id !== product.id));
-                                      }
-                                    }}
+                                    checked={product?.productStatus==="Accepted"} // Check if product ID is in selectedRows
+                                    // onChange={(e) => {
+                                    //   const checked = e.target.checked;
+                                    //   if (checked) {
+                                    //     // If checked, add the product ID to selectedRows
+                                    //     setFieldValue("selectedRows", [...values.selectedRows, product.id]);
+                                    //   } else {
+                                    //     // If unchecked, remove the product ID from selectedRows
+                                    //     setFieldValue("selectedRows", values.selectedRows.filter(id => id !== product.id));
+                                    //   }
+                                    // }}
                                     className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                                   />
                                 </td>

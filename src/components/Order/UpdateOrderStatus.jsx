@@ -425,9 +425,9 @@ const UpdateOrderStaus = () => {
                         <table className="min-w-full leading-normal overflow-auto">
                           <thead>
                             <tr className="bg-slate-300 dark:bg-slate-700 dark:text-white">
-                              <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                              {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Select
-                              </th>
+                              </th> */}
                               <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Order No
                               </th>
@@ -452,7 +452,7 @@ const UpdateOrderStaus = () => {
                             {order?.orderProducts?.map((product, index) => (
                               <tr key={product.id}>
                                 {/* Radio Button */}
-                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <Field
                                     type="checkbox"
                                     name="selectedRows"
@@ -470,7 +470,7 @@ const UpdateOrderStaus = () => {
                                     }}
                                     className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                                   />
-                                </td>
+                                </td> */}
 
                                 {/* Product ID */}
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
