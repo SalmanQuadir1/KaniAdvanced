@@ -9,7 +9,7 @@ const BudgetReportView = () => {
     const [totalForKani, settotalForKani] = useState()
     const [totalForBudget, settotalForBudget] = useState()
     const [totalForRevisedBudget, settotalForRevisedBudget] = useState()
-    
+
     const { token } = currentUser;
     const location = useLocation();
     const [budgetData, setbudgetData] = useState()
@@ -125,6 +125,7 @@ const BudgetReportView = () => {
                     {/* Kani Retail Client */}
                     <tr style={{ border: "1px solid black", height: "80px" }}>
                         <th style={{ border: "1px solid black" }} >Kani Retail Client</th>
+
                         <td style={{ border: "1px solid black" }} id="krb">{budgetData?.budgetData?.Kani?.BudgetRetail}</td>
                         <td style={{ border: "1px solid black" }} id="krrb">{budgetData?.budgetData?.Kani?.BudgetRevisedRetail}</td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.retailKaniValueIP}</td>
@@ -200,56 +201,57 @@ const BudgetReportView = () => {
                     {/* Contemporary Pashmina Retail Client */}
                     <tr style={{ border: "1px solid black", height: "80px" }}>
                         <th style={{ border: "1px solid black" }} >Contemporary Pashmina Retail Client</th>
-                        <td style={{ border: "1px solid black" }} id="cprb">-</td>
-                        <td style={{ border: "1px solid black" }} id="cprrb">-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }} id="cprtv">-</td>
+
+                        <td style={{ border: "1px solid black" }} id="krb">{budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRetail}</td>
+                        <td style={{ border: "1px solid black" }} id="krrb">{budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRevisedRetail}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.retailCPValueIP}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.receivedQtyCalculation?.retailCPValue}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.retailCPValueExtra}</td>
+                        <td style={{ border: "1px solid black" }} id="krtv"> {totalForKani}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cprbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cprpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>-</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailCPValueCreated}</td>
                     </tr>
 
                     {/* Contemporary Pashmina KLC Stock */}
                     <tr style={{ border: "1px solid black", height: "80px" }}>
                         <th style={{ border: "1px solid black" }} >Contemporary Pashmina KLC Stock</th>
-                        <td style={{ border: "1px solid black" }} id="cpkb">-</td>
-                        <td style={{ border: "1px solid black" }} id="cpkrb">-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }} id="cpktv">-</td>
+                        <td style={{ border: "1px solid black" }} id="krb">{budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetKLC}</td>
+                        <td style={{ border: "1px solid black" }} id="krrb">{budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRevisedKLC}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.klcCPValueIP}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.receivedQtyCalculation?.klcCPValue}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.klcCPValueExtra}</td>
+                        <td style={{ border: "1px solid black" }} id="krtv"> {totalForKani}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpkbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpkpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>-</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.klcKaniValueCreated}</td>
                     </tr>
 
                     {/* Contemporary Pashmina Wholesale */}
                     <tr style={{ border: "1px solid black", height: "80px" }}>
                         <th style={{ border: "1px solid black" }} >Contemporary Pashmina Wholesale</th>
-                        
-                        <td style={{ border: "1px solid black" }} id="cpwb">-</td>
-                        <td style={{ border: "1px solid black" }} id="cpwrb">-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }} id="cpwtv">-</td>
+
+                        <td style={{ border: "1px solid black" }} id="krb">{budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetWS}</td>
+                        <td style={{ border: "1px solid black" }} id="krrb">{budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRevisedWS}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.wsCPValueIP}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.receivedQtyCalculation?.wsCPValue}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.wsCPValueExtra}</td>
+                        <td style={{ border: "1px solid black" }} id="krtv"> {totalForKani}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpwbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpwpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>-</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.wsCPValueCreated}</td>
                     </tr>
 
                     {/* Total for Contemporary Pashmina */}
@@ -278,55 +280,56 @@ const BudgetReportView = () => {
 
                     <tr style={{ border: "1px solid black", height: "80px" }}>
                         <th style={{ border: "1px solid black" }} >Pashmina Embroidery Retail Client</th>
-                        <td style={{ border: "1px solid black" }} id="cpkb">-</td>
-                        <td style={{ border: "1px solid black" }} id="cpkrb">-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }} id="cpktv">-</td>
+
+                        <td style={{ border: "1px solid black" }} id="krb">{budgetData?.budgetData?.["Pashmina Embroidery"]?.BudgetRetail}</td>
+                        <td style={{ border: "1px solid black" }} id="krrb">{budgetData?.budgetData?.["Pashmina Embroidery"]?.BudgetRevisedRetail}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.retailPEValueIP}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.receivedQtyCalculation?.retailPEValue}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.retailPEValueExtra}</td>
+                        <td style={{ border: "1px solid black" }} id="krtv"> {totalForKani}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpkbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpkpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>-</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailCPValueCreated}</td>
                     </tr>
 
                     {/* Contemporary Pashmina Wholesale */}
                     <tr style={{ border: "1px solid black", height: "80px" }}>
                         <th style={{ border: "1px solid black" }} >Pashmina Embroidery KLC Stock</th>
-                        <td style={{ border: "1px solid black" }} id="cpwb">-</td>
-                        <td style={{ border: "1px solid black" }} id="cpwrb">-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }} id="cpwtv">-</td>
+                        <td style={{ border: "1px solid black" }} id="krb">{budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetKLC}</td>
+                        <td style={{ border: "1px solid black" }} id="krrb">{budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetRevisedKLC}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.klcPEValueIP}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.receivedQtyCalculation?.klcPEValue}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.klcPEValueExtra}</td>
+                        <td style={{ border: "1px solid black" }} id="krtv"> {totalForKani}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpwbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpwpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>-</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.klcKaniValueCreated}</td>
                     </tr>
                     <tr style={{ border: "1px solid black", height: "80px" }}>
                         <th style={{ border: "1px solid black" }} >Pashmina Embroidery Wholesale</th>
-                        <td style={{ border: "1px solid black" }} id="cpwb">-</td>
-                        <td style={{ border: "1px solid black" }} id="cpwrb">-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }} id="cpwtv">-</td>
+                        <td style={{ border: "1px solid black" }} id="krb">{budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetWS}</td>
+                        <td style={{ border: "1px solid black" }} id="krrb">{budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetRevisedWS}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.wsPEValueIP}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.receivedQtyCalculation?.wsPEValue}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.wsPEValueExtra}</td>
+                        <td style={{ border: "1px solid black" }} id="krtv"> {totalForKani}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpwbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpwpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>-</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.wsPEValueCreated}</td>
                     </tr>
-                    
+
 
                     {/* Total for Contemporary Pashmina */}
                     <tr style={{ border: "1px solid black", height: "80px" }}>
@@ -357,53 +360,53 @@ const BudgetReportView = () => {
 
                     <tr style={{ border: "1px solid black", height: "80px" }}>
                         <th style={{ border: "1px solid black" }} >Contemporary Wool Retail Client</th>
-                        <td style={{ border: "1px solid black" }} id="cpkb">-</td>
-                        <td style={{ border: "1px solid black" }} id="cpkrb">-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }} id="cpktv">-</td>
+                        <td style={{ border: "1px solid black" }} id="krb">{budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRetail}</td>
+                        <td style={{ border: "1px solid black" }} id="krrb">{budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedRetail}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.retailCWValueIP}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.receivedQtyCalculation?.retailCWValue}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.retailCWValueExtra}</td>
+                        <td style={{ border: "1px solid black" }} id="krtv"> {totalForKani}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpkbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpkpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>-</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailCPValueCreated}</td>
                     </tr>
 
                     {/* Contemporary Pashmina Wholesale */}
                     <tr style={{ border: "1px solid black", height: "80px" }}>
                         <th style={{ border: "1px solid black" }} >Contemporary Wool KLC Stock</th>
-                        <td style={{ border: "1px solid black" }} id="cpwb">-</td>
-                        <td style={{ border: "1px solid black" }} id="cpwrb">-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }} id="cpwtv">-</td>
+                        <td style={{ border: "1px solid black" }} id="krb">{budgetData?.budgetData?.["Contemporary Wool "]?.BudgetKLC}</td>
+                        <td style={{ border: "1px solid black" }} id="krrb">{budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedKLC}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.klcCWValueIP}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.receivedQtyCalculation?.klcCWValue}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.klcCWValueExtra}</td>
+                        <td style={{ border: "1px solid black" }} id="krtv"> {totalForKani}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpwbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpwpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>-</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.klcKaniValueCreated}</td>
                     </tr>
                     <tr style={{ border: "1px solid black", height: "80px" }}>
                         <th style={{ border: "1px solid black" }} >Contemporary Wool Wholesale</th>
-                        <td style={{ border: "1px solid black" }} id="cpwb">-</td>
-                        <td style={{ border: "1px solid black" }} id="cpwrb">-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }} id="cpwtv">-</td>
+                        <td style={{ border: "1px solid black" }} id="krb">{budgetData?.budgetData?.["Contemporary Wool "]?.BudgetWS}</td>
+                        <td style={{ border: "1px solid black" }} id="krrb">{budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedWS}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.wsCWValueIP}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.receivedQtyCalculation?.wsCWValue}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.wsCWValueExtra}</td>
+                        <td style={{ border: "1px solid black" }} id="krtv"> {totalForKani}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpwbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpwpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>-</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.wsCPValueCreated}</td>
                     </tr>
 
                     {/* Total for Contemporary Pashmina */}
@@ -432,53 +435,53 @@ const BudgetReportView = () => {
 
                     <tr style={{ border: "1px solid black", height: "80px" }}>
                         <th style={{ border: "1px solid black" }} >Wool Embroidery Retail Client</th>
-                        <td style={{ border: "1px solid black" }} id="cpkb">-</td>
-                        <td style={{ border: "1px solid black" }} id="cpkrb">-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }} id="cpktv">-</td>
+                        <td style={{ border: "1px solid black" }} id="krb">{budgetData?.budgetData?.['Wool Embroidery']?.BudgetRetail}</td>
+                        <td style={{ border: "1px solid black" }} id="krrb">{budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedRetail}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.retailWEValueIP}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.receivedQtyCalculation?.retailWEValue}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.retailWEValueExtra}</td>
+                        <td style={{ border: "1px solid black" }} id="krtv"> {totalForKani}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpkbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpkpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>-</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailCPValueCreated}</td>
                     </tr>
 
                     {/* Contemporary Pashmina Wholesale */}
                     <tr style={{ border: "1px solid black", height: "80px" }}>
                         <th style={{ border: "1px solid black" }} >Wool Embroidery KLC Stock</th>
-                        <td style={{ border: "1px solid black" }} id="cpwb">-</td>
-                        <td style={{ border: "1px solid black" }} id="cpwrb">-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }} id="cpwtv">-</td>
+                        <td style={{ border: "1px solid black" }} id="krb">{budgetData?.budgetData?.['Wool Embroidery']?.BudgetKLC}</td>
+                        <td style={{ border: "1px solid black" }} id="krrb">{budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedKLC}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.klcWEValueIP}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.receivedQtyCalculation?.klcWEValue}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.klcWEValueExtra}</td>
+                        <td style={{ border: "1px solid black" }} id="krtv"> {totalForKani}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpwbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpwpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>-</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.klcKaniValueCreated}</td>
                     </tr>
                     <tr style={{ border: "1px solid black", height: "80px" }}>
                         <th style={{ border: "1px solid black" }} >Wool Embroidery Wholesale</th>
-                        <td style={{ border: "1px solid black" }} id="cpwb">-</td>
-                        <td style={{ border: "1px solid black" }} id="cpwrb">-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }}>-</td>
-                        <td style={{ border: "1px solid black" }} id="cpwtv">-</td>
+                        <td style={{ border: "1px solid black" }} id="krb">{budgetData?.budgetData?.['Wool Embroidery']?.BudgetWS}</td>
+                        <td style={{ border: "1px solid black" }} id="krrb">{budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedWS}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.wsWEValueIP}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.receivedQtyCalculation?.wsWEValue}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.wsWEValueExtra}</td>
+                        <td style={{ border: "1px solid black" }} id="krtv"> {totalForKani}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpwbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="cpwpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>-</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.wsCPValueCreated}</td>
                     </tr>
 
                     {/* Total for Contemporary Pashmina */}
