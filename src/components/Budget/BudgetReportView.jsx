@@ -102,7 +102,7 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }} id="krrb">{budgetData?.budgetData?.Kani?.BudgetRevisedRetail}</td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.retailKaniValueIP}</td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.receivedQtyCalculation?.retailKaniValue}</td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailKaniValueCreated}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.retailKaniValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv"> {totalForKani}</td>
                         <td style={{ border: "1px solid black" }}>
                             <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
@@ -110,7 +110,7 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>
                             <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.retailKaniValueExtra}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailKaniValueCreated}</td>
                     </tr>
 
                     {/* Kani KLC Stock */}
@@ -137,9 +137,9 @@ const BudgetReportView = () => {
                         <th style={{ border: "1px solid black" }} >Kani Wholesale</th>
                         <td style={{ border: "1px solid black" }} id="krb">{budgetData?.budgetData?.Kani?.BudgetWS}</td>
                         <td style={{ border: "1px solid black" }} id="krrb">{budgetData?.budgetData?.Kani?.BudgetRevisedWS}</td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.retailKaniValueIP}</td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.receivedQtyCalculation?.retailKaniValue}</td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailKaniValueCreated}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.wsKaniValueIP}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.receivedQtyCalculation?.wsKaniValue}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.wsKaniValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv"> {totalForKani}</td>
                         <td style={{ border: "1px solid black" }}>
                             <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
@@ -147,7 +147,7 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>
                             <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.retailKaniValueExtra}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.wsKaniValueCreated}</td>
                     </tr>
 
                     {/* Total for Kani */}
