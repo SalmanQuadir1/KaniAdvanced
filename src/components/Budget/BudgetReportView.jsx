@@ -117,11 +117,11 @@ const BudgetReportView = () => {
                     <tr style={{ border: "1px solid black", height: "80px" }}>
                         <th style={{ border: "1px solid black" }}>Kani KLC Stock</th>
 
-                         <td style={{ border: "1px solid black" }} id="krb">{budgetData?.budgetData?.Kani?.BudgetRetail}</td>
-                        <td style={{ border: "1px solid black" }} id="krrb">{budgetData?.budgetData?.Kani?.BudgetRevisedRetail}</td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.retailKaniValueIP}</td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.receivedQtyCalculation?.retailKaniValue}</td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailKaniValueCreated}</td>
+                        <td style={{ border: "1px solid black" }} id="krb">{budgetData?.budgetData?.Kani?.BudgetKLC}</td>
+                        <td style={{ border: "1px solid black" }} id="krrb">{budgetData?.budgetData?.Kani?.BudgetRevisedKLC}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.klcKaniValueIP}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.receivedQtyCalculation?.klcKaniValue}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.klcKaniValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv"> {totalForKani}</td>
                         <td style={{ border: "1px solid black" }}>
                             <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
@@ -129,7 +129,7 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>
                             <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.retailKaniValueExtra}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.klcKaniValueCreated}</td>
                     </tr>
 
                     {/* Kani Wholesale */}
