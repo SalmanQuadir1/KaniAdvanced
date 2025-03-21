@@ -2100,6 +2100,7 @@ console.log(product,"lama");
                                                             onChange={handleFileChange}
                                                             className="absolute inset-0 z-50 w-full h-full opacity-0 cursor-pointer"
                                                         />
+                                                       
                                                         <div className="flex flex-col items-center justify-center space-y-3 border-[1.5px] border-stroke bg-transparent py-3 px-5 rounded text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary">
                                                             <span className="flex h-10 w-10 items-center justify-center rounded-full border p-3 border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
                                                                 <svg
