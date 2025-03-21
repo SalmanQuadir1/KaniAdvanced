@@ -698,7 +698,8 @@ const OrderProforma = () => {
                                                         type="text"
                                                         placeholder="pid"
                                                         readOnly
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                        disabled // This makes the field disabled
+                                                        className="w-full rounded border-[1.5px] bg-gray-2 border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:bg-gray-300 dark:disabled:bg-gray-600 dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                     <ErrorMessage name="orderType" component="div" className="text-red-600 text-sm" />
                                                 </div>
@@ -710,6 +711,7 @@ const OrderProforma = () => {
                                                     <Field
                                                         name="billTo"
                                                         type="text"
+                                                        readOnly
                                                         placeholder="bill To"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
@@ -728,6 +730,7 @@ const OrderProforma = () => {
                                                     <Field
                                                         name="billtoEmail"
                                                         type="text"
+                                                        readOnly
                                                         placeholder="Enter Weft Colors"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
@@ -742,6 +745,7 @@ const OrderProforma = () => {
                                                     <Field
                                                         name="shipTo"
                                                         type="text"
+                                                        readOnly
                                                         placeholder="Enter Warp Colors"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
@@ -751,6 +755,7 @@ const OrderProforma = () => {
                                                         Ship To Email
                                                     </label>
                                                     <Field
+                                                     readOnly
                                                         name="shipToEmail"
                                                         type="text"
                                                         placeholder="Enter Weft Colors"
@@ -766,6 +771,7 @@ const OrderProforma = () => {
                                                         <Field
                                                             name="poDate"
                                                             type="text"
+                                                         
                                                             placeholder="poDate"
                                                             readOnly
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
@@ -790,6 +796,7 @@ const OrderProforma = () => {
                                                         <Field
                                                             name="shipDate"
                                                             type="text"
+                                                     
                                                             placeholder="shippingDate"
                                                             readOnly
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
@@ -1005,6 +1012,7 @@ const OrderProforma = () => {
                                                                                 newValue
                                                                             );
                                                                         }}
+                                                                        readOnly
                                                                         className="w-[150px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                                         placeholder="Enter Product ID"
                                                                     />
@@ -1017,6 +1025,7 @@ const OrderProforma = () => {
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
                                                                         name={`orderProducts[${index}].unit`}
+                                                                        readOnly
                                                                         // value={values.orderProducts[index]?.unit || ""}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                                     />
@@ -1030,6 +1039,7 @@ const OrderProforma = () => {
                                                                 {/* Client Order Quantity */}
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
+                                                                     readOnly
                                                                         name={`orderProducts[${index}].orderQty`}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                                         onBlur={() =>
@@ -1074,6 +1084,7 @@ const OrderProforma = () => {
 
                                                                         <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                             <Field
+                                                                             readOnly
                                                                                 name={`orderProducts[${index}].gstTax`}
                                                                                 className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                                             />
@@ -1161,6 +1172,7 @@ const OrderProforma = () => {
                                                             </label>
                                                             <Field
                                                                 name="totalUnits"
+                                                                readOnly
 
                                                                 type="text"
                                                                 placeholder="Enter Warp Colors"
@@ -1172,6 +1184,7 @@ const OrderProforma = () => {
                                                                 Total Value
                                                             </label>
                                                             <Field
+                                                             readOnly
                                                                 name="totalUnitsValue"
                                                                 type="text"
                                                                 placeholder="Enter Weft Colors"
@@ -1209,6 +1222,7 @@ const OrderProforma = () => {
                                                             </label>
                                                             <Field
                                                                 name="gst"
+                                                                readOnly
                                                                 type="text"
                                                                 placeholder="Enter Weft Colors"
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
@@ -1269,6 +1283,7 @@ const OrderProforma = () => {
                                                                 Invoice Total
                                                             </label>
                                                             <Field
+                                                             readOnly
                                                                 name="total"
                                                                 type="text"
                                                                 placeholder="Total"
@@ -1303,6 +1318,7 @@ const OrderProforma = () => {
                                                                 Outstanding Balance
                                                             </label>
                                                             <Field
+                                                             readOnly
                                                                 name="outstandingBalance"
                                                                 type="text"
                                                                 placeholder="Total"

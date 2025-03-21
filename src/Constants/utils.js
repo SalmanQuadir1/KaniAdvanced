@@ -157,6 +157,9 @@ export const DELETE_ORDERTYPE_URL = `${BASE_URL}/orderType/`;
 export const ADD_BUDGET_URL = `${BASE_URL}/budget`;
 export const GET_BUDGET_URL = `${BASE_URL}/budget`;
 export const SEARCH_BUDGET_URL = `${BASE_URL}/budget/searchBudget`;
+export const GETBUDGETBYDATE_URL = `${BASE_URL}/budget/frbybudgetdate`;
+
+
 
 
 export const UPDATE_BUDGET_URL = `${BASE_URL}/budget`;

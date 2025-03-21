@@ -42,6 +42,10 @@ import PrivateRoute from './PrivateRoute/PrivateRoute.jsx';
 import RoleBasedRoute from './PrivateRoute/RoleBasedRoute.jsx';
 import Budget from './components/Budget/Budget.jsx';
 import ViewBudget from './components/Budget/ViewBudget.jsx';
+import BudgetReport from './components/Budget/BudgetReport.jsx';
+
+import BudgetReportView from './components/Budget/BudgetReportView.jsx';
+
 import UpdateBudget from './components/Budget/UpdateBudget.jsx';
 
 
@@ -1046,6 +1050,26 @@ function App() {
               <>
                 <PageTitle title="View Budget" />
                 <ViewBudget />
+              </>
+            }
+          />
+
+<Route
+            path="/report/budgetReport"
+            element={
+              <>
+                <PageTitle title="View Budget Report By Date" />
+                <BudgetReport />
+              </>
+            }
+          />
+
+<Route
+            path="/report/budgetReportbyDate"
+            element={
+              <>
+                <PageTitle title="Budget Report By Date" />
+                <BudgetReportView />
               </>
             }
           />

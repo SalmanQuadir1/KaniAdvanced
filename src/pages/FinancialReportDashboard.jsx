@@ -109,7 +109,7 @@ const FinancialReportDashboard = () => {
         ROLE_ADMIN: [
             { title: "General Financial Reports", link: "/report/financial",  icon: <TbReport className="w-10 h-10" />, levelUp: true },
             { title: "Financial Reports By Date", link: "/report/freportdate", countKey: "proforma", icon: <TbReport className="w-10 h-10" />, levelUp: true },
-            { title: "Financial Reports (On Budget Date)", link: "/chart", countKey: "orders", icon: <TbReport className="w-10 h-10" />, levelDown: true },
+            { title: "Financial Reports (On Budget Date)", link: "/report/budgetReport", countKey: "orders", icon: <TbReport className="w-10 h-10" />, levelDown: true },
 
            
 
