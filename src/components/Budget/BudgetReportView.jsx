@@ -54,11 +54,25 @@ const BudgetReportView = () => {
 
     const [totalweBudget, settotalweBudget] = useState()
     const [totalweRevisedBudget, settotalweRevisedBudget] = useState()
+    const [budgetVariancee, setbudgetVariancee] = useState()
+    const [percenVariance, setpercenVariance] = useState()
 
     const { token } = currentUser;
     const location = useLocation();
     const [budgetData, setbudgetData] = useState()
     const { date } = location.state || { date: "" };
+
+
+
+
+
+
+
+
+    // coloring
+
+    const budgetVarianceStyle = budgetVariancee > 0 ? { backgroundColor: "red" } : { backgroundColor: "#90EE90" };
+    const percentageVarianceStyle = percenVariance > 100 ? { backgroundColor: "red" } : { backgroundColor: "#90EE90" };
 
     const getBudget = async () => {
         try {
@@ -261,9 +275,9 @@ const BudgetReportView = () => {
             Math.round(
                 (Number(budgetData?.budgetData?.["Contemporary Pashmina"]?.BudgetRetail) || 0) +
                 (Number(budgetData?.budgetData?.["Contemporary Pashmina"]?.BudgetKLC) || 0) +
-                (Number(budgetData?.budgetData?.["Contemporary Pashmina"]?.BudgetWS) || 0) 
+                (Number(budgetData?.budgetData?.["Contemporary Pashmina"]?.BudgetWS) || 0)
             );
-            settotalCpBudget(totalForContemp)
+        settotalCpBudget(totalForContemp)
 
 
 
@@ -274,9 +288,9 @@ const BudgetReportView = () => {
             Math.round(
                 (Number(budgetData?.budgetData?.["Contemporary Pashmina"]?.BudgetRevisedRetail) || 0) +
                 (Number(budgetData?.budgetData?.["Contemporary Pashmina"]?.BudgetRevisedKLC) || 0) +
-                (Number(budgetData?.budgetData?.["Contemporary Pashmina"]?.BudgetRevisedWS) || 0) 
+                (Number(budgetData?.budgetData?.["Contemporary Pashmina"]?.BudgetRevisedWS) || 0)
             );
-            settotalCpRevisedBudget(totalForContempRevised)
+        settotalCpRevisedBudget(totalForContempRevised)
 
 
 
@@ -288,7 +302,7 @@ const BudgetReportView = () => {
                 (Number(budgetData?.budgetData?.["Pashmina Embroidery"]?.BudgetKLC) || 0) +
                 (Number(budgetData?.budgetData?.["Pashmina Embroidery"]?.BudgetWS) || 0)
             );
-            settotalPeBudget(totalForPE)
+        settotalPeBudget(totalForPE)
 
 
 
@@ -297,14 +311,14 @@ const BudgetReportView = () => {
             Math.round(
                 (Number(budgetData?.budgetData?.["Pashmina Embroidery"]?.BudgetRevisedRetail) || 0) +
                 (Number(budgetData?.budgetData?.["Pashmina Embroidery"]?.BudgetRevisedKLC) || 0) +
-                (Number(budgetData?.budgetData?.["Pashmina Embroidery"]?.BudgetRevisedWS) || 0) 
+                (Number(budgetData?.budgetData?.["Pashmina Embroidery"]?.BudgetRevisedWS) || 0)
             );
-            settotalPeRevisedBudget(totalForPERevised)
+        settotalPeRevisedBudget(totalForPERevised)
 
         // This will be rounded to the nearest integer.
 
 
-   
+
 
         // This will be rounded to the nearest integer.
 
@@ -314,7 +328,7 @@ const BudgetReportView = () => {
                 (Number(budgetData?.budgetData?.["Contemporary Wool "]?.BudgetKLC) || 0) +
                 (Number(budgetData?.budgetData?.["Contemporary Wool "]?.BudgetWS) || 0)
             );
-            settotalcwBudget(totalForCW)
+        settotalcwBudget(totalForCW)
 
         // This will be rounded to the nearest integer.
 
@@ -324,15 +338,15 @@ const BudgetReportView = () => {
                 (Number(budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedKLC) || 0) +
                 (Number(budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedWS) || 0)
             );
-            settotalcwRevisedBudget(totalForCWRevised)
+        settotalcwRevisedBudget(totalForCWRevised)
 
         // This will be rounded to the nearest integer.
         const totalForWE =
-        Math.round(
-            (Number(budgetData?.budgetData?.['Wool Embroidery']?.BudgetRetail) || 0) +
-            (Number(budgetData?.budgetData?.['Wool Embroidery']?.BudgetKLC) || 0) +
-            (Number(budgetData?.budgetData?.['Wool Embroidery']?.BudgetWS) || 0)
-        );
+            Math.round(
+                (Number(budgetData?.budgetData?.['Wool Embroidery']?.BudgetRetail) || 0) +
+                (Number(budgetData?.budgetData?.['Wool Embroidery']?.BudgetKLC) || 0) +
+                (Number(budgetData?.budgetData?.['Wool Embroidery']?.BudgetWS) || 0)
+            );
         settotalweBudget(totalForWE)
 
 
@@ -342,12 +356,32 @@ const BudgetReportView = () => {
                 (Number(budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedKLC) || 0) +
                 (Number(budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedWS) || 0)
             );
-            settotalweRevisedBudget(totalForWERevised)
+        settotalweRevisedBudget(totalForWERevised)
 
         // This will be rounded to the nearest integer.
     }, [budgetData]);
 
 
+    useEffect(() => {
+
+        const budgetRevisedRetail = budgetData?.budgetData?.Kani?.BudgetRevisedRetail;
+
+        const budgetVariance =
+            typeof totalForKaniKlc === 'number' && typeof budgetRevisedRetail === 'number'
+                ? totalForKaniKlc - budgetRevisedRetail
+                : 0;
+        setbudgetVariancee(budgetVariance)
+        console.log(budgetVariance, "j");
+
+        const percentageVariance = budgetData?.budgetData?.Kani?.BudgetRevisedRetail
+            ? (totalForKaniKlc / budgetData?.budgetData?.Kani?.BudgetRevisedRetail) * 100
+            : 0; // or any fallback value
+
+
+        setpercenVariance(percentageVariance)
+
+
+    }, [])
 
 
 
@@ -355,11 +389,10 @@ const BudgetReportView = () => {
 
 
 
-    console.log(budgetData, "dateeeeeeeee");
 
-    console.log(date, "ll")
 
-    console.log(date, "ll")
+
+
 
 
     return (
@@ -413,10 +446,10 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.retailKaniValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv">{totalForKani}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
+                            <input type="text" value={budgetVariancee} style={{ border: "none", ...budgetVarianceStyle }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
+                            <input type="text" value={percenVariance} style={{ border: "none", ...percentageVarianceStyle }} id="krpbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailKaniValueCreated}</td>
                     </tr>
