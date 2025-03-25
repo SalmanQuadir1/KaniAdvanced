@@ -456,7 +456,7 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>
                             <input type="text" value="" style={{ border: "none" }} id="kkpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.wsKaniValuereated}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.wsKaniValueCreated}</td>
                     </tr>
 
                     {/* Total for Kani */}
@@ -513,7 +513,7 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>
                             <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.klcKaniValueCreated}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.klcCPValueCreated}</td>
                     </tr>
 
                     {/* Contemporary Pashmina Wholesale */}
@@ -574,7 +574,7 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>
                             <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailCPValueCreated}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailPEValueCreated}</td>
                     </tr>
 
                     {/* Contemporary Pashmina Wholesale */}
@@ -592,7 +592,7 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>
                             <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.klcKaniValueCreated}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.klcPEValueCreated}</td>
                     </tr>
                     <tr style={{ border: "1px solid black", height: "80px" }}>
                         <th style={{ border: "1px solid black" }} >Pashmina Embroidery Wholesale</th>
@@ -653,7 +653,7 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>
                             <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailCPValueCreated}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailCWValueCreated}</td>
                     </tr>
 
                     {/* Contemporary Pashmina Wholesale */}
@@ -671,7 +671,7 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>
                             <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.klcKaniValueCreated}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.klcCWValueCreated}</td>
                     </tr>
                     <tr style={{ border: "1px solid black", height: "80px" }}>
                         <th style={{ border: "1px solid black" }} >Contemporary Wool Wholesale</th>
@@ -687,7 +687,7 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>
                             <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.wsCPValueCreated}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.wsCWValueCreated}</td>
                     </tr>
 
                     {/* Total for Contemporary Pashmina */}
@@ -728,7 +728,7 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>
                             <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailCPValueCreated}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailWEValueCreated}</td>
                     </tr>
 
                     {/* Contemporary Pashmina Wholesale */}
@@ -746,7 +746,7 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>
                             <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.klcKaniValueCreated}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.klcWEValueCreated}</td>
                     </tr>
                     <tr style={{ border: "1px solid black", height: "80px" }}>
                         <th style={{ border: "1px solid black" }} >Wool Embroidery Wholesale</th>
@@ -762,7 +762,7 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>
                             <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.wsCPValueCreated}</td>
+                        <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.wsWEValueCreated}</td>
                     </tr>
 
                     {/* Total for Contemporary Pashmina */}
