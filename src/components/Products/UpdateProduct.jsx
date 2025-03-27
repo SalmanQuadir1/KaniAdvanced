@@ -89,12 +89,20 @@ const UpdateProduct = () => {
         setPreviews((prev) => [...prev, ...newPreviews]);
 
         // Convert existing product.images to the same format as new files
-        const existingImagesAsFiles = product?.images.map(img => (
-            // Directly return the file object, not wrapped in fileObject
-            new File([], img.referenceImage
-               
-            )
-        )) || [];
+        const existingImagesAsFiles = product?.images.map(img => {
+            const fileName = img?.referenceImage;
+            
+            // If you can determine the type and size, populate it here. For example:
+            const fileExtension = fileName.split('.').pop();
+            const fileType = `image/${fileExtension}`; // Use the extension to determine the type
+            const fileSize = 0; // Set to a known size (or fetch it if possible)
+            
+            // Simulate a file object for existing images
+            return new File([], fileName, {
+              type: fileType,
+              size: fileSize,
+            });
+          }) || [];
 
         // Update referenceImages state (combining existing and new)
         setrefImage((prev) => [
