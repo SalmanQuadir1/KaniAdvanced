@@ -6,36 +6,6 @@ import { toast } from "react-toastify";
 
 const BudgetReportView = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
-
-
-
-
-
-
-    const getVarianceStyle = (value) => ({
-        backgroundColor: value && value > 0 ? "red" : "#90EE90",
-        border: "none",
-    
-      });
-      
-      const getPercentageStyle = (value) => ({
-        backgroundColor: value && value > 100 ? "red" : "#90EE90",
-        border: "none"
-      });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     const [totalForKani, settotalForKani] = useState()
     const [totalForKaniKlc, settotalForKaniKlc] = useState()
     const [totalFOrKaniWs, settotalFOrKaniWs] = useState()
@@ -87,41 +57,6 @@ const BudgetReportView = () => {
     const [budgetVariancee, setbudgetVariancee] = useState()
     const [percenVariance, setpercenVariance] = useState()
 
-    const [klcstockvariance, setklcstockvariance] = useState()
-    const [klcstockPercentage, setklcstockPercentage] = useState()
-    const [kaniwholsalevariance, setkaniwholsalevariance] = useState()
-    const [kaniwholesalepercentage, setkaniwholesalepercentage] = useState()
-
-    const [contempPashminaVariance, setcontempPashminaVariance] = useState()
-    const [contempPashminaPercentage, setcontempPashminaPercentage] = useState()
-    const [contempPashminaklcVariance, setcontempPashminaklcVariance] = useState()
-    const [contempPashminaKlcPercentage, setcontempPashminaKlcPercentage] = useState()
-    const [contempPashminaWholesale, setcontempPashminaWholesale] = useState()
-    const [contempPashminaWholesalePercentage, setcontempPashminaWholesalePercentage] = useState()
-    const [pashminaEmbRetailVariance, setpashminaEmbRetailVariance] = useState()
-    const [pashminaEmbRetailPercentage, setpashminaEmbRetailPercentage] = useState()
-    const [pashminaEmbKlcVariance, setpashminaEmbKlcVariance] = useState()
-    const [pashminaEmbKlcPercentage, setpashminaEmbKlcPercentage] = useState()
-    const [pashminaEmbWsVariance, setpashminaEmbWsVariance] = useState()
-    const [pashminaEmbWsPercentage, setpashminaEmbWsPercentage] = useState()
-    const [contempWoolVariance, setcontempWoolVariance] = useState()
-    const [contempwoolRetailPercentage, setcontempwoolRetailPercentage] = useState()
-    const [contempWoolklcVariance, setcontempWoolklcVariance] = useState()
-    const [contempWoolklcPercentage, setcontempWoolklcPercentage] = useState()
-    const [contempWoolwsVariane, setcontempWoolwsVariane] = useState()
-    const [contempWoolwsPercentage, setcontempWoolwsPercentage] = useState()
-
-    const [woolembVariance, setwoolembVariance] = useState()
-    const [woolembRetailPercentage, setwoolembRetailPercentage] = useState()
-    const [woolembklcVariance, setwoolembklcVariance] = useState()
-    const [woolembklcPercentage, setwoolembklcPercentage] = useState()
-    const [woolembwsVariane, setwoolembwsVariane] = useState()
-    const [woolembwsPercentage, setwoolembwsPercentage] = useState()
-
-
-
-
-
     const { token } = currentUser;
     const location = useLocation();
     const [budgetData, setbudgetData] = useState()
@@ -136,19 +71,8 @@ const BudgetReportView = () => {
 
     // coloring
 
-    // const budgetVarianceStyle = budgetVariancee > 0 ? { backgroundColor: "red" } : { backgroundColor: "#90EE90" };
-    // const percentageVarianceStyle = percenVariance > 100 ? { backgroundColor: "red" } : { backgroundColor: "#90EE90" };
-
-
-
-
-
-
-
-
-
-
-
+    const budgetVarianceStyle = budgetVariancee > 0 ? { backgroundColor: "red" } : { backgroundColor: "#90EE90" };
+    const percentageVarianceStyle = percenVariance > 100 ? { backgroundColor: "red" } : { backgroundColor: "#90EE90" };
 
     const getBudget = async () => {
         try {
@@ -168,6 +92,57 @@ const BudgetReportView = () => {
             toast.error("Failed to fetch Currency");
         }
     };
+    const [klcstockvariance, setklcstockvariance] = useState()
+
+
+    const [klcstockPercentage, setklcstockPercentage] = useState()
+
+
+
+    const [kaniwholsalevariance, setkaniwholsalevariance] = useState()
+
+    const [kaniwholesalepercentage, setkaniwholesalepercentage] = useState()
+
+    const [contempPashminaVariance, setcontempPashminaVariance] = useState()
+    const [contempPashminaPercentage, setcontempPashminaPercentage] = useState()
+
+
+    const [contempPashminaklcVariance, setcontempPashminaklcVariance] = useState()
+    const [contempPashminaKlcPercentage, setcontempPashminaKlcPercentage] = useState()
+
+
+    const [contempPashminaWholesale, setcontempPashminaWholesale] = useState()
+    const [contempPashminaWholesalePercentage, setcontempPashminaWholesalePercentage] = useState()
+
+
+    const [pashminaEmbRetailVariance, setpashminaEmbRetailVariance] = useState()
+    const [pashminaEmbRetailPercentage, setpashminaEmbRetailPercentage] = useState()
+
+    const [pashminaEmbKlcVariance, setpashminaEmbKlcVariance] = useState()
+    const [pashminaEmbKlcPercentage, setpashminaEmbKlcPercentage] = useState()
+
+    const [pashminaEmbWsVariance, setpashminaEmbWsVariance] = useState()
+    const [pashminaEmbWsPercentage, setpashminaEmbWsPercentage] = useState()
+
+
+    const [contempWoolVariance, setcontempWoolVariance] = useState()
+    const [contempwoolRetailPercentage, setcontempwoolRetailPercentage] = useState()
+
+    const [contempWoolklcVariance, setcontempWoolklcVariance] = useState()
+    const [contempWoolklcPercentage, setcontempWoolklcPercentage] = useState()
+
+    const [contempWoolwsVariane, setcontempWoolwsVariane] = useState()
+    const [contempWoolwsPercentage, setcontempWoolwsPercentage] = useState()
+
+    const [woolembVariance, setwoolembVariance] = useState()
+    const [woolembRetailPercentage, setwoolembRetailPercentage] = useState()
+
+    const [woolembklcVariance, setwoolembklcVariance] = useState()
+    const [woolembklcPercentage, setwoolembklcPercentage] = useState()
+    
+    const [woolembwsVariane, setwoolembwsVariane] = useState()
+    const [woolembwsPercentage, setwoolembwsPercentage] = useState()
+
 
     useEffect(() => {
 
@@ -462,51 +437,6 @@ const BudgetReportView = () => {
 
         }
 
-        else if (budgetData?.budgetData?.Kani?.BudgetRetail !== null && budgetData?.budgetData?.Kani?.BudgetRetail != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.Kani?.BudgetRetail;
-
-            const budgetVariance =
-                typeof totalForKaniKlc === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalForKaniKlc - budgetRevisedRetail
-                    : 0;
-            setbudgetVariancee(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.Kani?.BudgetRetail
-                ? (totalForKaniKlc / budgetData?.budgetData?.Kani?.BudgetRetail) * 100
-                : 0; // or any fallback value
-
-
-            setpercenVariance(percentageVariance)
-
-
-        }
-
-        if (budgetData?.budgetData?.Kani?.BudgetKLC !== null && budgetData?.budgetData?.Kani?.BudgetKLC != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.Kani?.BudgetKLC;
-
-            const budgetVariance =
-                typeof totalForKaniKlc === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalForKaniKlc - budgetRevisedRetail
-                    : 0;
-            setklcstockvariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.Kani?.BudgetKLC
-                ? (totalForKaniKlc / budgetData?.budgetData?.Kani?.BudgetKLC) * 100
-                : 0; // or any fallback value
-
-
-            setklcstockPercentage(percentageVariance)
-
-
-        }
         else if (budgetData?.budgetData?.Kani?.BudgetRevisedKLC !== null && budgetData?.budgetData?.Kani?.BudgetRevisedKLC != 0) {
 
 
@@ -517,628 +447,40 @@ const BudgetReportView = () => {
                 typeof totalForKaniKlc === 'number' && typeof budgetRevisedRetail === 'number'
                     ? totalForKaniKlc - budgetRevisedRetail
                     : 0;
-            setklcstockvariance(budgetVariance)
+            setbudgetVariancee(budgetVariance)
             console.log(budgetVariance, "j");
 
-            const percentageVariance = budgetData?.budgetData?.Kani?.BudgetRevisedKLC
-                ? (totalForKaniKlc / budgetData?.budgetData?.Kani?.BudgetRevisedKLC) * 100
+            const percentageVariance = budgetData?.budgetData?.Kani?.BudgetRevisedRetail
+                ? (totalForKaniKlc / budgetData?.budgetData?.Kani?.BudgetRevisedRetail) * 100
                 : 0; // or any fallback value
 
 
-            setklcstockPercentage(percentageVariance)
+            setpercenVariance(percentageVariance)
 
 
         }
-
-        if (budgetData?.budgetData?.Kani?.BudgetWS !== null && budgetData?.budgetData?.Kani?.BudgetWS != 0) {
-
+        if (budgetData?.budgetData?.Kani?.BudgetRevisedRetail !== null && budgetData?.budgetData?.Kani?.BudgetRevisedRetail != 0) {
 
 
-            const budgetRevisedRetail = budgetData?.budgetData?.Kani?.BudgetWS;
+
+            const budgetRevisedRetail = budgetData?.budgetData?.Kani?.BudgetRevisedRetail;
 
             const budgetVariance =
-                typeof totalFOrKaniWs === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalFOrKaniWs - budgetRevisedRetail
+                typeof totalForKaniKlc === 'number' && typeof budgetRevisedRetail === 'number'
+                    ? totalForKaniKlc - budgetRevisedRetail
                     : 0;
-            setkaniwholsalevariance(budgetVariance)
+            setbudgetVariancee(budgetVariance)
             console.log(budgetVariance, "j");
 
-            const percentageVariance = budgetData?.budgetData?.Kani?.BudgetWS
-                ? (totalFOrKaniWs / budgetData?.budgetData?.Kani?.BudgetWS) * 100
+            const percentageVariance = budgetData?.budgetData?.Kani?.BudgetRevisedRetail
+                ? (totalForKaniKlc / budgetData?.budgetData?.Kani?.BudgetRevisedRetail) * 100
                 : 0; // or any fallback value
 
 
-            setkaniwholesalepercentage(percentageVariance)
+            setpercenVariance(percentageVariance)
 
 
         }
-        else if (budgetData?.budgetData?.Kani?.BudgetRevisedWS !== null && budgetData?.budgetData?.Kani?.BudgetRevisedWS != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.Kani?.BudgetRevisedWS;
-
-            const budgetVariance =
-                typeof totalFOrKaniWs === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalFOrKaniWs - budgetRevisedRetail
-                    : 0;
-            setkaniwholsalevariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.Kani?.BudgetRevisedWS
-                ? (totalFOrKaniWs / budgetData?.budgetData?.Kani?.BudgetRevisedWS) * 100
-                : 0; // or any fallback value
-
-
-            setkaniwholesalepercentage(percentageVariance)
-
-
-        }
-
-        // contemp pashmina
-
-        if (budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRetail !== null && budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRetail != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRetail;
-
-            const budgetVariance =
-                typeof totalCpRetail === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalCpRetail - budgetRevisedRetail
-                    : 0;
-                    setcontempPashminaVariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRetail
-                ? (totalCpRetail / budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRetail) * 100
-                : 0; // or any fallback value
-
-
-                setcontempPashminaPercentage(percentageVariance)
-
-
-        }
-
-        else if (budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRevisedRetail !== null && budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRevisedRetail != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRevisedRetail;
-
-            const budgetVariance =
-                typeof totalCpRetail === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalCpRetail - budgetRevisedRetail
-                    : 0;
-                    setcontempPashminaVariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRevisedRetail
-                ? (totalCpRetail / budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRevisedRetail) * 100
-                : 0; // or any fallback value
-
-
-                setcontempPashminaPercentage(percentageVariance)
-
-
-        }
-
-
-        if (budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetKLC !== null && budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetKLC != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetKLC;
-
-            const budgetVariance =
-                typeof totalcpklc === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalcpklc - budgetRevisedRetail
-                    : 0;
-            setcontempPashminaklcVariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetKLC
-                ? (totalcpklc / budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetKLC) * 100
-                : 0; // or any fallback value
-
-
-                setcontempPashminaKlcPercentage(percentageVariance)
-
-
-        }
-        else if (budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRevisedKLC !== null && budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRevisedKLC != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRevisedKLC;
-
-            const budgetVariance =
-                typeof totalcpklc === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalcpklc - budgetRevisedRetail
-                    : 0;
-                    setcontempPashminaklcVariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRevisedKLC
-                ? (totalcpklc / budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRevisedKLC) * 100
-                : 0; // or any fallback value
-
-
-                setcontempPashminaKlcPercentage(percentageVariance)
-
-
-        }
-
-
-        if (budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetWS !== null && budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetWS != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetWS;
-
-            const budgetVariance =
-                typeof totalcpws === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalcpws - budgetRevisedRetail
-                    : 0;
-                    setcontempPashminaWholesale(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetWS
-                ? (totalcpws / budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetWS) * 100
-                : 0; // or any fallback value
-
-
-                setcontempPashminaWholesalePercentage(percentageVariance)
-
-
-        }
-        else if (budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRevisedWS !== null && budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRevisedWS != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRevisedWS;
-
-            const budgetVariance =
-                typeof totalcpws === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalcpws - budgetRevisedRetail
-                    : 0;
-                    setcontempPashminaWholesale(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRevisedWS
-                ? (totalcpws / budgetData?.budgetData?.['Contemporary Pashmina']?.BudgetRevisedWS) * 100
-                : 0; // or any fallback value
-
-
-                setcontempPashminaWholesalePercentage(percentageVariance)
-
-
-        }
-
-        // pashmina embb
-
-        if (budgetData?.budgetData?.["Pashmina Embroidery"]?.BudgetRetail !== null && budgetData?.budgetData?.["Pashmina Embroidery"]?.BudgetRetail != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.["Pashmina Embroidery"]?.BudgetRetail;
-
-            const budgetVariance =
-                typeof totalEmRetail === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalEmRetail - budgetRevisedRetail
-                    : 0;
-                    setpashminaEmbRetailVariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.["Pashmina Embroidery"]?.BudgetRetail
-                ? (totalEmRetail / budgetData?.budgetData?.["Pashmina Embroidery"]?.BudgetRetail) * 100
-                : 0; // or any fallback value
-
-
-                setpashminaEmbRetailPercentage(percentageVariance)
-
-
-        }
-
-        else if (budgetData?.budgetData?.["Pashmina Embroidery"]?.BudgetRevisedRetail !== null && budgetData?.budgetData?.["Pashmina Embroidery"]?.BudgetRevisedRetail != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.["Pashmina Embroidery"]?.BudgetRevisedRetail;
-
-            const budgetVariance =
-                typeof totalEmRetail === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalEmRetail - budgetRevisedRetail
-                    : 0;
-                    setpashminaEmbRetailVariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.["Pashmina Embroidery"]?.BudgetRevisedRetail
-                ? (totalEmRetail / budgetData?.budgetData?.["Pashmina Embroidery"]?.BudgetRevisedRetail) * 100
-                : 0; // or any fallback value
-
-
-                setpashminaEmbRetailPercentage(percentageVariance)
-
-
-        }
-
-
-        if (budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetKLC !== null && budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetKLC != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetKLC;
-
-            const budgetVariance =
-                typeof totalEmklc === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalEmklc - budgetRevisedRetail
-                    : 0;
-                    setpashminaEmbKlcVariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetKLC
-                ? (totalEmklc / budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetKLC) * 100
-                : 0; // or any fallback value
-
-
-                setpashminaEmbKlcPercentage(percentageVariance)
-
-
-        }
-        else if (budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetRevisedKLC !== null && budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetRevisedKLC != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetRevisedKLC;
-
-            const budgetVariance =
-                typeof totalEmklc === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalEmklc - budgetRevisedRetail
-                    : 0;
-                    setpashminaEmbKlcVariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetRevisedKLC
-                ? (totalEmklc / budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetRevisedKLC) * 100
-                : 0; // or any fallback value
-
-
-                setpashminaEmbKlcPercentage(percentageVariance)
-
-
-        }
-
-
-        if (budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetWS !== null && budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetWS != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetWS;
-
-            const budgetVariance =
-                typeof totalEmWs === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalEmWs - budgetRevisedRetail
-                    : 0;
-                    setpashminaEmbWsVariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetWS
-                ? (totalEmWs / budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetWS) * 100
-                : 0; // or any fallback value
-
-
-                setpashminaEmbWsPercentage(percentageVariance)
-
-
-        }
-
-        else if (budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetRevisedWS !== null && budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetRevisedWS != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetRevisedWS;
-
-            const budgetVariance =
-                typeof totalEmWs === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalEmWs - budgetRevisedRetail
-                    : 0;
-                    setpashminaEmbWsVariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetRevisedWS
-                ? (totalEmWs / budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetRevisedWS) * 100
-                : 0; // or any fallback value
-
-
-                setpashminaEmbWsPercentage(percentageVariance)
-
-
-        }
-        // contemwool  
-
-        if (budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRetail !== null && budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRetail != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRetail;
-
-            const budgetVariance =
-                typeof totalContemWoolRetail === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalContemWoolRetail - budgetRevisedRetail
-                    : 0;
-                    setcontempWoolVariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRetail
-                ? (totalContemWoolRetail / budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRetail) * 100
-                : 0; // or any fallback value
-
-
-                setcontempwoolRetailPercentage(percentageVariance)
-
-
-        }
-
-        else if (budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedRetail !== null && budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedRetail != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedRetail;
-
-            const budgetVariance =
-                typeof totalContemWoolRetail === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalContemWoolRetail - budgetRevisedRetail
-                    : 0;
-                    setcontempWoolVariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedRetail
-                ? (totalContemWoolRetail / budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedRetail) * 100
-                : 0; // or any fallback value
-
-
-                setcontempwoolRetailPercentage(percentageVariance)
-
-
-        }
-
-
-        if (budgetData?.budgetData?.["Contemporary Wool "]?.BudgetKLC !== null && budgetData?.budgetData?.["Contemporary Wool "]?.BudgetKLC != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.["Contemporary Wool "]?.BudgetKLC;
-
-            const budgetVariance =
-                typeof totalContemWoolklc === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalContemWoolklc - budgetRevisedRetail
-                    : 0;
-                    setcontempWoolklcVariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.["Contemporary Wool "]?.BudgetKLC
-                ? (totalContemWoolklc / budgetData?.budgetData?.["Contemporary Wool "]?.BudgetKLC) * 100
-                : 0; // or any fallback value
-
-
-                setcontempWoolklcPercentage(percentageVariance)
-
-
-        }
-        else if (budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedKLC !== null && budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedKLC != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedKLC;
-
-            const budgetVariance =
-                typeof totalContemWoolklc === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalContemWoolklc - budgetRevisedRetail
-                    : 0;
-                    setcontempWoolklcVariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedKLC
-                ? (totalContemWoolklc / budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedKLC) * 100
-                : 0; // or any fallback value
-
-
-                setcontempWoolklcPercentage(percentageVariance)
-
-
-        }
-
-
-        if (budgetData?.budgetData?.["Contemporary Wool "]?.BudgetWS !== null && budgetData?.budgetData?.["Contemporary Wool "]?.BudgetWS != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.["Contemporary Wool "]?.BudgetWS;
-
-            const budgetVariance =
-                typeof totalContemWoolWs === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalContemWoolWs - budgetRevisedRetail
-                    : 0;
-                    setcontempWoolwsVariane(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.["Contemporary Wool "]?.BudgetWS
-                ? (totalContemWoolWs / budgetData?.budgetData?.["Contemporary Wool "]?.BudgetWS) * 100
-                : 0; // or any fallback value
-
-
-                setcontempWoolwsPercentage(percentageVariance)
-
-
-        }
-
-        else if (budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedWS !== null && budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedWS != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedWS;
-
-            const budgetVariance =
-                typeof totalContemWoolWs === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalContemWoolWs - budgetRevisedRetail
-                    : 0;
-                    setcontempWoolwsVariane(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedWS
-                ? (totalContemWoolWs / budgetData?.budgetData?.["Contemporary Wool "]?.BudgetRevisedWS) * 100
-                : 0; // or any fallback value
-
-
-                setcontempWoolwsPercentage(percentageVariance)
-
-
-        }
-
-
-
-        //wool emb
-        if (budgetData?.budgetData?.['Wool Embroidery']?.BudgetRetail !== null && budgetData?.budgetData?.['Wool Embroidery']?.BudgetRetail != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.['Wool Embroidery']?.BudgetRetail;
-
-            const budgetVariance =
-                typeof totalEmRetail === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalEmRetail - budgetRevisedRetail
-                    : 0;
-                    setwoolembVariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.['Wool Embroidery']?.BudgetRetail
-                ? (totalEmRetail / budgetData?.budgetData?.['Wool Embroidery']?.BudgetRetail) * 100
-                : 0; // or any fallback value
-
-
-                setwoolembRetailPercentage(percentageVariance)
-
-
-        }
-
-        else if (budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedRetail !== null && budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedRetail != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedRetail;
-
-            const budgetVariance =
-                typeof totalEmRetail === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalEmRetail - budgetRevisedRetail
-                    : 0;
-                    setwoolembVariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance =budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedRetail
-                ? (totalEmRetail / budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedRetail) * 100
-                : 0; // or any fallback value
-
-
-                setwoolembRetailPercentage(percentageVariance)
-
-
-        }
-
-
-        if (budgetData?.budgetData?.['Wool Embroidery']?.BudgetKLC !== null && budgetData?.budgetData?.['Wool Embroidery']?.BudgetKLC != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.['Wool Embroidery']?.BudgetKLC;
-
-            const budgetVariance =
-                typeof totalEmklc === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalEmklc - budgetRevisedRetail
-                    : 0;
-                    setwoolembklcVariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.['Wool Embroidery']?.BudgetKLC
-                ? (totalEmklc / budgetData?.budgetData?.['Wool Embroidery']?.BudgetKLC) * 100
-                : 0; // or any fallback value
-
-
-                setwoolembklcPercentage(percentageVariance)
-
-
-        }
-        else if (budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedKLC !== null && budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedKLC != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedKLC;
-
-            const budgetVariance =
-                typeof totalEmklc === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalEmklc - budgetRevisedRetail
-                    : 0;
-                    setwoolembklcVariance(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedKLC
-                ? (totalEmklc / budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedKLC) * 100
-                : 0; // or any fallback value
-
-
-                setwoolembklcPercentage(percentageVariance)
-
-
-        }
-
-
-        if (budgetData?.budgetData?.['Wool Embroidery']?.BudgetWS !== null && budgetData?.budgetData?.['Wool Embroidery']?.BudgetWS != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.['Wool Embroidery']?.BudgetWS;
-
-            const budgetVariance =
-                typeof totalEmWs === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalEmWs - budgetRevisedRetail
-                    : 0;
-                    setwoolembwsVariane(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.['Wool Embroidery']?.BudgetWS
-                ? (totalEmWs / budgetData?.budgetData?.['Wool Embroidery']?.BudgetWS) * 100
-                : 0; // or any fallback value
-
-
-                setwoolembwsPercentage(percentageVariance)
-
-
-        }
-
-        else if (budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedWS !== null && budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedWS != 0) {
-
-
-
-            const budgetRevisedRetail = budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedWS;
-
-            const budgetVariance =
-                typeof totalEmWs === 'number' && typeof budgetRevisedRetail === 'number'
-                    ? totalEmWs - budgetRevisedRetail
-                    : 0;
-                    setwoolembwsVariane(budgetVariance)
-            console.log(budgetVariance, "j");
-
-            const percentageVariance = budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedWS
-                ? (totalEmWs / budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedWS) * 100
-                : 0; // or any fallback value
-
-
-                setwoolembwsPercentage(percentageVariance)
-
-
-        }
-
-
 
 
 
@@ -1200,17 +542,17 @@ const BudgetReportView = () => {
                     <tr style={{ border: "1px solid black", height: "80px" }}>
                         <th style={{ border: "1px solid black" }} >Kani Retail Client</th>
 
-                        <td style={{ border: "1px solid black" }} id="krb">{budgetData?.budgetData?.Kani?.BudgetRetail}</td>
-                        <td style={{ border: "1px solid black" }} id="krrb">{budgetData?.budgetData?.Kani?.BudgetRevisedRetail}</td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.inProgressOrderProductsCalculate?.retailKaniValueIP}</td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.receivedQtyCalculation?.retailKaniValue}</td>
-                        <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.retailKaniValueExtra}</td>
-                        <td style={{ border: "1px solid black" }} id="krtv">{totalForKani}</td>
+                        <td style={{ border: "1px solid black" }} id="krb"> {budgetData?.budgetData?.Kani?.BudgetRetail}</td>
+                        <td style={{ border: "1px solid black" }} id="krrb"> {budgetData?.budgetData?.Kani?.BudgetRevisedRetail}</td>
+                        <td style={{ border: "1px solid black" }}> {budgetData?.inProgressOrderProductsCalculate?.retailKaniValueIP}</td>
+                        <td style={{ border: "1px solid black" }}> {budgetData?.receivedQtyCalculation?.retailKaniValue}</td>
+                        <td style={{ border: "1px solid black" }}> {budgetData?.extraQtyCalculate?.retailKaniValueExtra}</td>
+                        <td style={{ border: "1px solid black" }} id="krtv"> {totalForKani}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={budgetVariancee} style={getVarianceStyle(2)}   id="krbv" readOnly />
+                            <input type="text" value={budgetVariancee} style={{ border: "none", ...budgetVarianceStyle }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={percenVariance} style={getPercentageStyle(percenVariance)} id="krpbv" readOnly />
+                            <input type="text" value={percenVariance} style={{ border: "none", ...percentageVarianceStyle }} id="krpbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailKaniValueCreated}</td>
                     </tr>
@@ -1226,10 +568,10 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.klcKaniValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv">{totalForKaniKlc}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={klcstockvariance} style={{ border: "none" }} id="kkbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="kkbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={klcstockPercentage} style={{ border: "none" }} id="kkpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="kkpbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.klcKaniValueCreated}</td>
                     </tr>
@@ -1245,10 +587,10 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.wsKaniValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv"> {totalFOrKaniWs}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={kaniwholsalevariance} style={{ border: "none" }} id="kkbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="kkbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={kaniwholesalepercentage} style={{ border: "none" }} id="kkpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="kkpbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.wsKaniValueCreated}</td>
                     </tr>
@@ -1284,10 +626,10 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.retailCPValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv"> {totalCpRetail}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={contempPashminaVariance} style={{ border: "none" }} id="krbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={contempPashminaPercentage} style={{ border: "none" }} id="krpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailCPValueCreated}</td>
                     </tr>
@@ -1302,10 +644,10 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.klcCPValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv"> {totalcpklc}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={contempPashminaklcVariance} style={{ border: "none" }} id="krbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={contempPashminaKlcPercentage} style={{ border: "none" }} id="krpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.klcCPValueCreated}</td>
                     </tr>
@@ -1321,10 +663,10 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.wsCPValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv"> {totalcpws}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={contempPashminaWholesale} style={{ border: "none" }} id="krbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={contempPashminaWholesalePercentage} style={{ border: "none" }} id="krpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.wsCPValueCreated}</td>
                     </tr>
@@ -1363,10 +705,10 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.retailPEValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv"> {totalEmRetail}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={pashminaEmbRetailVariance} style={{ border: "none" }} id="krbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={pashminaEmbRetailPercentage} style={{ border: "none" }} id="krpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailPEValueCreated}</td>
                     </tr>
@@ -1381,10 +723,10 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.klcPEValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv"> {totalEmklc}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={pashminaEmbKlcVariance} style={{ border: "none" }} id="krbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={pashminaEmbKlcPercentage} style={{ border: "none" }} id="krpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.klcPEValueCreated}</td>
                     </tr>
@@ -1397,10 +739,10 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.wsPEValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv"> {totalEmWs}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={pashminaEmbWsVariance} style={{ border: "none" }} id="krbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={pashminaEmbWsPercentage} style={{ border: "none" }} id="krpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.wsPEValueCreated}</td>
                     </tr>
@@ -1442,10 +784,10 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.retailCWValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv"> {totalContemWoolRetail}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={contempWoolVariance} style={{ border: "none" }} id="krbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={contempwoolRetailPercentage} style={{ border: "none" }} id="krpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailCWValueCreated}</td>
                     </tr>
@@ -1460,10 +802,10 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.klcCWValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv"> {totalContemWoolklc}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={contempWoolklcVariance} style={{ border: "none" }} id="krbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={contempWoolklcPercentage} style={{ border: "none" }} id="krpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.klcCWValueCreated}</td>
                     </tr>
@@ -1476,10 +818,10 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.wsCWValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv"> {totalContemWoolWs}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={contempWoolwsVariane} style={{ border: "none" }} id="krbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={contempWoolwsPercentage} style={{ border: "none" }} id="krpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.wsCWValueCreated}</td>
                     </tr>
@@ -1517,10 +859,10 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.retailWEValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv"> {totalwoolEmRetail}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={woolembVariance} style={{ border: "none" }} id="krbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={woolembRetailPercentage} style={{ border: "none" }} id="krpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailWEValueCreated}</td>
                     </tr>
@@ -1535,10 +877,10 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.klcWEValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv"> {totalWoolEmbKlc}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={woolembklcVariance} style={{ border: "none" }} id="krbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={woolembklcPercentage} style={{ border: "none" }} id="krpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.klcWEValueCreated}</td>
                     </tr>
@@ -1551,10 +893,10 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.wsWEValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv"> {totalwoolembws}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={woolembwsVariane} style={{ border: "none" }} id="krbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={woolembwsPercentage} style={{ border: "none" }} id="krpbv" readOnly />
+                            <input type="text" value="" style={{ border: "none" }} id="krpbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.wsWEValueCreated}</td>
                     </tr>

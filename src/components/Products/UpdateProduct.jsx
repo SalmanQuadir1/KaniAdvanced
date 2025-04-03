@@ -43,12 +43,14 @@ const UpdateProduct = () => {
     const productGroup = useSelector(state => state?.persisted?.productGroup);
     const [vaaluee, setvaaluee] = useState({})
 
-    const [referenceImages, setrefImage] = useState([])
+    const [referenceImages, setrefImage] = useState([
+
+    ])
     const [actualImages, setactualImage] = useState([])
     const navigate = useNavigate(); // Initialize navigate
-    const {  getUnits,
-        units,  } = useProduct({referenceImages,actualImages,productIdField});
-       
+    const { getUnits,
+        units, } = useProduct({ referenceImages, actualImages, productIdField });
+
     const [previews, setPreviews] = useState([]);
     const [previewsActual, setPreviewsActual] = useState([]);
     const [gstDetails, setgstDetails] = useState([])
@@ -60,7 +62,7 @@ const UpdateProduct = () => {
     useEffect(() => {
         getUnits();
     }, []); // Runs only once when the component mounts
-
+    console.log(product?.images, "hhgghhgg");
     useEffect(() => {
         if (units) {
             const formattedunitOptions = units.map(unitGroup => ({
@@ -73,26 +75,48 @@ const UpdateProduct = () => {
     }, [units]); // Runs whenever `units` is updated
 
     const handleFileChange = async (event) => {
-        const files = Array.from(event.target.files); // Convert FileList to an array
+        const files = Array.from(event.target.files);
+        if (!files.length) return;
+
+        // Create preview objects for new files
         const newPreviews = files.map((file) => ({
             file,
             url: URL.createObjectURL(file),
-            referenceImage: file, // Or actualImage depending on the logic
-            actualImage: file,    // Or referenceImage depending on the logic
+            isNew: true // Flag to identify new uploads
         }));
-    
-        // Update the referenceImages state with all selected files
-        setrefImage((prevImages) => [...prevImages, ...files]);
-    
-        // Update the previews state with all newPreviews
-        setPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
+
+        // Update previews state (only for UI display)
+        setPreviews((prev) => [...prev, ...newPreviews]);
+
+        // Convert existing product.images to the same format as new files
+        const existingImagesAsFiles = product?.images.map(img => {
+            const fileName = img?.referenceImage;
+            
+            // If you can determine the type and size, populate it here. For example:
+            const fileExtension = fileName.split('.').pop();
+            const fileType = `image/${fileExtension}`; // Use the extension to determine the type
+            const fileSize = 0; // Set to a known size (or fetch it if possible)
+            
+            // Simulate a file object for existing images
+            return new File([], fileName, {
+              type: fileType,
+              size: fileSize,
+            });
+          }) || [];
+
+        // Update referenceImages state (combining existing and new)
+        setrefImage((prev) => [
+            ...existingImagesAsFiles, // Keep existing images first
+            ...files
+        ]);
     };
-    
+    console.log(referenceImages, "jumbooooooooo");
+
     // Use useEffect to log the updated state after the change
     useEffect(() => {
         console.log(referenceImages, "refimagessssss====================================");
         setrefImage(referenceImages);
-    }, [referenceImages]);  //
+    }, [referenceImages]);
 
 
     const handleFileChangeActual = async (event) => {
@@ -106,7 +130,7 @@ const UpdateProduct = () => {
         }));
         setPreviewsActual((prevPreviewsActual) => [...prevPreviewsActual, ...newPreviewsActual]);
         await setactualImage((prevPreviewsActual) => [...prevPreviewsActual, ...files]);
-        console.log(actualImages,"jamshedpuuuuuuuuuuuuuuu===========");
+        console.log(actualImages, "jamshedpuuuuuuuuuuuuuuu===========");
 
     };
     useEffect(() => {
@@ -482,7 +506,7 @@ const UpdateProduct = () => {
     console.log(product, "brocode");
     console.log(productGroupOption, "codeeeee");
 
-console.log(formikRef?.current?.values?.slabBasedRates,"hhhhhhh");
+    console.log(formikRef?.current?.values?.slabBasedRates, "hhhhhhh");
     const handleModalSubmit = (newValues) => {
         console.log(newValues, "Submitted GST Rates");
 
@@ -491,14 +515,14 @@ console.log(formikRef?.current?.values?.slabBasedRates,"hhhhhhh");
         console.log(currentValues, "current values");
         // Merge current values with only the truly new rows
         const updatedValues = [...currentValues, ...newValues.filter(row => !currentValues.some(existing => existing.id === row.id))];
-console.log(updatedValues,"updatedvaluessss");
+        console.log(updatedValues, "updatedvaluessss");
         // Update Formik's field value with the deduplicated array
         formikRef.current.setFieldValue('slabBasedRates', updatedValues);
 
         setgstDetailModal(false); // Close the modal
     };
 
-console.log(product,"lama");
+    console.log(product, "lama");
 
     return (
         <DefaultLayout>
@@ -559,8 +583,8 @@ console.log(product,"lama");
                         embroideryCost: product?.embroideryCost || '',
                         totalCost: product?.totalCost || '',
                         slabBasedRates: product?.slabBasedRates || [],
-                        unit: product.unit ,
-                        supplierCode:product.supplierCode|| { id: 0 }
+                        unit: product.unit,
+                        supplierCode: product.supplierCode || { id: 0 }
 
                         // igst :vaaluee?.hsnCode?.igst ??product?.hsnCode?.igst ??  '',
                         // cgst :vaaluee?.hsnCode?.cgst ?? product?.hsnCode?.cgst ?? '',
@@ -700,7 +724,7 @@ console.log(product,"lama");
 
 
 
-                                      
+
 
                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                             <div className="flex-1 min-w-[300px]">
@@ -997,21 +1021,21 @@ console.log(product,"lama");
                                                     </div>
 
                                                     <div className="flex-2 min-w-[200px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
-                                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
-                                                                <ReactSelect
-                                                                    name="unit"
-                                                                    value={unitOptions?.find(option => option.value === values.unit?.id) || null}
-                                                                    onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
-                                                                    options={unitOptions}
-                                                                    styles={customStyles} // Pass custom styles here
-                                                                    className="bg-white dark:bg-form-Field"
-                                                                    classNamePrefix="react-select"
-                                                                    placeholder="Select Color Group"
-                                                                />
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                        <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                            <ReactSelect
+                                                                name="unit"
+                                                                value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                options={unitOptions}
+                                                                styles={customStyles} // Pass custom styles here
+                                                                className="bg-white dark:bg-form-Field"
+                                                                classNamePrefix="react-select"
+                                                                placeholder="Select Color Group"
+                                                            />
 
-                                                            </div>
                                                         </div>
+                                                    </div>
                                                 </div>
                                             </>
                                         )}
@@ -1045,22 +1069,22 @@ console.log(product,"lama");
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
 
-                                                <div className="flex-1 min-w-[300px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
-                                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
-                                                                <ReactSelect
-                                                                    name="unit"
-                                                                    value={unitOptions?.find(option => option.value === values.unit?.id) || null}
-                                                                    onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
-                                                                    options={unitOptions}
-                                                                    styles={customStyles} // Pass custom styles here
-                                                                    className="bg-white dark:bg-form-Field"
-                                                                    classNamePrefix="react-select"
-                                                                    placeholder="Select Color Group"
-                                                                />
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                        <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                            <ReactSelect
+                                                                name="unit"
+                                                                value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                options={unitOptions}
+                                                                styles={customStyles} // Pass custom styles here
+                                                                className="bg-white dark:bg-form-Field"
+                                                                classNamePrefix="react-select"
+                                                                placeholder="Select Color Group"
+                                                            />
 
-                                                            </div>
                                                         </div>
+                                                    </div>
                                                 </div>
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
@@ -1230,22 +1254,22 @@ console.log(product,"lama");
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
 
-                                                <div className="flex-1 min-w-[300px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
-                                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
-                                                                <ReactSelect
-                                                                    name="unit"
-                                                                    value={unitOptions?.find(option => option.value === values.unit?.id) || null}
-                                                                    onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
-                                                                    options={unitOptions}
-                                                                    styles={customStyles} // Pass custom styles here
-                                                                    className="bg-white dark:bg-form-Field"
-                                                                    classNamePrefix="react-select"
-                                                                    placeholder="Select Color Group"
-                                                                />
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                        <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                            <ReactSelect
+                                                                name="unit"
+                                                                value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                options={unitOptions}
+                                                                styles={customStyles} // Pass custom styles here
+                                                                className="bg-white dark:bg-form-Field"
+                                                                classNamePrefix="react-select"
+                                                                placeholder="Select Color Group"
+                                                            />
 
-                                                            </div>
                                                         </div>
+                                                    </div>
                                                 </div>
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
@@ -1397,22 +1421,22 @@ console.log(product,"lama");
 
 
 
-                                                <div className="flex-1 min-w-[300px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
-                                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
-                                                                <ReactSelect
-                                                                    name="unit"
-                                                                    value={unitOptions?.find(option => option.value === values.unit?.id) || null}
-                                                                    onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
-                                                                    options={unitOptions}
-                                                                    styles={customStyles} // Pass custom styles here
-                                                                    className="bg-white dark:bg-form-Field"
-                                                                    classNamePrefix="react-select"
-                                                                    placeholder="Select Color Group"
-                                                                />
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                        <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                            <ReactSelect
+                                                                name="unit"
+                                                                value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                options={unitOptions}
+                                                                styles={customStyles} // Pass custom styles here
+                                                                className="bg-white dark:bg-form-Field"
+                                                                classNamePrefix="react-select"
+                                                                placeholder="Select Color Group"
+                                                            />
 
-                                                            </div>
                                                         </div>
+                                                    </div>
                                                 </div>
 
 
@@ -1589,22 +1613,22 @@ console.log(product,"lama");
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
 
-                                                <div className="flex-1 min-w-[300px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
-                                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
-                                                                <ReactSelect
-                                                                    name="unit"
-                                                                    value={unitOptions?.find(option => option.value === values.unit?.id) || null}
-                                                                    onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
-                                                                    options={unitOptions}
-                                                                    styles={customStyles} // Pass custom styles here
-                                                                    className="bg-white dark:bg-form-Field"
-                                                                    classNamePrefix="react-select"
-                                                                    placeholder="Select Color Group"
-                                                                />
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                        <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                            <ReactSelect
+                                                                name="unit"
+                                                                value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                options={unitOptions}
+                                                                styles={customStyles} // Pass custom styles here
+                                                                className="bg-white dark:bg-form-Field"
+                                                                classNamePrefix="react-select"
+                                                                placeholder="Select Color Group"
+                                                            />
 
-                                                            </div>
                                                         </div>
+                                                    </div>
                                                 </div>
 
 
@@ -1739,22 +1763,22 @@ console.log(product,"lama");
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
 
-                                                <div className="flex-1 min-w-[300px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
-                                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
-                                                                <ReactSelect
-                                                                    name="unit"
-                                                                    value={unitOptions?.find(option => option.value === values.unit?.id) || null}
-                                                                    onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
-                                                                    options={unitOptions}
-                                                                    styles={customStyles} // Pass custom styles here
-                                                                    className="bg-white dark:bg-form-Field"
-                                                                    classNamePrefix="react-select"
-                                                                    placeholder="Select Color Group"
-                                                                />
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                        <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                            <ReactSelect
+                                                                name="unit"
+                                                                value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                options={unitOptions}
+                                                                styles={customStyles} // Pass custom styles here
+                                                                className="bg-white dark:bg-form-Field"
+                                                                classNamePrefix="react-select"
+                                                                placeholder="Select Color Group"
+                                                            />
 
-                                                            </div>
                                                         </div>
+                                                    </div>
                                                 </div>
 
 
@@ -1866,9 +1890,9 @@ console.log(product,"lama");
 
 
 
-                                        {(product?.gstDetails?.trim() === "Applicable"||product?.gstDetails?.trim() === "NotApplicable") && (
+                                        {(product?.gstDetails?.trim() === "Applicable" || product?.gstDetails?.trim() === "NotApplicable") && (
                                             <>
-    
+
                                                 <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>Statutory Details</h1>
 
 
@@ -1891,7 +1915,7 @@ console.log(product,"lama");
                                                     </div>
 
                                                     {/* GST RATE DETAILS Section (Conditional) */}
-                                                    {(product.gstDetails.trim() === "Applicable" ||values.gstDetails.trim()==="Applicable") && (
+                                                    {(product.gstDetails.trim() === "Applicable" || values.gstDetails.trim() === "Applicable") && (
 
                                                         <div className="flex-1 min-w-[250px]">
                                                             <label className="mb-2.5 block text-black dark:text-white">GST RATE DETAILS</label>
@@ -2149,7 +2173,7 @@ console.log(product,"lama");
                                                             onChange={handleFileChange}
                                                             className="absolute inset-0 z-50 w-full h-full opacity-0 cursor-pointer"
                                                         />
-                                                       
+
                                                         <div className="flex flex-col items-center justify-center space-y-3 border-[1.5px] border-stroke bg-transparent py-3 px-5 rounded text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary">
                                                             <span className="flex h-10 w-10 items-center justify-center rounded-full border p-3 border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
                                                                 <svg
@@ -2501,7 +2525,7 @@ console.log(product,"lama");
                                                     value={supplierCodeOptions?.find(option => option.value === values.supplierCode?.id) || null}
                                                     onChange={(option) => setFieldValue('supplierCode', option ? option?.suplieridd : null)}
                                                     options={supplierCodeOptions}
-                                                    isDisabled={true} 
+                                                    isDisabled={true}
                                                     styles={customStyles} // Pass custom styles here
                                                     className="bg-white dark:bg-form-Field"
                                                     classNamePrefix="react-select"
