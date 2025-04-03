@@ -26,7 +26,7 @@ const Location = () => {
 
 
 
-console.log(location,"locaaaaaaaaaaaaaaaaa");
+    console.log(location, "locaaaaaaaaaaaaaaaaa");
 
 
 
@@ -71,6 +71,18 @@ console.log(location,"locaaaaaaaaaaaaaaaaa");
                         if (values.pinCode === " ") {
                             errors.pinCode = "pinCode Should not Be Empty"
                         }
+                        if (!values.locationId) {
+                            errors.locationId = 'locationId is Required';
+                        }
+                        if (values.locationId === " ") {
+                            errors.locationId = "locationId Should not Be Empty"
+                        }
+                        if (!values.locationName) {
+                            errors.locationName = 'locationName is Required';
+                        }
+                        if (values.locationName === " ") {
+                            errors.locationName = "locationName Should not Be Empty"
+                        }
 
                         return errors;
                     }}
@@ -98,7 +110,7 @@ console.log(location,"locaaaaaaaaaaaaaaaaa");
 
                                         <div className="mb-4.5 flex flex-wrap gap-6">
 
-                                            <div className="flex-1 min-w-[300px]">
+                                            <div className="flex-2 min-w-[270px]">
                                                 <label className="mb-2.5 block text-black dark:text-white"> Address</label>
                                                 <Field
                                                     type="text"
@@ -109,9 +121,36 @@ console.log(location,"locaaaaaaaaaaaaaaaaa");
                                                 <ErrorMessage name="address" component="div" className="text-red-500" />
 
                                             </div>
+                                            <div className="flex-2 min-w-[270px]">
+                                                <label className="mb-2.5 block text-black dark:text-white"> Location Id</label>
+                                                <Field
+                                                    type="text"
+                                                    name="locationId"
+                                                    placeholder="Enter Location Id"
+                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                />
+                                                <ErrorMessage name="locationId" component="div" className="text-red-500" />
+
+                                            </div>
+                                            <div className="flex-2 min-w-[270px]">
+                                                <label className="mb-2.5 block text-black dark:text-white"> Location Name</label>
+                                                <Field
+                                                    type="text"
+                                                    name="locationName"
+                                                    placeholder="Enter Location Name"
+                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                />
+                                                <ErrorMessage name="locationName" component="div" className="text-red-500" />
+
+                                            </div>
 
 
-                                            <div className="flex-1 min-w-[300px]">
+
+                                        </div>
+
+
+                                        <div className="mb-4.5 flex flex-wrap gap-6">
+                                            <div className="flex-2 min-w-[270px]">
                                                 <label className="mb-2.5 block text-black dark:text-white"> City</label>
                                                 <Field
                                                     type="text"
@@ -122,12 +161,8 @@ console.log(location,"locaaaaaaaaaaaaaaaaa");
                                                 <ErrorMessage name="city" component="div" className="text-red-500" />
 
                                             </div>
-                                        </div>
 
-
-                                        <div className="mb-4.5 flex flex-wrap gap-6">
-
-                                            <div className="flex-1 min-w-[300px]">
+                                            <div className="flex-2 min-w-[270px]">
                                                 <label className="mb-2.5 block text-black dark:text-white"> State</label>
                                                 <Field
                                                     type="text"
@@ -140,7 +175,7 @@ console.log(location,"locaaaaaaaaaaaaaaaaa");
                                             </div>
 
 
-                                            <div className="flex-1 min-w-[300px]">
+                                            <div className="flex-2 min-w-[270px]">
                                                 <label className="mb-2.5 block text-black dark:text-white"> Gstin</label>
                                                 <Field
                                                     type="text"
@@ -157,7 +192,7 @@ console.log(location,"locaaaaaaaaaaaaaaaaa");
 
                                         <div className="mb-4.5 flex flex-wrap gap-6 md:w-[420px]">
 
-                                            <div className="flex-1 min-w-[300px] ">
+                                            <div className="flex-2 min-w-[270px] ">
                                                 <label className="mb-2.5 block text-black dark:text-white"> Pincode</label>
                                                 <Field
                                                     type="number"
@@ -174,9 +209,9 @@ console.log(location,"locaaaaaaaaaaaaaaaaa");
                                         </div>
 
                                         <div className="flex justify-center mt-4 items-center">
-                                        <button type="submit"   className="flex md:w-[120px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90">
-                                            {edit ? "Update Location" : "Create Location"}
-                                        </button>
+                                            <button type="submit" className="flex md:w-[120px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90">
+                                                {edit ? "Update Location" : "Create Location"}
+                                            </button>
                                         </div>
                                     </div>
 

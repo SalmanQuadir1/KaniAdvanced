@@ -146,6 +146,12 @@ const Home = () => {
             { title: "Monthly Order Calender", link: "/Order/monthlyorders", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
 
         ],
+        ROLE_QUALITYCONTROL: [
+           
+            { title: "Monthly Order Calender", link: "/Order/monthlyorders", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
+
+        ],
+        
 
         ROLE_ADMIN_SXR: [
             { title: "Reports", link: "/Reports",  icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },

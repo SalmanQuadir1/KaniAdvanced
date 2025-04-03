@@ -10,6 +10,8 @@ const useLocation = () => {
     const [edit, setEdit] = useState(false);
     const [currentLocation, setCurrentLocation] = useState({
         address: "",
+        locationId:"",
+        locationName:"",
         city: "",
         state: "",
         gstin: "",

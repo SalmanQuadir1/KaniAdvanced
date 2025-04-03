@@ -272,7 +272,7 @@ function App() {
             path="/"
             element={
               <>
-                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR","ROLE_USER"]}></RoleBasedRoute>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR","ROLE_USER","ROLE_QUALITYCONTROL"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <Home />
               </>
@@ -282,7 +282,7 @@ function App() {
             path="/home"
             element={
               <>
-                <RoleBasedRoute allowedRoles={["ROLE_ADMIN","ROLE_USER", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR"]}></RoleBasedRoute>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN","ROLE_USER", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR","ROLE_QUALITYCONTROL"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <Home />
               </>

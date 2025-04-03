@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE ,VIEW_ALL_ORDERS,VIEW_ALL_CUSTOMER, ADD_ORDER_URL, VIEW_ORDERNO, VIEW_ALL_SUPPLIER_URL, VIEW_ALL_PRODID, GET_PRODUCTIDDD_URL, } from "../Constants/utils";
+import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE ,VIEW_ALL_ORDERS,VIEW_ALL_CUSTOMER, ADD_ORDER_URL, VIEW_ORDERNO, VIEW_ALL_SUPPLIER_URL, VIEW_ALL_PRODID, GET_PRODUCTIDDD_URL, VIEW_ALL_LOCATIONS, } from "../Constants/utils";
 import { useNavigate } from 'react-router-dom';
 import { fetchorder } from '../redux/Slice/OrderNo';
 // import { GET_PRODUCTIDD_URL, VIEW_ALL_CUSTOMER, VIEW_ALL_ORDERTYPE } from "../Constants/utils";
@@ -9,6 +9,7 @@ import { fetchorder } from '../redux/Slice/OrderNo';
 const useorder = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
+    const [Location, setLocation] = useState([])
     const [orderTypee, setorderType] = useState([]);
     const [orderNo, setorderNo] = useState([])
     const [Order, setOrder] = useState([]);
@@ -115,6 +116,25 @@ useEffect(() => {
             const data = await response.json();
             console.log(data,"dataaaaaa");
             setorderNo(data);
+          
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch order Number");
+        }
+    };
+
+    const getLocation = async (page) => {
+        try {
+            const response = await fetch(`${VIEW_ALL_LOCATIONS}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data,"location");
+            setLocation(data);
           
         } catch (error) {
             console.error(error);
@@ -444,7 +464,9 @@ const handleUpdate = (e, item) => {
         getSupplier,
         supplier,
         getProdId,
-        productIdd
+        productIdd,
+        getLocation,Location
+
     };
 };
 

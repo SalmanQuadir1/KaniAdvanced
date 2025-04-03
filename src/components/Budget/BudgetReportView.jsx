@@ -6,36 +6,6 @@ import { toast } from "react-toastify";
 
 const BudgetReportView = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
-
-
-
-
-
-
-    const getVarianceStyle = (value) => ({
-        backgroundColor: value && value > 0 ? "red" : "#90EE90",
-        border: "none",
-    
-      });
-      
-      const getPercentageStyle = (value) => ({
-        backgroundColor: value && value > 100 ? "red" : "#90EE90",
-        border: "none"
-      });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     const [totalForKani, settotalForKani] = useState()
     const [totalForKaniKlc, settotalForKaniKlc] = useState()
     const [totalFOrKaniWs, settotalFOrKaniWs] = useState()
@@ -136,19 +106,8 @@ const BudgetReportView = () => {
 
     // coloring
 
-    // const budgetVarianceStyle = budgetVariancee > 0 ? { backgroundColor: "red" } : { backgroundColor: "#90EE90" };
-    // const percentageVarianceStyle = percenVariance > 100 ? { backgroundColor: "red" } : { backgroundColor: "#90EE90" };
-
-
-
-
-
-
-
-
-
-
-
+    const budgetVarianceStyle = budgetVariancee > 0 ? { backgroundColor: "red" } : { backgroundColor: "#90EE90" };
+    const percentageVarianceStyle = percenVariance > 100 ? { backgroundColor: "red" } : { backgroundColor: "#90EE90" };
 
     const getBudget = async () => {
         try {
@@ -439,6 +398,7 @@ const BudgetReportView = () => {
 
 
     useEffect(() => {
+        
         if (budgetData?.budgetData?.Kani?.BudgetRevisedRetail !== null && budgetData?.budgetData?.Kani?.BudgetRevisedRetail != 0) {
 
 
@@ -1082,7 +1042,7 @@ const BudgetReportView = () => {
             console.log(budgetVariance, "j");
 
             const percentageVariance = budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedKLC
-                ? (totalEmklc / budgetData?.budgetData?.['Wool Embroidery']?.BudgetRevisedKLC) * 100
+                ? (totalEmklc / budgetData?.budgetData?.['Pashmina Embroidery']?.BudgetRevisedKLC) * 100
                 : 0; // or any fallback value
 
 
@@ -1207,10 +1167,10 @@ const BudgetReportView = () => {
                         <td style={{ border: "1px solid black" }}>{budgetData?.extraQtyCalculate?.retailKaniValueExtra}</td>
                         <td style={{ border: "1px solid black" }} id="krtv">{totalForKani}</td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={budgetVariancee} style={getVarianceStyle(2)}   id="krbv" readOnly />
+                            <input type="text" value={budgetVariancee} style={{ border: "none", ...budgetVarianceStyle }} id="krbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>
-                            <input type="text" value={percenVariance} style={getPercentageStyle(percenVariance)} id="krpbv" readOnly />
+                            <input type="text" value={percenVariance} style={{ border: "none", ...percentageVarianceStyle }} id="krpbv" readOnly />
                         </td>
                         <td style={{ border: "1px solid black" }}>{budgetData?.createdQtyCalculate?.retailKaniValueCreated}</td>
                     </tr>

@@ -47,12 +47,17 @@ const UpdateOrderRecieving = () => {
   ])
   const {
 
-    productId,
+    productId,getLocation,Location
 
   } = useorder();
 
 
 
+useEffect(() => {
+ getLocation()
+}, [])
+
+console.log(Location,"llkkllkkllkk");
 
 
 
@@ -66,6 +71,7 @@ const UpdateOrderRecieving = () => {
 
 
   const [selectedSuppliers, setSelectedSuppliers] = useState([]);
+  const [selectedLocation, setselectedLocation] = useState([])
 
 
   const Locations = [
@@ -236,6 +242,21 @@ const UpdateOrderRecieving = () => {
   }, [order]);
 
 
+  useEffect(() => {
+    if (Location) {
+      const formattedOptions = Location.map(location => ({
+        value: location?.id,
+        label: `${location?.state}(${location.address})`,
+        LocationObject: location,
+        LocationId: { id: location.id }
+      }));
+  
+
+      setselectedLocation(formattedOptions); // Set Location when page loads
+    }
+  }, [Location]);
+
+
 
 
 
@@ -278,6 +299,7 @@ const UpdateOrderRecieving = () => {
 
 
   const handleSubmit = async (values) => {
+    console.log(values,'jamhhgg');
    
 
 
@@ -292,7 +314,7 @@ const UpdateOrderRecieving = () => {
       productStatus: values.productStatus,
       location: values.location
     }
-    console.log(formattedValues,"heyyyy");
+    
 
     try {
       const url = `${UPDATE_ORDERRECIEVED}/${id}`;
@@ -308,7 +330,7 @@ const UpdateOrderRecieving = () => {
       });
 
       const data = await response.json();
-      if (response.ok) {
+      if (response?.ok) {
         toast.success(`Order Recieved Status Updated successfully`);
         navigate("/order/partiallyApproved")
 
@@ -316,11 +338,12 @@ const UpdateOrderRecieving = () => {
 
         // getCurrency(pagination.currentPage); // Fetch updated Currency
       } else {
-        toast.error(`${data.errorMessage}`);
+        console.log(response,"kk");
+        toast.error(`${data}`);
       }
     } catch (error) {
-      console.error(error, response);
-      toast.error("An error occurred");
+      console.error(error,"hfff");
+      toast.error(error);
     }
 
     // You can now send `finalData` to the backend or do any other operation with it
@@ -338,7 +361,7 @@ const UpdateOrderRecieving = () => {
 
 
 
-  console.log(prodIdModal, "proddidmodal");
+  
 
 
 
@@ -346,7 +369,7 @@ const UpdateOrderRecieving = () => {
 
 
 
-  console.log(selectedSuppliers, "supppppppppppppppppppplierssssssssssssssssss");
+ 
 
 
   return (
@@ -619,13 +642,16 @@ const UpdateOrderRecieving = () => {
                         <label className="mb-2.5 block text-black dark:text-white">Product Location</label>
                         <ReactSelect
                           name="location"
+                          value={
+                            selectedLocation?.find(option => option.value === values.location.id) || null
+                          }
                           // value={
                           //   salesChannelOptions.find((option) => option.value === values.salesChannel) || null
                           // } // Display the selected value
                           onChange={(option) =>
-                            setFieldValue("location", option ? option.value : "")
+                            setFieldValue("location", option ? { id: option.value } : null)
                           } // Update Formik value
-                          options={Locations}
+                          options={selectedLocation}
                           styles={customStyles}
                           className="bg-white dark:bg-form-Field"
                           classNamePrefix="react-select"

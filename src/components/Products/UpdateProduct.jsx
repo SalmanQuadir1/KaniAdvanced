@@ -93,7 +93,8 @@ const UpdateProduct = () => {
             const fileName = img?.referenceImage;
             
             // If you can determine the type and size, populate it here. For example:
-            const fileExtension = fileName.split('.').pop();
+            // const fileExtension = fileName.split('.').pop();
+            const fileExtension = fileName
             const fileType = `image/${fileExtension}`; // Use the extension to determine the type
             const fileSize = 0; // Set to a known size (or fetch it if possible)
             
@@ -110,6 +111,7 @@ const UpdateProduct = () => {
             ...files
         ]);
     };
+    
     console.log(referenceImages, "jumbooooooooo");
 
     // Use useEffect to log the updated state after the change
