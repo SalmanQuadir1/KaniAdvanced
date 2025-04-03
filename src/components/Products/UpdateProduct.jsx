@@ -125,6 +125,55 @@ const UpdateProduct = () => {
             return updatedPreviews;
         });
     };
+
+
+    const handleRemoveImageActual = (indexToRemove) => {
+        setProduct((prevProduct) => ({
+            ...prevProduct,
+            images: prevProduct.images.filter((_, index) => index !== indexToRemove),
+        }));
+    };
+    
+
+    // const handleRemoveImagePreview = (indexToRemove) => {
+    //     setPreviews((prevPreviews) => {
+    //         const updatedPreviews = [...prevPreviews];
+    //         // Revoke the object URL to release memory
+    //         URL.revokeObjectURL(updatedPreviews[indexToRemove].url);
+    //         updatedPreviews.splice(indexToRemove, 1);
+    //         return updatedPreviews;
+    //     });
+    // };
+
+    // const handleRemoveImagePreview = (indexToRemove) => {
+    //     setProduct((prevProduct) => {
+    //         if (!prevProduct?.images || !prevProduct.images[indexToRemove]) return prevProduct;
+    
+    //         // Optional: Revoke object URL to free memory
+    //         if (prevProduct.images[indexToRemove].url) {
+    //             URL.revokeObjectURL(prevProduct.images[indexToRemove].url);
+    //         }
+    
+    //         // Remove the selected image
+    //         return {
+    //             ...prevProduct,
+    //             images: prevProduct.images.filter((_, index) => index !== indexToRemove),
+    //         };
+    //     });
+    // };
+
+    const handleRemoveImagePreview = (imageId) => {
+        setProduct((prevProduct) => {
+            if (!prevProduct?.images) return prevProduct;
+    
+            return {
+                ...prevProduct,
+                images: prevProduct.images.filter((img) => img.referenceImage !== imageId),
+            };
+        });
+    };
+    
+    
     const handleRemoveActual = (indexToRemove) => {
         setPreviewsActual((prevPreviewsActual) => {
             const updatedPreviewsActual = [...prevPreviewsActual];
@@ -2152,36 +2201,35 @@ console.log(product,"lama");
 
 
                                                     <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark flex flex-row">
-                                                        {/* Grid Layout */}
-                                                        <div className="flex flex-col grid-cols-3">
+    {/* Grid Layout */}
+    <div className="flex flex-col grid-cols-3">
+        <div className="flex flex-row gap-4">
+            {/* Image Preview */}
+            {product?.images
+    .filter((ref) => ref.referenceImage && !ref.actualImage) // Exclude images that have actualImage
+    .map((ref, index) => (
+        <div key={index} className="relative group">
+            <img
+                className="h-20 w-20 transition-transform duration-500 ease-in-out transform group-hover:scale-[1] group-hover:shadow-2xl"
+                crossOrigin="use-credentials"
+                src={`${GET_IMAGE}/products/getimages/${ref.referenceImage}`}
+                alt="Reference Image"
+            />
+            {/* Remove Button */}
+            <button
+                type="button"
+                onClick={() => handleRemoveImagePreview(ref.referenceImage)}
+                className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+                &times;
+            </button>
+        </div>
+    ))}
 
-                                                            <div className="flex flex-row gap-4 ">
-                                                                {/* Image Preview */}
-                                                                {product?.images.map((ref) => (
-                                                                    <>
-                                                                        {
-                                                                            ref.referenceImage != null &&
+        </div>
+    </div>
+</div>
 
-                                                                            <img
-                                                                                className="h-20 w-20  transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
-                                                                                crossOrigin="use-credentials"
-                                                                                src={`${GET_IMAGE}/products/getimages/${ref.referenceImage}`}
-                                                                                alt="Product Image"
-                                                                            />
-                                                                        }
-                                                                    </>
-                                                                ))}
-                                                                {/* Cancel Button */}
-                                                                <button
-                                                                    // onClick={() => handleRemoveImage(index)}
-                                                                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                                >
-                                                                    &times;
-                                                                </button>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
 
 
 
@@ -2291,36 +2339,33 @@ console.log(product,"lama");
 
 
                                                     <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark flex flex-row">
-                                                        {/* Grid Layout */}
-                                                        <div className="flex flex-col grid-cols-3">
-
-                                                            <div className="flex flex-row gap-4 ">
-                                                                {/* Image Preview */}
-                                                                {product?.images.map((ref) => (
-                                                                    <>
-                                                                        {
-                                                                            ref.actualImage != null &&
-
-                                                                            <img
-                                                                                className="h-20 w-20  transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
-                                                                                crossOrigin="use-credentials"
-                                                                                src={`${GET_IMAGE}/products/getimages/${ref.actualImage}`}
-                                                                                alt="Product Image"
-                                                                            />
-                                                                        }
-                                                                    </>
-                                                                ))}
-                                                                {/* Cancel Button */}
-                                                                <button
-                                                                    onClick={() => handleRemoveImage(index)}
-                                                                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                                >
-                                                                    &times;
-                                                                </button>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
+    {/* Grid Layout */}
+    <div className="flex flex-col grid-cols-3">
+        <div className="flex flex-row gap-4">
+            {/* Image Preview */}
+            {product?.images.map((ref, index) => (
+                ref.actualImage && (
+                    <div key={index} className="relative group">
+                        <img
+                            className="h-20 w-20 transition-transform duration-500 ease-in-out transform group-hover:scale-[1] group-hover:shadow-2xl"
+                            crossOrigin="use-credentials"
+                            src={`${GET_IMAGE}/products/getimages/${ref.actualImage}`}
+                            alt="Product Image"
+                        />
+                        {/* Remove Button */}
+                        <button
+                            type="button"
+                            onClick={() => handleRemoveImageActual(index)}
+                            className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                            &times;
+                        </button>
+                    </div>
+                )
+            ))}
+        </div>
+    </div>
+</div>
 
 
 
