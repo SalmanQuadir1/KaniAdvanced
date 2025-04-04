@@ -339,7 +339,7 @@ console.log(Location,"llkkllkkllkk");
         // getCurrency(pagination.currentPage); // Fetch updated Currency
       } else {
         console.log(response,"kk");
-        toast.error(`${data}`);
+        toast.error(`${data?.errorMessage}`);
       }
     } catch (error) {
       console.error(error,"hfff");

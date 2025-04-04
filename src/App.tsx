@@ -195,7 +195,7 @@ import UpdateInventory from './components/ProductsInventory/UpdateInventory.jsx'
 
 
 
-import AddStockJournel from './components/StockJournel/AddStockJournel.jsx';
+import AddStockJournell from './components/StockJournel/AddStockJournell.jsx';
 import ViewStockJournel from './components/StockJournel/ViewStockJournel.jsx';
 
 // import UpdateProduct from './components/Products/UpdateProduct';
@@ -1375,18 +1375,28 @@ function App() {
               </>
             }
           />
-          <Route
-            path="/stockjournal/add"
+          {/* <Route
+            path="/stockJournal/AddStockJournal"
             element={
               <>
                 <PageTitle title="Add Stock Journal" />
                 <AddStockJournel />
               </>
             }
+          /> */}
+
+           <Route
+            path="/stockJournal/AddStockJournal"
+            element={
+              <>
+                <PageTitle title="Add Stock Journal" />
+                <AddStockJournell />
+              </>
+            }
           />
 
           <Route
-            path="/stockjournal/view"
+            path="/stockJournal/ViewStockJournal"
             element={
               <>
                 <PageTitle title="View Stock Journal" />

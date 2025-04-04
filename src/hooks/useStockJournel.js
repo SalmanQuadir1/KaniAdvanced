@@ -43,11 +43,11 @@ const useStockJournel = () => {
     const dispatch = useDispatch();
     
         const [currentstockJournel, setCurrentStockJournel] = useState({
-            type: null,
-            material: null,
-            unit: null,
-            quantity: '',
-            cost: '',
+            productId:"",
+           location:"",
+           quantity:"",
+           transferQuantity:"",
+           destinationLocation:""
           });
 
     useEffect(() => {

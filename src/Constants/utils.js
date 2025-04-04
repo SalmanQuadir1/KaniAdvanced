@@ -19,7 +19,9 @@ export const UPDATE_LOCATION_URL = `${BASE_URL}/location/update`;
 export const VIEW_ALL_LOCATIONS = `${BASE_URL}/location/viewAll`;
 export const DELETE_LOCATION_URL = `${BASE_URL}/location/delete/`;
 
+// stock journl
 
+export const GET_QUANTITY = `${BASE_URL}/productInventory/closingBalance`;
 
 // add location inventory
 
@@ -83,7 +85,7 @@ export const DELETE_INVENTORY_URL = `${BASE_URL}/inventory`
 
 
 //stock journel url
-export const ADD_STOCKJOURNEL_URL = `${BASE_URL}/stockjournal`
+export const ADD_STOCKJOURNEL_URL = `${BASE_URL}/stockjournals/add`
 
 export const GET_STOCK_URL = `${BASE_URL}/stockjournal/search`
 export const GET_STOCKBYID_URL = `${BASE_URL}/stockjournal`
