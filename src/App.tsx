@@ -197,7 +197,7 @@ import UpdateInventory from './components/ProductsInventory/UpdateInventory.jsx'
 
 import AddStockJournell from './components/StockJournel/AddStockJournell.jsx';
 import VerifyStockJournal from './components/StockJournel/VerifyStockJournal.jsx';
-
+import Godown from './components/Godown/Godown.jsx'
 
 import ViewStockJournalCreated from './components/StockJournel/ViewStockJournalCreated.jsx';
 
@@ -655,6 +655,16 @@ function App() {
               <>
                 <PageTitle title="Cancelled Orders " />
                 <ViewOrderCancelled />
+              </>
+            }
+          />
+
+<Route
+            path="/godown/viewGodown"
+            element={
+              <>
+                <PageTitle title="Cancelled Orders " />
+                <Godown />
               </>
             }
           />
