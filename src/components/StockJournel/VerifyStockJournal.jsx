@@ -8,7 +8,7 @@ import 'flatpickr/dist/themes/material_blue.css'; // Import a Flatpickr theme
 
 import useorder from '../../hooks/useOrder';
 
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL, VIEW_STOCKJOURNALBYID } from '../../Constants/utils';
+import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL, VIEW_STOCKJOURNALBYID, VERIFY_STOCK_JOURNAL } from '../../Constants/utils';
 
 import { useNavigate, useNavigation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -134,16 +134,35 @@ const VerifyStockJournal = () => {
 
   const handleSubmit = async (values) => {
 
-    console.log(values, "jamm");
+    // console.log(values, "jamm");
     //   // Map selected row IDs to the desired format
     //   const selectedProducts = values.selectedRows.map((productId) => ({
     //     id: productId,
     //   }));
+    console.log(values,"jump");
+    
 
     //   // Prepare the final data
-    //   const finalData = {
-    //     orderProducts: selectedProducts, // Include the selected rows
-    //   };
+      const finalData = {
+        transferProducts: values?.stockJournal.map((item)=>({
+          product:{id:item?.product.id},
+          transferQty:item?.transferedQuantity,
+          recievedQty:Number(item?.recievedQty)
+          
+
+        })), // Include the selected rows
+      };
+      console.log(finalData,"jammu");
+      // const finalData = {
+      //   transferProducts: values?.stockJournal?.map((item) => ({
+      //     product: { id: item.products?.id },
+      //     sourceLocation: { id: item.sourceLocation?.id },
+      //     destinationLocation: { id: item.destinationLocation?.id },
+      //     transferedQuantity: item.transferedQuantity,
+      //     recievedQty: item.recievedQty
+      //   })) || []
+      // };
+      
 
     //   // Log the data to check the format
     //   console.log(finalData, "finalData");
@@ -152,7 +171,7 @@ const VerifyStockJournal = () => {
 
 
     try {
-      const url = `${UPDATE_ORDERCREATED_ALL}/${id}`;
+      const url = `${VERIFY_STOCK_JOURNAL}/${id}`;
       const method = "PUT";
 
       const response = await fetch(url, {
@@ -161,12 +180,13 @@ const VerifyStockJournal = () => {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
-        // body: JSON.stringify(finalData)
+        body: JSON.stringify(finalData)
       });
 
       const data = await response.json();
       if (response.ok) {
-        toast.success(`Order Status Updated  successfully`);
+        toast.success(`Journal Verified successfully`);
+        navigate("/stockJournal/verify")
 
 
 
@@ -244,11 +264,11 @@ const VerifyStockJournal = () => {
             orderNo: StockJournal?.orderNo || '',
             stockJournal: StockJournal?.transferProducts?.map((product) => ({
 
-              products: {
+              product: {
                 ...product.product,
                 productId: product.product?.productId || '',  // Set initial value for productId
               },
-              sourceLocation: product?.sourceLocation?.address,// we have to add here city also
+              sourceLocation: product?.sourceLocation?.address, // we have to add here city also
               destinationLocation: product?.destinationLocation?.address,
 
               transferedQuantity: product.recievedQty || '',
@@ -306,6 +326,7 @@ const VerifyStockJournal = () => {
                           </div>
                         </div>
                       </div>
+                          <h6 className='text-sm text-red-500'> * Hover On The Field To View The Full Title</h6>
 
 
 
@@ -388,10 +409,10 @@ const VerifyStockJournal = () => {
                                 {/* Product ID */}
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <Field
-                                    name={`stockJournal[${index}].products.productId`}
+                                    name={`stockJournal[${index}].product.productId`}
                                     className="w-[150px] bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-3 px-5 text-black truncate" // Added truncate
                                     placeholder="Enter Product ID"
-                                    title={values.stockJournal[index]?.products?.productId || ''} // Simple tooltip
+                                    title={values.stockJournal[index]?.product?.productId || ''} // Simple tooltip
                                   />
                                   <ErrorMessage
                                     name={`orderProducts[${index}].orderCategory`}
