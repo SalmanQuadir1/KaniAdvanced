@@ -86,6 +86,13 @@ export const DELETE_INVENTORY_URL = `${BASE_URL}/inventory`
 
 //stock journel url
 export const ADD_STOCKJOURNEL_URL = `${BASE_URL}/stockjournals/add`
+export const VIEW_VOUCHERNOS = `${BASE_URL}/stockjournals/voucherNos`
+export const VIEW_STOCKJOURNALCREATED = `${BASE_URL}/stockjournals/search`
+export const VIEW_STOCKJOURNALBYID = `${BASE_URL}/stockjournals/getById`
+
+
+
+
 
 export const GET_STOCK_URL = `${BASE_URL}/stockjournal/search`
 export const GET_STOCKBYID_URL = `${BASE_URL}/stockjournal`

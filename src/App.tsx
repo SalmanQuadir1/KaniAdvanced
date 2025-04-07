@@ -196,7 +196,12 @@ import UpdateInventory from './components/ProductsInventory/UpdateInventory.jsx'
 
 
 import AddStockJournell from './components/StockJournel/AddStockJournell.jsx';
-import ViewStockJournel from './components/StockJournel/ViewStockJournel.jsx';
+import VerifyStockJournal from './components/StockJournel/VerifyStockJournal.jsx';
+
+
+import ViewStockJournalCreated from './components/StockJournel/ViewStockJournalCreated.jsx';
+
+// import ViewStockJournel from './components/StockJournel/ViewStockJournel.jsx';
 
 // import UpdateProduct from './components/Products/UpdateProduct';
 
@@ -272,7 +277,7 @@ function App() {
             path="/"
             element={
               <>
-                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR","ROLE_USER","ROLE_QUALITYCONTROL"]}></RoleBasedRoute>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_VERIFIER", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR", "ROLE_USER", "ROLE_QUALITYCONTROL"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <Home />
               </>
@@ -282,7 +287,7 @@ function App() {
             path="/home"
             element={
               <>
-                <RoleBasedRoute allowedRoles={["ROLE_ADMIN","ROLE_USER", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR","ROLE_QUALITYCONTROL"]}></RoleBasedRoute>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", 'ROLE_VERIFIER', "ROLE_USER", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR", "ROLE_QUALITYCONTROL"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <Home />
               </>
@@ -320,7 +325,7 @@ function App() {
 
             element={
               <>
-               <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR"]}></RoleBasedRoute>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR"]}></RoleBasedRoute>
                 <PageTitle title="Calendar " />
                 <Calendar />
               </>
@@ -1054,7 +1059,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/report/budgetReport"
             element={
               <>
@@ -1064,7 +1069,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/report/budgetReportbyDate"
             element={
               <>
@@ -1385,7 +1390,7 @@ function App() {
             }
           /> */}
 
-           <Route
+          <Route
             path="/stockJournal/AddStockJournal"
             element={
               <>
@@ -1396,11 +1401,30 @@ function App() {
           />
 
           <Route
-            path="/stockJournal/ViewStockJournal"
+            path="/StockJournal/verifyStockJournalCreated/:id"
             element={
               <>
-                <PageTitle title="View Stock Journal" />
+                <PageTitle title="Verify Stock Journal" />
+                <VerifyStockJournal />
+              </>
+            }
+          />
+          {/* <Route
+            path="/stockJournal/verify"
+            element={
+              <>
+                <PageTitle title="Verify Stock Journal" />
                 <ViewStockJournel />
+              </>
+            }
+          /> */}
+
+          <Route
+            path="/stockJournal/verify"
+            element={
+              <>
+                <PageTitle title="Verify Stock Journal" />
+                <ViewStockJournalCreated />
               </>
             }
           />

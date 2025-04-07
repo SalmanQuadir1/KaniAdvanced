@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { ADD_STOCKJOURNEL_URL ,GET_STOCK_URL,UPDATE_STOCK_URL,DELETE_STOCK_URL} from '../Constants/utils';
+import { ADD_STOCKJOURNEL_URL ,GET_STOCK_URL,UPDATE_STOCK_URL,DELETE_STOCK_URL, VIEW_VOUCHERNOS} from '../Constants/utils';
 import { fetchunit } from '../redux/Slice/UnitSlice';
 import { fetchcolorGroup } from '../redux/Slice/ColorGroupSlice';
 
@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 const useStockJournel = () => {
 
   const [stockJournal, setStockJournal] = useState([]);
+  const [VoucherNo, setVoucherNo] = useState([])
   const navigate = useNavigate();
   const [pagination, setPagination] = useState({
       totalItems: 0,
@@ -219,6 +220,25 @@ const useStockJournel = () => {
     const handlePageChange = (page) => {
         ViewStock(page);
     };
+
+    const getVoucherNo = async (page) => {
+        try {
+            const response = await fetch(`${VIEW_VOUCHERNOS}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data,"dataaaaaa");
+            setVoucherNo(data);
+          
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch order Number");
+        }
+    };
     
 
   
@@ -227,6 +247,7 @@ const useStockJournel = () => {
         currentstockJournel,
       
          handleSubmit,
+         getVoucherNo,
         typeValues,
 
 
@@ -237,7 +258,8 @@ const useStockJournel = () => {
         handleDelete,
         handleUpdate,
         handlePageChange,
-        pagination
+        pagination,
+        VoucherNo
        
         
     };

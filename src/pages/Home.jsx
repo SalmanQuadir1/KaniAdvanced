@@ -124,7 +124,7 @@ const Home = () => {
             },
             { title: "Monthly Order Calender", link: "/Order/monthlyorders", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
             { title: "Product Report", link: "/report/product", countKey: "approvedOrders", icon: <GrCompliance className="w-10 h-10" />, levelUp: true },
-
+            { title: "Verifiy Product Transfer", link: "/stockJournal/verify", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
 
         ],
         ROLE_EXECUTOR: [
@@ -149,6 +149,11 @@ const Home = () => {
         ROLE_QUALITYCONTROL: [
            
             { title: "Monthly Order Calender", link: "/Order/monthlyorders", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
+
+        ],
+        ROLE_VERIFIER: [
+           
+            { title: "Verifiy Product Transfer", link: "/stockJournal/verify", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
 
         ],
         
