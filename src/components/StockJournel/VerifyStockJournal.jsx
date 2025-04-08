@@ -28,7 +28,7 @@ const VerifyStockJournal = () => {
   const { token } = currentUser;
 
 
-
+ 
 
 
 
@@ -286,7 +286,7 @@ const VerifyStockJournal = () => {
 
 
 
-            clientInstruction: order?.clientInstruction || '',
+            // clientInstruction: order?.clientInstruction || '',
             // customer: '',
           }}
 
