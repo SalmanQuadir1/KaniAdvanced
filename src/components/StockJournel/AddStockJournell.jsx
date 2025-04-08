@@ -150,7 +150,7 @@ const AddStockJournell = () => {
       // id: row.id, // Include the row ID
       product: { id: values.stockJournals[index]?.productId?.value || values.stockJournals[index]?.productId },
       sourceLocation: { id: values.stockJournals[index]?.location?.value || values.stockJournals[index]?.location },
-      transferQty: values.stockJournals[index]?.transferQuantity, 
+      transferQty: Number(values.stockJournals[index]?.transferQuantity), 
       inventoryQty: Number(values.stockJournals[index]?.quantity), // this quanity is inventory quantity
       destinationLocation: { id: values.stockJournals[index]?.destinationLocation?.value || values.stockJournals[index]?.destinationLocation }
     }));
