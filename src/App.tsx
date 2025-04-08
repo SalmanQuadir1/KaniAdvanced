@@ -200,7 +200,7 @@ import ViewStockJournel from './components/StockJournel/ViewStockJournel.jsx';
 
 
 import VerifyStockJournal from './components/StockJournel/VerifyStockJournal.jsx';
-
+import Godown from './components/Godown/Godown.jsx'
 
 import ViewStockJournalCreated from './components/StockJournel/ViewStockJournalCreated.jsx';
 
@@ -658,6 +658,16 @@ function App() {
               <>
                 <PageTitle title="Cancelled Orders " />
                 <ViewOrderCancelled />
+              </>
+            }
+          />
+
+<Route
+            path="/godown/viewGodown"
+            element={
+              <>
+                <PageTitle title="Cancelled Orders " />
+                <Godown />
               </>
             }
           />
