@@ -332,7 +332,7 @@ const AddStockJournell = () => {
                           </div>
 
                           <div className="flex-2 min-w-[140px]">
-                            <label className="mb-2.5 block text-black dark:text-white">Product Location</label>
+                            <label className="mb-2.5 block text-black dark:text-white">Source Location</label>
                             <ReactSelect
                               name={`stockJournals.${index}.location`}
                               value={selectedLocation.find(option =>
@@ -397,7 +397,7 @@ const AddStockJournell = () => {
                           </div>
 
                           <div className="flex-2 min-w-[140px]">
-                            <label className="mb-2.5 block text-black dark:text-white">Product Location</label>
+                            <label className="mb-2.5 block text-black dark:text-white">Dest. Location</label>
                             <ReactSelect
                               name={`stockJournals.${index}.destinationLocation`}
                               value={selectedLocation.find(option =>

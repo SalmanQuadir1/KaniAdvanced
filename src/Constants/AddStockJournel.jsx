@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import DefaultLayout from '../../layout/DefaultLayout';
+import DefaultLayout from '../layout/DefaultLayout';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import ReactSelect from 'react-select';
-import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
-import useStockJournel from '../../hooks/useStockJournel';
+import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
+import useStockJournel from '../hooks/useStockJournel';
 import { useSelector } from 'react-redux';
-import { customStyles as createCustomStyles } from '../../Constants/utils';
+import { customStyles as createCustomStyles } from './utils';
 
 const AddStockJournel = () => {
   const units = useSelector(state => state?.nonPersisted?.unit);
