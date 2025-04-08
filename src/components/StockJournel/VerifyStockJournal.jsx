@@ -8,7 +8,7 @@ import 'flatpickr/dist/themes/material_blue.css'; // Import a Flatpickr theme
 
 import useorder from '../../hooks/useOrder';
 
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL, VIEW_STOCKJOURNALBYID } from '../../Constants/utils';
+import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL, VIEW_STOCKJOURNALBYID, VERIFY_STOCK_JOURNAL } from '../../Constants/utils';
 
 import { useNavigate, useNavigation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
@@ -19,7 +19,7 @@ const VerifyStockJournal = () => {
   const [StockJournal, setStockJournal] = useState([])
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state?.persisted?.user);
-
+  const [checkAll, setCheckAll] = useState(false);
 
 
   const [order, setOrder] = useState(null); // To store fetched product data
@@ -132,58 +132,80 @@ const VerifyStockJournal = () => {
   console.log("stockJournal===========", StockJournal);
 
 
-  // const handleSubmit = async (values) => {
-  //   // Map selected row IDs to the desired format
-  //   const selectedProducts = values.selectedRows.map((productId) => ({
-  //     id: productId,
-  //   }));
+  const handleSubmit = async (values) => {
 
-  //   // Prepare the final data
-  //   const finalData = {
-  //     orderProducts: selectedProducts, // Include the selected rows
-  //   };
+    // console.log(values, "jamm");
+    //   // Map selected row IDs to the desired format
+    //   const selectedProducts = values.selectedRows.map((productId) => ({
+    //     id: productId,
+    //   }));
+    console.log(values,"jump");
+    
 
-  //   // Log the data to check the format
-  //   console.log(finalData, "finalData");
+    //   // Prepare the final data
+      const finalData = {
+        transferProducts: values?.stockJournal.map((item)=>({
+          product:{id:item?.product.id},
+          transferQty:item?.transferedQuantity,
+          recievedQty:Number(item?.recievedQty)
+          
 
+        })), // Include the selected rows
+      };
+      console.log(finalData,"jammu");
+      // const finalData = {
+      //   transferProducts: values?.stockJournal?.map((item) => ({
+      //     product: { id: item.products?.id },
+      //     sourceLocation: { id: item.sourceLocation?.id },
+      //     destinationLocation: { id: item.destinationLocation?.id },
+      //     transferedQuantity: item.transferedQuantity,
+      //     recievedQty: item.recievedQty
+      //   })) || []
+      // };
+      
 
-
-
-  //   try {
-  //     const url = `${UPDATE_ORDERCREATED_ALL}/${id}`;
-  //     const method = "PUT";
-
-  //     const response = await fetch(url, {
-  //       method: method,
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "Authorization": `Bearer ${token}`
-  //       },
-  //       body: JSON.stringify(finalData)
-  //     });
-
-  //     const data = await response.json();
-  //     if (response.ok) {
-  //       toast.success(`Order Status Updated  successfully`);
-
-
-
-  //       // getCurrency(pagination.currentPage); // Fetch updated Currency
-  //     } else {
-  //       toast.error(`${data.errorMessage}`);
-  //     }
-  //   } catch (error) {
-  //     console.error(error, response);
-  //     toast.error("An error occurred");
-  //   } 
-
-  //   // You can now send `finalData` to the backend or do any other operation with it
-  // };
+    //   // Log the data to check the format
+    //   console.log(finalData, "finalData");
 
 
 
 
+    try {
+      const url = `${VERIFY_STOCK_JOURNAL}/${id}`;
+      const method = "PUT";
 
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(finalData)
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        toast.success(`Journal Verified successfully`);
+        navigate("/stockJournal/verify")
+
+
+
+        // getCurrency(pagination.currentPage); // Fetch updated Currency
+      } else {
+        toast.error(`${data.errorMessage}`);
+      }
+    } catch (error) {
+      console.error(error, response);
+      toast.error("An error occurred");
+    }
+
+    // You can now send `finalData` to the backend or do any other operation with it
+
+
+
+
+
+  }
 
 
 
@@ -235,11 +257,29 @@ const VerifyStockJournal = () => {
       <Breadcrumb pageName="Order/Update Order" />
       <div>
         <Formik
-          // onSubmit={handleSubmit}
+          onSubmit={handleSubmit}
           enableReinitialize={true}
           initialValues={{
             selectedRows: [],
-            orderNo: order?.orderNo || '',
+            orderNo: StockJournal?.orderNo || '',
+            stockJournal: StockJournal?.transferProducts?.map((product) => ({
+
+              product: {
+                ...product.product,
+                productId: product.product?.productId || '',  // Set initial value for productId
+              },
+              sourceLocation: product?.sourceLocation?.address, // we have to add here city also
+              destinationLocation: product?.destinationLocation?.address,
+
+              transferedQuantity: product.recievedQty || '',
+              recievedQty: "",
+
+
+
+
+
+
+            })) || [],
 
 
 
@@ -286,6 +326,7 @@ const VerifyStockJournal = () => {
                           </div>
                         </div>
                       </div>
+                          <h6 className='text-sm text-red-500'> * Hover On The Field To View The Full Title</h6>
 
 
 
@@ -327,41 +368,153 @@ const VerifyStockJournal = () => {
                               </th>
                               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Action
+                                <Field
+                                  type="checkbox"
+                                  name="selectAll"
+                                  checked={checkAll}
+                                  onChange={(e) => {
+                                    const isChecked = e.target.checked;
+                                    setCheckAll(isChecked);
+
+                                    // Update all individual checkboxes
+                                    if (isChecked) {
+                                      const allIds = StockJournal?.transferProducts?.map(item => item.id) || [];
+                                      setFieldValue("selectedRows", allIds);
+
+                                      // Update all recievedQuantity fields
+                                      StockJournal?.transferProducts?.forEach((_, index) => {
+                                        setFieldValue(
+                                          `stockJournal[${index}].recievedQty`,
+                                          values.stockJournal[index]?.transferedQuantity
+                                        );
+                                      });
+                                    } else {
+                                      setFieldValue("selectedRows", []);
+
+                                      // Clear all recievedQuantity fields
+                                      StockJournal?.transferProducts?.forEach((_, index) => {
+                                        setFieldValue(`stockJournal[${index}].recievedQty`, "");
+                                      });
+                                    }
+                                  }}
+                                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 ml-2"
+                                />
                               </th>
                             </tr>
                           </thead>
                           <tbody>
                             {StockJournal?.transferProducts?.map((item, index) => (
                               <tr key={item.id}>
-                                {/* Radio Button */}
-                                {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                  <Field
-                                    type="checkbox"
-                                    name="selectedRows"
-                                    value={product.id} // Value of the checkbox (product ID)
-                                    checked={values.selectedRows.includes(product.id)} // Check if product ID is in selectedRows
-                                    onChange={(e) => {
-                                      const checked = e.target.checked;
-                                      if (checked) {
-                                        // If checked, add the product ID to selectedRows
-                                        setFieldValue("selectedRows", [...values.selectedRows, product.id]);
-                                      } else {
-                                        // If unchecked, remove the product ID from selectedRows
-                                        setFieldValue("selectedRows", values.selectedRows.filter(id => id !== product.id));
-                                      }
-                                    }}
-                                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                                  />
-                                </td> */}
 
                                 {/* Product ID */}
-
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    name={`stockJournal[${index}].product.productId`}
+                                    className="w-[150px] bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-3 px-5 text-black truncate" // Added truncate
+                                    placeholder="Enter Product ID"
+                                    title={values.stockJournal[index]?.product?.productId || ''} // Simple tooltip
+                                  />
+                                  <ErrorMessage
+                                    name={`orderProducts[${index}].orderCategory`}
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
+                                </td>
 
 
                                 {/* Order Category */}
 
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    name={`stockJournal[${index}].sourceLocation`}
 
+                                    // }}
+                                    title={values?.stockJournal[index]?.sourceLocation}
+                                    className="w-[150px] bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-3 px-5 text-black truncate"
+                                    placeholder="Enter Product ID"
+                                  />
+                                  <ErrorMessage
+                                    name={`orderProducts[${index}].orderCategory`}
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
+                                </td>
                                 {/* Client Order Quantity */}
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    name={`stockJournal[${index}].destinationLocation`}
+                                    title={values?.stockJournal[index]?.destinationLocation}
+                                    className="w-[150px] bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                    placeholder="Enter Product ID"
+                                  />
+                                  <ErrorMessage
+                                    name={`orderProducts[${index}].orderCategory`}
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
+                                </td>
+                                {/* Client Order Quantity */}
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    name={`stockJournal[${index}].transferedQuantity`}
+                                    // onChange={(e) => {
+                                    //   const newValue = e.target.value;
+                                    //   console.log(`New Product ID: ${newValue}`);
+                                    //   setFieldValue(
+                                    //     `orderProducts[${index}].products.productId`,
+                                    //     newValue
+                                    //   );
+                                    // }}
+                                    className="w-[150px] bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                    placeholder="Enter Product ID"
+                                  />
+                                  <ErrorMessage
+                                    name={`orderProducts[${index}].orderCategory`}
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
+                                </td>
+                                {/* Client Order Quantity */}
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    name={`stockJournal[${index}].recievedQty`}
+                                    // onChange={(e) => {
+                                    //   const newValue = e.target.value;
+                                    //   console.log(`New Product ID: ${newValue}`);
+                                    //   setFieldValue(
+                                    //     `orderProducts[${index}].products.productId`,
+                                    //     newValue
+                                    //   );
+                                    // }}
+                                    className="w-[150px] bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                    placeholder="Enter Recieved Quantity"
+                                  />
+                                  <ErrorMessage
+                                    name={`orderProducts[${index}].orderCategory`}
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
+                                </td>
+                                {/* Radio Button */}
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    type="checkbox"
+                                    name="selectedRows"
+                                    value={item.id} // Value of the checkbox (product ID)
+                                    checked={values.selectedRows.includes(item.id)} // Check if product ID is in selectedRows
+                                    onChange={(e) => {
+                                      const checked = e.target.checked;
+                                      if (checked) {
+                                        // If checked, add the product ID to selectedRows
+                                        setFieldValue("selectedRows", [...values.selectedRows, item.id]);
+                                      } else {
+                                        // If unchecked, remove the product ID from selectedRows
+                                        setFieldValue("selectedRows", values.selectedRows.filter(id => id !== item.id));
+                                      }
+                                    }}
+                                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                                  />
+                                </td>
 
 
 
@@ -402,11 +555,13 @@ const VerifyStockJournal = () => {
                       <div className="flex justify-center mt-4"> {/* Centering the button */}
                         <button
                           type="submit"
-
-
-                          className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none" // Increased width
+                          disabled={values.selectedRows.length !== StockJournal?.transferProducts?.length}
+                          className={`w-1/3 px-6 py-2 text-white rounded-lg shadow focus:outline-none ${values.selectedRows.length === StockJournal?.transferProducts?.length
+                              ? "bg-primary hover:bg-primary-dark"
+                              : " bg-slate-600 text-black cursor-not-allowed"
+                            }`}
                         >
-                          Accept All
+                          Submit
                         </button>
                       </div>
                     </div>

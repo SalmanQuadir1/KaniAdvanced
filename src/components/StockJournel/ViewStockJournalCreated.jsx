@@ -315,7 +315,7 @@ console.log("stockjournal+++++",StockJournal)
                                     <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
 
                                         <div className="flex-1 min-w-[200px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">StockJournal No</label>
+                                            <label className="mb-2.5 block text-black dark:text-white">Voucher No</label>
                                             <ReactSelect
                                                 name="StockJournalNo"
                                                 value={VoucherOptions.find(option => option.value === values.StockJournalNo)}
