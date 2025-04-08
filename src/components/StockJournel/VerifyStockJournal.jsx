@@ -271,7 +271,7 @@ const VerifyStockJournal = () => {
               sourceLocation: product?.sourceLocation?.address, // we have to add here city also
               destinationLocation: product?.destinationLocation?.address,
 
-              transferedQuantity: product.recievedQty || '',
+              transferedQuantity: product.transferQty|| '',
               recievedQty: "",
 
 
