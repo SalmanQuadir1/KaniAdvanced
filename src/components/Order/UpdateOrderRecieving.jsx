@@ -304,6 +304,9 @@ console.log(Location,"llkkllkkllkk");
 
 
     const formattedValues = {
+      product:{
+        id:values?.productsId
+      },
      
       receivedQuantity: values.receivedQuantity,
       receivedDate: values.receivedDate,
@@ -314,10 +317,11 @@ console.log(Location,"llkkllkkllkk");
       productStatus: values.productStatus,
       location: values.location
     }
+    console.log(formattedValues,"nishi");
     
 
     try {
-      const url = `${UPDATE_ORDERRECIEVED}/${id}`;
+      const url = `${UPDATE_ORDERRECIEVED}/${idd}`;
       const method = "PUT";
 
       const response = await fetch(url, {
