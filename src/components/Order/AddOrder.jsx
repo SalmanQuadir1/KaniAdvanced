@@ -692,12 +692,12 @@ const AddOrder = () => {
 
                       {isINVENTORYModalOpen && (
                         <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50">
-                          <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px]  w-[870px] h-[400px] mt-[60px]">
+                          <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px]  w-[870px] h-[400px] mt-[60px] overflow-auto">
                             <div className="text-right">
                               <button onClick={closeINVENTORYModal} className="text-red-500 text-xl  font-bold">&times;</button>
                             </div>
                             <h2 className="text-2xl text-center mb-4 font-extrabold">INVENTORY  DETAILS</h2>
-                            <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
+                            <div className="inline-block min-w-full shadow-md rounded-lg overflow-auto">
                               <table className="min-w-full leading-normal">
                                 <thead>
                                   <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>

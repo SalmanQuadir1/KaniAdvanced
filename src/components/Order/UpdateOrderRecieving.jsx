@@ -321,7 +321,7 @@ console.log(Location,"llkkllkkllkk");
     
 
     try {
-      const url = `${UPDATE_ORDERRECIEVED}/${idd}`;
+      const url = `${UPDATE_ORDERRECIEVED}/${id}`;
       const method = "PUT";
 
       const response = await fetch(url, {
