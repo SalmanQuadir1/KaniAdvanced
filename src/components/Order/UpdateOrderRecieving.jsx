@@ -47,17 +47,17 @@ const UpdateOrderRecieving = () => {
   ])
   const {
 
-    productId,getLocation,Location
+    productId, getLocation, Location
 
   } = useorder();
 
 
 
-useEffect(() => {
- getLocation()
-}, [])
+  useEffect(() => {
+    getLocation()
+  }, [])
 
-console.log(Location,"llkkllkkllkk");
+  console.log(Location, "llkkllkkllkk");
 
 
 
@@ -72,6 +72,7 @@ console.log(Location,"llkkllkkllkk");
 
   const [selectedSuppliers, setSelectedSuppliers] = useState([]);
   const [selectedLocation, setselectedLocation] = useState([])
+  const [SupplierList, setSupplierList] = useState([])
 
 
   const Locations = [
@@ -240,6 +241,20 @@ console.log(Location,"llkkllkkllkk");
       setSelectedSuppliers(initialSuppliers); // Set suppliers when page loads
     }
   }, [order]);
+  useEffect(() => {
+    if (order?.productSuppliers) {
+      const Suppliers = order.productSuppliers.map((supplier) => ({
+        label: supplier?.supplier.name,
+        value: supplier?.supplier.id
+      }));
+
+      setSupplierList(Suppliers); // Set suppliers when page loads
+    }
+  }, [order]);
+
+  console.log("suplierrrrrrrrrrrrrr+====", order?.productSuppliers);
+
+
 
 
   useEffect(() => {
@@ -250,7 +265,7 @@ console.log(Location,"llkkllkkllkk");
         LocationObject: location,
         LocationId: { id: location.id }
       }));
-  
+
 
       setselectedLocation(formattedOptions); // Set Location when page loads
     }
@@ -299,17 +314,20 @@ console.log(Location,"llkkllkkllkk");
 
 
   const handleSubmit = async (values) => {
-    console.log(values,'jamhhgg');
-   
+    console.log(values, 'jamhhgg');
+
 
 
     const formattedValues = {
-      product:{
-        id:values?.productsId
+      product: {
+        id: values?.productsId
       },
-     
+
       receivedQuantity: values.receivedQuantity,
       receivedDate: values.receivedDate,
+      supplier: {
+        id: values.supplier
+      },
 
       pendingQuantity: values.pendingQuantity,
       defectiveQuantity: values.defectiveQuantity,
@@ -317,8 +335,8 @@ console.log(Location,"llkkllkkllkk");
       productStatus: values.productStatus,
       location: values.location
     }
-    console.log(formattedValues,"nishi");
-    
+    console.log(formattedValues, "nishi");
+
 
     try {
       const url = `${UPDATE_ORDERRECIEVED}/${id}`;
@@ -342,11 +360,11 @@ console.log(Location,"llkkllkkllkk");
 
         // getCurrency(pagination.currentPage); // Fetch updated Currency
       } else {
-        console.log(response,"kk");
+        console.log(response, "kk");
         toast.error(`${data?.errorMessage}`);
       }
     } catch (error) {
-      console.error(error,"hfff");
+      console.error(error, "hfff");
       toast.error(error);
     }
 
@@ -365,7 +383,6 @@ console.log(Location,"llkkllkkllkk");
 
 
 
-  
 
 
 
@@ -373,7 +390,8 @@ console.log(Location,"llkkllkkllkk");
 
 
 
- 
+
+
 
 
   return (
@@ -391,7 +409,9 @@ console.log(Location,"llkkllkkllkk");
             quantityToManufacture: order?.quantityToManufacture,
 
             expectedDate: order?.expectedDate,
-
+            supplier: {
+              id: ""
+            },
             productsId: order?.products?.id,
 
             clientOrderQuantity: order?.clientOrderQuantity,
@@ -594,6 +614,22 @@ console.log(Location,"llkkllkkllkk");
                         //readOnly
                         />
                         <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="z-20 bg-transparent dark:bg-form-Field">
+                      <label className="mb-2.5 block text-black dark:text-white">Select Supplier</label>
+                        <ReactSelect
+                          name="supplierName"
+
+                          // value={productgrp.find(option => option.value === values.customerName)}
+                          onChange={(option) => setFieldValue('supplier', option ? option.value : null)}
+                          // options={formattedSupplier}
+
+                          options={[{ label: 'View All Suppliers', value: null }, ...SupplierList]}
+                          styles={customStyles} // Pass custom styles here
+                          className="bg-white dark:bg-form-Field"
+                          classNamePrefix="react-select"
+                          placeholder="Select supplier Name"
+                        />
                       </div>
                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Pending Quantity</label>

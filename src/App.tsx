@@ -63,7 +63,10 @@ import HsnCode from './components/Configurator/HsnCode.jsx';
 import Location from './components/Configurator/Location.jsx';
 import Supplier from './components/Configurator/Supplier.jsx';
 
+
+
 import AddSupplier from './components/Supplier/AddSupplier.jsx';
+import ViewSupplierLedger from './components/Supplier/SupplierLedger/ViewSupplierLedger.jsx';
 import AddBulkSupplier from './components/Supplier/AddBulkSupplier.jsx';
 
 import ViewSupplier from './components/Supplier/ViewSupplier.jsx';
@@ -1130,6 +1133,21 @@ function App() {
               </>
             }
           />
+
+          {/* Supplier Ledger */}
+
+          <Route
+            path="/Supplier/ledger"
+            element={
+              <>
+                <PageTitle title="Size" />
+                <ViewSupplierLedger />
+              </>
+            }
+          />
+
+
+
           <Route
             path="/configurator/addStyle"
             element={
