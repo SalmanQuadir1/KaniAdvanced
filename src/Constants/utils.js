@@ -47,6 +47,10 @@ export const VIEW_ALL_SUPPLIER_URL = `${BASE_URL}/supplier/getAll`;
 export const GET_SUPPLIER_ID_URL = `${BASE_URL}/supplier/getSupplier`;
 export const UPDATE_SUPPLIER_URL = `${BASE_URL}/supplier/updateSupplier`;
 export const DELETE_SUPPLIER_URL = `${BASE_URL}/supplier/deleteSupplier/`;
+//ledger
+export const VIEW_SUPPLIER_LEDGER = `${BASE_URL}/supplier/searchledger`;
+export const VIEW_SUPPLIER_LEDGERBYID = `${BASE_URL}/supplier/getBySupplierLedger`;
+
 
 
 //Material Url's
@@ -246,6 +250,7 @@ export const VIEW_ALLACCEPTED_ORDERS = `${BASE_URL}/order/searchAccepted`;
 export const VIEW_PARTIALLYAPPROVED_ORDERS = `${BASE_URL}/order/searchApprovedAndAccepted`;
 
 export const VIEW_APPROVED_ORDERS = `${BASE_URL}/order/searchApproved`; 
+export const VIEW_SEARCHBILL = `${BASE_URL}/order/searchBillStatus`; 
 
 export const VIEW_PROFORMA = `${BASE_URL}/order/searchOrderProforma`; 
 

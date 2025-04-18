@@ -153,7 +153,12 @@ const Home = () => {
         ],
         ROLE_VERIFIER: [
            
-            { title: "Verifiy Product Transfer", link: "/stockJournal/verify", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
+            { title: "Verifiy Product Transfer", link: "/Recieved/pendingForBill", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
+
+        ],
+        ROLE_FINANCE: [
+           
+            { title: "Pending for Bill", link: "/stockJournal/verify", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
 
         ],
         

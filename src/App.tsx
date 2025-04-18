@@ -143,6 +143,9 @@ import MonthlyOrders from './components/MonthlyOrders/MonthlyOrders.jsx'
 import ViewOrderCreated from './components/Order/ViewOrderCreated.jsx';
 import ViewOrderApproved from './components/Order/ViewOrderApproved.jsx';
 
+import PendingForBill from './components/Order/PendingForBill.jsx';
+
+
 import ViewChallan from './components/Order/ViewChallan.jsx';
 
 import ViewOrderRejected from './components/Order/ViewOrderRejected.jsx';
@@ -283,7 +286,7 @@ function App() {
             path="/"
             element={
               <>
-                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_VERIFIER", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR", "ROLE_USER", "ROLE_QUALITYCONTROL"]}></RoleBasedRoute>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_VERIFIER", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR", "ROLE_USER", "ROLE_QUALITYCONTROL","ROLE_FINANCE"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <Home />
               </>
@@ -293,7 +296,7 @@ function App() {
             path="/home"
             element={
               <>
-                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", 'ROLE_VERIFIER', "ROLE_USER", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR", "ROLE_QUALITYCONTROL"]}></RoleBasedRoute>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN","ROLE_FINANCE", 'ROLE_VERIFIER', "ROLE_USER", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR", "ROLE_QUALITYCONTROL"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <Home />
               </>
@@ -746,6 +749,16 @@ function App() {
               <>
                 <PageTitle title="View Order Created " />
                 <ViewOrderApproved />
+              </>
+            }
+          />
+
+<Route
+            path="/Recieved/pendingForBill"
+            element={
+              <>
+                <PageTitle title="View Order Created " />
+                <PendingForBill />
               </>
             }
           />

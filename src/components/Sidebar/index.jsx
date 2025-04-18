@@ -9,6 +9,7 @@ import { TbReportAnalytics } from "react-icons/tb";
 import { FcDataConfiguration } from "react-icons/fc";
 import { FaUser } from "react-icons/fa";
 import { PiRecycleBold } from "react-icons/pi";
+import { FaBook } from "react-icons/fa6";
 import { MdAddHome } from "react-icons/md";
 import { MdProductionQuantityLimits } from "react-icons/md";
 import { FaJediOrder } from "react-icons/fa";
@@ -401,7 +402,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               : setSidebarExpanded(true);
                           }}
                         >
-                          <MdAddHome size={24} />
+                          <FaBook size={24} />
                      Supplier Ledger
                           <svg
                             className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'

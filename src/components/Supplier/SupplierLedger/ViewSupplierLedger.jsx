@@ -3,9 +3,9 @@ import DefaultLayout from '../../../layout/DefaultLayout'
 import Breadcrumb from '../../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { DELETE_ORDER_URL, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS } from "../../../Constants/utils";
+import {  VIEW_SUPPLIER_LEDGER, VIEW_SUPPLIER_LEDGERBYID,  } from "../../../Constants/utils";
 import ReactSelect from 'react-select';
-import useorder from '../../../hooks/useOrder';
+import useOrder from '../../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import Pagination from '../../Pagination/Pagination';
 import { useSelector } from 'react-redux';
@@ -26,8 +26,8 @@ const productgrp = [
 
 const ViewSupplierLedger = () => {
 
-    const { handleUpdate, getorderNumber, orderNo, getSupplier, productId,
-        getprodId, supplier, getCustomer, customer } = useorder();
+    const { handleUpdate, getLedgerNumber, OrderNo, getSupplier, productId,
+        getprodId, supplier, getCustomer, customer } = useOrder();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
     const [isLoading, setisLoading] = useState(false)
@@ -47,23 +47,20 @@ const ViewSupplierLedger = () => {
 
     console.log(productId, "huhuuhuuuuuuuuuuuuuuuuu");
 
-    const [Order, setOrder] = useState()
+    const [Ledger, setLedger] = useState()
 
     const [supplierNameOptions, setsupplierNameOptions] = useState([])
 
 
    
     // const supplier = useSelector(state => state?.nonPersisted?.supplier);
-    const order = useSelector(state => state?.nonPersisted?.order);
+    const Order = useSelector(state => state?.nonPersisted?.Ledger);
     const navigate = useNavigate();
 
 
-    console.log(supplier, customer, productId, "orderNo");
+    console.log(supplier, customer, productId, "LedgerNo");
 
-    const formattedorder = orderNo.map(order => ({
-        label: order,
-        value: order
-    }));
+  
 
     const formattedSupplier = supplier.map(supplier => ({
         label: supplier.name,
@@ -72,12 +69,12 @@ const ViewSupplierLedger = () => {
 
 
 
-
+const [IsLEDGERModalOpen, setIsLEDGERModalOpen] = useState(false)
 
  
 
 
-
+const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
 
 
 
@@ -108,12 +105,12 @@ const ViewSupplierLedger = () => {
 
 
 
-    const getOrder = async (page, filters = {}) => {
+    const getLedger = async (page, filters = {}) => {
         console.log(filters, "filterssssssssssssssssssssssssssssssssssssssss");
-        console.log("Fetching orders for page", page); // Log the page number being requested
+        console.log("Fetching Ledgers for page", page); // Log the page number being requested
 
         try {
-            const response = await fetch(`${VIEW_CREATED_ORDERS}?page=${page || 1}`, {
+            const response = await fetch(`${VIEW_SUPPLIER_LEDGER}?page=${page || 1}`, {
                 method: "POST", // GET method
                 headers: {
                     "Content-Type": "application/json",
@@ -134,11 +131,11 @@ const ViewSupplierLedger = () => {
                 const data = JSON.parse(textResponse); // Try parsing as JSON
                 console.log("Parsed Response:", data);
 
-                if (data?.content) {
-                    setOrder(data.content); // Update orders state
+                if (data) {
+                    setLedger(data); // Update Ledgers state
                 } else {
-                    console.log("No orders found in the response");
-                    setOrder([]); // Set an empty state
+                    console.log("No Ledgers found in the response");
+                    setLedger([]); // Set an empty state
                 }
 
                 // Update pagination state
@@ -154,35 +151,35 @@ const ViewSupplierLedger = () => {
                 toast.error("Invalid response format.");
             }
         } catch (error) {
-            console.error("Error fetching orders:", error);
-            toast.error("Failed to fetch orders");
-            setOrder([]); // Reset to an empty state in case of an error
+            console.error("Error fetching Ledgers:", error);
+            toast.error("Failed to fetch Ledgers");
+            setLedger([]); // Reset to an empty state in case of an error
         }
     };
 
     useEffect(() => {
-        getOrder()
+        getLedger()
     }, [])
 
     const handlePageChange = (newPage) => {
         console.log("Page change requested:", newPage);
 
         setPagination((prev) => ({ ...prev, currentPage: newPage }));
-        getOrder(newPage); // Correct function name and 1-indexed for user interaction
+        getLedger(newPage); // Correct function name and 1-indexed for user interaction
     };
 
-    console.log(Order, "heyorder");
+    console.log(Ledger, "heyLedger");
 
 
 
 
     const renderTableRows = () => {
-        console.log(Order);
-        if (!Order || !Order.length) {
+        console.log(Ledger);
+        if (!Ledger || !Ledger.length) {
             return (
                 <tr className='bg-white dark:bg-slate-700 dark:text-white'>
-                    <td colSpan="6" className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap text-center">No Order Found</p>
+                    <td colSpan="6" className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
+                        <p className="text-gray-900 whitespace-no-wrap text-center">No Ledger Found</p>
                     </td>
                 </tr>
             );
@@ -193,7 +190,7 @@ const ViewSupplierLedger = () => {
         const handleDelete = async (e, id) => {
             e.preventDefault();
             try {
-                const response = await fetch(`${DELETE_ORDER_URL}/${id}`, { // Correct API endpoint
+                const response = await fetch(`${DELETE_Ledger_URL}/${id}`, { // Correct API endpoint
                     method: 'DELETE',
                     headers: {
                         "Content-Type": "application/json",
@@ -203,16 +200,16 @@ const ViewSupplierLedger = () => {
 
                 const data = await response.json();
                 if (response.ok) {
-                    toast.success(`Order Deleted Successfully !!`);
+                    toast.success(`Ledger Deleted Successfully !!`);
 
                     // Check if the current page becomes empty
-                    const isCurrentPageEmpty = Order.length === 1;
+                    const isCurrentPageEmpty = Ledger.length === 1;
 
                     if (isCurrentPageEmpty && pagination.currentPage > 1) {
                         const previousPage = pagination.currentPage - 1;
                         handlePageChange(previousPage); // Go to the previous page if current page becomes empty
                     } else {
-                        getOrder(pagination.currentPage); // Refresh orders on the current page
+                        getLedger(pagination.currentPage); // Refresh Ledgers on the current page
                     }
                 } else {
                     toast.error(`${data.errorMessage}`);
@@ -224,42 +221,89 @@ const ViewSupplierLedger = () => {
         };
 
 
+        const openLEDGERModal = (id) => {
+            console.log("opening");
 
 
+            const getLEDGER = async () => {
+    
+                try {
+                    const response = await fetch(`${VIEW_SUPPLIER_LEDGERBYID}/${id}`, {
+                        method: "GET",
+                        headers: {
+                            // "Content-Type": "multipart/form-data",
+                            "Authorization": `Bearer ${token}`
+                        }
+                    });
+                    const data = await response.json();
+                    console.log("data++++++===",data);
+    
+    
+                    // setLocation(data);
+                    setSelectedLEDGERData(data);
+    
+    
+                } catch (error) {
+                    console.error(error);
+                    toast.error("Failed to fetch Product");
+                }
+            };
+    
+            getLEDGER()
+                // useEffect(() => {
+                //     getLEDGER()
+                // }, [])
+    
+    
+    
+    
+                ;
+            // setmrp(mrp)
+            setIsLEDGERModalOpen(true);
+        };
+    
+    
+        // console.log(selectedBOMData, "jijiji");
+    
+       
 
 
+        
 
-        return Order.map((item, index) => (
+        return Ledger.map((item, index) => (
 
             <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
                 </td>
 
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.orderNo}</p>
 
                 </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.customerName}</p>
+                <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item.supplierName}</p>
                 </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                <td>
+                <span onClick={() => openLEDGERModal(item?.supplierId)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> VIEW LEDGER</span>
+                    </td>
+                {/* <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     {item.products &&
                         item.products.map((prodId, index) => (
                             <p key={index} className="text-gray-900 whitespace-nowrap">
                                 {prodId?.productId}
                             </p>
                         ))}
-                </td>
+                </td> */}
 
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                {/* <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     {item.products &&
                         item.products.map((prodId, index) => (
                             <p key={index} className="text-gray-900 whitespace-nowrap">
                                 {prodId.productStatus}
                             </p>
                         ))}
-                </td>
+                </td> */}
 
 
 
@@ -269,28 +313,28 @@ const ViewSupplierLedger = () => {
 
 
 
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
                         <FiEdit
                             size={17}
                             className="text-teal-500 hover:text-teal-700 mx-2"
-                            onClick={() => navigate(`/Order/updateorderCreated/${item?.id}`)}
-                            title="Edit Order"
+                            onClick={() => navigate(`/Ledger/updateLedgerCreated/${item?.id}`)}
+                            title="Edit Ledger"
                         />
                         |
                         {
-                            item.orderTypeName === "WSClients" ? (
+                            item.LedgerTypeName === "WSClients" ? (
                                 <MdCreateNewFolder
                                     size={17}
                                     className="text-teal-500 hover:text-teal-700 mx-2"
-                                    onClick={() => navigate(`/Order/generateProforma/${item?.id}`)}
+                                    onClick={() => navigate(`/Ledger/generateProforma/${item?.id}`)}
                                     title="Create proforma"
                                 />
-                            ) : item.orderTypeName === "RetailClients" ? (
+                            ) : item.LedgerTypeName === "RetailClients" ? (
                                 <MdCreateNewFolder
                                     size={17}
                                     className="text-teal-500 hover:text-teal-700 mx-2"
-                                    onClick={() => navigate(`/Order/generateRetailProforma/${item?.id}`)} // Navigate to a different page for RetailClients
+                                    onClick={() => navigate(`/Ledger/generateRetailProforma/${item?.id}`)} // Navigate to a different page for RetailClients
                                     title="Create proforma"
                                 />
                             ) : null
@@ -322,29 +366,99 @@ const ViewSupplierLedger = () => {
 
          
         };
-        getOrder(pagination.currentPage, filters);
+        getLedger(pagination.currentPage, filters);
         // ViewInventory(pagination.currentPage, filters);
     };
 
     console.log(prodIdOptions, "llkkllkk");
+    const closeLEDGERModal = () => {
+        setIsLEDGERModalOpen(false);
+        setSelectedLEDGERData(null);
+    };
 
     return (
         <DefaultLayout>
-            <Breadcrumb pageName="Order/ View Order" />
+            <Breadcrumb pageName="Ledger/ View Ledger" />
             <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
                 <div className="pt-5">
                     <div className='flex justify-between'>
-                        <h2 className="text-xl font-semibold leading-tight">View Order</h2>
+                        <h2 className="text-xl font-semibold leading-tight">View Ledger</h2>
                         {/* <p className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium bg-success text-success dark:bg-white dark:text-slate-800`}>
                             TOTAL PRODUCTS: {pagination.totalItems}
                         </p> */}
                     </div>
+                    {IsLEDGERModalOpen && (
+            <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50 ">
+                <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px]  w-[870px] h-[400px] mt-[60px] dark:bg-slate-600">
+                    <div className="text-right">
+                        <button onClick={()=>closeLEDGERModal()} className="text-red-500 text-xl  font-bold">&times;</button>
+                    </div>
+                    <h2 className="text-2xl text-center mb-4 font-extrabold shadow-sm">LEDGER DETAILS OF SUPPLIERS</h2>
+                    <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
+                        <table className="min-w-full leading-normal">
+                            <thead>
+                                <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
+                                <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">SupplierName</th>
+                                <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
+                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Debit </th>
+                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Credit </th>
+                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Balance  </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+
+                                {/* {selectedINVENTORYData && (
+                                    <>
+                                        {selectedINVENTORYData.map((row, index) => (
+                                            <tr key={row.id}>
+                                                <td className="px-2 py-2 border-b dark:text-white">
+                                                    <p>{row?.location?.address}</p>
+                                                </td>
+                                                <td className="px-2 py-2 border-b dark:text-white">
+                                                    <p>{row?.openingBalance}</p>
+                                                </td>
+                                                <td className="px-2 py-2 border-b dark:text-white">
+                                                    {row.rate}
+                                                </td>
+                                                <td className="px-2 py-2 border-b dark:text-white">
+                                                    {row.value}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                        <tr>
+                                            <td
+                                                className="px-2 py-2 border-t font-bold text-black dark:text-white"
+                                                colSpan={3}
+                                            >
+                                                Total Values
+                                            </td>
+                                            <td className="px-2 py-2 border-t font-bold text-black dark:text-white">
+                                                {selectedINVENTORYData
+                                                    .reduce((total, currentRow) => total + (currentRow.value || 0), 0)
+                                                    .toFixed(2)}
+                                            </td>
+                                            <td className="px-2 py-2 border-t"></td>
+                                        </tr>
+                                    </>
+                                )} */}
+
+
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* <pre>{JSON.stringify(selectedBOMData, null, 2)}</pre> */}
+                </div>
+            </div>
+        )}
 
 
                     <div className='items-center justify-center'>
                         <Formik
                             initialValues={{
-                                orderNo: '',
+                                LedgerNo: '',
                                 customerName: "",
                                 supplierName: "",
                                 ProductId: ""
@@ -408,15 +522,13 @@ const ViewSupplierLedger = () => {
                             <table className="min-w-full leading-normal">
                                 <thead>
                                     <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">order No</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Debit </th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Credit </th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Balance  </th>
-                                        {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
+                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
+                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
+                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">SupplierName</th>
+                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Ledger</th>
+                                        {/* <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+                                        <th className="px-5 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -431,7 +543,7 @@ const ViewSupplierLedger = () => {
                 </div>
 
             </div>
-
+ 
         </DefaultLayout>
     )
 }
