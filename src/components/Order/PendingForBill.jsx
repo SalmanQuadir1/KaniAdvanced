@@ -259,26 +259,42 @@ const PendingForBill = () => {
                 </td>
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.orderNo}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.supplierName}</p>
 
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.productId}</p>
-                </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    {item.supplierName &&
-                        item.supplierName.map((supplier, index) => (
+                    {item.orders &&
+                        item?.orders.map((order, index) => (
                             <p key={index} className="text-gray-900 whitespace-nowrap">
-                                {supplier}
+                                {order.productId}
                             </p>
                         ))}
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.totalBillAmount}</p>
+                    {item.orders &&
+                        item?.orders.map((order, index) => (
+                            <p key={index} className="text-gray-900 whitespace-nowrap">
+                                {order.orderNo}
+                            </p>
+                        ))}
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.billStatus}</p>
+                    {item.orders &&
+                        item?.orders.map((order, index) => (
+                            <p key={index} className="text-gray-900 whitespace-nowrap">
+                                {order.totalBillAmount}
+                            </p>
+                        ))}
                 </td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    {item.orders &&
+                        item?.orders.map((order, index) => (
+                            <p key={index} className="text-gray-900 whitespace-nowrap">
+                                {order.billStatus}
+                            </p>
+                        ))}
+                </td>
+                
 
                
 
@@ -443,9 +459,9 @@ const PendingForBill = () => {
                                 <thead>
                                     <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Prod Id</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Suppliers </th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Prod Id</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Total Bill Amount </th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Bill Status</th>
                                         {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
