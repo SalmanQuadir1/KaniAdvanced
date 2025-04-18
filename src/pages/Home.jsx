@@ -125,7 +125,7 @@ const Home = () => {
             { title: "Monthly Order Calender", link: "/Order/monthlyorders", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
             { title: "Product Report", link: "/report/product", countKey: "approvedOrders", icon: <GrCompliance className="w-10 h-10" />, levelUp: true },
             { title: "Verifiy Product Transfer", link: "/stockJournal/verify", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
-
+            { title: "Pending for Bill", link: "/stockJournal/verify", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
         ],
         ROLE_EXECUTOR: [
             { title: "Reports", link: "/Reports",  icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },

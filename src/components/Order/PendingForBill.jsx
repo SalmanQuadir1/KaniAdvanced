@@ -276,6 +276,9 @@ const PendingForBill = () => {
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item.totalBillAmount}</p>
                 </td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item.billStatus}</p>
+                </td>
 
                
 
