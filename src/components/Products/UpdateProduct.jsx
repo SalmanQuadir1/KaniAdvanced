@@ -683,7 +683,6 @@ const UpdateProduct = () => {
                                                 </div>
                                             </div>
 
-
                                         </div>
 
                                         <div className="mb-4.5 flex flex-wrap gap-6">
