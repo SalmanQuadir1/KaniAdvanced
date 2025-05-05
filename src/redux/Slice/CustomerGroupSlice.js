@@ -7,7 +7,7 @@ export const fetchCustomerGroup = createAsyncThunk(
   async (accessToken) => {
     const response = await fetch(VIEW_ALL_CUSTOMERGROUP, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${accessToken}` ,
       },
     });
     return response.json();
