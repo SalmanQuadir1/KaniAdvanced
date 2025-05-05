@@ -5,7 +5,7 @@ import { VIEW_ALL_UNITS } from "../../Constants/utils";
 export const fetchunit = createAsyncThunk(
   "fetchunit",
   async (accessToken) => {
-    const response = await fetch(VIEW_ALL_UNITS, {
+    const response = await fetch(VIEW_ALL_UNITS, { 
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
