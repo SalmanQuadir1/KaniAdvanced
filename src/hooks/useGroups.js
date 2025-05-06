@@ -51,9 +51,10 @@ const useGroups = () => {
     };
 
     const handleDelete = async (e, id) => {
+        console.log(id,"del");
         e.preventDefault();
         try {
-            const response = await fetch(`${DELETE_Groups_URL}${id}`, {
+            const response = await fetch(`${DELETE_Groups_URL}/${id}`, {
                 method: 'DELETE',
                 headers: {
                     "Content-Type": "application/json",
@@ -61,7 +62,7 @@ const useGroups = () => {
                 }
             });
 
-            const data = await response.json();
+            // const data = await response.json();
             if (response.ok) {
                 toast.success(`Groups Deleted Successfully !!`);
 
