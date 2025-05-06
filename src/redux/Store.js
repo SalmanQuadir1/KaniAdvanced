@@ -17,6 +17,7 @@ import sizeReducer from "./Slice/SizeSlice";
 import HsnReducer from "./Slice/HsnCodeSlice";
 import OrderReducer from "./Slice/OrderNo";
 import ThemeSlice from "./Slice/ThemeSlice";
+import AppModeSlice from "./Slice/AppModeSlice";
 
 
 // Persist config
@@ -40,6 +41,7 @@ const persistedReducer = persistReducer(
     size:sizeReducer,
     hsn:HsnReducer,
     orderType:orderTypeReducer,
+    appMode: AppModeSlice
   })
 );
 

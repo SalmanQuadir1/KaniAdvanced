@@ -5,7 +5,12 @@ import DropdownUser from './DropdownUser';
 import LogoIcon from '../../images/logo/logo-icon.svg';
 import DarkModeSwitcher from './DarkModeSwitcher';
 import { FaHome } from "react-icons/fa";
+import { useSelector } from 'react-redux';
 const Header = (props) => {
+  const appMode = useSelector((state) => state?.persisted?.appMode);
+
+  const { mode } = appMode
+
 
   const navigate = useNavigate()
   return (
@@ -108,6 +113,7 @@ const Header = (props) => {
 
           <FaHome className='cursor-pointer' size={30} onClick={() => navigate("/home")}/>
           </ul>
+          <span className='capitalize bg-yellow-500 text-white rounded-3xl p-2'>{mode}</span>
 
           {/* <!-- User Area --> */}
           <DropdownUser />

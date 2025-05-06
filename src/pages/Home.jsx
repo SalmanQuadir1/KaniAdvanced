@@ -24,7 +24,10 @@ const Home = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { user, token } = currentUser;
     const role = user?.authorities?.map(auth => auth.authority) || [];
+    const appMode = useSelector((state) => state?.persisted?.appMode);
 
+    const { mode } = appMode
+    console.log(mode, "kk");
 
     const handleDownloadReport = async () => {
 
@@ -178,8 +181,27 @@ const Home = () => {
 
     };
 
+
+    //acounts
+    const accountsModeCards = [
+        { title: "Accounts Dashboard", link: "/accounts/dashboard", countKey: "accountsData", icon: <LuScale className="w-10 h-10" />, levelUp: true },
+        { title: "Billing Info", link: "/accounts/billing", countKey: "billing", icon: <MdRepartition className="w-10 h-10" />, levelDown: true },
+        { title: "Invoices", link: "/accounts/invoices", countKey: "invoices", icon: <MdOutlinePending className="w-10 h-10" />, levelUp: true },
+      ];
+
     // Get all cards user should see based on roles
-    const cardsToShow = role.flatMap(roleName => roleBasedCards[roleName] || []);
+     // Get all cards user should see based on roles
+  const cardsToShow = (() => {
+    if (mode === "production") {
+      return role.flatMap(roleName => roleBasedCards[roleName] || []);
+    }
+  
+    if (mode === "accounts" && role.includes("ROLE_ADMIN")) {
+      return accountsModeCards;
+    }
+  
+    return [];
+  })();
 
     return (
         <DefaultLayout>

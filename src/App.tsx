@@ -10,7 +10,7 @@ import Chart from './pages/Chart.jsx';
 import Home from './pages/Home.jsx';
 import FinancialReportDashboard from './pages/FinancialReportDashboard.jsx';
 import GeneralFinancialReportDashboard from './pages/GeneralFinancialReportDashboard.jsx';
-
+import Groups from './components/Accounts/Config/Groups.jsx';
 
 
 import Material from './components/Material/Material.jsx';
@@ -299,6 +299,16 @@ function App() {
                 <RoleBasedRoute allowedRoles={["ROLE_ADMIN","ROLE_FINANCE", 'ROLE_VERIFIER', "ROLE_USER", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR", "ROLE_QUALITYCONTROL"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <Home />
+              </>
+            }
+          />
+            <Route
+            path="/configurator/groups"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Dashboard" />
+                <Groups />
               </>
             }
           />

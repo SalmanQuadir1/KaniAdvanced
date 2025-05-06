@@ -36,6 +36,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
 
   const { currentUser } = useSelector((state) => state?.persisted?.user);
+  const appMode = useSelector((state) => state?.persisted?.appMode);
+
+  const { mode } = appMode
+  console.log(mode, "kk");
+
   const { user } = currentUser || {};
   const roles = user?.authorities.map((auth) => auth.authority) || []; // Ensure it's always an array
 
@@ -163,10 +168,113 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 </svg>
                 Dashboard
               </NavLink>
-           
-{/* Role Admin_dli */}
+              {/*Accounts*/}
 
-              {roles.some(role => [ 'ROLE_ADMIN_DLI'].includes(role)) ? (
+
+              <SidebarLinkGroup
+              // activeCondition={
+              //   pathname === '/configurator' || pathname.includes('configurator')
+              // }
+              >
+                {(handleClick, open) => {
+                  return (
+                    <React.Fragment>
+                      {mode === "accounts" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                        <NavLink
+                          to="#"
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
+                            pathname.includes('forms')) &&
+                            'bg-graydark dark:bg-meta-4'
+                            }`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            sidebarExpanded
+                              ? handleClick()
+                              : setSidebarExpanded(true);
+                          }}
+                        >
+                          <FcDataConfiguration size={24} />
+                          Configurator
+                          <svg
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
+                              }`}
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              clipRule="evenodd"
+                              d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
+                              fill=""
+                            />
+                          </svg>
+                        </NavLink>
+                      ) : null}
+
+                      <div
+                        className={`translate transform overflow-hidden ${!open && 'hidden'
+                          }`}
+                      >
+                        <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+
+                          <li>
+                            <NavLink
+                              to="/configurator/groups"
+                              className={({ isActive }) =>
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                (isActive && '!text-white')
+                              }
+                            >
+                              Groups
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/configurator/location"
+                              className={({ isActive }) =>
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                (isActive && '!text-white')
+                              }
+                            >
+                              Location
+                            </NavLink>
+                          </li>
+
+
+                          <li>
+                            <NavLink
+                              to="/configurator/addordertype"
+                              className={({ isActive }) =>
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                (isActive && '!text-white')
+                              }
+                            >
+                              Order Type
+                            </NavLink>
+                          </li>
+                        
+                        </ul>
+                      </div>
+
+                    </React.Fragment>
+                  );
+                }}
+              </SidebarLinkGroup>
+
+
+           
+
+              {/* Role Admin_dli */}
+
+
+
+
+
+
+              {mode === "production" && roles.some(role => ['ROLE_ADMIN_DLI'].includes(role)) ? (
 
                 <NavLink
                   to="/configurator/addcustomergroup"
@@ -202,7 +310,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN', 'ROLE_ADMIN_SXR'].includes(role)) ? (
+                      {mode === "production" && roles.some(role => ['ROLE_ADMIN', 'ROLE_ADMIN_SXR'].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
@@ -242,7 +350,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                          {roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                          {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                             <li>
                               <NavLink
                                 to="/product/addProduct"
@@ -306,7 +414,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                      {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
@@ -321,7 +429,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           }}
                         >
                           <MdAddHome size={24} />
-                       Godown
+                          Godown
                           <svg
                             className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
                               }`}
@@ -388,7 +496,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                      {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
@@ -403,7 +511,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           }}
                         >
                           <FaBook size={24} />
-                     Supplier Ledger
+                          Supplier Ledger
                           <svg
                             className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
                               }`}
@@ -470,7 +578,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN', 'ROLE_ADMIN_SXR'].includes(role)) ? (
+                      {mode === "production" && roles.some(role => ['ROLE_ADMIN', 'ROLE_ADMIN_SXR'].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
@@ -510,7 +618,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                          {roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                          {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                             <li>
                               <NavLink
                                 to="/configurator/addbudget"
@@ -546,7 +654,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
 
 
-              {roles.some(role => ['ROLE_ADMIN','ROLE_ADMIN_DLI', 'ROLE_EXECUTOR', 'ROLE_ADMIN_SXR',"ROLE_USER"].includes(role)) ? (
+              {mode === "production" && roles.some(role => ['ROLE_ADMIN', 'ROLE_ADMIN_DLI', 'ROLE_EXECUTOR', 'ROLE_ADMIN_SXR', "ROLE_USER"].includes(role)) ? (
                 <NavLink
                   to="/Reports"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 
@@ -558,7 +666,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 </NavLink>
               ) : null}
 
-              {roles.some(role => ['ROLE_ADMIN', 'ROLE_EXECUTOR', 'ROLE_ADMIN_SXR'].includes(role)) ? (
+              {mode === "production" && roles.some(role => ['ROLE_ADMIN', 'ROLE_EXECUTOR', 'ROLE_ADMIN_SXR'].includes(role)) ? (
                 <NavLink
                   to="/Order/ViewOrder"
                   className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 
@@ -611,7 +719,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                      {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
@@ -695,7 +803,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN',"ROLE_ADMIN_DLI"].includes(role)) ? (
+                      {mode === "production" && roles.some(role => ['ROLE_ADMIN', "ROLE_ADMIN_DLI"].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
@@ -790,7 +898,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN',"ROLE_ADMIN_DLI"].includes(role)) ? (
+                      {mode === "production" && roles.some(role => ['ROLE_ADMIN', "ROLE_ADMIN_DLI"].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
@@ -805,7 +913,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           }}
                         >
                           <MdInventory2 size={24} />
-                        Stock Journal
+                          Stock Journal
                           <svg
                             className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
                               }`}
@@ -886,7 +994,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                      {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
@@ -1083,7 +1191,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN',"ROLE_ADMIN_DLI"].includes(role)) ? (
+                      {mode === "production" && roles.some(role => ['ROLE_ADMIN', "ROLE_ADMIN_DLI"].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
@@ -1174,7 +1282,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                      {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
@@ -1266,7 +1374,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
           {/* <!-- Others Group --> */}
           <div>
-            {roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+            {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
               <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
                 Auth
               </h3>
@@ -1284,7 +1392,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                      {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/auth' || pathname.includes('auth')) &&

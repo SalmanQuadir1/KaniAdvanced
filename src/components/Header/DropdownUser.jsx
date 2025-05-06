@@ -5,12 +5,15 @@ import UserOne from '../../images/user/user-01.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { signoutSuccess } from '../../redux/Slice/UserSlice';
 import { FaCircleUser } from "react-icons/fa6";
+import { clearAppMode } from '../../redux/Slice/AppModeSlice';
 
 const DropdownUser = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { currentUser } = useSelector((state) => state?.persisted?.user);
+
+
   //console.log(currentUser);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -45,6 +48,7 @@ const DropdownUser = () => {
   const handleLogout = () => {
     try {
       dispatch(signoutSuccess());
+      dispatch(clearAppMode());
       navigate("/auth/signin")
     } catch (error) {
 
@@ -53,6 +57,7 @@ const DropdownUser = () => {
 
   return (
     <div className="relative">
+    
       <Link
         ref={trigger}
         onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -60,6 +65,7 @@ const DropdownUser = () => {
         to="#"
       >
         <span className="hidden text-right lg:block">
+
           <span className="block text-sm font-medium text-black capitalize dark:text-white">
             {currentUser?.user?.username}
           </span>
