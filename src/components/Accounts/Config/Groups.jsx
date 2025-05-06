@@ -10,6 +10,8 @@ import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import useGroups from '../../../hooks/useGroups';
 import ViewTable from './ViewTable';
 import Pagination from '../../Pagination/Pagination';
+import { customStyles as createCustomStyles } from '../../../Constants/utils';
+import { useSelector } from 'react-redux';
 const Groups = () => {
     const {
         Groups,
@@ -20,10 +22,11 @@ const Groups = () => {
         handleUpdate,
         handleSubmit,
         handlePageChange,
+        nature
     } = useGroups();
+    const theme = useSelector(state => state?.persisted?.theme);
 
-
-
+    const customStyles = createCustomStyles(theme?.mode);
 
 
     console.log(Groups, "locaaaaaaaaaaaaaaaaa");
@@ -51,7 +54,7 @@ const Groups = () => {
                     onSubmit={handleSubmit}
                 >
 
-                    {({ isSubmitting }) => (
+                    {({ isSubmitting,setFieldValue,values }) => (
                         <Form>
                             <div className="flex flex-col gap-9">
                                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -72,6 +75,20 @@ const Groups = () => {
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                 />
                                                 <ErrorMessage name="groupName" component="div" className="text-red-500" />
+                                            </div>
+                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                <label className="mb-2.5 block text-black dark:text-white">Nature Of Group</label>
+                                                <ReactSelect
+                                                    name="natureOfGroup"
+                                                    value={nature.find(option => option.value === values.natureOfGroup) || null}
+                                                    onChange={(option) => setFieldValue('natureOfGroup', option ?option.value : null)}
+                                                    options={nature}
+                                                    styles={customStyles} // Pass custom styles here
+                                                    className="bg-white dark:bg-form-Field w-[300px]"
+                                                    classNamePrefix="react-select"
+                                                    placeholder="Select Units"
+                                                />
+
                                             </div>
                                         </div>
 

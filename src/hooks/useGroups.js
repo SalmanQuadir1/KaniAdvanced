@@ -10,8 +10,16 @@ const useGroups = () => {
     const [edit, setEdit] = useState(false);
     const [currentGroups, setCurrentGroups] = useState({
        groupName:"",
-       subGroup:[]
+       subGroup:[],
+       natureOfGroup:""
     });
+
+    const nature = [
+        { value: '', label: 'Select' },
+        { value: 'Income', label: 'Income' },
+        { value: 'Expense', label: 'Expense' },
+ 
+    ]
 
     const [pagination, setPagination] = useState({
         totalItems: 0,
@@ -112,7 +120,8 @@ const useGroups = () => {
                 setEdit(false);
                 setCurrentGroups({
                     groupName: "",
-                    subGroup:[]
+                    subGroup:[],
+                    natureOfGroup:""
                    
                 });
                 getGroups(pagination.currentPage); // Fetch updated Groups
@@ -142,6 +151,7 @@ const useGroups = () => {
         handleUpdate,
         handleSubmit,
         handlePageChange,
+        nature
     };
 };
 
