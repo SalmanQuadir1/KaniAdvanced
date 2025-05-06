@@ -231,30 +231,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               Groups
                             </NavLink>
                           </li>
-                          <li>
-                            <NavLink
-                              to="/configurator/location"
-                              className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                (isActive && '!text-white')
-                              }
-                            >
-                              Location
-                            </NavLink>
-                          </li>
+                        
 
 
-                          <li>
-                            <NavLink
-                              to="/configurator/addordertype"
-                              className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                (isActive && '!text-white')
-                              }
-                            >
-                              Order Type
-                            </NavLink>
-                          </li>
+                         
                         
                         </ul>
                       </div>
