@@ -40,11 +40,20 @@ const ViewTable = ({ title, units, totalItems, handleDelete, handleUpdate, pagin
             const updatedItem = { ...item, id: startingSerialNumber + rowIndex }; // Update id value with index + 1
             return (
                 <tr key={rowIndex} className='bg-white dark:bg-slate-700 dark:text-white'>
-                    {Object.values(updatedItem).map((value, colIndex) => (
-                        <td key={colIndex} className="px-5 py-5 border-b border-gray-200 text-sm">
-                            <p className="text-gray-900 whitespace-no-wrap">{value}</p>
-                        </td>
-                    ))}
+                   {Object.values(updatedItem).map((value, colIndex) => (
+  <td key={colIndex} className="px-5 py-5 border-b border-gray-200 text-sm align-top">
+    {Array.isArray(value) ? (
+      <ul className="list-disc list-inside space-y-1 text-gray-900">
+        {value.map((item, i) => (
+          <li key={i}>{item}</li>
+        ))}
+      </ul>
+    ) : (
+      <p className="text-gray-900 whitespace-pre-wrap">{value}</p>
+    )}
+  </td>
+))}
+
                     <td key={Object.keys(updatedItem).length} className="px-5 py-5 border-b border-gray-200 text-sm">
                         <p className="flex text-gray-900 whitespace-no-wrap">
                             <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={(e) => handleUpdate(e, item)} title={`Edit ${title}`} />  |

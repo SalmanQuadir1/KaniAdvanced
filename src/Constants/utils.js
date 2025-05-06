@@ -357,7 +357,11 @@ export const DELETE_HSNCODE_URL = `${BASE_URL}/hsncode`;
 //dahsboard
 
 //acountsss
-export const ADD_Groups_URL = `${BASE_URL}/addGroup`;
+export const ADD_Groups_URL = `${BASE_URL}/accountGroup/add`;
+export const GET_Groups_URL = `${BASE_URL}/accountGroup/getAll`;
+export const UPDATE_Groups_URL = `${BASE_URL}/accountGroup/update`;
+export const DELETE_Groups_URL = `${BASE_URL}/accountGroup/delete`;
+
 
 
 //images
