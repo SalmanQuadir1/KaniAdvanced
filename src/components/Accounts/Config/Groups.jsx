@@ -79,28 +79,32 @@ const Groups = () => {
                                             </div>
                                             <div className="flex flex-col gap-4 mt-6">
                                                 {[
-                                                    { name: 'affectGrossProfit', label: 'Does It Affect Gross Profit ?' },
+                                                    { name: 'affectGrossProfit', label: 'Does It Affect Gross Profit?' },
                                                     { name: 'subLedgerGroup', label: 'Group Behaves Like a Sub Ledger' },
                                                     { name: 'balanceReporting', label: 'Nett Debit/Credit Balances for Reporting' },
-                                                    { name: 'calculation', label: 'Used For Calculation(eg Taxes,Discounts)' },
+                                                    { name: 'calculation', label: 'Used For Calculation (e.g., Taxes, Discounts)' },
                                                 ].map(({ name, label }) => (
                                                     <div key={name} className="flex items-center justify-between w-full max-w-[500px]">
                                                         <label className="text-black dark:text-white w-1/2">{label}</label>
                                                         <div className="flex gap-4">
                                                             <label className="flex items-center gap-1 text-black dark:text-white">
-                                                                <Field
+                                                                <input
                                                                     type="radio"
                                                                     name={name}
                                                                     value="true"
+                                                                    checked={values[name] === true}
+                                                                    onChange={() => setFieldValue(name, true)}
                                                                     className="form-radio text-primary"
                                                                 />
                                                                 Yes
                                                             </label>
                                                             <label className="flex items-center gap-1 text-black dark:text-white">
-                                                                <Field
+                                                                <input
                                                                     type="radio"
                                                                     name={name}
                                                                     value="false"
+                                                                    checked={values[name] === false}
+                                                                    onChange={() => setFieldValue(name, false)}
                                                                     className="form-radio text-primary"
                                                                 />
                                                                 No
