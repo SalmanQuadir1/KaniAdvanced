@@ -8,9 +8,14 @@ const ViewTable = ({ title, units, totalItems, handleDelete, handleUpdate, pagin
   console.log(pagination.itemsPerPage + 1, "heyyy");
   const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
   const renderTableHeaders = () => {
+    const excludedKeys = ['affectGrossProfit', 'subLedgerGroup', 'balanceReporting',"calculation"	];
 
     if (!units || units.length === 0) return null;
-    const headers = Object.keys(units[0]).map(header => header === 'id' ? 'Sno' : header);
+   
+const headers = Object.keys(units[0])
+.filter(key => !excludedKeys.includes(key))  // exclude unwanted keys
+.map(header => header === 'id' ? 'Sno' : header);
+
     return headers
       .map((header, index) => (
         <th
@@ -33,6 +38,7 @@ const ViewTable = ({ title, units, totalItems, handleDelete, handleUpdate, pagin
   // Function to generate table rows dynamically
   // Function to generate table rows dynamically
   const renderTableRows = () => {
+    const excludedKeys = ['affectGrossProfit', 'subLedgerGroup', 'balanceReporting',"calculation"	];
 
 
     if (!units || units.length === 0) return null;
@@ -40,20 +46,23 @@ const ViewTable = ({ title, units, totalItems, handleDelete, handleUpdate, pagin
       const updatedItem = { ...item, id: startingSerialNumber + rowIndex }; // Update id value with index + 1
       return (
         <tr key={rowIndex} className='bg-white dark:bg-slate-700 dark:text-white'>
-          {Object.values(updatedItem).map((value, colIndex) => (
-            <td key={colIndex} className="px-5 py-5 border-b border-gray-200 text-sm align-top">
-              {Array.isArray(value) ? (
-                <ul className="list-disc list-inside space-y-1 text-gray-900">
-                  {value.map((item, i) => (
-                     <p className="text-gray-900 whitespace-pre-wrap">{item}</p>
-                  ))}
-                </ul>
-               
-              ) : (
-                <p className="text-gray-900 whitespace-pre-wrap">{value}</p>
-              )}
-            </td>
+
+       {Object.entries(updatedItem)
+  .filter(([key]) => !excludedKeys.includes(key))
+  .map(([key, value], colIndex) => (
+    <td key={colIndex} className="px-5 py-5 border-b border-gray-200 text-sm align-top">
+      {Array.isArray(value) ? (
+        <ul className="list-disc list-inside space-y-1 text-gray-900">
+          {value.map((item, i) => (
+             <p className="text-gray-900 whitespace-pre-wrap">{item}</p>
+        
           ))}
+        </ul>
+      ) : (
+        <p className="text-gray-900 whitespace-pre-wrap">{value}</p>
+      )}
+    </td>
+))}
 
           <td key={Object.keys(updatedItem).length} className="px-5 py-5 border-b border-gray-200 text-sm">
             <p className="flex text-gray-900 whitespace-no-wrap">

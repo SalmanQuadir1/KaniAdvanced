@@ -22,7 +22,8 @@ const Groups = () => {
         handleUpdate,
         handleSubmit,
         handlePageChange,
-        nature
+        nature,
+        invoice
     } = useGroups();
     const theme = useSelector(state => state?.persisted?.theme);
 
@@ -54,7 +55,7 @@ const Groups = () => {
                     onSubmit={handleSubmit}
                 >
 
-                    {({ isSubmitting,setFieldValue,values }) => (
+                    {({ isSubmitting, setFieldValue, values }) => (
                         <Form>
                             <div className="flex flex-col gap-9">
                                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -65,23 +66,80 @@ const Groups = () => {
                                     </div>
 
                                     <div className="flex flex-col  p-6.5">
-                                        <div className="mb-4.5 flex flex-wrap gap-6">
+                                        <div className="mb-4.5 flex flex-col gap-6">
                                             <div className="flex-2 min-w-[360px]">
                                                 <label className="mb-2.5 block text-black dark:text-white">Group</label>
                                                 <Field
                                                     type="text"
                                                     name="groupName"
                                                     placeholder="Enter Group Name"
-                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                    className="w-[300px] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                 />
                                                 <ErrorMessage name="groupName" component="div" className="text-red-500" />
                                             </div>
+                                            <div className="flex flex-col gap-4 mt-6">
+                                                {[
+                                                    { name: 'affectGrossProfit', label: 'Does It Affect Gross Profit ?' },
+                                                    { name: 'subLedgerGroup', label: 'Group Behaves Like a Sub Ledger' },
+                                                    { name: 'balanceReporting', label: 'Nett Debit/Credit Balances for Reporting' },
+                                                    { name: 'calculation', label: 'Used For Calculation(eg Taxes,Discounts)' },
+                                                ].map(({ name, label }) => (
+                                                    <div key={name} className="flex items-center justify-between w-full max-w-[500px]">
+                                                        <label className="text-black dark:text-white w-1/2">{label}</label>
+                                                        <div className="flex gap-4">
+                                                            <label className="flex items-center gap-1 text-black dark:text-white">
+                                                                <Field
+                                                                    type="radio"
+                                                                    name={name}
+                                                                    value="true"
+                                                                    className="form-radio text-primary"
+                                                                />
+                                                                Yes
+                                                            </label>
+                                                            <label className="flex items-center gap-1 text-black dark:text-white">
+                                                                <Field
+                                                                    type="radio"
+                                                                    name={name}
+                                                                    value="false"
+                                                                    className="form-radio text-primary"
+                                                                />
+                                                                No
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+
+
+                                            <div className="flex gap-4 items-center mb-4.5">
+                                                <label className="text-black dark:text-white w-[280px]">
+                                                    Method To Allocate When Used in Purchase Invoice
+                                                </label>
+                                                <div className="flex-1 min-w-[300px] z-50 relative">
+                                                    <ReactSelect
+                                                        name="allocatePurchaseInvoice"
+                                                        value={invoice.find(option => option.value === values?.allocatePurchaseInvoice) || null}
+                                                        onChange={(option) => setFieldValue('allocatePurchaseInvoice', option ? option?.value : '')}
+                                                        options={invoice}
+                                                        styles={customStyles}
+                                                        className="bg-white dark:bg-form-Field"
+                                                        classNamePrefix="react-select"
+                                                        placeholder="Select Method"
+                                                    />
+                                                </div>
+                                            </div>
+
+
+
+
+
+
                                             <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                 <label className="mb-2.5 block text-black dark:text-white">Nature Of Group</label>
                                                 <ReactSelect
                                                     name="natureOfGroup"
                                                     value={nature.find(option => option.value === values.natureOfGroup) || null}
-                                                    onChange={(option) => setFieldValue('natureOfGroup', option ?option.value : null)}
+                                                    onChange={(option) => setFieldValue('natureOfGroup', option ? option.value : null)}
                                                     options={nature}
                                                     styles={customStyles} // Pass custom styles here
                                                     className="bg-white dark:bg-form-Field w-[300px]"

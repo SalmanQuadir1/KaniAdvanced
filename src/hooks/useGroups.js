@@ -11,7 +11,12 @@ const useGroups = () => {
     const [currentGroups, setCurrentGroups] = useState({
        groupName:"",
        subGroup:[],
-       natureOfGroup:""
+       natureOfGroup:"",
+       allocatePurchaseInvoice:"",
+       calculation:"",
+       balanceReporting:"",
+       subLedgerGroup:"",
+       affectGrossProfit:""
     });
 
     const nature = [
@@ -22,6 +27,13 @@ const useGroups = () => {
         { value: 'Expenses', label: 'Expenses' },
  
     ]
+    const invoice = [
+        { value: '', label: 'Select' },
+        { value: 'NotApplicable', label: 'NotApplicable' },
+        { value: 'AppropriatebyQTY', label: 'AppropriatebyQTY' },
+        { value: 'AppropriatebyValue', label: 'AppropriatebyValue' },
+      ];
+      
 
     const [pagination, setPagination] = useState({
         totalItems: 0,
@@ -153,7 +165,8 @@ const useGroups = () => {
         handleUpdate,
         handleSubmit,
         handlePageChange,
-        nature
+        nature,
+        invoice
     };
 };
 
