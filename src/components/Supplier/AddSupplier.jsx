@@ -74,7 +74,7 @@ const AddSupplier = () => {
             const data = await response.json();
             console.log(data, "Response data"); // Log the response data for debugging
     
-            if (response.ok) {r
+            if (response.ok) {
 
                 toast.success(`Supplier added successfully`);
                 navigate("/supplier/view")

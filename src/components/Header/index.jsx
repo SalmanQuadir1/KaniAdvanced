@@ -113,7 +113,7 @@ const Header = (props) => {
 
           <FaHome className='cursor-pointer' size={30} onClick={() => navigate("/home")}/>
           </ul>
-          <span className='capitalize bg-yellow-500 text-white rounded-3xl p-2'>{mode}</span>
+          <span className='capitalize bg-blue-700 text-white rounded-3xl p-2'>{mode}</span>
 
           {/* <!-- User Area --> */}
           <DropdownUser />
