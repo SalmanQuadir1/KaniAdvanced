@@ -17,7 +17,9 @@ const useGroups = () => {
     const nature = [
         { value: '', label: 'Select' },
         { value: 'Income', label: 'Income' },
-        { value: 'Expense', label: 'Expense' },
+        { value: 'Liabilities', label: 'Liabilities' },
+        { value: 'Assets', label: 'Assets' },
+        { value: 'Expenses', label: 'Expenses' },
  
     ]
 
