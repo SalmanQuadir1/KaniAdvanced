@@ -67,6 +67,8 @@ import Supplier from './components/Configurator/Supplier.jsx';
 
 import AddSupplier from './components/Supplier/AddSupplier.jsx';
 import ViewSupplierLedger from './components/Supplier/SupplierLedger/ViewSupplierLedger.jsx';
+import ViewSuppLedger from './components/Supplier/SupplierLedger/ViewSuppLedger.jsx';
+
 import AddBulkSupplier from './components/Supplier/AddBulkSupplier.jsx';
 
 import ViewSupplier from './components/Supplier/ViewSupplier.jsx';
@@ -1165,6 +1167,15 @@ function App() {
               <>
                 <PageTitle title="Size" />
                 <ViewSupplierLedger />
+              </>
+            }
+          />
+           <Route
+            path="/Supplier/Viewledger"
+            element={
+              <>
+                <PageTitle title="Size" />
+                <ViewSuppLedger />
               </>
             }
           />
