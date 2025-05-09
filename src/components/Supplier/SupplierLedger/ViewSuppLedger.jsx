@@ -3,7 +3,7 @@ import DefaultLayout from '../../../layout/DefaultLayout'
 import Breadcrumb from '../../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import {  VIEW_SUPPLIER_LEDGER, VIEW_SUPPLIER_LEDGERBYID,  } from "../../../Constants/utils";
+import {  VIEW_SUPPLIER, VIEW_SUPPLIER_LEDGER, VIEW_SUPPLIER_LEDGERBYID,  } from "../../../Constants/utils";
 import ReactSelect from 'react-select';
 import useOrder from '../../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -113,7 +113,7 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
         console.log("Fetching Ledgers for page", page); // Log the page number being requested
 
         try {
-            const response = await fetch(`${VIEW_SUPPLIER_LEDGER}?page=${page || 1}`, {
+            const response = await fetch(`${VIEW_SUPPLIER}?page=${page || 0}`, {
                 method: "POST", // GET method
                 headers: {
                     "Content-Type": "application/json",
@@ -135,7 +135,7 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
                 console.log("Parsed Response:", data);
 
                 if (data) {
-                    setLedger(data); // Update Ledgers state
+                    setLedger(data.content); // Update Ledgers state
                 } else {
                     console.log("No Ledgers found in the response");
                     setLedger([]); // Set an empty state
@@ -166,10 +166,9 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
 
     const handlePageChange = (newPage) => {
         console.log("Page change requested:", newPage);
-
         setPagination((prev) => ({ ...prev, currentPage: newPage }));
-        getLedger(newPage); // Correct function name and 1-indexed for user interaction
     };
+    
 
     console.log(Ledger, "heyLedger");
 
@@ -281,11 +280,15 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
                 </td>
 
                 <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.orderNo}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.name}</p>
 
                 </td>
                 <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.supplierName}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.supplierCode}</p>
+
+                </td>
+                <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.accountGroup?.groupName}</p>
                 </td>
                 <td>
                 <span onClick={() => openLEDGERModal(item?.supplierId)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> VIEW LEDGER</span>
@@ -369,7 +372,7 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
 
          
         };
-        getLedger(pagination.currentPage, filters);
+        getLedger(pagination?.currentPage, filters);
         // ViewInventory(pagination.currentPage, filters);
     };
 
@@ -526,8 +529,9 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
                                 <thead>
                                     <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
-                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">SupplierName</th>
+                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Supplier Code</th>
+                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Accounting Group</th>
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Ledger</th>
                                         {/* <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 

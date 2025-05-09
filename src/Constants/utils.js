@@ -49,6 +49,9 @@ export const UPDATE_SUPPLIER_URL = `${BASE_URL}/supplier/updateSupplier`;
 export const DELETE_SUPPLIER_URL = `${BASE_URL}/supplier/deleteSupplier/`;
 //ledger
 export const VIEW_SUPPLIER_LEDGER = `${BASE_URL}/supplier/searchledger`;
+export const VIEW_SUPPLIER = `${BASE_URL}/supplier/searchSupplier`;
+
+
 export const VIEW_SUPPLIER_LEDGERBYID = `${BASE_URL}/supplier/getBySupplierLedger`;
 
 
