@@ -20,6 +20,7 @@ import { MdGroups } from "react-icons/md";
 import { TbReport } from "react-icons/tb";
 import { useSelector } from 'react-redux';
 import { FcSearch } from "react-icons/fc";
+import { TbViewportWide } from "react-icons/tb";
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const [role, setrole] = useState('')
@@ -123,6 +124,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
       <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
         {/* <!-- Sidebar Menu --> */}
+        <span className='capitalize bg-slate-600 text-white  p-2 text-center'>{mode}</span>
         <nav className=" px-4 lg:mt-9 lg:px-6">
           {/* <!-- Menu Group --> */}
           <div>

@@ -67,15 +67,32 @@ const Groups = () => {
 
                                     <div className="flex flex-col  p-6.5">
                                         <div className="mb-4.5 flex flex-col gap-6">
-                                            <div className="flex-2 min-w-[360px]">
-                                                <label className="mb-2.5 block text-black dark:text-white">Group</label>
-                                                <Field
-                                                    type="text"
-                                                    name="groupName"
-                                                    placeholder="Enter Group Name"
-                                                    className="w-[300px] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-                                                />
-                                                <ErrorMessage name="groupName" component="div" className="text-red-500" />
+                                            <div className='flex-col'>
+                                                <div className="flex-2 min-w-[360px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">Group</label>
+                                                    <Field
+                                                        type="text"
+                                                        name="groupName"
+                                                        placeholder="Enter Group Name"
+                                                        className="w-[300px] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                    />
+                                                    <ErrorMessage name="groupName" component="div" className="text-red-500" />
+                                                </div>
+
+                                                <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                    <label className="mb-2.5 block text-black dark:text-white">Nature Of Group</label>
+                                                    <ReactSelect
+                                                        name="natureOfGroup"
+                                                        value={nature.find(option => option.value === values.natureOfGroup) || null}
+                                                        onChange={(option) => setFieldValue('natureOfGroup', option ? option.value : null)}
+                                                        options={nature}
+                                                        styles={customStyles} // Pass custom styles here
+                                                        className="bg-white dark:bg-form-Field w-[300px]"
+                                                        classNamePrefix="react-select"
+                                                        placeholder="Select Units"
+                                                    />
+
+                                                </div>
                                             </div>
                                             <div className="flex flex-col gap-4 mt-6">
                                                 {[
@@ -138,20 +155,7 @@ const Groups = () => {
 
 
 
-                                            <div className=" z-20 bg-transparent dark:bg-form-Field">
-                                                <label className="mb-2.5 block text-black dark:text-white">Nature Of Group</label>
-                                                <ReactSelect
-                                                    name="natureOfGroup"
-                                                    value={nature.find(option => option.value === values.natureOfGroup) || null}
-                                                    onChange={(option) => setFieldValue('natureOfGroup', option ? option.value : null)}
-                                                    options={nature}
-                                                    styles={customStyles} // Pass custom styles here
-                                                    className="bg-white dark:bg-form-Field w-[300px]"
-                                                    classNamePrefix="react-select"
-                                                    placeholder="Select Units"
-                                                />
 
-                                            </div>
                                         </div>
 
                                         {/* --- subGroup FieldArray --- */}
