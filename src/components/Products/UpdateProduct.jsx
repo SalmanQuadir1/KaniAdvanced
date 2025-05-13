@@ -901,6 +901,7 @@ const UpdateProduct = () => {
                                                             name='weave'
                                                             type="text"
                                                             placeholder="Enter Wave"
+                                                            //value={values.weave}
                                                             value={values.weave}
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
@@ -939,7 +940,7 @@ const UpdateProduct = () => {
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
-                                                    <div className="flex-1 min-w-[300px]">
+                                                    {/* <div className="flex-1 min-w-[300px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> MRP</label>
                                                         <Field
                                                             name='mrp'
@@ -948,7 +949,7 @@ const UpdateProduct = () => {
                                                             value={values.mrp}
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
-                                                    </div>
+                                                    </div> */}
                                                 </div>
 
 
@@ -1289,7 +1290,7 @@ const UpdateProduct = () => {
                                                                                                     
 
 
-                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                {/* <div className="mb-4.5 flex flex-wrap gap-6">
                                                     <div className="flex-1 min-w-[300px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> Cost Price </label>
                                                         <Field
@@ -1308,8 +1309,8 @@ const UpdateProduct = () => {
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
-                                                </div>
-                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                </div> */}
+                                                {/* <div className="mb-4.5 flex flex-wrap gap-6">
                                                     <div className="flex-1 min-w-[300px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> Dyeing Cost </label>
                                                         <Field
@@ -1329,8 +1330,8 @@ const UpdateProduct = () => {
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
-                                                </div>
-                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                </div> */}
+                                                {/* <div className="mb-4.5 flex flex-wrap gap-6">
                                                     <div className="flex-1 min-w-[300px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> USD Price </label>
                                                         <Field
@@ -1349,9 +1350,9 @@ const UpdateProduct = () => {
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
-                                                </div>
+                                                </div> */}
 
-                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                {/* <div className="mb-4.5 flex flex-wrap gap-6">
                                                     <div className="flex-1 min-w-[300px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> GBP Price </label>
                                                         <Field
@@ -1370,7 +1371,7 @@ const UpdateProduct = () => {
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
-                                                </div>
+                                                </div> */}
                                             </>
                                         )}
 
@@ -1621,7 +1622,7 @@ const UpdateProduct = () => {
 
 
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
-                                                    <div className="flex-1 min-w-[300px]">
+                                                    {/* <div className="flex-1 min-w-[300px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> Total Cost </label>
                                                         <Field
                                                             name='totalCost'
@@ -1630,8 +1631,8 @@ const UpdateProduct = () => {
                                                             value={values.totalCost}
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
-                                                    </div>
-                                                    <div className="flex-1 min-w-[300px]">
+                                                    </div> */}
+                                                    {/* <div className="flex-1 min-w-[300px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> MRP</label>
                                                         <Field
                                                             name='mrp'
@@ -1639,11 +1640,11 @@ const UpdateProduct = () => {
                                                             placeholder="Enter Mrp"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
-                                                    </div>
+                                                    </div> */}
                                                 </div>
 
 
-                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                {/* <div className="mb-4.5 flex flex-wrap gap-6">
                                                     <div className="flex-1 min-w-[300px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> Dyeing Cost </label>
                                                         <Field
@@ -1662,10 +1663,10 @@ const UpdateProduct = () => {
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
-                                                </div>
+                                                </div> */}
 
 
-                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                {/* <div className="mb-4.5 flex flex-wrap gap-6">
                                                     <div className="flex-1 min-w-[300px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> USD Price </label>
                                                         <Field
@@ -1684,10 +1685,10 @@ const UpdateProduct = () => {
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
-                                                </div>
+                                                </div> */}
 
 
-                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                {/* <div className="mb-4.5 flex flex-wrap gap-6">
                                                     <div className="flex-1 min-w-[300px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> GBP Price </label>
                                                         <Field
@@ -1706,7 +1707,7 @@ const UpdateProduct = () => {
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
-                                                </div>
+                                                </div> */}
 
                                             </>
                                         )}
