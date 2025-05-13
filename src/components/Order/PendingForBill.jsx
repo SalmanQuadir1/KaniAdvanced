@@ -34,8 +34,8 @@ const PendingForBill = () => {
 
     const { token } = currentUser;
 
-    console.log(productIdd,"huhuuhuuuuuuuuuuuuuuuuu");
-    
+    console.log(productIdd, "huhuuhuuuuuuuuuuuuuuuuu");
+
     const [Order, setOrder] = useState()
 
     const [supplierNameOptions, setsupplierNameOptions] = useState([])
@@ -52,7 +52,7 @@ const PendingForBill = () => {
     }, []);
 
 
-  
+
 
     const formattedorder = orderNo.map(order => ({
         label: order,
@@ -71,7 +71,7 @@ const PendingForBill = () => {
 
 
 
-    
+
     const formattedCustomer = customer.map(customer => ({
         label: customer.customerName,
         value: customer.customerName
@@ -264,6 +264,19 @@ const PendingForBill = () => {
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     {item.orders &&
+                        item?.orders.map((order, index) => {
+                            const formattedDate = new Date(order.updatedAt).toISOString().split("T")[0]
+                            const formattedTime = new Date(order.updatedAt).toTimeString().slice(0, 5);
+                            return (
+                                <p key={index} className="text-gray-900 whitespace-nowrap">
+
+                                    {formattedDate},  {  formattedTime}
+                                </p>
+                            )
+                        })}
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    {item.orders &&
                         item?.orders.map((order, index) => (
                             <p key={index} className="text-gray-900 whitespace-nowrap">
                                 {order.productId}
@@ -275,6 +288,22 @@ const PendingForBill = () => {
                         item?.orders.map((order, index) => (
                             <p key={index} className="text-gray-900 whitespace-nowrap">
                                 {order.orderNo}
+                            </p>
+                        ))}
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    {item.orders &&
+                        item?.orders.map((order, index) => (
+                            <p key={index} className="text-gray-900 whitespace-nowrap">
+                                {order.totalCost}
+                            </p>
+                        ))}
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    {item.orders &&
+                        item?.orders.map((order, index) => (
+                            <p key={index} className="text-gray-900 whitespace-nowrap">
+                                {order.receivedQty}
                             </p>
                         ))}
                 </td>
@@ -294,9 +323,9 @@ const PendingForBill = () => {
                             </p>
                         ))}
                 </td>
-                
 
-               
+
+
 
 
 
@@ -352,7 +381,7 @@ const PendingForBill = () => {
                         <Formik
                             initialValues={{
                                 orderNo: '',
-                               
+
                                 supplierName: "",
                                 ProductId: ""
 
@@ -434,7 +463,7 @@ const PendingForBill = () => {
                                             />
 
                                         </div>
-                                      
+
 
                                     </div>
 
@@ -460,8 +489,11 @@ const PendingForBill = () => {
                                     <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Suppliers </th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date </th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Prod Id</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">total Cost </th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Recieved Quantity </th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Total Bill Amount </th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Bill Status</th>
                                         {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}

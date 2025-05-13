@@ -256,6 +256,8 @@ export const VIEW_APPROVED_ORDERS = `${BASE_URL}/order/searchApproved`;
 export const VIEW_SEARCHBILL = `${BASE_URL}/order/searchBillStatus`; 
 
 export const VIEW_PROFORMA = `${BASE_URL}/order/searchOrderProforma`; 
+export const VIEW_PROFORMABYID= `${BASE_URL}/order/getOrderProforma`; 
+
 
 export const VIEW_CANCELLED_ORDERS = `${BASE_URL}/order/searchCancel`; 
 export const VIEW_REPORT = `${BASE_URL}/report/search`; 
