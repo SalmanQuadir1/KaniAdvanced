@@ -89,6 +89,9 @@ import FinanceReportByDate from './components/Reports/FinanceReportByDate.jsx';
 
 import ViewPerforma from './components/Order/ViewPerforma';
 
+import DownloadPerformaws from './components/Order/DownloadPerformaws';
+
+import DownloadPerformare from './components/Order/DownloadPerformare';
 
 import ViewOrder from './components/Order/ViewOrder.jsx';
 
@@ -429,6 +432,24 @@ function App() {
               <>
                 <PageTitle title="View Proforma" />
                 <ViewPerforma />
+              </>
+            }
+          />
+           <Route
+            path="/Order/orderPerformaws/:id"
+            element={
+              <>
+                <PageTitle title="View Proforma" />
+                <DownloadPerformaws />
+              </>
+            }
+          />
+            <Route
+            path="/Order/orderPerformare/:id"
+            element={
+              <>
+                <PageTitle title="View Proforma" />
+                <DownloadPerformare />
               </>
             }
           />

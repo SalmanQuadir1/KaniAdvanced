@@ -7,7 +7,9 @@ import DarkModeSwitcher from './DarkModeSwitcher';
 import { FaHome } from "react-icons/fa";
 import { useSelector, useDispatch } from 'react-redux';
 import { setAppMode } from '../../redux/Slice/AppModeSlice';
+import { TbSwitch } from "react-icons/tb";
 import { useState } from 'react';
+import { toast } from 'react-toastify';
 
 const Header = (props) => {
   const appMode = useSelector((state) => state?.persisted?.appMode);
@@ -18,6 +20,8 @@ const Header = (props) => {
 
   const handleModeChange = (newMode) => {
     dispatch(setAppMode(newMode));
+    toast.success(`Welcome To ${newMode.charAt(0).toUpperCase() + newMode.slice(1)}`);
+
     setShowModeDropdown(false);
     // You might want to navigate to a specific route or refresh data here
     // navigate('/home');
@@ -85,12 +89,12 @@ const Header = (props) => {
           </form>
         </div>
 
-        <div className="flex items-center gap-3 2xsm:gap-7">
-          <ul className="flex items-center gap-2 2xsm:gap-4">
+        <div className="flex items-center gap-1 2xsm:gap-5">
+          <ul className="flex items-center gap-1 2xsm:gap-3">
             <DarkModeSwitcher />
           </ul>
           <ul>
-            <FaHome className='cursor-pointer' size={30} onClick={() => navigate("/home")}/>
+            <FaHome className='cursor-pointer p-2 bg-slate-500 text-white rounded-full' size={35} onClick={() => navigate("/home")}/>
           </ul>
           
           {/* Mode Switcher */}
@@ -99,11 +103,11 @@ const Header = (props) => {
               onClick={() => setShowModeDropdown(!showModeDropdown)}
               className={`capitalize rounded-3xl p-2 ${
                 mode === 'production' 
-                  ? 'bg-red-500 hover:bg-red-600' 
+                  ? 'bg-slate-500 hover:bg-red-600' 
                   : 'bg-yellow-500 hover:bg-yellow-600'
               } text-white`}
             >
-              {mode}
+              <TbSwitch />
             </button>
             
             {showModeDropdown && (

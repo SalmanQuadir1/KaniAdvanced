@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customStyles as createCustomStyles } from '../../Constants/utils';
 import { MdCreateNewFolder } from 'react-icons/md';
-
+import { HiViewfinderCircle } from "react-icons/hi2";
 
 
 
@@ -298,8 +298,8 @@ const ViewOrderApproved = () => {
 
 
 
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="flex text-gray-900 whitespace-no-wrap">
+                <td className="px-5 py-5 border-b border-gray-200 text-sm flex">
+                    <p className=" text-gray-900 whitespace-no-wrap">
                         {/* Check if the order proforma is not created */}
                         {item.isOrderProformaCreated === false ? (
                             // Check if the orderType is "WSClients" or "RetailClients"
@@ -331,6 +331,45 @@ const ViewOrderApproved = () => {
                                     }
                                 }}
                                 title="Edit Order"
+                            />
+                        )}
+                    </p>
+
+
+
+                    <p className=" text-gray-900 whitespace-no-wrap">
+                        {/* Check if the order proforma is not created */}
+                        {item.isOrderProformaCreated === false ? (
+                            null
+                            // Check if the orderType is "WSClients" or "RetailClients"
+                            // item.orderTypeName === "WSClients" ? (
+                            //     <MdCreateNewFolder
+                            //         size={17}
+                            //         className="text-teal-500 hover:text-teal-700 mx-2"
+                            //         onClick={() => navigate(`/Order/generateProforma/${item?.id}`)}
+                            //         title="Create Proforma"
+                            //     />
+                            // ) : item.orderTypeName === "RetailClients" ? (
+                            //     <MdCreateNewFolder
+                            //         size={17}
+                            //         className="text-teal-500 hover:text-teal-700 mx-2"
+                            //         onClick={() => navigate(`/Order/generateRetailProforma/${item?.id}`)}
+                            //         title="Create Proforma"
+                            //     />
+                            // ) : null
+                        ) : (
+                            // If proforma is created, show the Edit icon based on orderType
+                            <HiViewfinderCircle
+                                size={17}
+                                className="text-teal-500 hover:text-teal-700 mx-2"
+                                onClick={() => {
+                                    if (item.orderTypeName === "WSClients") {
+                                        navigate(`/Order/orderPerformaws/${item?.id}`);
+                                    } else if (item.orderTypeName === "RetailClients") {
+                                        navigate(`/Order/orderPerformare/${item?.id}`);
+                                    }
+                                }}
+                                title="View Pdf"
                             />
                         )}
                     </p>
