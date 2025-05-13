@@ -42,7 +42,6 @@ const DownloadPerformaws = () => {
         if (proforma) {
             const hasGST = proforma.proformaProduct.some(item => item.gstTax > 0);
             if (!hasGST) {
-                // Hide GST-related elements
                 const gstElements = document.querySelectorAll('.gsttab');
                 gstElements.forEach(el => el.style.display = 'none');
                 document.getElementById('gstTaxt').style.display = 'none';
@@ -61,63 +60,96 @@ const DownloadPerformaws = () => {
         return date.toISOString().split('T')[0];
     };
 
-    // Custom CSS styles
+    // Enhanced CSS styles with smaller fonts and modern styling
     const styles = {
+        container: {
+            fontFamily: "'Helvetica Neue', Arial, sans-serif",
+            fontSize: '12px',
+            lineHeight: '1.4',
+            color: '#333'
+        },
         table: {
-            border: '1px solid #dee2e6',
-            borderCollapse: 'collapse'
+            border: '1px solid #e0e0e0',
+            borderCollapse: 'collapse',
+            fontSize: '11px'
         },
         th: {
-            backgroundColor: '#f8f9fa',
-            border: '1px solid #dee2e6',
-            padding: '8px',
-            textAlign: 'left'
+            backgroundColor: '#f5f5f5',
+            border: '1px solid #e0e0e0',
+            padding: '6px 8px',
+            textAlign: 'left',
+            fontWeight: '600',
+            color: '#444'
         },
         td: {
-            border: '1px solid #dee2e6',
-            padding: '8px'
+            border: '1px solid #e0e0e0',
+            padding: '6px 8px',
+            verticalAlign: 'middle'
         },
         companyHeader: {
-            color: '#343a40',
-            marginBottom: '0.5rem'
+            color: '#333',
+            marginBottom: '0.3rem',
+            fontSize: '11px',
+            fontWeight: '500'
         },
         invoiceHeader: {
-            color: '#495057',
-            fontWeight: 'bold'
+            color: '#2c3e50',
+            fontWeight: '600',
+            fontSize: '14px',
+            letterSpacing: '0.5px',
+            marginTop: '15px'
         },
         totalRow: {
             backgroundColor: '#f8f9fa',
-            fontWeight: 'bold'
+            fontWeight: '600'
         },
         productImage: {
-            width: '100px',
-            height: '90px',
-            objectFit: 'cover'
+            width: '80px',
+            height: '70px',
+            objectFit: 'cover',
+            borderRadius: '2px'
+        },
+        logo: {
+            width: '220px',
+            height: '25px',
+            filter: 'contrast(1.2)'
+        },
+        sectionTitle: {
+            fontSize: '11px',
+            fontWeight: '600',
+            color: '#2c3e50',
+            marginBottom: '4px'
+        },
+        boldText: {
+            fontWeight: '600'
+        },
+        subtleText: {
+            color: '#666'
         }
     };
 
     return (
-        <Container className="mt-3" style={{ fontFamily: 'Arial, sans-serif' }}>
+        <Container className="mt-2" style={styles.container}>
             <Row>
-                <Col md={4} className="mt-4">
+                <Col md={4} className="mt-3">
                     <h6 style={styles.companyHeader}><b>Kashmir Loom Company Pvt Ltd</b></h6>
                     <h6 style={styles.companyHeader}>C65, Basement Nizamuddin East,</h6>
                     <h6 style={styles.companyHeader}>New Delhi-110013, India</h6>
-                    <h6 style={styles.companyHeader}><b>GSTIN</b>:- <strong>07AABCK4463H1ZK</strong></h6>
-                    <h6 style={styles.companyHeader}><b>Email</b>:-&nbsp;<a href="mailto:admin@kashmirloom.com" style={{ color: 'black', textDecoration: 'none' }}><strong>admin@kashmirloom.com</strong></a></h6>
-                    <h6 style={styles.companyHeader}><b>Tel</b>:- &nbsp;&nbsp;&nbsp; <strong>+91 1146502902</strong></h6>
+                    <h6 style={styles.companyHeader}><b>GSTIN</b>: <span style={styles.boldText}>07AABCK4463H1ZK</span></h6>
+                    <h6 style={styles.companyHeader}><b>Email</b>: <a href="mailto:admin@kashmirloom.com" style={{ color: '#333', textDecoration: 'none' }}><span style={styles.boldText}>admin@kashmirloom.com</span></a></h6>
+                    <h6 style={styles.companyHeader}><b>Tel</b>: <span style={styles.boldText}>+91 1146502902</span></h6>
                 </Col>
 
-                <Col md={4} className="mt-4 text-center">
+                <Col md={4} className="mt-3 text-center">
                     <img
-                        style={{ width: '280px', height: '30px' }}
+                        style={styles.logo}
                         src="//cdn.shopify.com/s/files/1/2429/1673/files/kashmir_loom_logo_CTP_4e3ef626-01bf-4fe0-8ba1-ca2d0f03a257_x20.png?v=1613708436"
                         alt="Kashmir Loom"
                     />
-                    <h5 className="mt-4" style={styles.invoiceHeader}>PRO FORMA INVOICE</h5>
+                    <h5 className="mt-3" style={styles.invoiceHeader}>PRO FORMA INVOICE</h5>
                 </Col>
 
-                <Col md={4} className="mt-4">
+                <Col md={12} className="mt-3">
                     <Table bordered style={styles.table}>
                         <thead>
                             <tr>
@@ -135,7 +167,7 @@ const DownloadPerformaws = () => {
                 </Col>
             </Row>
 
-            <Row className="mt-3">
+            <Row className="mt-2">
                 <Col md={12} className="table-responsive">
                     <Table bordered style={styles.table}>
                         <thead>
@@ -150,22 +182,22 @@ const DownloadPerformaws = () => {
                                 <td style={styles.td}>{proforma.order.customer.shippingAddress}</td>
                             </tr>
                             <tr>
-                                <td style={styles.td}><b>Customer Purchase Order No:</b>&nbsp;&nbsp;{proforma.order.purchaseOrderNo}</td>
-                                <td style={styles.td}><b>PO Date:</b>&nbsp;&nbsp;{proforma.order.poDate}</td>
+                                <td style={styles.td}><span style={styles.boldText}>Customer Purchase Order No:</span> {proforma.order.purchaseOrderNo}</td>
+                                <td style={styles.td}><span style={styles.boldText}>PO Date:</span> {proforma.order.poDate}</td>
                             </tr>
                             <tr id="cgst">
-                                <td style={styles.td} colSpan="2"><b>CLIENT GST NO.</b>&nbsp;&nbsp;{proforma.order.customer.gstin}</td>
+                                <td style={styles.td} colSpan="2"><span style={styles.boldText}>CLIENT GST NO.</span> {proforma.order.customer.gstin}</td>
                             </tr>
                             <tr>
-                                <td style={styles.td}><b>EMAIL:</b>&nbsp;{proforma.order.customer.emailId}</td>
-                                <td style={styles.td}><b>EMAIL:</b>&nbsp;{proforma.order.customer.emailId}</td>
+                                <td style={styles.td}><span style={styles.boldText}>EMAIL:</span> {proforma.order.customer.emailId}</td>
+                                <td style={styles.td}><span style={styles.boldText}>EMAIL:</span> {proforma.order.customer.emailId}</td>
                             </tr>
                         </tbody>
                     </Table>
                 </Col>
             </Row>
 
-            <Row className="mt-3">
+            <Row className="mt-2">
                 <Col md={12} className="table-responsive">
                     <Table bordered style={styles.table}>
                         <thead>
@@ -192,7 +224,7 @@ const DownloadPerformaws = () => {
                 </Col>
             </Row>
 
-            <Row className="mt-3">
+            <Row className="mt-2">
                 <Col md={12} className="table-responsive">
                     <Table bordered style={styles.table}>
                         <thead>
@@ -236,35 +268,35 @@ const DownloadPerformaws = () => {
                             </tr>
 
                             <tr>
-                                <td style={styles.td} colSpan="4" className="text-right"><b>GST</b></td>
+                                <td style={styles.td} colSpan="4" className="text-right"><span style={styles.boldText}>GST</span></td>
                                 <td style={styles.td} className="gsttab"></td>
                                 <td style={styles.td}></td>
                                 <td style={styles.td}>{proforma.gst}</td>
                             </tr>
 
                             <tr>
-                                <td style={styles.td} colSpan="4" className="text-right"><b>Courier Charges</b></td>
+                                <td style={styles.td} colSpan="4" className="text-right"><span style={styles.boldText}>Courier Charges</span></td>
                                 <td style={styles.td} className="gsttab"></td>
                                 <td style={styles.td}></td>
                                 <td style={styles.td}>{proforma.courierCharges}</td>
                             </tr>
 
                             <tr style={styles.totalRow}>
-                                <td style={styles.td} colSpan="4" className="text-right"><b>Invoice Total</b></td>
+                                <td style={styles.td} colSpan="4" className="text-right"><span style={styles.boldText}>Invoice Total</span></td>
                                 <td style={styles.td} className="gsttab"></td>
                                 <td style={styles.td}></td>
                                 <td style={styles.td}>{proforma.total}</td>
                             </tr>
 
                             <tr>
-                                <td style={styles.td} colSpan="4" className="text-right"><b>Advance Received</b></td>
+                                <td style={styles.td} colSpan="4" className="text-right"><span style={styles.boldText}>Advance Received</span></td>
                                 <td style={styles.td} className="gsttab"></td>
                                 <td style={styles.td}></td>
                                 <td style={styles.td}>{proforma.advanceReceived}</td>
                             </tr>
 
                             <tr style={styles.totalRow}>
-                                <td style={styles.td} colSpan="4" className="text-right"><b>Balance Payable</b></td>
+                                <td style={styles.td} colSpan="4" className="text-right"><span style={styles.boldText}>Balance Payable</span></td>
                                 <td style={styles.td} className="gsttab"></td>
                                 <td style={styles.td}></td>
                                 <td style={styles.td}>{proforma.outstandingBalance}&nbsp;{proforma.currency}</td>
@@ -272,51 +304,53 @@ const DownloadPerformaws = () => {
 
                             <tr>
                                 <td style={styles.td} colSpan="7">
-                                    <h5>CLIENT INSTRUCTIONS:</h5>
-                                    <p>{proforma.order.clientInstruction}</p>
+                                    <h6 style={styles.sectionTitle}>CLIENT INSTRUCTIONS:</h6>
+                                    <p style={{ fontSize: '11px', marginBottom: '0' }}>{proforma.order.clientInstruction}</p>
                                 </td>
                             </tr>
 
                             <tr>
                                 <td style={styles.td} colSpan="7">
-                                    <Table borderless>
+                                    <Table borderless style={{ marginBottom: '0' }}>
                                         <thead>
                                             <tr>
-                                                <th style={styles.th} className="text-uppercase text-center" colSpan="6">Shipping & Delivery instructions if any</th>
-                                                <th style={styles.th} className="text-uppercase" colSpan="6">packing instructions if any</th>
+                                                <th style={{ ...styles.th, fontSize: '10px' }} className="text-uppercase text-center" colSpan="6">Shipping & Delivery instructions if any</th>
+                                                <th style={{ ...styles.th, fontSize: '10px' }} className="text-uppercase" colSpan="6">packing instructions if any</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td style={styles.td} className="text-uppercase text-right" colSpan="1"><b>Shipping Account:</b></td>
+                                                <td style={styles.td} className="text-uppercase text-right" colSpan="1"><span style={styles.boldText}>Shipping Account:</span></td>
                                                 <td style={styles.td} colSpan="5">{proforma.shippingAccount}</td>
-                                                <td style={styles.td} className="text-uppercase" colSpan="1"><b>Labels:</b></td>
+                                                <td style={styles.td} className="text-uppercase" colSpan="1"><span style={styles.boldText}>Labels:</span></td>
                                                 <td style={styles.td} colSpan="5">{proforma.order.tagsAndLabels}</td>
                                             </tr>
 
                                             <tr>
-                                                <td style={styles.td} className="text-uppercase text-right" colSpan="1"><b>Service:</b></td>
+                                                <td style={styles.td} className="text-uppercase text-right" colSpan="1"><span style={styles.boldText}>Service:</span></td>
                                                 <td style={styles.td} colSpan="5">{proforma.service}</td>
-                                                <td style={styles.td} className="text-uppercase" colSpan="1"><b>Tags:</b></td>
+                                                <td style={styles.td} className="text-uppercase" colSpan="1"><span style={styles.boldText}>Tags:</span></td>
                                                 <td style={styles.td} colSpan="5">{proforma.tags}</td>
                                             </tr>
 
                                             <tr>
-                                                <td style={styles.td} className="text-uppercase text-right" colSpan="1"><b>Mode of Shipment:</b></td>
+                                                <td style={styles.td} className="text-uppercase text-right" colSpan="1"><span style={styles.boldText}>Mode of Shipment:</span></td>
                                                 <td style={styles.td} colSpan="5">{proforma.modeOfShipment}</td>
-                                                <td style={styles.td} className="text-uppercase" colSpan="1"><b>Logo:</b></td>
+                                                <td style={styles.td} className="text-uppercase" colSpan="1"><span style={styles.boldText}>Logo:</span></td>
                                                 <td style={styles.td} colSpan="5">{proforma.logo}</td>
                                             </tr>
 
                                             <tr>
                                                 <td style={styles.td} className="text-uppercase" colSpan="6"></td>
-                                                <td style={styles.td} className="text-uppercase" colSpan="1"><b>Cloth Bag:</b></td>
+                                                <td style={styles.td} className="text-uppercase" colSpan="1"><span style={styles.boldText}>Cloth Bag:</span></td>
                                                 <td style={styles.td} colSpan="5">{proforma.clothBags}</td>
                                             </tr>
 
                                             <tr>
                                                 <td style={styles.td} colSpan="7">
-                                                    <p><strong>All our products are hand made by artisans,slight variations are the nature of the craft.These enhance the individuality of each product.</strong></p>
+                                                    <p style={{ fontSize: '10px', fontStyle: 'italic', marginBottom: '0' }}>
+                                                        <strong>All our products are hand made by artisans, slight variations are the nature of the craft. These enhance the individuality of each product.</strong>
+                                                    </p>
                                                 </td>
                                             </tr>
                                         </tbody>
