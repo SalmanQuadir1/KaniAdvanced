@@ -912,11 +912,20 @@ const AddProduct = () => {
 
                                                     <h1 className='text-center text-xl mt-[50px] mb-[50px]'>Pricing</h1>
                                                     <div className="mb-4.5 flex flex-wrap gap-6">
-                                                        <div className="flex-2 min-w-[250px]">
+                                                        {/* <div className="flex-2 min-w-[250px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> Retail Mrp</label>
                                                             <Field
                                                                 name='retailMrp'
                                                                 type="number"
+                                                                placeholder="Enter Retail Mrp"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div> */}
+                                                        <div className="flex-2 min-w-[250px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white"> Retail Mrp</label>
+                                                            <Field
+                                                                name='retailMrp'
+                                                                type="text"
                                                                 placeholder="Enter Retail Mrp"
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                             />
