@@ -16,13 +16,13 @@ const ExcelUploadProduct = () => {
     const [selectedCategory, setSelectedCategory] = useState('');
     const categories = [
         { label: 'Contemporary Pashmina', value: 'contemporary', sampleFile: '/products/downloadCp' },
-        { label: 'Pashmina Embroidery', value: 'pashmina', sampleFile: '/samples/pashmina.xlsx' },
-        { label: 'Kani', value: 'Kani', sampleFile: '/products/downloadCp' },
-        { label: 'Wool Embroidery', value: 'woolemb', sampleFile: '/samples/pashmina.xlsx' },
-        { label: 'Paper Machie', value: 'papermachie', sampleFile: '/products/downloadCp' },
+        { label: 'Pashmina Embroidery', value: 'Pashmina EMb', sampleFile: '/samples/Pashmina EMb.xlsx' },
+        { label: 'Kani', value: 'kani', sampleFile: '/products/downloadCp' },
+        { label: 'Wool Embroidery', value: 'wool emb', sampleFile: '/samples/pashmina.xlsx' },
+        { label: 'Paper Machie', value: 'Paper Machie', sampleFile: '/products/downloadCp' },
         { label: 'Cotton', value: 'cotton', sampleFile: '/samples/pashmina.xlsx' },
-        { label: 'Contemporary Saree', value: 'saree', sampleFile: '/samples/kani.xlsx' },
-        { label: 'Contemporary Wool', value: 'contempwool', sampleFile: '/samples/cotton.xlsx' },
+        { label: 'Contemporary Saree', value: 'contemporary saree', sampleFile: '/samples/kani.xlsx' },
+        { label: 'Contemporary Wool', value: 'contemporary wool', sampleFile: '/samples/cotton.xlsx' },
     ];
 
     const handleSubmit = async (values) => {

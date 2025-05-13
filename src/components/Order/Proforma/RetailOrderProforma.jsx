@@ -451,7 +451,7 @@ const RetailOrderProforma = () => {
                                 order?.orderProducts?.forEach((product, index) => {
                                     // Calculate the new rate: rate / currentrate
                                     const newRate = product?.products?.retailMrp / values.currentrate || 0;
-
+console.log(newRate,"umershah");
                                     // Update the rate for the product
                                     setFieldValue(`orderProducts[${index}].rate`, newRate);
                                 });
@@ -511,7 +511,7 @@ const RetailOrderProforma = () => {
                             setFieldValue('gst', gst);
                             setgst(gst)
                        
-                            console.log("GST Tax (Calculated):", gstTax);
+                            // console.log("GST Tax (Calculated):", gstTax);
                             console.log("Total Value (Calculated):", totalValue);
                         };
 

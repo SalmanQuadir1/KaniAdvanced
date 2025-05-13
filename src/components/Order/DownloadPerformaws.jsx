@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { Table, Container, Row, Col } from 'react-bootstrap';
 import { VIEW_PROFORMABYID } from '../../Constants/utils';
 import { useSelector } from 'react-redux';
-
+import Logo from '/img/logo.png';
 const DownloadPerformaws = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
@@ -110,8 +110,8 @@ const DownloadPerformaws = () => {
             borderRadius: '2px'
         },
         logo: {
-            width: '220px',
-            height: '25px',
+            width: '100px',
+            height: '55px',
             filter: 'contrast(1.2)'
         },
         sectionTitle: {
@@ -127,6 +127,7 @@ const DownloadPerformaws = () => {
             color: '#666'
         }
     };
+    console.log(proforma,"japan");
 
     return (
         <Container className="mt-2" style={styles.container}>
@@ -140,12 +141,9 @@ const DownloadPerformaws = () => {
                     <h6 style={styles.companyHeader}><b>Tel</b>: <span style={styles.boldText}>+91 1146502902</span></h6>
                 </Col>
 
-                <Col md={4} className="mt-3 text-center">
-                    <img
-                        style={styles.logo}
-                        src="//cdn.shopify.com/s/files/1/2429/1673/files/kashmir_loom_logo_CTP_4e3ef626-01bf-4fe0-8ba1-ca2d0f03a257_x20.png?v=1613708436"
-                        alt="Kashmir Loom"
-                    />
+                <Col md={4} className="mt-1 text-center">
+                
+                    <img   style={styles.logo}src={Logo}  alt="Logo" />
                     <h5 className="mt-3" style={styles.invoiceHeader}>PRO FORMA INVOICE</h5>
                 </Col>
 
@@ -178,7 +176,7 @@ const DownloadPerformaws = () => {
                         </thead>
                         <tbody>
                             <tr>
-                                <td style={styles.td}>{proforma.order.customer.billingTo}</td>
+                                <td style={styles.td}>{proforma.order.customer.billTo}</td>
                                 <td style={styles.td}>{proforma.order.customer.shippingAddress}</td>
                             </tr>
                             <tr>
@@ -189,8 +187,8 @@ const DownloadPerformaws = () => {
                                 <td style={styles.td} colSpan="2"><span style={styles.boldText}>CLIENT GST NO.</span> {proforma.order.customer.gstin}</td>
                             </tr>
                             <tr>
-                                <td style={styles.td}><span style={styles.boldText}>EMAIL:</span> {proforma.order.customer.emailId}</td>
-                                <td style={styles.td}><span style={styles.boldText}>EMAIL:</span> {proforma.order.customer.emailId}</td>
+                                <td style={styles.td}><span style={styles.boldText}>Bill To EMAIL:</span> {proforma.order.customer.emailId}</td>
+                                <td style={styles.td}><span style={styles.boldText}>Ship To EMAIL:</span> {proforma.order.customer.emailId}</td>
                             </tr>
                         </tbody>
                     </Table>
