@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { GET_LOCATION_URL, DELETE_LOCATION_URL, UPDATE_LOCATION_URL, ADD_LOCATION_URL } from "../Constants/utils";
+import { GET_LOCATION_URL, DELETE_LOCATION_URL, UPDATE_LOCATION_URL, ADD_LOCATION_URL, VIEW_ALL_LOCATIONS } from "../Constants/utils";
 
 const useLocation = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const [location, setLocation] = useState([]);
+    const [Locations, setLocations] = useState([])
     const [edit, setEdit] = useState(false);
     const [currentLocation, setCurrentLocation] = useState({
         address: "",
@@ -51,6 +52,26 @@ const useLocation = () => {
         } catch (error) {
             console.error(error);
             toast.error("Failed to fetch Location");
+        }
+    };
+    const getAllLocation = async () => {
+        console.log("iam here");
+        try {
+            const response = await fetch(`${VIEW_ALL_LOCATIONS}`, {
+                method: "GET",
+                headers: {
+                    // "Content-Type": "multipart/form-data",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data, "pr datatata")
+
+            setLocations(data);
+
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch Product");
         }
     };
 
@@ -146,6 +167,8 @@ const useLocation = () => {
         handleUpdate,
         handleSubmit,
         handlePageChange,
+        getAllLocation,
+        Locations
     };
 };
 

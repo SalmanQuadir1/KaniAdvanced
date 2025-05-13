@@ -269,7 +269,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           }}
                         >
                           <FaBook size={24} />
-                          Supplier Ledger
+                           Ledger
                           <svg
                             className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
                               }`}
@@ -316,7 +316,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                 (isActive && '!text-white')
                               }
                             >
-                              View Supplier Ledger
+                              View Ledger
                             </NavLink>
                           </li>
 
@@ -574,7 +574,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           }}
                         >
                           <FaBook size={24} />
-                          Supplier Ledger
+                          Ledger
                           <svg
                             className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
                               }`}
@@ -621,7 +621,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                 (isActive && '!text-white')
                               }
                             >
-                              View Supplier Ledger
+                              View Ledger
                             </NavLink>
                           </li>
 
