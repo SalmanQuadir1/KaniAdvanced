@@ -12,7 +12,7 @@ import FinancialReportDashboard from './pages/FinancialReportDashboard.jsx';
 import GeneralFinancialReportDashboard from './pages/GeneralFinancialReportDashboard.jsx';
 import Groups from './components/Accounts/Config/Groups.jsx';
 
-
+import CreateLedger from './components/Ledger/CreateLedger.jsx';
 import Material from './components/Material/Material.jsx';
 import AddProduct from './components/Products/AddProduct.jsx';
 import ViewProduct from './components/Products/ViewProduct.jsx';
@@ -149,6 +149,8 @@ import ViewOrderCreated from './components/Order/ViewOrderCreated.jsx';
 import ViewOrderApproved from './components/Order/ViewOrderApproved.jsx';
 
 import PendingForBill from './components/Order/PendingForBill.jsx';
+import UpdatePendingForBill from './components/Order/UpdatePendingForBill.jsx';
+
 
 
 import ViewChallan from './components/Order/ViewChallan.jsx';
@@ -291,7 +293,7 @@ function App() {
             path="/"
             element={
               <>
-                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_VERIFIER", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR", "ROLE_USER", "ROLE_QUALITYCONTROL","ROLE_FINANCE"]}></RoleBasedRoute>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_VERIFIER", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR", "ROLE_USER", "ROLE_QUALITYCONTROL", "ROLE_FINANCE"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <Home />
               </>
@@ -301,13 +303,13 @@ function App() {
             path="/home"
             element={
               <>
-                <RoleBasedRoute allowedRoles={["ROLE_ADMIN","ROLE_FINANCE", 'ROLE_VERIFIER', "ROLE_USER", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR", "ROLE_QUALITYCONTROL"]}></RoleBasedRoute>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_FINANCE", 'ROLE_VERIFIER', "ROLE_USER", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR", "ROLE_QUALITYCONTROL"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <Home />
               </>
             }
           />
-            <Route
+          <Route
             path="/configurator/groups"
             element={
               <>
@@ -435,7 +437,7 @@ function App() {
               </>
             }
           />
-           <Route
+          <Route
             path="/Order/orderPerformaws/:id"
             element={
               <>
@@ -444,7 +446,7 @@ function App() {
               </>
             }
           />
-            <Route
+          <Route
             path="/Order/orderPerformare/:id"
             element={
               <>
@@ -701,7 +703,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/godown/viewGodown"
             element={
               <>
@@ -785,13 +787,23 @@ function App() {
               </>
             }
           />
-
-<Route
+{/* Pending for bill */}
+          <Route
             path="/Recieved/pendingForBill"
             element={
               <>
                 <PageTitle title="View Order Created " />
                 <PendingForBill />
+              </>
+            }
+          />
+
+<Route
+            path="/Order/updatependingforbill/:id"
+            element={
+              <>
+                <PageTitle title="Update Pending For Bill " />
+                <UpdatePendingForBill />
               </>
             }
           />
@@ -1191,7 +1203,7 @@ function App() {
               </>
             }
           />
-           <Route
+          <Route
             path="/Supplier/Viewledger"
             element={
               <>
@@ -1200,6 +1212,16 @@ function App() {
               </>
             }
           />
+            <Route
+            path="/supplier/updateLedger/:id"
+            element={
+              <>
+                <PageTitle title="Size" />
+                <CreateLedger />
+              </>
+            }
+          />
+         
 
 
 
@@ -1486,7 +1508,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/stockJournal/ViewStockJournal"
             element={
               <>

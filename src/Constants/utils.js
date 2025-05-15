@@ -253,7 +253,22 @@ export const VIEW_ALLACCEPTED_ORDERS = `${BASE_URL}/order/searchAccepted`;
 export const VIEW_PARTIALLYAPPROVED_ORDERS = `${BASE_URL}/order/searchApprovedAndAccepted`;
 
 export const VIEW_APPROVED_ORDERS = `${BASE_URL}/order/searchApproved`; 
+
+//pending for bill
+
 export const VIEW_SEARCHBILL = `${BASE_URL}/order/searchBillStatus`; 
+
+export const VIEW_PENDINGFORBILLBYID = `${BASE_URL}/order/getBillStatus`; 
+
+//ledger
+
+
+
+
+export const UPDATE_Ledger_URL = `${BASE_URL}/ledger/getBillStatus`; 
+export const ADD_Ledger_URL = `${BASE_URL}/order/getBillStatus`; 
+export const DELETE_Ledger_URL = `${BASE_URL}/order/delete`; 
+export const GET_Ledger_URL = `${BASE_URL}/order/get`; 
 
 export const VIEW_PROFORMA = `${BASE_URL}/order/searchOrderProforma`; 
 export const VIEW_PROFORMABYID= `${BASE_URL}/order/getOrderProforma`; 

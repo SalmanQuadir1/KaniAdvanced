@@ -4,11 +4,14 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import MaterialPoModal from '../../hooks/MaterialPoModal';  // Import the modal component
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import Pagination from '../Pagination/Pagination';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useNavigation } from 'react-router-dom';
 import useSupplier from '../../hooks/useSupplier';
 import { ErrorMessage, Field } from 'formik';
+import { FaBook } from "react-icons/fa6";
 
 const ViewSupplier = () => {
+
+  const navigate= useNavigate()
   const { Supplier, getSupplier, handleDelete, pagination, handleUpdate, handlePageChange, GetSupplierById } = useSupplier();
   const [showModal, setShowModal] = useState(false);
   const [selectedMaterialPos, setSelectedMaterialPos] = useState([]);
@@ -60,6 +63,12 @@ console.log(filteredSupplier,"filteredddddddddddddd");
         <td className="px-5 py-5 border-b border-gray-200 text-sm">
           <p className="text-gray-900 whitespace-no-wrap"> {item.supplierCode}</p>
         </td>
+        <td className="px-5 py-5  border-b border-gray-200  text-sm">
+          <p className="flex text-gray-900 whitespace-no-wrap">
+            <FaBook size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={(e) => navigate(`/supplier/updateLedger/${item.id}`)} title='Update Ledger' />  
+           
+          </p>
+        </td>
 
         <td className="px-5 py-5  border-b border-gray-200  text-sm">
           <p className="flex text-gray-900 whitespace-no-wrap">
@@ -103,6 +112,7 @@ console.log(filteredSupplier,"filteredddddddddddddd");
                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Phone Number</th>
                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Address</th>
                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Supplier Code</th>
+                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Update Ledger</th>
                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Action</th>
                   </tr>
                 </thead>
