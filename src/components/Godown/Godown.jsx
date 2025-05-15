@@ -112,10 +112,14 @@ const Godown = () => {
   }, [])
 
   const handleSubmit = (values) => {
+    console.log(values,"prakash");
     const filters = {};
 
     if (values.productId !== null && values.productId !== '') {
       filters.productId = values.productId;
+    }
+    if (values.address !== null && values.address !== '') {
+      filters.address = values.address;
     }
 
     // Reset to page 1 when applying new filters

@@ -13,20 +13,50 @@ import * as Yup from 'yup';
 import { MdDelete } from "react-icons/md";
 import useorder from '../../hooks/useOrder';
 import useProduct from '../../hooks/useProduct';
-import { GET_INVENTORYLOCATION, GET_PRODUCTBYID_URL } from '../../Constants/utils';
+import { ADD_CUSTOMER_URL, GET_INVENTORYLOCATION, GET_PRODUCTBYID_URL } from '../../Constants/utils';
 import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import Modall from './Modal';
 import SupplierModal from './SupplierModal';
 import { FiTrash2 } from 'react-icons/fi';
 import { toast } from 'react-toastify';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { customStyles as createCustomStyles } from '../../Constants/utils';
+import Modalll from './Modallll';
+import { fetchCustomerGroup } from '../../redux/Slice/CustomerGroupSlice';
 const AddOrder = () => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const [supplierSelections, setSupplierSelections] = useState({});
   const { token } = currentUser;
   const [orderType, setOrderType] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
+  const [selectedCustomerGroup, setSelectedCustomerGroup] = useState(null);
+  const [newCustomerName, setNewCustomerName] = useState('');
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchCustomerGroup(token));
+  }, []);
+  //customer group 
+  const customerGroup = useSelector(
+    (state) => state?.nonPersisted?.customerGroup,
+  );
+
+  const [customerGroupList, setCustomerGroupList] = useState([]);
+  console.log("jamshedpur+++++++++++", customerGroupList);
+
+  useEffect(() => {
+    if (customerGroup.data) {
+      const formattedOptions = customerGroup.data.content.map((customer) => ({
+        value: customer?.id,
+        label: customer?.customerGroupName,
+        customerObject: customer,
+      }));
+      setCustomerGroupList(formattedOptions);
+    }
+  }, [customerGroup.data]);
+
   const [orderTypeOptions, setorderTypeOptions] = useState([])
   const [customerOptions, setcustomerOptions] = useState([])
   const [prodIdOptions, setprodIdOptions] = useState([])
@@ -60,23 +90,23 @@ const AddOrder = () => {
 
     getorderType();
     getCustomer();
-   
+
   }, [])
 
 
 
- useEffect(() => {
-        const fetchData = async () => {
-            setisLoading(true)
-            // Set loading to true when data starts loading
-            await getprodId();
+  useEffect(() => {
+    const fetchData = async () => {
+      setisLoading(true)
+      // Set loading to true when data starts loading
+      await getprodId();
 
-            setisLoading(false)
-            // Set loading to false once data is loaded
-        };
+      setisLoading(false)
+      // Set loading to false once data is loaded
+    };
 
-        fetchData();
-    }, []);
+    fetchData();
+  }, []);
 
 
 
@@ -168,7 +198,7 @@ const AddOrder = () => {
 
 
   const [prodIdModal, setprodIdModal] = useState([])
-
+  const [customers, setCustomers] = useState([]); // Add this state
 
   useEffect(() => {
     if (orderTypee) {
@@ -200,7 +230,7 @@ const AddOrder = () => {
       }));
       setcustomerOptions(formattedCustomerOptions);
     }
-  }, [orderTypee,productId]);
+  }, [orderTypee, productId,customers]);
 
 
 
@@ -307,7 +337,7 @@ const AddOrder = () => {
       //     getInventory()
       // }, [])
 
-
+    
 
 
       ;
@@ -359,6 +389,72 @@ const AddOrder = () => {
   const [isPopulated, setIsPopulated] = useState(false);
 
   console.log(selectedSuppliers, "umerumer");
+
+  const handleAddCustomer = async (name, group) => {
+    const values = {
+      customerName: name,
+      customerGroup: { id: group?.id }
+    };
+  
+    try {
+      const response = await fetch(ADD_CUSTOMER_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(values),
+      });
+  
+      const data = await response.json();
+      
+      if (response.ok) {
+        toast.success('Customer added successfully');
+        
+        // Simply refetch all customers after successful addition
+        await getCustomer()
+        
+        setIsCustomerModalOpen(false);
+        setNewCustomerName('');
+      } else {
+        toast.error(data.errorMessage || 'Failed to add customer');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('An error occurred');
+    }
+  };
+  useEffect(() => {
+    if (orderTypee) {
+      const formattedOptions = orderTypee.map(order => ({
+        value: order.id,
+        label: order?.orderTypeName,
+        orderTypeObject: order,
+        orderTypeId: { id: order.id }
+      }));
+      setorderTypeOptions(formattedOptions);
+    }
+    console.log(productId, "japaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
+    if (productId) {
+      const formattedProdIdOptions = productId?.map(prodId => ({
+        value: prodId.id,
+        label: prodId?.productId,
+        prodIdObject: prodId,
+        prodId: prodId.id
+      }));
+      setprodIdOptions(formattedProdIdOptions);
+    }
+    if (customer) {
+      const formattedCustomerOptions = customer.map(customer => ({
+        value: customer.id,
+        label: customer?.customerName,
+        customerObject: customer,
+        customer: customer.id
+      }));
+      setcustomerOptions(formattedCustomerOptions);
+    }
+  }, [orderTypee, productId,customers,customer]);
 
   return (
     <DefaultLayout>
@@ -423,7 +519,7 @@ const AddOrder = () => {
                   expectedDate: values?.orderProducts[index]?.expectedDate || "",
                   value: values?.orderProducts[index]?.value || "", // Add any other fields you need here
                   units: item?.units || "",
-                 
+
                 }));
 
                 console.log(updatedOrderProducts, "Updated Order Products");
@@ -548,23 +644,36 @@ const AddOrder = () => {
                           (selectedOrderType.label === "RetailClients" || selectedOrderType.label === "WSClients") && (
 
                             <div >
-                              <div className="flex-1 min-w-[300px] mt-4">
-                                <label className="mb-2.5 block text-black dark:text-white">Customer</label>
-                                <ReactSelect
-                                  name="Customer"
-                                  value={customerOptions?.find(option => option.value === values.customer?.id) || null}
-                                  onChange={(option) => setFieldValue('customer', option ? { id: option.value } : null)}
-                                  options={customerOptions}
-                                  styles={customStyles}
-                                  className="bg-white dark:bg-form-Field"
-                                  classNamePrefix="react-select"
-                                  placeholder="Select Customer"
-                                />
-
-
-
-                                <ErrorMessage name="Customer" component="div" className="text-red-600 text-sm" />
+                              <div className="flex items-start gap-4">
+                                <div className="flex-1 min-w-[300px] mt-4">
+                                  <label className="mb-2.5 block text-black dark:text-white">Customer</label>
+                                  <div className="flex gap-2">
+                                    <ReactSelect
+                                      name="Customer"
+                                      value={customerOptions?.find(option => option.value === values.customer?.id) || null}
+                                      onChange={(option) => setFieldValue('customer', option ? { id: option.value } : null)}
+                                      options={customerOptions}
+                                      styles={customStyles}
+                                      className="flex-1 bg-white dark:bg-form-Field"
+                                      classNamePrefix="react-select"
+                                      placeholder="Select Customer"
+                                    />
+                                   
+                                  </div>
+                                  <ErrorMessage name="Customer" component="div" className="text-red-600 text-sm" />
+                                </div>
+                                <div className="flex-1 min-w-[300px] mt-4">
+                                  <button
+                                    type="button"
+                                    onClick={() => setIsCustomerModalOpen(true)}
+                                    className="mt-10 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                                  >
+                                    Add New Customer
+                                  </button>
+                                </div>
                               </div>
+
+
                               <div className="flex flex-wrap gap-4">
                                 <div className="flex-1 min-w-[200px] mt-7">
                                   <label className="mb-2.5 block text-black dark:text-white">Customer Purchase Order No</label>
@@ -1285,6 +1394,75 @@ const AddOrder = () => {
           height="80%"
           style={{ marginLeft: '70px', marginRight: '0' }}  // Add this line
         />
+
+
+
+
+        {isCustomerModalOpen && (
+          <Modalll
+            isOpen={isCustomerModalOpen}
+            onRequestClose={() => setIsCustomerModalOpen(false)}
+            className="modal mr-[200px] mt-[80px]"
+            overlayClassName="modal-overlay"
+            width="500px"
+          >
+            <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+              <h3 className="font-medium text-slate-500 text-center text-xl dark:text-black">
+                Add New Customer
+              </h3>
+            </div>
+            <div className="p-4">
+              <div className="mb-4">
+                <label className="block text-black dark:text-white mb-2">Customer Name</label>
+                <input
+                  type="text"
+                  value={newCustomerName}
+                  onChange={(e) => setNewCustomerName(e.target.value)}
+                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                  placeholder="Enter customer name"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="mb-2.5 block text-black dark:text-white">Customer Group</label>
+                <ReactSelect
+                  name="customerGroup"
+                  value={customerGroupList?.find(option => option.value === selectedCustomerGroup?.id) || null}
+                  onChange={(option) => {
+                    setSelectedCustomerGroup(option ? option.customerObject : null);
+                  }}
+                  options={customerGroupList}
+                  styles={customStyles}
+                  className="bg-white dark:bg-form-input"
+                  classNamePrefix="react-select"
+                  placeholder="Select customer group"
+                  isClearable
+                />
+              </div>
+
+              {/* You can add more customer fields here as needed */}
+
+              <div className="flex justify-end gap-2 mt-6">
+                <button
+                  type="button"
+                  onClick={() => setIsCustomerModalOpen(false)}
+                  className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleAddCustomer(newCustomerName, selectedCustomerGroup)}
+                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                  disabled={!newCustomerName.trim()}
+                >
+                  Add Customer
+                </button>
+              </div>
+            </div>
+          </Modalll>
+        )}
+
 
 
       </div>
