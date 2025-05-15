@@ -13,9 +13,12 @@ import GeneralFinancialReportDashboard from './pages/GeneralFinancialReportDashb
 import Groups from './components/Accounts/Config/Groups.jsx';
 
 import CreateLedger from './components/Ledger/CreateLedger.jsx';
+import UpdateLedger from './components/Ledger/UpdateLedger.jsx';
+
 import Material from './components/Material/Material.jsx';
 import AddProduct from './components/Products/AddProduct.jsx';
 import ViewProduct from './components/Products/ViewProduct.jsx';
+
 import ExcelUploadProduct from './components/Products/ExcelUploadProduct.jsx';
 import ExcelUploadBulkInventory from './components/Products/ExcelUploadBulkInventory.jsx';
 
@@ -1195,6 +1198,16 @@ function App() {
           {/* Supplier Ledger */}
 
           <Route
+            path="/Ledger/CreateLedger"
+            element={
+              <>
+                <PageTitle title="Size" />
+                <CreateLedger />
+              </>
+            }
+          />
+
+          <Route
             path="/Supplier/ledger"
             element={
               <>
@@ -1217,7 +1230,7 @@ function App() {
             element={
               <>
                 <PageTitle title="Size" />
-                <CreateLedger />
+                <UpdateLedger />
               </>
             }
           />

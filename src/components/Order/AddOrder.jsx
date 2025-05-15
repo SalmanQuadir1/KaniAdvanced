@@ -645,7 +645,7 @@ const AddOrder = () => {
 
                             <div >
                               <div className="flex items-start gap-4">
-                                <div className="flex-1 min-w-[300px] mt-4">
+                                <div className="flex-1 min-w-[250px] mt-4">
                                   <label className="mb-2.5 block text-black dark:text-white">Customer</label>
                                   <div className="flex gap-2">
                                     <ReactSelect
@@ -662,7 +662,7 @@ const AddOrder = () => {
                                   </div>
                                   <ErrorMessage name="Customer" component="div" className="text-red-600 text-sm" />
                                 </div>
-                                <div className="flex-1 min-w-[300px] mt-4">
+                                <div className="flex-1 min-w-[250px] mt-4">
                                   <button
                                     type="button"
                                     onClick={() => setIsCustomerModalOpen(true)}

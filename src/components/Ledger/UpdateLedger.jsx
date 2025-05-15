@@ -1,15 +1,12 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import DefaultLayout from '../../layout/DefaultLayout'
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import { useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
 import { customStyles as createCustomStyles } from '../../Constants/utils';
-import useLedger from '../../hooks/useLedger';
 
-const CreateLedger = () => {
-
-    const { getGroup, Group } = useLedger()
+const UpdateLedger = () => {
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
 
@@ -20,17 +17,6 @@ const CreateLedger = () => {
         { value: 'regular', label: 'Regular' },
         { value: 'unregistered', label: 'Unregistered/Consumer' }
     ];
-    useEffect(() => {
-        getGroup()
-
-    }, [])
-    console.log(Group, "====+++");
-
-    const formattedGroup = Group.map(gr => ({
-        label: gr.groupName,
-        value: gr.id
-    }));
-
 
     const underOptions = [
         { value: 'capital_account', label: 'Capital Account' }
@@ -43,51 +29,23 @@ const CreateLedger = () => {
             <div>
                 <Formik
                     initialValues={{
-                        name: '',
+                        name: 'Aaa',
                         mobileNo: '',
                         email: '',
-                        city: "",
-
-                  
-                        country:"",
-                        category:"",
-
-                        maximumDiscountApplicable:"",
-                        setAlterDealingProducts:"",
-                        under: '',
-                        // Mailing Details
-                        mailingName:"",
-                        mailingAddress:"",
-                        mailingstate:"",
-                        mailingCountry:"",
-                        pincode:"",
-
-                        // Banking Details
-                      
-
-                        // Tax Registration Details
-                        panOrTanNo:"",
-
-                       
-                        gstinOrUin:"",
-
-                        registrationType:"regular",
-                        setAlterAdditionalGstDetails:"",
-
-                        // balance:"",
-                        // credit:"",
-                        // debit:"",
-                       
-                      
-                     
-                       
-                  
-                
+                        mayumDiscount: 0,
+                        sellAlertProducts: false,
+                        under: 'capital_account',
+                        mailingName: 'Aaa',
+                        mailingAddress: '',
+                        stateCountry: 'Not Applicable',
                         include: 'None',
 
-                       
+                        panNo: '',
+                        registrationType: 'regular',
+                        gstin: '',
+                        sellAlertGstDetails: false,
                         openingBalance: '',
-                   
+                        openingBalanceDate: '1-Apr-26',
 
                         provideBankDetails: 'no',
                         bankName: '',
@@ -176,7 +134,7 @@ const CreateLedger = () => {
                                                     <label className="mb-2.5 block text-black dark:text-white">Max discount Applicable %</label>
                                                     <Field
                                                         type="text"
-                                                        name="maximumDiscountApplicable"
+                                                        name="discountApplicable"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -192,7 +150,7 @@ const CreateLedger = () => {
                                                 <label className="flex items-center">
                                                     <Field
                                                         type="radio"
-                                                        name="setAlterDealingProducts"
+                                                        name="setAfterDealingProduct"
                                                         value="yes"
                                                         className="mr-2"
                                                     />
@@ -201,7 +159,7 @@ const CreateLedger = () => {
                                                 <label className="flex items-center">
                                                     <Field
                                                         type="radio"
-                                                        name="setAlterDealingProducts"
+                                                        name="setAfterDealingProduct"
                                                         value="no"
                                                         className="mr-2"
                                                     />
@@ -218,9 +176,9 @@ const CreateLedger = () => {
                                             <div className="flex-1 min-w-[250px] z-20 bg-transparent dark:bg-form-Field">
                                                 <ReactSelect
                                                     name="under"
-                                                    value={formattedGroup.find(option => option.value === values.under)}
+                                                    value={underOptions.find(option => option.value === values.under)}
                                                     onChange={(option) => setFieldValue('under', option.value)}
-                                                    options={formattedGroup}
+                                                    options={underOptions}
                                                     styles={customStyles}
                                                     className="bg-white dark:bg-form-Field w-full"
                                                     classNamePrefix="react-select"
@@ -252,7 +210,7 @@ const CreateLedger = () => {
                                                     <label className="mb-2.5 block text-black dark:text-white">State</label>
                                                     <Field
                                                         type="text"
-                                                        name="state"
+                                                        name="mailingState"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -275,7 +233,7 @@ const CreateLedger = () => {
                                                     <label className="mb-2.5 block text-black dark:text-white">Pincode</label>
                                                     <Field
                                                         type="text"
-                                                        name="pincode"
+                                                        name="mailingPincode"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -362,35 +320,35 @@ const CreateLedger = () => {
                                                 </div>
                                                 <div className='flex flex-row gap-4'>
 
-                                                    <div className="flex-1 min-w-[250px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">PAN/T No.</label>
-                                                        <Field
-                                                            type="text"
-                                                            name="panNo"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
-                                                    <div className="flex-1 min-w-[250px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">Registration type</label>
-                                                        <ReactSelect
-                                                            name="registrationType"
-                                                            value={gstRegistrationTypes.find(option => option.value === values.registrationType)}
-                                                            onChange={(option) => setFieldValue('registrationType', option.value)}
-                                                            options={gstRegistrationTypes}
-                                                            styles={customStyles}
-                                                            className="bg-white dark:bg-form-Field w-full"
-                                                            classNamePrefix="react-select"
-                                                        />
-                                                    </div>
-                                                    <div className="flex-1 min-w-[250px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">GSTIN/UN</label>
-                                                        <Field
-                                                            type="text"
-                                                            name="gstin"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
+                                                <div className="flex-1 min-w-[250px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">PAN/T No.</label>
+                                                    <Field
+                                                        type="text"
+                                                        name="panNo"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                    />
                                                 </div>
+                                                <div className="flex-1 min-w-[250px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">Registration type</label>
+                                                    <ReactSelect
+                                                        name="registrationType"
+                                                        value={gstRegistrationTypes.find(option => option.value === values.registrationType)}
+                                                        onChange={(option) => setFieldValue('registrationType', option.value)}
+                                                        options={gstRegistrationTypes}
+                                                        styles={customStyles}
+                                                        className="bg-white dark:bg-form-Field w-full"
+                                                        classNamePrefix="react-select"
+                                                    />
+                                                </div>
+                                                <div className="flex-1 min-w-[250px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">GSTIN/UN</label>
+                                                    <Field
+                                                        type="text"
+                                                        name="gstin"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                    />
+                                                </div>
+</div>
 
                                                 <div className="flex-1 min-w-[200px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Set/After Additional Gst Detail</label>
@@ -451,4 +409,4 @@ const CreateLedger = () => {
     )
 }
 
-export default CreateLedger
+export default UpdateLedger

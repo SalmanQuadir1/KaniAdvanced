@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 // import { GET_Ledger_URL, DELETE_Ledger_URL, UPDATE_Ledger_URL, ADD_Ledger_URL } from "../Constants/utils";
-import { ADD_Ledger_URL, DELETE_Ledger_URL, GET_Ledger_URL, UPDATE_Ledger_URL } from "../Constants/utils";
+import { ADD_Ledger_URL, DELETE_Ledger_URL, GET_Groupss_URL, GET_Ledger_URL, UPDATE_Ledger_URL } from "../Constants/utils";
 const useLedger = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
+    const [Group, setGroup] = useState([])
     const [Ledger, setLedger] = useState([]);
     const [edit, setEdit] = useState(false);
     const [currentLedger, setCurrentLedger] = useState({
@@ -79,6 +80,25 @@ const useLedger = () => {
             toast.error("Failed to fetch Ledger");
         }
     };
+    const getGroup = async (page) => {
+        try {
+            const response = await fetch(`${GET_Groupss_URL}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data,"groupppsss+++");
+            setGroup(data);
+          
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch Ledger");
+        }
+    };
+
 
     const handleDelete = async (e, id) => {
         console.log(id,"del");
@@ -175,7 +195,9 @@ const useLedger = () => {
         handlePageChange,
         nature,
         invoice,
-        under
+        under,
+        getGroup,
+        Group
     };
 };
 
