@@ -176,46 +176,46 @@ const finalresult = {
   };
 
   // Remove the product object if it exists
-  delete finalresult.product;
+  delete finalresult.product; 
 
   console.log(finalresult);
 console.log(finalresult,"jahahaha++++++++");
 
 
-        // try {
-        //     const url = edit ? `${UPDATE_Groups_URL}/${currentGroups.id}` : ADD_Groups_URL;
-        //     const method = edit ? "PUT" : "POST";
+        try {
+            const url = edit ? `${UPDATE_Groups_URL}/${currentGroups.id}` : ADD_Groups_URL;
+            const method = edit ? "PUT" : "POST";
 
-        //     const response = await fetch(url, {
-        //         method: method,
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             "Authorization": `Bearer ${token}`
-        //         },
-        //         body: JSON.stringify(values)
-        //     });
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(values)
+            });
 
-        //     const data = await response.json();
-        //     if (response.ok) {
-        //         toast.success(`Groups ${edit ? 'updated' : 'added'} successfully`);
-        //         resetForm();
-        //         setEdit(false);
-        //         setCurrentGroups({
-        //             groupName: "",
-        //             subGroup:[],
-        //             natureOfGroup:""
+            const data = await response.json();
+            if (response.ok) {
+                toast.success(`Groups ${edit ? 'updated' : 'added'} successfully`);
+                resetForm();
+                setEdit(false);
+                setCurrentGroups({
+                    groupName: "",
+                    subGroup:[],
+                    natureOfGroup:""
                    
-        //         });
-        //         getGroups(pagination.currentPage); // Fetch updated Groups
-        //     } else {
-        //         toast.error(`${data.errorMessage}`);
-        //     }
-        // } catch (error) {
-        //     console.error(error, response);
-        //     toast.error("An error occurred");
-        // } finally {
-        //     setSubmitting(false);
-        // }
+                });
+                getGroups(pagination.currentPage); // Fetch updated Groups
+            } else {
+                toast.error(`${data.errorMessage}`);
+            }
+        } catch (error) {
+            console.error(error, response);
+            toast.error("An error occurred");
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     const handlePageChange = (newPage) => {
