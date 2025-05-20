@@ -45,12 +45,14 @@ export const ADD_SUPPLIER_URL = `${BASE_URL}/supplier/addSupplier`;
 export const GET_SUPPLIER_URL = `${BASE_URL}/supplier/viewAll`;
 export const VIEW_ALL_SUPPLIER_URL = `${BASE_URL}/supplier/getAll`;
 export const GET_SUPPLIER_ID_URL = `${BASE_URL}/supplier/getSupplier`;
+export const GET_SUPPLIERLedger_ID_URL = `${BASE_URL}/supplier/getSupplierWithLedger`;
+
 export const UPDATE_SUPPLIER_URL = `${BASE_URL}/supplier/updateSupplier`;
 export const DELETE_SUPPLIER_URL = `${BASE_URL}/supplier/deleteSupplier/`;
 //ledger
 export const VIEW_SUPPLIER_LEDGER = `${BASE_URL}/supplier/searchledger`;
 export const VIEW_SUPPLIER = `${BASE_URL}/supplier/searchSupplier`;
-
+export const GET_LEDGER_ID_URL = `${BASE_URL}/ledger/get`;
 
 export const VIEW_SUPPLIER_LEDGERBYID = `${BASE_URL}/supplier/getBySupplierLedger`;
 
@@ -265,10 +267,10 @@ export const VIEW_PENDINGFORBILLBYID = `${BASE_URL}/order/getBillStatus`;
 
 
 
-export const UPDATE_Ledger_URL = `${BASE_URL}/ledger/getBillStatus`; 
+export const UPDATE_Ledger_URL = `${BASE_URL}/ledger/update`; 
 export const ADD_Ledger_URL = `${BASE_URL}/order/getBillStatus`; 
 export const DELETE_Ledger_URL = `${BASE_URL}/order/delete`; 
-export const GET_Ledger_URL = `${BASE_URL}/order/get`; 
+// export const GET_Ledger_URL = `${BASE_URL}/order/get`; 
 
 export const VIEW_PROFORMA = `${BASE_URL}/order/searchOrderProforma`; 
 export const VIEW_PROFORMABYID= `${BASE_URL}/order/getOrderProforma`; 

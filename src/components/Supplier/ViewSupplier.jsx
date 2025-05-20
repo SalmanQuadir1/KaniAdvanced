@@ -8,7 +8,7 @@ import { Link, useNavigate, useNavigation } from 'react-router-dom';
 import useSupplier from '../../hooks/useSupplier';
 import { ErrorMessage, Field } from 'formik';
 import { FaBook } from "react-icons/fa6";
-
+import { TiTickOutline } from "react-icons/ti";
 const ViewSupplier = () => {
 
   const navigate= useNavigate()
@@ -69,6 +69,14 @@ console.log(filteredSupplier,"filteredddddddddddddd");
            
           </p>
         </td>
+        <td className="px-5 py-5  border-b border-gray-200  text-sm">
+          <p className="flex text-gray-900 whitespace-no-wrap">
+           {
+            item?.updateLedger && <TiTickOutline size={30}/>
+           }
+           
+          </p>
+        </td>
 
         <td className="px-5 py-5  border-b border-gray-200  text-sm">
           <p className="flex text-gray-900 whitespace-no-wrap">
@@ -113,6 +121,7 @@ console.log(filteredSupplier,"filteredddddddddddddd");
                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Address</th>
                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Supplier Code</th>
                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Update Ledger</th>
+                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Updated Ledger</th>
                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Action</th>
                   </tr>
                 </thead>

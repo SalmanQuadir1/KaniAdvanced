@@ -5,6 +5,7 @@ import { VIEW_PROFORMABYID } from '../../Constants/utils';
 import { useSelector } from 'react-redux';
 import Logo from '/img/logo.png';
 const DownloadPerformaws = () => {
+    
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const { id } = useParams();
@@ -128,6 +129,7 @@ const DownloadPerformaws = () => {
         }
     };
     console.log(proforma,"japan");
+    
 
     return (
         <Container className="mt-2" style={styles.container}>

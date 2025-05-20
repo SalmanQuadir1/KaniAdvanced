@@ -8,7 +8,7 @@ const ViewTable = ({ title, units, totalItems, handleDelete, handleUpdate, pagin
   console.log(pagination.itemsPerPage + 1, "heyyy");
   const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
   const renderTableHeaders = () => {
-    const excludedKeys = ['affectGrossProfit', 'subLedgerGroup', 'balanceReporting', "calculation"];
+    const excludedKeys = ['affectGrossProfit', 'subLedgerGroup', 'balanceReporting', "calculation","gstDetails","hsnCode","slabBasedRates","subGroup"];
 
     if (!units || units.length === 0) return null;
 
@@ -38,7 +38,7 @@ const ViewTable = ({ title, units, totalItems, handleDelete, handleUpdate, pagin
   // Function to generate table rows dynamically
   // Function to generate table rows dynamically
   const renderTableRows = () => {
-    const excludedKeys = ['affectGrossProfit', 'subLedgerGroup', 'balanceReporting', "calculation"];
+    const excludedKeys = ['affectGrossProfit', 'subLedgerGroup', 'balanceReporting', "calculation","gstDetails","hsnCode","slabBasedRates","subGroup"];
 
 
     if (!units || units.length === 0) return null;

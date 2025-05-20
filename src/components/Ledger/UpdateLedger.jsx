@@ -1,12 +1,98 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import DefaultLayout from '../../layout/DefaultLayout'
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import { useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
-import { customStyles as createCustomStyles } from '../../Constants/utils';
+import { GET_LEDGER_ID_URL, GET_SUPPLIERLedger_ID_URL, GET_SUPPLIER_ID_URL, customStyles as createCustomStyles } from '../../Constants/utils';
+import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import useLedger from '../../hooks/useLedger';
 
 const UpdateLedger = () => {
+    const { currentUser } = useSelector((state) => state?.persisted?.user);
+    const { token } = currentUser;
+    const { getGroup, Group, handleUpdateSubmit } = useLedger()
+    const [Supplier, setSupplier] = useState([])
+    const [Ledger, setLedger] = useState([])
+
+    const { id } = useParams()
+    useEffect(() => {
+        getGroup()
+
+    }, [])
+    console.log(Group, "====+++");
+
+    const formattedGroup = Group.map(gr => ({
+        label: gr.groupName,
+        value: { id: gr.id }
+    }));
+
+    useEffect(() => {
+        const GetSupplierById = async () => {
+            try {
+                const response = await fetch(`${GET_SUPPLIERLedger_ID_URL}/${id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                });
+
+                const data = await response.json();
+                console.log(data + "xsdfghjkl")
+                if (response.ok) {
+                    console.log("get supp data", data);
+                    setSupplier(data);
+                    return data; // Return the fetched data
+                } else {
+                    toast.error(`${data.errorMessage}`);
+                    return null;
+                }
+            } catch (error) {
+                console.error(error);
+                toast.error("An error occurred");
+                return null;
+            }
+        };
+        GetSupplierById()
+
+    }, [])
+    console.log(Supplier?.name, "kk+++++++++++");
+
+    useEffect(() => {
+        const GetLedgerById = async () => {
+            try {
+                const response = await fetch(`${GET_LEDGER_ID_URL}/${Supplier?.ledger?.id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                });
+
+                const data = await response.json();
+                console.log(data, "jasxabshx+++++")
+                if (response.ok) {
+                    console.log("get supp data", data);
+                    setLedger(data);
+                    return data; // Return the fetched data
+                } else {
+                    toast.error(`${data.errorMessage}`);
+                    return null;
+                }
+            } catch (error) {
+                console.error(error);
+                // toast.error("An error occurred");
+                return null;
+            }
+        };
+        GetLedgerById()
+
+    }, [Supplier])
+    console.log(Supplier?.name, "kk+++++++++++");
+
+
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
 
@@ -23,39 +109,50 @@ const UpdateLedger = () => {
     ];
     const currentYear = new Date().getFullYear().toString().slice(-2); // Gets last 2 digits (e.g., "25" for 2025)
     const openingBalanceDate = `1-Apr-${currentYear}`;
+
+
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Ledger Creation" />
             <div>
                 <Formik
                     initialValues={{
-                        name: 'Aaa',
-                        mobileNo: '',
-                        email: '',
-                        mayumDiscount: 0,
-                        sellAlertProducts: false,
-                        under: 'capital_account',
-                        mailingName: 'Aaa',
-                        mailingAddress: '',
-                        stateCountry: 'Not Applicable',
-                        include: 'None',
+                        name: Supplier?.name || Ledger.name,
+                        mobileNo: Supplier?.phoneNumber || Ledger.phoneNumber,
+                        email: Supplier?.emailId || Ledger?.emailId,
+                        country: Ledger.country || "",
+                        city: Supplier?.address,
+                        maximumDiscountApplicable: Ledger.maximumDiscountApplicable || 0,
+                        setAlterDealingProducts: Ledger.setAlterDealingProducts || false,
+                        accountGroup: Ledger?.accountGroup || { id: null },
+                        mailingName: Ledger.mailingName || '',
+                        mailingAddress: Ledger.mailingAddress || "",
+                        state: Ledger.state || "",
+                        mailingCountry: Ledger.mailingCountry || "",
+                        pincode: Ledger.pincode || "",
 
-                        panNo: '',
-                        registrationType: 'regular',
-                        gstin: '',
-                        sellAlertGstDetails: false,
-                        openingBalance: '',
-                        openingBalanceDate: '1-Apr-26',
+                        include: Ledger.include || "",
+                        category: Ledger.category || "",
 
-                        provideBankDetails: 'no',
-                        bankName: '',
-                        accountNumber: '',
-                        ifscCode: '',
-                        branch: '',
-                        accountType: ''
+                        provideBankDetails: Ledger.provideBankDetails || false,
+                        bankName: Ledger.bankName || "",
+                        accountNumber: Ledger.accountNumber || Supplier?.accountNo,
+                        ifscCode: Ledger.ifscCode || '',
+                        branch: Ledger.branch || '',
+                        accountType: Ledger.accountType || '',
+
+                        panOrTanNo: Ledger.panOrTanNo || '',
+                        registrationType: Ledger.registrationType || 'regular',
+                        gstinOrUin: Ledger.gstinOrUin || '',
+                        setAlterAdditionalGstDetails: Ledger?.setAlterAdditionalGstDetails || false,
+                        openingBalance: Ledger.openingBalance || '',
+                        openingBalanceDate: Ledger.openingBalanceDate || '',
+
+
                     }}
+                    enableReinitialize={true}
                     onSubmit={(values) => {
-                        console.log(values);
+                        handleUpdateSubmit(values, Supplier?.ledger?.id)
                         // Handle form submission here
                     }}
                 >
@@ -134,7 +231,7 @@ const UpdateLedger = () => {
                                                     <label className="mb-2.5 block text-black dark:text-white">Max discount Applicable %</label>
                                                     <Field
                                                         type="text"
-                                                        name="discountApplicable"
+                                                        name="maximumDiscountApplicable"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -150,8 +247,8 @@ const UpdateLedger = () => {
                                                 <label className="flex items-center">
                                                     <Field
                                                         type="radio"
-                                                        name="setAfterDealingProduct"
-                                                        value="yes"
+                                                        name="setAlterDealingProducts"
+                                                        value="true"
                                                         className="mr-2"
                                                     />
                                                     Yes
@@ -159,8 +256,8 @@ const UpdateLedger = () => {
                                                 <label className="flex items-center">
                                                     <Field
                                                         type="radio"
-                                                        name="setAfterDealingProduct"
-                                                        value="no"
+                                                        name="setAlterDealingProducts"
+                                                        value="false"
                                                         className="mr-2"
                                                     />
                                                     No
@@ -175,13 +272,17 @@ const UpdateLedger = () => {
                                             <h4 className="mb-2.5 font-medium text-black dark:text-white">Under</h4>
                                             <div className="flex-1 min-w-[250px] z-20 bg-transparent dark:bg-form-Field">
                                                 <ReactSelect
-                                                    name="under"
-                                                    value={underOptions.find(option => option.value === values.under)}
-                                                    onChange={(option) => setFieldValue('under', option.value)}
-                                                    options={underOptions}
+                                                    name="accountGroup"
+                                                    value={formattedGroup.find(option =>
+                                                        option.value.id === values.accountGroup?.id
+                                                    )}
+                                                    onChange={(option) => setFieldValue('accountGroup', option.value)}
+                                                    options={formattedGroup}
                                                     styles={customStyles}
                                                     className="bg-white dark:bg-form-Field w-full"
                                                     classNamePrefix="react-select"
+                                                    getOptionLabel={option => option.label}
+                                                    getOptionValue={option => option.value.id}
                                                 />
                                             </div>
                                         </div>
@@ -210,7 +311,7 @@ const UpdateLedger = () => {
                                                     <label className="mb-2.5 block text-black dark:text-white">State</label>
                                                     <Field
                                                         type="text"
-                                                        name="mailingState"
+                                                        name="state"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -233,7 +334,7 @@ const UpdateLedger = () => {
                                                     <label className="mb-2.5 block text-black dark:text-white">Pincode</label>
                                                     <Field
                                                         type="text"
-                                                        name="mailingPincode"
+                                                        name="pincode"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -251,13 +352,13 @@ const UpdateLedger = () => {
                                                         <ReactSelect
                                                             name="provideBankDetails"
                                                             value={[
-                                                                { value: 'yes', label: 'Yes' },
-                                                                { value: 'no', label: 'No' }
+                                                                { value: 'true', label: 'Yes' },
+                                                                { value: 'false', label: 'No' }
                                                             ].find(option => option.value === values.provideBankDetails)}
                                                             onChange={(option) => setFieldValue('provideBankDetails', option.value)}
                                                             options={[
-                                                                { value: 'yes', label: 'Yes' },
-                                                                { value: 'no', label: 'No' }
+                                                                { value: 'true', label: 'Yes' },
+                                                                { value: 'false', label: 'No' }
                                                             ]}
                                                             styles={customStyles}
                                                             className="bg-white dark:bg-form-Field w-full"
@@ -267,7 +368,7 @@ const UpdateLedger = () => {
                                                     </div>
 
                                                     {/* Bank Details Fields (shown only when Yes is selected) */}
-                                                    {values?.provideBankDetails === "yes" && (
+                                                    {values?.provideBankDetails === "true" && (
                                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border border-stroke p-4 rounded-lg dark:border-strokedark">
                                                             <div>
                                                                 <label className="mb-2.5 block text-black dark:text-white">Bank Name</label>
@@ -320,35 +421,35 @@ const UpdateLedger = () => {
                                                 </div>
                                                 <div className='flex flex-row gap-4'>
 
-                                                <div className="flex-1 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">PAN/T No.</label>
-                                                    <Field
-                                                        type="text"
-                                                        name="panNo"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-                                                    />
+                                                    <div className="flex-1 min-w-[250px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">PAN/T No.</label>
+                                                        <Field
+                                                            type="text"
+                                                            name="panOrTanNo"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[250px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">Registration type</label>
+                                                        <ReactSelect
+                                                            name="registrationType"
+                                                            value={gstRegistrationTypes.find(option => option.value === values.registrationType)}
+                                                            onChange={(option) => setFieldValue('registrationType', option.value)}
+                                                            options={gstRegistrationTypes}
+                                                            styles={customStyles}
+                                                            className="bg-white dark:bg-form-Field w-full"
+                                                            classNamePrefix="react-select"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[250px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">GSTIN/UN</label>
+                                                        <Field
+                                                            type="text"
+                                                            name="gstinOrUin"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
                                                 </div>
-                                                <div className="flex-1 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Registration type</label>
-                                                    <ReactSelect
-                                                        name="registrationType"
-                                                        value={gstRegistrationTypes.find(option => option.value === values.registrationType)}
-                                                        onChange={(option) => setFieldValue('registrationType', option.value)}
-                                                        options={gstRegistrationTypes}
-                                                        styles={customStyles}
-                                                        className="bg-white dark:bg-form-Field w-full"
-                                                        classNamePrefix="react-select"
-                                                    />
-                                                </div>
-                                                <div className="flex-1 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">GSTIN/UN</label>
-                                                    <Field
-                                                        type="text"
-                                                        name="gstin"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-</div>
 
                                                 <div className="flex-1 min-w-[200px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Set/After Additional Gst Detail</label>
@@ -357,8 +458,8 @@ const UpdateLedger = () => {
                                                         <label className="flex items-center">
                                                             <Field
                                                                 type="radio"
-                                                                name="setAfterDealingProduct"
-                                                                value="yes"
+                                                                name="setAlterAdditionalGstDetails"
+                                                                value="true"
                                                                 className="mr-2"
                                                             />
                                                             Yes
@@ -366,8 +467,8 @@ const UpdateLedger = () => {
                                                         <label className="flex items-center">
                                                             <Field
                                                                 type="radio"
-                                                                name="setAfterDealingProduct"
-                                                                value="no"
+                                                                name="setAlterAdditionalGstDetails"
+                                                                value="false"
                                                                 className="mr-2"
                                                             />
                                                             No
