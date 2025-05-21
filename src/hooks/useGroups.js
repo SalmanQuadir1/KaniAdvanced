@@ -28,6 +28,7 @@ const useGroups = (gstDetails) => {
        affectGrossProfit:"",
        gstDetails: "",
        productStatus: "",
+       gstratedetails:"",
 
        hsnCodes: "",
        hsnCode:{},
@@ -146,10 +147,10 @@ const useGroups = (gstDetails) => {
         console.log(values,"kk");
         const product={}
         if (gstDetails && gstDetails.length > 0) {
-            product.slabBasedRates = gstDetails; // Add gstDetails to the product
+            product.slabBasedRates = gstDetails.map(({ id, ...rest }) => rest);// Add gstDetails to the product
         }
         if (values.gstratedetails === "Specify Slab Based Rates") {
-            product.slabBasedRates = gstDetails; // Include slab-based rates
+            product.slabBasedRates = gstDetails.map(({ id, ...rest }) => rest); // Include slab-based rates
             delete values.hsnCode; // Remove HSN-related fields if they exist
             delete product.igst;
             delete product.cgst;
