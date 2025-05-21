@@ -192,7 +192,7 @@ console.log(finalresult,"jahahaha++++++++");
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify(values)
+                body: JSON.stringify(finalresult)
             });
 
             const data = await response.json();
