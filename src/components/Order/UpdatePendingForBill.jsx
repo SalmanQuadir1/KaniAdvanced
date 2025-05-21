@@ -2,553 +2,253 @@ import React, { useEffect, useState } from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import ReactSelect from 'react-select';
-
-import 'flatpickr/dist/themes/material_blue.css'; // Import a Flatpickr theme
-
-import useorder from '../../hooks/useOrder';
-
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL,  VERIFY_STOCK_JOURNAL, VIEW_PENDINGFORBILLBYID } from '../../Constants/utils';
-
-import { useNavigate, useNavigation, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { MdDelete } from 'react-icons/md';
-import { IoIosGitMerge } from 'react-icons/io';
+import { VIEW_PENDINGFORBILLBYID, VERIFY_STOCK_JOURNAL } from '../../Constants/utils';
+
 const UpdatePendingForBill = () => {
-    const [PendingForBill, setPendingForBill] = useState([])
+    const [billData, setBillData] = useState({
+        supplierName: '',
+        supplierId: null,
+        orders: []
+    });
+    const [selectedOrders, setSelectedOrders] = useState([]);
     const navigate = useNavigate();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
-    const [checkAll, setCheckAll] = useState(false);
-
-
-    const [order, setOrder] = useState(null); // To store fetched product data
-
-
     const { token } = currentUser;
-
-
-
-    const [selectedSuppliers, setSelectedSuppliers] = useState([]);
-
-
-    // const handleCheckboxChange = (supplierId) => {
-    //   console.log(supplierId, "sssspppp");
-    //   setSelectedSuppliers((prev) =>
-    //     prev.includes(supplierId)
-    //       ? prev.filter((id) => id !== supplierId) // Remove if already selected
-    //       : [...prev, supplierId] // Add if not selected
-    //   );
-    // };
-    const handleCheckboxChange = (selectedRowId, supplierId) => {
-        setSelectedSuppliers((prev) => {
-            const updated = [...prev];
-            const rowIndex = updated.findIndex(
-                (row) => row.selectedRowId === selectedRowId
-            );
-
-            if (rowIndex !== -1) {
-                // Update supplierIds for the existing row
-                const supplierExists = updated[rowIndex].supplierIds.some(
-                    (s) => s.supplierId === supplierId
-                );
-
-                if (supplierExists) {
-                    // Remove the supplier if already exists
-                    updated[rowIndex].supplierIds = updated[rowIndex].supplierIds.filter(
-                        (s) => s.supplierId !== supplierId
-                    );
-                } else {
-                    // Add new supplier to the row
-                    updated[rowIndex].supplierIds.push({
-                        supplierId,
-                        supplierName: "", // Optional: default supplier name if needed
-                    });
-                }
-            } else {
-                // Add a new row with the selected supplier
-                updated.push({
-                    selectedRowId,
-                    supplierIds: [{ supplierId, supplierName: "" }],
-                });
-            }
-            console.log(updated, "updatedddddddddddddddddddddd");
-            return updated;
-        });
-    };
-
-
-    console.log(selectedSuppliers, "selecteddddddddd Suppliersss");
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     const { id } = useParams();
 
     const getPendingForBill = async () => {
         try {
             const response = await fetch(`${VIEW_PENDINGFORBILLBYID}/${id}`, {
-                method: 'GET',
+                method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch product');
-            }
-
+        
+            if (!response.ok) throw new Error("Failed to fetch pending bills");
+        
             const data = await response.json();
-            console.log(data, "gghhgghh")
-            setPendingForBill(data); // Store fetched product
+            console.log("API Response:", data);
+            
+            // Transform the orders data into a more usable format
+            const transformedOrders = data.orders.map(orderGroup => {
+                const orderNumbers = Object.keys(orderGroup).filter(key => key !== 'physicalBillNo');
+                const orders = orderNumbers.flatMap(orderNo => orderGroup[orderNo]);
+                
+                return {
+                    physicalBillNo: orderGroup.physicalBillNo,
+                    orders: orders,
+                    // Use the first order's details for common fields
+                    orderNo: orderNumbers.join(', '), // Combine all order numbers
+                    date: orders[0]?.updatedAt,
+                    supplierName: data.supplierName,
+                    supplierId: data.supplierId
+                };
+            });
+            
+            setBillData({
+                supplierName: data.supplierName,
+                supplierId: data.supplierId,
+                orders: transformedOrders
+            });
         } catch (error) {
-            console.error('Error fetching product:', error);
-        } finally {
-            // Stop loader
+            console.error("Error fetching pending bills:", error);
+            toast.error("Failed to load pending bills");
         }
     };
 
     useEffect(() => {
-        getPendingForBill()
-    }, [])
+        getPendingForBill();
+    }, [id]);
 
-
-    console.log("PendingForBill===========", PendingForBill);
-
+    const handleCheckboxChange = (index, isChecked) => {
+        setSelectedOrders(prev => 
+            isChecked 
+                ? [...prev, index] 
+                : prev.filter(i => i !== index)
+        );
+    };
 
     const handleSubmit = async (values) => {
+        // Prepare data with only selected order groups
+        const ordersToUpdate = billData.orders
+            .filter((orderGroup, index) => selectedOrders.includes(index))
+            .map((orderGroup, index) => ({
+                ...orderGroup,
+                physicalBillNo: values[`physicalBillNo_${index}`] || null,
+                orders: orderGroup.orders.map(order => ({
+                    ...order,
+                    physicalBillNo: values[`physicalBillNo_${index}`] || null
+                }))
+            }));
 
-        // console.log(values, "jamm");
-        //   // Map selected row IDs to the desired format
-        //   const selectedProducts = values.selectedRows.map((productId) => ({
-        //     id: productId,
-        //   }));
-        console.log(values, "jump");
-
-
-        //   // Prepare the final data
-        const finalData = {
-            transferProducts: values?.PendingForBill.map((item) => ({
-                product: { id: item?.product.id },
-                transferQty: item?.transferedQuantity,
-                recievedQty: Number(item?.recievedQty)
-
-
-            })), // Include the selected rows
-        };
-        console.log(finalData, "jammu");
-        // const finalData = {
-        //   transferProducts: values?.PendingForBill?.map((item) => ({
-        //     product: { id: item.products?.id },
-        //     sourceLocation: { id: item.sourceLocation?.id },
-        //     destinationLocation: { id: item.destinationLocation?.id },
-        //     transferedQuantity: item.transferedQuantity,
-        //     recievedQty: item.recievedQty
-        //   })) || []
-        // };
-
-
-        //   // Log the data to check the format
-        //   console.log(finalData, "finalData");
-
-
-
+        if (ordersToUpdate.length === 0) {
+            toast.error("Please select at least one order group");
+            return;
+        }
 
         try {
-            const url = `${VERIFY_STOCK_JOURNAL}/${id}`;
-            const method = "PUT";
-
-            const response = await fetch(url, {
-                method: method,
+            const response = await fetch(`${VERIFY_STOCK_JOURNAL}/${id}`, {
+                method: 'PUT',
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify(finalData)
+                body: JSON.stringify({
+                    supplierId: billData.supplierId,
+                    orders: ordersToUpdate.flatMap(group => group.orders)
+                })
             });
 
             const data = await response.json();
             if (response.ok) {
-                toast.success(`Journal Verified successfully`);
-                navigate("/PendingForBill/verify")
-
-
-
-                // getCurrency(pagination.currentPage); // Fetch updated Currency
+                toast.success("Orders updated successfully");
+                navigate("/PendingForBill/verify");
             } else {
-                toast.error(`${data.errorMessage}`);
+                toast.error(data.errorMessage || "Failed to update orders");
             }
         } catch (error) {
-            console.error(error, response);
-            toast.error("An error occurred");
+            console.error('Error updating orders:', error);
+            toast.error("An error occurred while updating orders");
         }
-
-        // You can now send `finalData` to the backend or do any other operation with it
-
-
-
-
-
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-    const customStyles = {
-        control: (provided) => ({
-            ...provided,
-            minHeight: '50px',
-            fontSize: '16px',
-        }),
-        valueContainer: (provided) => ({
-            ...provided,
-            padding: '10px 14px',
-        }),
-        input: (provided) => ({
-            ...provided,
-            fontSize: '16px',
-        }),
-        singleValue: (provided) => ({
-            ...provided,
-            fontSize: '16px',
-        }),
     };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     return (
         <DefaultLayout>
-            <Breadcrumb pageName="Order/Update Order" />
+            <Breadcrumb pageName="Order/Update Pending Bills" />
             <div>
                 <Formik
                     onSubmit={handleSubmit}
                     enableReinitialize={true}
-                    initialValues={{
-                        selectedRows: [],
-                        supplier: PendingForBill?.supplierName || '',
-                        // PendingForBill: PendingForBill?.transferProducts?.map((product) => ({
-
-                        //     product: {
-                        //         ...product.product,
-                        //         productId: product.product?.productId || '',  // Set initial value for productId
-                        //     },
-                        //     sourceLocation: product?.sourceLocation?.address, // we have to add here city also
-                        //     destinationLocation: product?.destinationLocation?.address,
-
-                        //     transferedQuantity: product.transferQty || '',
-                        //     recievedQty: "",
-
-
-
-
-
-
-                        // })) || [],
-
-
-
-
-
-
-                        // clientInstruction: order?.clientInstruction || '',
-                        // customer: '',
-                    }}
-
-                // validationSchema={validationSchema}
+                    initialValues={{}}
                 >
-                    {({ values, setFieldValue }) => {
-
-
-                        return (
-                            <Form>
-                                <div className="flex flex-col gap-9">
-                                    {/* Form fields */}
-                                    <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                                        <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                                            <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                                                Verify Pending For Bill
-                                            </h3>
+                    {({ values, setFieldValue }) => (
+                        <Form>
+                            <div className="flex flex-col gap-9">
+                                <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                                    <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                                        <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
+                                            Update Pending Bills
+                                        </h3>
+                                    </div>
+                                    <div className="p-6.5">
+                                        <div className="mb-4">
+                                            <h4 className="text-lg font-semibold dark:text-white">
+                                                Supplier: {billData.supplierName}
+                                            </h4>
                                         </div>
-                                        <div className="p-6.5">
-                                         
-                                            <h6 className='text-sm text-red-500'> * Hover On The Field To View The Full Title</h6>
+                                        
+                                        <div className="shadow-md rounded-lg mt-3 overflow-auto">
+                                            <table className="min-w-full leading-normal">
+                                                <thead>
+                                                    <tr className="bg-slate-300 dark:bg-slate-700 dark:text-white">
+                                                        <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
+                                                            Select
+                                                        </th>
+                                                        <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
+                                                            Date
+                                                        </th>
+                                                        <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
+                                                            Order No(s)
+                                                        </th>
+                                                        <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
+                                                            Product IDs
+                                                        </th>
+                                                        <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
+                                                            cost
+                                                        </th>
+                                                        <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
+                                                            recieved Quantity
+                                                        </th>
+                                                       
+                                                        <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
+                                                            Total Bill Amount
+                                                        </th>
 
 
+                                                        <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
+                                                            Physical Bill No
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {billData.orders?.map((orderGroup, index) => {
+                                                        // Calculate totals
+                                                        const totalQty = orderGroup.orders.reduce((sum, order) => sum + (order.receivedQty || 0), 0);
+                                                        const totalCost = orderGroup.orders.reduce((sum, order) => sum + (order.productCost || 0), 0);
+                                                        const totalBillAmount = orderGroup.orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+                                                        const productIds = orderGroup.orders.map(order => order.productId).join(', ');
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                            <div className="shadow-md rounded-lg mt-3 overflow-scroll">
-                                                <table className="min-w-full leading-normal overflow-auto">
-                                                    <thead>
-                                                        <tr className="bg-slate-300 dark:bg-slate-700 dark:text-white">
-                                                            {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Select
-                              </th> */}
-                                                           <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Suppliers </th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date </th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Prod Id</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">total Cost </th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Recieved Quantity </th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Total Bill Amount </th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Bill Status</th>
-                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                                Action
-                                                                <Field
-                                                                    type="checkbox"
-                                                                    name="selectAll"
-                                                                    checked={checkAll}
-                                                                    onChange={(e) => {
-                                                                        const isChecked = e.target.checked;
-                                                                        setCheckAll(isChecked);
-
-                                                                        // Update all individual checkboxes
-                                                                        if (isChecked) {
-                                                                            const allIds = PendingForBill?.transferProducts?.map(item => item.id) || [];
-                                                                            setFieldValue("selectedRows", allIds);
-
-                                                                            // Update all recievedQuantity fields
-                                                                            PendingForBill?.transferProducts?.forEach((_, index) => {
-                                                                                setFieldValue(
-                                                                                    `PendingForBill[${index}].recievedQty`,
-                                                                                    values.PendingForBill[index]?.transferedQuantity
-                                                                                );
-                                                                            });
-                                                                        } else {
-                                                                            setFieldValue("selectedRows", []);
-
-                                                                            // Clear all recievedQuantity fields
-                                                                            PendingForBill?.transferProducts?.forEach((_, index) => {
-                                                                                setFieldValue(`PendingForBill[${index}].recievedQty`, "");
-                                                                            });
-                                                                        }
-                                                                    }}
-                                                                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 ml-2"
-                                                                />
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {PendingForBill?.transferProducts?.map((item, index) => (
-                                                            <tr key={item.id}>
-
-                                                                {/* Product ID */}
-                                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                                    <Field
-                                                                        name={`PendingForBill[${index}].product.productId`}
-                                                                        className="w-[150px] bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-3 px-5 text-black truncate" // Added truncate
-                                                                        placeholder="Enter Product ID"
-                                                                        title={values.PendingForBill[index]?.product?.productId || ''} // Simple tooltip
-                                                                    />
-                                                                    <ErrorMessage
-                                                                        name={`orderProducts[${index}].orderCategory`}
-                                                                        component="div"
-                                                                        className="text-red-600 text-sm"
-                                                                    />
-                                                                </td>
-
-
-                                                                {/* Order Category */}
-
-                                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                                    <Field
-                                                                        name={`PendingForBill[${index}].sourceLocation`}
-
-                                                                        // }}
-                                                                        title={values?.PendingForBill[index]?.sourceLocation}
-                                                                        className="w-[150px] bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-3 px-5 text-black truncate"
-                                                                        placeholder="Enter Product ID"
-                                                                    />
-                                                                    <ErrorMessage
-                                                                        name={`orderProducts[${index}].orderCategory`}
-                                                                        component="div"
-                                                                        className="text-red-600 text-sm"
-                                                                    />
-                                                                </td>
-                                                                {/* Client Order Quantity */}
-                                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                                    <Field
-                                                                        name={`PendingForBill[${index}].destinationLocation`}
-                                                                        title={values?.PendingForBill[index]?.destinationLocation}
-                                                                        className="w-[150px] bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                                                        placeholder="Enter Product ID"
-                                                                    />
-                                                                    <ErrorMessage
-                                                                        name={`orderProducts[${index}].orderCategory`}
-                                                                        component="div"
-                                                                        className="text-red-600 text-sm"
-                                                                    />
-                                                                </td>
-                                                                {/* Client Order Quantity */}
-                                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                                    <Field
-                                                                        name={`PendingForBill[${index}].transferedQuantity`}
-                                                                        // onChange={(e) => {
-                                                                        //   const newValue = e.target.value;
-                                                                        //   console.log(`New Product ID: ${newValue}`);
-                                                                        //   setFieldValue(
-                                                                        //     `orderProducts[${index}].products.productId`,
-                                                                        //     newValue
-                                                                        //   );
-                                                                        // }}
-                                                                        className="w-[150px] bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                                                        placeholder="Enter Product ID"
-                                                                    />
-                                                                    <ErrorMessage
-                                                                        name={`orderProducts[${index}].orderCategory`}
-                                                                        component="div"
-                                                                        className="text-red-600 text-sm"
-                                                                    />
-                                                                </td>
-                                                                {/* Client Order Quantity */}
-                                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                                    <Field
-                                                                        name={`PendingForBill[${index}].recievedQty`}
-                                                                        // onChange={(e) => {
-                                                                        //   const newValue = e.target.value;
-                                                                        //   console.log(`New Product ID: ${newValue}`);
-                                                                        //   setFieldValue(
-                                                                        //     `orderProducts[${index}].products.productId`,
-                                                                        //     newValue
-                                                                        //   );
-                                                                        // }}
-                                                                        className="w-[150px] bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                                                        placeholder="Enter Recieved Quantity"
-                                                                    />
-                                                                    <ErrorMessage
-                                                                        name={`orderProducts[${index}].orderCategory`}
-                                                                        component="div"
-                                                                        className="text-red-600 text-sm"
-                                                                    />
-                                                                </td>
-                                                                {/* Radio Button */}
-                                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                                    <Field
+                                                        return (
+                                                            <tr key={index} className="border-b border-gray-200">
+                                                                <td className="px-5 py-5 text-sm">
+                                                                    <input
                                                                         type="checkbox"
-                                                                        name="selectedRows"
-                                                                        value={item.id} // Value of the checkbox (product ID)
-                                                                        checked={values.selectedRows.includes(item.id)} // Check if product ID is in selectedRows
-                                                                        onChange={(e) => {
-                                                                            const checked = e.target.checked;
-                                                                            if (checked) {
-                                                                                // If checked, add the product ID to selectedRows
-                                                                                setFieldValue("selectedRows", [...values.selectedRows, item.id]);
-                                                                            } else {
-                                                                                // If unchecked, remove the product ID from selectedRows
-                                                                                setFieldValue("selectedRows", values.selectedRows.filter(id => id !== item.id));
-                                                                            }
-                                                                        }}
+                                                                        checked={selectedOrders.includes(index)}
+                                                                        onChange={(e) => handleCheckboxChange(index, e.target.checked)}
                                                                         className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
                                                                     />
                                                                 </td>
-
-
-
-
-                                                                <td
-                                                                    className="px-5 py-5 border-b border-gray-200 text-sm"
-                                                                    colSpan={2} // Use colSpan to span across multiple columns
-                                                                >
-                                                                    {/* <div className="flex items-center gap-2">
-                                    <span onClick={() => navigate(`/order/modifyorderproduct/${product?.id}`)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"> VIEW ORDER PRODUCT</span>
-                                    <span onClick={() => navigate(`/order/viewProduct/${product?.id}`)} className=" bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]">VIEW PRODUCT DETAILS</span>
-                                  </div> */}
+                                                                <td className="px-5 py-5 text-sm">
+                                                                    {orderGroup.date && new Date(orderGroup.date).toLocaleString('en-IN', {
+                                                                        year: 'numeric',
+                                                                        month: 'short',
+                                                                        day: '2-digit',
+                                                                        hour: '2-digit',
+                                                                        minute: '2-digit',
+                                                                        hour12: true,
+                                                                    })}
                                                                 </td>
-
+                                                                <td className="px-5 py-5 text-sm">
+                                                                    {orderGroup.orderNo}
+                                                                </td>
+                                                                <td className="px-5 py-5 text-sm">
+                                                                    {productIds}
+                                                                </td>
+                                                                <td className="px-5 py-5 text-sm">
+                                                                    {totalQty}
+                                                                </td>
+                                                                <td className="px-5 py-5 text-sm">
+                                                                    {totalCost}
+                                                                </td>
+                                                                <td className="px-5 py-5 text-sm">
+                                                                    {totalBillAmount}
+                                                                </td>
+                                                                <td className="px-5 py-5 text-sm">
+                                                                    <Field
+                                                                        name={`physicalBillNo_${index}`}
+                                                                        className="w-full bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-2 px-3 text-black"
+                                                                        placeholder="Enter Physical Bill No"
+                                                                    />
+                                                                </td>
                                                             </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                            <div className="flex justify-center mt-4"> {/* Centering the button */}
-                                                <button
-                                                    type="submit"
-                                                    disabled={values.selectedRows.length !== PendingForBill?.transferProducts?.length}
-                                                    className={`w-1/3 px-6 py-2 text-white rounded-lg shadow focus:outline-none ${values.selectedRows.length === PendingForBill?.transferProducts?.length
+                                                        );
+                                                    })}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div className="flex justify-center mt-4">
+                                            <button
+                                                type="submit"
+                                                disabled={selectedOrders.length === 0}
+                                                className={`w-1/3 px-6 py-2 text-white rounded-lg shadow focus:outline-none ${
+                                                    selectedOrders.length > 0
                                                         ? "bg-primary hover:bg-primary-dark"
-                                                        : " bg-slate-600 text-black cursor-not-allowed"
-                                                        }`}
-                                                >
-                                                    Submit
-                                                </button>
-                                            </div>
+                                                        : "bg-slate-600 cursor-not-allowed"
+                                                }`}
+                                            >
+                                                Update Selected Orders
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
-
-
-                            </Form>
-                        )
-                    }}
+                            </div>
+                        </Form>
+                    )}
                 </Formik>
-
-
-
-
-
             </div>
         </DefaultLayout>
     );
