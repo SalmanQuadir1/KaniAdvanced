@@ -135,7 +135,7 @@ const PendingForBill = () => {
 
             const textResponse = await response.text();
 
-            // console.log(textResponse, "japaaaaaaaaaaaaaaaaaan");
+            console.log(textResponse, "japaaaaaaaaaaaaaaaaaan++++++++++++++++++++++++");
 
             // Get the raw text response
             // Log raw response before parsing   
@@ -143,7 +143,7 @@ const PendingForBill = () => {
             // Try parsing the response only if it's valid JSON
             try {
                 const data = JSON.parse(textResponse); // Try parsing as JSON
-                console.log("Parsed Response:", data);
+                console.log("Parsed Response++++++++++++:", data);
 
                 if (data?.content) {
                     setOrder(data.content); // Update orders state
@@ -295,7 +295,7 @@ const PendingForBill = () => {
                     {item.orders &&
                         item?.orders.map((order, index) => (
                             <p key={index} className="text-gray-900 whitespace-nowrap">
-                                {order.totalCost}
+                                {order.productCost}
                             </p>
                         ))}
                 </td>
@@ -311,17 +311,20 @@ const PendingForBill = () => {
                     {item.orders &&
                         item?.orders.map((order, index) => (
                             <p key={index} className="text-gray-900 whitespace-nowrap">
-                                {order.totalBillAmount}
+                                {order.totalAmount}
                             </p>
                         ))}
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    {item.orders &&
-                        item?.orders.map((order, index) => (
-                            <p key={index} className="text-gray-900 whitespace-nowrap">
-                                {order.billStatus}
-                            </p>
-                        ))}
+                {item.orders && (
+  <p className="text-gray-900 whitespace-nowrap">
+    {item.orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0)}
+  </p>
+)}
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.billStatus}</p>
+
                 </td>
 
 
@@ -494,6 +497,7 @@ const PendingForBill = () => {
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">total Cost </th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Recieved Quantity </th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Total Amount </th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Total Bill Amount </th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Bill Status</th>
                                         {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
