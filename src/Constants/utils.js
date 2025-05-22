@@ -262,6 +262,8 @@ export const VIEW_SEARCHBILL = `${BASE_URL}/order/searchBillStatus`;
 
 export const VIEW_PENDINGFORBILLBYID = `${BASE_URL}/order/getBillStatus`; 
 
+export const UPDATE_PENDINGFORBILLBYID = `${BASE_URL}/order/updatePhysicalBillNo/`; 
+
 //ledger
 
 

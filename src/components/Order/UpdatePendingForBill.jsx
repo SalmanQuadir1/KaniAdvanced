@@ -5,7 +5,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { VIEW_PENDINGFORBILLBYID, VERIFY_STOCK_JOURNAL } from '../../Constants/utils';
+import { VIEW_PENDINGFORBILLBYID, VERIFY_STOCK_JOURNAL, UPDATE_PENDINGFORBILLBYID } from '../../Constants/utils';
 
 const UpdatePendingForBill = () => {
     const [billData, setBillData] = useState({
@@ -73,36 +73,38 @@ const UpdatePendingForBill = () => {
     };
 
     const handleSubmit = async (values) => {
-        // Prepare data with only selected order groups
-        const ordersToUpdate = billData.orders
-            .filter((orderGroup, index) => selectedOrders.includes(index))
-            .map((orderGroup, index) => ({
-                ...orderGroup,
-                physicalBillNo: values[`physicalBillNo_${index}`] || null,
-                orders: orderGroup.orders.map(order => ({
-                    ...order,
-                    physicalBillNo: values[`physicalBillNo_${index}`] || null
-                }))
-            }));
-
-        if (ordersToUpdate.length === 0) {
+        // Prepare data in the exact format required
+        const payload = selectedOrders.map(index => {
+            const orderGroup = billData.orders[index];
+            const firstOrder = orderGroup.orders[0];
+            console.log(firstOrder,"firssstorderrr"); // Take the first order as representative
+            
+            return {
+                supplierId: billData.supplierId,
+                orderId: firstOrder.orderId, // Using the first order's ID
+                productsId: orderGroup.orders.map(o => o.productId).join(','), // Combine all product IDs
+                totalBillAmount: orderGroup.orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0),
+                physicalBillNo: values[`physicalBillNo_${index}`] || ''
+            };
+        });
+    
+        if (payload.length === 0) {
             toast.error("Please select at least one order group");
             return;
         }
-
+    
+        console.log("Payload being sent:", payload);
+    
         try {
-            const response = await fetch(`${VERIFY_STOCK_JOURNAL}/${id}`, {
+            const response = await fetch(`${UPDATE_PENDINGFORBILLBYID}/${id}`, {
                 method: 'PUT',
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify({
-                    supplierId: billData.supplierId,
-                    orders: ordersToUpdate.flatMap(group => group.orders)
-                })
+                body: JSON.stringify(payload)
             });
-
+    
             const data = await response.json();
             if (response.ok) {
                 toast.success("Orders updated successfully");
@@ -158,17 +160,14 @@ const UpdatePendingForBill = () => {
                                                             Product IDs
                                                         </th>
                                                         <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
-                                                            cost
+                                                            Cost
                                                         </th>
                                                         <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
-                                                            recieved Quantity
+                                                            Received Quantity
                                                         </th>
-                                                       
                                                         <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
                                                             Total Bill Amount
                                                         </th>
-
-
                                                         <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
                                                             Physical Bill No
                                                         </th>
@@ -209,10 +208,10 @@ const UpdatePendingForBill = () => {
                                                                     {productIds}
                                                                 </td>
                                                                 <td className="px-5 py-5 text-sm">
-                                                                    {totalQty}
+                                                                    {totalCost}
                                                                 </td>
                                                                 <td className="px-5 py-5 text-sm">
-                                                                    {totalCost}
+                                                                    {totalQty}
                                                                 </td>
                                                                 <td className="px-5 py-5 text-sm">
                                                                     {totalBillAmount}
