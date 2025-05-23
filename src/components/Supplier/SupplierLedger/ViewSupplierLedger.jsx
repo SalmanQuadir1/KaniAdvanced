@@ -221,45 +221,15 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
         };
 
 
-        const openLEDGERModal = (id) => {
-            console.log("opening");
-
-
-            const getLEDGER = async () => {
-    
-                try {
-                    const response = await fetch(`${VIEW_SUPPLIER_LEDGERBYID}/${id}`, {
-                        method: "GET",
-                        headers: {
-                            // "Content-Type": "multipart/form-data",
-                            "Authorization": `Bearer ${token}`
-                        }
-                    });
-                    const data = await response.json();
-                    console.log("data++++++===",data);
-    
-    
-                    // setLocation(data);
-                    setSelectedLEDGERData(data);
-    
-    
-                } catch (error) {
-                    console.error(error);
-                    toast.error("Failed to fetch Product");
-                }
-            };
-    
-            getLEDGER()
-                // useEffect(() => {
-                //     getLEDGER()
-                // }, [])
-    
-    
-    
-    
-                ;
-            // setmrp(mrp)
-            setIsLEDGERModalOpen(true);
+        const openLEDGERModal = (supplierId) => {
+            // Find the supplier data from your existing Ledger state
+            const supplierData = Ledger.find(item => item.supplierId === supplierId);
+            if (supplierData) {
+                setSelectedLEDGERData(supplierData);
+                setIsLEDGERModalOpen(true);
+            } else {
+                toast.error("Supplier data not found");
+            }
         };
     
     
@@ -277,10 +247,7 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
                     <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
                 </td>
 
-                <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.orderNo}</p>
-
-                </td>
+           
                 <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item.supplierName}</p>
                 </td>
@@ -387,72 +354,64 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
                             TOTAL PRODUCTS: {pagination.totalItems}
                         </p> */}
                     </div>
-                    {IsLEDGERModalOpen && (
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50 ">
-                <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px]  w-[870px] h-[400px] mt-[60px] dark:bg-slate-600">
-                    <div className="text-right">
-                        <button onClick={()=>closeLEDGERModal()} className="text-red-500 text-xl  font-bold">&times;</button>
-                    </div>
-                    <h2 className="text-2xl text-center mb-4 font-extrabold shadow-sm">LEDGER DETAILS OF SUPPLIERS</h2>
-                    <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
-                        <table className="min-w-full leading-normal">
-                            <thead>
-                                <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">SupplierName</th>
-                                <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
-                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Debit </th>
-                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Credit </th>
-                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Balance  </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-
-
-                                {/* {selectedINVENTORYData && (
-                                    <>
-                                        {selectedINVENTORYData.map((row, index) => (
-                                            <tr key={row.id}>
-                                                <td className="px-2 py-2 border-b dark:text-white">
-                                                    <p>{row?.location?.address}</p>
-                                                </td>
-                                                <td className="px-2 py-2 border-b dark:text-white">
-                                                    <p>{row?.openingBalance}</p>
-                                                </td>
-                                                <td className="px-2 py-2 border-b dark:text-white">
-                                                    {row.rate}
-                                                </td>
-                                                <td className="px-2 py-2 border-b dark:text-white">
-                                                    {row.value}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                        <tr>
-                                            <td
-                                                className="px-2 py-2 border-t font-bold text-black dark:text-white"
-                                                colSpan={3}
-                                            >
-                                                Total Values
-                                            </td>
-                                            <td className="px-2 py-2 border-t font-bold text-black dark:text-white">
-                                                {selectedINVENTORYData
-                                                    .reduce((total, currentRow) => total + (currentRow.value || 0), 0)
-                                                    .toFixed(2)}
-                                            </td>
-                                            <td className="px-2 py-2 border-t"></td>
-                                        </tr>
-                                    </>
-                                )} */}
-
-
-
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {/* <pre>{JSON.stringify(selectedBOMData, null, 2)}</pre> */}
-                </div>
+                    {IsLEDGERModalOpen && SelectedLEDGERData && (
+    <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center z-50">
+        <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px] w-[870px] h-[400px] mt-[60px] dark:bg-slate-600 overflow-auto">
+            <div className="text-right">
+                <button onClick={() => closeLEDGERModal()} className="text-red-500 text-xl font-bold">&times;</button>
             </div>
-        )}
+            <h2 className="text-2xl text-center mb-4 font-extrabold shadow-sm">
+                LEDGER DETAILS OF {SelectedLEDGERData.supplierName?.toUpperCase()}
+            </h2>
+            <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
+                <table className="min-w-full leading-normal">
+                    <thead>
+                        <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
+                            <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
+                            <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
+                            <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Debit</th>
+                            <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Credit</th>
+                            <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Balance</th>
+                            <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Total Bill Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {SelectedLEDGERData.ledgerSuppliers?.length > 0 ? (
+                            SelectedLEDGERData.ledgerSuppliers.map((ledger, index) => (
+                                <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
+                                    <td className="px-2 py-2 border-b dark:text-white">
+                                        {ledger.receivedDate ? new Date(ledger.receivedDate).toLocaleDateString() : 'N/A'}
+                                    </td>
+                                    <td className="px-2 py-2 border-b dark:text-white">
+                                        {ledger.orderNo || 'N/A'}
+                                    </td>
+                                    <td className="px-2 py-2 border-b dark:text-white">
+                                        {ledger.debit ?? '0'}
+                                    </td>
+                                    <td className="px-2 py-2 border-b dark:text-white">
+                                        {ledger.credit ?? '0'}
+                                    </td>
+                                    <td className="px-2 py-2 border-b dark:text-white">
+                                        {ledger.balance ?? '0'}
+                                    </td>
+                                    <td className="px-2 py-2 border-b dark:text-white">
+                                        {ledger.totalBillAmount ?? '0'}
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr className='bg-white dark:bg-slate-700 dark:text-white'>
+                                <td colSpan="6" className="px-2 py-2 border-b dark:text-white text-center">
+                                    No ledger entries found for this supplier
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+)}
 
 
                     <div className='items-center justify-center'>
@@ -523,7 +482,7 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
                                 <thead>
                                     <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
-                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
+                                        
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">SupplierName</th>
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Ledger</th>
                                         {/* <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
