@@ -108,7 +108,7 @@ const UpdatePendingForBill = () => {
             const data = await response.json();
             if (response.ok) {
                 toast.success("Orders updated successfully");
-                navigate("/PendingForBill/verify");
+                navigate("/Recieved/pendingForBill");
             } else {
                 toast.error(data.errorMessage || "Failed to update orders");
             }
