@@ -174,59 +174,65 @@ const UpdatePendingForBill = () => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {billData.orders?.map((orderGroup, index) => {
-                                                        // Calculate totals
-                                                        const totalQty = orderGroup.orders.reduce((sum, order) => sum + (order.receivedQty || 0), 0);
-                                                        const totalCost = orderGroup.orders.reduce((sum, order) => sum + (order.productCost || 0), 0);
-                                                        const totalBillAmount = orderGroup.orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
-                                                        const productIds = orderGroup.orders.map(order => order.productId).join(', ');
+    {billData.orders?.map((orderGroup, index) => {
+        // Calculate totals
+        const totalQty = orderGroup.orders.reduce((sum, order) => sum + (order.receivedQty || 0), 0);
+        const totalCost = orderGroup.orders.reduce((sum, order) => sum + (order.productCost || 0), 0);
+        const totalBillAmount = orderGroup.orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+        const productIds = orderGroup.orders.map(order => order.productId).join(', ');
 
-                                                        return (
-                                                            <tr key={index} className="border-b border-gray-200">
-                                                                <td className="px-5 py-5 text-sm">
-                                                                    <input
-                                                                        type="checkbox"
-                                                                        checked={selectedOrders.includes(index)}
-                                                                        onChange={(e) => handleCheckboxChange(index, e.target.checked)}
-                                                                        className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                                                                    />
-                                                                </td>
-                                                                <td className="px-5 py-5 text-sm">
-                                                                    {orderGroup.date && new Date(orderGroup.date).toLocaleString('en-IN', {
-                                                                        year: 'numeric',
-                                                                        month: 'short',
-                                                                        day: '2-digit',
-                                                                        hour: '2-digit',
-                                                                        minute: '2-digit',
-                                                                        hour12: true,
-                                                                    })}
-                                                                </td>
-                                                                <td className="px-5 py-5 text-sm">
-                                                                    {orderGroup.orderNo}
-                                                                </td>
-                                                                <td className="px-5 py-5 text-sm">
-                                                                    {productIds}
-                                                                </td>
-                                                                <td className="px-5 py-5 text-sm">
-                                                                    {totalCost}
-                                                                </td>
-                                                                <td className="px-5 py-5 text-sm">
-                                                                    {totalQty}
-                                                                </td>
-                                                                <td className="px-5 py-5 text-sm">
-                                                                    {totalBillAmount}
-                                                                </td>
-                                                                <td className="px-5 py-5 text-sm">
-                                                                    <Field
-                                                                        name={`physicalBillNo_${index}`}
-                                                                        className="w-full bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-2 px-3 text-black"
-                                                                        placeholder="Enter Physical Bill No"
-                                                                    />
-                                                                </td>
-                                                            </tr>
-                                                        );
-                                                    })}
-                                                </tbody>
+        return (
+            <tr key={index} className="border-b border-gray-200">
+                <td className="px-5 py-5 text-sm">
+                    <input
+                        type="checkbox"
+                        checked={selectedOrders.includes(index)}
+                        onChange={(e) => handleCheckboxChange(index, e.target.checked)}
+                        className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                    />
+                </td>
+                <td className="px-5 py-5 text-sm">
+                    {orderGroup.date && new Date(orderGroup.date).toLocaleString('en-IN', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: true,
+                    })}
+                </td>
+                <td className="px-5 py-5 text-sm">
+                    {orderGroup.orderNo}
+                </td>
+                <td className="px-5 py-5 text-sm">
+                    {productIds}
+                </td>
+                <td className="px-5 py-5 text-sm">
+                    {totalCost}
+                </td>
+                <td className="px-5 py-5 text-sm">
+                    {totalQty}
+                </td>
+                <td className="px-5 py-5 text-sm">
+                    {totalBillAmount}
+                </td>
+                <td className="px-5 py-5 text-sm">
+                    {orderGroup.physicalBillNo ? (
+                        // Show existing physical bill number if it exists
+                        orderGroup.physicalBillNo
+                    ) : (
+                        // Show input field if physicalBillNo is null or undefined
+                        <Field
+                            name={`physicalBillNo_${index}`}
+                            className="w-full bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-2 px-3 text-black"
+                            placeholder="Enter Physical Bill No"
+                        />
+                    )}
+                </td>
+            </tr>
+        );
+    })}
+</tbody>
                                             </table>
                                         </div>
                                         <div className="flex justify-center mt-4">
