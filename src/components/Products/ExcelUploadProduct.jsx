@@ -203,12 +203,12 @@ const ExcelUploadProduct = () => {
                                                             try {
                                                                 const apiEndpoints = {
                                                                     contemporary: `${BASE_URL}/products/downloadCp`,
-                                                                    pashmina: `${BASE_URL}/uploadExcel/downloadPe`,
+                                                                    pashminaEmb: `${BASE_URL}/uploadExcel/downloadPe`,
                                                                     kani: `${BASE_URL}/uploadExcel/downloadKani`,
                                                                     woolemb: `${BASE_URL}/uploadExcel/downloadWe`,
                                                                     papermachie: `${BASE_URL}/uploadExcel/downloadPaper`,
                                                                     cotton: `${BASE_URL}/uploadExcel/downloadCotton`,
-                                                                    saree: `${BASE_URL}/uploadExcel/downloadSaree`,
+                                                                    contempSaree: `${BASE_URL}/uploadExcel/downloadSaree`,
                                                                     contempwool: `${BASE_URL}/uploadExcel/downloadContempWool`,
                                                                 };
 
