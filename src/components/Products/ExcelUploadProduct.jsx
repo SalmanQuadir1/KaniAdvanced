@@ -14,15 +14,17 @@ const ExcelUploadProduct = () => {
     const [fullScreenLoading, setFullScreenLoading] = useState(false);
     const navigate = useNavigate();
     const [selectedCategory, setSelectedCategory] = useState('');
+
+
     const categories = [
         { label: 'Contemporary Pashmina', value: 'contemporary', sampleFile: '/products/downloadCp' },
-        { label: 'Pashmina Embroidery', value: 'Pashmina EMb', sampleFile: '/samples/Pashmina EMb.xlsx' },
+        { label: 'Pashmina Embroidery', value: 'pashmina', sampleFile: '/samples/Pashmina EMb.xlsx' },
         { label: 'Kani', value: 'kani', sampleFile: '/products/downloadCp' },
-        { label: 'Wool Embroidery', value: 'wool emb', sampleFile: '/samples/pashmina.xlsx' },
-        { label: 'Paper Machie', value: 'Paper Machie', sampleFile: '/products/downloadCp' },
+        { label: 'Wool Embroidery', value: 'woolemb', sampleFile: '/samples/pashmina.xlsx' },
+        { label: 'Paper Machie', value: 'papermachie', sampleFile: '/products/downloadCp' },
         { label: 'Cotton', value: 'cotton', sampleFile: '/samples/pashmina.xlsx' },
-        { label: 'Contemporary Saree', value: 'contemporary saree', sampleFile: '/samples/kani.xlsx' },
-        { label: 'Contemporary Wool', value: 'contemporary wool', sampleFile: '/samples/cotton.xlsx' },
+        { label: 'Contemporary Saree', value: 'saree', sampleFile: '/samples/kani.xlsx' },
+        { label: 'Contemporary Wool', value: 'contempwool', sampleFile: '/samples/cotton.xlsx' },
     ];
 
     const handleSubmit = async (values) => {
@@ -30,16 +32,16 @@ const ExcelUploadProduct = () => {
             toast.error('Please select a category');
             return;
         }
-    
+
         const formData = new FormData();
         formData.append('file', values.file);
-    
+
         // Start full-screen loading state
         setFullScreenLoading(true);
-    
+
         // Show initial loading toast
         const loadingToast = toast.loading('Uploading your file...');  // Loading toast displayed at the top
-    
+
         const apiEndpoints = {
             contemporary: ADD_CONTEMPORARY,
             pashmina: ADD_PASHMINA_EMB,
@@ -50,9 +52,9 @@ const ExcelUploadProduct = () => {
             saree: ADD_CONTEM_SAREE,
             contempwool: ADD_CONTEMP_WOOL,
         };
-    
+
+        console.log(selectedCategory, "+++++++++++LLLL");
         const apiUrl = apiEndpoints[selectedCategory];
-    
         try {
             // Make the request to the API
             const response = await fetch(apiUrl, {
@@ -62,13 +64,13 @@ const ExcelUploadProduct = () => {
                     Authorization: `Bearer ${token}`,
                 },
             });
-    
+
             if (response.ok) {
                 // If the response is okay, parse the JSON
                 const data = await response.json();
                 const message = data?.message; // Get the message from the backend
                 console.log("Backend response message:", message);
-    
+
                 // Update the loading toast to success message
                 toast.update(loadingToast, {
                     render: message || 'File uploaded successfully!',
@@ -81,7 +83,7 @@ const ExcelUploadProduct = () => {
                 const errorData = await response.json();
                 console.error("Error response data:", errorData);
                 const errorMessage = errorData.message || 'An error occurred';
-    
+
                 // Update the loading toast to error message
                 toast.update(loadingToast, {
                     render: errorMessage,
@@ -92,7 +94,7 @@ const ExcelUploadProduct = () => {
             }
         } catch (error) {
             console.error('Error during upload:', error);
-    
+
             // Update the loading toast to error message
             toast.update(loadingToast, {
                 render: error.message || 'An error occurred during upload.',
@@ -105,9 +107,9 @@ const ExcelUploadProduct = () => {
             setFullScreenLoading(false);
         }
     };
-    
-    
-    
+
+
+
 
 
 
