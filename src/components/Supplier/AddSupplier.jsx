@@ -80,7 +80,9 @@ const AddSupplier = () => {
                 navigate("/supplier/view")
                 // Call resetForm and setCurrentSupplier with proper state updates
             } else {
-                toast.error(`${data.errorMessage}`);
+                console.log("error here");
+                console.log(data.accountNo,"+++++++");
+                toast.error(data.errorMessage ? `${data.errorMessage}` : `${data?.accountNo}`);
             }
         } catch (error) {
             console.error(error); // Log the error for debugging

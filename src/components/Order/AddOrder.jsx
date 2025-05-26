@@ -914,7 +914,7 @@ const AddOrder = () => {
                         />
                         <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
                       </div>
-                      <div className="flex-1 min-w-[250px] mt-4">
+                      {/* <div className="flex-1 min-w-[250px] mt-4">
                         <button
                           type="button"
                           onClick={() => setisProductModalOpen(true)}
@@ -922,7 +922,7 @@ const AddOrder = () => {
                         >
                           Add New Product
                         </button>
-                      </div>
+                      </div> */}
 
 
 

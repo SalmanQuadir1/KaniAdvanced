@@ -70,14 +70,24 @@ const ExcelUploadProduct = () => {
                 const data = await response.json();
                 const message = data?.message; // Get the message from the backend
                 console.log("Backend response message:", message);
-
-                // Update the loading toast to success message
-                toast.update(loadingToast, {
-                    render: message || 'File uploaded successfully!',
-                    type: 'success',
-                    isLoading: false,
-                    autoClose: 3000, // Auto close after 3 seconds
-                });
+                const formattedMessage = message 
+                ? message.split('. ').map((sentence, index, array) => 
+                    index === array.length - 1 && !sentence.endsWith('.') 
+                        ? sentence 
+                        : `${sentence}.`
+                  ).join('\n')
+                : 'File uploaded successfully!';
+            
+            toast.update(loadingToast, {
+                render: (
+                    <div style={{ whiteSpace: 'pre-line' }}>
+                        {formattedMessage}
+                    </div>
+                ),
+                type: 'success',
+                isLoading: false,
+                autoClose: 7000,
+            });
             } else {
                 // If the response is not okay, handle the error
                 const errorData = await response.json();
