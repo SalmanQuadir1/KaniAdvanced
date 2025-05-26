@@ -18,12 +18,12 @@ const ExcelUploadProduct = () => {
 
     const categories = [
         { label: 'Contemporary Pashmina', value: 'contemporary', sampleFile: '/products/downloadCp' },
-        { label: 'Pashmina Embroidery', value: 'pashmina', sampleFile: '/samples/Pashmina EMb.xlsx' },
+        { label: 'Pashmina Embroidery', value: 'pashminaEmb', sampleFile: '/samples/Pashmina EMb.xlsx' },
         { label: 'Kani', value: 'kani', sampleFile: '/products/downloadCp' },
         { label: 'Wool Embroidery', value: 'woolemb', sampleFile: '/samples/pashmina.xlsx' },
         { label: 'Paper Machie', value: 'papermachie', sampleFile: '/products/downloadCp' },
         { label: 'Cotton', value: 'cotton', sampleFile: '/samples/pashmina.xlsx' },
-        { label: 'Contemporary Saree', value: 'saree', sampleFile: '/samples/kani.xlsx' },
+        { label: 'Contemporary Saree', value: 'contempSaree', sampleFile: '/samples/kani.xlsx' },
         { label: 'Contemporary Wool', value: 'contempwool', sampleFile: '/samples/cotton.xlsx' },
     ];
 
@@ -44,12 +44,12 @@ const ExcelUploadProduct = () => {
 
         const apiEndpoints = {
             contemporary: ADD_CONTEMPORARY,
-            pashmina: ADD_PASHMINA_EMB,
+            pashminaEmb: ADD_PASHMINA_EMB,
             kani: ADD_KANI,
             woolemb: ADD_WOOL_EMB,
             papermachie: ADD_PAPERMACHIE,
             cotton: ADD_COTTON,
-            saree: ADD_CONTEM_SAREE,
+            contempSaree: ADD_CONTEM_SAREE,
             contempwool: ADD_CONTEMP_WOOL,
         };
 
