@@ -368,7 +368,7 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
 
 
        
-            supplierName: values.supplierName || undefined,
+            name: values.supplierName || undefined,
 
          
         };
@@ -464,10 +464,9 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
                     <div className='items-center justify-center'>
                         <Formik
                             initialValues={{
-                                LedgerNo: '',
-                                customerName: "",
-                                supplierName: "",
-                                ProductId: ""
+                           
+                                name: "",
+                             
 
 
 
@@ -487,10 +486,10 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
                                             </label>
                                             <div className="z-20 bg-transparent dark:bg-form-Field">
                                                 <ReactSelect
-                                                    name="supplierName"
+                                                    name="name"
 
                                                     value={productgrp.find(option => option.value === values.customerName)}
-                                                    onChange={(option) => setFieldValue('supplierName', option ? option.value : null)}
+                                                    onChange={(option) => setFieldValue('name', option ? option.value : null)}
                                                     // options={formattedSupplier}
 
                                                     options={[{ label: 'View All Suppliers', value: null }, ...formattedSupplier]}

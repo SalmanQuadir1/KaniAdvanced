@@ -329,7 +329,7 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
 
 
        
-            supplierName: values.supplierName || undefined,
+            name: values.supplierName || undefined,
 
          
         };

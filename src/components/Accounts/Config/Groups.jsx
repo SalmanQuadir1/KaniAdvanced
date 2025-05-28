@@ -46,7 +46,7 @@ const Groups = () => {
             sethsnOptions(formattedOptions);
         }
     }, [hsnCode]);
-    console.log(hsnOptions, "locaaaaaaaaaaaaaaaaa");
+   
     const gstOptions = [
 
         { value: 'Applicable', label: 'Applicable' },
