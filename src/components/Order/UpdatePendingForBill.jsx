@@ -78,13 +78,15 @@ const UpdatePendingForBill = () => {
             const orderGroup = billData.orders[index];
             const firstOrder = orderGroup.orders[0];
             console.log(firstOrder,"firssstorderrr"); // Take the first order as representative
-            
+            console.log(values,"values=+++++++");
             return {
                 supplierId: billData.supplierId,
                 orderId: firstOrder.orderId, // Using the first order's ID
                 productsId: orderGroup.orders.map(o => o.productId).join(','), // Combine all product IDs
                 totalBillAmount: orderGroup.orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0),
-                physicalBillNo: values[`physicalBillNo_${index}`] || ''
+                physicalBillNo: values[`physicalBillNo_${index}`] || '',
+                orderNo:firstOrder.orderNo
+
             };
         });
     
@@ -95,27 +97,27 @@ const UpdatePendingForBill = () => {
     
         console.log("Payload being sent:", payload);
     
-        try {
-            const response = await fetch(`${UPDATE_PENDINGFORBILLBYID}/${id}`, {
-                method: 'PUT',
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify(payload)
-            });
+        // try {
+        //     const response = await fetch(`${UPDATE_PENDINGFORBILLBYID}/${id}`, {
+        //         method: 'PUT',
+        //         headers: {
+        //             "Content-Type": "application/json",
+        //             "Authorization": `Bearer ${token}`
+        //         },
+        //         body: JSON.stringify(payload)
+        //     });
     
-            const data = await response.json();
-            if (response.ok) {
-                toast.success("Orders updated successfully");
-                navigate("/Recieved/pendingForBill");
-            } else {
-                toast.error(data.errorMessage || "Failed to update orders");
-            }
-        } catch (error) {
-            console.error('Error updating orders:', error);
-            toast.error("An error occurred while updating orders");
-        }
+        //     const data = await response.json();
+        //     if (response.ok) {
+        //         toast.success("Orders updated successfully");
+        //         navigate("/Recieved/pendingForBill");
+        //     } else {
+        //         toast.error(data.errorMessage || "Failed to update orders");
+        //     }
+        // } catch (error) {
+        //     console.error('Error updating orders:', error);
+        //     toast.error("An error occurred while updating orders");
+        // }
     };
 
     return (
