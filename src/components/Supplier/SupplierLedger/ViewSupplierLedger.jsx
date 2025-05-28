@@ -3,7 +3,7 @@ import DefaultLayout from '../../../layout/DefaultLayout'
 import Breadcrumb from '../../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import {  VIEW_SUPPLIER_LEDGER, VIEW_SUPPLIER_LEDGERBYID,  } from "../../../Constants/utils";
+import { VIEW_SUPPLIER_LEDGER, VIEW_SUPPLIER_LEDGERBYID, } from "../../../Constants/utils";
 import ReactSelect from 'react-select';
 import useOrder from '../../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -34,13 +34,13 @@ const ViewSupplierLedger = () => {
     const customStyles = createCustomStyles(theme?.mode);
     const [prodIdOptions, setprodIdOptions] = useState([])
     useEffect(() => {
-      
+
         getSupplier();
-     
+
 
 
     }, []);
-  
+
 
 
     const { token } = currentUser;
@@ -52,7 +52,7 @@ const ViewSupplierLedger = () => {
     const [supplierNameOptions, setsupplierNameOptions] = useState([])
 
 
-   
+
     // const supplier = useSelector(state => state?.nonPersisted?.supplier);
     const Order = useSelector(state => state?.nonPersisted?.Ledger);
     const navigate = useNavigate();
@@ -60,7 +60,7 @@ const ViewSupplierLedger = () => {
 
     console.log(supplier, customer, productId, "LedgerNo");
 
-  
+
 
     const formattedSupplier = supplier.map(supplier => ({
         label: supplier.name,
@@ -69,12 +69,12 @@ const ViewSupplierLedger = () => {
 
 
 
-const [IsLEDGERModalOpen, setIsLEDGERModalOpen] = useState(false)
-
- 
+    const [IsLEDGERModalOpen, setIsLEDGERModalOpen] = useState(false)
 
 
-const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
+
+
+    const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
 
 
 
@@ -231,14 +231,14 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
                 toast.error("Supplier data not found");
             }
         };
-    
-    
+
+
         // console.log(selectedBOMData, "jijiji");
-    
-       
 
 
-        
+
+
+
 
         return Ledger.map((item, index) => (
 
@@ -247,13 +247,13 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
                     <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
                 </td>
 
-           
+
                 <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item.supplierName}</p>
                 </td>
                 <td>
-                <span onClick={() => openLEDGERModal(item?.supplierId)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> VIEW LEDGER</span>
-                    </td>
+                    <span onClick={() => openLEDGERModal(item?.supplierId)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> VIEW LEDGER</span>
+                </td>
                 {/* <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     {item.products &&
                         item.products.map((prodId, index) => (
@@ -328,10 +328,10 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
 
 
 
-       
+
             name: values.supplierName || undefined,
 
-         
+
         };
         getLedger(pagination.currentPage, filters);
         // ViewInventory(pagination.currentPage, filters);
@@ -355,64 +355,99 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
                         </p> */}
                     </div>
                     {IsLEDGERModalOpen && SelectedLEDGERData && (
-    <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center z-50">
-        <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px] w-[870px] h-[400px] mt-[60px] dark:bg-slate-600 overflow-auto">
-            <div className="text-right">
-                <button onClick={() => closeLEDGERModal()} className="text-red-500 text-xl font-bold">&times;</button>
-            </div>
-            <h2 className="text-2xl text-center mb-4 font-extrabold shadow-sm">
-                LEDGER DETAILS OF {SelectedLEDGERData.supplierName?.toUpperCase()}
-            </h2>
-            <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
-                <table className="min-w-full leading-normal">
-                    <thead>
-                        <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                            <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
-                            <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
-                            <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Debit</th>
-                            <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Credit</th>
-                            <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Balance</th>
-                            <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Total Bill Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {SelectedLEDGERData.ledgerSuppliers?.length > 0 ? (
-                            SelectedLEDGERData.ledgerSuppliers.map((ledger, index) => (
-                                <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
-                                    <td className="px-2 py-2 border-b dark:text-white">
-                                        {ledger.receivedDate ? new Date(ledger.receivedDate).toLocaleDateString() : 'N/A'}
-                                    </td>
-                                    <td className="px-2 py-2 border-b dark:text-white">
-                                        {ledger.orderNo || 'N/A'}
-                                    </td>
-                                    <td className="px-2 py-2 border-b dark:text-white">
-                                        {ledger.debit ?? '0'}
-                                    </td>
-                                    <td className="px-2 py-2 border-b dark:text-white">
-                                        {ledger.credit ?? '0'}
-                                    </td>
-                                    <td className="px-2 py-2 border-b dark:text-white">
-                                        {ledger.balance ?? '0'}
-                                    </td>
-                                    <td className="px-2 py-2 border-b dark:text-white">
-                                        {ledger.totalBillAmount ?? '0'}
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr className='bg-white dark:bg-slate-700 dark:text-white'>
-                                <td colSpan="6" className="px-2 py-2 border-b dark:text-white text-center">
-                                    No ledger entries found for this supplier
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-)}
+                        <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center z-50">
+                            <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px] w-[870px] h-[400px] mt-[60px] dark:bg-slate-600 overflow-auto">
+                                <div className="text-right">
+                                    <button onClick={() => closeLEDGERModal()} className="text-red-500 text-xl font-bold">&times;</button>
+                                </div>
+                                <h2 className="text-2xl text-center mb-4 font-extrabold shadow-sm">
+                                    LEDGER DETAILS OF {SelectedLEDGERData.supplierName?.toUpperCase()}
+                                </h2>
+                                <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
+                                    <table className="min-w-full leading-normal">
+                                        <thead>
+                                            <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
+                                                <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
+                                                <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
+                                                <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Debit</th>
+                                                <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Credit</th>
+                                                <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Balance</th>
+                                                <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Total Bill Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {SelectedLEDGERData.ledgerSuppliers?.length > 0 ? (
+                                                SelectedLEDGERData.ledgerSuppliers.map((ledger, index) => (
+                                                    <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
+                                                        <td className="px-2 py-2 border-b dark:text-white">
+                                                            {ledger.receivedDate ? new Date(ledger.receivedDate).toLocaleDateString() : 'N/A'}
+                                                        </td>
+                                                        <td className="px-2 py-2 border-b dark:text-white">
+                                                            {ledger.orderNo || 'N/A'}
+                                                        </td>
+                                                        <td className="px-2 py-2 border-b dark:text-white">
+                                                            {ledger.debit ?? '0'}
+                                                        </td>
+                                                        <td className="px-2 py-2 border-b dark:text-white">
+                                                            {ledger.credit ?? '0'}
+                                                        </td>
+                                                        <td className="px-2 py-2 border-b dark:text-white">
+                                                            {ledger.balance ?? '0'}
+                                                        </td>
+                                                        <td className="px-2 py-2 border-b dark:text-white">
+                                                            {ledger.totalBillAmount ?? '0'}
+                                                        </td>
+                                                    </tr>
+                                                ))
+                                            ) : (
+                                                <tr className='bg-white dark:bg-slate-700 dark:text-white'>
+                                                    <td colSpan="6" className="px-2 py-2 border-b dark:text-white text-center">
+                                                        No ledger entries found for this supplier
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </tbody>
+                                    </table>
 
+                                    {/* Summary Section */}
+                                    <div className="mt-4 flex flex-col items-end space-y-4 pr-4">
+                                        <div className="text-right">
+                                            <p className="font-semibold">Opening Balance:{SelectedLEDGERData.openingBalance ?? '0'}</p>
+                                      
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="font-semibold">Total Debit:   {SelectedLEDGERData.ledgerSuppliers?.reduce(
+                                                    (total, ledger) => total + (Number(ledger.debit) || 0),
+                                                    0
+                                                ).toFixed(2)}</p>
+                                           
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="font-semibold">Total Credit: {SelectedLEDGERData.ledgerSuppliers?.reduce(
+                                                    (total, ledger) => total + (Number(ledger.credit) || 0),
+                                                    0
+                                                ).toFixed(2)}</p>
+                                            
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="font-semibold">Closing Balance:       {(
+                                                    parseFloat(SelectedLEDGERData.openingBalance || 0) +
+                                                    SelectedLEDGERData.ledgerSuppliers?.reduce(
+                                                        (sum, ledger) => sum + (parseFloat(ledger.credit) || 0), 0
+                                                    ) -
+                                                    SelectedLEDGERData.ledgerSuppliers?.reduce(
+                                                        (sum, ledger) => sum + (parseFloat(ledger.debit) || 0), 0
+                                                    )
+                                                ).toFixed(2)}</p>
+                                            <p>
+                                           
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     <div className='items-center justify-center'>
                         <Formik
@@ -459,7 +494,7 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
 
 
 
-                                  
+
 
                                     <div className="flex justify-center">
                                         <button
@@ -482,7 +517,7 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
                                 <thead>
                                     <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
-                                        
+
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">SupplierName</th>
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Ledger</th>
                                         {/* <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
@@ -502,7 +537,7 @@ const [SelectedLEDGERData, setSelectedLEDGERData] = useState([])
                 </div>
 
             </div>
- 
+
         </DefaultLayout>
     )
 }
