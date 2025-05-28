@@ -97,27 +97,27 @@ const UpdatePendingForBill = () => {
     
         console.log("Payload being sent:", payload);
     
-        // try {
-        //     const response = await fetch(`${UPDATE_PENDINGFORBILLBYID}/${id}`, {
-        //         method: 'PUT',
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             "Authorization": `Bearer ${token}`
-        //         },
-        //         body: JSON.stringify(payload)
-        //     });
+        try {
+            const response = await fetch(`${UPDATE_PENDINGFORBILLBYID}/${id}`, {
+                method: 'PUT',
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
     
-        //     const data = await response.json();
-        //     if (response.ok) {
-        //         toast.success("Orders updated successfully");
-        //         navigate("/Recieved/pendingForBill");
-        //     } else {
-        //         toast.error(data.errorMessage || "Failed to update orders");
-        //     }
-        // } catch (error) {
-        //     console.error('Error updating orders:', error);
-        //     toast.error("An error occurred while updating orders");
-        // }
+            const data = await response.json();
+            if (response.ok) {
+                toast.success("Orders updated successfully");
+                navigate("/Recieved/pendingForBill");
+            } else {
+                toast.error(data.errorMessage || "Failed to update orders");
+            }
+        } catch (error) {
+            console.error('Error updating orders:', error);
+            toast.error("An error occurred while updating orders");
+        }
     };
 
     return (
