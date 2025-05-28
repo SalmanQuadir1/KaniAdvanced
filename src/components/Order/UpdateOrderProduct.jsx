@@ -15,13 +15,14 @@ import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
 import { FiTrash2 } from 'react-icons/fi';
-import { useParams } from 'react-router-dom';
+import { useNavigation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import SupplierModall from './SupplierModall';
 const UpdateOrderProduct = () => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const [orderType, setOrderType] = useState('');
+  const navigate = useNavigation();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [orderTypeOptions, setorderTypeOptions] = useState([])
   const [prodIdOptions, setprodIdOptions] = useState([])
@@ -162,6 +163,8 @@ const UpdateOrderProduct = () => {
       if (response.ok) {
         console.log(data, "coming ");
         toast.success(`Order Updated successfully`);
+        navigate("/order/created")
+        
       } else {
         toast.error(`${data.errorMessage}`);
       }

@@ -42,7 +42,7 @@ export const GET_GODOWN = `${BASE_URL}/productInventory/searchGoDown`;
 
 // Supplier Urls's
 export const ADD_SUPPLIER_URL = `${BASE_URL}/supplier/addSupplier`;
-export const GET_SUPPLIER_URL = `${BASE_URL}/supplier/viewAll`;
+export const  GET_SUPPLIER_URL = `${BASE_URL}/supplier/viewAll`;
 export const VIEW_ALL_SUPPLIER_URL = `${BASE_URL}/supplier/getAll`;
 export const GET_SUPPLIER_ID_URL = `${BASE_URL}/supplier/getSupplier`;
 export const GET_SUPPLIERLedger_ID_URL = `${BASE_URL}/supplier/getSupplierWithLedger`;
