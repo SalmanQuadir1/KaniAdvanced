@@ -15,14 +15,14 @@ import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
 import { FiTrash2 } from 'react-icons/fi';
-import { useNavigation, useParams } from 'react-router-dom';
+import { useNavigate, useNavigation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import SupplierModall from './SupplierModall';
 const IssueChalaan = () => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
 
-  const navigate = useNavigation();
+  const navigate = useNavigate();
   const [orderType, setOrderType] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [orderTypeOptions, setorderTypeOptions] = useState([])
