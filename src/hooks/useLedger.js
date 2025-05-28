@@ -3,10 +3,12 @@ import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 // import { GET_Ledger_URL, DELETE_Ledger_URL, UPDATE_Ledger_URL, ADD_Ledger_URL } from "../Constants/utils";
 import { ADD_Ledger_URL, DELETE_Ledger_URL, GET_Groupss_URL, UPDATE_Ledger_URL } from "../Constants/utils";
+import { useNavigate, useNavigation } from 'react-router-dom';
 const useLedger = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const [Group, setGroup] = useState([])
+    const navigate= useNavigate()
     const [Ledger, setLedger] = useState([]);
     const [edit, setEdit] = useState(false);
     const [currentLedger, setCurrentLedger] = useState({
@@ -152,6 +154,7 @@ const useLedger = () => {
             const data = await response.json();
             if (response.ok) {
                 toast.success(`Ledger updated successfully`);
+                navigate("/supplier/view")
                
               
                 
