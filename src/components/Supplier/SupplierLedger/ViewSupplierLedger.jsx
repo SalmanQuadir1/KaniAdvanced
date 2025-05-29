@@ -388,8 +388,11 @@ const ViewSupplierLedger = () => {
                                                         <td className="px-2 py-2 border-b dark:text-white">
                                                             {ledger.debit ?? '0'}
                                                         </td>
-                                                        <td className="px-2 py-2 border-b dark:text-white">
+                                                        {/* <td className="px-2 py-2 border-b dark:text-white">
                                                             {ledger.credit ?? '0'}
+                                                        </td> */}
+                                                         <td className="px-2 py-2 border-b dark:text-white">
+                                                            {ledger.totalBillAmount ?? '0'}
                                                         </td>
                                                         <td className="px-2 py-2 border-b dark:text-white">
                                                             {ledger.balance ?? '0'}
@@ -424,7 +427,7 @@ const ViewSupplierLedger = () => {
                                         </div>
                                         <div className="text-right">
                                             <p className="font-semibold">Total Credit: {SelectedLEDGERData.ledgerSuppliers?.reduce(
-                                                    (total, ledger) => total + (Number(ledger.credit) || 0),
+                                                    (total, ledger) => total + (Number(ledger.totalBillAmount) || 0),
                                                     0
                                                 ).toFixed(2)}</p>
                                             
@@ -433,7 +436,7 @@ const ViewSupplierLedger = () => {
                                             <p className="font-semibold">Closing Balance:       {(
                                                     parseFloat(SelectedLEDGERData.openingBalance || 0) +
                                                     SelectedLEDGERData.ledgerSuppliers?.reduce(
-                                                        (sum, ledger) => sum + (parseFloat(ledger.credit) || 0), 0
+                                                        (sum, ledger) => sum + (parseFloat(ledger.totalBillAmount) || 0), 0
                                                     ) -
                                                     SelectedLEDGERData.ledgerSuppliers?.reduce(
                                                         (sum, ledger) => sum + (parseFloat(ledger.debit) || 0), 0
