@@ -118,7 +118,7 @@ const ViewCustomer = () => {
   };
   const handleSubmit = (values) => {
     const filters = {
-        customerName: values.customerName || undefined,
+      customerName: values.customerName || undefined,
     };
     getCustomer(pagination.currentPage, filters);
 };

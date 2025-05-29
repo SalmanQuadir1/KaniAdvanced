@@ -25,17 +25,15 @@ const useCustomer = () => {
       totalItems: 0,
       data: [],
       totalPages: 0,
-      currentPage: 1,
-      itemsPerPage: 0,
-    });
+      currentPage: 0,
+      itemsPerPage: 0
+  });
 
-    useEffect(() => {
-      getCustomer(pagination.currentPage);
-    }, [currentCustomer]);
+  
 
     const getCustomerr = async (page) => {
       try {
-        const response = await fetch(`${GET_CUSTOMER_URL}?page=${page||1}`, {
+        const response = await fetch(`${GET_CUSTOMER_URL}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -62,7 +60,7 @@ const useCustomer = () => {
       console.log("iam here");
       console.log(filters, "filllllllll");
       try {
-          const response = await fetch(`${GET_CUSTOMERR_URL}?page=${page || 0}`, {
+          const response = await fetch(`${GET_CUSTOMERR_URL}?page=${0}`, {
               method: "POST",
               headers: {
                   "Content-Type": "application/json",
