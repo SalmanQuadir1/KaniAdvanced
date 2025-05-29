@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { GET_CUSTOMER_URL, DELETE_CUSTOMER_URL, UPDATE_CUSTOMER_URL, ADD_CUSTOMER_URL,GET_CUSTOMER_ID_URL } from "../Constants/utils";
+import { GET_CUSTOMER_URL, DELETE_CUSTOMER_URL, UPDATE_CUSTOMER_URL, ADD_CUSTOMER_URL,GET_CUSTOMER_ID_URL, GET_CUSTOMERR_URL } from "../Constants/utils";
 import { fetchCustomerGroup } from '../redux/Slice/CustomerGroupSlice';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,6 +11,7 @@ const useCustomer = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const [Customer, setCustomer] = useState([]);
+    const [Customerr, setCustomerr ] = useState([]);
     const [edit, setEdit] = useState(false);
     const [currentCustomer, setCurrentCustomer] = useState({ currentCustomer: '', productGroup: {}, orderType: {}, startDate: '', toDate: "",revisedCustomer:"",revisedDate:"" });
 
@@ -32,7 +33,7 @@ const useCustomer = () => {
       getCustomer(pagination.currentPage);
     }, [currentCustomer]);
 
-    const getCustomer = async (page) => {
+    const getCustomerr = async (page) => {
       try {
         const response = await fetch(`${GET_CUSTOMER_URL}?page=${page||1}`, {
           method: 'GET',
@@ -43,7 +44,7 @@ const useCustomer = () => {
         });
         const data = await response.json();
         // console.log(data,"from url");
-        setCustomer(data?.content);
+        setCustomerr(data?.content);
         setPagination({
           totalItems: data.totalElements,
           pagUnitList: data.content,
@@ -56,6 +57,35 @@ const useCustomer = () => {
         toast.error('Failed to fetch Customer');
       }
     };
+
+    const getCustomer = async (page, filters = {}) => {
+      console.log("iam here");
+      console.log(filters, "filllllllll");
+      try {
+          const response = await fetch(`${GET_CUSTOMERR_URL}?page=${page || 0}`, {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${token}`
+              },
+              body: JSON.stringify(filters)
+          });
+          const data = await response.json();
+          console.log(data, "pr datatata")
+
+          setCustomer(data?.content);
+          setPagination({
+              totalItems: data?.totalElements,
+              data: data?.content,
+              totalPages: data?.totalPages,
+              currentPage: data?.number + 1,
+              itemsPerPage: data.size
+          });
+      } catch (error) {
+          console.log(error);
+          toast.error("Failed to fetch Product");
+      }
+  };
 
     const handleDelete = async (e, id) => {
       e.preventDefault();
@@ -184,6 +214,8 @@ const useCustomer = () => {
     return {
         Customer,
         getCustomer,
+        getCustomerr,
+        Customerr,
         edit,
         currentCustomer,
         pagination,

@@ -6,17 +6,24 @@ import { FiEdit, FiTrash2 } from "react-icons/fi";
 import Pagination from '../Pagination/Pagination';
 import { Link } from 'react-router-dom';
 import useCustomer from '../../hooks/useCustomer';
-import { ErrorMessage, Field } from 'formik';
+import {  customStyles as createCustomStyles } from '../../Constants/utils';
+import { ErrorMessage, Field, Form, Formik } from 'formik';
+import { FaBook } from 'react-icons/fa6';
+import reactSelect from 'react-select';
+import { useSelector } from 'react-redux';
 
 
 const ViewCustomer = () => {
-  const { Customer, getCustomer, handleDelete, pagination, handleUpdate, handlePageChange, GetCustomerById } = useCustomer();
+  const { Customer,Customerr,getCustomerr, getCustomer, handleDelete, pagination, handleUpdate, handlePageChange, GetCustomerById } = useCustomer();
   const [showModal, setShowModal] = useState(false);
+  const theme = useSelector(state => state?.persisted?.theme);
+  const customStyles = createCustomStyles(theme?.mode);
   const [selectedMaterialPos, setSelectedMaterialPos] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     getCustomer();
+    getCustomerr()
   }, []);
 
   const handleViewMaterialPos = (materialPos) => {
@@ -28,6 +35,10 @@ const ViewCustomer = () => {
   //   setSearchQuery(e.target.value);
   // };
   console.log(Customer, "cusssssssss");
+  const formattedCustomer = Customerr.map(cust => ({
+    label: cust.customerName,
+    value: cust.customerName
+}));
 
   // const filteredCustomer = Customer?.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
   // console.log(filteredCustomer,"filteredddddddddddddd");
@@ -70,6 +81,20 @@ const ViewCustomer = () => {
             {item?.contactNumber}
           </p>
         </td>
+        <td className="px-5 py-5  border-b border-gray-200  text-sm">
+          <p className="flex text-gray-900 whitespace-no-wrap">
+            <FaBook size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={(e) => navigate(`/customer/updateLedger/${item.id}`)} title='Update Ledger' />
+
+          </p>
+        </td>
+        <td className="px-5 py-5  border-b border-gray-200  text-sm">
+          <p className="flex text-gray-900 whitespace-no-wrap">
+            {/* {
+            item?.updateLedger && <TiTickOutline size={30}/>
+           } */}
+
+          </p>
+        </td>
 
         <td className="px-5 py-5  border-b border-gray-200  text-sm">
           <p className="flex text-gray-900 whitespace-no-wrap">
@@ -91,12 +116,53 @@ const ViewCustomer = () => {
       </tr>
     ));
   };
+  const handleSubmit = (values) => {
+    const filters = {
+        customerName: values.customerName || undefined,
+    };
+    getCustomer(pagination.currentPage, filters);
+};
 
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Customer / View Customer" />
       <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
         <div className="pt-5">
+          <div className='items-center justify-center'>
+            <Formik
+              initialValues={{
+                customerName: '',
+              }}
+              onSubmit={handleSubmit}
+            >
+              {({ setFieldValue, values }) => (
+                <Form>
+                  <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
+                    <div className="flex-1 min-w-[300px]">
+                      <label className="mb-2.5 block text-black dark:text-white">Customer</label>
+                      <Field
+                        name="customerName"
+                        component={reactSelect}
+                        options={[{ label: 'View All Customer', value: null }, ...formattedCustomer]}
+                        styles={customStyles}
+                        placeholder="Select Customer"
+                        value={formattedCustomer.find(option => option.value === values.customerName)}
+                        onChange={option => setFieldValue('customerName', option ? option.value : '')}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-center">
+                    <button
+                      type="submit"
+                      className="flex md:w-[240px] w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
+                    >
+                      Search
+                    </button>
+                  </div>
+                </Form>
+              )}
+            </Formik>
+          </div>
           {/* <div className="flex justify-center items-center p-3">
             <input
               type="text"
@@ -144,6 +210,14 @@ const ViewCustomer = () => {
                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Contact Number
                     </th>
+                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Update Ledger
+                    </th>
+                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Updated Ledger
+                    </th>
+
+
                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Action
                     </th>
