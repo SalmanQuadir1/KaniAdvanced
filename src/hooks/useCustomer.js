@@ -56,11 +56,11 @@ const useCustomer = () => {
       }
     };
 
-    const getCustomer = async (page, filters = {}) => {
+    const getCustomer = async (page=0, filters = {}) => {
       console.log("iam here");
       console.log(filters, "filllllllll");
       try {
-          const response = await fetch(`${GET_CUSTOMERR_URL}?page=${0}`, {
+          const response = await fetch(`${GET_CUSTOMERR_URL}?page=${page}`, {
               method: "POST",
               headers: {
                   "Content-Type": "application/json",
@@ -204,10 +204,9 @@ const useCustomer = () => {
     
 
     const handlePageChange = (newPage) => {
-
-        setPagination((prev) => ({ ...prev, currentPage: newPage }));
-        getCustomer(newPage); // API is 0-indexed for pages
-    };
+      setPagination((prev) => ({ ...prev, currentPage: newPage }));
+      getCustomer(newPage - 1); // Subtract 1 because API is 0-indexed
+  };
 
     return {
         Customer,
