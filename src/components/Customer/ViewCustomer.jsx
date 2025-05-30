@@ -4,7 +4,7 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import MaterialPoModal from '../../hooks/MaterialPoModal';  // Import the modal component
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import Pagination from '../Pagination/Pagination';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import useCustomer from '../../hooks/useCustomer';
 import {  customStyles as createCustomStyles } from '../../Constants/utils';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 const ViewCustomer = () => {
   const { Customer,Customerr,getCustomerr, getCustomer, handleDelete, pagination, handleUpdate, handlePageChange, GetCustomerById } = useCustomer();
   const [showModal, setShowModal] = useState(false);
+  const navigate= useNavigate();
   const theme = useSelector(state => state?.persisted?.theme);
   const customStyles = createCustomStyles(theme?.mode);
   const [selectedMaterialPos, setSelectedMaterialPos] = useState([]);
@@ -83,7 +84,7 @@ const ViewCustomer = () => {
         </td>
         <td className="px-5 py-5  border-b border-gray-200  text-sm">
           <p className="flex text-gray-900 whitespace-no-wrap">
-            <FaBook size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={(e) => navigate(`/customer/updateLedger/${item.id}`)} title='Update Ledger' />
+            <FaBook size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={(e) => navigate(`/customer/updateLedger/${item?.id}`)} title='Update Ledger' />
 
           </p>
         </td>

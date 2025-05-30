@@ -13,6 +13,8 @@ import GeneralFinancialReportDashboard from './pages/GeneralFinancialReportDashb
 import Groups from './components/Accounts/Config/Groups.jsx';
 
 import CreateLedger from './components/Ledger/CreateLedger.jsx';
+import UpdateCustomerLedger from './components/Ledger/UpdateCustomerLedger.jsx';
+
 import UpdateLedger from './components/Ledger/UpdateLedger.jsx';
 
 import Material from './components/Material/Material.jsx';
@@ -1362,6 +1364,16 @@ function App() {
               </>
             }
           />
+                <Route
+            path="/customer/updateLedger/:id"
+            element={
+              <>
+                <PageTitle title="Update Customer Ledger" />
+                <UpdateCustomerLedger />
+              </>
+            }
+          />
+         
 
           <Route
             path="/customer/addCustomerBulk"

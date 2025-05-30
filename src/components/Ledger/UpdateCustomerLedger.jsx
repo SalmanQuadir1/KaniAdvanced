@@ -9,7 +9,7 @@ import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import useLedger from '../../hooks/useLedger';
 
-const UpdateLedger = () => {
+const UpdateCustomerLedger = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const { getGroup, Group, handleUpdateSubmit } = useLedger()
@@ -510,4 +510,4 @@ const UpdateLedger = () => {
     )
 }
 
-export default UpdateLedger
+export default UpdateCustomerLedger
