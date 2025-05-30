@@ -9,7 +9,7 @@ import useLedger from '../../hooks/useLedger';
 
 const CreateLedger = () => {
 
-    const { getGroup, Group } = useLedger()
+    const { getGroup, Group,handleSubmit } = useLedger()
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
 
@@ -87,6 +87,7 @@ const CreateLedger = () => {
 
                        
                         openingBalance: '',
+                        accountGroup:{id:""},
                    
 
                         provideBankDetails: 'no',
@@ -97,7 +98,7 @@ const CreateLedger = () => {
                         accountType: ''
                     }}
                     onSubmit={(values) => {
-                        console.log(values);
+                        handleSubmit(values)
                         // Handle form submission here
                     }}
                 >
@@ -193,7 +194,7 @@ const CreateLedger = () => {
                                                     <Field
                                                         type="radio"
                                                         name="setAlterDealingProducts"
-                                                        value="yes"
+                                                        value="true"
                                                         className="mr-2"
                                                     />
                                                     Yes
@@ -202,7 +203,7 @@ const CreateLedger = () => {
                                                     <Field
                                                         type="radio"
                                                         name="setAlterDealingProducts"
-                                                        value="no"
+                                                        value="false"
                                                         className="mr-2"
                                                     />
                                                     No
@@ -217,9 +218,9 @@ const CreateLedger = () => {
                                             <h4 className="mb-2.5 font-medium text-black dark:text-white">Under</h4>
                                             <div className="flex-1 min-w-[250px] z-20 bg-transparent dark:bg-form-Field">
                                                 <ReactSelect
-                                                    name="under"
-                                                    value={formattedGroup.find(option => option.value === values.under)}
-                                                    onChange={(option) => setFieldValue('under', option.value)}
+                                                    name="accountGroup"
+                                                    value={formattedGroup.find(option => option.value === values.accountGroup)}
+                                                    onChange={(option) => setFieldValue('accountGroup',{id:option.value})}
                                                     options={formattedGroup}
                                                     styles={customStyles}
                                                     className="bg-white dark:bg-form-Field w-full"
@@ -293,13 +294,13 @@ const CreateLedger = () => {
                                                         <ReactSelect
                                                             name="provideBankDetails"
                                                             value={[
-                                                                { value: 'yes', label: 'Yes' },
-                                                                { value: 'no', label: 'No' }
+                                                                { value: 'true', label: 'Yes' },
+                                                                { value: 'false', label: 'No' }
                                                             ].find(option => option.value === values.provideBankDetails)}
                                                             onChange={(option) => setFieldValue('provideBankDetails', option.value)}
                                                             options={[
-                                                                { value: 'yes', label: 'Yes' },
-                                                                { value: 'no', label: 'No' }
+                                                                { value: 'true', label: 'Yes' },
+                                                                { value: 'false', label: 'No' }
                                                             ]}
                                                             styles={customStyles}
                                                             className="bg-white dark:bg-form-Field w-full"

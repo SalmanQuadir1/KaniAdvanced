@@ -169,11 +169,11 @@ const useLedger = () => {
   
 
 
-    const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    const handleSubmit = async (values,  resetForm ) => {
         console.log(values,"kk");
         try {
-            const url = edit ? `${UPDATE_Ledger_URL}/${currentLedger.id}` : ADD_Ledger_URL;
-            const method = edit ? "PUT" : "POST";
+            const url =  ADD_Ledger_URL;
+            const method =  "POST";
 
             const response = await fetch(url, {
                 method: method,
@@ -186,16 +186,11 @@ const useLedger = () => {
 
             const data = await response.json();
             if (response.ok) {
-                toast.success(`Ledger ${edit ? 'updated' : 'added'} successfully`);
+                toast.success(`Ledger'added successfully`);
                 resetForm();
                 setEdit(false);
-                setCurrentLedger({
-                    groupName: "",
-                    subGroup:[],
-                    natureOfGroup:""
-                   
-                });
-                getLedger(pagination.currentPage); // Fetch updated Ledger
+             
+                 // Fetch updated Ledger
             } else {
                 toast.error(`${data.errorMessage}`);
             }

@@ -271,7 +271,7 @@ export const UPDATE_PENDINGFORBILLBYID = `${BASE_URL}/order/updatePhysicalBillNo
 
 
 export const UPDATE_Ledger_URL = `${BASE_URL}/ledger/update`; 
-export const ADD_Ledger_URL = `${BASE_URL}/order/getBillStatus`; 
+export const ADD_Ledger_URL = `${BASE_URL}/ledger/add`; 
 export const DELETE_Ledger_URL = `${BASE_URL}/order/delete`; 
 // export const GET_Ledger_URL = `${BASE_URL}/order/get`; 
 
