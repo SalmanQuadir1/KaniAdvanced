@@ -4,7 +4,7 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import { useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
-import { GET_LEDGER_ID_URL, GET_SUPPLIERLedger_ID_URL, GET_SUPPLIER_ID_URL, customStyles as createCustomStyles } from '../../Constants/utils';
+import { GET_CUSTOMERBYID_URL, GET_CUSTOMER_URL, GET_LEDGER_ID_URL,  customStyles as createCustomStyles } from '../../Constants/utils';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import useLedger from '../../hooks/useLedger';
@@ -13,7 +13,7 @@ const UpdateCustomerLedger = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const { getGroup, Group, handleUpdateSubmit } = useLedger()
-    const [Supplier, setSupplier] = useState([])
+    const [Customer, setCustomer] = useState([])
     const [Ledger, setLedger] = useState([])
 
     const { id } = useParams()
@@ -29,9 +29,9 @@ const UpdateCustomerLedger = () => {
     }));
 
     useEffect(() => {
-        const GetSupplierById = async () => {
+        const GetCustomerById = async () => {
             try {
-                const response = await fetch(`${GET_SUPPLIERLedger_ID_URL}/${id}`, {
+                const response = await fetch(`${GET_CUSTOMERBYID_URL}/${id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -43,7 +43,7 @@ const UpdateCustomerLedger = () => {
                 console.log(data + "xsdfghjkl")
                 if (response.ok) {
                     console.log("get supp data", data);
-                    setSupplier(data);
+                    setCustomer(data);
                     return data; // Return the fetched data
                 } else {
                     toast.error(`${data.errorMessage}`);
@@ -55,15 +55,15 @@ const UpdateCustomerLedger = () => {
                 return null;
             }
         };
-        GetSupplierById()
+        GetCustomerById()
 
     }, [])
-    console.log(Supplier?.name, "kk+++++++++++");
+    console.log(Customer, "kk+++++++++++");
 
     useEffect(() => {
         const GetLedgerById = async () => {
             try {
-                const response = await fetch(`${GET_LEDGER_ID_URL}/${Supplier?.ledger?.id}`, {
+                const response = await fetch(`${GET_LEDGER_ID_URL}/${Customer?.ledgerCustomer?.id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -89,8 +89,8 @@ const UpdateCustomerLedger = () => {
         };
         GetLedgerById()
 
-    }, [Supplier])
-    console.log(Supplier?.name, "kk+++++++++++");
+    }, [Customer])
+    console.log(Customer?.name, "kk+++++++++++");
 
 
     const theme = useSelector(state => state?.persisted?.theme);
@@ -117,16 +117,17 @@ const UpdateCustomerLedger = () => {
             <div>
                 <Formik
                     initialValues={{
-                        name: Supplier?.name || Ledger.name,
-                        mobileNo: Supplier?.phoneNumber || Ledger.phoneNumber,
-                        email: Supplier?.emailId || Ledger?.emailId,
+                        name: Customer?.customerName || Ledger.name,
+                        mobileNo: Customer?.contactNumber || Ledger.phoneNumber,
+                        email: Customer?.email || Ledger?.emailId,
                         country: Ledger.country || "",
-                        city: Supplier?.address,
-                        maximumDiscountApplicable: Ledger.maximumDiscountApplicable || 0,
+                        city: Customer?.city
+                        ,
+                        maximumDiscountApplicable:Customer?.discount|| Ledger.maximumDiscountApplicable || 0,
                         setAlterDealingProducts: Ledger.setAlterDealingProducts || false,
                         accountGroup: Ledger?.accountGroup || { id: null },
                         mailingName: Ledger.mailingName || '',
-                        mailingAddress: Ledger.mailingAddress || "",
+                        mailingAddress:Customer.shippingAddress|| Ledger.mailingAddress || "",
                         state: Ledger.state || "",
                         mailingCountry: Ledger.mailingCountry || "",
                         pincode: Ledger.pincode || "",
@@ -136,7 +137,7 @@ const UpdateCustomerLedger = () => {
 
                         provideBankDetails: Ledger.provideBankDetails || false,
                         bankName: Ledger.bankName || "",
-                        accountNumber: Ledger.accountNumber || Supplier?.accountNo,
+                        accountNumber: Ledger.accountNumber || Customer?.accountNo,
                         ifscCode: Ledger.ifscCode || '',
                         branch: Ledger.branch || '',
                         accountType: Ledger.accountType || '',
@@ -152,7 +153,7 @@ const UpdateCustomerLedger = () => {
                     }}
                     enableReinitialize={true}
                     onSubmit={(values) => {
-                        handleUpdateSubmit(values, Supplier?.ledger?.id)
+                        handleUpdateSubmit(values, Customer?.ledgerCustomer?.id)
                         // Handle form submission here
                     }}
                 >
@@ -162,7 +163,7 @@ const UpdateCustomerLedger = () => {
                                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                                         <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                                            Ledger Creation
+                                            Ledger Update
                                         </h3>
                                     </div>
 
@@ -496,7 +497,7 @@ const UpdateCustomerLedger = () => {
                                                 type="submit"
                                                 className="flex w-[120px] h-[37px] pt-2 rounded-lg justify-center bg-primary p-2.5 font-medium text-sm text-gray hover:bg-opacity-90"
                                             >
-                                                Create Ledger
+                                                Update Ledger
                                             </button>
                                         </div>
                                     </div>

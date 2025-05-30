@@ -191,6 +191,7 @@ export const DELETE_BUDGET_URL = `${BASE_URL}/budget/`;
 //BUDGET
 export const ADD_CUSTOMER_URL = `${BASE_URL}/customer`;
 export const GET_CUSTOMER_URL = `${BASE_URL}/customer`;
+export const GET_CUSTOMERBYID_URL = `${BASE_URL}/customer/getCustomerWithLedger`;
 export const GET_CUSTOMERR_URL = `${BASE_URL}/customer/searchCustomer`;
 
 export const UPDATE_CUSTOMER_URL = `${BASE_URL}/customer`;
