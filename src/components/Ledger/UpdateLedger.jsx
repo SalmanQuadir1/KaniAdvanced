@@ -134,7 +134,7 @@ const UpdateLedger = () => {
                         include: Ledger.include || "",
                         category: Ledger.category || "",
 
-                        provideBankDetails: Ledger.provideBankDetails || false,
+                        provideBankDetails: Ledger.provideBankDetails ? "true" : "false",
                         bankName: Ledger.bankName || "",
                         accountNumber: Ledger.accountNumber || Supplier?.accountNo,
                         ifscCode: Ledger.ifscCode || '',

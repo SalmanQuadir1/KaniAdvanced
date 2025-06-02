@@ -397,7 +397,13 @@ console.log(Ledger,"jumping");
                                         </thead>
                                         <tbody>
                                             {SelectedLEDGERData.ledgerSuppliers?.length > 0 ? (
-                                                SelectedLEDGERData.ledgerSuppliers.map((ledger, index) => (
+                                                SelectedLEDGERData.ledgerSuppliers.filter(ledger => 
+                                                    ledger.receivedDate || 
+                                                    ledger.orderNo || 
+                                                    ledger.debit !== null || 
+                                                    ledger.totalBillAmount !== null || 
+                                                    ledger.balance !== null
+                                                  ).map((ledger, index) => (
                                                     <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
                                                         <td className="px-2 py-2 border-b dark:text-white">
                                                             {ledger.receivedDate ? new Date(ledger.receivedDate).toLocaleDateString() : 'N/A'}
