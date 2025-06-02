@@ -384,7 +384,7 @@ const ViewProduct = () => {
                                     <button onClick={closeINVENTORYModal} className="text-red-500 text-xl  font-bold">&times;</button>
                                 </div>
                                 <h2 className="text-2xl text-center mb-4 font-extrabold">INVENTORY  DETAILS</h2>
-                                <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
+                                <div className="inline-block min-w-full shadow-md rounded-lg overflow-auto">
                                     <table className="min-w-full leading-normal">
                                         <thead>
                                             <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
