@@ -385,7 +385,7 @@ const ViewProduct = () => {
                                 </div>
                                 <h2 className="text-2xl text-center mb-4 font-extrabold">INVENTORY  DETAILS</h2>
                                 <div className="inline-block min-w-full shadow-md rounded-lg overflow-auto">
-                                    <table className="min-w-full leading-normal">
+                                    <table className="min-w-full leading-normal overflow-auto">
                                         <thead>
                                             <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >LOCATION</th>
