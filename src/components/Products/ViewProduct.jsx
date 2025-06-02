@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
 import useProduct from '../../hooks/useProduct';
@@ -36,7 +36,7 @@ const ViewProduct = () => {
 
 
 
-
+  
 
 
 
@@ -128,6 +128,76 @@ const ViewProduct = () => {
         setSelectedINVENTORYData(null);
     };
 
+    //image upload loagic
+    const [uploadModalOpen, setUploadModalOpen] = useState(false);
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [uploading, setUploading] = useState(false);
+    const [currentProductId, setCurrentProductId] = useState(null);
+    const fileInputRef = useRef(null);
+
+    // Handle file selection
+    const handleFileSelect = (e, productId) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+        
+        setCurrentProductId(productId);
+        setSelectedFiles(files.map(file => ({
+            file,
+            preview: URL.createObjectURL(file)
+        })));
+        setUploadModalOpen(true);
+    };
+
+    // Handle image upload
+    const handleImageUpload = async () => {
+        if (!currentProductId || selectedFiles.length === 0) return;
+        
+        setUploading(true);
+        const toastId = toast.loading(`Uploading ${selectedFiles.length} images...`);
+        
+        try {
+            const formData = new FormData();
+            selectedFiles.forEach(fileObj => {
+                formData.append('images', fileObj.file);
+            });
+
+            const response = await fetch(`${UPDATE_PRODUCT_URL}/${currentProductId}/images`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                toast.success(`${selectedFiles.length} images uploaded successfully!`, { id: toastId });
+                // Refresh product data
+                getProduct();
+                // Close modal and reset
+                setUploadModalOpen(false);
+                setSelectedFiles([]);
+                setCurrentProductId(null);
+            } else {
+                throw new Error('Upload failed');
+            }
+        } catch (error) {
+            console.error('Error uploading images:', error);
+            toast.error('Failed to upload images', { id: toastId });
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    // Clean up object URLs
+    useEffect(() => {
+        return () => {
+            selectedFiles.forEach(fileObj => URL.revokeObjectURL(fileObj.preview));
+        };
+    }, [selectedFiles]);
+
+    //image uplaod ends here 
+  
+
     const renderTableRows = () => {
         if (!Product || !Product.length) {
             return (
@@ -159,16 +229,48 @@ const ViewProduct = () => {
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
                 </td>
+
                 <td className="px-1 py-5 border-b border-gray-200 text-sm">
-                    <div className="relative group">
-                        <img
-                            className="h-[50px] w-[50px] rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
-                            crossOrigin="use-credentials"
-                            src={`${GET_IMAGE}/products/getimages/${item?.images[0]?.referenceImage}`}
-                            alt="Product Image"
+            <div className="relative group">
+                {item?.images?.[0]?.referenceImage ? (
+                    <img
+                        className="h-[50px] w-[50px] rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                        crossOrigin="use-credentials"
+                        src={`${GET_IMAGE}/products/getimages/${item.images[0].referenceImage}`}
+                        alt="Product Image"
+                    />
+                ) : (
+                    <div 
+                        className="h-[50px] w-[50px] rounded-full bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+                        onClick={() => fileInputRef.current.click()}
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-6 w-6 text-gray-500"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 4v16m8-8H4"
+                            />
+                        </svg>
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => handleFileSelect(e, item.id)}
+                            multiple
                         />
                     </div>
-                </td>
+                )}
+            </div>
+        </td>
+    
                 <td className="px-2 py-5  md:w-[50px] border-b border-gray-200 text-xs">
                     <span onClick={() => openImageModal(item?.images)} className="bg-green-100 text-green-800  font-medium me-2 px-1 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer "> VIEW IMG</span>
 
@@ -243,6 +345,84 @@ const ViewProduct = () => {
         };
         getProduct(pagination.currentPage, filters);
     };
+    const renderUploadModal = () => (
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center z-40">
+            <div className="bg-slate-100 dark:bg-slate-600 border border-b-1 rounded p-6 shadow-lg w-[900px] ml-[300px] max-h-[90vh] overflow-auto">
+                <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-2xl font-extrabold">Upload Images ({selectedFiles.length} selected)</h2>
+                    <button 
+                        onClick={() => {
+                            setUploadModalOpen(false);
+                            setSelectedFiles([]);
+                        }}
+                        className="text-red-500 text-xl font-bold hover:text-red-700"
+                    >
+                        &times;
+                    </button>
+                </div>
+                
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
+                    {selectedFiles.map((fileObj, index) => (
+                        <div key={index} className="relative border rounded-lg overflow-hidden group">
+                            <img
+                                src={fileObj.preview}
+                                alt={`Preview ${index}`}
+                                className="w-full h-32 object-cover"
+                            />
+                            <div className="absolute top-1 right-1 bg-black bg-opacity-50 text-white rounded-full w-6 h-6 flex items-center justify-center">
+                                {index + 1}
+                            </div>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    // Remove the image from selectedFiles
+                                    const updatedFiles = [...selectedFiles];
+                                    updatedFiles.splice(index, 1);
+                                    setSelectedFiles(updatedFiles);
+                                    // Revoke the object URL to prevent memory leaks
+                                    URL.revokeObjectURL(fileObj.preview);
+                                }}
+                                className="absolute top-1 left-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                                title="Remove image"
+                            >
+                                &times;
+                            </button>
+                        </div>
+                    ))}
+                </div>
+                
+                <div className="flex justify-end space-x-3">
+                    <button
+                        onClick={() => {
+                            setUploadModalOpen(false);
+                            setSelectedFiles([]);
+                        }}
+                        className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100 dark:hover:bg-slate-500 transition-colors"
+                        disabled={uploading}
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onClick={handleImageUpload}
+                        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-blue-300 flex items-center transition-colors"
+                        disabled={uploading || selectedFiles.length === 0}
+                    >
+                        {uploading ? (
+                            <>
+                                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Uploading...
+                            </>
+                        ) : (
+                            `Upload ${selectedFiles.length} Images`
+                        )}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
 
     return (
         <DefaultLayout>
@@ -374,6 +554,9 @@ const ViewProduct = () => {
 
 
                     )}
+
+                    {/* Image Modal */}
+                    {uploadModalOpen && renderUploadModal()}
 
 
                     {/* Inventory Modal */}
