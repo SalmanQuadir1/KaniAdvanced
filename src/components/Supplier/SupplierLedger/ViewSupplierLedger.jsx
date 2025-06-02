@@ -66,6 +66,11 @@ const ViewSupplierLedger = () => {
         label: supplier.name,
         value: supplier.name
     }));
+    const LedgerType = [
+        { value: 'supplier', label: 'supplier' },
+        { value: 'customer', label: 'customer' },
+    
+    ];
 
 
 
@@ -110,7 +115,7 @@ const ViewSupplierLedger = () => {
         console.log("Fetching Ledgers for page", page); // Log the page number being requested
 
         try {
-            const response = await fetch(`${VIEW_SUPPLIER_LEDGER}?page=${page || 1}`, {
+            const response = await fetch(`${VIEW_SUPPLIER_LEDGER}?page=${page || 0}`, {
                 method: "POST", // GET method
                 headers: {
                     "Content-Type": "application/json",
@@ -132,7 +137,7 @@ const ViewSupplierLedger = () => {
                 console.log("Parsed Response:", data);
 
                 if (data) {
-                    setLedger(data); // Update Ledgers state
+                    setLedger(data?.content); // Update Ledgers state
                 } else {
                     console.log("No Ledgers found in the response");
                     setLedger([]); // Set an empty state
@@ -165,7 +170,7 @@ const ViewSupplierLedger = () => {
         console.log("Page change requested:", newPage);
 
         setPagination((prev) => ({ ...prev, currentPage: newPage }));
-        getLedger(newPage); // Correct function name and 1-indexed for user interaction
+        getLedger(newPage-1); // Correct function name and 1-indexed for user interaction
     };
 
     console.log(Ledger, "heyLedger");
@@ -174,8 +179,8 @@ const ViewSupplierLedger = () => {
 
 
     const renderTableRows = () => {
-        console.log(Ledger);
-        if (!Ledger || !Ledger.length) {
+        
+        if (!Ledger) {
             return (
                 <tr className='bg-white dark:bg-slate-700 dark:text-white'>
                     <td colSpan="6" className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
@@ -237,7 +242,7 @@ const ViewSupplierLedger = () => {
 
 
 
-
+console.log(Ledger,"jumping");
 
 
         return Ledger.map((item, index) => (
@@ -249,8 +254,22 @@ const ViewSupplierLedger = () => {
 
 
                 <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.supplierName}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.supplierName || item?.customerName}</p>
                 </td>
+                {
+                    item.supplierName ? (
+                        <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
+                            <p className="text-gray-900 whitespace-no-wrap">Supplier</p>
+                        </td>
+                    ) : item.customerName?(
+                        <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
+                            <p className="text-gray-900 whitespace-no-wrap">Customer</p>
+                        </td>
+                    ):  <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">null</p>
+                </td>
+                }
+                
                 <td>
                     <span onClick={() => openLEDGERModal(item?.supplierId)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> VIEW LEDGER</span>
                 </td>
@@ -329,11 +348,12 @@ const ViewSupplierLedger = () => {
 
 
 
-            name: values.supplierName || undefined,
+            // name: values.supplierName || undefined,
+            type:values?.type||undefined
 
 
         };
-        getLedger(pagination.currentPage, filters);
+        getLedger(pagination.currentPage-1, filters);
         // ViewInventory(pagination.currentPage, filters);
     };
 
@@ -391,7 +411,7 @@ const ViewSupplierLedger = () => {
                                                         {/* <td className="px-2 py-2 border-b dark:text-white">
                                                             {ledger.credit ?? '0'}
                                                         </td> */}
-                                                         <td className="px-2 py-2 border-b dark:text-white">
+                                                        <td className="px-2 py-2 border-b dark:text-white">
                                                             {ledger.totalBillAmount ?? '0'}
                                                         </td>
                                                         <td className="px-2 py-2 border-b dark:text-white">
@@ -416,34 +436,34 @@ const ViewSupplierLedger = () => {
                                     <div className="mt-4 flex flex-col items-end space-y-4 pr-4">
                                         <div className="text-right">
                                             <p className="font-semibold">Opening Balance:{SelectedLEDGERData.openingBalance ?? '0'}</p>
-                                      
+
                                         </div>
                                         <div className="text-right">
                                             <p className="font-semibold">Total Debit:   {SelectedLEDGERData.ledgerSuppliers?.reduce(
-                                                    (total, ledger) => total + (Number(ledger.debit) || 0),
-                                                    0
-                                                ).toFixed(2)}</p>
-                                           
+                                                (total, ledger) => total + (Number(ledger.debit) || 0),
+                                                0
+                                            ).toFixed(2)}</p>
+
                                         </div>
                                         <div className="text-right">
                                             <p className="font-semibold">Total Credit: {SelectedLEDGERData.ledgerSuppliers?.reduce(
-                                                    (total, ledger) => total + (Number(ledger.totalBillAmount) || 0),
-                                                    0
-                                                ).toFixed(2)}</p>
-                                            
+                                                (total, ledger) => total + (Number(ledger.totalBillAmount) || 0),
+                                                0
+                                            ).toFixed(2)}</p>
+
                                         </div>
                                         <div className="text-right">
                                             <p className="font-semibold">Closing Balance:       {(
-                                                    parseFloat(SelectedLEDGERData.openingBalance || 0) +
-                                                    SelectedLEDGERData.ledgerSuppliers?.reduce(
-                                                        (sum, ledger) => sum + (parseFloat(ledger.totalBillAmount) || 0), 0
-                                                    ) -
-                                                    SelectedLEDGERData.ledgerSuppliers?.reduce(
-                                                        (sum, ledger) => sum + (parseFloat(ledger.debit) || 0), 0
-                                                    )
-                                                ).toFixed(2)}</p>
+                                                parseFloat(SelectedLEDGERData.openingBalance || 0) +
+                                                SelectedLEDGERData.ledgerSuppliers?.reduce(
+                                                    (sum, ledger) => sum + (parseFloat(ledger.totalBillAmount) || 0), 0
+                                                ) -
+                                                SelectedLEDGERData.ledgerSuppliers?.reduce(
+                                                    (sum, ledger) => sum + (parseFloat(ledger.debit) || 0), 0
+                                                )
+                                            ).toFixed(2)}</p>
                                             <p>
-                                           
+
                                             </p>
                                         </div>
                                     </div>
@@ -455,10 +475,11 @@ const ViewSupplierLedger = () => {
                     <div className='items-center justify-center'>
                         <Formik
                             initialValues={{
-                                LedgerNo: '',
-                                customerName: "",
-                                supplierName: "",
-                                ProductId: ""
+                                // LedgerNo: '',
+                                // customerName: "",
+                                // supplierName: "",
+                                // ProductId: "",
+                                type:"",
 
 
 
@@ -476,7 +497,7 @@ const ViewSupplierLedger = () => {
                                                 Supplier
                                                 <span className="text-red-700 text-xl mt-[40px] justify-center items-center"> *</span>
                                             </label>
-                                            <div className="z-20 bg-transparent dark:bg-form-Field">
+                                            {/* <div className="z-20 bg-transparent dark:bg-form-Field">
                                                 <ReactSelect
                                                     name="supplierName"
 
@@ -489,6 +510,21 @@ const ViewSupplierLedger = () => {
                                                     className="bg-white dark:bg-form-Field"
                                                     classNamePrefix="react-select"
                                                     placeholder="Select supplier Name"
+                                                />
+                                            </div> */}
+                                              <div className="z-20 bg-transparent dark:bg-form-Field">
+                                                <ReactSelect
+                                                    name="type"
+
+                                                    value={LedgerType.find(option => option.value === values.type)}
+                                                    onChange={(option) => setFieldValue('type', option ? option.value : null)}
+                                                    // options={formattedSupplier}
+
+                                                    options={[{ label: 'View All ', value: null }, ...LedgerType]}
+                                                    styles={customStyles} // Pass custom styles here
+                                                    className="bg-white dark:bg-form-Field"
+                                                    classNamePrefix="react-select"
+                                                    placeholder="Select Type"
                                                 />
                                             </div>
                                         </div>
@@ -521,7 +557,8 @@ const ViewSupplierLedger = () => {
                                     <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
 
-                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">SupplierName</th>
+                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">LedgerName</th>
+                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">LedgerType</th>
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Ledger</th>
                                         {/* <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 
