@@ -72,6 +72,58 @@ const [report, setreport] = useState()
         value: cust.customerName
     }));
 
+    const orderStatus = [
+        {
+        label: "Pending",
+        value: "Pending"
+    },
+    {
+        label: "Closed",
+        value: "Closed"
+    },
+    {
+        label: "Partially_Pending",
+        value: "Partially_Pending"
+    },
+    {
+        label: "Partially_Closed",
+        value: "Partially_Closed"
+    },
+    {
+        label: "Forced_Closure",
+        value: "Forced_Closure"
+    },
+    {
+        label: "approved",
+        value: "approved"
+    },
+    {
+        label: "Partially_Approved",
+        value: "Partially_Approved"
+    },
+    {
+        label: "created",
+        value: "created"
+    },
+    {
+        label: "accepted",
+        value: "accepted"
+    },
+    {
+        label: "Partially_Accepted",
+        value: "Partially_Accepted"
+    },
+    {
+        label: "rejected",
+        value: "rejected"
+    },
+  
+
+
+
+];
+
+
 
 
     const formattedSupplier = Supplier?.map(sup => ({
@@ -418,6 +470,7 @@ const [report, setreport] = useState()
 
 
             fromDate: values.fromDate,
+            orderStatus:values.orderStatus,
             toDate: values.toDate,
 
 
@@ -503,6 +556,7 @@ getReport(pagination.currentPage, filters)
             supplierId: values.supplierName,
             productId: values?.ProductId,
             fromDate: values.fromDate,
+            orderStatus:values.orderStatus,
             toDate: values.toDate,
         };
     
@@ -551,6 +605,7 @@ getReport(pagination.currentPage, filters)
             supplierId: values.supplierName,
             productId: values?.ProductId,
             fromDate: values.fromDate,
+            orderStatus:values.orderStatus,
             toDate: values.toDate,
         };
     
@@ -642,6 +697,7 @@ getReport(pagination.currentPage, filters)
                                 supplierName: "",
                                 customerName: "",
                                 fromDate: '',
+                                orderStatus:"",
                                 toDate: ''
 
 
@@ -816,6 +872,32 @@ getReport(pagination.currentPage, filters)
                                                 className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                             />
                                         </div>
+                                    </div>
+
+                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
+                                        <div className="flex-1 min-w-[300px]">
+                                            <label className="mb-2.5 block text-black dark:text-white">
+                                               Order Status
+                                            </label>
+                                            <ReactSelect
+                                                name="orderStatus"
+                                                // value={productgrp.find(option => option.value === values.customerName)}
+                                                onChange={(option) => {
+                                                    setFieldValue('orderStatus', option.value);
+
+                                                }} 
+                                                // onBlur={handleBlur}
+                                                // // options={formattedCustomer}
+                                                options={[{ label: 'Select', value: null }, ...orderStatus]}
+                                                styles={customStyles}
+                                                className="bg-white dark:bg-form-input"
+                                                classNamePrefix="react-select"
+                                                placeholder="Select"
+                                            />
+                                        </div>
+
+
+                                     
                                     </div>
 
                                     <div className="flex justify-center">
