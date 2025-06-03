@@ -6,7 +6,7 @@ import { FiEdit, FiTrash2 } from "react-icons/fi";
 import Pagination from '../Pagination/Pagination';
 import { useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
-import { GET_IMAGE, GET_INVENTORYLOCATION, customStyles as createCustomStyles } from '../../Constants/utils';
+import { GET_IMAGE, GET_INVENTORYLOCATION, UPDATE_PRODUCTIMAGE_URL, UPDATE_PRODUCT_URL, customStyles as createCustomStyles } from '../../Constants/utils';
 import { Field, Form, Formik } from 'formik';
 import { IoIosAdd } from "react-icons/io";
 import { useNavigate } from 'react-router-dom';
@@ -17,6 +17,7 @@ const ViewProduct = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const referenceImages = [];
+    const [uploadType, setUploadType] = useState('referenceImages');
     const actualImages = [];
 
     const theme = useSelector(state => state?.persisted?.theme);
@@ -36,7 +37,7 @@ const ViewProduct = () => {
 
 
 
-  
+
 
 
 
@@ -136,11 +137,13 @@ const ViewProduct = () => {
     const fileInputRef = useRef(null);
 
     // Handle file selection
-    const handleFileSelect = (e, productId) => {
+    const handleFileSelect = (e, productId, type) => {
+        console.log(type, "jjhty[e");
         const files = Array.from(e.target.files);
         if (files.length === 0) return;
-        
+
         setCurrentProductId(productId);
+        setUploadType(type); // Set the upload type
         setSelectedFiles(files.map(file => ({
             file,
             preview: URL.createObjectURL(file)
@@ -151,42 +154,48 @@ const ViewProduct = () => {
     // Handle image upload
     const handleImageUpload = async () => {
         if (!currentProductId || selectedFiles.length === 0) return;
-        
+
         setUploading(true);
-        const toastId = toast.loading(`Uploading ${selectedFiles.length} images...`);
-        
+        // const toastId = toast.loading(`Uploading ${selectedFiles.length} ${uploadType} images...`);
+
         try {
             const formData = new FormData();
+            const fieldName = uploadType === 'referenceImages' ? 'referenceImages' : 'actualImages';
+
             selectedFiles.forEach(fileObj => {
-                formData.append('images', fileObj.file);
+                if (!(fileObj.file instanceof File)) {
+                    throw new Error('Invalid file object');
+                }
+                formData.append(fieldName, fileObj.file);
             });
 
-            const response = await fetch(`${UPDATE_PRODUCT_URL}/${currentProductId}/images`, {
-                method: 'POST',
+            const response = await fetch(`${UPDATE_PRODUCTIMAGE_URL}/${currentProductId}`, {
+                method: 'PUT',
                 body: formData,
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
             });
 
-            if (response.ok) {
-                toast.success(`${selectedFiles.length} images uploaded successfully!`, { id: toastId });
-                // Refresh product data
-                getProduct();
-                // Close modal and reset
-                setUploadModalOpen(false);
-                setSelectedFiles([]);
-                setCurrentProductId(null);
-            } else {
-                throw new Error('Upload failed');
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || 'Upload failed');
             }
+
+            toast.success(`${selectedFiles.length} ${uploadType} images uploaded successfully!`);
+            getProduct();
         } catch (error) {
             console.error('Error uploading images:', error);
-            toast.error('Failed to upload images', { id: toastId });
+            toast.error(error.message || `Failed to upload ${uploadType} images`, { id: toastId });
         } finally {
+            setUploadModalOpen(false);
+            setSelectedFiles([]);
+            setCurrentProductId(null);
             setUploading(false);
         }
     };
+
+
 
     // Clean up object URLs
     useEffect(() => {
@@ -196,7 +205,7 @@ const ViewProduct = () => {
     }, [selectedFiles]);
 
     //image uplaod ends here 
-  
+
 
     const renderTableRows = () => {
         if (!Product || !Product.length) {
@@ -208,6 +217,7 @@ const ViewProduct = () => {
                 </tr>
             );
         }
+
 
         const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
 
@@ -221,7 +231,6 @@ const ViewProduct = () => {
             navigate(`/product/updateInventory/${id}`)
         }
 
-        console.log(Product, "prooodudctcttc");
 
 
         return Product.map((item, index) => (
@@ -231,48 +240,88 @@ const ViewProduct = () => {
                 </td>
 
                 <td className="px-1 py-5 border-b border-gray-200 text-sm">
-            <div className="relative group">
-                {item?.images?.[0]?.referenceImage ? (
-                    <img
-                        className="h-[50px] w-[50px] rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
-                        crossOrigin="use-credentials"
-                        src={`${GET_IMAGE}/products/getimages/${item.images[0].referenceImage}`}
-                        alt="Product Image"
-                    />
-                ) : (
-                    <div 
-                        className="h-[50px] w-[50px] rounded-full bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
-                        onClick={() => fileInputRef.current.click()}
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-6 w-6 text-gray-500"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 4v16m8-8H4"
+                    <div className="relative group">
+                        {item?.images?.find((img)=>img.referenceImage) ? (
+                            <img
+                                className="h-[50px] w-[50px] rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                                crossOrigin="use-credentials"
+                                src={`${GET_IMAGE}/products/getimages/${item?.images?.find((img)=>img.referenceImage).referenceImage}`}
+                                alt="Product Image"
                             />
-                        </svg>
-                        <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={(e) => handleFileSelect(e, item.id)}
-                            multiple
-                        />
+                        ) : (
+                            <div
+                                className="h-[50px] w-[50px] rounded-full bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+                                onClick={() => fileInputRef.current.click()}
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-6 w-6 text-gray-500"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M12 4v16m8-8H4"
+                                    />
+                                </svg>
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => handleFileSelect(e, item.id, "referenceImages")}
+                                    multiple
+                                />
+                            </div>
+                        )}
                     </div>
-                )}
-            </div>
-        </td>
-    
+                </td>
+                <td className="px-1 py-5 border-b border-gray-200 text-sm">
+                    <div className="relative group">
+                        {item?.images?.find(img => img?.actualImage) ? (
+                            <img
+                                className="h-[50px] w-[50px] rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                                crossOrigin="use-credentials"
+                                src={`${GET_IMAGE}/products/getimages/${item.images.find(img => img?.actualImage)?.actualImage}`}
+                                alt="Product Actual Image"
+                            />
+                        ) : (
+                            <div
+                                className="h-[50px] w-[50px] rounded-full bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+                                onClick={() => fileInputRef.current.click()}
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="h-6 w-6 text-gray-500"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M12 4v16m8-8H4"
+                                    />
+                                </svg>
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => handleFileSelect(e, item.id, "actualImages")}
+                                    multiple
+                                />
+                            </div>
+                        )}
+                    </div>
+                </td>
+
                 <td className="px-2 py-5  md:w-[50px] border-b border-gray-200 text-xs">
-                    <span onClick={() => openImageModal(item?.images)} className="bg-green-100 text-green-800  font-medium me-2 px-1 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer "> VIEW IMG</span>
+                    <span onClick={() => openImageModal(item?.images)} className="bg-green-100 text-green-800  font-medium me-2 px-1 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer "> VIEW</span>
 
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
@@ -350,7 +399,7 @@ const ViewProduct = () => {
             <div className="bg-slate-100 dark:bg-slate-600 border border-b-1 rounded p-6 shadow-lg w-[900px] ml-[300px] max-h-[90vh] overflow-auto">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-2xl font-extrabold">Upload Images ({selectedFiles.length} selected)</h2>
-                    <button 
+                    <button
                         onClick={() => {
                             setUploadModalOpen(false);
                             setSelectedFiles([]);
@@ -360,7 +409,7 @@ const ViewProduct = () => {
                         &times;
                     </button>
                 </div>
-                
+
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-6">
                     {selectedFiles.map((fileObj, index) => (
                         <div key={index} className="relative border rounded-lg overflow-hidden group">
@@ -390,7 +439,7 @@ const ViewProduct = () => {
                         </div>
                     ))}
                 </div>
-                
+
                 <div className="flex justify-end space-x-3">
                     <button
                         onClick={() => {
@@ -669,7 +718,8 @@ const ViewProduct = () => {
                                 <thead>
                                     <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">IMAGE</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">REF IMAGE</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">ACT IMAGE</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider md:w-[500px]">View Images</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">PRODUCT ID</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">PRODUCT GROUP</th>

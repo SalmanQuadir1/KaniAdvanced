@@ -233,6 +233,7 @@ export const GET_PRODUCT_URL = `${BASE_URL}/products/search`;
 
 export const GET_PRODUCTBYID_URL = `${BASE_URL}/products`;
 export const UPDATE_PRODUCT_URL = `${BASE_URL}/products/update-product`;
+export const UPDATE_PRODUCTIMAGE_URL = `${BASE_URL}/products/update-product-images`;
 export const VIEW_ALL_PRODUCT = `${BASE_URL}/products/viewAll`;
 export const DELETE_PRODUCT_URL = `${BASE_URL}/products/`;
 export const GET_PRODUCTID_URL = `${BASE_URL}/products`;
