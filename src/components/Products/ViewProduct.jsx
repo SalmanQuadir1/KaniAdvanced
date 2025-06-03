@@ -52,6 +52,19 @@ const ViewProduct = () => {
         label: id,
         value: id
     }));
+
+    const optionsForImage = [{
+        label: "true",
+        value: "true",
+    },
+    {
+        label: "false",
+        value: "false"
+    }
+    ];
+
+
+
     // console.log(Product,"lololo");
     const customStyles = createCustomStyles(theme?.mode);
 
@@ -241,11 +254,11 @@ const ViewProduct = () => {
 
                 <td className="px-1 py-5 border-b border-gray-200 text-sm">
                     <div className="relative group">
-                        {item?.images?.find((img)=>img.referenceImage) ? (
+                        {item?.images?.find((img) => img.referenceImage) ? (
                             <img
                                 className="h-[50px] w-[50px] rounded-full transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
                                 crossOrigin="use-credentials"
-                                src={`${GET_IMAGE}/products/getimages/${item?.images?.find((img)=>img.referenceImage).referenceImage}`}
+                                src={`${GET_IMAGE}/products/getimages/${item?.images?.find((img) => img.referenceImage).referenceImage}`}
                                 alt="Product Image"
                             />
                         ) : (
@@ -391,6 +404,8 @@ const ViewProduct = () => {
     const handleSubmit = (values) => {
         const filters = {
             productId: values.ProductId || undefined,
+            hasActualImage:values.hasActualImage,
+            hasReferenceImage:values.hasReferenceImage
         };
         getProduct(pagination.currentPage, filters);
     };
@@ -680,6 +695,8 @@ const ViewProduct = () => {
                         <Formik
                             initialValues={{
                                 ProductId: '',
+                                hasActualImage: "",
+                                hasReferenceImage: ""
                             }}
                             onSubmit={handleSubmit}
                         >
@@ -698,6 +715,33 @@ const ViewProduct = () => {
                                                 onChange={option => setFieldValue('ProductId', option ? option.value : '')}
                                             />
                                         </div>
+                                        <div className="flex-1 min-w-[300px]">
+                                            <label className="mb-2.5 block text-black dark:text-white">Has Reference Image</label>
+                                            <Field
+                                                name="hasReferenceImage"
+                                                component={ReactSelect}
+                                                options={[{ label: 'Select', value: null }, ...optionsForImage]}
+                                                styles={customStyles}
+                                                placeholder="Select Product Id"
+                                                value={optionsForImage.find(option => option.value === values.hasReferenceImage)}
+                                                onChange={option => setFieldValue('hasReferenceImage', option ? option.value : '')}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
+                                        <div className="flex-1 min-w-[300px]">
+                                            <label className="mb-2.5 block text-black dark:text-white">Has Actual Image</label>
+                                            <Field
+                                                name="hasActualImage"
+                                                component={ReactSelect}
+                                                options={[{ label: 'Select', value: null }, ...optionsForImage]}
+                                                styles={customStyles}
+                                                placeholder="Select has Actual Image"
+                                                value={optionsForImage.find(option => option.value === values.hasActualImage)}
+                                                onChange={option => setFieldValue('hasActualImage', option ? option.value : '')}
+                                            />
+                                        </div>
+
                                     </div>
                                     <div className="flex justify-center">
                                         <button
