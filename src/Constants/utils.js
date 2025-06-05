@@ -276,7 +276,7 @@ export const UPDATE_Ledger_URL = `${BASE_URL}/ledger/update`;
 export const ADD_Ledger_URL = `${BASE_URL}/ledger/add`; 
 export const DELETE_Ledger_URL = `${BASE_URL}/order/delete`; 
 // export const GET_Ledger_URL = `${BASE_URL}/order/get`; 
-
+export const GET_GROUPLedger_URL = `${BASE_URL}/ledger/getLedgerByAcountGroup`; 
 export const VIEW_PROFORMA = `${BASE_URL}/order/searchOrderProforma`; 
 export const VIEW_PROFORMABYID= `${BASE_URL}/order/getOrderProforma`; 
 
