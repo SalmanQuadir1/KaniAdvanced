@@ -166,6 +166,36 @@ const useLedger = () => {
             toast.error("An error occurred");
         }
     };
+    const handleUpdateSubmitt = async (values,id) => {
+        console.log(values,id,"+++++++++++++++++kk");
+        try {
+            const url =  `${UPDATE_Ledger_URL}/${id}` ;
+            const method =  "PUT" 
+
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(values)
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                toast.success(`Ledger updated successfully`);
+                navigate("/ledger/view")
+               
+              
+                
+            } else {
+                toast.error(`${data.errorMessage}`);
+            }
+        } catch (error) {
+            console.error(error, response);
+            toast.error("An error occurred");
+        }
+    };
   
 
 
@@ -222,7 +252,8 @@ const useLedger = () => {
         under,
         getGroup,
         Group,
-        handleUpdateSubmit
+        handleUpdateSubmit,
+        handleUpdateSubmitt
     };
 };
 

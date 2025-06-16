@@ -409,7 +409,7 @@ const [report, setreport] = useState()
 
             const textResponse = await response.text();
 
-            console.log(textResponse, "japaaaaaaaaaaaaaaaaaan");
+          
 
             // Get the raw text response
             // Log raw response before parsing   
@@ -459,7 +459,7 @@ const [report, setreport] = useState()
 
     const handleSubmit = (values) => {
 
-        console.log(values, "valiiiiii");
+    
         const filters = {
 
 
@@ -478,7 +478,7 @@ const [report, setreport] = useState()
 
 
         };
-        console.log(filters,"kk");
+     
 getReport(pagination.currentPage, filters)
         // getOrder(pagination.currentPage, filters);
         // ViewInventory(pagination.currentPage, filters);
@@ -612,7 +612,7 @@ getReport(pagination.currentPage, filters)
             toDate: values.toDate,
         };
     
-        console.log(filters, "lala");
+   
     
         try {
             const response = await fetch(`${DOWNLOADCSV_REPORT}`, { 

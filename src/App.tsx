@@ -16,7 +16,7 @@ import CreateLedger from './components/Ledger/CreateLedger.jsx';
 import UpdateCustomerLedger from './components/Ledger/UpdateCustomerLedger.jsx';
 
 import UpdateLedger from './components/Ledger/UpdateLedger.jsx';
-
+import UpdateLedgerr from './components/Ledger/UpdateLedgerr.jsx';
 import Material from './components/Material/Material.jsx';
 import AddProduct from './components/Products/AddProduct.jsx';
 import ViewProduct from './components/Products/ViewProduct.jsx';
@@ -1210,7 +1210,7 @@ function App() {
           />
 
           <Route
-            path="/Supplier/ledger"
+            path="/ledger/view"
             element={
               <>
                 <PageTitle title="Size" />
@@ -1233,6 +1233,15 @@ function App() {
               <>
                 <PageTitle title="Size" />
                 <UpdateLedger />
+              </>
+            }
+          />
+             <Route
+            path="/Ledger/updateLedger/:id"
+            element={
+              <>
+                <PageTitle title="Size" />
+                <UpdateLedgerr />
               </>
             }
           />

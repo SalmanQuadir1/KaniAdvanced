@@ -307,27 +307,10 @@ console.log(Ledger,"jumping");
                         <FiEdit
                             size={17}
                             className="text-teal-500 hover:text-teal-700 mx-2"
-                            onClick={() => navigate(`/Ledger/updateLedgerCreated/${item?.id}`)}
+                            onClick={() => navigate(`/Ledger/updateLedger/${item?.ledgerId}`)}
                             title="Edit Ledger"
                         />
-                        |
-                        {
-                            item.LedgerTypeName === "WSClients" ? (
-                                <MdCreateNewFolder
-                                    size={17}
-                                    className="text-teal-500 hover:text-teal-700 mx-2"
-                                    onClick={() => navigate(`/Ledger/generateProforma/${item?.id}`)}
-                                    title="Create proforma"
-                                />
-                            ) : item.LedgerTypeName === "RetailClients" ? (
-                                <MdCreateNewFolder
-                                    size={17}
-                                    className="text-teal-500 hover:text-teal-700 mx-2"
-                                    onClick={() => navigate(`/Ledger/generateRetailProforma/${item?.id}`)} // Navigate to a different page for RetailClients
-                                    title="Create proforma"
-                                />
-                            ) : null
-                        }
+                    
                         <FiTrash2
                             size={17}
                             className="text-red-500 hover:text-red-700 mx-2"
