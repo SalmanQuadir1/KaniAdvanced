@@ -392,6 +392,15 @@ export const UPDATE_Groups_URL = `${BASE_URL}/accountGroup/update`;
 export const DELETE_Groups_URL = `${BASE_URL}/accountGroup/delete`;
 
 
+//Vouchers
+export const ADD_Voucher_URL = `${BASE_URL}/voucher/addVoucher`;
+export const GET_Voucher_URL = `${BASE_URL}/voucher/getAll`;
+export const GET_Vouchers_URL = `${BASE_URL}/voucher/viewAll`;
+
+export const UPDATEVoucher_URL = `${BASE_URL}/voucher/update`;
+export const DELETE_Voucher_URL = `${BASE_URL}/voucher/delete`;
+
+
 
 //images
 

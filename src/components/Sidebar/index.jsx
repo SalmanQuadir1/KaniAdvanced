@@ -233,12 +233,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               Groups
                             </NavLink>
                           </li>
-                        
 
-
-                         
-                        
-                        </ul>
+                          
+                          <li>
+                            <NavLink
+                              to="/configurator/vouchers"
+                              className={({ isActive }) =>
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                (isActive && '!text-white')
+                              }
+                            >
+                              Vouchers
+                            </NavLink>
+                          </li>
+ </ul> 
                       </div>
 
                     </React.Fragment>
@@ -626,7 +634,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
                           <li>
                             <NavLink
-                              to="/Supplier/ledger"
+                              to="/ledger/view"
                               className={({ isActive }) =>
                                 'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')

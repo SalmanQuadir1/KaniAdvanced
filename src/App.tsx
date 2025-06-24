@@ -11,6 +11,7 @@ import Home from './pages/Home.jsx';
 import FinancialReportDashboard from './pages/FinancialReportDashboard.jsx';
 import GeneralFinancialReportDashboard from './pages/GeneralFinancialReportDashboard.jsx';
 import Groups from './components/Accounts/Config/Groups.jsx';
+import Voucher from './components/Accounts/Vouchers/Voucher.jsx';
 
 import CreateLedger from './components/Ledger/CreateLedger.jsx';
 import UpdateCustomerLedger from './components/Ledger/UpdateCustomerLedger.jsx';
@@ -67,8 +68,6 @@ import OrderType from './components/Configurator/OrderType.jsx';
 import HsnCode from './components/Configurator/HsnCode.jsx';
 import Location from './components/Configurator/Location.jsx';
 import Supplier from './components/Configurator/Supplier.jsx';
-
-
 
 import AddSupplier from './components/Supplier/AddSupplier.jsx';
 import ViewSupplierLedger from './components/Supplier/SupplierLedger/ViewSupplierLedger.jsx';
@@ -321,6 +320,16 @@ function App() {
                 <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
                 <PageTitle title="Dashboard" />
                 <Groups />
+              </>
+            }
+          />
+               <Route
+            path="/configurator/vouchers"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Voucher" />
+                <Voucher />
               </>
             }
           />

@@ -305,14 +305,7 @@ const AddProduct = () => {
 
     const changeTextColor = () => {
         setIsOptionSelected(true); console.log(productGroup, 'productGroup');
-        console.log(colorGroup, 'colorGroup');
-        console.log(productCategory, 'productCategory');
-        console.log(design, 'design');
-        console.log(style, 'style');
-        console.log(size, 'size');
-        console.log(hsnCode, 'hsnCode');
-        console.log(supplier, 'supplier');
-        console.log(theme, 'theme');
+  
     };
 
     const [productIdField, setproductIdField] = useState("")
@@ -696,6 +689,26 @@ const AddProduct = () => {
                                                         name='materialWeight'
                                                         type="number"
                                                         placeholder="Enter material Weight"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="mb-4.5 flex flex-wrap gap-6">
+                                                <div className="flex-1 min-w-[300px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Gross Weight </label>
+                                                    <Field
+                                                        name='finishedWeight'
+                                                        type="number"
+                                                        placeholder="Enter Gross Weight"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                    />
+                                                </div>
+                                                <div className="flex-1 min-w-[300px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Net Weight</label>
+                                                    <Field
+                                                        name='materialWeight'
+                                                        type="number"
+                                                        placeholder="Enter Net Weight"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
