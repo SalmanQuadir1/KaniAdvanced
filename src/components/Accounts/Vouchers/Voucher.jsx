@@ -12,9 +12,12 @@ import useVoucher from '../../../hooks/useVoucher';
 import { customStyles as createCustomStyles } from '../../../Constants/utils';
 import { useSelector } from 'react-redux';
 import Modall from '../../Products/Modall';
+import NumberingDetailsModal from './NumberingDetailsModal';
 const Voucher = () => {
     const [gstDetails, setgstDetails] = useState([])
     const [hsnOptions, sethsnOptions] = useState([])
+    const [showNumberingModal, setShowNumberingModal] = useState(false);
+    const [numberingDetails, setNumberingDetails] = useState(null);
     const {
         Voucher,
         edit,
@@ -26,7 +29,7 @@ const Voucher = () => {
         invoice,
         under,
 
-    } = useVoucher();
+    } = useVoucher(numberingDetails);
     const theme = useSelector(state => state?.persisted?.theme);
     const [vaaluee, setvaaluee] = useState({})
     const customStyles = createCustomStyles(theme?.mode);
@@ -131,14 +134,14 @@ const Voucher = () => {
                 <Formik
                     initialValues={currentVoucher}
                     enableReinitialize={true}
-                   
+
 
                     validate={values => {
                         const errors = {};
                         if (!values.name) {
                             errors.name = 'Required';
                         }
-                  
+
 
 
                         return errors;
@@ -189,7 +192,7 @@ const Voucher = () => {
                                                         styles={customStyles}
                                                         className="bg-white dark:bg-form-Field w-full"
                                                         classNamePrefix="react-select"
-                                                        placeholder="type Of Voucher"
+                                                        placeholder="Type Of Voucher"
                                                     />
                                                 </div>
                                                 <div className="flex-2 min-w-[100px]">
@@ -198,7 +201,7 @@ const Voucher = () => {
                                                         name={`abbreviation`}
                                                         type="text"
                                                         value={values.abbreviation}
-                                                        placeholder="Upto"
+                                                        placeholder="Abbreviation"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -229,7 +232,7 @@ const Voucher = () => {
                                                         styles={customStyles}
                                                         className="bg-white dark:bg-form-Field w-full"
                                                         classNamePrefix="react-select"
-                                                        placeholder="method Of voucher Numbering"
+                                                        placeholder="Method Of voucher Numbering"
                                                     />
                                                 </div>
                                                 <div className="flex-1 min-w-[250px] z-20 bg-transparent dark:bg-form-Field">
@@ -242,7 +245,7 @@ const Voucher = () => {
                                                         styles={customStyles}
                                                         className="bg-white dark:bg-form-Field w-full"
                                                         classNamePrefix="react-select"
-                                                        placeholder="Activate This Voucher Type"
+                                                        placeholder="Numbering Behaviour On Insertion"
                                                     />
                                                 </div>
 
@@ -251,7 +254,7 @@ const Voucher = () => {
 
                                                 {[
 
-                                                    { name: 'setAdditionalNumb', label: 'Set/Alter Additional Numbering Detail' },
+                                                    { name: 'setAdditionalNumb', label: 'Set/Alter Additional Numbering Detail', modal: true },
 
 
                                                     { name: 'unusedVchNos', label: 'Show Unused Vchr No"s in transaction for retain the original Vchr No. Behaviour' },
@@ -280,7 +283,7 @@ const Voucher = () => {
                                                         { name: 'costPurchase', label: 'Track Addditional Cost for Purchases' },
 
                                                     ] : []),
-       
+
                                                     ...(values.typeOfVoucher === "Journal" ? [
 
                                                         { name: 'whatsAppVch', label: 'WhatsApp Voucher After Saving' },
@@ -290,7 +293,7 @@ const Voucher = () => {
                                                     ] : []),
 
 
-                                                ].map(({ name, label }) => (
+                                                ].map(({ name, label, modal }) => (
                                                     <div key={name} className="flex items-center justify-between w-full max-w-[500px]">
                                                         <label className="text-black dark:text-white w-1/2">{label}</label>
                                                         <div className="flex gap-4">
@@ -300,7 +303,11 @@ const Voucher = () => {
                                                                     name={name}
                                                                     value="true"
                                                                     checked={values[name] === true}
-                                                                    onChange={() => setFieldValue(name, true)}
+                                                                    onChange={() => {
+                                                                        setFieldValue(name, true);
+                                                                        if (modal) setShowNumberingModal(true);
+                                                                    }}
+
                                                                     className="form-radio text-primary"
                                                                 />
                                                                 Yes
@@ -388,23 +395,23 @@ const Voucher = () => {
                                             </div>
 
 
-                                         
-                                              
-
-                                                    <div className="flex-2 min-w-[250px] ml-7">
-                                                        <label className="mb-2.5 block text-black dark:text-white ">Default Godown</label>
-                                                        <Field
-                                                            name='defaultGodown'
-                                                            type="text"
-                                                            value={values.defaultGodown}
-                                                            placeholder="Upto"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
 
 
-                                               
-                                          
+
+                                            <div className="flex-2 min-w-[250px] ml-7">
+                                                <label className="mb-2.5 block text-black dark:text-white ">Default Godown</label>
+                                                <Field
+                                                    name='defaultGodown'
+                                                    type="text"
+                                                    value={values.defaultGodown}
+                                                    placeholder="Upto"
+                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                />
+                                            </div>
+
+
+
+
                                             {
                                                 values.typeOfVoucher !== "Sales" && (
 
@@ -485,10 +492,10 @@ const Voucher = () => {
                                         </div>
                                         <div className='flex flex-row gap-4'>
 
-                                            
 
 
-                                      
+
+
 
 
 
@@ -558,18 +565,18 @@ const Voucher = () => {
                                         <h1 className='items-center text-center font-semibold text-xl '>Statutory Details</h1>
 
                                         <div className="flex-1 min-w-[250px] z-20 bg-transparent dark:bg-form-Field">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Default Gst Registration</label>
-                                                    <ReactSelect
-                                                        name="defGstRegist"
-                                                        value={defGstRegist.find(option => option.value === values.defGstRegist) || null}
-                                                        onChange={(option) => setFieldValue('defGstRegist', option ? option.value : null)}
-                                                        options={defGstRegist}
-                                                        styles={customStyles}
-                                                        className="bg-white dark:bg-form-Field w-full"
-                                                        classNamePrefix="react-select"
-                                                        placeholder="Activate This Voucher Type"
-                                                    />
-                                                </div>
+                                            <label className="mb-2.5 block text-black dark:text-white">Default Gst Registration</label>
+                                            <ReactSelect
+                                                name="defGstRegist"
+                                                value={defGstRegist.find(option => option.value === values.defGstRegist) || null}
+                                                onChange={(option) => setFieldValue('defGstRegist', option ? option.value : null)}
+                                                options={defGstRegist}
+                                                styles={customStyles}
+                                                className="bg-white dark:bg-form-Field w-full"
+                                                classNamePrefix="react-select"
+                                                placeholder="Activate This Voucher Type"
+                                            />
+                                        </div>
 
                                         {/* --- subGroup FieldArray --- */}
                                         <div className="flex flex-col gap-4 mt-6 w-[400px] mb-7">
@@ -835,8 +842,16 @@ const Voucher = () => {
 
 
                 </Formik>
-
             </div>
+                <NumberingDetailsModal
+                    show={showNumberingModal}
+                    onHide={() => setShowNumberingModal(false)}
+                    onSubmit={(data) => {
+                        setNumberingDetails(data);
+                        // You can also store this data in your form values if needed
+                        // setFieldValue('numberingDetails', data);
+                    }}
+                />
 
         </DefaultLayout >
     )
