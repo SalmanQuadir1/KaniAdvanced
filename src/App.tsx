@@ -12,6 +12,10 @@ import FinancialReportDashboard from './pages/FinancialReportDashboard.jsx';
 import GeneralFinancialReportDashboard from './pages/GeneralFinancialReportDashboard.jsx';
 import Groups from './components/Accounts/Config/Groups.jsx';
 import Voucher from './components/Accounts/Vouchers/Voucher.jsx';
+import CreateVoucher from './components/Accounts/Vouchers/CreateVoucher.jsx';
+
+import ViewVoucher from './components/Accounts/Vouchers/ViewVoucher.jsx';
+
 
 import CreateLedger from './components/Ledger/CreateLedger.jsx';
 import UpdateCustomerLedger from './components/Ledger/UpdateCustomerLedger.jsx';
@@ -323,13 +327,39 @@ function App() {
               </>
             }
           />
-               <Route
+          {/* voucherss */}
+
+
+          <Route
             path="/configurator/vouchers"
             element={
               <>
                 <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
                 <PageTitle title="Voucher" />
                 <Voucher />
+              </>
+            }
+          />
+
+          <Route
+            path="/voucher/create/:id"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Voucher" />
+                <CreateVoucher />
+              </>
+            }
+          />
+
+
+          <Route
+            path="/Vouchers/view"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Voucher" />
+                <ViewVoucher />
               </>
             }
           />
@@ -801,7 +831,7 @@ function App() {
               </>
             }
           />
-{/* Pending for bill */}
+          {/* Pending for bill */}
           <Route
             path="/Recieved/pendingForBill"
             element={
@@ -812,7 +842,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/Order/updatependingforbill/:id"
             element={
               <>
@@ -1236,7 +1266,7 @@ function App() {
               </>
             }
           />
-            <Route
+          <Route
             path="/supplier/updateLedger/:id"
             element={
               <>
@@ -1245,7 +1275,7 @@ function App() {
               </>
             }
           />
-             <Route
+          <Route
             path="/Ledger/updateLedger/:id"
             element={
               <>
@@ -1254,7 +1284,7 @@ function App() {
               </>
             }
           />
-         
+
 
 
 
@@ -1382,7 +1412,7 @@ function App() {
               </>
             }
           />
-                <Route
+          <Route
             path="/customer/updateLedger/:id"
             element={
               <>
@@ -1391,7 +1421,7 @@ function App() {
               </>
             }
           />
-         
+
 
           <Route
             path="/customer/addCustomerBulk"

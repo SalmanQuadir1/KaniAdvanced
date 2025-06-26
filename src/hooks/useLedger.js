@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 // import { GET_Ledger_URL, DELETE_Ledger_URL, UPDATE_Ledger_URL, ADD_Ledger_URL } from "../Constants/utils";
-import { ADD_Ledger_URL, DELETE_Ledger_URL, GET_Groupss_URL, UPDATE_Ledger_URL } from "../Constants/utils";
+import { ADD_Ledger_URL, DELETE_Ledger_URL, GET_Groupss_URL, GET_LEDGER_ID_URL, GET_LEDGER__URL, UPDATE_Ledger_URL, } from "../Constants/utils";
 import { useNavigate, useNavigation } from 'react-router-dom';
 const useLedger = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
@@ -58,30 +58,24 @@ const useLedger = () => {
     //     getLedger(pagination.currentPage);
     // }, []);
 
-    // const getLedger = async (page) => {
-    //     try {
-    //         const response = await fetch(`${GET_Ledger_URL}?page=${page}`, {
-    //             method: "GET",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 "Authorization": `Bearer ${token}`
-    //             }
-    //         });
-    //         const data = await response.json();
-    //         console.log(data,"asd");
-    //         setLedger(data.content);
-    //         setPagination({
-    //             totalItems: data.totalElements,
-    //             pagUnitList: data.content,
-    //             totalPages: data.totalPages,
-    //             currentPage: data.number + 1,
-    //             itemsPerPage:data.size
-    //         });
-    //     } catch (error) {
-    //         console.error(error);
-    //         toast.error("Failed to fetch Ledger");
-    //     }
-    // };
+    const getLedger = async (page) => {
+        try {
+            const response = await fetch(`${GET_LEDGER__URL}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data,"asd");
+            setLedger(data.content);
+          
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch Ledger");
+        }
+    };
     const getGroup = async (page) => {
         try {
             const response = await fetch(`${GET_Groupss_URL}`, {
@@ -244,7 +238,7 @@ const useLedger = () => {
         currentLedger,
         pagination,
         handleDelete,
-       
+        getLedger,
         handleSubmit,
         handlePageChange,
         nature,

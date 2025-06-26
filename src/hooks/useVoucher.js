@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 // import { GET_Voucher_URL, DELETE_Voucher_URL, UPDATE_Voucher_URL, ADD_Voucher_URL } from "../Constants/utils";
-import { ADD_Voucher_URL, DELETE_Voucher_URL, GET_Voucher_URL, UPDATEVoucher_URL } from "../Constants/utils";
+import { ADD_Voucher_URL, DELETE_Voucher_URL, GET_VoucherBYID, GET_Voucher_URL, UPDATEVoucher_URL } from "../Constants/utils";
 import { fetchHsnCode } from '../redux/Slice/HsnCodeSlice';
 const useVoucher = (numberingDetails) => {
+    
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
-    const [Voucher, setVoucher] = useState([]);
+    const [Vouchers, setVoucher] = useState([]);
     const [edit, setEdit] = useState(false);
     const dispatch = useDispatch();
 
@@ -153,6 +154,34 @@ const useVoucher = (numberingDetails) => {
         // }
     };
 
+    const GetVoucherById = async (id) => {
+        console.log("heere");
+        try {
+            const response = await fetch(`${GET_VoucherBYID}/${id}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+            });
+
+            const data = await response.json();
+            console.log(data + "xsdfghjkl")
+            if (response.ok) {
+                console.log("get Material data", data);
+                setVoucher(data);
+                return data; // Return the fetched data
+            } else {
+                toast.error(`${data.errorMessage}`);
+                return null;
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("An error occurred");
+            return null;
+        }
+    };
+
     const handleDelete = async (e, id) => {
         console.log(id, "del");
         e.preventDefault();
@@ -272,7 +301,7 @@ console.log(formData,"jj");
     };
 
     return {
-        Voucher,
+        Vouchers,
         edit,
         currentVoucher,
         pagination,
@@ -282,7 +311,8 @@ console.log(formData,"jj");
         handlePageChange,
         nature,
         invoice,
-        under
+        under,
+        GetVoucherById
     };
 };
 

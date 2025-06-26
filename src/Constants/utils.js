@@ -53,6 +53,7 @@ export const DELETE_SUPPLIER_URL = `${BASE_URL}/supplier/deleteSupplier/`;
 export const VIEW_SUPPLIER_LEDGER = `${BASE_URL}/ledger/searchLedger`;
 export const VIEW_SUPPLIER = `${BASE_URL}/supplier/searchSupplier`;
 export const GET_LEDGER_ID_URL = `${BASE_URL}/ledger/get`;
+export const GET_LEDGER__URL = `${BASE_URL}/ledger/viewAll`;
 
 export const VIEW_SUPPLIER_LEDGERBYID = `${BASE_URL}/supplier/getBySupplierLedger`;
 
@@ -395,7 +396,9 @@ export const DELETE_Groups_URL = `${BASE_URL}/accountGroup/delete`;
 //Vouchers
 export const ADD_Voucher_URL = `${BASE_URL}/voucher/addVoucher`;
 export const GET_Voucher_URL = `${BASE_URL}/voucher/getAll`;
-export const GET_Vouchers_URL = `${BASE_URL}/voucher/viewAll`;
+export const GET_Vouchersearch_URL = `${BASE_URL}/voucher/search`;
+export const GET_VoucherBYID = `${BASE_URL}/voucher/get`;
+
 
 export const UPDATEVoucher_URL = `${BASE_URL}/voucher/update`;
 export const DELETE_Voucher_URL = `${BASE_URL}/voucher/delete`;
