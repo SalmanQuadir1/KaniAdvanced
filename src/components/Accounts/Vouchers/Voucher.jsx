@@ -628,40 +628,7 @@ const Voucher = () => {
 
                                         </div>
                                         {/* gst */}
-                                        <div className="flex flex-wrap gap-4">
-                                            {/* GST DETAILS Section */}
-                                            <div className="flex-1 min-w-[250px]">
-                                                <label className="mb-2.5 block text-black dark:text-white">GST DETAILS</label>
-                                                <div className="z-20 bg-transparent dark:bg-form-Field">
-                                                    <ReactSelect
-                                                        name="gstDetails"
-                                                        options={gstOptions}
-                                                        value={gstOptions.find((option) => option.value === values.gstDetails)}
-                                                        onChange={(option) => setFieldValue("gstDetails", option?.value)}
-                                                        styles={customStyles}
-                                                        className="bg-white dark:bg-form-Field"
-                                                        classNamePrefix="react-select"
-                                                        placeholder="Select GST details"
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            {/* GST RATE DETAILS Section (Conditional) */}
-                                            {values.gstDetails === "Applicable" && (
-                                                <div className="flex-1 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">GST RATE DETAILS</label>
-                                                    <ReactSelect
-                                                        name="gstratedetails"
-                                                        options={gstdetails}
-                                                        value={gstdetails.find((option) => option.value === values.gstratedetails)}
-                                                        onChange={(option) => handlerateDetails(option, setFieldValue)}
-                                                        styles={customStyles}
-                                                        classNamePrefix="react-select"
-                                                        placeholder="Enter GST Rate Details"
-                                                    />
-                                                </div>
-                                            )}
-                                        </div>
+                                      
 
 
                                         <div className="mb-4.5  gap-6">
