@@ -54,6 +54,8 @@ export const VIEW_SUPPLIER_LEDGER = `${BASE_URL}/ledger/searchLedger`;
 export const VIEW_SUPPLIER = `${BASE_URL}/supplier/searchSupplier`;
 export const GET_LEDGER_ID_URL = `${BASE_URL}/ledger/get`;
 export const GET_LEDGER__URL = `${BASE_URL}/ledger/viewAll`;
+export const GET_LEDGERR__URL = `${BASE_URL}/ledger/getAll`;
+
 
 export const VIEW_SUPPLIER_LEDGERBYID = `${BASE_URL}/supplier/getBySupplierLedger`;
 

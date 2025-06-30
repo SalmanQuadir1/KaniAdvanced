@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 // import { GET_Ledger_URL, DELETE_Ledger_URL, UPDATE_Ledger_URL, ADD_Ledger_URL } from "../Constants/utils";
-import { ADD_Ledger_URL, DELETE_Ledger_URL, GET_Groupss_URL, GET_LEDGER_ID_URL, GET_LEDGER__URL, UPDATE_Ledger_URL, } from "../Constants/utils";
+import { ADD_Ledger_URL, DELETE_Ledger_URL, GET_Groupss_URL, GET_LEDGERR__URL, GET_LEDGER_ID_URL, GET_LEDGER__URL, UPDATE_Ledger_URL, } from "../Constants/utils";
 import { useNavigate, useNavigation } from 'react-router-dom';
 const useLedger = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
@@ -60,7 +60,7 @@ const useLedger = () => {
 
     const getLedger = async (page) => {
         try {
-            const response = await fetch(`${GET_LEDGER__URL}`, {
+            const response = await fetch(`${GET_LEDGERR__URL}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -69,7 +69,7 @@ const useLedger = () => {
             });
             const data = await response.json();
             console.log(data,"asd");
-            setLedger(data.content);
+            setLedger(data);
           
         } catch (error) {
             console.error(error);

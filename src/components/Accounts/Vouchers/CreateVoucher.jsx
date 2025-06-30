@@ -19,7 +19,7 @@ const CreateVoucher = () => {
     const { id } = useParams();
     const { GetVoucherById, Vouchers, CreateVoucherEntry } = useVoucher();
 
-    const {getLedger,Ledger  } = useLedger();
+    const { getLedger, Ledger } = useLedger();
     const theme = useSelector(state => state?.persisted?.theme);
     const [vaaluee, setvaaluee] = useState({});
     const customStyles = createCustomStyles(theme?.mode);
@@ -31,7 +31,25 @@ const CreateVoucher = () => {
         // Fetch ledgers here
         // Example: fetchLedgers().then(data => setLedgers(data));
     }, []);
-console.log(Ledger,"jjhh");
+    console.log(Ledger, "jjhh");
+
+
+    const LedgerData = Ledger?.map(ledg => ({
+        value: ledg?.id,
+        label: ledg?.name,
+        balance: ledg?.openingBalance 
+
+    }));
+
+    const handleAccountSelect = (option, setFieldValue) => {
+        setFieldValue('accounts', option);
+        setFieldValue('currentBalance', option?.balance || 0);
+        console.log(option?.balance,"lklklk");
+    };
+
+
+
+
     const handleSubmit = async (values) => {
         try {
             await CreateVoucherEntry({
@@ -76,6 +94,8 @@ console.log(Ledger,"jjhh");
                         voucherNumber: '',
                         supplierInvoiceNumber: '',
                         date: '',
+                        accounts:"",
+                        currentBalance:"",
                         entries: [{
                             ledger: null,
                             credit: 0,
@@ -119,6 +139,7 @@ console.log(Ledger,"jjhh");
                                                 />
                                                 <ErrorMessage name="supplierInvoiceNumber" component="div" className="text-red-500" />
                                             </div>
+
                                             <div className="flex-2 min-w-[250px] mb-4">
                                                 <label className="mb-2.5 block text-black dark:text-white">Date</label>
                                                 <Field
@@ -130,22 +151,67 @@ console.log(Ledger,"jjhh");
                                                 <ErrorMessage name="date" component="div" className="text-red-500" />
                                             </div>
                                         </div>
+                                        <div className='flex flex-row gap-4'>
+
+
+                                            {
+                                                (Vouchers?.typeOfVoucher === "Payment" || Vouchers?.typeOfVoucher === "Contra") && (
+                                                    <>
+                                                        <div className="flex-2 min-w-[250px] mb-4">
+                                                            <label className="mb-2.5 block text-black dark:text-white">Account</label>
+                                                            <ReactSelect
+                                                                name={`entries.accounts`}
+                                                                value={values.accounts}
+                                                                onChange={(option) => handleAccountSelect(option, setFieldValue)}
+                                                                options={LedgerData}
+                                                                styles={customStyles}
+                                                                className="bg-white dark:bg-form-Field w-full z-5"
+                                                                classNamePrefix="react-select"
+                                                                placeholder="Select Ledger"
+                                                            // menuShouldBlockScroll={true}
+                                                            />
+                                                            <ErrorMessage name="supplierInvoiceNumber" component="div" className="text-red-500" />
+                                                        </div>
+                                                        <div className="flex-2 min-w-[250px] mb-4">
+                                                            <label className="mb-2.5 block text-black dark:text-white">Current Balance</label>
+                                                            <Field
+                                                                type="text"
+                                                                name="currentBalance"
+                                                                placeholder="Enter No"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                            />
+                                                            <ErrorMessage name="currentBalance" component="div" className="text-red-500" />
+                                                        </div>
+                                                    </>
+                                                )
+                                            }
+                                        </div>
 
                                         {/* Entries Table */}
                                         <FieldArray name="entries">
                                             {({ push, remove }) => (
                                                 <div className="mb-6">
-                                                    <div className="overflow-x-auto">
-                                                        <table className="w-full table-auto">
+                                                    <div className="">
+                                                        <table className="w-full ">
                                                             <thead>
                                                                 <tr className="bg-gray-2 text-left dark:bg-meta-4">
-                                                                    <th className="py-4 px-4 font-medium text-black dark:text-white">Particulars</th>
-                                                                    <th className="py-4 px-4 font-medium text-black dark:text-white">Narration</th>
-                                                                    <th className="py-4 px-4 font-medium text-black dark:text-white">Credit</th>
-                                                                    <th className="py-4 px-4 font-medium text-black dark:text-white">Debit</th>
+                                                                    <th className="py-4 px-4 font-medium text-black dark:text-white w-[200px]">Particulars</th>
+
+                                                                    {(Vouchers?.typeOfVoucher === "Payment" || Vouchers?.typeOfVoucher === "Contra") && (
+                                                                        <th className="py-4 px-4 font-medium text-black dark:text-white">Amount</th>
+                                                                    )}
+
+                                                                    {(Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && (
+                                                                        <>
+                                                                            <th className="py-4 px-4 font-medium text-black dark:text-white">Credit</th>
+                                                                            <th className="py-4 px-4 font-medium text-black dark:text-white">Debit</th>
+                                                                        </>
+                                                                    )}
+
                                                                     <th className="py-4 px-4 font-medium text-black dark:text-white">Action</th>
                                                                 </tr>
                                                             </thead>
+
                                                             <tbody>
                                                                 {values.entries.map((entry, index) => (
                                                                     <tr key={index}>
@@ -154,44 +220,59 @@ console.log(Ledger,"jjhh");
                                                                                 name={`entries.${index}.ledger`}
                                                                                 value={entry.ledger}
                                                                                 onChange={(option) => setFieldValue(`entries.${index}.ledger`, option)}
-                                                                                options={ledgers}
+                                                                                options={LedgerData}
                                                                                 styles={customStyles}
-                                                                                className="bg-white dark:bg-form-Field w-full"
+                                                                                className="bg-white dark:bg-form-Field w-full z-5"
                                                                                 classNamePrefix="react-select"
                                                                                 placeholder="Select Ledger"
+                                                                            // menuShouldBlockScroll={true}
                                                                             />
                                                                             <ErrorMessage name={`entries.${index}.ledger`} component="div" className="text-red-500" />
                                                                         </td>
-                                                                        <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                                                                            <Field
-                                                                                type="text"
-                                                                                name={`entries.${index}.narration`}
-                                                                                placeholder="Narration"
-                                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                            />
-                                                                        </td>
-                                                                        <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                                                                            <Field
-                                                                                type="number"
-                                                                                name={`entries.${index}.credit`}
-                                                                                placeholder="0.00"
-                                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                                min="0"
-                                                                                step="0.01"
-                                                                            />
-                                                                            <ErrorMessage name={`entries.${index}.credit`} component="div" className="text-red-500" />
-                                                                        </td>
-                                                                        <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
-                                                                            <Field
-                                                                                type="number"
-                                                                                name={`entries.${index}.debit`}
-                                                                                placeholder="0.00"
-                                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                                min="0"
-                                                                                step="0.01"
-                                                                            />
-                                                                            <ErrorMessage name={`entries.${index}.debit`} component="div" className="text-red-500" />
-                                                                        </td>
+                                                                        {(Vouchers?.typeOfVoucher === "Payment" || Vouchers?.typeOfVoucher === "Contra") && (
+                                                                            <>
+                                                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                                                                                    <Field
+                                                                                        type="number"
+                                                                                        name={`entries.${index}.amount`}
+                                                                                        placeholder="0.00"
+                                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                        min="0"
+                                                                                        step="0.01"
+                                                                                    />
+                                                                                    <ErrorMessage name={`entries.${index}.credit`} component="div" className="text-red-500" />
+                                                                                </td>
+                                                                                <span className='flex-col'>Current Balance</span>
+                                                                            </>
+                                                                        )}
+
+                                                                        {(Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && (
+                                                                            <>
+
+                                                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                                                                                    <Field
+                                                                                        type="number"
+                                                                                        name={`entries.${index}.credit`}
+                                                                                        placeholder="0.00"
+                                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                        min="0"
+                                                                                        step="0.01"
+                                                                                    />
+                                                                                    <ErrorMessage name={`entries.${index}.credit`} component="div" className="text-red-500" />
+                                                                                </td>
+                                                                                <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
+                                                                                    <Field
+                                                                                        type="number"
+                                                                                        name={`entries.${index}.debit`}
+                                                                                        placeholder="0.00"
+                                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                        min="0"
+                                                                                        step="0.01"
+                                                                                    />
+                                                                                    <ErrorMessage name={`entries.${index}.debit`} component="div" className="text-red-500" />
+                                                                                </td>
+                                                                            </>
+                                                                        )}
                                                                         <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                                                             {index > 0 && (
                                                                                 <button
@@ -218,6 +299,18 @@ console.log(Ledger,"jjhh");
                                                 </div>
                                             )}
                                         </FieldArray>
+
+                                        <div className="flex-2 min-w-[250px] mb-4">
+                                            <label className="mb-2.5 block text-black dark:text-white">Narration</label>
+
+                                            <Field
+                                                as="textarea"
+                                                name="narration"
+                                                placeholder="Narration"
+                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                            />
+
+                                        </div>
 
                                         <div className="flex justify-center mt-4 items-center">
                                             <button
