@@ -365,7 +365,7 @@ console.log(Voucher,"jumping");
                                                 />
                                             </div> */}
                                               <div className="flex-1 min-w-[300px]">
-                                              <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
+                                              <label className="mb-2.5 block text-black dark:text-white">Voucher Name</label>
                                                 <ReactSelect
                                                     name="type"
 
@@ -382,7 +382,7 @@ console.log(Voucher,"jumping");
                                                 
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
+                                            <label className="mb-2.5 block text-black dark:text-white">Voucher Type</label>
                                                 <ReactSelect
                                                     name="type"
 
