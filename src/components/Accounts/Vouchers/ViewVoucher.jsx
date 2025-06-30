@@ -27,7 +27,7 @@ const productgrp = [
 
 const ViewVoucher = () => {
 
-    const {   } = useVoucher();
+    const {  Voucherr,getVoucherr } = useVoucher();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
     const [isLoading, setisLoading] = useState(false)
@@ -52,6 +52,10 @@ const ViewVoucher = () => {
 
 
 
+useEffect(() => {
+ getVoucherr()
+}, [])
+console.log(Voucherr,"jjhhgg");
 
     // const formattedSupplier = supplier.map(supplier => ({
     //     label: supplier.name,
@@ -62,6 +66,16 @@ const ViewVoucher = () => {
         { value: 'customer', label: 'customer' },
     
     ];
+
+    const voucherName = Voucherr && Voucherr.map((vouch) => ({
+        label: vouch.name,
+        value: vouch.name
+      }));
+      const voucherType = Voucherr && Voucherr.map((vouch) => ({
+        label: vouch.typeOfVoucher,
+        value: vouch.typeOfVoucher
+      }));
+      
 
 
 
@@ -299,7 +313,8 @@ console.log(Voucher,"jumping");
 
 
             // name: values.supplierName || undefined,
-            type:values?.type||undefined
+            typeOfVoucher:values?.typeOfVoucher||undefined, 
+            name:values.name
 
 
         };
@@ -333,7 +348,8 @@ console.log(Voucher,"jumping");
                                 // customerName: "",
                                 // supplierName: "",
                                 // ProductId: "",
-                                type:"",
+                                typeOfVoucher:"",
+                                name:""
 
 
 
@@ -365,15 +381,32 @@ console.log(Voucher,"jumping");
                                                 />
                                             </div> */}
                                               <div className="flex-1 min-w-[300px]">
-                                              <label className="mb-2.5 block text-black dark:text-white">Voucher Name</label>
+                                            <label className="mb-2.5 block text-black dark:text-white">Voucher Name</label>
                                                 <ReactSelect
-                                                    name="type"
+                                                    name="name"
 
-                                                    value={VoucherType.find(option => option.value === values.type)}
-                                                    onChange={(option) => setFieldValue('type', option ? option.value : null)}
+                                                    value={voucherName.find(option => option.value === values.name)}
+                                                    onChange={(option) => setFieldValue('name', option ? option.value : null)}
                                                     // options={formattedSupplier}
 
-                                                    options={[{ label: 'View All ', value: null }, ...VoucherType]}
+                                                    options={[{ label: 'View All ', value: null }, ...voucherName]}
+                                                    styles={customStyles} // Pass custom styles here
+                                                    className="bg-white dark:bg-form-Field"
+                                                    classNamePrefix="react-select"
+                                                    placeholder="Select Name"
+                                                />
+                                                
+                                            </div>
+                                              <div className="flex-1 min-w-[300px]">
+                                              <label className="mb-2.5 block text-black dark:text-white">Voucher Type</label>
+                                                <ReactSelect
+                                                    name="typeOfVoucher"
+
+                                                    value={voucherType.find(option => option.value === values.typeOfVoucher)}
+                                                    onChange={(option) => setFieldValue('typeOfVoucher', option ? option.value : null)}
+                                                    // options={formattedSupplier}
+
+                                                    options={[{ label: 'View All ', value: null }, ...voucherType]}
                                                     styles={customStyles} // Pass custom styles here
                                                     className="bg-white dark:bg-form-Field"
                                                     classNamePrefix="react-select"
@@ -381,23 +414,7 @@ console.log(Voucher,"jumping");
                                                 />
                                                 
                                             </div>
-                                            <div className="flex-1 min-w-[300px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">Voucher Type</label>
-                                                <ReactSelect
-                                                    name="type"
-
-                                                    value={VoucherType.find(option => option.value === values.type)}
-                                                    onChange={(option) => setFieldValue('type', option ? option.value : null)}
-                                                    // options={formattedSupplier}
-
-                                                    options={[{ label: 'View All ', value: null }, ...VoucherType]}
-                                                    styles={customStyles} // Pass custom styles here
-                                                    className="bg-white dark:bg-form-Field"
-                                                    classNamePrefix="react-select"
-                                                    placeholder="Select Type"
-                                                />
-                                                
-                                            </div>
+                                          
                                             
                                         </div>
                                     </div>

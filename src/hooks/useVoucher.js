@@ -9,6 +9,7 @@ const useVoucher = (numberingDetails) => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const [Vouchers, setVoucher] = useState([]);
+    const [Voucherr, setVoucherr] = useState([]);
     const [edit, setEdit] = useState(false);
     const dispatch = useDispatch();
 
@@ -125,33 +126,25 @@ const useVoucher = (numberingDetails) => {
         itemsPerPage: 0
     });
 
-    useEffect(() => {
-        getVoucher(pagination.currentPage);
-    }, []);
+ 
 
-    const getVoucher = async (page) => {
-        // try {
-        //     const response = await fetch(`${GET_Voucher_URL}?page=${page}`, {
-        //         method: "GET",
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             "Authorization": `Bearer ${token}`
-        //         }
-        //     });
-        //     const data = await response.json();
-        //     console.log(data, "asd");
-        //     setVoucher(data.content);
-        //     setPagination({
-        //         totalItems: data.totalElements,
-        //         pagUnitList: data.content,
-        //         totalPages: data.totalPages,
-        //         currentPage: data.number + 1,
-        //         itemsPerPage: data.size
-        //     });
-        // } catch (error) {
-        //     console.error(error);
-        //     toast.error("Failed to fetch Voucher");
-        // }
+    const getVoucherr = async (page) => {
+        try {
+            const response = await fetch(`${GET_Voucher_URL}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data, "asd");
+            setVoucherr(data.content);
+        
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch Voucher");
+        }
     };
 
     const GetVoucherById = async (id) => {
@@ -312,7 +305,9 @@ console.log(formData,"jj");
         nature,
         invoice,
         under,
-        GetVoucherById
+        GetVoucherById,
+        getVoucherr,
+        Voucherr
     };
 };
 
