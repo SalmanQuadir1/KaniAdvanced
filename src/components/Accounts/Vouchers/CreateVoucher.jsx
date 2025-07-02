@@ -24,7 +24,7 @@ const CreateVoucher = () => {
     const [vaaluee, setvaaluee] = useState({});
     const customStyles = createCustomStyles(theme?.mode);
     const [ledgers, setLedgers] = useState([]); // You'll need to fetch these from your API
-
+    const [openingbalance2, setopeningbalance2] = useState(0)
     useEffect(() => {
         GetVoucherById(id);
         getLedger()
@@ -37,31 +37,40 @@ const CreateVoucher = () => {
     const LedgerData = Ledger?.map(ledg => ({
         value: ledg?.id,
         label: ledg?.name,
-        balance: ledg?.openingBalance 
+        balance: ledg?.openingBalance
 
     }));
 
     const handleAccountSelect = (option, setFieldValue) => {
-        setFieldValue('accounts', option);
+        setFieldValue('accounts',{ id:option.value});
         setFieldValue('currentBalance', option?.balance || 0);
-        console.log(option?.balance,"lklklk");
+        console.log(option?.balance, "lklklk");
+    };
+    const handleAccounttSelect = (option, index, setFieldValue) => {
+
+        setFieldValue(`entries.${index}.ledger`, { id:option.value});
+        setFieldValue(`entries.${index}.openingbalance2`, option?.balance || 0);
+        // setopeningbalance2(option?.balance || 0)
+        // setFieldValue('currentBalance', option?.balance || 0);
+        console.log(option?.balance, "lklklk");
     };
 
 
 
 
     const handleSubmit = async (values) => {
-        try {
-            await CreateVoucherEntry({
-                voucherNumber: values.voucherNumber,
-                supplierInvoiceNumber: values.supplierInvoiceNumber,
-                date: values.date,
-                entries: values.entries
-            });
-            // Handle success (show message, redirect, etc.)
-        } catch (error) {
-            // Handle error
-        }
+        console.log(values,"jj");
+        // try {
+        //     await CreateVoucherEntry({
+        //         voucherNumber: values.voucherNumber,
+        //         supplierInvoiceNumber: values.supplierInvoiceNumber,
+        //         date: values.date,
+        //         entries: values.entries
+        //     });
+        //     // Handle success (show message, redirect, etc.)
+        // } catch (error) {
+        //     // Handle error
+        // }
     };
 
     const validationSchema = Yup.object().shape({
@@ -94,10 +103,11 @@ const CreateVoucher = () => {
                         voucherNumber: '',
                         supplierInvoiceNumber: '',
                         date: '',
-                        accounts:"",
-                        currentBalance:"",
+                        accounts: "",
+                        currentBalance: "",
                         entries: [{
                             ledger: null,
+                            openingBalance: 0,
                             credit: 0,
                             debit: 0,
                             narration: ''
@@ -196,7 +206,7 @@ const CreateVoucher = () => {
                                                             <thead>
                                                                 <tr className="bg-gray-2 text-left dark:bg-meta-4">
                                                                     <th className="py-4 px-4 font-medium text-black dark:text-white w-[200px]">Particulars</th>
-
+                                                                    <th className="py-4 px-4 font-medium text-black dark:text-white w-[200px]">Current Balance</th>
                                                                     {(Vouchers?.typeOfVoucher === "Payment" || Vouchers?.typeOfVoucher === "Contra") && (
                                                                         <th className="py-4 px-4 font-medium text-black dark:text-white">Amount</th>
                                                                     )}
@@ -219,7 +229,8 @@ const CreateVoucher = () => {
                                                                             <ReactSelect
                                                                                 name={`entries.${index}.ledger`}
                                                                                 value={entry.ledger}
-                                                                                onChange={(option) => setFieldValue(`entries.${index}.ledger`, option)}
+                                                                                // onChange={(option) => setFieldValue(`entries.${index}.ledger`, option)}
+                                                                                onChange={(option) => handleAccounttSelect(option, index, setFieldValue)}
                                                                                 options={LedgerData}
                                                                                 styles={customStyles}
                                                                                 className="bg-white dark:bg-form-Field w-full z-5"
@@ -229,6 +240,17 @@ const CreateVoucher = () => {
                                                                             />
                                                                             <ErrorMessage name={`entries.${index}.ledger`} component="div" className="text-red-500" />
                                                                         </td>
+                                                                        <td>    <div className="flex-2 min-w-[250px] ">
+                                                                          
+                                                                            <Field
+                                                                                type="text"
+                                                                                name={`entries.${index}.openingbalance2`}
+                                                                                placeholder="Enter No"
+                                                                                readOnly
+                                                                                className="w-full bg-graydark rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                                            />
+                                                                            <ErrorMessage name="currentBalance" component="div" className="text-red-500" />
+                                                                        </div></td>
                                                                         {(Vouchers?.typeOfVoucher === "Payment" || Vouchers?.typeOfVoucher === "Contra") && (
                                                                             <>
                                                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -242,7 +264,7 @@ const CreateVoucher = () => {
                                                                                     />
                                                                                     <ErrorMessage name={`entries.${index}.credit`} component="div" className="text-red-500" />
                                                                                 </td>
-                                                                                <span className='flex-col'>Current Balance</span>
+
                                                                             </>
                                                                         )}
 
@@ -284,6 +306,7 @@ const CreateVoucher = () => {
                                                                                 </button>
                                                                             )}
                                                                         </td>
+
                                                                     </tr>
                                                                 ))}
                                                             </tbody>
