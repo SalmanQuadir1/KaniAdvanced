@@ -11,6 +11,8 @@ import Home from './pages/Home.jsx';
 import FinancialReportDashboard from './pages/FinancialReportDashboard.jsx';
 import GeneralFinancialReportDashboard from './pages/GeneralFinancialReportDashboard.jsx';
 import Groups from './components/Accounts/Config/Groups.jsx';
+
+import Daybook from './components/Accounts/Config/Daybook.jsx';
 import Voucher from './components/Accounts/Vouchers/Voucher.jsx';
 import CreateVoucher from './components/Accounts/Vouchers/CreateVoucher.jsx';
 
@@ -74,7 +76,7 @@ import Location from './components/Configurator/Location.jsx';
 import Supplier from './components/Configurator/Supplier.jsx';
 
 import AddSupplier from './components/Supplier/AddSupplier.jsx';
-import ViewSupplierLedger from './components/Supplier/SupplierLedger/ViewSupplierLedger.jsx';
+import ViewLedger from './components/Supplier/SupplierLedger/ViewLedger.jsx';
 import ViewSuppLedger from './components/Supplier/SupplierLedger/ViewSuppLedger.jsx';
 
 import AddBulkSupplier from './components/Supplier/AddBulkSupplier.jsx';
@@ -337,6 +339,16 @@ function App() {
                 <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
                 <PageTitle title="Voucher" />
                 <Voucher />
+              </>
+            }
+          />
+            <Route
+            path="/configurator/dayBook"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Day Book" />
+                <Daybook />
               </>
             }
           />
@@ -1253,7 +1265,7 @@ function App() {
             element={
               <>
                 <PageTitle title="Size" />
-                <ViewSupplierLedger />
+                <ViewLedger />
               </>
             }
           />

@@ -22,6 +22,7 @@ import { useSelector } from 'react-redux';
 import { FcSearch } from "react-icons/fc";
 import { TbViewportWide } from "react-icons/tb";
 import { RiPagesLine } from "react-icons/ri";
+import { MdBook } from "react-icons/md";
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const [role, setrole] = useState('')
   const location = useLocation();
@@ -230,6 +231,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                 (isActive && '!text-white')
                               }
                             >
+                              <LiaTruckLoadingSolid/>
                               Groups
                             </NavLink>
                           </li>
@@ -243,7 +245,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                 (isActive && '!text-white')
                               }
                             >
+                              <TbReportAnalytics/>
                               Vouchers
+                            </NavLink>
+                          </li>
+                          <li>
+                            <NavLink
+                              to="/configurator/dayBook"
+                              className={({ isActive }) =>
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                (isActive && '!text-white')
+                              }
+                            >
+                              <MdBook/>
+                              Day Book
                             </NavLink>
                           </li>
  </ul> 

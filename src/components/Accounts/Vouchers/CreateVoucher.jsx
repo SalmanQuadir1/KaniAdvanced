@@ -17,7 +17,7 @@ import useLedger from '../../../hooks/useLedger';
 
 const CreateVoucher = () => {
     const { id } = useParams();
-    const { GetVoucherById, Vouchers, CreateVoucherEntry } = useVoucher();
+    const { GetVoucherById, Vouchers, CreateVoucherEntry,handleCreateVoucher } = useVoucher();
 
     const { getLedger, Ledger } = useLedger();
     const theme = useSelector(state => state?.persisted?.theme);
@@ -37,19 +37,20 @@ const CreateVoucher = () => {
     const LedgerData = Ledger?.map(ledg => ({
         value: ledg?.id,
         label: ledg?.name,
+        obj:ledg,
         balance: ledg?.openingBalance
 
     }));
 
-    const handleAccountSelect = (option, setFieldValue) => {
-        setFieldValue('accounts',{ id:option.value});
+    const handleledgerIdelect = (option, setFieldValue) => {
+        setFieldValue('ledgerId', option.value);
         setFieldValue('currentBalance', option?.balance || 0);
         console.log(option?.balance, "lklklk");
     };
     const handleAccounttSelect = (option, index, setFieldValue) => {
 
-        setFieldValue(`entries.${index}.ledger`, { id:option.value});
-        setFieldValue(`entries.${index}.openingbalance2`, option?.balance || 0);
+        setFieldValue(`paymentDetails.${index}.ledgerId`, option.value);
+        setFieldValue(`paymentDetails.${index}.openingbalance2`, option?.balance || 0);
         // setopeningbalance2(option?.balance || 0)
         // setFieldValue('currentBalance', option?.balance || 0);
         console.log(option?.balance, "lklklk");
@@ -58,26 +59,13 @@ const CreateVoucher = () => {
 
 
 
-    const handleSubmit = async (values) => {
-        console.log(values,"jj");
-        // try {
-        //     await CreateVoucherEntry({
-        //         voucherNumber: values.voucherNumber,
-        //         supplierInvoiceNumber: values.supplierInvoiceNumber,
-        //         date: values.date,
-        //         entries: values.entries
-        //     });
-        //     // Handle success (show message, redirect, etc.)
-        // } catch (error) {
-        //     // Handle error
-        // }
-    };
+   
 
     const validationSchema = Yup.object().shape({
-        voucherNumber: Yup.string().required('Voucher number is required'),
+        recieptNumber: Yup.string().required('Voucher number is required'),
         supplierInvoiceNumber: Yup.string().required('Supplier invoice number is required'),
         date: Yup.date().required('Date is required'),
-        // entries: Yup.array().of(
+        // paymentDetails: Yup.array().of(
         //     Yup.object().shape({
         //         ledger: Yup.object().required('Ledger is required'),
         //         credit: Yup.number().when('debit', {
@@ -100,13 +88,13 @@ const CreateVoucher = () => {
             <div>
                 <Formik
                     initialValues={{
-                        voucherNumber: '',
+                        recieptNumber: '',
                         supplierInvoiceNumber: '',
                         date: '',
-                        accounts: "",
+                        ledgerId: "",
                         currentBalance: "",
-                        entries: [{
-                            ledger: null,
+                        paymentDetails: [{
+                            ledgerId: null,
                             openingBalance: 0,
                             credit: 0,
                             debit: 0,
@@ -115,7 +103,7 @@ const CreateVoucher = () => {
                     }}
                     enableReinitialize={true}
                     validationSchema={validationSchema}
-                    onSubmit={handleSubmit}
+                    onSubmit={handleCreateVoucher}
                 >
                     {({ isSubmitting, setFieldValue, values }) => (
                         <Form>
@@ -130,14 +118,14 @@ const CreateVoucher = () => {
                                     <div className="flex flex-col p-6.5">
                                         <div className='flex flex-row gap-4'>
                                             <div className="flex-2 min-w-[250px] mb-4">
-                                                <label className="mb-2.5 block text-black dark:text-white">{Vouchers?.typeOfVoucher} Number</label>
+                                                <label className="mb-2.5 block text-black dark:text-white">{Vouchers?.typeOfVoucher} Voucher Number</label>
                                                 <Field
                                                     type="text"
-                                                    name="voucherNumber"
+                                                    name="recieptNumber"
                                                     placeholder="Enter No"
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                 />
-                                                <ErrorMessage name="voucherNumber" component="div" className="text-red-500" />
+                                                <ErrorMessage name="recieptNumber" component="div" className="text-red-500" />
                                             </div>
                                             <div className="flex-2 min-w-[250px] mb-4">
                                                 <label className="mb-2.5 block text-black dark:text-white">Supplier Invoice Number</label>
@@ -170,9 +158,10 @@ const CreateVoucher = () => {
                                                         <div className="flex-2 min-w-[250px] mb-4">
                                                             <label className="mb-2.5 block text-black dark:text-white">Account</label>
                                                             <ReactSelect
-                                                                name={`entries.accounts`}
-                                                                value={values.accounts}
-                                                                onChange={(option) => handleAccountSelect(option, setFieldValue)}
+                                                                name={`paymentDetails.ledgerId`}
+                                                                // value={values?.ledgerId}
+                                                                value={LedgerData.find(option => option.value === values.ledgerId?.id)}
+                                                                onChange={(option) => handleledgerIdelect(option, setFieldValue)}
                                                                 options={LedgerData}
                                                                 styles={customStyles}
                                                                 className="bg-white dark:bg-form-Field w-full z-5"
@@ -197,8 +186,8 @@ const CreateVoucher = () => {
                                             }
                                         </div>
 
-                                        {/* Entries Table */}
-                                        <FieldArray name="entries">
+                                        {/* paymentDetails Table */}
+                                        <FieldArray name="paymentDetails">
                                             {({ push, remove }) => (
                                                 <div className="mb-6">
                                                     <div className="">
@@ -223,13 +212,14 @@ const CreateVoucher = () => {
                                                             </thead>
 
                                                             <tbody>
-                                                                {values.entries.map((entry, index) => (
+                                                                {values.paymentDetails.map((entry, index) => (
                                                                     <tr key={index}>
                                                                         <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                                                             <ReactSelect
-                                                                                name={`entries.${index}.ledger`}
-                                                                                value={entry.ledger}
-                                                                                // onChange={(option) => setFieldValue(`entries.${index}.ledger`, option)}
+                                                                                name={`paymentDetails.${index}.ledgerId`}
+                                                                                value={LedgerData.find(option => option.value === entry.ledgerId?.id)}
+                                                                                // value={entry.ledgerId}
+                                                                                // onChange={(option) => setFieldValue(`paymentDetails.${index}.ledger`, option)}
                                                                                 onChange={(option) => handleAccounttSelect(option, index, setFieldValue)}
                                                                                 options={LedgerData}
                                                                                 styles={customStyles}
@@ -238,13 +228,13 @@ const CreateVoucher = () => {
                                                                                 placeholder="Select Ledger"
                                                                             // menuShouldBlockScroll={true}
                                                                             />
-                                                                            <ErrorMessage name={`entries.${index}.ledger`} component="div" className="text-red-500" />
+                                                                            <ErrorMessage name={`paymentDetails.${index}.ledgerId`} component="div" className="text-red-500" />
                                                                         </td>
                                                                         <td>    <div className="flex-2 min-w-[250px] ">
                                                                           
                                                                             <Field
                                                                                 type="text"
-                                                                                name={`entries.${index}.openingbalance2`}
+                                                                                name={`paymentDetails.${index}.openingbalance2`}
                                                                                 placeholder="Enter No"
                                                                                 readOnly
                                                                                 className="w-full bg-graydark rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
@@ -256,13 +246,13 @@ const CreateVoucher = () => {
                                                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                                                                     <Field
                                                                                         type="number"
-                                                                                        name={`entries.${index}.amount`}
+                                                                                        name={`paymentDetails.${index}.amount`}
                                                                                         placeholder="0.00"
                                                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                                                         min="0"
                                                                                         step="0.01"
                                                                                     />
-                                                                                    <ErrorMessage name={`entries.${index}.credit`} component="div" className="text-red-500" />
+                                                                                    <ErrorMessage name={`paymentDetails.${index}.credit`} component="div" className="text-red-500" />
                                                                                 </td>
 
                                                                             </>
@@ -274,24 +264,24 @@ const CreateVoucher = () => {
                                                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                                                                     <Field
                                                                                         type="number"
-                                                                                        name={`entries.${index}.credit`}
+                                                                                        name={`paymentDetails.${index}.credit`}
                                                                                         placeholder="0.00"
                                                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                                                         min="0"
                                                                                         step="0.01"
                                                                                     />
-                                                                                    <ErrorMessage name={`entries.${index}.credit`} component="div" className="text-red-500" />
+                                                                                    <ErrorMessage name={`paymentDetails.${index}.credit`} component="div" className="text-red-500" />
                                                                                 </td>
                                                                                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                                                                                     <Field
                                                                                         type="number"
-                                                                                        name={`entries.${index}.debit`}
+                                                                                        name={`paymentDetails.${index}.debit`}
                                                                                         placeholder="0.00"
                                                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                                                         min="0"
                                                                                         step="0.01"
                                                                                     />
-                                                                                    <ErrorMessage name={`entries.${index}.debit`} component="div" className="text-red-500" />
+                                                                                    <ErrorMessage name={`paymentDetails.${index}.debit`} component="div" className="text-red-500" />
                                                                                 </td>
                                                                             </>
                                                                         )}
@@ -314,7 +304,7 @@ const CreateVoucher = () => {
                                                     </div>
                                                     <button
                                                         type="button"
-                                                        onClick={() => push({ ledger: null, credit: 0, debit: 0, narration: '' })}
+                                                        onClick={() => push({ ledgerId: null, credit: 0, debit: 0, narration: '' })}
                                                         className="flex items-center gap-2 mt-4 text-primary"
                                                     >
                                                         <IoMdAdd /> Add Row

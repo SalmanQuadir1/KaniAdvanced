@@ -24,7 +24,7 @@ const productgrp = [
 ];
 
 
-const ViewSupplierLedger = () => {
+const ViewLedger = () => {
 
     const { handleUpdate, getLedgerNumber, OrderNo, getSupplier, productId,
         getprodId, supplier, getCustomer, customer } = useOrder();
@@ -227,8 +227,11 @@ const ViewSupplierLedger = () => {
 
 
         const openLEDGERModal = (supplierId) => {
+            console.log(supplierId,"suo");
+            console.log(Ledger,";;'';;'';;''_____");
             // Find the supplier data from your existing Ledger state
-            const supplierData = Ledger.find(item => item.supplierId === supplierId);
+            const supplierData = Ledger.find(item => item.ledgerId === supplierId);
+            console.log(supplierData,"..,");
             if (supplierData) {
                 setSelectedLEDGERData(supplierData);
                 setIsLEDGERModalOpen(true);
@@ -243,7 +246,7 @@ const ViewSupplierLedger = () => {
 
 
 console.log(Ledger,"jumping");
-
+console.log(SelectedLEDGERData,"l");
 
         return Ledger.map((item, index) => (
 
@@ -274,7 +277,7 @@ console.log(Ledger,"jumping");
                 }
                 
                 <td>
-                    <span onClick={() => openLEDGERModal(item?.supplierId)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> VIEW LEDGER</span>
+                    <span onClick={() => openLEDGERModal(item?.ledgerId)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> VIEW LEDGER</span>
                 </td>
                 {/* <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     {item.products &&
@@ -382,11 +385,11 @@ console.log(Ledger,"jumping");
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {SelectedLEDGERData.ledgerSuppliers?.length > 0 ? (
+                                            {SelectedLEDGERData?.ledgerSuppliers?.length > 0 ? (
                                                 SelectedLEDGERData.ledgerSuppliers.filter(ledger => 
                                                     ledger.receivedDate || 
                                                     ledger.orderNo || 
-                                                    ledger.debit !== null || 
+                                                    ledger.debit !== null || ledger.credit !== null ||
                                                     ledger.totalBillAmount !== null || 
                                                     ledger.balance !== null
                                                   ).map((ledger, index) => (
@@ -400,12 +403,10 @@ console.log(Ledger,"jumping");
                                                         <td className="px-2 py-2 border-b dark:text-white">
                                                             {ledger.debit ?? '0'}
                                                         </td>
-                                                        {/* <td className="px-2 py-2 border-b dark:text-white">
-                                                            {ledger.credit ?? '0'}
-                                                        </td> */}
                                                         <td className="px-2 py-2 border-b dark:text-white">
-                                                            {ledger.totalBillAmount ?? '0'}
+                                                            {ledger.credit ?? '0'}
                                                         </td>
+                                                    
                                                         <td className="px-2 py-2 border-b dark:text-white">
                                                             {ledger.balance ?? '0'}
                                                         </td>
@@ -486,7 +487,7 @@ console.log(Ledger,"jumping");
 
                                         <div className="flex-1 min-w-[300px]">
                                             <label className="mb-2.5 block text-black dark:text-white">
-                                                Supplier
+                                               Ledger Type
                                                 <span className="text-red-700 text-xl mt-[40px] justify-center items-center"> *</span>
                                             </label>
                                             {/* <div className="z-20 bg-transparent dark:bg-form-Field">
@@ -575,4 +576,4 @@ console.log(Ledger,"jumping");
     )
 }
 
-export default ViewSupplierLedger
+export default ViewLedger

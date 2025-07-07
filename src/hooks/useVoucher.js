@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 // import { GET_Voucher_URL, DELETE_Voucher_URL, UPDATE_Voucher_URL, ADD_Voucher_URL } from "../Constants/utils";
-import { ADD_Voucher_URL, DELETE_Voucher_URL, GET_VoucherBYID, GET_Voucher_URL, UPDATEVoucher_URL } from "../Constants/utils";
+import { ADD_VoucherEntry_URL, ADD_Voucher_URL, DELETE_Voucher_URL, GET_VoucherBYID, GET_Voucher_URL, UPDATEVoucher_URL } from "../Constants/utils";
 import { fetchHsnCode } from '../redux/Slice/HsnCodeSlice';
 const useVoucher = (numberingDetails) => {
     
@@ -286,6 +286,39 @@ console.log(formData,"jj");
             setSubmitting(false);
         }
     };
+    const handleCreateVoucher = async (values, { setSubmitting, resetForm }) => {
+     
+        // const formData={...values,...numberingDetails}
+     
+     console.log(values,"vouchercreate");
+     
+             try {
+                 const url =  ADD_VoucherEntry_URL;
+                 const method = "POST";
+     
+                 const response = await fetch(url, {
+                     method: method,
+                     headers: {
+                         "Content-Type": "application/json",
+                         "Authorization": `Bearer ${token}`
+                     },
+                     body: JSON.stringify(values)
+                 });
+     
+                 const data = await response.json();
+                 if (response.ok) {
+                     toast.success(`Voucher Entry added successfully`);
+                     // Fetch updated Voucher
+                 } else {
+                     toast.error(`${data.errorMessage}`);
+                 }
+             } catch (error) {
+                 console.error(error, response);
+                 toast.error("An error occurred");
+             } finally {
+                 setSubmitting(false);
+             }
+         };
 
     const handlePageChange = (newPage) => {
 
@@ -307,7 +340,8 @@ console.log(formData,"jj");
         under,
         GetVoucherById,
         getVoucherr,
-        Voucherr
+        Voucherr,
+        handleCreateVoucher
     };
 };
 
