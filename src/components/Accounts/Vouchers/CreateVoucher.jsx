@@ -91,12 +91,14 @@ const CreateVoucher = () => {
                         recieptNumber: '',
                         supplierInvoiceNumber: '',
                         date: '',
+                        voucherId:id,
                         ledgerId: "",
                         currentBalance: "",
                         paymentDetails: [{
                             ledgerId: null,
                             openingBalance: 0,
                             credit: 0,
+                            amount:0,
                             debit: 0,
                             narration: ''
                         }]
@@ -252,7 +254,7 @@ const CreateVoucher = () => {
                                                                                         min="0"
                                                                                         step="0.01"
                                                                                     />
-                                                                                    <ErrorMessage name={`paymentDetails.${index}.credit`} component="div" className="text-red-500" />
+                                                                                    <ErrorMessage name={`paymentDetails.${index}.amount`} component="div" className="text-red-500" />
                                                                                 </td>
 
                                                                             </>

@@ -9,7 +9,7 @@ import useLedger from '../../hooks/useLedger';
 
 const CreateLedger = () => {
 
-    const { getGroup, Group,handleSubmit } = useLedger()
+    const { getGroup, Group, handleSubmit } = useLedger()
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
 
@@ -48,47 +48,47 @@ const CreateLedger = () => {
                         email: '',
                         city: "",
 
-                  
-                        country:"",
-                        category:"",
 
-                        maximumDiscountApplicable:"",
-                        setAlterDealingProducts:"",
+                        country: "",
+                        category: "",
+
+                        maximumDiscountApplicable: "",
+                        setAlterDealingProducts: "",
                         under: '',
                         // Mailing Details
-                        mailingName:"",
-                        mailingAddress:"",
-                        mailingstate:"",
-                        mailingCountry:"",
-                        pincode:"",
+                        mailingName: "",
+                        mailingAddress: "",
+                        mailingstate: "",
+                        mailingCountry: "",
+                        pincode: "",
 
                         // Banking Details
-                      
+
 
                         // Tax Registration Details
-                        panOrTanNo:"",
+                        panOrTanNo: "",
 
-                       
-                        gstinOrUin:"",
 
-                        registrationType:"regular",
-                        setAlterAdditionalGstDetails:"",
+                        gstinOrUin: "",
+
+                        registrationType: "regular",
+                        setAlterAdditionalGstDetails: "",
 
                         // balance:"",
                         // credit:"",
                         // debit:"",
-                       
-                      
-                     
-                       
-                  
-                
+
+
+
+
+
+
                         include: 'None',
 
-                       
+
                         openingBalance: '',
-                        accountGroup:{id:""},
-                   
+                        accountGroup: { id: "" },
+
 
                         provideBankDetails: 'no',
                         bankName: '',
@@ -96,7 +96,7 @@ const CreateLedger = () => {
                         ifscCode: '',
                         branch: '',
                         accountType: '',
-                        typeOfOpeningBalance:""
+                        typeOfOpeningBalance: ""
                     }}
                     onSubmit={(values) => {
                         handleSubmit(values)
@@ -221,7 +221,7 @@ const CreateLedger = () => {
                                                 <ReactSelect
                                                     name="accountGroup"
                                                     value={formattedGroup.find(option => option.value === values.accountGroup)}
-                                                    onChange={(option) => setFieldValue('accountGroup',{id:option.value})}
+                                                    onChange={(option) => setFieldValue('accountGroup', { id: option.value })}
                                                     options={formattedGroup}
                                                     styles={customStyles}
                                                     className="bg-white dark:bg-form-Field w-full"
@@ -423,51 +423,51 @@ const CreateLedger = () => {
 
                                         {/* Opening Balance */}
                                         <div className="mb-4.5 border-t border-stroke pt-4 dark:border-strokedark">
-  {/* Radio Buttons for Opening Balance Type */}
-  <div className="mb-2.5 flex items-center gap-4">
-    <h4 className="font-medium text-black dark:text-white">Opening Balance Type:</h4>
-    <label className="flex items-center gap-2">
-      <Field
-        type="radio"
-        name="typeOfOpeningBalance"
-        value="DR" // Saves as "DR" if selected
-        className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
-      />
-      <span className="text-black dark:text-white">Debit (DR)</span>
-    </label>
-    <label className="flex items-center gap-2">
-      <Field
-        type="radio"
-        name="typeOfOpeningBalance"
-        value="CR" // Saves as "CR" if selected
-        className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
-      />
-      <span className="text-black dark:text-white">Credit (CR)</span>
-    </label>
-  </div>
+                                            {/* Radio Buttons for Opening Balance Type */}
+                                            <div className="mb-2.5 flex items-center gap-4">
+                                                <h4 className="font-medium text-black dark:text-white">Opening Balance Type:</h4>
+                                                <label className="flex items-center gap-2">
+                                                    <Field
+                                                        type="radio"
+                                                        name="typeOfOpeningBalance"
+                                                        value="DR" // Saves as "DR" if selected
+                                                        className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
+                                                    />
+                                                    <span className="text-black dark:text-white">Debit (DR)</span>
+                                                </label>
+                                                <label className="flex items-center gap-2">
+                                                    <Field
+                                                        type="radio"
+                                                        name="typeOfOpeningBalance"
+                                                        value="CR" // Saves as "CR" if selected
+                                                        className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
+                                                    />
+                                                    <span className="text-black dark:text-white">Credit (CR)</span>
+                                                </label>
+                                            </div>
 
-  {/* Opening Balance Input */}
-  <h4 className="mb-2.5 font-medium text-black dark:text-white">
-    Opening Balance (on {openingBalanceDate})
-  </h4>
-  <div className="flex items-center gap-2">
-    <div className="flex-1 min-w-[250px]">
-      <Field
-        type="text"
-        name="openingBalance"
-        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-      />
-    </div>
-    {/* Display "CR" if Credit is selected */}
-    {values.typeOfOpeningBalance === "CR" ? (
-      <span className="text-lg font-medium text-gray-600 dark:text-gray-300">
-        Cr.
-      </span>
-    ): <span className="text-lg font-medium text-gray-600 dark:text-gray-300">
-   Dr.
-  </span>}
-  </div>
-</div>
+                                            {/* Opening Balance Input */}
+                                            <h4 className="mb-2.5 font-medium text-black dark:text-white">
+                                                Opening Balance (on {openingBalanceDate})
+                                            </h4>
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex-1 min-w-[250px]">
+                                                    <Field
+                                                        type="text"
+                                                        name="openingBalance"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                    />
+                                                </div>
+                                                {/* Display "CR" if Credit is selected */}
+                                                {values.typeOfOpeningBalance === "CR" ? (
+                                                    <span className="text-lg font-medium text-gray-600 dark:text-gray-300">
+                                                        Cr.
+                                                    </span>
+                                                ) : <span className="text-lg font-medium text-gray-600 dark:text-gray-300">
+                                                    Dr.
+                                                </span>}
+                                            </div>
+                                        </div>
 
                                         {/* Submit Button */}
                                         <div className="flex justify-center mt-6">

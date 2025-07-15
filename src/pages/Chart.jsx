@@ -17,6 +17,7 @@ import { MdRepartition, MdOutlinePendingActions, MdOutlinePending, MdRecommend, 
 import { PiGearFineFill } from "react-icons/pi";
 import { CiCalendarDate } from "react-icons/ci";
 import { VscDiffModified } from "react-icons/vsc";
+import { FaBook } from "react-icons/fa6";
 
 const Chart = () => {
   const [unitCount, setUnitCount] = useState([]);
@@ -59,6 +60,7 @@ const Chart = () => {
     { title: "Accounts Dashboard", link: "/accounts/dashboard", countKey: "accountsData", icon: <LuScale className="w-10 h-10" />, levelUp: true },
     { title: "Billing Info", link: "/accounts/billing", countKey: "billing", icon: <MdRepartition className="w-10 h-10" />, levelDown: true },
     { title: "Invoices", link: "/accounts/invoices", countKey: "invoices", icon: <MdOutlinePending className="w-10 h-10" />, levelUp: true },
+    { title: "Day Book", link: "/configurator/dayBook", countKey: "invoices", icon: <FaBook className="w-10 h-10" />, levelUp: true },
   ];
   const roleBasedCards = {
     ROLE_ADMIN: [

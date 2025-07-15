@@ -432,21 +432,25 @@ console.log(SelectedLEDGERData,"l");
 
                                         </div>
                                         <div className="text-right">
-                                            <p className="font-semibold">Total Debit:   {SelectedLEDGERData.ledgerSuppliers?.reduce(
+                                            {/* <p className="font-semibold">Total Debit:   {SelectedLEDGERData.ledgerSuppliers?.reduce(
                                                 (total, ledger) => total + (Number(ledger.debit) || 0),
                                                 0
-                                            ).toFixed(2)}</p>
+                                            ).toFixed(2)}</p> */}
+                                            <p>Total Debit :{SelectedLEDGERData.
+ledgerSuppliers[0].totalDebit}</p>
 
                                         </div>
                                         <div className="text-right">
-                                            <p className="font-semibold">Total Credit: {SelectedLEDGERData.ledgerSuppliers?.reduce(
+                                            {/* <p className="font-semibold">Total Credit: {SelectedLEDGERData.ledgerSuppliers?.reduce(
                                                 (total, ledger) => total + (Number(ledger.totalBillAmount) || 0),
                                                 0
-                                            ).toFixed(2)}</p>
+                                            ).toFixed(2)}</p> */}
+                                                      <p>Total Debit :{SelectedLEDGERData.
+ledgerSuppliers[0].totalCredit}</p>
 
                                         </div>
                                         <div className="text-right">
-                                            <p className="font-semibold">Closing Balance:       {(
+                                            {/* <p className="font-semibold">Closing Balance:       {(
                                                 parseFloat(SelectedLEDGERData.openingBalance || 0) +
                                                 SelectedLEDGERData.ledgerSuppliers?.reduce(
                                                     (sum, ledger) => sum + (parseFloat(ledger.totalBillAmount) || 0), 0
@@ -454,10 +458,9 @@ console.log(SelectedLEDGERData,"l");
                                                 SelectedLEDGERData.ledgerSuppliers?.reduce(
                                                     (sum, ledger) => sum + (parseFloat(ledger.debit) || 0), 0
                                                 )
-                                            ).toFixed(2)}</p>
-                                            <p>
-
-                                            </p>
+                                            ).toFixed(2)}</p> */}
+                                                      <p>Total Closing Balnce :{SelectedLEDGERData.
+ledgerSuppliers[0].totalClosingBalance}</p>
                                         </div>
                                     </div>
                                 </div>

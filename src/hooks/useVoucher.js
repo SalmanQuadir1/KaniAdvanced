@@ -118,34 +118,67 @@ const useVoucher = (numberingDetails) => {
     ];
 
 
-    const [pagination, setPagination] = useState({
-        totalItems: 0,
-        data: [],
-        totalPages: 0,
-        currentPage: 1,
-        itemsPerPage: 0
-    });
+ 
 
  
 
-    const getVoucherr = async (page) => {
-        try {
-            const response = await fetch(`${GET_Voucher_URL}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                }
-            });
-            const data = await response.json();
-            console.log(data, "asd");
-            setVoucherr(data.content);
-        
-        } catch (error) {
-            console.error(error);
-            toast.error("Failed to fetch Voucher");
+    const [loading, setLoading] = useState(false);
+    const [pagination, setPagination] = useState({
+      currentPage: 1,
+      totalPages: 1,
+      itemsPerPage: 10,
+      totalItems: 0
+    });
+    
+    const getVoucherr = async (page = 1) => {
+      setLoading(true);
+      try {
+        const response = await fetch(`${GET_Voucher_URL}?page=${page}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          }
+        });
+    
+        // Check if response is OK (status 200-299)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+    
+        // Handle empty response
+        const text = await response.text();
+        if (!text) {
+          throw new Error("Empty response from server");
+        }
+    
+        const data = JSON.parse(text);
+        console.log("Vouchers data:", data);
+    
+        // Update state with pagination info if available
+        setVoucherr(data.content || []);
+        setPagination(prev => ({
+          ...prev,
+          currentPage: data.number + 1 || 1,
+          totalPages: data.totalPages || 1,
+          totalItems: data.totalElements || 0
+        }));
+    
+      } catch (error) {
+        console.error("Fetch error:", error);
+        toast.error(error.message || "Failed to fetch vouchers");
+        setVoucherr([]); // Reset to empty array on error
+      } finally {
+        setLoading(false);
+      }
     };
+    
+    // Usage with pagination
+   
+
+
+
+
 
     const GetVoucherById = async (id) => {
         console.log("heere");
@@ -286,7 +319,7 @@ console.log(formData,"jj");
             setSubmitting(false);
         }
     };
-    const handleCreateVoucher = async (values, { setSubmitting, resetForm }) => {
+    const handleCreateVoucher = async (values) => {
      
         // const formData={...values,...numberingDetails}
      

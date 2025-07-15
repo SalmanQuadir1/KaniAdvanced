@@ -105,55 +105,64 @@ console.log(Voucherr,"jjhhgg");
 
 
 
-    const getVoucher = async (page, filters = {}) => {
-        console.log(filters, "filterssssssssssssssssssssssssssssssssssssssss");
-        console.log("Fetching Vouchers for page", page); // Log the page number being requested
-
+    const getVoucher = async (page = 0, filters = {}) => {
+        console.log("Fetching vouchers with filters:", filters);
+        console.log("Page:", page);
+    
         try {
-            const response = await fetch(`${GET_Vouchersearch_URL}?page=${page || 0}`, {
-                method: "POST", // GET method
+            const response = await fetch(`${GET_Vouchersearch_URL}?page=${page}`, {
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
                 },
                 body: JSON.stringify(filters)
             });
-
-            const textResponse = await response.text();
-
-            console.log(textResponse, "japaaaaaaaaaaaaaaaaaan");
-
-            // Get the raw text response
-            // Log raw response before parsing   
-
-            // Try parsing the response only if it's valid JSON
-            try {
-                const data = JSON.parse(textResponse); // Try parsing as JSON
-                console.log("Parsed Response:", data);
-
-                if (data) {
-                    setVoucher(data?.content); // Update Vouchers state
-                } else {
-                    console.log("No Vouchers found in the response");
-                    setVoucher([]); // Set an empty state
-                }
-
-                // Update pagination state
-                setPagination({
-                    totalItems: data?.totalElements || 0,
-                    data: data?.content || [],
-                    totalPages: data?.totalPages || 0,
-                    currentPage: data?.number + 1 || 1,
-                    itemsPerPage: data?.size || 0,
-                });
-            } catch (parseError) {
-                console.error("Error parsing response as JSON:", parseError);
-                toast.error("Invalid response format.");
+    
+            // First check if the response is OK (status 200-299)
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Server responded with ${response.status}: ${errorText}`);
             }
+    
+            // Try to parse as JSON
+            const data = await response.json();
+            console.log("Received data:", data);
+    
+            if (!data?.content) {
+                console.warn("No content in response, setting empty array");
+                setVoucher([]);
+            } else {
+                setVoucher(data.content);
+            }
+    
+            // Update pagination state
+            setPagination({
+                totalItems: data?.totalElements || 0,
+                data: data?.content || [],
+                totalPages: data?.totalPages || 1,
+                currentPage: data?.number !== undefined ? data.number + 1 : 1,
+                itemsPerPage: data?.size || 10,
+            });
+    
         } catch (error) {
-            console.error("Error fetching Vouchers:", error);
-            toast.error("Failed to fetch Vouchers");
-            setVoucher([]); // Reset to an empty state in case of an error
+            console.error("Error in getVoucher:", error);
+            
+            // More specific error messages
+            if (error instanceof SyntaxError) {
+                toast.error("Invalid JSON response from server");
+            } else {
+                toast.error(error.message || "Failed to fetch vouchers");
+            }
+            
+            setVoucher([]);
+            setPagination(prev => ({
+                ...prev,
+                totalItems: 0,
+                data: [],
+                totalPages: 1,
+                currentPage: 1
+            }));
         }
     };
 
@@ -175,7 +184,7 @@ console.log(Voucherr,"jjhhgg");
 
     const renderTableRows = () => {
         
-        if (!Voucher) {
+        if (!Voucher||Voucher==[]) {
             return (
                 <tr className='bg-white dark:bg-slate-700 dark:text-white'>
                     <td colSpan="6" className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
