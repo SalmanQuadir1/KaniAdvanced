@@ -13,6 +13,7 @@ import { customStyles as createCustomStyles } from '../../../Constants/utils';
 import { useSelector } from 'react-redux';
 import Modall from '../../Products/Modall';
 import NumberingDetailsModal from './NumberingDetailsModal';
+import useLocation from '../../../hooks/useLocation';
 const Voucher = () => {
     const [gstDetails, setgstDetails] = useState([])
     const [hsnOptions, sethsnOptions] = useState([])
@@ -124,6 +125,18 @@ const Voucher = () => {
         setgstDetails(values)
 
     }
+
+    const { Locations, getAllLocation } = useLocation()
+
+    useEffect(() => {
+
+        getAllLocation();
+    }, []);
+
+    const formattedLocation = Locations?.map(id => ({
+        label: id.address,
+        value: id.id
+    }));
 
 
 
@@ -250,80 +263,79 @@ const Voucher = () => {
                                                 </div>
 
                                             </div>
+
                                             <div className="flex flex-col gap-4 mt-6">
-
                                                 {[
-
                                                     { name: 'setAdditionalNumb', label: 'Set/Alter Additional Numbering Detail', modal: true },
-
-
                                                     { name: 'unusedVchNos', label: 'Show Unused Vchr No"s in transaction for retain the original Vchr No. Behaviour' },
-
-
-                                                    { name: 'dateForVchs', label: 'Use Effective Date For Voucher' },
-
-
+                                                    {
+                                                        name: 'dateForVchs',
+                                                        label: 'Use Effective Date For Voucher',
+                                                        isDateField: true // Mark this field as needing a date field
+                                                    },
                                                     { name: 'zeroTransactionAllowed', label: 'Allow Zero Value Transaction' },
-
-
                                                     { name: 'optionalVchType', label: 'Make This Voucher Type As (Optional) By Default' },
-
-
                                                     { name: 'narrationVchs', label: 'Allow Narration In Voucher' },
-
-
-
                                                     { name: 'narratLedgerVch', label: 'Provide Narration For Each Voucher In Ledger' },
-
                                                     ...(values.typeOfVoucher !== "Journal" ? [
                                                         { name: 'defAccounting', label: 'Enable Default Accounting Allocation' },
-
                                                     ] : []),
                                                     ...(values.typeOfVoucher === "Journal" || values.typeOfVoucher === "Payment" || values.typeOfVoucher === "debitNote" ? [
                                                         { name: 'costPurchase', label: 'Track Addditional Cost for Purchases' },
-
                                                     ] : []),
-
                                                     ...(values.typeOfVoucher === "Journal" ? [
-
                                                         { name: 'whatsAppVch', label: 'WhatsApp Voucher After Saving' },
                                                     ] : []),
                                                     ...(values.typeOfVoucher === "Sales" ? [
                                                         { name: 'inteCompTransfer', label: 'Activate Inter Company Transfer' },
                                                     ] : []),
-
-
-                                                ].map(({ name, label, modal }) => (
-                                                    <div key={name} className="flex items-center justify-between w-full max-w-[500px]">
-                                                        <label className="text-black dark:text-white w-1/2">{label}</label>
-                                                        <div className="flex gap-4">
-                                                            <label className="flex items-center gap-1 text-black dark:text-white">
-                                                                <input
-                                                                    type="radio"
-                                                                    name={name}
-                                                                    value="true"
-                                                                    checked={values[name] === true}
-                                                                    onChange={() => {
-                                                                        setFieldValue(name, true);
-                                                                        if (modal) setShowNumberingModal(true);
-                                                                    }}
-
-                                                                    className="form-radio text-primary"
-                                                                />
-                                                                Yes
-                                                            </label>
-                                                            <label className="flex items-center gap-1 text-black dark:text-white">
-                                                                <input
-                                                                    type="radio"
-                                                                    name={name}
-                                                                    value="false"
-                                                                    checked={values[name] === false}
-                                                                    onChange={() => setFieldValue(name, false)}
-                                                                    className="form-radio text-primary"
-                                                                />
-                                                                No
-                                                            </label>
+                                                ].map(({ name, label, modal, isDateField }) => (
+                                                    <div key={name} className="flex flex-col gap-2 w-full max-w-[500px]">
+                                                        <div className="flex items-center justify-between">
+                                                            <label className="text-black dark:text-white w-1/2">{label}</label>
+                                                            <div className="flex gap-4">
+                                                                <label className="flex items-center gap-1 text-black dark:text-white">
+                                                                    <input
+                                                                        type="radio"
+                                                                        name={name}
+                                                                        value="true"
+                                                                        checked={values[name] === true}
+                                                                        onChange={() => {
+                                                                            setFieldValue(name, true);
+                                                                            if (modal) setShowNumberingModal(true);
+                                                                        }}
+                                                                        className="form-radio text-primary"
+                                                                    />
+                                                                    Yes
+                                                                </label>
+                                                                <label className="flex items-center gap-1 text-black dark:text-white">
+                                                                    <input
+                                                                        type="radio"
+                                                                        name={name}
+                                                                        value="false"
+                                                                        checked={values[name] === false}
+                                                                        onChange={() => setFieldValue(name, false)}
+                                                                        className="form-radio text-primary"
+                                                                    />
+                                                                    No
+                                                                </label>
+                                                            </div>
                                                         </div>
+                                                        {/* Show date field if this is the dateForVchs field and it's true */}
+                                                        {isDateField && values[name] === true && (
+                                                            <div className="flex items-center justify-between">
+                                                                <label className="text-black dark:text-white w-1/2">Effective Date</label>
+
+                                                                <Field
+                                                                    name="effectiveDate"
+                                                                    type="date"
+                                                                    value={values.effectiveDate || ''}
+                                                                    onChange={(e) => setFieldValue('effectiveDate', e.target.value)}
+                                                                    placeholder="effective Date"
+                                                                    className=" rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                />
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 ))}
                                             </div>
@@ -400,13 +412,24 @@ const Voucher = () => {
 
                                             <div className="flex-2 min-w-[250px] ml-7">
                                                 <label className="mb-2.5 block text-black dark:text-white ">Default Godown</label>
+
+
+
+
+
                                                 <Field
-                                                    name='defaultGodown'
-                                                    type="text"
-                                                    value={values.defaultGodown}
-                                                    placeholder="Upto"
-                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                    name="defaultGodown"
+                                                    component={ReactSelect}
+                                                    options={[{ label: 'View All Locations', value: null }, ...formattedLocation]}
+                                                    styles={customStyles}
+                                                    placeholder="Select Location"
+                                                    value={formattedLocation.find(option => option.value === values.defaultGodown)}
+                                                    onChange={option => setFieldValue('defaultGodown', option ? { id: option.value } : '')}
                                                 />
+
+
+
+
                                             </div>
 
 
@@ -628,7 +651,7 @@ const Voucher = () => {
 
                                         </div>
                                         {/* gst */}
-                                      
+
 
 
                                         <div className="mb-4.5  gap-6">
@@ -810,15 +833,15 @@ const Voucher = () => {
 
                 </Formik>
             </div>
-                <NumberingDetailsModal
-                    show={showNumberingModal}
-                    onHide={() => setShowNumberingModal(false)}
-                    onSubmit={(data) => {
-                        setNumberingDetails(data);
-                        // You can also store this data in your form values if needed
-                        // setFieldValue('numberingDetails', data);
-                    }}
-                />
+            <NumberingDetailsModal
+                show={showNumberingModal}
+                onHide={() => setShowNumberingModal(false)}
+                onSubmit={(data) => {
+                    setNumberingDetails(data);
+                    // You can also store this data in your form values if needed
+                    // setFieldValue('numberingDetails', data);
+                }}
+            />
 
         </DefaultLayout >
     )

@@ -62,7 +62,7 @@ const useVoucher = (numberingDetails) => {
 
         msgPrintTwo:"",
 
-        defaultGodown:"",
+        defaultGodown:{},
 
         defTitlePrint:"",
 
@@ -319,6 +319,15 @@ console.log(formData,"jj");
             setSubmitting(false);
         }
     };
+
+
+
+
+
+
+
+
+    
     const handleCreateVoucher = async (values) => {
      
         // const formData={...values,...numberingDetails}
