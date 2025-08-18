@@ -413,6 +413,8 @@ export const SEARCH_DayBook_URL = `${BASE_URL}/entryPayment/search`;
 export const UPDATEVoucher_URL = `${BASE_URL}/voucher/update`;
 export const DELETE_Voucher_URL = `${BASE_URL}/voucher/delete`;
 
+export const UPDATETOGGLE_Voucher_URL = `${BASE_URL}/voucher/actVoucher`;
+
 
 
 //images

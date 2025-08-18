@@ -223,7 +223,7 @@ const Voucher = () => {
                                                     <label className="mb-2.5 block text-black dark:text-white">Activate This Voucher Type</label>
                                                     <ReactSelect
                                                         name="actVoucher"
-                                                        value={yesNo.find(option => option.value === values.yesNo) || null}
+                                                        value={yesNo.find(option => option.value === values.actVoucher) || null}
                                                         onChange={(option) => setFieldValue('actVoucher', option ? option.value : null)}
                                                         options={yesNo}
                                                         styles={customStyles}
@@ -597,7 +597,7 @@ const Voucher = () => {
                                                 styles={customStyles}
                                                 className="bg-white dark:bg-form-Field w-full"
                                                 classNamePrefix="react-select"
-                                                placeholder="Activate This Voucher Type"
+                                                placeholder="Default Gst Registration"
                                             />
                                         </div>
 

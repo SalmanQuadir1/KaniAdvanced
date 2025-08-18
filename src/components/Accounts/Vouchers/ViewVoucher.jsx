@@ -3,7 +3,7 @@ import DefaultLayout from '../../../layout/DefaultLayout'
 import Breadcrumb from '../../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { GET_Vouchersearch_URL } from "../../../Constants/utils";
+import { GET_Vouchersearch_URL, UPDATETOGGLE_Voucher_URL } from "../../../Constants/utils";
 import ReactSelect from 'react-select';
 import useOrder from '../../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -27,13 +27,13 @@ const productgrp = [
 
 const ViewVoucher = () => {
 
-    const {  Voucherr,getVoucherr } = useVoucher();
+    const { Voucherr, getVoucherr } = useVoucher();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
     const [isLoading, setisLoading] = useState(false)
     const customStyles = createCustomStyles(theme?.mode);
     const [prodIdOptions, setprodIdOptions] = useState([])
-  
+
 
 
 
@@ -52,10 +52,10 @@ const ViewVoucher = () => {
 
 
 
-useEffect(() => {
- getVoucherr()
-}, [])
-console.log(Voucherr,"jjhhgg");
+    useEffect(() => {
+        getVoucherr()
+    }, [])
+    console.log(Voucherr, "jjhhgg");
 
     // const formattedSupplier = supplier.map(supplier => ({
     //     label: supplier.name,
@@ -64,18 +64,18 @@ console.log(Voucherr,"jjhhgg");
     const VoucherType = [
         { value: 'supplier', label: 'supplier' },
         { value: 'customer', label: 'customer' },
-    
+
     ];
 
     const voucherName = Voucherr && Voucherr.map((vouch) => ({
         label: vouch.name,
         value: vouch.name
-      }));
-      const voucherType = Voucherr && Voucherr.map((vouch) => ({
+    }));
+    const voucherType = Voucherr && Voucherr.map((vouch) => ({
         label: vouch.typeOfVoucher,
         value: vouch.typeOfVoucher
-      }));
-      
+    }));
+
 
 
 
@@ -89,7 +89,7 @@ console.log(Voucherr,"jjhhgg");
 
 
 
-  
+
 
 
     const [pagination, setPagination] = useState({
@@ -100,7 +100,7 @@ console.log(Voucherr,"jjhhgg");
     });
 
 
-  
+
 
 
 
@@ -108,7 +108,7 @@ console.log(Voucherr,"jjhhgg");
     const getVoucher = async (page = 0, filters = {}) => {
         console.log("Fetching vouchers with filters:", filters);
         console.log("Page:", page);
-    
+
         try {
             const response = await fetch(`${GET_Vouchersearch_URL}?page=${page}`, {
                 method: "POST",
@@ -118,24 +118,24 @@ console.log(Voucherr,"jjhhgg");
                 },
                 body: JSON.stringify(filters)
             });
-    
+
             // First check if the response is OK (status 200-299)
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`Server responded with ${response.status}: ${errorText}`);
             }
-    
+
             // Try to parse as JSON
             const data = await response.json();
             console.log("Received data:", data);
-    
+
             if (!data?.content) {
                 console.warn("No content in response, setting empty array");
                 setVoucher([]);
             } else {
                 setVoucher(data.content);
             }
-    
+
             // Update pagination state
             setPagination({
                 totalItems: data?.totalElements || 0,
@@ -144,17 +144,17 @@ console.log(Voucherr,"jjhhgg");
                 currentPage: data?.number !== undefined ? data.number + 1 : 1,
                 itemsPerPage: data?.size || 10,
             });
-    
+
         } catch (error) {
             console.error("Error in getVoucher:", error);
-            
+
             // More specific error messages
             if (error instanceof SyntaxError) {
                 toast.error("Invalid JSON response from server");
             } else {
                 toast.error(error.message || "Failed to fetch vouchers");
             }
-            
+
             setVoucher([]);
             setPagination(prev => ({
                 ...prev,
@@ -174,7 +174,7 @@ console.log(Voucherr,"jjhhgg");
         console.log("Page change requested:", newPage);
 
         setPagination((prev) => ({ ...prev, currentPage: newPage }));
-        getVoucher(newPage-1); // Correct function name and 1-indexed for user interaction
+        getVoucher(newPage - 1); // Correct function name and 1-indexed for user interaction
     };
 
     console.log(Voucher, "heyVoucher");
@@ -183,8 +183,8 @@ console.log(Voucherr,"jjhhgg");
 
 
     const renderTableRows = () => {
-        
-        if (!Voucher||Voucher==[]) {
+
+        if (!Voucher || Voucher == []) {
             return (
                 <tr className='bg-white dark:bg-slate-700 dark:text-white'>
                     <td colSpan="6" className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
@@ -230,14 +230,40 @@ console.log(Voucherr,"jjhhgg");
         };
 
 
-  
+
 
 
         // console.log(selectedBOMData, "jijiji");
 
 
 
-console.log(Voucher,"jumping");
+        console.log(Voucher, "jumping");
+        const handleToggle = async (voucher) => {
+            try {
+              const newStatus = !voucher.actVoucher; // flip the current status
+              const response = await fetch(`${UPDATETOGGLE_Voucher_URL}/${voucher.id}`, {
+                method: "PUT",   // or POST if backend expects POST
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({ actVoucher: newStatus }),
+              });
+          
+              if (!response.ok) {
+                throw new Error("Failed to update voucher status");
+              }
+          
+              toast.success(`Voucher ${newStatus ? "Activated" : "Deactivated"} successfully`);
+          
+              // Refresh the table after update
+              getVoucher(pagination.currentPage - 1);
+            } catch (err) {
+              console.error(err);
+              toast.error("Error updating voucher status");
+            }
+          };
+          
 
 
         return Voucher.map((item, index) => (
@@ -254,12 +280,27 @@ console.log(Voucher,"jumping");
                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.typeOfVoucher} </p>
                 </td>
+
+
                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.defaultGodown} </p>
                 </td>
-            
-             
-                
+                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
+                    <label className="inline-flex items-center cursor-pointer">
+                        <input
+                            type="checkbox"
+                            className="sr-only peer"
+                            checked={item?.actVoucher || false}
+                            onChange={() => handleToggle(item)}
+                        />
+                        <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-500 transition">
+                            <div className="absolute top-[2px] left-[2px] w-5 h-5 bg-white rounded-full transition peer-checked:translate-x-5"></div>
+                        </div>
+                    </label>
+                </td>
+
+
+
                 <td>
                     <span onClick={() => navigate(`/voucher/create/${item.id}`)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> Add Entry</span>
                 </td>
@@ -297,7 +338,7 @@ console.log(Voucher,"jumping");
                             onClick={() => navigate(`/Voucher/updateVoucher/${item?.VoucherId}`)}
                             title="Edit Voucher"
                         />
-                    
+
                         <FiTrash2
                             size={17}
                             className="text-red-500 hover:text-red-700 mx-2"
@@ -322,12 +363,12 @@ console.log(Voucher,"jumping");
 
 
             // name: values.supplierName || undefined,
-            typeOfVoucher:values?.typeOfVoucher||undefined, 
-            name:values.name
+            typeOfVoucher: values?.typeOfVoucher || undefined,
+            name: values.name
 
 
         };
-        getVoucher(pagination.currentPage-1, filters);
+        getVoucher(pagination.currentPage - 1, filters);
         // ViewInventory(pagination.currentPage, filters);
     };
 
@@ -348,7 +389,7 @@ console.log(Voucher,"jumping");
                             TOTAL PRODUCTS: {pagination.totalItems}
                         </p> */}
                     </div>
-                
+
 
                     <div className='items-center justify-center'>
                         <Formik
@@ -357,8 +398,8 @@ console.log(Voucher,"jumping");
                                 // customerName: "",
                                 // supplierName: "",
                                 // ProductId: "",
-                                typeOfVoucher:"",
-                                name:""
+                                typeOfVoucher: "",
+                                name: ""
 
 
 
@@ -371,9 +412,9 @@ console.log(Voucher,"jumping");
 
 
 
-                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-                                    
-                                            
+                                        <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
+
+
                                             {/* <div className="z-20 bg-transparent dark:bg-form-Field">
                                                 <ReactSelect
                                                     name="supplierName"
@@ -389,8 +430,8 @@ console.log(Voucher,"jumping");
                                                     placeholder="Select supplier Name"
                                                 />
                                             </div> */}
-                                              <div className="flex-1 min-w-[300px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">Voucher Name</label>
+                                            <div className="flex-1 min-w-[300px]">
+                                                <label className="mb-2.5 block text-black dark:text-white">Voucher Name</label>
                                                 <ReactSelect
                                                     name="name"
 
@@ -404,10 +445,10 @@ console.log(Voucher,"jumping");
                                                     classNamePrefix="react-select"
                                                     placeholder="Select Name"
                                                 />
-                                                
+
                                             </div>
-                                              <div className="flex-1 min-w-[300px]">
-                                              <label className="mb-2.5 block text-black dark:text-white">Voucher Type</label>
+                                            <div className="flex-1 min-w-[300px]">
+                                                <label className="mb-2.5 block text-black dark:text-white">Voucher Type</label>
                                                 <ReactSelect
                                                     name="typeOfVoucher"
 
@@ -421,10 +462,10 @@ console.log(Voucher,"jumping");
                                                     classNamePrefix="react-select"
                                                     placeholder="Select Type"
                                                 />
-                                                
+
                                             </div>
-                                          
-                                            
+
+
                                         </div>
                                     </div>
 
@@ -458,6 +499,7 @@ console.log(Voucher,"jumping");
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">VoucherName</th>
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Voucher Type</th>
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">defaultGodown</th>
+                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Activation Status</th>
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Add Entries</th>
 
                                         {/* <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}

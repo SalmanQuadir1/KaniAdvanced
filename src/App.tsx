@@ -199,7 +199,7 @@ import UpdateOrderShippingDate from './components/Order/UpdateOrderShippingDate.
 
 import AddCustomer from './components/Customer/AddCustomer';
 import ExcelUploadCustomer from './components/Customer/AddCustomerBulk.jsx';
-
+import ExcelUploadLedger from './components/Ledger/BulkLedgerUpload.jsx'
 
 import ViewCustomer from './components/Customer/ViewCustomer';
 import UpdateCustomer from './components/Customer/UpdateCustomer';
@@ -1275,6 +1275,16 @@ function App() {
               <>
                 <PageTitle title="Size" />
                 <ViewSuppLedger />
+              </>
+            }
+          />
+
+<Route
+            path="/ledger/AddBulk"
+            element={
+              <>
+                <PageTitle title="Size" />
+                <ExcelUploadLedger />
               </>
             }
           />
