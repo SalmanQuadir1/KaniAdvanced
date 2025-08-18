@@ -361,7 +361,7 @@ const Voucher = () => {
 
                                                     { name: 'printVch', label: 'Print Voucher After Saving' },
 
-                                                    ...(values.typeOfVoucher !== "Sales" ? [
+                                                    ...(values.typeOfVoucher == "Sales" ? [
                                                         { name: 'posInvoicing', label: 'Use For Pos Invoicing' },
 
                                                     ] : []),
@@ -436,7 +436,7 @@ const Voucher = () => {
 
 
                                             {
-                                                values.typeOfVoucher !== "Sales" && (
+                                                values.typeOfVoucher == "Sales" && (
 
                                                     <div className="flex-2 min-w-[250px] ml-7">
                                                         <label className="mb-2.5 block text-black dark:text-white ">Default Title To Print</label>
@@ -492,10 +492,31 @@ const Voucher = () => {
                                                 )
                                             }
                                         </div>
-
-                                        <div className='flex flex-row gap-4 mt-6 mb-7'>
+                                        <div className='flex gap-4'>
+                                        <div className=' gap-4 mt-6 mb-7'>
                                             {
-                                                values.typeOfVoucher !== "Sales" && (
+                                                values.typeOfVoucher == "Sales" && (
+
+                                                    <div className="flex-2 min-w-[300px] ">
+                                                        <label className="mb-2.5 block text-black dark:text-white ">Default Bank</label>
+                                                        <Field
+                                                            name={`defBank`}
+                                                            type="text"
+                                                            value={values.defBank}
+                                                            placeholder="Def Bank"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+
+
+                                                )
+                                            }
+
+                                        </div>
+
+                                        <div className=' gap-4 mt-6 mb-7'>
+                                            {
+                                                values.typeOfVoucher == "Sales" && (
 
                                                     <div className="flex-2 min-w-[300px] ">
                                                         <label className="mb-2.5 block text-black dark:text-white ">Default Jurisdiction</label>
@@ -512,6 +533,7 @@ const Voucher = () => {
                                                 )
                                             }
 
+                                        </div>
                                         </div>
                                         <div className='flex flex-row gap-4'>
 

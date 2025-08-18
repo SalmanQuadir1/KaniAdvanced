@@ -94,6 +94,7 @@ const CreateVoucher = () => {
                         voucherId:id,
                         ledgerId: "",
                         currentBalance: "",
+                        
                         paymentDetails: [{
                             ledgerId: null,
                             openingBalance: 0,
