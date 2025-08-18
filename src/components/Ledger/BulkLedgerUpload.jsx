@@ -21,34 +21,35 @@ const ExcelUploadLedger = () => {
         formData.append('file', values.file);
 
         try {
-            const apiEndpoints = `${BASE_URL}/ledger/upload`
-
+            const apiEndpoints = `${BASE_URL}/ledger/upload`;
+          
             const response = await fetch(apiEndpoints, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+              method: 'POST',
+              body: formData,
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
             });
+          
             if (response.ok) {
-                // `response.ok` is true for status codes in the 200–299 range
-
-                const message = await response.json();
-                const messageData = message.message
-                toast.success(messageData);
+              const message = await response.json();
+              const messageData = message.message || "Upload successful";
+              toast.success(messageData);
             } else {
-                const errorData = await response.json(); // Parse the response body as JSON
-                const errorMessage = errorData.message || 'An error occurred'; // Use `message` or fallback
-
-                toast.error(errorMessage); // Display the error message in a toast
+              const errorData = await response.json();
+              console.log(errorData, "lola");
+          
+              // Safely get message if exists
+              const errorMessage =
+                errorData.message || errorData.error || "An error occurred";
+          
+              toast.error(errorMessage);
             }
-
-
-
-        } catch (error) {
-            console.error(error.message, "errorrrrr");
-            toast.error('An error occurred during upload.');
-        }
+          } catch (error) {
+            console.error(error, "errorrrrr");
+            toast.error(error.message || "An error occurred during upload.");
+          }
+          
     };
 
     return (
