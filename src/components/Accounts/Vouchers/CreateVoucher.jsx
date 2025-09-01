@@ -19,8 +19,8 @@ const CreateVoucher = () => {
     const { id } = useParams();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
-    const { GetVoucherById, Vouchers, CreateVoucherEntry,handleCreateVoucher } = useVoucher();
-const [voucherNos, setvoucherNos] = useState([])
+    const { GetVoucherById, Vouchers, CreateVoucherEntry, handleCreateVoucher } = useVoucher();
+    const [voucherNos, setvoucherNos] = useState([])
     const { getLedger, Ledger } = useLedger();
     const theme = useSelector(state => state?.persisted?.theme);
     const [vaaluee, setvaaluee] = useState({});
@@ -39,7 +39,7 @@ const [voucherNos, setvoucherNos] = useState([])
     const LedgerData = Ledger?.map(ledg => ({
         value: ledg?.id,
         label: ledg?.name,
-        obj:ledg,
+        obj: ledg,
         balance: ledg?.openingBalance
 
     }));
@@ -61,7 +61,7 @@ const [voucherNos, setvoucherNos] = useState([])
 
 
 
-   
+
 
     const validationSchema = Yup.object().shape({
         recieptNumber: Yup.string().required('Voucher number is required'),
@@ -113,28 +113,31 @@ const [voucherNos, setvoucherNos] = useState([])
     useEffect(() => {
         GetVoucherNos()
     }, [Vouchers?.typeOfVoucher])
+
+    let lastvoucher = 0; // default
+    if (voucherNos.length > 0) {
+      lastvoucher = Number(voucherNos[voucherNos.length - 1]) || 0;
+    }
     
-console.log(voucherNos,"jamaat");
-const lastvoucher= voucherNos[voucherNos.length-1]
-console.log(lastvoucher,"last");
+    const nextVoucher = lastvoucher + 1;
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Configurator/Create Voucher" />
             <div>
                 <Formik
                     initialValues={{
-                        recieptNumber: Number(lastvoucher)+1,
+                        recieptNumber: nextVoucher,
                         supplierInvoiceNumber: '',
                         date: '',
-                        voucherId:id,
+                        voucherId: id,
                         ledgerId: "",
                         currentBalance: "",
-                        
+
                         paymentDetails: [{
                             ledgerId: null,
                             openingBalance: 0,
                             credit: 0,
-                            amount:0,
+                            amount: 0,
                             debit: 0,
                             narration: ''
                         }]
@@ -269,7 +272,7 @@ console.log(lastvoucher,"last");
                                                                             <ErrorMessage name={`paymentDetails.${index}.ledgerId`} component="div" className="text-red-500" />
                                                                         </td>
                                                                         <td>    <div className="flex-2 min-w-[250px] ">
-                                                                          
+
                                                                             <Field
                                                                                 type="text"
                                                                                 name={`paymentDetails.${index}.openingbalance2`}
