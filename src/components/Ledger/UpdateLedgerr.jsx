@@ -5,7 +5,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import { useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
 import { GET_LEDGER_ID_URL, GET_SUPPLIERLedger_ID_URL, GET_SUPPLIER_ID_URL, customStyles as createCustomStyles } from '../../Constants/utils';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import useLedger from '../../hooks/useLedger';
 
@@ -15,7 +15,12 @@ const UpdateLedgerr = () => {
     const { getGroup, Group, handleUpdateSubmitt } = useLedger()
     const [Supplier, setSupplier] = useState([])
     const [Ledger, setLedger] = useState([])
+    const supplier = location.state?.supplier;  // 👈 get supplier
 
+    console.log("Supplier passed:", supplier);
+    const [searchParams] = useSearchParams();
+    const supplierId = searchParams.get("supplier"); 
+    console.log(supplierId,"l");
     const { id } = useParams()
     useEffect(() => {
         getGroup()
@@ -28,7 +33,37 @@ const UpdateLedgerr = () => {
         value: { id: gr.id }
     }));
 
+    useEffect(() => {
+        const GetSupplierById = async () => {
+            try {
+                const response = await fetch(`${GET_SUPPLIERLedger_ID_URL}/${supplierId}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                });
 
+                const data = await response.json();
+                console.log(data + "xsdfghjkl")
+                if (response.ok) {
+                    console.log("get supp data", data);
+                    setSupplier(data);
+                    return data; // Return the fetched data
+                } else {
+                    toast.error(`${data.errorMessage}`);
+                    return null;
+                }
+            } catch (error) {
+                console.error(error);
+                toast.error("An error occurred");
+                return null;
+            }
+        };
+        GetSupplierById()
+
+    }, [])
+    console.log(Supplier?.name, "kk+++++++++++");
 
     useEffect(() => {
         const GetLedgerById = async () => {
@@ -502,7 +537,7 @@ const UpdateLedgerr = () => {
                                                 type="submit"
                                                 className="flex w-[120px] h-[37px] pt-2 rounded-lg justify-center bg-primary p-2.5 font-medium text-sm text-gray hover:bg-opacity-90"
                                             >
-                                                Create Ledger
+                                                Update Ledger
                                             </button>
                                         </div>
                                     </div>

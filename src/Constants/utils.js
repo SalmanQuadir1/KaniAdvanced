@@ -401,6 +401,9 @@ export const ADD_VoucherEntry_URL = `${BASE_URL}/entryPayment/add`;
 
 export const GET_Voucher_URL = `${BASE_URL}/voucher/getAll`;
 export const GET_Vouchersearch_URL = `${BASE_URL}/voucher/search`;
+export const GET_VoucherNos_URL = `${BASE_URL}/voucher/receipt-numbers`;
+
+
 export const GET_VoucherBYID = `${BASE_URL}/voucher/get`;
 export const SEARCH_DayBook_URL = `${BASE_URL}/entryPayment/search`;
 

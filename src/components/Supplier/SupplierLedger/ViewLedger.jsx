@@ -310,7 +310,10 @@ console.log(SelectedLEDGERData,"l");
                         <FiEdit
                             size={17}
                             className="text-teal-500 hover:text-teal-700 mx-2"
-                            onClick={() => navigate(`/Ledger/updateLedger/${item?.ledgerId}`)}
+                            onClick={() => navigate(`/Ledger/updateLedger/${item?.ledgerId}?supplier=${item?.supplierId}`)
+
+                        
+                        }
                             title="Edit Ledger"
                         />
                     

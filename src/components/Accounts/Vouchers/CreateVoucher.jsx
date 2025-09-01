@@ -8,7 +8,7 @@ import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import useVoucher from '../../../hooks/useVoucher';
-import { customStyles as createCustomStyles } from '../../../Constants/utils';
+import { GET_VoucherNos_URL, customStyles as createCustomStyles } from '../../../Constants/utils';
 import { useSelector } from 'react-redux';
 import Modall from '../../Products/Modall';
 import NumberingDetailsModal from './NumberingDetailsModal';
@@ -17,8 +17,10 @@ import useLedger from '../../../hooks/useLedger';
 
 const CreateVoucher = () => {
     const { id } = useParams();
+    const { currentUser } = useSelector((state) => state?.persisted?.user);
+    const { token } = currentUser;
     const { GetVoucherById, Vouchers, CreateVoucherEntry,handleCreateVoucher } = useVoucher();
-
+const [voucherNos, setvoucherNos] = useState([])
     const { getLedger, Ledger } = useLedger();
     const theme = useSelector(state => state?.persisted?.theme);
     const [vaaluee, setvaaluee] = useState({});
@@ -81,14 +83,47 @@ const CreateVoucher = () => {
         //     })
         // ).min(1, 'At least one entry is required')
     });
+    const GetVoucherNos = async () => {
+        console.log("i am");
+        try {
+            const response = await fetch(`${GET_VoucherNos_URL}/${Vouchers?.typeOfVoucher}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+            });
 
+            const data = await response.json();
+            console.log(data + "voucherrssss")
+            if (response.ok) {
+                console.log("voucher data", data);
+                setvoucherNos(data);
+                return data; // Return the fetched data
+            } else {
+                toast.error(`${data.errorMessage}`);
+                return null;
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("An error occurred");
+            return null;
+        }
+    };
+    useEffect(() => {
+        GetVoucherNos()
+    }, [Vouchers?.typeOfVoucher])
+    
+console.log(voucherNos,"jamaat");
+const lastvoucher= voucherNos[voucherNos.length-1]
+console.log(lastvoucher,"last");
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Configurator/Create Voucher" />
             <div>
                 <Formik
                     initialValues={{
-                        recieptNumber: '',
+                        recieptNumber: Number(lastvoucher)+1,
                         supplierInvoiceNumber: '',
                         date: '',
                         voucherId:id,

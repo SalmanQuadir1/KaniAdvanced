@@ -532,7 +532,7 @@ const UpdateLedger = () => {
                                                 type="submit"
                                                 className="flex w-[120px] h-[37px] pt-2 rounded-lg justify-center bg-primary p-2.5 font-medium text-sm text-gray hover:bg-opacity-90"
                                             >
-                                                Create Ledger
+                                                Update Ledger
                                             </button>
                                         </div>
                                     </div>

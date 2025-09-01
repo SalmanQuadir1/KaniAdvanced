@@ -9,6 +9,7 @@ const useVoucher = (numberingDetails) => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const [Vouchers, setVoucher] = useState([]);
+    const [voucherNos, setvoucherNos] = useState([])
     const [Voucherr, setVoucherr] = useState([]);
     const [edit, setEdit] = useState(false);
     const dispatch = useDispatch();
@@ -347,17 +348,28 @@ console.log(formData,"jj");
                      body: JSON.stringify(values)
                  });
      
-                 const data = await response.json();
+                //  const data = await response.json();
+                 let data;
+                 try {
+                   // Try to parse JSON safely
+                   data = await response.json();
+                 } catch {
+                    console.log(data,"catccccccch");
+                   data = { errorMessage: response.errorMessage };
+                 }
                  if (response.ok) {
                      toast.success(`Voucher Entry added successfully`);
                      // Fetch updated Voucher
                  } else {
+                    console.log("i am in error else ");
                      toast.error(`${data.errorMessage}`);
                  }
              } catch (error) {
                  console.error(error, response);
+                 console.log("i am in error catch ");
                  toast.error("An error occurred");
              } finally {
+                console.log("i am in Finally ");
                  setSubmitting(false);
              }
          };
