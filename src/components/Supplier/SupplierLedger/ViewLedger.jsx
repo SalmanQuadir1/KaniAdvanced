@@ -69,7 +69,7 @@ const ViewLedger = () => {
     const LedgerType = [
         { value: 'supplier', label: 'supplier' },
         { value: 'customer', label: 'customer' },
-    
+
     ];
 
 
@@ -170,7 +170,7 @@ const ViewLedger = () => {
         console.log("Page change requested:", newPage);
 
         setPagination((prev) => ({ ...prev, currentPage: newPage }));
-        getLedger(newPage-1); // Correct function name and 1-indexed for user interaction
+        getLedger(newPage - 1); // Correct function name and 1-indexed for user interaction
     };
 
     console.log(Ledger, "heyLedger");
@@ -179,7 +179,7 @@ const ViewLedger = () => {
 
 
     const renderTableRows = () => {
-        
+
         if (!Ledger) {
             return (
                 <tr className='bg-white dark:bg-slate-700 dark:text-white'>
@@ -227,11 +227,11 @@ const ViewLedger = () => {
 
 
         const openLEDGERModal = (supplierId) => {
-            console.log(supplierId,"suo");
-            console.log(Ledger,";;'';;'';;''_____");
+            console.log(supplierId, "suo");
+            console.log(Ledger, ";;'';;'';;''_____");
             // Find the supplier data from your existing Ledger state
             const supplierData = Ledger.find(item => item.ledgerId === supplierId);
-            console.log(supplierData,"..,");
+            console.log(supplierData, "..,");
             if (supplierData) {
                 setSelectedLEDGERData(supplierData);
                 setIsLEDGERModalOpen(true);
@@ -245,8 +245,8 @@ const ViewLedger = () => {
 
 
 
-console.log(Ledger,"jumping");
-console.log(SelectedLEDGERData,"l");
+        console.log(Ledger, "jumping");
+        console.log(SelectedLEDGERData, "l");
 
         return Ledger.map((item, index) => (
 
@@ -257,7 +257,7 @@ console.log(SelectedLEDGERData,"l");
 
 
                 <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.supplierName || item?.customerName||item?.name}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.supplierName || item?.customerName || item?.name}</p>
                 </td>
                 <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.groupName} </p>
@@ -267,15 +267,15 @@ console.log(SelectedLEDGERData,"l");
                         <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                             <p className="text-gray-900 whitespace-no-wrap">Supplier</p>
                         </td>
-                    ) : item.customerName?(
+                    ) : item.customerName ? (
                         <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                             <p className="text-gray-900 whitespace-no-wrap">Customer</p>
                         </td>
-                    ):  <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">null</p>
-                </td>
+                    ) : <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
+                        <p className="text-gray-900 whitespace-no-wrap">null</p>
+                    </td>
                 }
-                
+
                 <td>
                     <span onClick={() => openLEDGERModal(item?.ledgerId)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> VIEW LEDGER</span>
                 </td>
@@ -305,18 +305,28 @@ console.log(SelectedLEDGERData,"l");
 
 
 
+
                 <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
                         <FiEdit
                             size={17}
                             className="text-teal-500 hover:text-teal-700 mx-2"
-                            onClick={() => navigate(`/Ledger/updateLedger/${item?.ledgerId}?supplier=${item?.supplierId}`)
+                            onClick={() => {
+                                let queryParam = '';
+                                if (item.supplierName) {
+                                    queryParam = `supplier=${item?.supplierId}`;
+                                } else if (item.customerName) {
+                                    queryParam = `customer=${item?.customerId}`;
+                                }
+
+                                navigate(`/Ledger/updateLedger/${item?.ledgerId}${queryParam ? `?${queryParam}` : ''}`);
+                            }}
 
                         
-                        }
-                            title="Edit Ledger"
+                        
+                        title="Edit Ledger"
                         />
-                    
+
                         <FiTrash2
                             size={17}
                             className="text-red-500 hover:text-red-700 mx-2"
@@ -341,11 +351,11 @@ console.log(SelectedLEDGERData,"l");
 
 
             // name: values.supplierName || undefined,
-            type:values?.type||undefined
+            type: values?.type || undefined
 
 
         };
-        getLedger(pagination.currentPage-1, filters);
+        getLedger(pagination.currentPage - 1, filters);
         // ViewInventory(pagination.currentPage, filters);
     };
 
@@ -389,13 +399,13 @@ console.log(SelectedLEDGERData,"l");
                                         </thead>
                                         <tbody>
                                             {SelectedLEDGERData?.ledgerSuppliers?.length > 0 ? (
-                                                SelectedLEDGERData.ledgerSuppliers.filter(ledger => 
-                                                    ledger.receivedDate || 
-                                                    ledger.orderNo || 
+                                                SelectedLEDGERData.ledgerSuppliers.filter(ledger =>
+                                                    ledger.receivedDate ||
+                                                    ledger.orderNo ||
                                                     ledger.debit !== null || ledger.credit !== null ||
-                                                    ledger.totalBillAmount !== null || 
+                                                    ledger.totalBillAmount !== null ||
                                                     ledger.balance !== null
-                                                  ).map((ledger, index) => (
+                                                ).map((ledger, index) => (
                                                     <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
                                                         <td className="px-2 py-2 border-b dark:text-white">
                                                             {ledger.receivedDate ? new Date(ledger.receivedDate).toLocaleDateString() : 'N/A'}
@@ -409,7 +419,7 @@ console.log(SelectedLEDGERData,"l");
                                                         <td className="px-2 py-2 border-b dark:text-white">
                                                             {ledger.credit ?? '0'}
                                                         </td>
-                                                    
+
                                                         <td className="px-2 py-2 border-b dark:text-white">
                                                             {ledger.balance ?? '0'}
                                                         </td>
@@ -440,7 +450,7 @@ console.log(SelectedLEDGERData,"l");
                                                 0
                                             ).toFixed(2)}</p> */}
                                             <p>Total Debit :{SelectedLEDGERData.
-ledgerSuppliers[0].totalDebit}</p>
+                                                ledgerSuppliers[0].totalDebit}</p>
 
                                         </div>
                                         <div className="text-right">
@@ -448,8 +458,8 @@ ledgerSuppliers[0].totalDebit}</p>
                                                 (total, ledger) => total + (Number(ledger.totalBillAmount) || 0),
                                                 0
                                             ).toFixed(2)}</p> */}
-                                                      <p>Total Debit :{SelectedLEDGERData.
-ledgerSuppliers[0].totalCredit}</p>
+                                            <p>Total Debit :{SelectedLEDGERData.
+                                                ledgerSuppliers[0].totalCredit}</p>
 
                                         </div>
                                         <div className="text-right">
@@ -462,8 +472,8 @@ ledgerSuppliers[0].totalCredit}</p>
                                                     (sum, ledger) => sum + (parseFloat(ledger.debit) || 0), 0
                                                 )
                                             ).toFixed(2)}</p> */}
-                                                      <p>Total Closing Balnce :{SelectedLEDGERData.
-ledgerSuppliers[0].totalClosingBalance}</p>
+                                            <p>Total Closing Balnce :{SelectedLEDGERData.
+                                                ledgerSuppliers[0].totalClosingBalance}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -478,7 +488,7 @@ ledgerSuppliers[0].totalClosingBalance}</p>
                                 // customerName: "",
                                 // supplierName: "",
                                 // ProductId: "",
-                                type:"",
+                                type: "",
 
 
 
@@ -493,7 +503,7 @@ ledgerSuppliers[0].totalClosingBalance}</p>
 
                                         <div className="flex-1 min-w-[300px]">
                                             <label className="mb-2.5 block text-black dark:text-white">
-                                               Ledger Type
+                                                Ledger Type
                                                 <span className="text-red-700 text-xl mt-[40px] justify-center items-center"> *</span>
                                             </label>
                                             {/* <div className="z-20 bg-transparent dark:bg-form-Field">
@@ -511,7 +521,7 @@ ledgerSuppliers[0].totalClosingBalance}</p>
                                                     placeholder="Select supplier Name"
                                                 />
                                             </div> */}
-                                              <div className="z-20 bg-transparent dark:bg-form-Field">
+                                            <div className="z-20 bg-transparent dark:bg-form-Field">
                                                 <ReactSelect
                                                     name="type"
 

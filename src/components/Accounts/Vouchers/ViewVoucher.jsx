@@ -285,24 +285,35 @@ const ViewVoucher = () => {
                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.defaultGodown} </p>
                 </td>
-                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
-                    <label className="inline-flex items-center cursor-pointer">
-                        <input
-                            type="checkbox"
-                            className="sr-only peer"
-                            checked={item?.actVoucher || false}
-                            onChange={() => handleToggle(item)}
-                        />
-                        <div className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-500 transition">
-                            <div className="absolute top-[2px] left-[2px] w-5 h-5 bg-white rounded-full transition peer-checked:translate-x-5"></div>
-                        </div>
-                    </label>
-                </td>
+              <td className="px-5 py-5  text-sm">
+  <label className="inline-flex items-center cursor-pointer">
+    <input
+      type="checkbox"
+      className="sr-only peer"
+      checked={item?.actVoucher || false}
+      onChange={() => handleToggle(item)}
+    />
+    <div className="relative w-11 h-6 bg-black rounded-full peer peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 transition-all duration-300 ease-in-out
+                    peer-checked:bg-green-500">
+      {/* Knob */}
+      <div className="absolute top-[2px] left-[2px] w-5 h-5 bg-white border-2 border-gray-800 rounded-full transition-all duration-300 ease-in-out
+                      peer-checked:translate-x-5 peer-checked:border-green-500">
+      </div>
+    </div>
+  
+    <span className="ml-3 text-sm font-medium text-gray-700">
+      {item?.actVoucher ? 'Active' : 'Inactive'}
+    </span>
+  </label>
+</td>
 
 
 
                 <td>
                     <span onClick={() => navigate(`/voucher/create/${item.id}`)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> Add Entry</span>
+                </td>
+                  <td>
+                    <span onClick={() => navigate(`/voucher/create/${item.id}`)} className="bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> View Entries</span>
                 </td>
                 {/* <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     {item.products &&
@@ -501,7 +512,7 @@ const ViewVoucher = () => {
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">defaultGodown</th>
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Activation Status</th>
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Add Entries</th>
-
+                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Entries</th>
                                         {/* <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 
                                         <th className="px-5 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>

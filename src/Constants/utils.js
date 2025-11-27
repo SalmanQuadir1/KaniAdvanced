@@ -407,6 +407,9 @@ export const GET_VoucherNos_URL = `${BASE_URL}/voucher/receipt-numbers`;
 export const GET_VoucherBYID = `${BASE_URL}/voucher/get`;
 export const SEARCH_DayBook_URL = `${BASE_URL}/entryPayment/search`;
 
+export const GETPRODUCTBYSUPPLIER = `${BASE_URL}/order/order-products/accepted`;
+
+
 
 
 
@@ -446,6 +449,7 @@ export const customStyles = (theme) => ({
     control: (provided, state) => ({
         ...provided,
         minHeight: '50px',
+        minWidth:"150px",
         fontSize: '16px',
         backgroundColor: theme === 'dark' ? '#1D2A39' : '#fff',
         color: theme === 'dark' ? '#fff' : '#000',

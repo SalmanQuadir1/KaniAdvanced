@@ -697,7 +697,7 @@ const AddProduct = () => {
                                                 <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white"> Gross Weight </label>
                                                     <Field
-                                                        name='finishedWeight'
+                                                        name='grossWeight'
                                                         type="number"
                                                         placeholder="Enter Gross Weight"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
@@ -706,7 +706,7 @@ const AddProduct = () => {
                                                 <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white"> Net Weight</label>
                                                     <Field
-                                                        name='materialWeight'
+                                                        name='netWeight'
                                                         type="number"
                                                         placeholder="Enter Net Weight"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"

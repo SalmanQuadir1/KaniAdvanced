@@ -73,8 +73,8 @@ const Voucher = () => {
 
     const defGstRegist = [
 
-        { value: 'RegsitartionDelhi', label: 'RegsitartionDelhi' },
-        { value: 'RegsitartionSXR', label: 'Regsitartion Srinagar' },
+        { value: 'Regsitartion Delhi', label: 'RegsitartionDelhi' },
+        { value: 'Regsitartion Srinagar', label: 'Regsitartion Srinagar' },
 
     ]
     const gstOptions = [

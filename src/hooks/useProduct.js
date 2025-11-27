@@ -68,7 +68,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
         //         product: "" 
         //     }
         // ],      
-        productDescription: "",
+     
         supplier: [],
         supplierCode: {},
         warpColors: "",
@@ -79,6 +79,8 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
         weave: "",
         finishedWeight: "",
         materialWeight: "",
+        grossWeight:"",
+        netWeight: "",
 
 
         gstDetails: "",

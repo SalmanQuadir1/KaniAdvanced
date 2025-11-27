@@ -67,8 +67,8 @@ const useLedger = () => {
                     "Authorization": `Bearer ${token}`
                 }
             });
-            const data = await response.json();
-            console.log(data,"asd");
+            const data = await response.json();0
+            console.log(data,"ledger data");
             setLedger(data);
           
         } catch (error) {
