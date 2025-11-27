@@ -15,6 +15,8 @@ import Groups from './components/Accounts/Config/Groups.jsx';
 import Daybook from './components/Accounts/Config/Daybook.jsx';
 import Voucher from './components/Accounts/Vouchers/Voucher.jsx';
 import CreateVoucher from './components/Accounts/Vouchers/CreateVoucher.jsx';
+import VoucherEntriesView from './components/Accounts/Vouchers/VoucherEntriesView.jsx';
+
 
 import ViewVoucher from './components/Accounts/Vouchers/ViewVoucher.jsx';
 
@@ -360,6 +362,17 @@ function App() {
                 <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
                 <PageTitle title="Voucher" />
                 <CreateVoucher />
+              </>
+            }
+          />
+
+             <Route
+            path="/voucherEntries/:id"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Voucher Entries" />
+                <VoucherEntriesView />
               </>
             }
           />
