@@ -17,7 +17,7 @@ import Voucher from './components/Accounts/Vouchers/Voucher.jsx';
 import CreateVoucher from './components/Accounts/Vouchers/CreateVoucher.jsx';
 import VoucherEntriesView from './components/Accounts/Vouchers/VoucherEntriesView.jsx';
 
-
+import PrintEntryPayment from './components/Accounts/Vouchers/PrintEntryPayment.jsx';
 import ViewVoucher from './components/Accounts/Vouchers/ViewVoucher.jsx';
 
 
@@ -373,6 +373,18 @@ function App() {
                 <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
                 <PageTitle title="Voucher Entries" />
                 <VoucherEntriesView />
+              </>
+            }
+          />
+
+
+            <Route
+            path="/printentrypayment/:id/:gstRegistration"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Voucher Entries" />
+                <PrintEntryPayment />
               </>
             }
           />

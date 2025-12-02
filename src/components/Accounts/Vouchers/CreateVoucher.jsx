@@ -88,6 +88,8 @@ const CreateVoucher = () => {
         }
 
         const igstRate = hsnCode?.igst || 0;
+        // const cgstRate = hsnCode?.cgstRate || 0;
+        // const sgstRate = hsnCode?.sgstRate || 0;
 
         // Check if same state (both contain "Srinagar")
         const isSameState = gstRegistration?.toLowerCase().includes('srinagar') &&
@@ -95,8 +97,10 @@ const CreateVoucher = () => {
 
         if (isSameState) {
             // Same state - apply CGST + SGST (each half of IGST rate)
-            const cgstRate = igstRate / 2;
-            const sgstRate = igstRate / 2;
+            // const cgstRate = igstRate / 2;
+            // const sgstRate = igstRate / 2;
+            const cgstRate = hsnCode?.cgst || 0;
+            const sgstRate = hsnCode?.sgst || 0;
             const cgstAmount = mrp * (cgstRate / 100);
             const sgstAmount = mrp * (sgstRate / 100);
             const totalGstAmount = cgstAmount + sgstAmount;
@@ -169,7 +173,7 @@ const CreateVoucher = () => {
             setLoadingProducts(true);
             try {
                 const customerId = option.value;
-                const response = await fetch(`http://localhost:8081/order/order-products/accepted/${customerId}?type=customer`, {
+                const response = await fetch(`http://localhost:8081/order/order-product/accepted/${customerId}?type=customer`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -182,10 +186,10 @@ const CreateVoucher = () => {
 
                 if (response.ok && Array.isArray(data)) {
                     const productOptions = data.map(prod => ({
-                        value: prod.products.id,
-                        label: prod.products.productDescription,
-                        price: prod.products?.retailMrp,
-                        hsnCode: prod.products?.hsnCode || '',
+                        value: prod.product.id,
+                        label: prod.product.productDescription,
+                        price: prod.product?.retailMrp,
+                        hsnCode: prod.product?.hsnCode || '',
                         obj: prod
                     }));
                     setAvailableProducts(productOptions);
@@ -214,7 +218,7 @@ const CreateVoucher = () => {
 
     const calculateLineTotal = (entry) => {
         const basePrice = entry.discount > 0 ? entry.rate : entry.exclusiveGst;
-        const quantity = entry.qty || 1;
+        const quantity = entry.quantity || 1;
         return (basePrice * quantity).toFixed(2);
     };
 
@@ -239,27 +243,29 @@ const CreateVoucher = () => {
 
 
             // Calculate MRP total
-            const mrpTotal = (entry.mrp || 0) * (entry.qty || 1);
+            const mrpTotal = (entry.mrp || 0) * (entry.quantity || 1);
             totalMRP += mrpTotal;
 
             // Calculate total quantity
-            totalQuantity += (entry.qty || 1);
+            totalQuantity += (entry.quantity || 1);
+            console.log(entry, "kukuauti");
+
 
             // Only calculate GST if no discount is applied
             if (!entry.gstCalculation?.discountApplied) {
                 if (entry.gstCalculation?.type === 'CGST+SGST') {
-                    totalCGST += (entry.gstCalculation.cgstAmount || 0) * (entry.qty || 1);
-                    totalSGST += (entry.gstCalculation.sgstAmount || 0) * (entry.qty || 1);
+                    totalCGST += (entry.gstCalculation.cgstAmount || 0) * (entry.quantity || 1);
+                    totalSGST += (entry.gstCalculation.sgstAmount || 0) * (entry.quantity || 1);
                 } else if (entry.gstCalculation?.type === 'IGST') {
-                    totalIGST += (entry.gstCalculation.gstAmount || 0) * (entry.qty || 1);
+                    totalIGST += (entry.gstCalculation.gstAmount || 0) * (entry.quantity || 1);
                 }
 
-                totalGST += (entry.gstCalculation?.totalGstAmount || 0) * (entry.qty || 1);
+                totalGST += (entry.gstCalculation?.totalGstAmount || 0) * (entry.quantity || 1);
             }
 
             // Calculate discount amount
             if (entry.discount > 0) {
-                const discountAmount = (entry.mrp * (entry.discount / 100)) * (entry.qty || 1);
+                const discountAmount = (entry.mrp * (entry.discount / 100)) * (entry.quantity || 1);
                 totalDiscount += discountAmount;
             }
         });
@@ -362,14 +368,18 @@ const CreateVoucher = () => {
                         currentBalance: "",
                         gstRegistration: Vouchers.defGstRegist || "",
                         narration: "",
-                        totalAmount: "",
+                        totalAmount: 0,
+                        totalIgst: 0,
+                        totalSgst: 0,
+                        totalCgst: 0,
+                        totalGst: 0,
                         paymentDetails: [{
                             productsId: null,
                             mrp: 0,
                             rate: 0,
                             exclusiveGst: 0,
                             discount: 0,
-                            qty: 1,
+                            quantity: 1,
                             value: 0,
                             igstRate: 0,
                             gstAmount: 0,
@@ -382,6 +392,14 @@ const CreateVoucher = () => {
                 >
                     {({ isSubmitting, setFieldValue, values }) => {
                         const totals = calculateTotals(values);
+
+                        useEffect(() => {
+                            setFieldValue('totalAmount', totals.subtotal);
+                            setFieldValue('totalGst', totals.totalGST);
+                             setFieldValue('totalCgst', totals.totalCGST);
+                              setFieldValue('totalIgst', totals.totalIGST);
+                               setFieldValue('totalSgst', totals.totalSGST);
+                        }, [totals.subtotal, totals.totalGST,totals.totalCGST,totals.totalIGST,totals.totalSGST, setFieldValue]);
 
                         return (
                             <Form>
@@ -490,7 +508,7 @@ const CreateVoucher = () => {
                                                                                 "MRP",
                                                                                 "Rate (inc. GST)",
                                                                                 "Discount Applied",
-                                                                                "Qty",
+                                                                                "quantity",
                                                                                 "Value",
                                                                                 "GST Type",
                                                                                 "Action"
@@ -631,21 +649,21 @@ const CreateVoucher = () => {
                                                                                         />
                                                                                     </td>
 
-                                                                                    {/* Qty */}
+                                                                                    {/* quantity */}
                                                                                     <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
                                                                                         <Field
                                                                                             type="number"
-                                                                                            name={`paymentDetails.${index}.qty`}
+                                                                                            name={`paymentDetails.${index}.quantity`}
                                                                                             placeholder="1"
                                                                                             min="1"
                                                                                             step="1"
                                                                                             className="w-full py-2 px-3 text-sm rounded border focus:border-primary"
                                                                                             onChange={(e) => {
-                                                                                                const qty = parseFloat(e.target.value) || 1;
-                                                                                                setFieldValue(`paymentDetails.${index}.qty`, qty);
+                                                                                                const quantity = parseFloat(e.target.value) || 1;
+                                                                                                setFieldValue(`paymentDetails.${index}.quantity`, quantity);
                                                                                                 setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
                                                                                                     ...entry,
-                                                                                                    qty: qty
+                                                                                                    quantity: quantity
                                                                                                 }));
                                                                                             }}
                                                                                         />
@@ -713,21 +731,57 @@ const CreateVoucher = () => {
                                                                             </div>
                                                                         )}
                                                                         {totals.totalCGST > 0 && (
-                                                                            <div>
+                                                                            // <div>
+                                                                            //     <p className="text-gray-600 dark:text-gray-400">CGST</p>
+                                                                            //     <p className="font-medium text-black dark:text-white">₹{totals.totalCGST}</p>
+                                                                            // </div>
+
+                                                                            <div className='flex flex-col'>
                                                                                 <p className="text-gray-600 dark:text-gray-400">CGST</p>
-                                                                                <p className="font-medium text-black dark:text-white">₹{totals.totalCGST}</p>
+                                                                                <Field
+                                                                                    type="number"
+                                                                                    name="totalCgst"
+                                                                                    value={totals.totalCGST}
+                                                                                    placeholder="0.00"
+                                                                                    readOnly
+                                                                                    className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
+                                                                                />
                                                                             </div>
                                                                         )}
                                                                         {totals.totalSGST > 0 && (
-                                                                            <div>
+                                                                            // <div>
+                                                                            //     <p className="text-gray-600 dark:text-gray-400">SGST</p>
+                                                                            //     <p className="font-medium text-black dark:text-white">₹{totals.totalSGST}</p>
+                                                                            // </div>
+
+                                                                               <div className='flex flex-col'>
                                                                                 <p className="text-gray-600 dark:text-gray-400">SGST</p>
-                                                                                <p className="font-medium text-black dark:text-white">₹{totals.totalSGST}</p>
+                                                                                <Field
+                                                                                    type="number"
+                                                                                    name="totalSgst"
+                                                                                    value={totals.totalSGST}
+                                                                                    placeholder="0.00"
+                                                                                    readOnly
+                                                                                    className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
+                                                                                />
                                                                             </div>
                                                                         )}
                                                                         {totals.totalIGST > 0 && (
-                                                                            <div>
+                                                                            // <div>
+                                                                            //     <p className="text-gray-600 dark:text-gray-400">IGST</p>
+                                                                            //     <p className="font-medium text-black dark:text-white">₹{totals.totalIGST}</p>
+                                                                            // </div>
+
+                                                                              <div className='flex flex-col'>
                                                                                 <p className="text-gray-600 dark:text-gray-400">IGST</p>
-                                                                                <p className="font-medium text-black dark:text-white">₹{totals.totalIGST}</p>
+                                                                                <Field
+                                                                                    type="number"
+                                                                                    name="totalIgst"
+                                                                                    value={totals.totalIGST}
+                                                                                    placeholder="0.00"
+                                                                                    readOnly
+                                                                                    className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
+                                                                                />
                                                                             </div>
                                                                         )}
                                                                         <div>
@@ -764,7 +818,7 @@ const CreateVoucher = () => {
                                                                         rate: 0,
                                                                         exclusiveGst: 0,
                                                                         discount: 0,
-                                                                        qty: 1,
+                                                                        quantity: 1,
                                                                         value: 0,
                                                                         igstRate: 0,
                                                                         gstAmount: 0,

@@ -224,7 +224,7 @@ const VoucherEntriesView = () => {
                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.recieptNumber}</p>
                 </td>
-                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
+                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.ledgerName}</p>
                 </td>
                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
@@ -267,8 +267,8 @@ const VoucherEntriesView = () => {
                         <FaPrint
                             size={17}
                             className="text-teal-500 hover:text-teal-700 mx-2"
-                            // onClick={() => navigate(`/Voucher/updateVoucher/${item?.VoucherId}`)}
-                            title="Print Entry "
+                            onClick={() => navigate(`/printentrypayment/${item.id}/${item.gstRegistration}`)}
+                            title="Print Entry"
                         />
 
                         <FiTrash2
@@ -298,7 +298,7 @@ const VoucherEntriesView = () => {
 
 
 
-        
+
 
 
         };
@@ -399,10 +399,10 @@ const VoucherEntriesView = () => {
                                         </div>
 
                                         {/* Voucher Name Field */}
-                                   
+
                                     </div>
 
-                                
+
 
                                     <div className="flex justify-center mt-6">
                                         <button
@@ -427,7 +427,7 @@ const VoucherEntriesView = () => {
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
 
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Reciept Number</th>
-                                          <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Party  Name</th>
+                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Party  Name</th>
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">gstRegistration</th>
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">narration</th>
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">totalAmount</th>
