@@ -860,6 +860,29 @@ const CreateVoucher = () => {
                                                                     </tbody>
                                                                 </table>
                                                             </div>
+                                                              {/* Add Row Button */}
+                                                            <button
+                                                                type="button"
+                                                                onClick={() =>
+                                                                    push({
+                                                                        id: uuidv4(),
+                                                                        productsId: null,
+                                                                        mrp: 0,
+                                                                        rate: 0,
+                                                                        exclusiveGst: 0,
+                                                                        discount: 0,
+                                                                        quantity: 1,
+                                                                        value: 0,
+                                                                        igstRate: 0,
+                                                                        gstAmount: 0,
+                                                                        gstCalculation: null
+                                                                    })
+                                                                }
+                                                                disabled={!selectedLedger}
+                                                                className="flex items-center gap-2 mt-4 text-primary hover:text-primary/80 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
+                                                            >
+                                                                <IoMdAdd size={20} /> Add Row
+                                                            </button>
 
                                                             {/* GST Summary */}
                                                             {Vouchers?.typeOfVoucher === "Sales" && (
@@ -958,29 +981,7 @@ const CreateVoucher = () => {
                                                                 </div>
                                                             )}
 
-                                                            {/* Add Row Button */}
-                                                            <button
-                                                                type="button"
-                                                                onClick={() =>
-                                                                    push({
-                                                                        id: uuidv4(),
-                                                                        productsId: null,
-                                                                        mrp: 0,
-                                                                        rate: 0,
-                                                                        exclusiveGst: 0,
-                                                                        discount: 0,
-                                                                        quantity: 1,
-                                                                        value: 0,
-                                                                        igstRate: 0,
-                                                                        gstAmount: 0,
-                                                                        gstCalculation: null
-                                                                    })
-                                                                }
-                                                                disabled={!selectedLedger}
-                                                                className="flex items-center gap-2 mt-4 text-primary hover:text-primary/80 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
-                                                            >
-                                                                <IoMdAdd size={20} /> Add Row
-                                                            </button>
+                                                          
                                                         </div>
                                                     )}
                                                 </FieldArray>
