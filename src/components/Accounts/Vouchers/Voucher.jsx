@@ -10,7 +10,8 @@ import { useSelector } from 'react-redux';
 import NumberingDetailsModal from './NumberingDetailsModal';
 import useLocation from '../../../hooks/useLocation';
 import { toast } from 'react-toastify';
-import { GET_VOUCHER_BY_ID_URL, CREATE_VOUCHER_URL, UPDATE_VOUCHER_URL } from '../../../Constants/utils';
+import { GET_VOUCHER_BY_ID_URL} from '../../../Constants/utils';
+import useVoucher from '../../../hooks/useVoucher';
 
 const Voucher = () => {
     const { id } = useParams();
@@ -19,6 +20,18 @@ const Voucher = () => {
     const { token } = currentUser;
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
+     const {
+        Voucher,
+        edit,
+        currentVoucher,
+
+        handleSubmit,
+
+        nature,
+        invoice,
+        under,
+
+    } = useVoucher();
     
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(!!id);
@@ -144,39 +157,39 @@ const Voucher = () => {
     };
 
     // Form submission handler
-    const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-        setLoading(true);
-        try {
-            const url = id ? `${UPDATE_VOUCHER_URL}/${id}` : CREATE_VOUCHER_URL;
-            const method = id ? "PUT" : "POST";
+    // const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    //     setLoading(true);
+    //     try {
+    //         const url = id ? `${UPDATE_VOUCHER_URL}/${id}` : CREATE_VOUCHER_URL;
+    //         const method = id ? "PUT" : "POST";
             
-            const response = await fetch(url, {
-                method: method,
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify(values)
-            });
+    //         const response = await fetch(url, {
+    //             method: method,
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 "Authorization": `Bearer ${token}`
+    //             },
+    //             body: JSON.stringify(values)
+    //         });
 
-            const data = await response.json();
-            if (response.ok) {
-                toast.success(id ? 'Voucher updated successfully' : 'Voucher created successfully');
-                if (!id) {
-                    resetForm();
-                }
-                navigate('/vouchers'); // Navigate to voucher list
-            } else {
-                toast.error(data.errorMessage || 'Operation failed');
-            }
-        } catch (error) {
-            console.error(error);
-            toast.error("An error occurred");
-        } finally {
-            setLoading(false);
-            setSubmitting(false);
-        }
-    };
+    //         const data = await response.json();
+    //         if (response.ok) {
+    //             toast.success(id ? 'Voucher updated successfully' : 'Voucher created successfully');
+    //             if (!id) {
+    //                 resetForm();
+    //             }
+    //             navigate('/vouchers'); // Navigate to voucher list
+    //         } else {
+    //             toast.error(data.errorMessage || 'Operation failed');
+    //         }
+    //     } catch (error) {
+    //         console.error(error);
+    //         toast.error("An error occurred");
+    //     } finally {
+    //         setLoading(false);
+    //         setSubmitting(false);
+    //     }
+    // };
 
     // Fetch locations and HSN codes
     useEffect(() => {
