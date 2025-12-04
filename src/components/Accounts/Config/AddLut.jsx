@@ -263,7 +263,7 @@ const AddLut = () => {
                                                                         <button
                                                                             type='button'
                                                                             onClick={() => toggleLutActive(lut.id, lut.isActive)}
-                                                                            disabled={isExpired}
+                                                                            // disabled={isExpired}
                                                                             className={`p-2 rounded-full transition-all ${lut.isActiveLut
                                                                                     ? ' text-green-600 '
                                                                                     : 'text-gray-400'
