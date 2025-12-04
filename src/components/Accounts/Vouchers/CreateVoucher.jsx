@@ -539,71 +539,68 @@ const CreateVoucher = () => {
                                                     <ReactSelect
                                                         name='orderIds'
                                                         style={{ height: "20px" }}
-
-                                                        value={availableOrders.filter(opt => values.orderIds.includes(opt.value))}
+                                                        value={availableOrders.filter(opt => values.orderIds?.includes(opt.value))}
                                                         onChange={(selectedOptions) => {
                                                             const selectedValues = selectedOptions?.map(option => option.value) || [];
                                                             setFieldValue('orderIds', selectedValues);
                                                             console.log(selectedValues, "jojojazim");
 
-                                                            // Call any additional handlers
-                                                            if (selectedOptions && selectedOptions.length > 0) {
-                                                                handleOrderSelect(selectedValues);
-                                                            }
+                                                            // Call handleOrderSelect with selected values (even if empty)
+                                                            handleOrderSelect(selectedValues);
                                                         }}
                                                         options={availableOrders}
                                                         isMulti={true}
                                                         menuPortalTarget={document.body}
-                                                          styles={{
-            ...customStyles,
-            control: (base, state) => ({
-                ...base,
-                minHeight: '42px',
-                maxHeight: '42px',
-                overflowY: 'auto',
-                borderColor: state.isFocused ? '#3b82f6' : '#d1d5db',
-                '&:hover': {
-                    borderColor: '#9ca3af',
-                },
-            }),
-            valueContainer: (base) => ({
-                ...base,
-                maxHeight: '36px',
-                overflowY: 'auto',
-                flexWrap: 'nowrap',
-                display: 'flex',
-            }),
-            multiValue: (base) => ({
-                ...base,
-                backgroundColor: '#3b82f6',
-                borderRadius: '4px',
-                margin: '2px',
-                flexShrink: 0, // Prevent items from shrinking
-            }),
-            multiValueLabel: (base) => ({
-                ...base,
-                color: 'white',
-                padding: '2px 6px',
-                fontSize: '12px',
-            }),
-            multiValueRemove: (base) => ({
-                ...base,
-                color: 'white',
-                ':hover': {
-                    backgroundColor: '#2563eb',
-                    color: 'white',
-                },
-            }),
-            indicatorsContainer: (base) => ({
-                ...base,
-                height: '40px',
-            }),
-            menuPortal: (base) => ({ ...base, zIndex: 100000 })
-        }}
-        components={{
-            DropdownIndicator: null, // Hide dropdown arrow if you want
-            IndicatorSeparator: null, // Hide separator
-        }}
+                                                        styles={{
+                                                            ...customStyles,
+                                                            control: (base, state) => ({
+                                                                ...base,
+                                                                minHeight: '42px',
+                                                                maxHeight: '42px',
+                                                                overflowY: 'auto',
+                                                                borderColor: state.isFocused ? '#3b82f6' : '#d1d5db',
+                                                                '&:hover': {
+                                                                    borderColor: '#9ca3af',
+                                                                },
+                                                            }),
+                                                            valueContainer: (base) => ({
+                                                                ...base,
+                                                                maxHeight: '36px',
+                                                                overflowY: 'auto',
+                                                                flexWrap: 'nowrap',
+                                                                display: 'flex',
+                                                            }),
+                                                            multiValue: (base) => ({
+                                                                ...base,
+                                                                backgroundColor: '#3b82f6',
+                                                                borderRadius: '4px',
+                                                                margin: '2px',
+                                                                flexShrink: 0,
+                                                            }),
+                                                            multiValueLabel: (base) => ({
+                                                                ...base,
+                                                                color: 'white',
+                                                                padding: '2px 6px',
+                                                                fontSize: '12px',
+                                                            }),
+                                                            multiValueRemove: (base) => ({
+                                                                ...base,
+                                                                color: 'white',
+                                                                ':hover': {
+                                                                    backgroundColor: '#2563eb',
+                                                                    color: 'white',
+                                                                },
+                                                            }),
+                                                            indicatorsContainer: (base) => ({
+                                                                ...base,
+                                                                height: '40px',
+                                                            }),
+                                                            menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                        }}
+                                                        components={{
+                                                            DropdownIndicator: null,
+                                                            IndicatorSeparator: null,
+                                                        }}
                                                     />
                                                     <ErrorMessage name="orderId" component="div" className="text-red-500 text-xs mt-1" />
                                                 </div>
@@ -860,7 +857,7 @@ const CreateVoucher = () => {
                                                                     </tbody>
                                                                 </table>
                                                             </div>
-                                                              {/* Add Row Button */}
+                                                            {/* Add Row Button */}
                                                             <button
                                                                 type="button"
                                                                 onClick={() =>
@@ -981,7 +978,7 @@ const CreateVoucher = () => {
                                                                 </div>
                                                             )}
 
-                                                          
+
                                                         </div>
                                                     )}
                                                 </FieldArray>

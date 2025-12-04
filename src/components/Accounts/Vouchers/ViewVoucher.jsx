@@ -240,30 +240,30 @@ const ViewVoucher = () => {
         console.log(Voucher, "jumping");
         const handleToggle = async (voucher) => {
             try {
-              const newStatus = !voucher.actVoucher; // flip the current status
-              const response = await fetch(`${UPDATETOGGLE_Voucher_URL}/${voucher.id}`, {
-                method: "PUT",   // or POST if backend expects POST
-                headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": `Bearer ${token}`,
-                },
-                body: JSON.stringify({ actVoucher: newStatus }),
-              });
-          
-              if (!response.ok) {
-                throw new Error("Failed to update voucher status");
-              }
-          
-              toast.success(`Voucher ${newStatus ? "Activated" : "Deactivated"} successfully`);
-          
-              // Refresh the table after update
-              getVoucher(pagination.currentPage - 1);
+                const newStatus = !voucher.actVoucher; // flip the current status
+                const response = await fetch(`${UPDATETOGGLE_Voucher_URL}/${voucher.id}`, {
+                    method: "PUT",   // or POST if backend expects POST
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ actVoucher: newStatus }),
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to update voucher status");
+                }
+
+                toast.success(`Voucher ${newStatus ? "Activated" : "Deactivated"} successfully`);
+
+                // Refresh the table after update
+                getVoucher(pagination.currentPage - 1);
             } catch (err) {
-              console.error(err);
-              toast.error("Error updating voucher status");
+                console.error(err);
+                toast.error("Error updating voucher status");
             }
-          };
-          
+        };
+
 
 
         return Voucher.map((item, index) => (
@@ -285,34 +285,34 @@ const ViewVoucher = () => {
                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.defaultGodown} </p>
                 </td>
-              <td className="px-5 py-5  text-sm">
-  <label className="inline-flex items-center cursor-pointer">
-    <input
-      type="checkbox"
-      className="sr-only peer"
-      checked={item?.actVoucher || false}
-      onChange={() => handleToggle(item)}
-    />
-    <div className="relative w-11 h-6 bg-black rounded-full peer peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 transition-all duration-300 ease-in-out
+                <td className="px-5 py-5  text-sm">
+                    <label className="inline-flex items-center cursor-pointer">
+                        <input
+                            type="checkbox"
+                            className="sr-only peer"
+                            checked={item?.actVoucher || false}
+                            onChange={() => handleToggle(item)}
+                        />
+                        <div className="relative w-11 h-6 bg-black rounded-full peer peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 transition-all duration-300 ease-in-out
                     peer-checked:bg-green-500">
-      {/* Knob */}
-      <div className="absolute top-[2px] left-[2px] w-5 h-5 bg-white border-2 border-gray-800 rounded-full transition-all duration-300 ease-in-out
+                            {/* Knob */}
+                            <div className="absolute top-[2px] left-[2px] w-5 h-5 bg-white border-2 border-gray-800 rounded-full transition-all duration-300 ease-in-out
                       peer-checked:translate-x-5 peer-checked:border-green-500">
-      </div>
-    </div>
-  
-    <span className="ml-3 text-sm font-medium text-gray-700">
-      {item?.actVoucher ? 'Active' : 'Inactive'}
-    </span>
-  </label>
-</td>
+                            </div>
+                        </div>
+
+                        <span className="ml-3 text-sm font-medium text-gray-700">
+                            {item?.actVoucher ? 'Active' : 'Inactive'}
+                        </span>
+                    </label>
+                </td>
 
 
 
                 <td>
                     <span onClick={() => navigate(`/voucher/create/${item.id}`)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> Add Entry</span>
                 </td>
-                  <td>
+                <td>
                     <span onClick={() => navigate(`/voucherEntries/${item.id}`)} className="bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> View Entries</span>
                 </td>
                 {/* <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
@@ -392,17 +392,17 @@ const ViewVoucher = () => {
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Voucher/ View Voucher" />
-            <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
-                <div className="pt-5">
-                    <div className='flex justify-between'>
-                        <h2 className="text-xl font-semibold leading-tight">View Voucher</h2>
+            <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800 mb-4">
+                <div className="pt-5 pb-4">
+                    <div className='flex justify-center'>
+                        <h2 className="text-xl font-semibold leading-tight justify-center items-center">View Voucher</h2>
                         {/* <p className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium bg-success text-success dark:bg-white dark:text-slate-800`}>
                             TOTAL PRODUCTS: {pagination.totalItems}
                         </p> */}
                     </div>
 
 
-                    <div className='items-center justify-center'>
+                    <div className='items-center justify-center mb-3 '>
                         <Formik
                             initialValues={{
                                 // VoucherNo: '',
@@ -442,7 +442,7 @@ const ViewVoucher = () => {
                                                 />
                                             </div> */}
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white">Voucher Name</label>
+                                                <label className="mb-2.5 block font-bold text-black dark:text-white">Voucher Name</label>
                                                 <ReactSelect
                                                     name="name"
 
@@ -459,7 +459,7 @@ const ViewVoucher = () => {
 
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white">Voucher Type</label>
+                                                <label className="mb-2.5 block font-bold text-black dark:text-white">Voucher Type</label>
                                                 <ReactSelect
                                                     name="typeOfVoucher"
 
@@ -498,7 +498,11 @@ const ViewVoucher = () => {
                         </Formik>
                     </div>
 
+                </div>
+            </div>
+            <div>
 
+                <div className='mt-9 bg-white'>
 
                     <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                         <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
