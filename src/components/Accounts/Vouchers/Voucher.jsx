@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 import NumberingDetailsModal from './NumberingDetailsModal';
 import useLocation from '../../../hooks/useLocation';
 import { toast } from 'react-toastify';
-import { GET_VOUCHER_BY_ID_URL} from '../../../Constants/utils';
+import { GET_VoucherBYID} from '../../../Constants/utils';
 import useVoucher from '../../../hooks/useVoucher';
 
 const Voucher = () => {
@@ -127,7 +127,7 @@ const Voucher = () => {
         
         setFetching(true);
         try {
-            const response = await fetch(`${GET_VOUCHER_BY_ID_URL}/${id}`, {
+            const response = await fetch(`${GET_VoucherBYID}/${id}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
