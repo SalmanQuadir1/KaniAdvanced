@@ -13,6 +13,8 @@ import GeneralFinancialReportDashboard from './pages/GeneralFinancialReportDashb
 import Groups from './components/Accounts/Config/Groups.jsx';
 
 import Daybook from './components/Accounts/Config/Daybook.jsx';
+
+import AddLut from './components/Accounts/Config/AddLut.jsx';
 import Voucher from './components/Accounts/Vouchers/Voucher.jsx';
 import CreateVoucher from './components/Accounts/Vouchers/CreateVoucher.jsx';
 import VoucherEntriesView from './components/Accounts/Vouchers/VoucherEntriesView.jsx';
@@ -351,6 +353,17 @@ function App() {
                 <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
                 <PageTitle title="Day Book" />
                 <Daybook />
+              </>
+            }
+          />
+
+              <Route
+            path="/configurator/AddLut"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Add Lut" />
+                <AddLut />
               </>
             }
           />

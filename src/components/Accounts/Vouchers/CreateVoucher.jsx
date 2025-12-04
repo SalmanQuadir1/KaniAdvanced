@@ -30,8 +30,16 @@ const CreateVoucher = () => {
     const [ledgers, setLedgers] = useState([]);
     const [openingbalance2, setopeningbalance2] = useState(0)
     const [selectedLedger, setSelectedLedger] = useState(null);
+
+    const [selectedOrder, setselectedOrder] = useState(null)
+
+
+
     const [availableProducts, setAvailableProducts] = useState([]);
+
+    const [availableOrders, setavailableOrders] = useState([])
     const [loadingProducts, setLoadingProducts] = useState(false);
+    const [loadingOrders, setloadingOrders] = useState(false)
 
     console.log(Vouchers, "jharkhand");
 
@@ -134,15 +142,78 @@ const CreateVoucher = () => {
         }
     };
 
+
+
+    const handleOrderSelect = async (option) => {
+
+
+        setselectedOrder(option);
+        setAvailableProducts([]);
+        console.log(option, "lklk");
+
+        console.log(selectedOrder, "kikidoyopu");
+
+
+
+        try {
+
+            const response = await fetch(`http://localhost:8081/order/order-products/by-order-ids?orderIds=${option}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+            });
+
+            const data = await response.json();
+
+            console.log(data, "iuiu");
+
+
+
+            if (response.ok && Array.isArray(data)) {
+                const productOptions = data.map(prod => ({
+                    value: prod.id,
+                    label: prod.product.productDescription,
+                    price: prod.product?.retailMrp,
+                    hsnCode: prod.product?.hsnCode || '',
+                    obj: prod
+                }));
+                setAvailableProducts(productOptions);
+            }
+
+        }
+        catch (error) {
+            console.error("Error fetching customer products:", error);
+        } finally {
+            setLoadingProducts(false);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     const handleLedgerSelect = async (option) => {
         setSelectedLedger(option);
-        setAvailableProducts([]);
+        setavailableOrders([]);
 
         if (option?.obj?.supplier) {
-            setLoadingProducts(true);
+            setloadingOrders(true);
             try {
                 const supplierId = option.obj.supplier.id;
-                const response = await fetch(`http://localhost:8081/order/order-product/accepted/${supplierId}?type=supplier`, {
+                const response = await fetch(`http://localhost:8081/order/order-product/accepted?id=${supplierId}?type=supplier`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -153,16 +224,16 @@ const CreateVoucher = () => {
                 const data = await response.json();
                 console.log(data, "Products data");
 
-                if (response.ok && Array.isArray(data)) {
-                    const productOptions = data.map(prod => ({
-                        value: prod.id,
-                        label: prod.products.productDescription,
-                        price: prod.products?.retailMrp,
-                        hsnCode: prod.products?.hsnCode || '',
-                        obj: prod
-                    }));
-                    setAvailableProducts(productOptions);
-                }
+                // if (response.ok && Array.isArray(data)) {
+                //     const orderOptions = data.map(order => ({
+                //         value: prod.id,
+                //         label: prod.products.productDescription,
+                //         price: prod.products?.retailMrp,
+                //         hsnCode: prod.products?.hsnCode || '',
+                //         obj: prod
+                //     }));
+                //     setAvailableProducts(productOptions);
+                // }
             } catch (error) {
                 console.error("Error fetching products:", error);
             } finally {
@@ -170,10 +241,10 @@ const CreateVoucher = () => {
             }
         } else if (Vouchers?.typeOfVoucher === "Sales" && option) {
             // For Sales - fetch customer products
-            setLoadingProducts(true);
+            setloadingOrders(true);
             try {
                 const customerId = option.value;
-                const response = await fetch(`http://localhost:8081/order/order-product/accepted/${customerId}?type=customer`, {
+                const response = await fetch(`http://localhost:8081/order/by-type?id=${customerId}&type=customer`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -182,17 +253,16 @@ const CreateVoucher = () => {
                 });
 
                 const data = await response.json();
-                console.log(data, "Customer products data");
+                console.log(data, "order data");
 
                 if (response.ok && Array.isArray(data)) {
-                    const productOptions = data.map(prod => ({
-                        value: prod.product.id,
-                        label: prod.product.productDescription,
-                        price: prod.product?.retailMrp,
-                        hsnCode: prod.product?.hsnCode || '',
-                        obj: prod
+                    const orderOptions = data.map(ord => ({
+                        value: ord.orderId,
+                        label: ord.orderNumber,
+
+                        obj: ord
                     }));
-                    setAvailableProducts(productOptions);
+                    setavailableOrders(orderOptions);
                 }
             } catch (error) {
                 console.error("Error fetching customer products:", error);
@@ -201,6 +271,9 @@ const CreateVoucher = () => {
             }
         }
     };
+
+
+
 
     const getUsedproductsIds = (values, currentIndex) => {
         return values.paymentDetails
@@ -365,6 +438,7 @@ const CreateVoucher = () => {
                         date: '',
                         voucherId: Number(id),
                         ledgerId: "",
+                        orderIds: [],
                         currentBalance: "",
                         gstRegistration: Vouchers.defGstRegist || "",
                         narration: "",
@@ -396,10 +470,10 @@ const CreateVoucher = () => {
                         useEffect(() => {
                             setFieldValue('totalAmount', totals.subtotal);
                             setFieldValue('totalGst', totals.totalGST);
-                             setFieldValue('totalCgst', totals.totalCGST);
-                              setFieldValue('totalIgst', totals.totalIGST);
-                               setFieldValue('totalSgst', totals.totalSGST);
-                        }, [totals.subtotal, totals.totalGST,totals.totalCGST,totals.totalIGST,totals.totalSGST, setFieldValue]);
+                            setFieldValue('totalCgst', totals.totalCGST);
+                            setFieldValue('totalIgst', totals.totalIGST);
+                            setFieldValue('totalSgst', totals.totalSGST);
+                        }, [totals.subtotal, totals.totalGST, totals.totalCGST, totals.totalIGST, totals.totalSGST, setFieldValue]);
 
                         return (
                             <Form>
@@ -414,6 +488,7 @@ const CreateVoucher = () => {
                                         <div className="flex flex-col p-6.5">
                                             {/* Top Section - Party Account Details */}
                                             <div className='flex flex-row gap-4 mb-6'>
+
                                                 <div className="flex-2 min-w-[250px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">{Vouchers?.typeOfVoucher} Voucher Number</label>
                                                     <Field
@@ -459,6 +534,85 @@ const CreateVoucher = () => {
                                                     <ErrorMessage name="ledgerId" component="div" className="text-red-500 text-xs mt-1" />
                                                 </div>
 
+                                                <div className="flex-2 min-w-[250px] " >
+                                                    <label className="mb-2.5 block text-black dark:text-white">Orders Pending For{getPartyAccountLabel()}</label>
+                                                    <ReactSelect
+                                                        name='orderIds'
+                                                        style={{ height: "20px" }}
+
+                                                        value={availableOrders.filter(opt => values.orderIds.includes(opt.value))}
+                                                        onChange={(selectedOptions) => {
+                                                            const selectedValues = selectedOptions?.map(option => option.value) || [];
+                                                            setFieldValue('orderIds', selectedValues);
+                                                            console.log(selectedValues, "jojojazim");
+
+                                                            // Call any additional handlers
+                                                            if (selectedOptions && selectedOptions.length > 0) {
+                                                                handleOrderSelect(selectedValues);
+                                                            }
+                                                        }}
+                                                        options={availableOrders}
+                                                        isMulti={true}
+                                                        menuPortalTarget={document.body}
+                                                          styles={{
+            ...customStyles,
+            control: (base, state) => ({
+                ...base,
+                minHeight: '42px',
+                maxHeight: '42px',
+                overflowY: 'auto',
+                borderColor: state.isFocused ? '#3b82f6' : '#d1d5db',
+                '&:hover': {
+                    borderColor: '#9ca3af',
+                },
+            }),
+            valueContainer: (base) => ({
+                ...base,
+                maxHeight: '36px',
+                overflowY: 'auto',
+                flexWrap: 'nowrap',
+                display: 'flex',
+            }),
+            multiValue: (base) => ({
+                ...base,
+                backgroundColor: '#3b82f6',
+                borderRadius: '4px',
+                margin: '2px',
+                flexShrink: 0, // Prevent items from shrinking
+            }),
+            multiValueLabel: (base) => ({
+                ...base,
+                color: 'white',
+                padding: '2px 6px',
+                fontSize: '12px',
+            }),
+            multiValueRemove: (base) => ({
+                ...base,
+                color: 'white',
+                ':hover': {
+                    backgroundColor: '#2563eb',
+                    color: 'white',
+                },
+            }),
+            indicatorsContainer: (base) => ({
+                ...base,
+                height: '40px',
+            }),
+            menuPortal: (base) => ({ ...base, zIndex: 100000 })
+        }}
+        components={{
+            DropdownIndicator: null, // Hide dropdown arrow if you want
+            IndicatorSeparator: null, // Hide separator
+        }}
+                                                    />
+                                                    <ErrorMessage name="orderId" component="div" className="text-red-500 text-xs mt-1" />
+                                                </div>
+
+
+                                            </div>
+
+                                            <div className='flex flex-row gap-4 mb-6'>
+
                                                 <div className="flex-2 min-w-[250px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Current Balance</label>
                                                     <Field
@@ -469,9 +623,6 @@ const CreateVoucher = () => {
                                                         className="w-full bg-gray-100 dark:bg-slate-800 rounded border border-gray-300 py-3 px-5 text-black cursor-not-allowed"
                                                     />
                                                 </div>
-                                            </div>
-
-                                            <div className='flex flex-row gap-4 mb-6'>
                                                 <div className="flex-2 min-w-[250px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Date</label>
                                                     <Field
@@ -754,7 +905,7 @@ const CreateVoucher = () => {
                                                                             //     <p className="font-medium text-black dark:text-white">₹{totals.totalSGST}</p>
                                                                             // </div>
 
-                                                                               <div className='flex flex-col'>
+                                                                            <div className='flex flex-col'>
                                                                                 <p className="text-gray-600 dark:text-gray-400">SGST</p>
                                                                                 <Field
                                                                                     type="number"
@@ -772,7 +923,7 @@ const CreateVoucher = () => {
                                                                             //     <p className="font-medium text-black dark:text-white">₹{totals.totalIGST}</p>
                                                                             // </div>
 
-                                                                              <div className='flex flex-col'>
+                                                                            <div className='flex flex-col'>
                                                                                 <p className="text-gray-600 dark:text-gray-400">IGST</p>
                                                                                 <Field
                                                                                     type="number"

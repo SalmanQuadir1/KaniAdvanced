@@ -292,6 +292,9 @@ const PrintEntryPayment = () => {
         </Container>
     );
 
+    console.log(paymentData,"okok");
+    
+
     return (
         <Container style={styles.container}>
             {/* Print Button (hidden during actual print) */}
@@ -306,48 +309,48 @@ const PrintEntryPayment = () => {
 
             {/* Header Section */}
             <div style={styles.header}>
-             <Row className="align-items-start">
-    <Col md={8} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-        {/* Left side - Company Address */}
-        <div style={{ flex: 1 }}>
-            <div style={styles.companyName}>{companyAddress.name}</div>
-            <div style={styles.companyAddress}>{companyAddress.address}</div>
-            <div style={styles.companyAddress}>
-                <strong>GSTIN/UIN:</strong> {companyAddress.gstin}
-            </div>
-            <div style={styles.companyAddress}>
-                <strong>State Name:</strong> {companyAddress.state}, <strong>Code:</strong> {companyAddress.stateCode}
-            </div>
-            <div style={styles.companyAddress}>
-                <strong>CIN:</strong> {companyAddress.cin}
-            </div>
-            <div style={styles.companyAddress}>
-                <strong>Contact:</strong> {companyAddress.contact}
-            </div>
-            <div style={styles.companyAddress}>
-                <strong>E-Mail:</strong> {companyAddress.email}
-            </div>
-        </div>
+                <Row className="align-items-start">
+                    <Col md={8} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        {/* Left side - Company Address */}
+                        <div style={{ flex: 1 }}>
+                            <div style={styles.companyName}>{companyAddress.name}</div>
+                            <div style={styles.companyAddress}>{companyAddress.address}</div>
+                            <div style={styles.companyAddress}>
+                                <strong>GSTIN/UIN:</strong> {companyAddress.gstin}
+                            </div>
+                            <div style={styles.companyAddress}>
+                                <strong>State Name:</strong> {companyAddress.state}, <strong>Code:</strong> {companyAddress.stateCode}
+                            </div>
+                            <div style={styles.companyAddress}>
+                                <strong>CIN:</strong> {companyAddress.cin}
+                            </div>
+                            <div style={styles.companyAddress}>
+                                <strong>Contact:</strong> {companyAddress.contact}
+                            </div>
+                            <div style={styles.companyAddress}>
+                                <strong>E-Mail:</strong> {companyAddress.email}
+                            </div>
+                        </div>
 
-        {/* Right side - Logo (inside same column as address) */}
-        <div style={{ marginLeft: '20px', marginTop: '0' }}>
-            <img
-                src="/img/logo.png"
-                alt="Company Logo"
-                style={{
-                    width: '90px',
-                    height: '90px',
-                    objectFit: 'contain'
-                }}
-            />
-        </div>
-    </Col>
+                        {/* Right side - Logo (inside same column as address) */}
+                        <div style={{ marginLeft: '20px', marginTop: '0' }}>
+                            <img
+                                src="/img/logo.png"
+                                alt="Company Logo"
+                                style={{
+                                    width: '90px',
+                                    height: '90px',
+                                    objectFit: 'contain'
+                                }}
+                            />
+                        </div>
+                    </Col>
 
-    {/* Separate column for TAX INVOICE title */}
-    <Col md={4} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-        <div style={styles.invoiceTitle}>TAX INVOICE</div>
-    </Col>
-</Row>
+                    {/* Separate column for TAX INVOICE title */}
+                    <Col md={4} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+                        <div style={styles.invoiceTitle}>TAX INVOICE</div>
+                    </Col>
+                </Row>
             </div>
 
             {/* Consignee and Buyer Section */}
@@ -359,10 +362,12 @@ const PrintEntryPayment = () => {
                     </tr>
                     <tr>
                         <td style={styles.tableCell}>
+                           <strong> {paymentData.ledgerName}</strong> <br/>
                             {paymentData.shippingAddress || paymentData.shippingAddress}<br />
                             {/* <strong>State Name:</strong> {companyAddress.state}, <strong>Code:</strong> {companyAddress.stateCode} */}
                         </td>
                         <td style={styles.tableCell}>
+                              <strong> {paymentData.ledgerName}</strong> <br/>
                             {paymentData.billingAddress || paymentData.billingAddress}<br />
                             {/* <strong>State Name:</strong> {companyAddress.state}, <strong>Code:</strong> {companyAddress.stateCode} */}
                         </td>
@@ -514,111 +519,105 @@ const PrintEntryPayment = () => {
             {/* HSN Summary */}
             {/* HSN Summary Section - Simplified */}
             {(() => {
-                // Group payment details by HSN code
-                const hsnMap = {};
+                // Separate CGST/SGST and IGST items
+                const cgstSgstItems = [];
+                const igstItems = [];
 
                 if (paymentData.paymentDetails && paymentData.paymentDetails.length > 0) {
                     paymentData.paymentDetails.forEach(item => {
                         if (item.hsnCode && item.hsnCode.hsnCodeName) {
-                            const hsnKey = item.hsnCode.hsnCodeName;
-
-                            if (!hsnMap[hsnKey]) {
-                                hsnMap[hsnKey] = {
-                                    hsnCode: item.hsnCode.hsnCodeName,
-                                    taxableValue: 0,
-                                    cgstRate: 0,
-                                    sgstRate: 0,
-                                    cgstAmount: 0,
-                                    sgstAmount: 0,
-                                    totalTax: 0,
-                                    gstType: item.gstCalculation?.type || 'No GST'
-                                };
-                            }
-
+                            const gstCalc = item.gstCalculation || {};
                             const quantity = item.quantity || 1;
                             const taxableValue = (item.exclusiveGst || 0) * quantity;
-                            const gstCalc = item.gstCalculation || {};
-
-                            hsnMap[hsnKey].taxableValue += taxableValue;
-                            console.log(gstCalc.type,"calccctypeeeeeeeeee");
-                            
 
                             if (gstCalc.type === 'CGST+SGST') {
-                                hsnMap[hsnKey].cgstRate = gstCalc.cgstRate || 0;
-                                hsnMap[hsnKey].sgstRate = gstCalc.sgstRate || 0;
-                                hsnMap[hsnKey].cgstAmount += (gstCalc.cgstAmount || 0) * quantity;
-                                hsnMap[hsnKey].sgstAmount += (gstCalc.sgstAmount || 0) * quantity;
-                                hsnMap[hsnKey].totalTax += (gstCalc.totalGstAmount || 0) * quantity;
+                                cgstSgstItems.push({
+                                    hsnCode: item.hsnCode.hsnCodeName,
+                                    taxableValue: taxableValue,
+                                    cgstRate: gstCalc.cgstRate || 0,
+                                    sgstRate: gstCalc.sgstRate || 0,
+                                    cgstAmount: (gstCalc.cgstAmount || 0) * quantity,
+                                    sgstAmount: (gstCalc.sgstAmount || 0) * quantity,
+                                    totalTax: (gstCalc.totalGstAmount || 0) * quantity
+                                });
                             } else if (gstCalc.type === 'IGST') {
-                                // For IGST, split equally between CGST and SGST columns (as per Indian GST format)
-                                hsnMap[hsnKey].cgstRate = (gstCalc.igstRate || 0) / 2;
-                                hsnMap[hsnKey].sgstRate = (gstCalc.igstRate || 0) / 2;
-                                const halfAmount = (gstCalc.totalGstAmount || 0) * quantity / 2;
-                                hsnMap[hsnKey].cgstAmount += halfAmount;
-                                hsnMap[hsnKey].sgstAmount += halfAmount;
-                                hsnMap[hsnKey].totalTax += (gstCalc.totalGstAmount || 0) * quantity;
+                                igstItems.push({
+                                    hsnCode: item.hsnCode.hsnCodeName,
+                                    taxableValue: taxableValue,
+                                    igstRate: gstCalc.igstRate || 0,
+                                    igstAmount: (gstCalc.totalGstAmount || 0) * quantity,
+                                    totalTax: (gstCalc.totalGstAmount || 0) * quantity
+                                });
                             }
                         }
                     });
                 }
 
-                const hsnSummary = Object.values(hsnMap);
-                const hasGST = hsnSummary.some(item => item.totalTax > 0);
-
-                if (hasGST && hsnSummary.length > 0) {
-                    return (
-                        <>
-                            <div style={styles.sectionTitle}>HSN Summary</div>
-                            <table style={styles.table}>
-                                <thead>
-                                    <tr>
-                                        <th style={styles.tableHeader}>HSN/SAC</th>
-                                        <th style={styles.tableHeader}>Taxable Value</th>
-                                        <th style={styles.tableHeader}>CGST Rate</th>
-                                        <th style={styles.tableHeader}>CGST Amount</th>
-                                        <th style={styles.tableHeader}>SGST Rate</th>
-                                        <th style={styles.tableHeader}>SGST Amount</th>
-                                        <th style={styles.tableHeader}>Total Tax Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {hsnSummary.map((hsn, index) => (
-                                        <tr key={index}>
-                                            <td style={styles.tableCell}>{hsn.hsnCode}</td>
-                                            <td style={styles.tableCell}>₹{formatCurrency(hsn.taxableValue)}</td>
-                                            <td style={styles.tableCell}>{hsn.cgstRate > 0 ? `${hsn.cgstRate}%` : '-'}</td>
-                                            <td style={styles.tableCell}>₹{formatCurrency(hsn.cgstAmount)}</td>
-                                            <td style={styles.tableCell}>{hsn.sgstRate > 0 ? `${hsn.sgstRate}%` : '-'}</td>
-                                            <td style={styles.tableCell}>₹{formatCurrency(hsn.sgstAmount)}</td>
-                                            <td style={styles.tableCell}>₹{formatCurrency(hsn.totalTax)}</td>
+                return (
+                    <>
+                        {/* CGST/SGST Table */}
+                        {cgstSgstItems.length > 0 && (
+                            <>
+                                <div style={styles.sectionTitle}>HSN Summary (CGST+SGST)</div>
+                                <table style={styles.table}>
+                                    <thead>
+                                        <tr>
+                                            <th style={styles.tableHeader}>HSN/SAC</th>
+                                            <th style={styles.tableHeader}>Taxable Value</th>
+                                            <th style={styles.tableHeader}>CGST Rate</th>
+                                            <th style={styles.tableHeader}>CGST Amount</th>
+                                            <th style={styles.tableHeader}>SGST Rate</th>
+                                            <th style={styles.tableHeader}>SGST Amount</th>
+                                            <th style={styles.tableHeader}>Total Tax</th>
                                         </tr>
-                                    ))}
+                                    </thead>
+                                    <tbody>
+                                        {cgstSgstItems.map((item, index) => (
+                                            <tr key={index}>
+                                                <td style={styles.tableCell}>{item.hsnCode}</td>
+                                                <td style={styles.tableCell}>₹{formatCurrency(item.taxableValue)}</td>
+                                                <td style={styles.tableCell}>{item.cgstRate}%</td>
+                                                <td style={styles.tableCell}>₹{formatCurrency(item.cgstAmount)}</td>
+                                                <td style={styles.tableCell}>{item.sgstRate}%</td>
+                                                <td style={styles.tableCell}>₹{formatCurrency(item.sgstAmount)}</td>
+                                                <td style={styles.tableCell}>₹{formatCurrency(item.totalTax)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </>
+                        )}
 
-                                    {/* Total Row */}
-                                    <tr style={styles.totalRow}>
-                                        <td style={styles.tableCell}>Total</td>
-                                        <td style={styles.tableCell}>
-                                            ₹{formatCurrency(hsnSummary.reduce((sum, item) => sum + item.taxableValue, 0))}
-                                        </td>
-                                        <td style={styles.tableCell}></td>
-                                        <td style={styles.tableCell}>
-                                            ₹{formatCurrency(hsnSummary.reduce((sum, item) => sum + item.cgstAmount, 0))}
-                                        </td>
-                                        <td style={styles.tableCell}></td>
-                                        <td style={styles.tableCell}>
-                                            ₹{formatCurrency(hsnSummary.reduce((sum, item) => sum + item.sgstAmount, 0))}
-                                        </td>
-                                        <td style={styles.tableCell}>
-                                            ₹{formatCurrency(hsnSummary.reduce((sum, item) => sum + item.totalTax, 0))}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </>
-                    );
-                }
-
-                return null;
+                        {/* IGST Table */}
+                        {igstItems.length > 0 && (
+                            <>
+                                <div style={styles.sectionTitle}>HSN Summary (IGST)</div>
+                                <table style={styles.table}>
+                                    <thead>
+                                        <tr>
+                                            <th style={styles.tableHeader}>HSN/SAC</th>
+                                            <th style={styles.tableHeader}>Taxable Value</th>
+                                            <th style={styles.tableHeader}>IGST Rate</th>
+                                            <th style={styles.tableHeader}>IGST Amount</th>
+                                            <th style={styles.tableHeader}>Total Tax</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {igstItems.map((item, index) => (
+                                            <tr key={index}>
+                                                <td style={styles.tableCell}>{item.hsnCode}</td>
+                                                <td style={styles.tableCell}>₹{formatCurrency(item.taxableValue)}</td>
+                                                <td style={styles.tableCell}>{item.igstRate}%</td>
+                                                <td style={styles.tableCell}>₹{formatCurrency(item.igstAmount)}</td>
+                                                <td style={styles.tableCell}>₹{formatCurrency(item.totalTax)}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </>
+                        )}
+                    </>
+                );
             })()}
 
             {/* Tax Amount in Words */}

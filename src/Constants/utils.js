@@ -412,9 +412,13 @@ export const SEARCH_DayBook_URL = `${BASE_URL}/entryPayment/search`;
 export const GETPRODUCTBYSUPPLIER = `${BASE_URL}/order/order-products/accepted`;
 
 
+//lut 
 
-
-
+export const ADD_Lut_URL = `${BASE_URL}/lut/save`;
+export const DELETE_Lut_URL = `${BASE_URL}/entryPayment/add`;
+export const GET_LutBYID = `${BASE_URL}/voucher/addVoucher`;
+export const UPDATELut_URL = `${BASE_URL}/entryPayment/add`;
+export const GET_Lut_URL = `${BASE_URL}/lut/viewAll`;
 
 
 
