@@ -3,7 +3,7 @@ import DefaultLayout from '../../../layout/DefaultLayout'
 import Breadcrumb from '../../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { GET_Vouchersearch_URL, UPDATETOGGLE_Voucher_URL } from "../../../Constants/utils";
+import { DELETE_Voucher_URL, GET_Vouchersearch_URL, UPDATETOGGLE_Voucher_URL } from "../../../Constants/utils";
 import ReactSelect from 'react-select';
 import useOrder from '../../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -14,6 +14,7 @@ import { toast } from 'react-toastify';
 import { customStyles as createCustomStyles } from '../../../Constants/utils';
 import { MdCreateNewFolder } from "react-icons/md";
 import useVoucher from '../../../hooks/useVoucher';
+import { IoIosAdd } from 'react-icons/io';
 
 
 
@@ -283,7 +284,10 @@ const ViewVoucher = () => {
 
 
                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.defaultGodown} </p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.defGstRegist} </p>
+                </td>
+                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
+                   <IoIosAdd size={30} onClick={()=>navigate(`/configurator/vouchers/${item.id}`)}/>
                 </td>
                 <td className="px-5 py-5  text-sm">
                     <label className="inline-flex items-center cursor-pointer">
@@ -504,7 +508,7 @@ const ViewVoucher = () => {
 
                 <div className='mt-9 bg-white'>
 
-                    <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+                    <div className="-mx-4 sm:-mx-8 px-4 sm:px-8  overflow-x-auto">
                         <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
                             <table className="min-w-full leading-normal">
                                 <thead>
@@ -513,7 +517,8 @@ const ViewVoucher = () => {
 
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">VoucherName</th>
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Voucher Type</th>
-                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">defaultGodown</th>
+                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">GST REGISTRATION</th>
+                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">ADD SUB VOUCHER</th>
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Activation Status</th>
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Add Entries</th>
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Entries</th>

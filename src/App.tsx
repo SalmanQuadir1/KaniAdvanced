@@ -346,6 +346,19 @@ function App() {
               </>
             }
           />
+
+            <Route
+            path="/configurator/vouchers/:id"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Voucher" />
+                <Voucher />
+              </>
+            }
+          />
+
+
             <Route
             path="/configurator/dayBook"
             element={
