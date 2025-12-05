@@ -3,45 +3,55 @@ import DefaultLayout from '../../../layout/DefaultLayout'
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
 import ReactSelect from 'react-select';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation as useRouterLocation } from 'react-router-dom';
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import { customStyles as createCustomStyles } from '../../../Constants/utils';
 import { useSelector } from 'react-redux';
 import NumberingDetailsModal from './NumberingDetailsModal';
 import useLocation from '../../../hooks/useLocation';
 import { toast } from 'react-toastify';
-import { GET_VoucherBYID} from '../../../Constants/utils';
+import { GET_VoucherBYID, ADD_Voucher_URL, UPDATEVoucher_URL, ADD_VoucherEntry_URL } from '../../../Constants/utils';
 import useVoucher from '../../../hooks/useVoucher';
 
 const Voucher = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useRouterLocation();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
-     const {
-        Voucher,
-        edit,
-        currentVoucher,
-
-        handleSubmit,
-
-        nature,
-        invoice,
-        under,
-
-    } = useVoucher();
     
     const [loading, setLoading] = useState(false);
-    const [fetching, setFetching] = useState(!!id);
+    const [fetching, setFetching] = useState(false);
     const [showNumberingModal, setShowNumberingModal] = useState(false);
-    const [gstDetails, setgstDetails] = useState([]);
-    const [hsnOptions, sethsnOptions] = useState([]);
-    const [vaaluee, setvaaluee] = useState({});
+    const [gstDetails, setGstDetails] = useState([]);
+    const [hsnOptions, setHsnOptions] = useState([]);
+    const [initialFormValues, setInitialFormValues] = useState(null);
+    const [operationType, setOperationType] = useState('create'); // 'create', 'create-sub', 'update'
+    const [parentVoucherId, setParentVoucherId] = useState(null);
     
     const { Locations, getAllLocation } = useLocation();
-    const hsnCode = useSelector(state => state?.persisted?.hsn);
+
+    // const hsnCode = useSelector(state => state?.persisted?.hsn);
+
+       useEffect(() => {
+
+        getAllLocation();
+    }, []);
+    // Determine operation type from URL
+    useEffect(() => {
+        const path = location.pathname;
+        
+        if (path.includes('/update/')) {
+            setOperationType('update');
+        } else if (id && !path.includes('/update/')) {
+            setOperationType('create-sub');
+            setParentVoucherId(id);
+        } else {
+            setOperationType('create');
+        }
+    }, [location.pathname, id]);
 
     // Dropdown options
     const typeOfVoucher = [
@@ -84,7 +94,7 @@ const Voucher = () => {
     ];
 
     // Initial values
-    const initialValues = {
+    const defaultInitialValues = {
         name: '',
         typeOfVoucher: '',
         abbreviation: '',
@@ -116,94 +126,231 @@ const Voucher = () => {
         defGstRegist: '',
         methodVouchNumbering: false,
         gstratedetails: '',
-        hsnCode: null,
+        // hsnCode: null,
         gstDescription: '',
         hsn_Sac: '',
+        parentVoucherId: null,
     };
 
-    // Fetch voucher by ID if in edit mode
-    const fetchVoucherById = async () => {
-        if (!id) return;
-        
+    // Fetch voucher data based on operation type
+    const fetchData = async () => {
+        if (operationType === 'update' && id) {
+            // Fetch voucher data for update
+            await fetchVoucherById(id);
+        } else if (operationType === 'create-sub' && parentVoucherId) {
+            // Fetch parent voucher data for reference
+            await fetchParentVoucherData(parentVoucherId);
+        } else {
+            // Create new voucher
+            setInitialFormValues({
+                ...defaultInitialValues,
+                parentVoucherId: parentVoucherId
+            });
+        }
+    };
+
+    const fetchVoucherById = async (voucherId) => {
         setFetching(true);
         try {
-            const response = await fetch(`${GET_VoucherBYID}/${id}`, {
+            const response = await fetch(`${GET_VoucherBYID}/${voucherId}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
             });
-            
+
             if (response.ok) {
-                const data = await response.json();
-                // Format data for form
-                const formattedData = {
-                    ...data,
-                    actVoucher: data.actVoucher?.toString() || 'true',
-                };
-                return formattedData;
+                const voucherData = await response.json();
+                const formattedData = formatVoucherData(voucherData);
+                setInitialFormValues(formattedData);
             } else {
                 toast.error('Failed to fetch voucher data');
-                return null;
+                setInitialFormValues(defaultInitialValues);
             }
         } catch (error) {
             console.error('Error fetching voucher:', error);
             toast.error('Failed to fetch voucher data');
-            return null;
+            setInitialFormValues(defaultInitialValues);
         } finally {
             setFetching(false);
         }
     };
 
-    // Form submission handler
-    // const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-    //     setLoading(true);
-    //     try {
-    //         const url = id ? `${UPDATE_VOUCHER_URL}/${id}` : CREATE_VOUCHER_URL;
-    //         const method = id ? "PUT" : "POST";
-            
-    //         const response = await fetch(url, {
-    //             method: method,
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 "Authorization": `Bearer ${token}`
-    //             },
-    //             body: JSON.stringify(values)
-    //         });
+    const fetchParentVoucherData = async (parentId) => {
+        setFetching(true);
+        try {
+            const response = await fetch(`${GET_VoucherBYID}/${parentId}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+            });
 
-    //         const data = await response.json();
-    //         if (response.ok) {
-    //             toast.success(id ? 'Voucher updated successfully' : 'Voucher created successfully');
-    //             if (!id) {
-    //                 resetForm();
-    //             }
-    //             navigate('/vouchers'); // Navigate to voucher list
-    //         } else {
-    //             toast.error(data.errorMessage || 'Operation failed');
-    //         }
-    //     } catch (error) {
-    //         console.error(error);
-    //         toast.error("An error occurred");
-    //     } finally {
-    //         setLoading(false);
-    //         setSubmitting(false);
-    //     }
-    // };
+            if (response.ok) {
+                const parentData = await response.json();
+                // Pre-fill some fields from parent for sub-voucher
+                const subVoucherData = {
+                    ...defaultInitialValues,
+                    parentVoucherId: parentId,
+                    typeOfVoucher: parentData.typeOfVoucher || '',
+                    abbreviation: parentData.abbreviation ? `${parentData.abbreviation}_SUB` : '',
+                    // Add other fields you want to inherit from parent
+                };
+                setInitialFormValues(subVoucherData);
+            } else {
+                // If parent fetch fails, still create sub-voucher
+                setInitialFormValues({
+                    ...defaultInitialValues,
+                    parentVoucherId: parentId
+                });
+            }
+        } catch (error) {
+            console.error('Error fetching parent voucher:', error);
+            setInitialFormValues({
+                ...defaultInitialValues,
+                parentVoucherId: parentId
+            });
+        } finally {
+            setFetching(false);
+        }
+    };
+
+    const formatVoucherData = (voucherData) => {
+        return {
+            name: voucherData.name || '',
+            typeOfVoucher: voucherData.typeOfVoucher || '',
+            abbreviation: voucherData.abbreviation || '',
+            actVoucher: voucherData.actVoucher?.toString() || 'true',
+            methodOfvoucher: voucherData.methodOfvoucher || '',
+            numbInsertDelete: voucherData.numbInsertDelete || '',
+            setAdditionalNumb: voucherData.setAdditionalNumb || false,
+            unusedVchNos: voucherData.unusedVchNos || false,
+            dateForVchs: voucherData.dateForVchs || false,
+            effectiveDate: voucherData.effectiveDate || '',
+            zeroTransactionAllowed: voucherData.zeroTransactionAllowed || false,
+            optionalVchType: voucherData.optionalVchType || false,
+            narrationVchs: voucherData.narrationVchs || false,
+            narratLedgerVch: voucherData.narratLedgerVch || false,
+            defAccounting: voucherData.defAccounting || false,
+            costPurchase: voucherData.costPurchase || false,
+            whatsAppVch: voucherData.whatsAppVch || false,
+            inteCompTransfer: voucherData.inteCompTransfer || false,
+            printVch: voucherData.printVch || false,
+            posInvoicing: voucherData.posInvoicing || false,
+            setAlterDecl: voucherData.setAlterDecl || false,
+            defaultGodown:voucherData.defaultGodown || '',
+            defTitlePrint: voucherData.defTitlePrint || '',
+            msgPrintOne: voucherData.msgPrintOne || '',
+            msgPrintTwo: voucherData.msgPrintTwo || '',
+            defBank: voucherData.defBank || '',
+            defJurisdiction: voucherData.defJurisdiction || '',
+            printFormal: voucherData.printFormal || false,
+            defGstRegist: voucherData.defGstRegist || '',
+            methodVouchNumbering: voucherData.methodVouchNumbering || false,
+            gstratedetails: voucherData.gstratedetails || '',
+            // hsnCode: voucherData.hsnCode || null,
+            gstDescription: voucherData.gstDescription || '',
+            hsn_Sac: voucherData.hsn_Sac || '',
+            // parentVoucherId: voucherData.parentVoucherId || null,
+        };
+    };
+
+    // Handle form submission
+    const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+        setLoading(true);
+        
+        try {
+            let url, method, successMessage;
+            
+            if (operationType === 'update' && id) {
+                // Update existing voucher
+                url = `${UPDATEVoucher_URL}/${id}`;
+                method = "PUT";
+                successMessage = 'Voucher updated successfully';
+            } else if (operationType === 'create-sub' && parentVoucherId) {
+                // Create sub-voucher entry
+                url = ADD_Voucher_URL;
+                method = "POST";
+                successMessage = 'Sub-voucher created successfully';
+            } else {
+                // Create new voucher
+                url = ADD_Voucher_URL;
+                method = "POST";
+                successMessage = 'Voucher created successfully';
+            }
+            
+            // Prepare the data
+            const formData = {
+                ...values,
+                ...(gstDetails.length > 0 ? { gstDetails } : {})
+            };
+            
+            // Clean up data for ReactSelect fields
+            // if (values.hsnCode && typeof values.hsnCode === 'object') {
+            //     formData.hsnCode = values.hsnCode.value || values.hsnCode.id;
+            // }
+            
+            if (values.defaultGodown && typeof values.defaultGodown === 'object') {
+                formData.defaultGodown = values.defaultGodown.value;
+            }
+            
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+            
+            if (response.ok) {
+                toast.success(successMessage);
+                
+                if (operationType === 'create' || operationType === 'create-sub') {
+                    resetForm();
+                }
+                
+                // Navigate based on operation type
+                if (operationType === 'update') {
+                    navigate('/configurator/vouchers');
+                } else if (operationType === 'create-sub') {
+                    navigate(`/configurator/vouchers/${parentVoucherId}`);
+                } else {
+                    navigate('/configurator/vouchers');
+                }
+            } else {
+                toast.error(data.errorMessage || 'Operation failed');
+            }
+        } catch (error) {
+            console.error('Submission error:', error);
+            toast.error("An error occurred during submission");
+        } finally {
+            setLoading(false);
+            setSubmitting(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, [operationType, id, parentVoucherId]);
 
     // Fetch locations and HSN codes
-    useEffect(() => {
-        getAllLocation();
+    // useEffect(() => {
+    //     getAllLocation();
         
-        if (hsnCode.data) {
-            const formattedOptions = hsnCode.data.map(hsn => ({
-                value: hsn.id,
-                label: hsn?.hsnCodeName,
-                hsnObject: hsn,
-            }));
-            sethsnOptions(formattedOptions);
-        }
-    }, [hsnCode.data]);
+    //     if (hsnCode.data) {
+    //         const formattedOptions = hsnCode.data.map(hsn => ({
+    //             value: hsn.id,
+    //             label: hsn?.hsnCodeName,
+    //             hsnObject: hsn,
+    //         }));
+    //         setHsnOptions(formattedOptions);
+    //     }
+    // }, [hsnCode.data]);
 
     const formattedLocation = Locations?.map(loc => ({
         label: loc.address,
@@ -239,113 +386,21 @@ const Voucher = () => {
         </div>
     );
 
-    // Render GST details based on selection
-    const renderGSTDetails = (values, setFieldValue) => {
-        if (values.gstratedetails === "Specify Slab Based Rates") {
-            return (
-                <div className="mt-4 p-4 border rounded-lg">
-                    <h4 className="font-semibold mb-3">Slab Based Rates</h4>
-                    {gstDetails.length > 0 ? (
-                        gstDetails.map((gst, index) => (
-                            <div key={index} className="grid grid-cols-4 gap-4 mb-3">
-                                <Field
-                                    name={`gstDetails[${index}].greaterThan`}
-                                    placeholder="Greater Than"
-                                    className="p-2 border rounded"
-                                />
-                                <Field
-                                    name={`gstDetails[${index}].upTo`}
-                                    placeholder="Up To"
-                                    className="p-2 border rounded"
-                                />
-                                <Field
-                                    name={`gstDetails[${index}].type`}
-                                    placeholder="Type"
-                                    className="p-2 border rounded"
-                                />
-                                <Field
-                                    name={`gstDetails[${index}].gstRate`}
-                                    placeholder="Rate %"
-                                    className="p-2 border rounded"
-                                />
-                            </div>
-                        ))
-                    ) : (
-                        <p className="text-gray-500">No slab rates configured</p>
-                    )}
-                </div>
-            );
-        } else if (values.gstratedetails === "Use GST Classification") {
-            return (
-                <div className="mt-4 p-4 border rounded-lg">
-                    <h4 className="font-semibold mb-3">HSN Code Details</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block mb-2">HSN Code</label>
-                            <ReactSelect
-                                name="hsnCode"
-                                value={hsnOptions?.find(opt => opt.value === values.hsnCode?.id)}
-                                onChange={(opt) => {
-                                    setFieldValue("hsnCode", opt?.hsnObject);
-                                    setvaaluee({ hsnCode: opt?.hsnObject });
-                                }}
-                                options={hsnOptions}
-                                styles={customStyles}
-                                placeholder="Select HSN Code"
-                            />
-                        </div>
-                        <div>
-                            <label className="block mb-2">GST Description</label>
-                            <Field
-                                name="gstDescription"
-                                value={vaaluee?.hsnCode?.productDescription || ''}
-                                className="w-full p-2 border rounded"
-                            />
-                        </div>
-                        <div>
-                            <label className="block mb-2">HSN/SAC</label>
-                            <Field
-                                name="hsn_Sac"
-                                className="w-full p-2 border rounded"
-                            />
-                        </div>
-                        <div className="grid grid-cols-3 gap-2">
-                            <div>
-                                <label className="block mb-2">IGST %</label>
-                                <Field
-                                    value={vaaluee?.hsnCode?.igst || ''}
-                                    disabled
-                                    className="w-full p-2 border rounded bg-gray-100"
-                                />
-                            </div>
-                            <div>
-                                <label className="block mb-2">CGST %</label>
-                                <Field
-                                    value={vaaluee?.hsnCode?.cgst || ''}
-                                    disabled
-                                    className="w-full p-2 border rounded bg-gray-100"
-                                />
-                            </div>
-                            <div>
-                                <label className="block mb-2">SGST %</label>
-                                <Field
-                                    value={vaaluee?.hsnCode?.sgst || ''}
-                                    disabled
-                                    className="w-full p-2 border rounded bg-gray-100"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
+    const getPageTitle = () => {
+        switch (operationType) {
+            case 'update':
+                return 'Update Voucher';
+            case 'create-sub':
+                return 'Create Sub-Voucher';
+            default:
+                return 'Create Voucher';
         }
-        return null;
     };
 
-    if (fetching) {
+    if (fetching || !initialFormValues) {
         return (
             <DefaultLayout>
-                <Breadcrumb pageName={id ? "Update Voucher" : "Create Voucher"} />
+                <Breadcrumb pageName={getPageTitle()} />
                 <div className="flex justify-center items-center h-64">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
                 </div>
@@ -355,17 +410,22 @@ const Voucher = () => {
 
     return (
         <DefaultLayout>
-            <Breadcrumb pageName={id ? "Update Voucher" : "Create Voucher"} />
+            <Breadcrumb pageName={getPageTitle()} />
             
             <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                 <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                     <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                        {id ? "Update Voucher" : "Create Voucher"}
+                        {getPageTitle()}
+                        {operationType === 'create-sub' && parentVoucherId && (
+                            <div className="text-sm text-gray-500 mt-2">
+                                Parent Voucher ID: {parentVoucherId}
+                            </div>
+                        )}
                     </h3>
                 </div>
 
                 <Formik
-                    initialValues={initialValues}
+                    initialValues={initialFormValues}
                     enableReinitialize={true}
                     validationSchema={Yup.object({
                         name: Yup.string().required('Voucher name is required'),
@@ -376,6 +436,11 @@ const Voucher = () => {
                     {({ isSubmitting, setFieldValue, values }) => (
                         <Form>
                             <div className="p-6.5">
+                                {/* Hidden parent voucher ID for sub-vouchers */}
+                                {/* {operationType === 'create-sub' && (
+                                    <Field type="hidden" name="parentVoucherId" />
+                                )} */}
+                                
                                 {/* Basic Information */}
                                 <div className="mb-8">
                                     <h4 className="text-lg font-semibold mb-4 text-black dark:text-white">Basic Information</h4>
@@ -400,6 +465,7 @@ const Voucher = () => {
                                                 options={typeOfVoucher}
                                                 styles={customStyles}
                                                 placeholder="Select voucher type"
+                                                isDisabled={operationType === 'create-sub'} // Disable for sub-vouchers
                                             />
                                         </div>
                                         
@@ -545,7 +611,7 @@ const Voucher = () => {
                                                 name="defaultGodown"
                                                 options={formattedLocation}
                                                 value={formattedLocation?.find(opt => opt.value === values.defaultGodown)}
-                                                onChange={(opt) => setFieldValue('defaultGodown', opt?.value)}
+                                                onChange={(opt) => setFieldValue('defaultGodown',{id: opt?.value})}
                                                 styles={customStyles}
                                                 placeholder="Select location"
                                             />
@@ -630,26 +696,10 @@ const Voucher = () => {
                                     {renderYesNoRadio('methodVouchNumbering', 'Use Common Voucher Numbering for All GST Registrations', values, setFieldValue)}
                                 </div>
 
-                                {/* GST Details */}
-                                <div className="mb-8">
-                                    <h4 className="text-lg font-semibold mb-4 text-black dark:text-white">GST Details</h4>
-                                    <div className="mb-6">
-                                        <label className="mb-2.5 block text-black dark:text-white">GST Calculation Method</label>
-                                        <ReactSelect
-                                            name="gstratedetails"
-                                            value={gstdetails.find(opt => opt.value === values.gstratedetails)}
-                                            onChange={(opt) => setFieldValue('gstratedetails', opt?.value)}
-                                            options={gstdetails}
-                                            styles={customStyles}
-                                            placeholder="Select GST method"
-                                        />
-                                    </div>
-                                    
-                                    {renderGSTDetails(values, setFieldValue)}
-                                </div>
+                         
 
                                 {/* Submit Button */}
-                                <div className="flex justify-center mt-8">
+                                 <div className="flex justify-center mt-8">
                                     <button
                                         type="submit"
                                         disabled={isSubmitting || loading}
@@ -658,22 +708,24 @@ const Voucher = () => {
                                         {loading ? (
                                             <div className="flex items-center gap-2">
                                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                                                {id ? 'Updating...' : 'Creating...'}
+                                                {operationType === 'update' ? 'Updating...' : 
+                                                 operationType === 'create-sub' ? 'Creating Sub-Voucher...' : 
+                                                 'Creating...'}
                                             </div>
                                         ) : (
-                                            id ? 'Update Voucher' : 'Create Voucher'
+                                            operationType === 'update' ? 'Update Voucher' : 
+                                            operationType === 'create-sub' ? 'Create Sub-Voucher' : 
+                                            'Create Voucher'
                                         )}
                                     </button>
                                     
-                                    {id && (
-                                        <button
-                                            type="button"
-                                            onClick={() => navigate(-1)}
-                                            className="ml-4 flex items-center justify-center md:w-[100px] w-full md:h-[44px] h-[44px] rounded-lg bg-gray-200 font-medium text-gray-700 hover:bg-gray-300"
-                                        >
-                                            Cancel
-                                        </button>
-                                    )}
+                                    <button
+                                        type="button"
+                                        onClick={() => navigate(-1)}
+                                        className="ml-4 flex items-center justify-center md:w-[100px] w-full md:h-[44px] h-[44px] rounded-lg bg-gray-200 font-medium text-gray-700 hover:bg-gray-300"
+                                    >
+                                        Cancel
+                                    </button>
                                 </div>
                             </div>
                         </Form>
@@ -685,7 +737,7 @@ const Voucher = () => {
                 show={showNumberingModal}
                 onHide={() => setShowNumberingModal(false)}
                 onSubmit={(data) => {
-                    setgstDetails(data);
+                    setGstDetails(data);
                     setShowNumberingModal(false);
                 }}
             />
