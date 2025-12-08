@@ -218,6 +218,7 @@ const Voucher = () => {
     };
 
     const formatVoucherData = (voucherData) => {
+          console.log(voucherData,"sed godown");
         return {
             name: voucherData.name || '',
             typeOfVoucher: voucherData.typeOfVoucher || '',
@@ -256,6 +257,9 @@ const Voucher = () => {
             // parentVoucherId: voucherData.parentVoucherId || null,
         };
     };
+
+  
+    
 
     // Handle form submission
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {

@@ -401,10 +401,11 @@ export const ADD_VoucherEntry_URL = `${BASE_URL}/entryPayment/add`;
 
 export const GET_Voucher_URL = `${BASE_URL}/voucher/getAll`;
 export const GET_Vouchersearch_URL = `${BASE_URL}/voucher/search`;
-export const GET_VoucherEntriessearch_URL = `${BASE_URL}/entryPayment/search-entrypayment`;
-export const PRINTEntries_URL = `${BASE_URL}/entryPayment`;
-export const GET_VoucherNos_URL = `${BASE_URL}/voucher/receipt-numbers`;
 
+export const GET_VoucherEntriessearch_URL = `${BASE_URL}/entryPayment/voucher`;
+export const PRINTEntries_URL = `${BASE_URL}/entryPayment`;
+export const GET_VoucherNoss_URL = `${BASE_URL}/voucher/getReceipt`;
+export const GET_VoucherNos_URL = `${BASE_URL}/voucher/getPreviousReceipt`;
 
 export const GET_VoucherBYID = `${BASE_URL}/voucher/get`;
 export const SEARCH_DayBook_URL = `${BASE_URL}/entryPayment/search`;

@@ -16,6 +16,7 @@ import { useParams } from 'react-router-dom';
 import useLedger from '../../../hooks/useLedger';
 import { use } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { toast } from 'react-toastify';
 
 const CreateVoucher = () => {
     const { id } = useParams();
@@ -367,9 +368,13 @@ const CreateVoucher = () => {
         ledgerId: Yup.string().required('Party account is required'),
     });
 
+
+    console.log(Vouchers,"humsath");
+    
     const GetVoucherNos = async () => {
         try {
-            const response = await fetch(`${GET_VoucherNos_URL}/${Vouchers?.typeOfVoucher}`, {
+       
+            const response = await fetch(`${GET_VoucherNos_URL}/${Vouchers.id}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -378,6 +383,8 @@ const CreateVoucher = () => {
             });
 
             const data = await response.json();
+            console.log(data,"humnahi");
+            
             if (response.ok) {
                 setvoucherNos(data);
                 return data;
@@ -394,7 +401,7 @@ const CreateVoucher = () => {
 
     useEffect(() => {
         GetVoucherNos()
-    }, [Vouchers?.typeOfVoucher])
+    }, [])
 
     let lastvoucher = 0;
     if (voucherNos.length > 0) {
@@ -442,10 +449,12 @@ const CreateVoucher = () => {
                         currentBalance: "",
                         gstRegistration: Vouchers.defGstRegist || "",
                         narration: "",
+                        isExport: false,
                         totalAmount: 0,
                         totalIgst: 0,
                         totalSgst: 0,
                         totalCgst: 0,
+
                         totalGst: 0,
                         paymentDetails: [{
                             productsId: null,
@@ -639,6 +648,21 @@ const CreateVoucher = () => {
                                                         className=" w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                     />
                                                     <ErrorMessage name="gstRegistration" component="div" className="text-red-500" />
+                                                </div>
+
+                                                <div className="flex-2 min-w-[250px] ml-5">
+                                                    <label className="mt-7 mb-2  block text-black dark:text-white">Is Export</label>
+                                                    <div className="flex items-center gap-3">
+                                                        <Field
+                                                            name="isExport"
+                                                            type="checkbox"
+                                                            className="h-5 w-5 rounded border-stroke bg-transparent text-primary focus:ring-primary dark:border-form-strokedark dark:bg-form-input"
+                                                        />
+                                                        <span className="text-sm text-gray-600 dark:text-gray-300">
+                                                            {values.isExport ? 'Yes (Export)' : 'No (Domestic)'}
+                                                        </span>
+                                                    </div>
+                                                    <ErrorMessage name="isExport" component="div" className="text-red-500 text-sm mt-1" />
                                                 </div>
                                             </div>
 

@@ -9,7 +9,7 @@ import useOrder from '../../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import Pagination from '../../Pagination/Pagination';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customStyles as createCustomStyles } from '../../../Constants/utils';
 import { MdCreateNewFolder } from "react-icons/md";
@@ -23,7 +23,7 @@ import { FaPrint } from "react-icons/fa";
 
 const VoucherEntriesView = () => {
 
-
+    const { id } = useParams();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
     const [isLoading, setisLoading] = useState(false)
@@ -78,11 +78,11 @@ const VoucherEntriesView = () => {
 
 
 
-    const getVoucher = async (page = 1, filters = {}) => {
+    const getVoucher = async (page = 0, filters = {}) => {
 
 
         try {
-            const response = await fetch(`${GET_VoucherEntriessearch_URL}?page=${page}`, {
+            const response = await fetch(`${GET_VoucherEntriessearch_URL}/${id}/search?page=${page}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -113,7 +113,7 @@ const VoucherEntriesView = () => {
                 totalItems: data?.totalElements || 0,
                 data: data?.content || [],
                 totalPages: data?.totalPages || 1,
-                currentPage: data?.number !== undefined ? data.number + 1 : 1,
+                currentPage: data?.number !== undefined ? data.number  : 0,
                 itemsPerPage: data?.size || 10,
             });
 

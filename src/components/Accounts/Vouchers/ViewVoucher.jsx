@@ -350,7 +350,7 @@ const ViewVoucher = () => {
                         <FiEdit
                             size={17}
                             className="text-teal-500 hover:text-teal-700 mx-2"
-                            onClick={() => navigate(`/Voucher/updateVoucher/${item?.VoucherId}`)}
+                            onClick={() => navigate(`/Voucher/update/${item?.id}`)}
                             title="Edit Voucher"
                         />
 
