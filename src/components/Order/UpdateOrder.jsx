@@ -324,15 +324,24 @@ const UpdateOrder = () => {
       setprodIdOptions(formattedProdIdOptions);
     }
 
+    // if (customer) {
+    //   const formattedCustomerOptions = customer.map(customer => ({
+    //     value: customer.id,
+    //     label: customer?.customerName,
+    //     customerObject: customer,
+    //     customer: customer.id
+    //   }));
+    //   setcustomerOptions(formattedCustomerOptions);
+    // }
     if (customer) {
-      const formattedCustomerOptions = customer.map(customer => ({
-        value: customer.id,
-        label: customer?.customerName,
-        customerObject: customer,
-        customer: customer.id
-      }));
-      setcustomerOptions(formattedCustomerOptions);
-    }
+  const formattedCustomerOptions = customer.map(c => ({
+    value: c.id,
+    label: c.customerName,
+    data: c   // <-- Required key
+  }));
+  setcustomerOptions(formattedCustomerOptions);
+}
+
   }, [orderTypee]);
 
 
@@ -357,10 +366,10 @@ const UpdateOrder = () => {
   //   { value: 'NO T&L', label: 'NO T&L' },
   // ];
 
-  const productgrp = [
-    { value: 'Embroidery', label: 'Embroidery' },
-    { value: 'Dyeing', label: 'Dyeing' },
-    { value: 'Plain Order', label: 'Plain Order' },
+   const productgrp = [
+    { value: 'KLC', label: 'KLC' },
+    { value: 'CLIENT', label: 'CLIENT' },
+    { value: 'NO T&L', label: 'NO T&L' },
   ];
 
 
@@ -635,101 +644,142 @@ const UpdateOrder = () => {
       <div>
         <Formik
           enableReinitialize={true}
-          initialValues={{
-            orderNo: order?.orderNo || '',
-            orderType: order?.orderType || '',
-            customer: order?.customer?.customerName || '',
-            purchaseOrderNo: order?.purchaseOrderNo || '',
-            poDate: order?.poDate || '',
-            salesChannel: order?.salesChannel || '',
-            employeeName: order?.employeeName || '',
-            customisationDetails: order?.customisationDetails || '',
-            orderDate: order?.orderDate || '',
-            expectingDate: order?.expectingDate || '',
-            shippingDate: '',
-            tagsAndLabels: order?.tagsAndLabels || '',
-            logoNo: '',
-            clientInstruction: order?.clientInstruction || '',
+          // initialValues={{
+          //   orderNo: order?.orderNo || '',
+          //   orderType: order?.orderType || '',
+          //   // customer: order?.customer?.customerName || '',
+          //   customer: order?.customer || null,
+
+          //   purchaseOrderNo: order?.purchaseOrderNo || '',
+          //   poDate: order?.poDate || '',
+          //   salesChannel: order?.salesChannel || '',
+          //   employeeName: order?.employeeName || '',
+          //   customisationDetails: order?.customisationDetails || '',
+          //   orderDate: order?.orderDate || '',
+          //   expectingDate: order?.expectingDate || '',
+          //   shippingDate: '',
+          //   tagsAndLabels: order?.tagsAndLabels || '',
+          //   // logoNo: '',
+          //   logoNo: order?.logoNo || '',
+
+          //   clientInstruction: order?.clientInstruction || '',
           
-            // ✅ Only One `orderProducts` Key
-            orderProducts: [
-              // Include existing `orderProducts`
-              ...(order?.orderProducts?.map((product) => ({
-                // products: {
-                //   id: product.products?.id || '',  // Ensure `id` is sent, not `productId`
-                // },
-                products: {
-                  ...product.products,
-                  productId: product.products?.productId || '',  // Set initial value for productId
-                },
+          //   // ✅ Only One `orderProducts` Key
+          //   orderProducts: [
+          //     // Include existing `orderProducts`
+          //     ...(order?.orderProducts?.map((product) => ({
+          //       // products: {
+          //       //   id: product.products?.id || '',  // Ensure `id` is sent, not `productId`
+          //       // },
+          //       products: {
+          //         ...product.products,
+          //         productId: product.products?.productId || '',  // Set initial value for productId
+          //       },
   
-                orderCategory: product.orderCategory || '',
-                inStockQuantity: product.inStockQuantity || '',
-                clientOrderQuantity: product.clientOrderQuantity || '',
-                quantityToManufacture: product.quantityToManufacture || '',
-                units: product.units || '',
-                value: product.value || '',
-                clientShippingDate: product.clientShippingDate || '',
-                expectedDate: product.expectedDate || '',
-                // productSuppliers: product.productSuppliers?.map(supplier => ({
-                //   supplierName: supplier.supplier?.name || '',
-                //   supplierOrderQty: supplier.supplierOrderQty || 0,
-                // })) || [],
+          //       orderCategory: product.orderCategory || '',
+          //       inStockQuantity: product.inStockQuantity || '',
+          //       clientOrderQuantity: product.clientOrderQuantity || '',
+          //       quantityToManufacture: product.quantityToManufacture || '',
+          //       units: product.units || '',
+          //       value: product.value || '',
+          //       clientShippingDate: product.clientShippingDate || '',
+          //       expectedDate: product.expectedDate || '',
+          //       // productSuppliers: product.productSuppliers?.map(supplier => ({
+          //       //   supplierName: supplier.supplier?.name || '',
+          //       //   supplierOrderQty: supplier.supplierOrderQty || 0,
+          //       // })) || [],
 
-                // productSuppliers: product.productSuppliers?.map((supplier) => ({
-                //   supplier: {
-                //     id: supplier?.supplier?.id || '',
-                //     name: supplier?.supplier?.name || '',
-                //   },
-                //   supplierOrderQty: supplier.supplierOrderQty || 0,
-                // })) || []
+          //       // productSuppliers: product.productSuppliers?.map((supplier) => ({
+          //       //   supplier: {
+          //       //     id: supplier?.supplier?.id || '',
+          //       //     name: supplier?.supplier?.name || '',
+          //       //   },
+          //       //   supplierOrderQty: supplier.supplierOrderQty || 0,
+          //       // })) || []
 
-                productSuppliers: [
-                  ...(product.productSuppliers?.map((supplier) => ({
-                    supplier: {
-                      id: supplier?.supplier?.id || '',
-                      //name: supplier?.supplier?.name || '',
-                    },
-                    supplierOrderQty: supplier.supplierOrderQty || 0,
-                  })) || []),
+          //       productSuppliers: [
+          //         ...(product.productSuppliers?.map((supplier) => ({
+          //           supplier: {
+          //             id: supplier?.supplier?.id || '',
+          //             //name: supplier?.supplier?.name || '',
+          //           },
+          //           supplierOrderQty: supplier.supplierOrderQty || 0,
+          //         })) || []),
             
-                  // ✅ Add a New Supplier Entry
-                  {
-                    supplier: {
-                      //id: id || '', // Supplier ID
-                      id: Number(id) || 0, // ✅ Ensure Supplier ID is stored as a number
-                    },
-                    supplierOrderQty: "",
-                  },
-                ],
+          //         // ✅ Add a New Supplier Entry
+          //         {
+          //           supplier: {
+          //             //id: id || '', // Supplier ID
+          //             id: Number(id) || 0, // ✅ Ensure Supplier ID is stored as a number
+          //           },
+          //           supplierOrderQty: "",
+          //         },
+          //       ],
               
-              })) || []),
+          //     })) || []),
           
-              // ✅ Merge `prodIdModal` Data
-              ...(prodIdModal?.map((item) => ({
-                products: {
-                  id: item.id || '',  // Ensure `id` is sent correctly
-                },
-                orderCategory: item.orderCatagory || '',
-                inStockQuantity: '',
-                clientOrderQuantity: '',
-                quantityToManufacture: '',
-                units: '',
-                value: '',
-                clientShippingDate: '',
-                expectedDate: '',
-                //productSuppliers: [],
-                productSuppliers: [
-                  {
-                    supplier: {
-                      id: id  || '', // Supplier ID
-                    },
-                    supplierOrderQty: "",
-                  },
-                ],
-              })) || [])
-            ]
-          }}
+          //     // ✅ Merge `prodIdModal` Data
+          //     ...(prodIdModal?.map((item) => ({
+          //       products: {
+          //         id: item.id || '',  // Ensure `id` is sent correctly
+          //       },
+          //       orderCategory: item.orderCatagory || '',
+          //       inStockQuantity: '',
+          //       clientOrderQuantity: '',
+          //       quantityToManufacture: '',
+          //       units: '',
+          //       value: '',
+          //       clientShippingDate: '',
+          //       expectedDate: '',
+          //       //productSuppliers: [],
+          //       productSuppliers: [
+          //         {
+          //           supplier: {
+          //             id: id  || '', // Supplier ID
+          //           },
+          //           supplierOrderQty: "",
+          //         },
+          //       ],
+          //     })) || [])
+          //   ]
+          // }}
+          initialValues={{
+  orderNo: order?.orderNo || '',
+ orderType: order?.orderType || '',
+  customer: order?.customer || null,
+  purchaseOrderNo: order?.purchaseOrderNo || '',
+  poDate: order?.poDate || '',
+  salesChannel: order?.salesChannel || '',
+  employeeName: order?.employeeName || '',
+  customisationDetails: order?.customisationDetails || '',
+  orderDate: order?.orderDate || '',
+  expectingDate: order?.expectingDate || '',
+  shippingDate: order?.shippingDate || '', // map from backend
+  tagsAndLabels: order?.tagsAndLabels || '',
+  logoNo: order?.logoNo || '',
+  clientInstruction: order?.clientInstruction || '',
+  orderProducts: order?.orderProducts?.map(product => ({
+    // products: { id: product.products?.id || '' }, // match backend
+    products: {
+  id: product.products.id,
+  productId: product.products.productId,   // ✅ THIS LINE IS MISSING
+},
+
+    orderCategory: product.orderCategory || '',
+    inStockQuantity: product.inStockQuantity || '',
+    clientOrderQuantity: product.clientOrderQuantity || '',
+    quantityToManufacture: product.quantityToManufacture || '',
+    units: product.units || '',
+    value: product.value || '',
+    clientShippingDate: product.clientShippingDate || '',
+    expectedDate: product.expectedDate || '',
+    productSuppliers: product.productSuppliers?.map(supplier => ({
+      supplier: { id: supplier?.supplier?.id || '' },
+      supplierOrderQty: supplier.supplierOrderQty || 0
+    })) || []
+  })) || []
+}}
+
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
@@ -798,7 +848,7 @@ const UpdateOrder = () => {
                       <div >
                         <div className="flex-1 min-w-[300px] mt-4">
                           <label className="mb-2.5 block text-black dark:text-white">Customer</label>
-                          <ReactSelect
+                          {/* <ReactSelect
                             name="Customer"
 
                             // onChange={(option) => setFieldValue('orderType', option ? option.orderTypeObject : null)}
@@ -812,7 +862,26 @@ const UpdateOrder = () => {
                             options={customerOptions}
                             classNamePrefix="react-select"
                             placeholder="Select Customer"
-                          />
+                          /> */}
+                          <ReactSelect
+  name="customer"
+  styles={customStyles}
+  className="bg-white dark:bg-form-Field"
+  value={
+    values.customer
+      ? {
+          label: values.customer.customerName,
+          value: values.customer.id,
+          data: values.customer
+        }
+      : null
+  }
+  onChange={(option) => setFieldValue("customer", option ? option.data : null)}
+  options={customerOptions}
+  classNamePrefix="react-select"
+  placeholder="Select Customer"
+/>
+
                           <ErrorMessage name="Customer" component="div" className="text-red-600 text-sm" />
                         </div>
                         <div className="flex flex-wrap gap-4">
@@ -919,7 +988,7 @@ const UpdateOrder = () => {
                           name="tagsAndLabels"
                           // value={productgrp.find(option => option.value === values.tags)}
                           value={productgrp.find(option => option.value === values.tagsAndLabels) || null}
-                          onChange={(option) => setFieldValue('tags', option.value)}
+                          onChange={(option) => setFieldValue('tagsAndLabels', option.value)}
                           onBlur={handleBlur}
                           options={productgrp}
                           styles={customStyles}
@@ -1077,13 +1146,17 @@ const UpdateOrder = () => {
                                 <Field
                                   name={`orderProducts[${index}].products.productId`}
                                   // value={values.orderProducts[index]?.products?.productId || ""}
-                                  onChange={(e) => {
-                                    const newValue = e.target.value;
-                                    console.log(`New Product ID: ${newValue}`);
-                                    setFieldValue(`orderProducts[${index}].products.productId`, newValue);  // Update the Formik state
-                                  }}
+                                  value={values.orderProducts?.[index]?.products?.productId || ""}
+
+                                  // onChange={(e) => {
+                                  //   const newValue = e.target.value;
+                                  //   console.log(`New Product ID: ${newValue}`);
+                                  //   setFieldValue(`orderProducts[${index}].products.productId`, newValue);  // Update the Formik state
+                                  // }}
                                   className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                   placeholder="Enter Product ID"
+                                  readOnly
+
                                 />
 
 
