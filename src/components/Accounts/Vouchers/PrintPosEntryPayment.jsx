@@ -1,11 +1,11 @@
-// PrintEntryPayment.jsx
+// PrintPosEntryPayment.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { PRINTEntries_URL } from '../../../Constants/utils';
 
-const PrintEntryPayment = () => {
+const PrintPosEntryPayment = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const { id, location } = useParams(); // location will be 'delhi' or 'srinagar'
@@ -676,4 +676,4 @@ const PrintEntryPayment = () => {
     );
 };
 
-export default PrintEntryPayment;
+export default PrintPosEntryPayment;

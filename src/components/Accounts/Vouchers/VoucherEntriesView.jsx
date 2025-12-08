@@ -145,8 +145,8 @@ const VoucherEntriesView = () => {
     const handlePageChange = (newPage) => {
         console.log("Page change requested:", newPage);
 
-        setPagination((prev) => ({ ...prev, currentPage: newPage }));
-        getVoucher(newPage - 1); // Correct function name and 1-indexed for user interaction
+        setPagination((prev) => ({ ...prev, currentPage: newPage-1 }));
+        getVoucher(newPage -1); // Correct function name and 1-indexed for user interaction
     };
 
     console.log(Voucher, "heyVoucher");
@@ -166,7 +166,7 @@ const VoucherEntriesView = () => {
             );
         }
 
-        const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
+          const startingSerialNumber = (pagination.currentPage * pagination.itemsPerPage) + 1;
 
         const handleDelete = async (e, id) => {
             e.preventDefault();
@@ -206,6 +206,7 @@ const VoucherEntriesView = () => {
 
 
 
+console.log(Voucher,"amjh");
 
 
 
@@ -289,8 +290,9 @@ const VoucherEntriesView = () => {
 
         console.log(values, "valiiiiii");
         const filters = {
+            voucherId: Number(id)||"",
 
-            receiptNumber: values.receiptNumber || undefined,
+            recieptNumber: values.recieptNumber || undefined,
             fromDate: values.fromDate || undefined,
             toDate: values.toDate || undefined,
             gstRegistration: values.gstRegistration || undefined,
@@ -328,7 +330,7 @@ const VoucherEntriesView = () => {
                     <div className='items-center justify-center'>
                         <Formik
                             initialValues={{
-                                receiptNumber: "",
+                                recieptNumber: "",
                                 fromDate: "",
                                 toDate: "",
                                 gstRegistration: "",
@@ -344,7 +346,7 @@ const VoucherEntriesView = () => {
                                             <label className="mb-2.5 block text-black dark:text-white">Receipt Number</label>
                                             <Field
                                                 type="text"
-                                                name="receiptNumber"
+                                                name="recieptNumber"
                                                 placeholder="Enter Receipt Number"
                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                             />
@@ -443,7 +445,7 @@ const VoucherEntriesView = () => {
                                 </tbody>
                             </table>
                         </div>
-                        <Pagination totalPages={pagination.totalPages} currentPage={pagination.currentPage} handlePageChange={handlePageChange} />
+                        <Pagination totalPages={pagination.totalPages} currentPage={pagination.currentPage+1} handlePageChange={handlePageChange} />
                     </div>
 
 

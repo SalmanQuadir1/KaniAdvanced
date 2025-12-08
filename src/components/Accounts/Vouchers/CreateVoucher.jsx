@@ -174,7 +174,7 @@ const CreateVoucher = () => {
 
             if (response.ok && Array.isArray(data)) {
                 const productOptions = data.map(prod => ({
-                    value: prod.id,
+                    value: prod.product.id,
                     label: prod.product.productDescription,
                     price: prod.product?.retailMrp,
                     hsnCode: prod.product?.hsnCode || '',
@@ -322,7 +322,7 @@ const CreateVoucher = () => {
 
             // Calculate total quantity
             totalQuantity += (entry.quantity || 1);
-            console.log(entry, "kukuauti");
+     
 
 
             // Only calculate GST if no discount is applied
@@ -386,12 +386,21 @@ const CreateVoucher = () => {
             console.log(data,"humnahi");
             
             if (response.ok) {
-                setvoucherNos(data);
-                return data;
-            } else {
-                toast.error(`${data.errorMessage}`);
-                return null;
-            }
+    // Simple and direct approach
+    const receiptNum = parseInt(data?.receiptNumber);
+    
+    if (!isNaN(receiptNum)) {
+        setvoucherNos([receiptNum]); // Store as array with one number
+    } else {
+        setvoucherNos([]); // Store empty array if invalid
+    }
+    
+    return data;
+} else {
+    toast.error(data.errorMessage || "Error");
+    setvoucherNos([]);
+    return null;
+}
         } catch (error) {
             console.error(error);
             toast.error("An error occurred");
@@ -399,9 +408,12 @@ const CreateVoucher = () => {
         }
     };
 
-    useEffect(() => {
-        GetVoucherNos()
-    }, [])
+  useEffect(() => {
+    // Only call GetVoucherNos when Vouchers.id is available
+    if (Vouchers?.id) {
+        GetVoucherNos();
+    }
+}, [Vouchers.id]);
 
     let lastvoucher = 0;
     if (voucherNos.length > 0) {
@@ -440,7 +452,7 @@ const CreateVoucher = () => {
             <div>
                 <Formik
                     initialValues={{
-                        recieptNumber: nextVoucher,
+                        recieptNumber: `${nextVoucher}`,
                         supplierInvoiceNumber: '',
                         date: '',
                         voucherId: Number(id),
