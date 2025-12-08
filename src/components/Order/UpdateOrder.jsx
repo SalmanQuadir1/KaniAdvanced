@@ -333,17 +333,31 @@ const UpdateOrder = () => {
     //   }));
     //   setcustomerOptions(formattedCustomerOptions);
     // }
-    if (customer) {
-  const formattedCustomerOptions = customer.map(c => ({
-    value: c.id,
-    label: c.customerName,
-    data: c   // <-- Required key
-  }));
-  setcustomerOptions(formattedCustomerOptions);
-}
+
+//     if (customer) {
+//   const formattedCustomerOptions = customer.map(c => ({
+//     value: c.id,
+//     label: c.customerName,
+//     data: c   // <-- Required key
+//   }));
+//   setcustomerOptions(formattedCustomerOptions);
+// }
+
+
 
   }, [orderTypee]);
 
+
+  useEffect(() => {
+  if (customer && Array.isArray(customer)) {
+    const formatted = customer.map(c => ({
+      value: c.id,
+      label: c.customerName,
+      data: c
+    }));
+    setcustomerOptions(formatted);
+  }
+}, [customer]);   // <-- IMPORTANT
 
   
 
