@@ -35,7 +35,7 @@ const HsnCode = () => {
                     }}
                     onSubmit={handleSubmit}
                 >
-                    {({ isSubmitting }) => (
+                    {({ isSubmitting,setFieldValue,values }) => (
                         <Form>
                             <div className="flex flex-col gap-9">
                                 {/* Form fields */}
@@ -69,6 +69,24 @@ const HsnCode = () => {
                                             </div>
                                         </div>
                                         <div className="mb-4.5 flex flex-wrap gap-6">
+
+                                               <div className="flex-1 min-w-[300px]">
+                                                <label className="mb-2.5 block text-black dark:text-white"> Gst (%)</label>
+                                                <Field
+                                                    type="number"
+                                                    name="gst"
+                                                    onChange={(e)=>{
+                                                        const gstValue= parseFloat(e.target.value)
+                                                        setFieldValue("cgst",(gstValue/2))
+                                                        setFieldValue("sgst",(gstValue/2))
+                                                    
+                                                    }
+                                                    }
+                                                    placeholder="Enter Gst"
+                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                />
+                                                <ErrorMessage name="gst" component="div" className="text-red-500" />
+                                            </div>
                                             <div className="flex-1 min-w-[300px]">
                                                 <label className="mb-2.5 block text-black dark:text-white"> CGST (%)</label>
                                                 <Field

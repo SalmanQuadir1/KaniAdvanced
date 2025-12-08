@@ -414,11 +414,13 @@ export const GETPRODUCTBYSUPPLIER = `${BASE_URL}/order/order-products/accepted`;
 
 //lut 
 
-export const ADD_Lut_URL = `${BASE_URL}/lut/save`;
-export const DELETE_Lut_URL = `${BASE_URL}/entryPayment/add`;
-export const GET_LutBYID = `${BASE_URL}/voucher/addVoucher`;
-export const UPDATELut_URL = `${BASE_URL}/entryPayment/add`;
-export const GET_Lut_URL = `${BASE_URL}/lut/viewAll`;
+export const ADD_Lut_URL = `${BASE_URL}/api/lut/save`;
+export const DELETE_Lut_URL = `${BASE_URL}/api/entryPayment/add`;
+export const GET_LutBYID = `${BASE_URL}/api/voucher/addVoucher`;
+export const UPDATELut_URL = `${BASE_URL}/api/entryPayment/add`;
+export const GET_Lut_URL = `${BASE_URL}/api/lut/viewAll`;
+
+export const TOGGLE_Lut_URL = `${BASE_URL}/api/lut/toggle`;
 
 
 

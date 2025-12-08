@@ -9,10 +9,16 @@ import { FiEdit, FiTrash2, FiCheck, FiX } from 'react-icons/fi';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 
+import { FaToggleOn } from "react-icons/fa";
+import { FaToggleOff } from "react-icons/fa";
+
+
+import { TOGGLE_Lut_URL } from '../../../Constants/utils';
+
 const AddLut = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
-    
+
     const {
         AddLut,
         edit,
@@ -51,16 +57,18 @@ const AddLut = () => {
     // Function to toggle LUT active status
     const toggleLutActive = async (lutId, currentStatus) => {
         try {
-            const response = await fetch(`/api/lut/${lutId}/toggle-active`, {
+            const response = await fetch(`${TOGGLE_Lut_URL}/${lutId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({
-                    isActive: !currentStatus
-                })
+                // body: JSON.stringify({
+                //     isActive: !currentStatus
+                // })
             });
+            console.log(response, "luyyyyy");
+
 
             const data = await response.json();
 
@@ -68,38 +76,16 @@ const AddLut = () => {
                 toast.success(`LUT ${!currentStatus ? 'activated' : 'deactivated'} successfully`);
                 getLut(); // Refresh the list
             } else {
-                toast.error(data.message || 'Failed to update LUT status');
+                toast.error(data.errorMessage || 'Failed to update LUT status');
             }
         } catch (error) {
             console.error('Error toggling LUT status:', error);
-            toast.error('Failed to update LUT status');
+            toast.error('Failed to update LUT status', error.errorMessage);
         }
     };
 
     // Function to activate a specific LUT (and deactivate others)
-    const activateLut = async (lutId) => {
-        try {
-            const response = await fetch(`/api/lut/${lutId}/activate`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
 
-            const data = await response.json();
-
-            if (response.ok) {
-                toast.success('LUT activated successfully');
-                getLut(); // Refresh the list
-            } else {
-                toast.error(data.message || 'Failed to activate LUT');
-            }
-        } catch (error) {
-            console.error('Error activating LUT:', error);
-            toast.error('Failed to activate LUT');
-        }
-    };
 
     return (
         <DefaultLayout>
@@ -140,7 +126,7 @@ const AddLut = () => {
                                                     />
                                                     <ErrorMessage name="lutNumber" component="div" className="text-red-500 text-sm mt-1" />
                                                 </div>
-                                                
+
                                                 <div className="flex-1 min-w-[250px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">From Date</label>
                                                     <Field
@@ -158,7 +144,7 @@ const AddLut = () => {
                                                     />
                                                     <ErrorMessage name="fromDate" component="div" className="text-red-500 text-sm mt-1" />
                                                 </div>
-                                                
+
                                                 <div className="flex-1 min-w-[250px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">To Date</label>
                                                     <Field
@@ -170,7 +156,7 @@ const AddLut = () => {
                                                 </div>
 
                                                 {/* Active Checkbox for new LUT */}
-                                                {!edit && (
+                                                {/* {!edit && (
                                                     <div className="flex-1 min-w-[250px] flex items-center">
                                                         <div className="mt-6">
                                                             <label className="flex items-center">
@@ -188,7 +174,7 @@ const AddLut = () => {
                                                             </p>
                                                         </div>
                                                     </div>
-                                                )}
+                                                )} */}
                                             </div>
                                         </div>
 
@@ -239,11 +225,9 @@ const AddLut = () => {
                                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                                                 To Date
                                                             </th>
+
                                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                                Status
-                                                            </th>
-                                                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                                                                Active
+                                                                Active/InActive
                                                             </th>
                                                             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                                                                 Actions
@@ -257,7 +241,7 @@ const AddLut = () => {
                                                             const currentDate = new Date();
                                                             const toDate = new Date(lut.toDate);
                                                             const isExpired = currentDate > toDate;
-                                                            const isActive = lut.isActive && !isExpired;
+                                                            const isActive = lut.isActiveLut && !isExpired;
 
                                                             return (
                                                                 <tr key={lut.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
@@ -273,29 +257,29 @@ const AddLut = () => {
                                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
                                                                         {formatDisplayDate(lut.toDate)}
                                                                     </td>
-                                                                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                                                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                                                            isExpired 
-                                                                                ? 'bg-red-100 text-red-800'
-                                                                                : isActive
-                                                                                ? 'bg-green-100 text-green-800'
-                                                                                : 'bg-yellow-100 text-yellow-800'
-                                                                        }`}>
-                                                                            {isExpired ? 'Expired' : (isActive ? 'Active' : 'Inactive')}
-                                                                        </span>
-                                                                    </td>
+
+
                                                                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                                         <button
+                                                                            type='button'
                                                                             onClick={() => toggleLutActive(lut.id, lut.isActive)}
                                                                             disabled={isExpired}
-                                                                            className={`p-2 rounded-full transition-all ${
-                                                                                lut.isActive 
-                                                                                    ? 'bg-green-100 text-green-600 hover:bg-green-200' 
-                                                                                    : 'bg-gray-100 text-gray-400 hover:bg-gray-200'
-                                                                            } ${isExpired ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                                                                            title={isExpired ? 'Cannot activate expired LUT' : (lut.isActive ? 'Deactivate' : 'Activate')}
+                                                                            className={`p-2 rounded-full transition-all ${lut.isActiveLut
+                                                                                    ? ' text-green-600 '
+                                                                                    : 'text-gray-400'
+                                                                                } ${isExpired ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                                                                            title={isExpired ? 'Cannot activate expired LUT' : (lut.isActiveLut ? 'Deactivate' : 'Activate')}
                                                                         >
-                                                                            {lut.isActive ? <FiCheck size={16} /> : <FiX size={16} />}
+                                                                            <span className='flex gap-2'>
+                                                                            {lut.isActiveLut ? <FaToggleOn size={26} /> : <FaToggleOff size={26} />}  <span className={` flex px-3 py-1 rounded-full text-xs font-medium ${isExpired
+                                                                                    ? 'bg-red-100 text-red-800'
+                                                                                    : isActive
+                                                                                        ? 'bg-green-100 text-green-800'
+                                                                                        : 'bg-yellow-100 text-yellow-800'
+                                                                                }`}>
+                                                                                {  (isActive ? 'Active' : 'Inactive')}
+                                                                            </span>
+                                                                            </span>
                                                                         </button>
                                                                     </td>
                                                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">
