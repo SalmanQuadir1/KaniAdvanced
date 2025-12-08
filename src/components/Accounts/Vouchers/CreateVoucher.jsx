@@ -461,6 +461,10 @@ const CreateVoucher = () => {
                         currentBalance: "",
                         gstRegistration: Vouchers.defGstRegist || "",
                         narration: "",
+                        modeOfPayment:"",
+                        cardNumber:"",
+                        transactionId:"",
+
                         isExport: false,
                         totalAmount: 0,
                         totalIgst: 0,
