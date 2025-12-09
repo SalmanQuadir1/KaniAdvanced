@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-
+import { useNavigate } from "react-router-dom";
 import ReactSelect from 'react-select';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/themes/material_blue.css'; // Import a Flatpickr theme
@@ -38,6 +38,7 @@ const UpdateOrder = () => {
   const [isLoading, setIsLoading] = useState(true); // Loader state
   const [customerOptions, setcustomerOptions] = useState([])
   const { token } = currentUser;
+  const navigate = useNavigate();
 
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [selectedRowIdProduct, setSelectedRowIdProduct] = useState(null);
@@ -262,6 +263,7 @@ const UpdateOrder = () => {
       if (response.ok) {
         console.log(data, "coming ");
         toast.success(`Order Updated successfully`);
+        navigate("/Order/ViewOrder");
       } else {
         toast.error(`${data.errorMessage}`);
       }
