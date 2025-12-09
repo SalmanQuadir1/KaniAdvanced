@@ -503,87 +503,70 @@ const PrintPosEntryPayment = () => {
                 Amount Chargeable (in words): INR {numberToWords(paymentData.totalAmount)}
             </div>
 
-            {/* HSN Summary */}
-            {/* HSN Summary Section - Simplified */}
-            {(() => {
-                // Separate CGST/SGST and IGST items
-                const cgstSgstItems = [];
-                const igstItems = [];
-
-                if (paymentData.paymentDetails && paymentData.paymentDetails.length > 0) {
-                    paymentData.paymentDetails.forEach(item => {
-                        if (item.hsnCode && item.hsnCode.hsnCodeName) {
-                            const gstCalc = item.gstCalculation || {};
-                            const quantity = item.quantity || 1;
-                            const taxableValue = (item.exclusiveGst || 0) * quantity;
-
-                            if (gstCalc.type === 'CGST+SGST') {
-                                cgstSgstItems.push({
-                                    hsnCode: item.hsnCode.hsnCodeName,
-                                    taxableValue: taxableValue,
-                                    cgstRate: gstCalc.cgstRate || 0,
-                                    sgstRate: gstCalc.sgstRate || 0,
-                                    cgstAmount: (gstCalc.cgstAmount || 0) * quantity,
-                                    sgstAmount: (gstCalc.sgstAmount || 0) * quantity,
-                                    totalTax: (gstCalc.totalGstAmount || 0) * quantity
-                                });
-                            } else if (gstCalc.type === 'IGST') {
-                                igstItems.push({
-                                    hsnCode: item.hsnCode.hsnCodeName,
-                                    taxableValue: taxableValue,
-                                    igstRate: gstCalc.igstRate || 0,
-                                    igstAmount: (gstCalc.totalGstAmount || 0) * quantity,
-                                    totalTax: (gstCalc.totalGstAmount || 0) * quantity
-                                });
-                            }
-                        }
-                    });
-                }
-
-                return (
-                    <>
-                        {/* CGST/SGST Table */}
-                        {cgstSgstItems.length > 0 && (
-                            <>
-                                <div style={styles.sectionTitle}>HSN Summary (CGST+SGST)</div>
-                                <table style={styles.table}>
-                                    <thead>
-                                        <tr>
-                                            <th style={styles.tableHeader}>HSN/SAC</th>
-                                            <th style={styles.tableHeader}>Taxable Value</th>
-                                            <th style={styles.tableHeader}>CGST Rate</th>
-                                            <th style={styles.tableHeader}>CGST Amount</th>
-                                            <th style={styles.tableHeader}>SGST Rate</th>
-                                            <th style={styles.tableHeader}>SGST Amount</th>
-                                            <th style={styles.tableHeader}>Total Tax</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {cgstSgstItems.map((item, index) => (
-                                            <tr key={index}>
-                                                <td style={styles.tableCell}>{item.hsnCode}</td>
-                                                <td style={styles.tableCell}>₹{formatCurrency(item.taxableValue)}</td>
-                                                <td style={styles.tableCell}>{item.cgstRate}%</td>
-                                                <td style={styles.tableCell}>₹{formatCurrency(item.cgstAmount)}</td>
-                                                <td style={styles.tableCell}>{item.sgstRate}%</td>
-                                                <td style={styles.tableCell}>₹{formatCurrency(item.sgstAmount)}</td>
-                                                <td style={styles.tableCell}>₹{formatCurrency(item.totalTax)}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </>
-                        )}
-
-                      
-                    </>
-                );
-            })()}
+       
 
             {/* Tax Amount in Words */}
             <div style={styles.sectionTitle}>
                 Tax Amount (in words): INR {numberToWords(paymentData.totalGst)}
             </div>
+
+
+    {/* Invoice Details */}
+           
+
+
+
+   <table style={styles.table}>
+                <tbody>
+
+
+                 
+
+                  
+
+                  
+                            <tr>
+                                <td style={styles.tableHeader}>Payment Details</td>
+                                <td style={styles.tableCell} colSpan="5">
+                                   <span className='font-semibold'> Mode Of Payment:</span> {paymentData?.modeOfPayment || ''} <br/>
+
+                                   {
+                                    paymentData?.modeOfPayment === 'Card' && (
+                                        <>
+                                          <span className='font-semibold'>  Card No:</span> {paymentData?.cardNumber || '-'} <br/>
+                                        </>
+                                    )
+                                   }
+                                   {
+                                    paymentData?.modeOfPayment === 'Cheque' && (
+                                        <>
+                                          <span className='font-semibold'>  Cheque No:</span> {paymentData?.cardNumber || '-'} <br/>
+                                        </>
+                                    )
+                                   }
+                                   {
+                                    paymentData?.modeOfPayment === 'Bank Transfer' && (
+                                        <>
+                                          <span className='font-semibold'>  Transaction Id:</span> {paymentData?.transactionId || '-'} <br/>
+                                        </>
+                                    )
+                                   }
+
+                                </td>
+                            </tr>
+                        
+                    
+                 
+                </tbody>
+            </table>
+
+
+
+
+
+
+
+
 
             {/* Declaration and Signatures */}
             <div style={styles.signatureArea}>
@@ -607,6 +590,8 @@ const PrintPosEntryPayment = () => {
                     </Col>
                 </Row>
             </div>
+
+        
 
             {/* Footer */}
             <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '10px' }}>
