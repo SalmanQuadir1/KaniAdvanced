@@ -265,6 +265,17 @@ console.log(Voucher,"amjh");
 
                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
+                        {
+                            item.posInvoicing===true &&
+
+                              <FaPrint
+                            size={17}
+                            className="text-teal-500 hover:text-teal-700 mx-2"
+                            onClick={() => navigate(`/printentrypaymentPos/${item.id}/${item.gstRegistration}`)}
+                            title="Print Entry"
+                        />
+
+                        }
                         <FaPrint
                             size={17}
                             className="text-teal-500 hover:text-teal-700 mx-2"

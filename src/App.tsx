@@ -20,6 +20,9 @@ import CreateVoucher from './components/Accounts/Vouchers/CreateVoucher.jsx';
 import VoucherEntriesView from './components/Accounts/Vouchers/VoucherEntriesView.jsx';
 
 import PrintEntryPayment from './components/Accounts/Vouchers/PrintEntryPayment.jsx';
+
+
+import PrintPosEntryPayment from './components/Accounts/Vouchers/PrintPosEntryPayment.jsx';
 import ViewVoucher from './components/Accounts/Vouchers/ViewVoucher.jsx';
 
 
@@ -422,6 +425,17 @@ function App() {
                 <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
                 <PageTitle title="Voucher Entries" />
                 <PrintEntryPayment />
+              </>
+            }
+          />
+
+          <Route
+            path="/printentrypaymentPos/:id/:gstRegistration"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Voucher Entries" />
+                <PrintPosEntryPayment />
               </>
             }
           />

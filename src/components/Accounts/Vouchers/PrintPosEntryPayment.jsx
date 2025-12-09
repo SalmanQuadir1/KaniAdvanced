@@ -348,54 +348,27 @@ const PrintPosEntryPayment = () => {
 
                     {/* Separate column for TAX INVOICE title */}
                     <Col md={4} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
-                        <div style={styles.invoiceTitle}>TAX INVOICE</div>
+                        <div style={styles.invoiceTitle}>Sale INVOICE</div>
                     </Col>
                 </Row>
             </div>
 
             {/* Consignee and Buyer Section */}
-            <table style={styles.table}>
-                <tbody>
-                    <tr>
-                        <td style={styles.tableHeader} width="50%">Consignee (Ship to)</td>
-                        <td style={styles.tableHeader} width="50%">Buyer (Bill to)</td>
-                    </tr>
-                    <tr>
-                        <td style={styles.tableCell}>
-                            <strong> {paymentData.ledgerName}</strong> <br />
-                            {paymentData.shippingAddress || paymentData.shippingAddress}<br />
-                            {/* <strong>State Name:</strong> {companyAddress.state}, <strong>Code:</strong> {companyAddress.stateCode} */}
-                        </td>
-                        <td style={styles.tableCell}>
-                            <strong> {paymentData.ledgerName}</strong> <br />
-                            {paymentData.billingAddress || paymentData.billingAddress}<br />
-                            {/* <strong>State Name:</strong> {companyAddress.state}, <strong>Code:</strong> {companyAddress.stateCode} */}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+    
 
             {/* Invoice Details */}
             <table style={styles.table}>
                 <tbody>
+
+
                     <tr>
-                        <td style={styles.tableHeader} width="25%">Invoice No.</td>
+                        <td style={styles.tableHeader} width="25%">Bill No.</td>
                         <td style={styles.tableCell} width="25%">{paymentData.recieptNumber}</td>
                         <td style={styles.tableHeader} width="25%">Dated</td>
                         <td style={styles.tableCell} width="25%">{formatDate(paymentData.date)}</td>
                     </tr>
-                    <tr>
-                        <td style={styles.tableHeader}>Delivery Note</td>
-                        <td style={styles.tableCell}>{paymentData.deliveryNote || '-'}</td>
-                        <td style={styles.tableHeader}>Mode/Terms of Payment</td>
-                        <td style={styles.tableCell}>{paymentData.paymentTerms || '-'}</td>
-                    </tr>
-                    <tr>
-                        <td style={styles.tableHeader}>Buyer's Order No.</td>
-                        <td style={styles.tableCell}>{paymentData.buyerOrderNo || '-'}</td>
-                        <td style={styles.tableHeader}>Delivery Note Date</td>
-                        <td style={styles.tableCell}>{formatDate(paymentData.deliveryNoteDate)}</td>
-                    </tr>
+
+                  
 
                     {
                         paymentData.isExport === true && (
@@ -409,12 +382,7 @@ const PrintPosEntryPayment = () => {
                             </tr>
                         )
                     }
-                    <tr>
-                        <td style={styles.tableHeader}>Buyer's Order No.</td>
-                        <td style={styles.tableCell}>{paymentData.buyerOrderNo || '-'}</td>
-                        <td style={styles.tableHeader}>Delivery Note Date</td>
-                        <td style={styles.tableCell}>{formatDate(paymentData.deliveryNoteDate)}</td>
-                    </tr>
+                 
                 </tbody>
             </table>
 
@@ -607,34 +575,7 @@ const PrintPosEntryPayment = () => {
                             </>
                         )}
 
-                        {/* IGST Table */}
-                        {igstItems.length > 0 && (
-                            <>
-                                <div style={styles.sectionTitle}>HSN Summary (IGST)</div>
-                                <table style={styles.table}>
-                                    <thead>
-                                        <tr>
-                                            <th style={styles.tableHeader}>HSN/SAC</th>
-                                            <th style={styles.tableHeader}>Taxable Value</th>
-                                            <th style={styles.tableHeader}>IGST Rate</th>
-                                            <th style={styles.tableHeader}>IGST Amount</th>
-                                            <th style={styles.tableHeader}>Total Tax</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {igstItems.map((item, index) => (
-                                            <tr key={index}>
-                                                <td style={styles.tableCell}>{item.hsnCode}</td>
-                                                <td style={styles.tableCell}>₹{formatCurrency(item.taxableValue)}</td>
-                                                <td style={styles.tableCell}>{item.igstRate}%</td>
-                                                <td style={styles.tableCell}>₹{formatCurrency(item.igstAmount)}</td>
-                                                <td style={styles.tableCell}>₹{formatCurrency(item.totalTax)}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </>
-                        )}
+                      
                     </>
                 );
             })()}
