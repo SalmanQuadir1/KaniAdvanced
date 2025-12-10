@@ -971,7 +971,7 @@ console.log(order,"umershah");
                       </div>
 
 
-
+{/* 
                       <div className="flex-1 min-w-[300px] mt-4">
                         <label className="mb-2.5 block text-black dark:text-white">Expected Receiving Date</label>
                         <Field
@@ -983,12 +983,9 @@ console.log(order,"umershah");
                         />
 
                         <ErrorMessage name="shippingDate" component="div" className="text-red-600 text-sm" />
-                      </div>
-                    </div>
+                      </div> */}
 
-
-                    <div className="flex flex-wrap gap-4">
-                      <div className="flex-1 min-w-[300px] mt-4">
+   <div className="flex-1 min-w-[300px] mt-4">
                         <label className="mb-2.5 block text-black dark:text-white">Tags</label>
                         <ReactSelect
                           name="tagsAndLabels"
@@ -1020,6 +1017,13 @@ console.log(order,"umershah");
                         </div>
                         <ErrorMessage name="logoNo" component="div" className="text-red-600 text-sm" />
                       </div>
+
+
+                    </div>
+
+
+                    <div className="flex flex-wrap gap-4">
+                   
 
                     </div>
 

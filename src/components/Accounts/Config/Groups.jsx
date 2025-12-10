@@ -260,6 +260,9 @@ const Groups = () => {
                                             </FieldArray>
                                         </div>
                                         {/* gst */}
+
+
+
                                         <div className="flex flex-wrap gap-4">
                                                 {/* GST DETAILS Section */}
                                                 <div className="flex-1 min-w-[250px]">
@@ -307,7 +310,7 @@ const Groups = () => {
                                                     <div className="mb-4.5 mt-6">
                                                         {/* Conditional Rendering: GST Details or HSN Code Section */}
                                                         {/* {gstDetails && gstDetails.length > 0 ? ( */}
-                                                        {values.gstratedetails === "Specify Slab Based Rates" ? (
+                                                        {values.gstratedetails === "Specify Slab Based Rates" &&values.gstDetails === "Applicable" ? (
 
                                                             // Render GST Details Section
                                                             <div className="flex flex-wrap gap-6">
@@ -356,7 +359,7 @@ const Groups = () => {
                                                                     </div>
                                                                 ))}
                                                             </div>
-                                                        ) : values.gstratedetails === "Use GST Classification " ? (
+                                                        ) : values.gstratedetails === "Use GST Classification " &&values.gstDetails === "Applicable" ? (
                                                             // Render HSN Code and Related Fields Section
                                                             <div className="mb-4.5 flex flex-wrap gap-6">
                                                                 <div className="flex-2 min-w-[250px]">

@@ -12,6 +12,7 @@ import { fetchsize } from '../redux/Slice/SizeSlice';
 import { fetchHsnCode } from '../redux/Slice/HsnCodeSlice';
 import { fetchsupplier } from '../redux/Slice/SupplierSlice';
 import { useNavigate } from 'react-router-dom';
+import { use } from 'react';
 
 
 
@@ -35,6 +36,8 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
     const [productList, setproductList] = useState([])
     const [units, setunits] = useState([])
     const [Location, setLocation] = useState([])
+
+   
 
     const [productmrp, setproductmrp] = useState([])
     const [currentProduct, setCurrentProduct] = useState({
@@ -495,11 +498,11 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
 
                 // Reset the form and states
                 resetForm();
-                setReferenceImages([]); // Reset reference images
-                setActualImages([]); // Reset actual images
+           
+                navigate("/product/viewProducts") // Refresh product list
                 window.location.reload();  // Reset form fields
                 setEdit(false); // Reset edit state
-                getProduct(pagination.currentPage || 1); // Refresh product list
+                getProduct(pagination.currentPage || 1);
             } else {
 
                 seterrorMessage(data)
