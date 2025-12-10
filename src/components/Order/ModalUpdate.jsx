@@ -49,7 +49,7 @@ const ModalUpdate = ({ isOpen, onRequestClose, onSubmit, prodIdd, width = "400px
 
 
       setproducts(data);
-      console.log(data,"datsaaaaa");
+      console.log(data, "datsaaaaa");
 
     } catch (error) {
       console.error(error);
@@ -116,7 +116,7 @@ const ModalUpdate = ({ isOpen, onRequestClose, onSubmit, prodIdd, width = "400px
                 orderCatagory: products.orderCatagory || '',
                 weight: products.finishedWeight || '',
                 // units: products.units || '',
-                units: products?.unit?.name||'',
+                units: products?.unit?.name || '',
                 colorGroup: products?.colors?.colorName || '',
                 warpColors: products.warpColors || '',
                 weftColors: products.weftColors || '',
@@ -313,20 +313,20 @@ const ModalUpdate = ({ isOpen, onRequestClose, onSubmit, prodIdd, width = "400px
 
 
                       <div className="flex-1 min-w-[300px] mt-4">
-                                              <label className="mb-2.5 block text-black dark:text-[rgb(200,200,200)]">Units</label>
-                                          
-                                              <Field
-                                               type="text"
-                                               // as="select" // Use 'as' to render a select element
-                                               id="units"
-                                               name="units"
-                                               disabled
-                                               value={products?.unit?.name}
-                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                                              />
-                                              <ErrorMessage name="units" component="div" className="text-red-600 text-sm" />
-                                            </div>
-                      
+                        <label className="mb-2.5 block text-black dark:text-[rgb(200,200,200)]">Units</label>
+
+                        <Field
+                          type="text"
+                          // as="select" // Use 'as' to render a select element
+                          id="units"
+                          name="units"
+                          disabled
+                          value={products?.unit?.name}
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                        <ErrorMessage name="units" component="div" className="text-red-600 text-sm" />
+                      </div>
+
 
 
 

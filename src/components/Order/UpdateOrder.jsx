@@ -72,7 +72,7 @@ const UpdateOrder = () => {
   const handleCheckboxChange = (selectedRowId, supplierId) => {
     setSelectedSuppliers((prev) => {
       const updated = [...prev];
-      
+
       const rowIndex = updated.findIndex(
         (row) => row.selectedRowId === selectedRowId
       );
@@ -146,16 +146,16 @@ const UpdateOrder = () => {
 
   console.log(selectedSuppliers, "selecteddddddddd Suppliersss");
 
-  const openSupplierModal = (id,rowIndex) => {
-    console.log("opening supplier  modal  after update", id,rowIndex);
+  const openSupplierModal = (id, rowIndex) => {
+    console.log("opening supplier  modal  after update", id, rowIndex);
     setIsSupplierModalOpen(true);
     setSelectedRowId(rowIndex);
     console.log(id, "ghson");
     setsuppId(id)
   };
 
-  const openSupplierModalProduct = (id,rowIndex) => {
-    console.log("opening supplier  modal  after update", id,rowIndex);
+  const openSupplierModalProduct = (id, rowIndex) => {
+    console.log("opening supplier  modal  after update", id, rowIndex);
     setIsSupplierModalOpenProduct(true);
     setSelectedRowId(rowIndex);
     console.log(id, "ghson");
@@ -173,7 +173,7 @@ const UpdateOrder = () => {
     setIsSupplierModalOpen(false);
   };
 
-  
+
   const closeSupplierModalProduct = () => {
     setIsSupplierModalOpenProduct(false);
   };
@@ -211,7 +211,7 @@ const UpdateOrder = () => {
 
 
 
-  //  const handleUpdateSubmit = async (values) => {
+  
 
   //                console.log(values,"jazim");
   //        try {
@@ -326,24 +326,6 @@ const UpdateOrder = () => {
       setprodIdOptions(formattedProdIdOptions);
     }
 
-    // if (customer) {
-    //   const formattedCustomerOptions = customer.map(customer => ({
-    //     value: customer.id,
-    //     label: customer?.customerName,
-    //     customerObject: customer,
-    //     customer: customer.id
-    //   }));
-    //   setcustomerOptions(formattedCustomerOptions);
-    // }
-
-//     if (customer) {
-//   const formattedCustomerOptions = customer.map(c => ({
-//     value: c.id,
-//     label: c.customerName,
-//     data: c   // <-- Required key
-//   }));
-//   setcustomerOptions(formattedCustomerOptions);
-// }
 
 
 
@@ -351,17 +333,17 @@ const UpdateOrder = () => {
 
 
   useEffect(() => {
-  if (customer && Array.isArray(customer)) {
-    const formatted = customer.map(c => ({
-      value: c.id,
-      label: c.customerName,
-      data: c
-    }));
-    setcustomerOptions(formatted);
-  }
-}, [customer]);   // <-- IMPORTANT
+    if (customer && Array.isArray(customer)) {
+      const formatted = customer.map(c => ({
+        value: c.id,
+        label: c.customerName,
+        data: c
+      }));
+      setcustomerOptions(formatted);
+    }
+  }, [customer]);   // <-- IMPORTANT
 
-  
+
 
   const customModalStyles = {
     content: {
@@ -376,13 +358,8 @@ const UpdateOrder = () => {
     },
   };
 
-  // const productgrp = [
-  //   { value: 'KLC', label: 'KLC' },
-  //   { value: 'CLIENT', label: 'CLIENT' },
-  //   { value: 'NO T&L', label: 'NO T&L' },
-  // ];
 
-   const productgrp = [
+  const productgrp = [
     { value: 'KLC', label: 'KLC' },
     { value: 'CLIENT', label: 'CLIENT' },
     { value: 'NO T&L', label: 'NO T&L' },
@@ -457,9 +434,20 @@ const UpdateOrder = () => {
   const handleModalSubmit = (values) => {
     console.log(values, "gfdsa");
 
+    setprodIdModal((prevValues) => {
+      console.log(prevValues, "jumpss");
+      const units =  values.units
+      // Ensure that previous values are preserved and the new ones are added.
+      return [...prevValues, {
+        units: units,
+        ...values,
+        // Ensure any additional data you need to keep is added
+      }];
+    });
+
+    // setprodIdModal((prevValues) => [...prevValues, values])
 
 
-    setprodIdModal((prevValues) => [...prevValues, values])
     setIsModalOpen(false)
 
   }
@@ -478,17 +466,17 @@ const UpdateOrder = () => {
 
   const handleDeleteSupplier = (rowIndex, supplierIndex, setFieldValue, values) => {
     console.log("Deleting supplier at row:", rowIndex, "supplier index:", supplierIndex);
-  
+
     if (!values || !values.orderProducts || !Array.isArray(values.orderProducts)) {
       console.error("Error: orderProducts is undefined or invalid.");
       return;
     }
-  
+
     if (!values.orderProducts[rowIndex]) {
       console.error(`Error: orderProducts[${rowIndex}] is undefined.`);
       return;
     }
-  
+
     setSelectedSuppliers((prev) => {
       const updated = prev.map((row) => {
         if (row.selectedRowId === rowIndex) {
@@ -497,32 +485,32 @@ const UpdateOrder = () => {
         }
         return row;
       }).filter((row) => row.supplierIds.length > 0);
-  
+
       return updated;
     });
-  
+
     // ✅ Remove the supplier from Formik field values
     const updatedProductSuppliers = values.orderProducts[rowIndex].productSuppliers?.filter(
       (_, idx) => idx !== supplierIndex
     ) || [];
-  
+
     setFieldValue(`orderProducts[${rowIndex}].productSuppliers`, updatedProductSuppliers);
   };
-  
-  
+
+
   const handleDeleteSupplierr = (rowIndex, supplierIndex, setFieldValue, values) => {
     console.log("Deleting supplier at row:", rowIndex, "supplier index:", supplierIndex);
-  
+
     if (!values || !values.orderProducts || !Array.isArray(values.orderProducts)) {
       console.error("Error: orderProducts is undefined or invalid.");
       return;
     }
-  
+
     if (!values.orderProducts[rowIndex]) {
       console.error(`Error: orderProducts[${rowIndex}] is undefined.`);
       return;
     }
-  
+
     setSelectedSuppliers((prev) => {
       const updated = prev.map((row) => {
         if (row.selectedRowId === rowIndex) {
@@ -531,19 +519,19 @@ const UpdateOrder = () => {
         }
         return row;
       }).filter((row) => row.supplierIds.length > 0);
-  
+
       return updated;
     });
-  
+
     // ✅ Remove the supplier from Formik field values
     const updatedProductSuppliers = values.orderProducts[rowIndex].productSuppliers?.filter(
       (_, idx) => idx !== supplierIndex
     ) || [];
-  
+
     setFieldValue(`orderProducts[${rowIndex}].productSuppliers`, updatedProductSuppliers);
   };
-  
-  
+
+
 
   // useEffect(() => {
   //   if (productId) {
@@ -572,6 +560,7 @@ const UpdateOrder = () => {
       productionComments: values.customisationDetails,
       poDate: values.poDate,
       orderCategory: values.orderCategory,
+      units: values.units,
       purchaseOrderNo: values.purchaseOrderNo,
       clientInstruction: values.clientInstruction,
       status: "Created", // Example static value
@@ -639,7 +628,7 @@ const UpdateOrder = () => {
   console.log(selectedSuppliers, "umerjj");
 
 
- const handleDeleteRow = (index) => {
+  const handleDeleteRow = (index) => {
     const updatedRows = prodIdModal.filter((_, i) => i !== index);
     console.log(updatedRows, "rowwwwwwwwwwwwws");
     setprodIdModal(updatedRows);
@@ -651,8 +640,9 @@ const UpdateOrder = () => {
 
 
 
-  
-  
+console.log(order,"umershah");
+
+
 
   return (
     <DefaultLayout>
@@ -679,7 +669,7 @@ const UpdateOrder = () => {
           //   logoNo: order?.logoNo || '',
 
           //   clientInstruction: order?.clientInstruction || '',
-          
+
           //   // ✅ Only One `orderProducts` Key
           //   orderProducts: [
           //     // Include existing `orderProducts`
@@ -691,7 +681,7 @@ const UpdateOrder = () => {
           //         ...product.products,
           //         productId: product.products?.productId || '',  // Set initial value for productId
           //       },
-  
+
           //       orderCategory: product.orderCategory || '',
           //       inStockQuantity: product.inStockQuantity || '',
           //       clientOrderQuantity: product.clientOrderQuantity || '',
@@ -721,7 +711,7 @@ const UpdateOrder = () => {
           //           },
           //           supplierOrderQty: supplier.supplierOrderQty || 0,
           //         })) || []),
-            
+
           //         // ✅ Add a New Supplier Entry
           //         {
           //           supplier: {
@@ -731,9 +721,9 @@ const UpdateOrder = () => {
           //           supplierOrderQty: "",
           //         },
           //       ],
-              
+
           //     })) || []),
-          
+
           //     // ✅ Merge `prodIdModal` Data
           //     ...(prodIdModal?.map((item) => ({
           //       products: {
@@ -760,49 +750,49 @@ const UpdateOrder = () => {
           //   ]
           // }}
           initialValues={{
-  orderNo: order?.orderNo || '',
- orderType: order?.orderType || '',
-  customer: order?.customer || null,
-  purchaseOrderNo: order?.purchaseOrderNo || '',
-  poDate: order?.poDate || '',
-  salesChannel: order?.salesChannel || '',
-  employeeName: order?.employeeName || '',
-  customisationDetails: order?.customisationDetails || '',
-  orderDate: order?.orderDate || '',
-  expectingDate: order?.expectingDate || '',
-  shippingDate: order?.shippingDate || '', // map from backend
-  tagsAndLabels: order?.tagsAndLabels || '',
-  logoNo: order?.logoNo || '',
-  clientInstruction: order?.clientInstruction || '',
-  orderProducts: order?.orderProducts?.map(product => ({
-    // products: { id: product.products?.id || '' }, // match backend
-    products: {
-  id: product.products.id,
-  productId: product.products.productId,   // ✅ THIS LINE IS MISSING
-},
+            orderNo: order?.orderNo || '',
+            orderType: order?.orderType || '',
+            customer: order?.customer || null,
+            purchaseOrderNo: order?.purchaseOrderNo || '',
+            poDate: order?.poDate || '',
+            salesChannel: order?.salesChannel || '',
+            employeeName: order?.employeeName || '',
+            customisationDetails: order?.customisationDetails || '',
+            orderDate: order?.orderDate || '',
+            expectingDate: order?.expectingDate || '',
+            shippingDate: order?.shippingDate || '', // map from backend
+            tagsAndLabels: order?.tagsAndLabels || '',
+            logoNo: order?.logoNo || '',
+            clientInstruction: order?.clientInstruction || '',
+            orderProducts: order?.orderProducts?.map(product => ({
+              // products: { id: product.products?.id || '' }, // match backend
+              products: {
+                id: product.products.id,
+                productId: product.products.productId,   // ✅ THIS LINE IS MISSING
+              },
 
-    orderCategory: product.orderCategory || '',
-    inStockQuantity: product.inStockQuantity || '',
-    clientOrderQuantity: product.clientOrderQuantity || '',
-    quantityToManufacture: product.quantityToManufacture || '',
-    units: product.units || '',
-    value: product.value || '',
-    clientShippingDate: product.clientShippingDate || '',
-    expectedDate: product.expectedDate || '',
-    productSuppliers: product.productSuppliers?.map(supplier => ({
-      supplier: { id: supplier?.supplier?.id || '' },
-      supplierOrderQty: supplier.supplierOrderQty || 0
-    })) || []
-  })) || []
-}}
+              orderCategory: product.orderCategory || '',
+              inStockQuantity: product.inStockQuantity || '',
+              clientOrderQuantity: product.clientOrderQuantity || '',
+              quantityToManufacture: product.quantityToManufacture || '',
+              units: product.units || '',
+              value: product.value || '',
+              clientShippingDate: product.clientShippingDate || '',
+              expectedDate: product.expectedDate || '',
+              productSuppliers: product.productSuppliers?.map(supplier => ({
+                supplier: { id: supplier?.supplier?.id || '' },
+                supplierOrderQty: supplier.supplierOrderQty || 0
+              })) || []
+            })) || []
+          }}
 
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {({ values, setFieldValue, handleBlur, isSubmitting }) => (
-            
+
             <Form>
-              
+
               <div className="flex flex-col gap-9">
                 {/* Form fields */}
                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -880,23 +870,23 @@ const UpdateOrder = () => {
                             placeholder="Select Customer"
                           /> */}
                           <ReactSelect
-  name="customer"
-  styles={customStyles}
-  className="bg-white dark:bg-form-Field"
-  value={
-    values.customer
-      ? {
-          label: values.customer.customerName,
-          value: values.customer.id,
-          data: values.customer
-        }
-      : null
-  }
-  onChange={(option) => setFieldValue("customer", option ? option.data : null)}
-  options={customerOptions}
-  classNamePrefix="react-select"
-  placeholder="Select Customer"
-/>
+                            name="customer"
+                            styles={customStyles}
+                            className="bg-white dark:bg-form-Field"
+                            value={
+                              values.customer
+                                ? {
+                                  label: values.customer.customerName,
+                                  value: values.customer.id,
+                                  data: values.customer
+                                }
+                                : null
+                            }
+                            onChange={(option) => setFieldValue("customer", option ? option.data : null)}
+                            options={customerOptions}
+                            classNamePrefix="react-select"
+                            placeholder="Select Customer"
+                          />
 
                           <ErrorMessage name="Customer" component="div" className="text-red-600 text-sm" />
                         </div>
@@ -1211,27 +1201,28 @@ const UpdateOrder = () => {
                                 <ErrorMessage name={`orderProducts[${index}].clientOrderQuantity`} component="div" className="text-red-600 text-sm" />
                               </td> */}
 
-<td className="px-5 py-5 border-b border-gray-200 text-sm">
-  <Field
-    name={`orderProducts[${index}].clientOrderQuantity`}
-    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-    onChange={(e) => {
-      const value = e.target.value;
-      setFieldValue(`orderProducts[${index}].clientOrderQuantity`, value);
-      setFieldValue(`orderProducts[${index}].quantityToManufacture`, value);
-    }}
-  />
-  <ErrorMessage
-    name={`orderProducts[${index}].clientOrderQuantity`}
-    component="div"
-    className="text-red-600 text-sm"
-  />
-</td>
+                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                <Field
+                                  name={`orderProducts[${index}].clientOrderQuantity`}
+                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                  onChange={(e) => {
+                                    const value = e.target.value;
+                                    setFieldValue(`orderProducts[${index}].clientOrderQuantity`, value);
+                                    setFieldValue(`orderProducts[${index}].quantityToManufacture`, value);
+                                  }}
+                                />
+                                <ErrorMessage
+                                  name={`orderProducts[${index}].clientOrderQuantity`}
+                                  component="div"
+                                  className="text-red-600 text-sm"
+                                />
+                              </td>
 
                               <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                 <Field
                                   name={`orderProducts[${index}].units`}
-                                  //value={product.units || ""}
+                                  // value={product.units || ""}
+                                  value={values.orderProducts[index]?.units || ''}
                                   className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                 //readOnly
                                 />
@@ -1249,23 +1240,23 @@ const UpdateOrder = () => {
                                 <ErrorMessage name={`orderProducts[${index}].value`} component="div" className="text-red-600 text-sm" />
                               </td> */}
 
-<td className="px-5 py-5 border-b border-gray-200 text-sm">
-  <Field
-    name={`orderProducts[${index}].inStockQuantity`}
-    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-    onChange={(e) => {
-      const value = Number(e.target.value) || 0; // Convert input to number
-      const initialQuantityToManufacture = values.orderProducts[index]?.clientOrderQuantity || 0; // Keep original value from clientOrderQuantity
+                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                <Field
+                                  name={`orderProducts[${index}].inStockQuantity`}
+                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                  onChange={(e) => {
+                                    const value = Number(e.target.value) || 0; // Convert input to number
+                                    const initialQuantityToManufacture = values.orderProducts[index]?.clientOrderQuantity || 0; // Keep original value from clientOrderQuantity
 
-      // Ensure new value is not negative
-      const newQuantityToManufacture = Math.max(0, initialQuantityToManufacture - value);
+                                    // Ensure new value is not negative
+                                    const newQuantityToManufacture = Math.max(0, initialQuantityToManufacture - value);
 
-      setFieldValue(`orderProducts[${index}].inStockQuantity`, value);
-      setFieldValue(`orderProducts[${index}].quantityToManufacture`, newQuantityToManufacture);
-    }}
-  />
-  <ErrorMessage name={`orderProducts[${index}].inStockQuantity`} component="div" className="text-red-600 text-sm" />
-</td>
+                                    setFieldValue(`orderProducts[${index}].inStockQuantity`, value);
+                                    setFieldValue(`orderProducts[${index}].quantityToManufacture`, newQuantityToManufacture);
+                                  }}
+                                />
+                                <ErrorMessage name={`orderProducts[${index}].inStockQuantity`} component="div" className="text-red-600 text-sm" />
+                              </td>
 
                               {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                 <Field
@@ -1278,13 +1269,13 @@ const UpdateOrder = () => {
                               </td> */}
 
 
-<td className="px-5 py-5 border-b border-gray-200 text-sm">
-  <Field
-    name={`orderProducts[${index}].quantityToManufacture`}
-    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-  />
-  <ErrorMessage name={`orderProducts[${index}].quantityToManufacture`} component="div" className="text-red-600 text-sm" />
-</td>
+                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                <Field
+                                  name={`orderProducts[${index}].quantityToManufacture`}
+                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                />
+                                <ErrorMessage name={`orderProducts[${index}].quantityToManufacture`} component="div" className="text-red-600 text-sm" />
+                              </td>
 
 
                               {/* Value */}
@@ -1324,7 +1315,7 @@ const UpdateOrder = () => {
 
                               {/* Actions */}
                               <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <IoIosAdd size={30} onClick={() => openSupplierModal(product?.products?.id,index)} />
+                                <IoIosAdd size={30} onClick={() => openSupplierModal(product?.products?.id, index)} />
 
 
                               </td>
@@ -1361,139 +1352,141 @@ const UpdateOrder = () => {
 
                                         </tr>
                                       </thead>
+
+
                                       <tbody>
-                                      {product.productSuppliers?.map((supplierData, supplierIndex) => (
-  <tr key={supplierData.supplier?.id}>
-    {/* Supplier Name Field */}
-    <td className="px-5 py-5 border-b border-gray-200 text-sm">
-      <Field
-        name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.name`}
-        value={supplierData.supplier?.name || ""}
-        className="w-[130px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-      />
-    </td>
+                                        {product.productSuppliers?.map((supplierData, supplierIndex) => (
+                                          <tr key={supplierData.supplier?.id}>
+                                            {/* Supplier Name Field */}
+                                            <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                              <Field
+                                                name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.name`}
+                                                value={supplierData.supplier?.name || ""}
+                                                className="w-[130px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                              />
+                                            </td>
 
-    {/* Supplier Quantity Field */}
-    <td className="px-5 py-5 border-b border-gray-200 text-sm">
-    
+                                            {/* Supplier Quantity Field */}
+                                            <td className="px-5 py-5 border-b border-gray-200 text-sm">
 
 
-<Field
-  name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
-  placeholder="Supplier Quantity"
-  type="number"
-  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-/>
 
-      <ErrorMessage
-        name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
-        component="div"
-        className="text-red-600 text-sm"
-      />
-    </td>
+                                              <Field
+                                                name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
+                                                placeholder="Supplier Quantity"
+                                                type="number"
+                                                className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                              />
 
-    
+                                              <ErrorMessage
+                                                name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
+                                                component="div"
+                                                className="text-red-600 text-sm"
+                                              />
+                                            </td>
 
-    {/* Delete Button */}
-    <td className="px-5 py-5 border-b border-gray-200 text-sm">
-    <MdDelete
-  size={20}
-  className="text-red-500"
-  onClick={() => handleDeleteSupplierr(index, supplierIndex, setFieldValue, values)}
-/>
 
-      {/* <MdDelete
+
+                                            {/* Delete Button */}
+                                            <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                              <MdDelete
+                                                size={20}
+                                                className="text-red-500"
+                                                onClick={() => handleDeleteSupplierr(index, supplierIndex, setFieldValue, values)}
+                                              />
+
+                                              {/* <MdDelete
   size={20}
   className="text-red-500"
   onClick={() => handleDeleteSupplier(index, supplierIndex, setFieldValue, values)}
 /> */}
 
 
-    </td>
-  </tr>
-))}
+                                            </td>
+                                          </tr>
+                                        ))}
 
-{selectedSuppliers
-  .find((supplierRow) => supplierRow.selectedRowId === index)
-  ?.supplierIds.map((supplier, supplierIndex) => {
-    const startingIndex = product.productSuppliers.length || 0; // Length of orderProducts
-    const adjustedIndex = startingIndex + supplierIndex; // Add the current index of prodIdModal to the starting index
+                                        {selectedSuppliers
+                                          .find((supplierRow) => supplierRow.selectedRowId === index)
+                                          ?.supplierIds.map((supplier, supplierIndex) => {
+                                            const startingIndex = product.productSuppliers.length || 0; // Length of orderProducts
+                                            const adjustedIndex = startingIndex + supplierIndex; // Add the current index of prodIdModal to the starting index
 
-    return (
-      <tr
-        key={`supplier-row-${index}-${adjustedIndex}`}
-        className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3"
-      >
-        {/* Supplier Name Field */}
-        <td key={`supplier-${adjustedIndex}`} className="px-5 py-5 border-b border-gray-200 text-sm">
-          <Field
-            name={`orderProducts[${index}].productSuppliers[${adjustedIndex}].supplier.id`}
-            placeholder="Supplier Name"
-            value={supplier?.supplierId?.supplierName || ""}
-            readOnly
-            className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-          />
-        </td>
+                                            return (
+                                              <tr
+                                                key={`supplier-row-${index}-${adjustedIndex}`}
+                                                className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3"
+                                              >
+                                                {/* Supplier Name Field */}
+                                                <td key={`supplier-${adjustedIndex}`} className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                  <Field
+                                                    name={`orderProducts[${index}].productSuppliers[${adjustedIndex}].supplier.id`}
+                                                    placeholder="Supplier Name"
+                                                    value={supplier?.supplierId?.supplierName || ""}
+                                                    readOnly
+                                                    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                                  />
+                                                </td>
 
-        {/* Supplier Quantity Field */}
-        <td key={`quantity-${adjustedIndex}`} className="px-5 py-5 border-b border-gray-200 text-sm">
-        
-          <Field
-    name={`orderProducts[${index}].productSuppliers[${adjustedIndex}].supplierOrderQty`}
-    placeholder="Supplier Quantity"
-    type="number"
-    value={supplier?.supplierOrderQty || ""}
-    onChange={(e) => {
-      const newQuantity = Number(e.target.value) || 0; // ✅ Convert input value to number
+                                                {/* Supplier Quantity Field */}
+                                                <td key={`quantity-${adjustedIndex}`} className="px-5 py-5 border-b border-gray-200 text-sm">
 
-      setFieldValue(
-        `orderProducts[${index}].productSuppliers[${adjustedIndex}].supplierOrderQty`,
-        newQuantity
-      );
+                                                  <Field
+                                                    name={`orderProducts[${index}].productSuppliers[${adjustedIndex}].supplierOrderQty`}
+                                                    placeholder="Supplier Quantity"
+                                                    type="number"
+                                                    value={supplier?.supplierOrderQty || ""}
+                                                    onChange={(e) => {
+                                                      const newQuantity = Number(e.target.value) || 0; // ✅ Convert input value to number
 
-      
-      setSelectedSuppliers((prevSuppliers) =>
-        prevSuppliers.map((row) =>
-          row.selectedRowId === index
-            ? {
-                ...row,
-                supplierIds: row.supplierIds.map((s, i) =>
-                  i === supplierIndex
-                    ? { 
-                        ...s, 
-                        supplierOrderQty: Number(newQuantity) || 0, // ✅ Ensure Quantity is a number
-                        id: Number(s.id) || 0  // ✅ Ensure ID is stored as a number
-                      }
-                    : s
-                ),
-              }
-            : row
-        )
-      );
-      
-    }}
-    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-  />
+                                                      setFieldValue(
+                                                        `orderProducts[${index}].productSuppliers[${adjustedIndex}].supplierOrderQty`,
+                                                        newQuantity
+                                                      );
 
-          <ErrorMessage
-            name={`orderProducts[${index}].productSuppliers[${adjustedIndex}].supplierOrderQty`}
-            component="div"
-            className="text-red-600 text-sm"
-          />
-        </td>
 
-        {/* Delete Button */}
-        <td className="px-5 py-5 border-b border-gray-200 text-sm">
-        <MdDelete
-  size={20}
-  className="text-red-500"
-  onClick={() => handleDeleteSupplier(index, supplierIndex, setFieldValue, values)}
-/>
+                                                      setSelectedSuppliers((prevSuppliers) =>
+                                                        prevSuppliers.map((row) =>
+                                                          row.selectedRowId === index
+                                                            ? {
+                                                              ...row,
+                                                              supplierIds: row.supplierIds.map((s, i) =>
+                                                                i === supplierIndex
+                                                                  ? {
+                                                                    ...s,
+                                                                    supplierOrderQty: Number(newQuantity) || 0, // ✅ Ensure Quantity is a number
+                                                                    id: Number(s.id) || 0  // ✅ Ensure ID is stored as a number
+                                                                  }
+                                                                  : s
+                                                              ),
+                                                            }
+                                                            : row
+                                                        )
+                                                      );
 
-        </td>
-      </tr>
-    );
-  })}
+                                                    }}
+                                                    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                                  />
+
+                                                  <ErrorMessage
+                                                    name={`orderProducts[${index}].productSuppliers[${adjustedIndex}].supplierOrderQty`}
+                                                    component="div"
+                                                    className="text-red-600 text-sm"
+                                                  />
+                                                </td>
+
+                                                {/* Delete Button */}
+                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                  <MdDelete
+                                                    size={20}
+                                                    className="text-red-500"
+                                                    onClick={() => handleDeleteSupplier(index, supplierIndex, setFieldValue, values)}
+                                                  />
+
+                                                </td>
+                                              </tr>
+                                            );
+                                          })}
 
 
 
@@ -1520,18 +1513,18 @@ const UpdateOrder = () => {
                               <tr key={adjustedIndex} className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3">
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <div>
-                                  
-
-                                  <Field
-  type="text"
-  name={`orderProducts[${adjustedIndex}].products.id`}
-  value={item?.productId || ""}
-  readOnly
-  className="w-[130px] bg-gray-200 dark:bg-gray-700 rounded border-[1.5px] border-stroke py-3 px-5 text-black dark:text-white outline-none transition focus:border-primary active:border-primary disabled:cursor-default"
-/>
 
 
-                                    
+                                    <Field
+                                      type="text"
+                                      name={`orderProducts[${adjustedIndex}].products.id`}
+                                      value={item?.productId || ""}
+                                      readOnly
+                                      className="w-[130px] bg-gray-200 dark:bg-gray-700 rounded border-[1.5px] border-stroke py-3 px-5 text-black dark:text-white outline-none transition focus:border-primary active:border-primary disabled:cursor-default"
+                                    />
+
+
+
                                     <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
                                   </div>
                                 </td>
@@ -1554,7 +1547,10 @@ const UpdateOrder = () => {
                                       placeholder="Enter Order Category"
                                       onChange={(e) => {
                                         console.log(`Order Category: ${e.target.value}`);
-                                        setFieldValue(`orderProducts[${adjustedIndex}].orderCategory`, e.target.value); // Update the field value manually
+                                        setFieldValue(`orderProducts[${adjustedIndex}].orderCategory`, e.target.value);
+                                        //  setFieldValue(`orderProducts[${adjustedIndex}].units`, item.units)
+
+                                        // Update the field value manually
                                       }}
                                       readOnly
                                       className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
@@ -1578,22 +1574,22 @@ const UpdateOrder = () => {
                                 </td> */}
 
 
-<td className="px-5 py-5 border-b border-gray-200 text-sm">
-  <div>
-    <Field
-      type="number"
-      name={`orderProducts[${adjustedIndex}].clientOrderQuantity`}
-      placeholder="Enter Client Order Qty"
-      onChange={(e) => {
-        const value = Number(e.target.value);
-        setFieldValue(`orderProducts[${adjustedIndex}].clientOrderQuantity`, value);
-        setFieldValue(`orderProducts[${adjustedIndex}].quantityToManufacture`, value);
-      }}
-      className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-    />
-    <ErrorMessage name={`orderProducts[${adjustedIndex}].clientOrderQuantity`} component="div" className="text-red-600 text-sm" />
-  </div>
-</td>
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <div>
+                                    <Field
+                                      type="number"
+                                      name={`orderProducts[${adjustedIndex}].clientOrderQuantity`}
+                                      placeholder="Enter Client Order Qty"
+                                      onChange={(e) => {
+                                        const value = Number(e.target.value);
+                                        setFieldValue(`orderProducts[${adjustedIndex}].clientOrderQuantity`, value);
+                                        setFieldValue(`orderProducts[${adjustedIndex}].quantityToManufacture`, value);
+                                      }}
+                                      className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                    />
+                                    <ErrorMessage name={`orderProducts[${adjustedIndex}].clientOrderQuantity`} component="div" className="text-red-600 text-sm" />
+                                  </div>
+                                </td>
 
                                 <td className="px-5 py-5 border-b border-gray-200  text-sm">
 
@@ -1602,7 +1598,7 @@ const UpdateOrder = () => {
 
                                     <Field
                                       name={`orderProducts[${adjustedIndex}].units`}
-                                      // value={item?.units}
+                                      value={item?.units}
                                       placeholder="Enter Units"
                                       className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                     />
@@ -1629,25 +1625,25 @@ const UpdateOrder = () => {
                                 </td> */}
 
 
-<td className="px-5 py-5 border-b border-gray-200 text-sm">
-  <div>
-    <Field
-      type="number"
-      name={`orderProducts[${adjustedIndex}].inStockQuantity`}
-      placeholder="Enter In Stock Qty"
-      onChange={(e) => {
-        const inStockValue = Number(e.target.value);
-        const clientOrderValue = Number(values.orderProducts[adjustedIndex]?.clientOrderQuantity || 0);
-        const newQuantityToManufacture = Math.max(clientOrderValue - inStockValue, 0);
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <div>
+                                    <Field
+                                      type="number"
+                                      name={`orderProducts[${adjustedIndex}].inStockQuantity`}
+                                      placeholder="Enter In Stock Qty"
+                                      onChange={(e) => {
+                                        const inStockValue = Number(e.target.value);
+                                        const clientOrderValue = Number(values.orderProducts[adjustedIndex]?.clientOrderQuantity || 0);
+                                        const newQuantityToManufacture = Math.max(clientOrderValue - inStockValue, 0);
 
-        setFieldValue(`orderProducts[${adjustedIndex}].inStockQuantity`, inStockValue);
-        setFieldValue(`orderProducts[${adjustedIndex}].quantityToManufacture`, newQuantityToManufacture);
-      }}
-      className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-    />
-    <ErrorMessage name={`orderProducts[${adjustedIndex}].inStockQuantity`} component="div" className="text-red-600 text-sm" />
-  </div>
-</td>
+                                        setFieldValue(`orderProducts[${adjustedIndex}].inStockQuantity`, inStockValue);
+                                        setFieldValue(`orderProducts[${adjustedIndex}].quantityToManufacture`, newQuantityToManufacture);
+                                      }}
+                                      className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                    />
+                                    <ErrorMessage name={`orderProducts[${adjustedIndex}].inStockQuantity`} component="div" className="text-red-600 text-sm" />
+                                  </div>
+                                </td>
 
 
                                 {/* <td className="px-5 py-5 border-b border-gray-200  text-sm">
@@ -1666,18 +1662,18 @@ const UpdateOrder = () => {
                                   </div>
                                 </td> */}
 
-<td className="px-5 py-5 border-b border-gray-200 text-sm">
-  <div>
-    <Field
-      type="number"
-      name={`orderProducts[${adjustedIndex}].quantityToManufacture`}
-      placeholder="Enter Qty To Manufacture"
-      readOnly
-      className="w-[130px] bg-gray-200 dark:bg-gray-700 rounded border-[1.5px] border-stroke py-3 px-5 text-black dark:text-white outline-none transition focus:border-primary active:border-primary disabled:cursor-default"
-    />
-    <ErrorMessage name={`orderProducts[${adjustedIndex}].quantityToManufacture`} component="div" className="text-red-600 text-sm" />
-  </div>
-</td>
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <div>
+                                    <Field
+                                      type="number"
+                                      name={`orderProducts[${adjustedIndex}].quantityToManufacture`}
+                                      placeholder="Enter Qty To Manufacture"
+                                      readOnly
+                                      className="w-[130px] bg-gray-200 dark:bg-gray-700 rounded border-[1.5px] border-stroke py-3 px-5 text-black dark:text-white outline-none transition focus:border-primary active:border-primary disabled:cursor-default"
+                                    />
+                                    <ErrorMessage name={`orderProducts[${adjustedIndex}].quantityToManufacture`} component="div" className="text-red-600 text-sm" />
+                                  </div>
+                                </td>
 
                                 <td className="px-5 py-5 border-b border-gray-200  text-sm">
 
@@ -1756,124 +1752,124 @@ const UpdateOrder = () => {
                                 </td>
 
 
-                                  <td className="px-5 py-5 border-b border-gray-200  text-sm">
-                                  
-                                                                      <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-                                                                        <div
-                                                                          className="inline-block min-w-full shadow-md rounded-lg overflow-hidden"
-                                                                        >
-                                                                          <table className="min-w-full leading-normal">
-                                                                            <thead>
-                                                                              <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                                                                <th
-                                  
-                                                                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                                                                >
-                                                                                  Supplier Name
-                                                                                </th>
-                                                                                <th
-                                  
-                                                                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                                                                >
-                                                                                  Supplier Quantity
-                                                                                </th>
-                                  
-                                                                                <th
-                                  
-                                                                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                                                                >
-                                                                                  Action
-                                                                                </th>
-                                  
-                                                                              </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                              {selectedSuppliersProduct&&selectedSuppliersProduct
-                                                                                .find((supplierRow) => supplierRow.selectedRowId === index)
-                                                                                ?.supplierIds.map((supplier, supplierIndex) => (
-                                                                                  <tr
-                                                                                    key={`supplier-row-${index}-${supplierIndex}`}
-                                                                                    className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3"
-                                                                                  >
-                                                                                    {/* Supplier Name Field */}
-                                                                                    <td
-                                                                                      key={`supplier-${supplierIndex}`}
-                                                                                      className="px-5 py-5 border-b border-gray-200 text-sm"
-                                                                                    >
-                                                                                      <Field
-                                                                                        name={`orderProducts[${adjustedIndex}].productSuppliers[${supplierIndex}].supplier.id`}
-                                                                                        placeholder="Supplier Name"
-                                                                                        value={supplier?.supplierId?.supplierName || ""}
-                                                                                        onChange={(e) =>
-                                                                                          setFieldValue(
-                                                                                            `orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`,
-                                                                                            e.target.value
-                                                                                          )
-                                                                                        }
-                                                                                        
-                                                                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                                                                                      />
-                                                                                      {/* <ErrorMessage
+                                <td className="px-5 py-5 border-b border-gray-200  text-sm">
+
+                                  <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+                                    <div
+                                      className="inline-block min-w-full shadow-md rounded-lg overflow-hidden"
+                                    >
+                                      <table className="min-w-full leading-normal">
+                                        <thead>
+                                          <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
+                                            <th
+
+                                              className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                            >
+                                              Supplier Name
+                                            </th>
+                                            <th
+
+                                              className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                            >
+                                              Supplier Quantity
+                                            </th>
+
+                                            <th
+
+                                              className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                            >
+                                              Action
+                                            </th>
+
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {selectedSuppliersProduct && selectedSuppliersProduct
+                                            .find((supplierRow) => supplierRow.selectedRowId === index)
+                                            ?.supplierIds.map((supplier, supplierIndex) => (
+                                              <tr
+                                                key={`supplier-row-${index}-${supplierIndex}`}
+                                                className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3"
+                                              >
+                                                {/* Supplier Name Field */}
+                                                <td
+                                                  key={`supplier-${supplierIndex}`}
+                                                  className="px-5 py-5 border-b border-gray-200 text-sm"
+                                                >
+                                                  <Field
+                                                    name={`orderProducts[${adjustedIndex}].productSuppliers[${supplierIndex}].supplier.id`}
+                                                    placeholder="Supplier Name"
+                                                    value={supplier?.supplierId?.supplierName || ""}
+                                                    onChange={(e) =>
+                                                      setFieldValue(
+                                                        `orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`,
+                                                        e.target.value
+                                                      )
+                                                    }
+
+                                                    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                                  />
+                                                  {/* <ErrorMessage
                                                                                         name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`}
                                                                                         component="div"
                                                                                         className="text-red-600 text-sm"
                                                                                       /> */}
-                                                                                    </td>
-                                  
-                                                                                    {/* Supplier Quantity Field */}
-                                                                                    <td
-                                                                                      key={`quantity-${supplierIndex}`}
-                                                                                      className="px-5 py-5 border-b border-gray-200 text-sm"
-                                                                                    >
-                                                                                    
-                                                                                      <Field
-  name={`orderProducts[${adjustedIndex}].productSuppliers[${supplierIndex}].supplierOrderQty`}
-  placeholder="Supplier Quantity"
-  type="number"
-  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
-  readOnly={false} // Ensures it is editable
-  disabled={false} // Ensures it is not disabled
-/>
+                                                </td>
 
-                                                                                      <ErrorMessage
-                                                                                        name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
-                                                                                        component="div"
-                                                                                        className="text-red-600 text-sm"
-                                                                                      />
-                                                                                    </td>
-                                  
-                                                                                    {/* Delete Button */}
-                                                                                    <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                                                      {/* < MdDelete size={20} className='text-red-500 ' onClick={() => handleDeleteSupplier(index, supplierIndex)} /> */}
-                                                                                      <MdDelete
-  size={20}
-  className="text-red-500"
-  onClick={() => handleDeleteSupplier(index, supplierIndex, setFieldValue, values)}
-/>
-                                                                                    </td>
-                                                                                  </tr>
-                                                                                ))}
-                                                                            </tbody>
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                  
-                                                                          </table>
-                                                                          
-                                                                        </div>
-                                                                        
-                                                                      </div>
-                                                                      
-                                                                    </td>
-                                                                     <td className="px-5 py-5 border-b items-center justify-center mt-[100px]">
-                                                                    
-                                                                          <MdDelete className='text-red-700' size={30} onClick={() => handleDeleteRow(index)} />
-                                                                    
-                                                                      </td>
-                                                                    
+                                                {/* Supplier Quantity Field */}
+                                                <td
+                                                  key={`quantity-${supplierIndex}`}
+                                                  className="px-5 py-5 border-b border-gray-200 text-sm"
+                                                >
+
+                                                  <Field
+                                                    name={`orderProducts[${adjustedIndex}].productSuppliers[${supplierIndex}].supplierOrderQty`}
+                                                    placeholder="Supplier Quantity"
+                                                    type="number"
+                                                    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary"
+                                                    readOnly={false} // Ensures it is editable
+                                                    disabled={false} // Ensures it is not disabled
+                                                  />
+
+                                                  <ErrorMessage
+                                                    name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
+                                                    component="div"
+                                                    className="text-red-600 text-sm"
+                                                  />
+                                                </td>
+
+                                                {/* Delete Button */}
+                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                  {/* < MdDelete size={20} className='text-red-500 ' onClick={() => handleDeleteSupplier(index, supplierIndex)} /> */}
+                                                  <MdDelete
+                                                    size={20}
+                                                    className="text-red-500"
+                                                    onClick={() => handleDeleteSupplier(index, supplierIndex, setFieldValue, values)}
+                                                  />
+                                                </td>
+                                              </tr>
+                                            ))}
+                                        </tbody>
+
+
+
+
+
+
+
+                                      </table>
+
+                                    </div>
+
+                                  </div>
+
+                                </td>
+                                <td className="px-5 py-5 border-b items-center justify-center mt-[100px]">
+
+                                  <MdDelete className='text-red-700' size={30} onClick={() => handleDeleteRow(index)} />
+
+                                </td>
+
 
                               </tr>
                             );
@@ -1966,11 +1962,11 @@ const UpdateOrder = () => {
           />
         )}
 
-{isSupplierModalOpenProduct && (
+        {isSupplierModalOpenProduct && (
           <SupplierUpdateProduct
             suppliers={suppliers}
             id={suppId}
-            
+
             selectedSuppliersProduct={selectedSuppliersProduct}
             selectedRowId={selectedRowId}
             handleCheckboxChangeProduct={handleCheckboxChangeProduct}
