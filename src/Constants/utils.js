@@ -401,7 +401,7 @@ export const ADD_VoucherEntry_URL = `${BASE_URL}/entryPayment/add`;
 
 export const GET_Voucher_URL = `${BASE_URL}/voucher/getAll`;
 export const GET_Vouchersearch_URL = `${BASE_URL}/voucher/search`;
-
+export const GET_VoucherName_URL = `${BASE_URL}/voucher/dropdown`;
 export const GET_VoucherEntriessearch_URL = `${BASE_URL}/entryPayment/voucher`;
 export const PRINTEntries_URL = `${BASE_URL}/entryPayment`;
 export const GET_VoucherNoss_URL = `${BASE_URL}/voucher/getReceipt`;

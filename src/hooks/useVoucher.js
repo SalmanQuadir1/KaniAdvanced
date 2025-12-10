@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 // import { GET_Voucher_URL, DELETE_Voucher_URL, UPDATE_Voucher_URL, ADD_Voucher_URL } from "../Constants/utils";
 import { ADD_VoucherEntry_URL, ADD_Voucher_URL, DELETE_Voucher_URL, GET_VoucherBYID, GET_Voucher_URL, UPDATEVoucher_URL } from "../Constants/utils";
 import { fetchHsnCode } from '../redux/Slice/HsnCodeSlice';
+import { useNavigate } from 'react-router-dom';
 const useVoucher = (numberingDetails) => {
     
     const { currentUser } = useSelector((state) => state?.persisted?.user);
@@ -13,7 +14,7 @@ const useVoucher = (numberingDetails) => {
     const [Voucherr, setVoucherr] = useState([]);
     const [edit, setEdit] = useState(false);
     const dispatch = useDispatch();
-
+const navigate = useNavigate();
     useEffect(() => {
 
         dispatch(fetchHsnCode(token))
@@ -359,6 +360,7 @@ console.log(formData,"jj");
                  }
                  if (response.ok) {
                      toast.success(`Voucher Entry added successfully`);
+                     navigate("/Vouchers/view")
                      // Fetch updated Voucher
                  } else {
                     console.log("i am in error else ");

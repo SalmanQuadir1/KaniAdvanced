@@ -354,26 +354,81 @@ const PrintEntryPayment = () => {
             </div>
 
             {/* Consignee and Buyer Section */}
-            <table style={styles.table}>
-                <tbody>
-                    <tr>
-                        <td style={styles.tableHeader} width="50%">Consignee (Ship to)</td>
-                        <td style={styles.tableHeader} width="50%">Buyer (Bill to)</td>
-                    </tr>
-                    <tr>
-                        <td style={styles.tableCell}>
-                            <strong> {paymentData.ledgerName}</strong> <br />
-                            {paymentData.shippingAddress || paymentData.shippingAddress}<br />
-                            {/* <strong>State Name:</strong> {companyAddress.state}, <strong>Code:</strong> {companyAddress.stateCode} */}
-                        </td>
-                        <td style={styles.tableCell}>
-                            <strong> {paymentData.ledgerName}</strong> <br />
-                            {paymentData.billingAddress || paymentData.billingAddress}<br />
-                            {/* <strong>State Name:</strong> {companyAddress.state}, <strong>Code:</strong> {companyAddress.stateCode} */}
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            {
+
+                paymentData.typeOfVoucher == "Sales" && (
+
+                    < table style={styles.table}>
+                        <tbody>
+                            <tr>
+                                <td style={styles.tableHeader} width="50%">Consignee (Ship to)</td>
+                                <td style={styles.tableHeader} width="50%">Buyer (Bill to)</td>
+                            </tr>
+                            <tr>
+                                <td style={styles.tableCell}>
+                                    <strong> {paymentData.ledgerName}</strong> <br />
+                                    {paymentData.shippingAddress || paymentData.shippingAddress}<br />
+                                    {/* <strong>State Name:</strong> {companyAddress.state}, <strong>Code:</strong> {companyAddress.stateCode} */}
+                                </td>
+                                <td style={styles.tableCell}>
+                                    <strong> {paymentData.ledgerName}</strong> <br />
+                                    {paymentData.billingAddress || paymentData.billingAddress}<br />
+                                    {/* <strong>State Name:</strong> {companyAddress.state}, <strong>Code:</strong> {companyAddress.stateCode} */}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                )
+            }
+
+
+
+            {
+
+                paymentData.typeOfVoucher == "Purchase" && (
+
+                    < table style={styles.table}>
+                        <tbody>
+                            <tr>
+                                <td style={styles.tableHeader} width="50%">Consignee (Ship to)</td>
+                                <td style={styles.tableHeader} width="50%">Supplier (Bill from)</td>
+                            </tr>
+                            <tr>
+                                <td style={styles.tableCell}>
+                                    <div style={{ flex: 1 }}>
+                                        <div style={styles.companyName}>{companyAddress.name}</div>
+                                        <div style={styles.companyAddress}>{companyAddress.address}</div>
+                                        <div style={styles.companyAddress}>
+                                            <strong>GSTIN/UIN:</strong> {companyAddress.gstin}
+                                        </div>
+                                        <div style={styles.companyAddress}>
+                                            <strong>State Name:</strong> {companyAddress.state}, <strong>Code:</strong> {companyAddress.stateCode}
+                                        </div>
+                                        <div style={styles.companyAddress}>
+                                            <strong>CIN:</strong> {companyAddress.cin}
+                                        </div>
+                                        <div style={styles.companyAddress}>
+                                            <strong>Contact:</strong> {companyAddress.contact}
+                                        </div>
+                                        <div style={styles.companyAddress}>
+                                            <strong>E-Mail:</strong> {companyAddress.email}
+                                        </div>
+                                    </div>
+                                    {/* <strong>State Name:</strong> {companyAddress.state}, <strong>Code:</strong> {companyAddress.stateCode} */}
+                                </td>
+                                <td style={styles.tableCell}>
+                                    <strong> {paymentData.ledgerName}</strong> <br />
+                                    {paymentData.billingAddress || paymentData.billingAddress}<br />
+                                    {/* <strong>State Name:</strong> {companyAddress.state}, <strong>Code:</strong> {companyAddress.stateCode} */}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                )
+            }
+
 
             {/* Invoice Details */}
             <table style={styles.table}>
@@ -390,21 +445,27 @@ const PrintEntryPayment = () => {
                         <td style={styles.tableHeader}>Mode/Terms of Payment</td>
                         <td style={styles.tableCell}>{paymentData.paymentTerms || '-'}</td>
                     </tr>
-                    <tr>
-                        <td style={styles.tableHeader}>Buyer's Order No.</td>
-                        <td style={styles.tableCell}>{paymentData.buyerOrderNo || '-'}</td>
-                        <td style={styles.tableHeader}>Delivery Note Date</td>
-                        <td style={styles.tableCell}>{formatDate(paymentData.deliveryNoteDate)}</td>
-                    </tr>
+
+
+                    {
+                        paymentData.typeOfVoucher === "Sales" && (
+                            <tr>
+                                <td style={styles.tableHeader}>Buyer's Order No.</td>
+                                <td style={styles.tableCell}>{paymentData.buyerOrderNo || '-'}</td>
+                                <td style={styles.tableHeader}>Delivery Note Date</td>
+                                <td style={styles.tableCell}>{formatDate(paymentData.deliveryNoteDate)}</td>
+                            </tr>
+                        )
+                    }
 
                     {
                         paymentData.isExport === true && (
                             <tr>
                                 <td style={styles.tableHeader}>LUT/Bond Details</td>
                                 <td style={styles.tableCell} colSpan="5">
-                                   <span className='font-semibold'> LUT No:</span> {paymentData?.lut?.lutNumber || '-'} <br/>
-                                  <span className='font-semibold'>  From:</span> {paymentData?.lut?.fromDate || '-'} <br/>
-                                  <span className='font-semibold'>  To:</span> {paymentData?.lut?.toDate || '-'}
+                                    <span className='font-semibold'> LUT No:</span> {paymentData?.lut?.lutNumber || '-'} <br />
+                                    <span className='font-semibold'>  From:</span> {paymentData?.lut?.fromDate || '-'} <br />
+                                    <span className='font-semibold'>  To:</span> {paymentData?.lut?.toDate || '-'}
                                 </td>
                             </tr>
                         )
@@ -415,6 +476,10 @@ const PrintEntryPayment = () => {
                         <td style={styles.tableHeader}>Delivery Note Date</td>
                         <td style={styles.tableCell}>{formatDate(paymentData.deliveryNoteDate)}</td>
                     </tr>
+
+
+
+
                 </tbody>
             </table>
 
@@ -424,9 +489,18 @@ const PrintEntryPayment = () => {
                     <tr>
                         <th style={styles.tableHeader} width="5%">Sl No.</th>
                         <th style={styles.tableHeader} width="40%">Description of Goods</th>
-                        <th style={styles.tableHeader} width="10%">HSN/SAC</th>
+                        {
+                            paymentData.typeOfVoucher == "Sales" && (
+
+                                <th style={styles.tableHeader} width="10%">HSN/SAC</th>
+                            )
+                        }
                         <th style={styles.tableHeader} width="8%">Quantity</th>
-                        <th style={styles.tableHeader} width="10%">Rate(inc. Of Tax)</th>
+
+                        {
+                            paymentData.typeOfVoucher == "Sales" && (
+                                <th style={styles.tableHeader} width="10%">Rate(inc. Of Tax)</th>
+                            )}
                         <th style={styles.tableHeader} width="10%">Rate</th>
                         <th style={styles.tableHeader} width="10%">Disc. %</th>
                         <th style={styles.tableHeader} width="12%">Amount</th>
@@ -437,9 +511,18 @@ const PrintEntryPayment = () => {
                         <tr key={index}>
                             <td style={styles.tableCell}>{index + 1}</td>
                             <td style={styles.tableCell}>{product.productDescription}</td>
-                            <td style={styles.tableCell}>{product?.hsnCode?.hsnCodeName}</td>
+                            {
+                                paymentData.typeOfVoucher == "Sales" && (
+
+                                    <td style={styles.tableCell}>{product?.hsnCode?.hsnCodeName}</td>
+                                )}
                             <td style={styles.tableCell}>{product.quantity} {product.unit}</td>
-                            <td style={styles.tableCell}>₹{formatCurrency(product.exclusiveGst)}</td>
+
+                            {
+                                paymentData.typeOfVoucher == "Sales" && (
+                                    <td style={styles.tableCell}>₹{formatCurrency(product.exclusiveGst)}</td>
+
+                                )}
                             <td style={styles.tableCell}>₹{formatCurrency(product.mrp)}</td>
                             <td style={styles.tableCell}>{product.discount || '0'}%</td>
                             <td style={styles.tableCell}>
@@ -466,183 +549,222 @@ const PrintEntryPayment = () => {
                         </td>
                     </tr>
 
-                    {paymentData.taxDetails?.map((tax, index) => (
-                        <tr key={`tax-${index}`}>
-                            <td style={styles.tableCell} colSpan="6" className="text-right">
-                                {tax.name} @ {tax.rate}%
-                            </td>
-                            <td style={styles.tableCell}>₹{formatCurrency(tax.amount)}</td>
-                        </tr>
-                    ))}
                     {
-                        paymentData.totalIgst > 0 && (
+                        paymentData.typeOfVoucher == "Sales" && (
+                            <>
+
+                                {paymentData.taxDetails?.map((tax, index) => (
+                                    <tr key={`tax-${index}`}>
+                                        <td style={styles.tableCell} colSpan="6" className="text-right">
+                                            {tax.name} @ {tax.rate}%
+                                        </td>
+                                        <td style={styles.tableCell}>₹{formatCurrency(tax.amount)}</td>
+                                    </tr>
+                                ))}
+
+
+                                {
+                                    paymentData.totalIgst > 0 && (
+                                        <tr style={styles.totalRow}>
+                                            <td style={styles.tableCell} colSpan="6" className="text-right">
+                                                <strong>Total IGST</strong>
+                                            </td>
+                                            <td colSpan="2" style={styles.tableCell}>
+                                                <strong>₹{formatCurrency(paymentData.totalIgst)}</strong>
+                                            </td>
+                                        </tr>
+                                    )
+                                }
+                                {
+                                    paymentData.totalCgst > 0 && (
+                                        <tr style={styles.totalRow}>
+                                            <td style={styles.tableCell} colSpan="6" className="text-right">
+                                                <strong>Total CGST</strong>
+                                            </td>
+                                            <td colSpan="2" style={styles.tableCell}>
+                                                <strong>₹{formatCurrency(paymentData.totalCgst)}</strong>
+                                            </td>
+                                        </tr>
+                                    )
+                                }
+                                {
+                                    paymentData.totalSgst > 0 && (
+                                        <tr style={styles.totalRow}>
+                                            <td style={styles.tableCell} colSpan="6" className="text-right">
+                                                <strong>Total SGST</strong>
+                                            </td>
+                                            <td colSpan="2" style={styles.tableCell}>
+                                                <strong>₹{formatCurrency(paymentData.totalSgst)}</strong>
+                                            </td>
+                                        </tr>
+                                    )
+                                }
+
+                            </>
+                        )
+                    }
+
+
+
+
+
+                    {
+                        paymentData.typeOfVoucher == "Sales" && (
+
+
                             <tr style={styles.totalRow}>
                                 <td style={styles.tableCell} colSpan="6" className="text-right">
-                                    <strong>Total IGST</strong>
+                                    <strong>Total Gst</strong>
                                 </td>
                                 <td colSpan="2" style={styles.tableCell}>
-                                    <strong>₹{formatCurrency(paymentData.totalIgst)}</strong>
+                                    <strong>₹{formatCurrency(paymentData.totalGst)}</strong>
                                 </td>
                             </tr>
                         )
                     }
-                    {
-                        paymentData.totalCgst > 0 && (
-                            <tr style={styles.totalRow}>
-                                <td style={styles.tableCell} colSpan="6" className="text-right">
-                                    <strong>Total CGST</strong>
-                                </td>
-                                <td colSpan="2" style={styles.tableCell}>
-                                    <strong>₹{formatCurrency(paymentData.totalCgst)}</strong>
-                                </td>
-                            </tr>
-                        )
-                    }
-                    {
-                        paymentData.totalSgst > 0 && (
-                            <tr style={styles.totalRow}>
-                                <td style={styles.tableCell} colSpan="6" className="text-right">
-                                    <strong>Total SGST</strong>
-                                </td>
-                                <td colSpan="2" style={styles.tableCell}>
-                                    <strong>₹{formatCurrency(paymentData.totalSgst)}</strong>
-                                </td>
-                            </tr>
-                        )
-                    }
-                    <tr style={styles.totalRow}>
-                        <td style={styles.tableCell} colSpan="6" className="text-right">
-                            <strong>Total Gst</strong>
-                        </td>
-                        <td colSpan="2" style={styles.tableCell}>
-                            <strong>₹{formatCurrency(paymentData.totalGst)}</strong>
-                        </td>
-                    </tr>
 
                     <tr style={styles.totalRow}>
                         <td style={styles.tableCell} colSpan="6" className="text-right">
                             <strong>Total Amount</strong>
                         </td>
-                        <td colSpan="2" style={styles.tableCell}>
-                            <strong>₹{formatCurrency(paymentData.totalAmount)}</strong>
-                        </td>
+                        {
+                            paymentData.typeOfVoucher == "Sales" && (
+                                <td colSpan="2" style={styles.tableCell}>
+                                    <strong>₹{formatCurrency(paymentData.totalAmount)}</strong>
+                                </td>
+                            )}
                     </tr>
                 </tbody>
             </table>
 
             {/* Amount in Words */}
-            <div style={styles.sectionTitle}>
-                Amount Chargeable (in words): INR {numberToWords(paymentData.totalAmount)}
-            </div>
+            {
+                paymentData.typeOfVoucher == "Sales" && (
+                    <div style={styles.sectionTitle}>
+                        Amount Chargeable (in words): INR {numberToWords(paymentData.totalAmount)}
+                    </div>
+
+                )}
 
             {/* HSN Summary */}
             {/* HSN Summary Section - Simplified */}
-            {(() => {
-                // Separate CGST/SGST and IGST items
-                const cgstSgstItems = [];
-                const igstItems = [];
+            {
 
-                if (paymentData.paymentDetails && paymentData.paymentDetails.length > 0) {
-                    paymentData.paymentDetails.forEach(item => {
-                        if (item.hsnCode && item.hsnCode.hsnCodeName) {
-                            const gstCalc = item.gstCalculation || {};
-                            const quantity = item.quantity || 1;
-                            const taxableValue = (item.exclusiveGst || 0) * quantity;
+                paymentData.typeOfVoucher == "Sales" && (
+                    (() => {
+                        // Separate CGST/SGST and IGST items
+                        const cgstSgstItems = [];
+                        const igstItems = [];
 
-                            if (gstCalc.type === 'CGST+SGST') {
-                                cgstSgstItems.push({
-                                    hsnCode: item.hsnCode.hsnCodeName,
-                                    taxableValue: taxableValue,
-                                    cgstRate: gstCalc.cgstRate || 0,
-                                    sgstRate: gstCalc.sgstRate || 0,
-                                    cgstAmount: (gstCalc.cgstAmount || 0) * quantity,
-                                    sgstAmount: (gstCalc.sgstAmount || 0) * quantity,
-                                    totalTax: (gstCalc.totalGstAmount || 0) * quantity
-                                });
-                            } else if (gstCalc.type === 'IGST') {
-                                igstItems.push({
-                                    hsnCode: item.hsnCode.hsnCodeName,
-                                    taxableValue: taxableValue,
-                                    igstRate: gstCalc.igstRate || 0,
-                                    igstAmount: (gstCalc.totalGstAmount || 0) * quantity,
-                                    totalTax: (gstCalc.totalGstAmount || 0) * quantity
-                                });
-                            }
+                        if (paymentData.paymentDetails && paymentData.paymentDetails.length > 0) {
+                            paymentData.paymentDetails.forEach(item => {
+                                if (item.hsnCode && item.hsnCode.hsnCodeName) {
+                                    const gstCalc = item.gstCalculation || {};
+                                    const quantity = item.quantity || 1;
+                                    const taxableValue = (item.exclusiveGst || 0) * quantity;
+
+                                    if (gstCalc.type === 'CGST+SGST') {
+                                        cgstSgstItems.push({
+                                            hsnCode: item.hsnCode.hsnCodeName,
+                                            taxableValue: taxableValue,
+                                            cgstRate: gstCalc.cgstRate || 0,
+                                            sgstRate: gstCalc.sgstRate || 0,
+                                            cgstAmount: (gstCalc.cgstAmount || 0) * quantity,
+                                            sgstAmount: (gstCalc.sgstAmount || 0) * quantity,
+                                            totalTax: (gstCalc.totalGstAmount || 0) * quantity
+                                        });
+                                    } else if (gstCalc.type === 'IGST') {
+                                        igstItems.push({
+                                            hsnCode: item.hsnCode.hsnCodeName,
+                                            taxableValue: taxableValue,
+                                            igstRate: gstCalc.igstRate || 0,
+                                            igstAmount: (gstCalc.totalGstAmount || 0) * quantity,
+                                            totalTax: (gstCalc.totalGstAmount || 0) * quantity
+                                        });
+                                    }
+                                }
+                            });
                         }
-                    });
-                }
 
-                return (
-                    <>
-                        {/* CGST/SGST Table */}
-                        {cgstSgstItems.length > 0 && (
+                        return (
                             <>
-                                <div style={styles.sectionTitle}>HSN Summary (CGST+SGST)</div>
-                                <table style={styles.table}>
-                                    <thead>
-                                        <tr>
-                                            <th style={styles.tableHeader}>HSN/SAC</th>
-                                            <th style={styles.tableHeader}>Taxable Value</th>
-                                            <th style={styles.tableHeader}>CGST Rate</th>
-                                            <th style={styles.tableHeader}>CGST Amount</th>
-                                            <th style={styles.tableHeader}>SGST Rate</th>
-                                            <th style={styles.tableHeader}>SGST Amount</th>
-                                            <th style={styles.tableHeader}>Total Tax</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {cgstSgstItems.map((item, index) => (
-                                            <tr key={index}>
-                                                <td style={styles.tableCell}>{item.hsnCode}</td>
-                                                <td style={styles.tableCell}>₹{formatCurrency(item.taxableValue)}</td>
-                                                <td style={styles.tableCell}>{item.cgstRate}%</td>
-                                                <td style={styles.tableCell}>₹{formatCurrency(item.cgstAmount)}</td>
-                                                <td style={styles.tableCell}>{item.sgstRate}%</td>
-                                                <td style={styles.tableCell}>₹{formatCurrency(item.sgstAmount)}</td>
-                                                <td style={styles.tableCell}>₹{formatCurrency(item.totalTax)}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            </>
-                        )}
+                                {/* CGST/SGST Table */}
+                                {cgstSgstItems.length > 0 && (
+                                    <>
+                                        <div style={styles.sectionTitle}>HSN Summary (CGST+SGST)</div>
+                                        <table style={styles.table}>
+                                            <thead>
+                                                <tr>
+                                                    <th style={styles.tableHeader}>HSN/SAC</th>
+                                                    <th style={styles.tableHeader}>Taxable Value</th>
+                                                    <th style={styles.tableHeader}>CGST Rate</th>
+                                                    <th style={styles.tableHeader}>CGST Amount</th>
+                                                    <th style={styles.tableHeader}>SGST Rate</th>
+                                                    <th style={styles.tableHeader}>SGST Amount</th>
+                                                    <th style={styles.tableHeader}>Total Tax</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {cgstSgstItems.map((item, index) => (
+                                                    <tr key={index}>
+                                                        <td style={styles.tableCell}>{item.hsnCode}</td>
+                                                        <td style={styles.tableCell}>₹{formatCurrency(item.taxableValue)}</td>
+                                                        <td style={styles.tableCell}>{item.cgstRate}%</td>
+                                                        <td style={styles.tableCell}>₹{formatCurrency(item.cgstAmount)}</td>
+                                                        <td style={styles.tableCell}>{item.sgstRate}%</td>
+                                                        <td style={styles.tableCell}>₹{formatCurrency(item.sgstAmount)}</td>
+                                                        <td style={styles.tableCell}>₹{formatCurrency(item.totalTax)}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </>
+                                )}
 
-                        {/* IGST Table */}
-                        {igstItems.length > 0 && (
-                            <>
-                                <div style={styles.sectionTitle}>HSN Summary (IGST)</div>
-                                <table style={styles.table}>
-                                    <thead>
-                                        <tr>
-                                            <th style={styles.tableHeader}>HSN/SAC</th>
-                                            <th style={styles.tableHeader}>Taxable Value</th>
-                                            <th style={styles.tableHeader}>IGST Rate</th>
-                                            <th style={styles.tableHeader}>IGST Amount</th>
-                                            <th style={styles.tableHeader}>Total Tax</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {igstItems.map((item, index) => (
-                                            <tr key={index}>
-                                                <td style={styles.tableCell}>{item.hsnCode}</td>
-                                                <td style={styles.tableCell}>₹{formatCurrency(item.taxableValue)}</td>
-                                                <td style={styles.tableCell}>{item.igstRate}%</td>
-                                                <td style={styles.tableCell}>₹{formatCurrency(item.igstAmount)}</td>
-                                                <td style={styles.tableCell}>₹{formatCurrency(item.totalTax)}</td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                {/* IGST Table */}
+                                {igstItems.length > 0 && (
+                                    <>
+                                        <div style={styles.sectionTitle}>HSN Summary (IGST)</div>
+                                        <table style={styles.table}>
+                                            <thead>
+                                                <tr>
+                                                    <th style={styles.tableHeader}>HSN/SAC</th>
+                                                    <th style={styles.tableHeader}>Taxable Value</th>
+                                                    <th style={styles.tableHeader}>IGST Rate</th>
+                                                    <th style={styles.tableHeader}>IGST Amount</th>
+                                                    <th style={styles.tableHeader}>Total Tax</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {igstItems.map((item, index) => (
+                                                    <tr key={index}>
+                                                        <td style={styles.tableCell}>{item.hsnCode}</td>
+                                                        <td style={styles.tableCell}>₹{formatCurrency(item.taxableValue)}</td>
+                                                        <td style={styles.tableCell}>{item.igstRate}%</td>
+                                                        <td style={styles.tableCell}>₹{formatCurrency(item.igstAmount)}</td>
+                                                        <td style={styles.tableCell}>₹{formatCurrency(item.totalTax)}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </>
+                                )}
                             </>
-                        )}
-                    </>
-                );
-            })()}
+                        );
+                    })()
+
+                )
+            }
+
 
             {/* Tax Amount in Words */}
-            <div style={styles.sectionTitle}>
-                Tax Amount (in words): INR {numberToWords(paymentData.totalGst)}
-            </div>
+            {
+                paymentData.typeOfVoucher == "Sales" && (
+                    <div style={styles.sectionTitle}>
+                        Tax Amount (in words): INR {numberToWords(paymentData.totalGst)}
+                    </div>
+
+                )}
 
             {/* Declaration and Signatures */}
             <div style={styles.signatureArea}>
@@ -672,7 +794,7 @@ const PrintEntryPayment = () => {
                 <div><strong>SUBJECT TO {companyAddress.state.toUpperCase()} COURTS ONLY JURISDICTION</strong></div>
                 <div>This is a Computer Generated Invoice</div>
             </div>
-        </Container>
+        </Container >
     );
 };
 

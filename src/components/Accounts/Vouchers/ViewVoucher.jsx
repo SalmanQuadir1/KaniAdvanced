@@ -3,7 +3,7 @@ import DefaultLayout from '../../../layout/DefaultLayout'
 import Breadcrumb from '../../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { DELETE_Voucher_URL, GET_Vouchersearch_URL, UPDATETOGGLE_Voucher_URL } from "../../../Constants/utils";
+import { DELETE_Voucher_URL, GET_VoucherName_URL, GET_Vouchersearch_URL, UPDATETOGGLE_Voucher_URL } from "../../../Constants/utils";
 import ReactSelect from 'react-select';
 import useOrder from '../../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -15,6 +15,7 @@ import { customStyles as createCustomStyles } from '../../../Constants/utils';
 import { MdCreateNewFolder } from "react-icons/md";
 import useVoucher from '../../../hooks/useVoucher';
 import { IoIosAdd } from 'react-icons/io';
+
 
 
 
@@ -39,7 +40,7 @@ const ViewVoucher = () => {
 
 
     const { token } = currentUser;
-
+const [voucherrr, setvoucherrr] = useState([])
 
 
     const [Voucher, setVoucher] = useState()
@@ -56,28 +57,25 @@ const ViewVoucher = () => {
     useEffect(() => {
         getVoucherr()
     }, [])
-    console.log(Voucherr, "jjhhgg");
+    console.log(voucherrr, "jjhhgg");
 
     // const formattedSupplier = supplier.map(supplier => ({
     //     label: supplier.name,
     //     value: supplier.name
     // }));
-    const VoucherType = [
-        { value: 'supplier', label: 'supplier' },
-        { value: 'customer', label: 'customer' },
+   
 
-    ];
-
-    const voucherName = Voucherr && Voucherr.map((vouch) => ({
+    const voucherName = voucherrr && voucherrr.map((vouch) => ({
         label: vouch.name,
         value: vouch.name
     }));
-    const voucherType = Voucherr && Voucherr.map((vouch) => ({
+    const voucherType = voucherrr && voucherrr.map((vouch) => ({
         label: vouch.typeOfVoucher,
         value: vouch.typeOfVoucher
     }));
 
 
+console.log(voucherType,"type");
 
 
     const [IsVoucherModalOpen, setIsVoucherModalOpen] = useState(false)
@@ -102,7 +100,26 @@ const ViewVoucher = () => {
 
 
 
+    const getVouchernameAndType= async()=>{
+        try {
+            const response = await fetch(`${GET_VoucherName_URL}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json", 
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+            const data = await response.json(); 
+            setvoucherrr(data);
+            console.log("Voucher names and types:", data);
 
+            
+        } catch (error) {
+            logger.error("Error fetching voucher names and types:", error);
+        }
+    }
+
+  
 
 
 
@@ -169,6 +186,7 @@ const ViewVoucher = () => {
 
     useEffect(() => {
         getVoucher()
+        getVouchernameAndType()
     }, [])
 
     const handlePageChange = (newPage) => {
@@ -251,6 +269,8 @@ const ViewVoucher = () => {
                     body: JSON.stringify({ actVoucher: newStatus }),
                 });
 
+                console.log(response, "kkjj");
+
                 if (!response.ok) {
                     throw new Error("Failed to update voucher status");
                 }
@@ -286,8 +306,8 @@ const ViewVoucher = () => {
                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.defGstRegist} </p>
                 </td>
-                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
-                   <IoIosAdd size={30} onClick={()=>navigate(`/configurator/vouchers/${item.id}`)}/>
+                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
+                    <IoIosAdd size={30} onClick={() => navigate(`/configurator/vouchers/${item.id}`)} />
                 </td>
                 <td className="px-5 py-5  text-sm">
                     <label className="inline-flex items-center cursor-pointer">
@@ -398,11 +418,9 @@ const ViewVoucher = () => {
             <Breadcrumb pageName="Voucher/ View Voucher" />
             <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800 mb-4">
                 <div className="pt-5 pb-4">
-                    <div className='flex justify-center'>
-                        <h2 className="text-xl font-semibold leading-tight justify-center items-center">View Voucher</h2>
-                        {/* <p className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium bg-success text-success dark:bg-white dark:text-slate-800`}>
-                            TOTAL PRODUCTS: {pagination.totalItems}
-                        </p> */}
+                    <div className='flex flex-col justify-center items-center mb-6'>
+                        <h2 className="text-xl font-semibold leading-tight mb-3">View Voucher</h2>
+                        <div className='w-full border-b-2 border-gray-300 dark:border-gray-600'></div>
                     </div>
 
 
@@ -423,78 +441,56 @@ const ViewVoucher = () => {
                         >
                             {({ setFieldValue, values, handleBlur }) => (
                                 <Form>
-                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
+                                    <div className="mb-6 flex justify-center items-center gap-6 mt-8">
+                                        {/* Voucher Name Field */}
+                                        <div className="min-w-[300px]">
+                                            <label className="mb-2.5 block font-bold text-black dark:text-white">
+                                                Voucher Name
+                                            </label>
+                                            <ReactSelect
+                                                name="name"
+                                                value={voucherName.find(option => option.value === values.name)}
+                                                onChange={(option) => setFieldValue('name', option ? option.value : null)}
+                                                options={[{ label: 'View All', value: null }, ...voucherName]}
+                                                styles={customStyles}
+                                                className="bg-white dark:bg-form-Field"
+                                                classNamePrefix="react-select"
+                                                placeholder="Select Voucher Name"
+                                                isClearable
+                                            />
+                                        </div>
 
-
-
-                                        <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-
-
-                                            {/* <div className="z-20 bg-transparent dark:bg-form-Field">
-                                                <ReactSelect
-                                                    name="supplierName"
-
-                                                    value={productgrp.find(option => option.value === values.customerName)}
-                                                    onChange={(option) => setFieldValue('supplierName', option ? option.value : null)}
-                                                    // options={formattedSupplier}
-
-                                                    options={[{ label: 'View All Suppliers', value: null }, ...formattedSupplier]}
-                                                    styles={customStyles} // Pass custom styles here
-                                                    className="bg-white dark:bg-form-Field"
-                                                    classNamePrefix="react-select"
-                                                    placeholder="Select supplier Name"
-                                                />
-                                            </div> */}
-                                            <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block font-bold text-black dark:text-white">Voucher Name</label>
-                                                <ReactSelect
-                                                    name="name"
-
-                                                    value={voucherName.find(option => option.value === values.name)}
-                                                    onChange={(option) => setFieldValue('name', option ? option.value : null)}
-                                                    // options={formattedSupplier}
-
-                                                    options={[{ label: 'View All ', value: null }, ...voucherName]}
-                                                    styles={customStyles} // Pass custom styles here
-                                                    className="bg-white dark:bg-form-Field"
-                                                    classNamePrefix="react-select"
-                                                    placeholder="Select Name"
-                                                />
-
-                                            </div>
-                                            <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block font-bold text-black dark:text-white">Voucher Type</label>
-                                                <ReactSelect
-                                                    name="typeOfVoucher"
-
-                                                    value={voucherType.find(option => option.value === values.typeOfVoucher)}
-                                                    onChange={(option) => setFieldValue('typeOfVoucher', option ? option.value : null)}
-                                                    // options={formattedSupplier}
-
-                                                    options={[{ label: 'View All ', value: null }, ...voucherType]}
-                                                    styles={customStyles} // Pass custom styles here
-                                                    className="bg-white dark:bg-form-Field"
-                                                    classNamePrefix="react-select"
-                                                    placeholder="Select Type"
-                                                />
-
-                                            </div>
-
-
+                                        {/* Voucher Type Field */}
+                                        <div className="min-w-[300px]">
+                                            <label className="mb-2.5 block font-bold text-black dark:text-white">
+                                                Voucher Type
+                                            </label>
+                                            <ReactSelect
+                                                name="typeOfVoucher"
+                                                value={voucherType.find(option => option.value === values.typeOfVoucher)}
+                                                onChange={(option) => setFieldValue('typeOfVoucher', option ? option.value : null)}
+                                                options={[{ label: 'View All', value: null }, ...voucherType]}
+                                                styles={customStyles}
+                                                className="bg-white dark:bg-form-Field"
+                                                classNamePrefix="react-select"
+                                                placeholder="Select Voucher Type"
+                                                isClearable
+                                            />
                                         </div>
                                     </div>
 
-
-
-
-
-
-                                    <div className="flex justify-center">
+                                    {/* Search Button */}
+                                    <div className="flex justify-center mt-4">
                                         <button
                                             type="submit"
-                                            className="flex md:w-[240px] w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
+                                            className="flex w-[240px] h-[44px] rounded-lg justify-center items-center bg-primary font-medium text-white hover:bg-opacity-90 transition duration-300 shadow-md hover:shadow-lg"
                                         >
-                                            Search
+                                            <span className="flex items-center gap-2">
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                                </svg>
+                                                Search
+                                            </span>
                                         </button>
                                     </div>
                                 </Form>
