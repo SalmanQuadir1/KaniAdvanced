@@ -61,14 +61,7 @@ const UpdateOrder = () => {
   const [selectedSuppliersProduct, setSelectedSuppliersProduct] = useState([]);
 
 
-  // const handleCheckboxChange = (supplierId) => {
-  //   console.log(supplierId, "sssspppp");
-  //   setSelectedSuppliers((prev) =>
-  //     prev.includes(supplierId)
-  //       ? prev.filter((id) => id !== supplierId) // Remove if already selected
-  //       : [...prev, supplierId] // Add if not selected
-  //   );
-  // };
+
   const handleCheckboxChange = (selectedRowId, supplierId) => {
     setSelectedSuppliers((prev) => {
       const updated = [...prev];
@@ -163,9 +156,7 @@ const UpdateOrder = () => {
   };
 
 
-  console.log(isSupplierModalOpen, "ll");
-
-  console.log(isModalOpen, "jj");
+  
 
 
   // Close modal
@@ -211,7 +202,7 @@ const UpdateOrder = () => {
 
 
 
-  
+  //  const handleUpdateSubmit = async (values) => {
 
   //                console.log(values,"jazim");
   //        try {
@@ -248,29 +239,29 @@ const UpdateOrder = () => {
   const handleUpdateSubmit = async (values) => {
     console.log(values, "jazim");
 
-    try {
-      const url = `${UPDATE_ORDER_URL}/${id}`;
-      const response = await fetch(url, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(values)
-      });
+    // try {
+    //   const url = `${UPDATE_ORDER_URL}/${id}`;
+    //   const response = await fetch(url, {
+    //     method: "PUT",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       "Authorization": `Bearer ${token}`
+    //     },
+    //     body: JSON.stringify(values)
+    //   });
 
-      const data = await response.json();
-      if (response.ok) {
-        console.log(data, "coming ");
-        toast.success(`Order Updated successfully`);
-        navigate("/Order/ViewOrder");
-      } else {
-        toast.error(`${data.errorMessage}`);
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("An error occurred");
-    }
+    //   const data = await response.json();
+    //   if (response.ok) {
+    //     console.log(data, "coming ");
+    //     toast.success(`Order Updated successfully`);
+    //     navigate("/Order/ViewOrder");
+    //   } else {
+    //     toast.error(`${data.errorMessage}`);
+    //   }
+    // } catch (error) {
+    //   console.error(error);
+    //   toast.error("An error occurred");
+    // }
   };
 
 
@@ -326,6 +317,24 @@ const UpdateOrder = () => {
       setprodIdOptions(formattedProdIdOptions);
     }
 
+    // if (customer) {
+    //   const formattedCustomerOptions = customer.map(customer => ({
+    //     value: customer.id,
+    //     label: customer?.customerName,
+    //     customerObject: customer,
+    //     customer: customer.id
+    //   }));
+    //   setcustomerOptions(formattedCustomerOptions);
+    // }
+
+    //     if (customer) {
+    //   const formattedCustomerOptions = customer.map(c => ({
+    //     value: c.id,
+    //     label: c.customerName,
+    //     data: c   // <-- Required key
+    //   }));
+    //   setcustomerOptions(formattedCustomerOptions);
+    // }
 
 
 
@@ -358,6 +367,11 @@ const UpdateOrder = () => {
     },
   };
 
+  // const productgrp = [
+  //   { value: 'KLC', label: 'KLC' },
+  //   { value: 'CLIENT', label: 'CLIENT' },
+  //   { value: 'NO T&L', label: 'NO T&L' },
+  // ];
 
   const productgrp = [
     { value: 'KLC', label: 'KLC' },
@@ -421,33 +435,15 @@ const UpdateOrder = () => {
 
 
   };
-  // const handleProductIdChange = (option, setFieldValue, index) => {
-  //   const productId = option.value; // Get the selected product ID
-  //   setFieldValue(`productId`, productId); // Update the selected product ID in the form state
-  //   setFieldValue(`orderProducts[${index}].products.id`, productId); // Update the product ID in the specific order product field
-
-  //   console.log(`Updated Product ID at index ${index}:`, productId); // Debugging log
-  // };
 
 
 
   const handleModalSubmit = (values) => {
     console.log(values, "gfdsa");
 
-    setprodIdModal((prevValues) => {
-      console.log(prevValues, "jumpss");
-      const units =  values.units
-      // Ensure that previous values are preserved and the new ones are added.
-      return [...prevValues, {
-        units: units,
-        ...values,
-        // Ensure any additional data you need to keep is added
-      }];
-    });
-
-    // setprodIdModal((prevValues) => [...prevValues, values])
 
 
+    setprodIdModal((prevValues) => [...prevValues, values])
     setIsModalOpen(false)
 
   }
@@ -533,95 +529,76 @@ const UpdateOrder = () => {
 
 
 
-  // useEffect(() => {
-  //   if (productId) {
-  //     const formattedProdIdOptions = productId.map(prodId => ({
-  //       value: prodId.id,
-  //       label: prodId.productId,
-  //       prodIdObject: prodId,
-  //     }));
-  //     setprodIdOptions(formattedProdIdOptions);
-  //   }
-  // }, [productId]);
 
 
-  const onSubmit = async (values, e) => {
-    console.log("Form submission triggered");
-    console.log(values, "Received values from frontend");
 
-    const formattedValues = {
-      orderDate: values.orderDate,
-      value: parseFloat(values.value),
-      shippingDate: values.shippingDate,
-      expectingDate: values.expectingDate,
-      tagsAndLabels: values.tags,
-      logoNo: values.logoNo,
-      productionExecutionStatus: "In Progress", // You can change this as needed
-      productionComments: values.customisationDetails,
-      poDate: values.poDate,
-      orderCategory: values.orderCategory,
-      units: values.units,
-      purchaseOrderNo: values.purchaseOrderNo,
-      clientInstruction: values.clientInstruction,
-      status: "Created", // Example static value
-      customisationDetails: values.customisationDetails,
-      createdBy: "Admin", // Replace with a dynamic value if available
-      employeeName: values.employeeName,
-      salesChannel: values.salesChannel,
-      // customer: {
-      //   id: 1, // Replace with the actual customer ID from your `values`
-      // },
-      customer: {
-        id: values.customer?.id || null, // Dynamically include the customer ID or set to null if not available
-      },
-      orderType: {
-        id: values.orderType?.id || 4, // Replace with the actual Order Type ID
-      },
-      orderProducts: [
-        // {
-        //   products: {
-        //     id: values.productId, // Product ID from the form values
-        //   },
-        {
-          // products: {
-          //   id: values.products?.productId || '',  // Accessing the productId from the products object
-          // },
+  // const onSubmit = async (values, e) => {
+  //   console.log("Form submission triggered");
+  //   console.log(values, "Received values from frontend");
 
-          products: {
-            id: values.products?.id || "", // Dynamically fetch product ID
-          },
-          // products: {
-          //   ...product.products,
-          //   productId: product.products?.productId || '',  // Set initial value for productId
-          // },
+  //   const formattedValues = {
+  //     orderDate: values.orderDate,
+  //     value: parseFloat(values.value),
+  //     shippingDate: values.shippingDate,
+  //     expectingDate: values.expectingDate,
+  //     tagsAndLabels: values.tags,
+  //     logoNo: values.logoNo,
+  //     productionExecutionStatus: "In Progress", // You can change this as needed
+  //     productionComments: values.customisationDetails,
+  //     poDate: values.poDate,
+  //     orderCategory: values.orderCategory,
+  //     purchaseOrderNo: values.purchaseOrderNo,
+  //     clientInstruction: values.clientInstruction,
+  //     status: "Created", // Example static value
+  //     customisationDetails: values.customisationDetails,
+  //     createdBy: "Admin", // Replace with a dynamic value if available
+  //     employeeName: values.employeeName,
+  //     salesChannel: values.salesChannel,
+  //     // customer: {
+  //     //   id: 1, // Replace with the actual customer ID from your `values`
+  //     // },
+  //     customer: {
+  //       id: values.customer?.id || null, // Dynamically include the customer ID or set to null if not available
+  //     },
+  //     orderType: {
+  //       id: values.orderType?.id || 4, // Replace with the actual Order Type ID
+  //     },
+  //     orderProducts: [
+    
+  //       {
+        
 
-          clientOrderQuantity: parseFloat(values.orderQuantity),
-          orderQuantity: parseFloat(values.orderQuantity),
-          value: parseFloat(values.value),
-          inStockQuantity: parseFloat(values.inStockQuantity),
-          quantityToManufacture: parseFloat(values.quantityToManufacture),
-          clientShippingDate: values.clientShippingDate,
-          expectedDate: values.expectedDate,
-          challanNo: "CH12345", // Replace with dynamic value if available
-          challanDate: values.shippingDate,
-          productSuppliers: [
-            {
-              supplier: {
-                id: "", // Supplier ID
-              },
-              supplierOrderQty: "",
-            },
-          ],
-        },
-      ],
+  //         products: {
+  //           id: values.products?.id || "", // Dynamically fetch product ID
+  //         },
+         
+  //         clientOrderQuantity: parseFloat(values.orderQuantity),
+  //         orderQuantity: parseFloat(values.orderQuantity),
+  //         value: parseFloat(values.value),
+  //         inStockQuantity: parseFloat(values.inStockQuantity),
+  //         quantityToManufacture: parseFloat(values.quantityToManufacture),
+  //         clientShippingDate: values.clientShippingDate,
+  //         expectedDate: values.expectedDate,
+  //         challanNo: "CH12345", // Replace with dynamic value if available
+  //         challanDate: values.shippingDate,
+  //         productSuppliers: [
+  //           {
+  //             supplier: {
+  //               id: "", // Supplier ID
+  //             },
+  //             supplierOrderQty: "",
+  //           },
+  //         ],
+  //       },
+  //     ],
 
-    };
+  //   };
 
-    console.log(JSON.stringify(formattedValues, null, 2), "Formatted Values");
-    handleUpdateSubmit(formattedValues, e);
-  };
+  //   console.log(JSON.stringify(formattedValues, null, 2), "Formatted Values");
+  //   handleUpdateSubmit(formattedValues, e);
+  // };
 
-  console.log(order, "mjhe order karna hai");
+  
 
 
 
@@ -633,14 +610,10 @@ const UpdateOrder = () => {
     console.log(updatedRows, "rowwwwwwwwwwwwws");
     setprodIdModal(updatedRows);
   };
-  console.log(prodIdModal, "prodddddddddddddddddddddddddd");
-  const [isPopulated, setIsPopulated] = useState(false);
-
-  console.log(selectedSuppliers, "umerumer");
 
 
 
-console.log(order,"umershah");
+
 
 
 
@@ -650,105 +623,7 @@ console.log(order,"umershah");
       <div>
         <Formik
           enableReinitialize={true}
-          // initialValues={{
-          //   orderNo: order?.orderNo || '',
-          //   orderType: order?.orderType || '',
-          //   // customer: order?.customer?.customerName || '',
-          //   customer: order?.customer || null,
-
-          //   purchaseOrderNo: order?.purchaseOrderNo || '',
-          //   poDate: order?.poDate || '',
-          //   salesChannel: order?.salesChannel || '',
-          //   employeeName: order?.employeeName || '',
-          //   customisationDetails: order?.customisationDetails || '',
-          //   orderDate: order?.orderDate || '',
-          //   expectingDate: order?.expectingDate || '',
-          //   shippingDate: '',
-          //   tagsAndLabels: order?.tagsAndLabels || '',
-          //   // logoNo: '',
-          //   logoNo: order?.logoNo || '',
-
-          //   clientInstruction: order?.clientInstruction || '',
-
-          //   // ✅ Only One `orderProducts` Key
-          //   orderProducts: [
-          //     // Include existing `orderProducts`
-          //     ...(order?.orderProducts?.map((product) => ({
-          //       // products: {
-          //       //   id: product.products?.id || '',  // Ensure `id` is sent, not `productId`
-          //       // },
-          //       products: {
-          //         ...product.products,
-          //         productId: product.products?.productId || '',  // Set initial value for productId
-          //       },
-
-          //       orderCategory: product.orderCategory || '',
-          //       inStockQuantity: product.inStockQuantity || '',
-          //       clientOrderQuantity: product.clientOrderQuantity || '',
-          //       quantityToManufacture: product.quantityToManufacture || '',
-          //       units: product.units || '',
-          //       value: product.value || '',
-          //       clientShippingDate: product.clientShippingDate || '',
-          //       expectedDate: product.expectedDate || '',
-          //       // productSuppliers: product.productSuppliers?.map(supplier => ({
-          //       //   supplierName: supplier.supplier?.name || '',
-          //       //   supplierOrderQty: supplier.supplierOrderQty || 0,
-          //       // })) || [],
-
-          //       // productSuppliers: product.productSuppliers?.map((supplier) => ({
-          //       //   supplier: {
-          //       //     id: supplier?.supplier?.id || '',
-          //       //     name: supplier?.supplier?.name || '',
-          //       //   },
-          //       //   supplierOrderQty: supplier.supplierOrderQty || 0,
-          //       // })) || []
-
-          //       productSuppliers: [
-          //         ...(product.productSuppliers?.map((supplier) => ({
-          //           supplier: {
-          //             id: supplier?.supplier?.id || '',
-          //             //name: supplier?.supplier?.name || '',
-          //           },
-          //           supplierOrderQty: supplier.supplierOrderQty || 0,
-          //         })) || []),
-
-          //         // ✅ Add a New Supplier Entry
-          //         {
-          //           supplier: {
-          //             //id: id || '', // Supplier ID
-          //             id: Number(id) || 0, // ✅ Ensure Supplier ID is stored as a number
-          //           },
-          //           supplierOrderQty: "",
-          //         },
-          //       ],
-
-          //     })) || []),
-
-          //     // ✅ Merge `prodIdModal` Data
-          //     ...(prodIdModal?.map((item) => ({
-          //       products: {
-          //         id: item.id || '',  // Ensure `id` is sent correctly
-          //       },
-          //       orderCategory: item.orderCatagory || '',
-          //       inStockQuantity: '',
-          //       clientOrderQuantity: '',
-          //       quantityToManufacture: '',
-          //       units: '',
-          //       value: '',
-          //       clientShippingDate: '',
-          //       expectedDate: '',
-          //       //productSuppliers: [],
-          //       productSuppliers: [
-          //         {
-          //           supplier: {
-          //             id: id  || '', // Supplier ID
-          //           },
-          //           supplierOrderQty: "",
-          //         },
-          //       ],
-          //     })) || [])
-          //   ]
-          // }}
+        
           initialValues={{
             orderNo: order?.orderNo || '',
             orderType: order?.orderType || '',
@@ -764,27 +639,45 @@ console.log(order,"umershah");
             tagsAndLabels: order?.tagsAndLabels || '',
             logoNo: order?.logoNo || '',
             clientInstruction: order?.clientInstruction || '',
-            orderProducts: order?.orderProducts?.map(product => ({
-              // products: { id: product.products?.id || '' }, // match backend
-              products: {
-                id: product.products.id,
-                productId: product.products.productId,   // ✅ THIS LINE IS MISSING
-              },
-
-              orderCategory: product.orderCategory || '',
-              inStockQuantity: product.inStockQuantity || '',
-              clientOrderQuantity: product.clientOrderQuantity || '',
-              quantityToManufacture: product.quantityToManufacture || '',
-              units: product.units || '',
-              value: product.value || '',
-              clientShippingDate: product.clientShippingDate || '',
-              expectedDate: product.expectedDate || '',
-              productSuppliers: product.productSuppliers?.map(supplier => ({
-                supplier: { id: supplier?.supplier?.id || '' },
-                supplierOrderQty: supplier.supplierOrderQty || 0
-              })) || []
-            })) || []
-          }}
+          orderProducts: [
+      // Existing products from order
+      ...(order?.orderProducts?.map(product => ({
+        products: {
+          id: product.products.id,
+          productId: product.products.productId,
+        },
+        orderCategory: product.orderCategory || '',
+        inStockQuantity: product.inStockQuantity || '',
+        clientOrderQuantity: product.clientOrderQuantity || '',
+        quantityToManufacture: product.quantityToManufacture || '',
+        units: product.units || '',
+        value: product.value || '',
+        clientShippingDate: product.clientShippingDate || '',
+        expectedDate: product.expectedDate || '',
+        productSuppliers: product.productSuppliers?.map(supplier => ({
+          supplier: { id: supplier?.supplier?.id || '' },
+          supplierOrderQty: supplier.supplierOrderQty || 0
+        })) || []
+      })) || []),
+      
+      // New products from prodIdModal
+      ...(prodIdModal?.map(item => ({
+        products: {
+          id: item.id || item.productId || '',
+          productId: item.productId || item.id || '',
+        },
+        orderCategory: item.orderCatagory || '',
+        inStockQuantity: '',
+        clientOrderQuantity: '',
+        quantityToManufacture: '',
+        units: item.units || 'Pcs',
+        value: '',
+        clientShippingDate: '',
+        expectedDate: '',
+        productSuppliers: []
+      })) || [])
+    ]
+  }}
 
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
@@ -971,7 +864,7 @@ console.log(order,"umershah");
                       </div>
 
 
-{/* 
+
                       <div className="flex-1 min-w-[300px] mt-4">
                         <label className="mb-2.5 block text-black dark:text-white">Expected Receiving Date</label>
                         <Field
@@ -983,9 +876,12 @@ console.log(order,"umershah");
                         />
 
                         <ErrorMessage name="shippingDate" component="div" className="text-red-600 text-sm" />
-                      </div> */}
+                      </div>
+                    </div>
 
-   <div className="flex-1 min-w-[300px] mt-4">
+
+                    <div className="flex flex-wrap gap-4">
+                      <div className="flex-1 min-w-[300px] mt-4">
                         <label className="mb-2.5 block text-black dark:text-white">Tags</label>
                         <ReactSelect
                           name="tagsAndLabels"
@@ -1017,13 +913,6 @@ console.log(order,"umershah");
                         </div>
                         <ErrorMessage name="logoNo" component="div" className="text-red-600 text-sm" />
                       </div>
-
-
-                    </div>
-
-
-                    <div className="flex flex-wrap gap-4">
-                   
 
                     </div>
 
@@ -1225,8 +1114,7 @@ console.log(order,"umershah");
                               <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                 <Field
                                   name={`orderProducts[${index}].units`}
-                                  // value={product.units || ""}
-                                  value={values.orderProducts[index]?.units || ''}
+                                  //value={product.units || ""}
                                   className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                 //readOnly
                                 />
@@ -1356,8 +1244,6 @@ console.log(order,"umershah");
 
                                         </tr>
                                       </thead>
-
-
                                       <tbody>
                                         {product.productSuppliers?.map((supplierData, supplierIndex) => (
                                           <tr key={supplierData.supplier?.id}>
@@ -1509,9 +1395,13 @@ console.log(order,"umershah");
 
 
                           {prodIdModal?.map((item, index) => {
+
+                            console.log(item,"jamshedpurrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
+                            
                             // Calculate the starting index dynamically based on the length of the existing orderProducts
                             const startingIndex = order?.orderProducts?.length || 0; // Length of orderProducts
-                            const adjustedIndex = startingIndex + index; // Add the current index of prodIdModal to the starting index
+                            const adjustedIndex = startingIndex + index ; // Add the current index of prodIdModal to the starting index
+console.log(adjustedIndex,"kjkjkjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjqqqqqqqqqqqqqqqqqqqqq");
 
                             return (
                               <tr key={adjustedIndex} className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3">
@@ -1535,15 +1425,7 @@ console.log(order,"umershah");
 
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <div>
-                                    {/* <Field
-            name={`orderProducts[${adjustedIndex}].orderCategory`}
-            placeholder="Enter Order Category"
-            onChange={(e) => {
-              console.log(`Order Category: ${e.target.value}`);
-              setFieldValue(`orderProducts[${adjustedIndex}].orderCategory`, e.target.value);
-            }}
-            className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-          /> */}
+             
 
                                     <Field
                                       name={`orderProducts[${adjustedIndex}].orderCategory`}
@@ -1551,10 +1433,7 @@ console.log(order,"umershah");
                                       placeholder="Enter Order Category"
                                       onChange={(e) => {
                                         console.log(`Order Category: ${e.target.value}`);
-                                        setFieldValue(`orderProducts[${adjustedIndex}].orderCategory`, e.target.value);
-                                        //  setFieldValue(`orderProducts[${adjustedIndex}].units`, item.units)
-
-                                        // Update the field value manually
+                                        setFieldValue(`orderProducts[${adjustedIndex}].orderCategory`, e.target.value); // Update the field value manually
                                       }}
                                       readOnly
                                       className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
@@ -1602,7 +1481,7 @@ console.log(order,"umershah");
 
                                     <Field
                                       name={`orderProducts[${adjustedIndex}].units`}
-                                      value={item?.units}
+                                      // value={item?.units}
                                       placeholder="Enter Units"
                                       className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                     />

@@ -73,6 +73,7 @@ const ModalUpdate = ({ isOpen, onRequestClose, onSubmit, prodIdd, width = "400px
     console.log(values, "vall"); // The submitted data
     // You can now send this data to your API
   };
+console.log(products,"heyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
 
 
   return (
