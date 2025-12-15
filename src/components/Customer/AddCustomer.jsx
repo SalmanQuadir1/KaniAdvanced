@@ -126,7 +126,7 @@ const AddCustomer = () => {
                 <div className="mb-4.5 flex flex-wrap gap-6">
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Customer Name
+                      Customer Name <span className="text-red-600">*</span>
                     </label>
                     <input
                       type="text"
@@ -183,7 +183,7 @@ const AddCustomer = () => {
                 <div className="mb-4.5 flex flex-wrap gap-6">
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Country
+                      Country <span className="text-red-600">*</span>
                     </label>
                     <input
                       type="text"
@@ -202,7 +202,7 @@ const AddCustomer = () => {
                   </div>
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      City
+                      City <span className="text-red-600">*</span>
                     </label>
                     <input
                       type="text"
@@ -223,7 +223,7 @@ const AddCustomer = () => {
                 <div className="mb-4.5 flex flex-wrap gap-6">
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Contact Number
+                      Contact Number <span className="text-red-600">*</span>
                     </label>
                     <input
                       type="text"
@@ -243,7 +243,7 @@ const AddCustomer = () => {
                   </div>
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Bill To
+                      Bill To <span className="text-red-600">*</span>
                     </label>
                     <input
                       type="text"
@@ -264,7 +264,7 @@ const AddCustomer = () => {
                 <div className="mb-4.5 flex flex-wrap gap-6">
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Email id
+                      Email id <span className="text-red-600">*</span>
                     </label>
                     <input
                       type="text"
@@ -283,7 +283,7 @@ const AddCustomer = () => {
                   </div>
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Reference
+                      Reference <span className="text-red-600">*</span>
                     </label>
                     <input
                       type="text"
@@ -304,7 +304,7 @@ const AddCustomer = () => {
                 <div className="mb-4.5 flex flex-wrap gap-6">
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Billing Address
+                      Billing Address <span className="text-red-600">*</span>
                     </label>
                     <input
                       type="text"
@@ -324,7 +324,7 @@ const AddCustomer = () => {
                   </div>
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Shipping Address
+                      Shipping Address <span className="text-red-600">*</span>
                     </label>
                     <input
                       type="text"
@@ -346,7 +346,7 @@ const AddCustomer = () => {
                 <div className="mb-4.5 flex flex-wrap gap-6">
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      GSTIN/VAT No
+                      GSTIN/VAT No <span className="text-red-600">*</span>
                     </label>
                     <input
                       type="text"
@@ -386,7 +386,7 @@ const AddCustomer = () => {
                 <div className="mb-4.5 flex flex-wrap gap-6">
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Instagram Id
+                      Instagram Id <span className="text-red-600">*</span>
                     </label>
                     <input
                       type="text"
@@ -621,7 +621,7 @@ const AddCustomer = () => {
                 <div className="mb-4.5 flex flex-wrap gap-6">
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Discount Offered(%){' '}
+                      Discount Offered(%){' '} <span className="text-red-600">*</span>
                     </label>
                     <input
                       type="text"
