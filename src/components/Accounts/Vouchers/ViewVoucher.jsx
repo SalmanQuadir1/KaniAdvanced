@@ -123,7 +123,7 @@ console.log(voucherType,"type");
 
 
 
-    const getVoucher = async (page = 0, filters = {}) => {
+    const getVoucher = async (page = 1, filters = {}) => {
         console.log("Fetching vouchers with filters:", filters);
         console.log("Page:", page);
 

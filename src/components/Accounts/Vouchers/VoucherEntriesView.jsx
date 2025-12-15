@@ -78,7 +78,7 @@ const VoucherEntriesView = () => {
 
 
 
-    const getVoucher = async (page = 0, filters = {}) => {
+    const getVoucher = async (page = 1, filters = {}) => {
 
 
         try {

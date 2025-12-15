@@ -175,6 +175,7 @@ const CreateVoucher = () => {
             if (response.ok && Array.isArray(data)) {
                 const productOptions = data.map(prod => ({
                     value: prod.product.id,
+                    orderProdId: prod.id,
                     label: prod.product.productDescription,
                     price: prod.product?.retailMrp,
                     hsnCode: prod.product?.hsnCode || '',
@@ -513,12 +514,14 @@ const CreateVoucher = () => {
                         totalGst: 0,
                         paymentDetails: [{
                             productsId: null,
+                            orderProductId: null,
                             mrp: 0,
                             rate: 0,
                             exclusiveGst: 0,
                             discount: 0,
                             quantity: 1,
                             value: 0,
+                            voucherAmount: 0,
                             igstRate: 0,
                             gstAmount: 0,
                             gstCalculation: null
@@ -775,6 +778,7 @@ const CreateVoucher = () => {
                                                                                                     const gstCalculation = calculateGST(mrp, hsnCode, gstRegistration, customerAddress, currentDiscount);
 
                                                                                                     setFieldValue(`paymentDetails.${index}.productsId`, option?.value || null);
+                                                                                                    setFieldValue(`paymentDetails.${index}.orderProductId`, option?.orderProdId || null);
                                                                                                     setFieldValue(`paymentDetails.${index}.mrp`, mrp);
                                                                                                     setFieldValue(`paymentDetails.${index}.igstRate`, igstRate);
                                                                                                     setFieldValue(`paymentDetails.${index}.gstAmount`, gstCalculation.totalGstAmount);
@@ -782,6 +786,11 @@ const CreateVoucher = () => {
                                                                                                     setFieldValue(`paymentDetails.${index}.rate`, gstCalculation.inclusivePrice);
                                                                                                     setFieldValue(`paymentDetails.${index}.gstCalculation`, gstCalculation);
                                                                                                     setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
+                                                                                                        ...entry,
+                                                                                                        exclusiveGst: gstCalculation.inclusivePrice,
+                                                                                                        rate: gstCalculation.inclusivePrice
+                                                                                                    }));
+                                                                                                       setFieldValue(`paymentDetails.${index}.voucherAmount`, calculateLineTotal({
                                                                                                         ...entry,
                                                                                                         exclusiveGst: gstCalculation.inclusivePrice,
                                                                                                         rate: gstCalculation.inclusivePrice
@@ -876,9 +885,19 @@ const CreateVoucher = () => {
                                                                                                                     rate: discountedRate,
                                                                                                                     discount: discount
                                                                                                                 }));
+                                                                                                                  setFieldValue(`paymentDetails.${index}.voucherAmount`, calculateLineTotal({
+                                                                                                                    ...entry,
+                                                                                                                    rate: discountedRate,
+                                                                                                                    discount: discount
+                                                                                                                }));
                                                                                                             } else {
                                                                                                                 setFieldValue(`paymentDetails.${index}.rate`, gstCalculation.inclusivePrice);
                                                                                                                 setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
+                                                                                                                    ...entry,
+                                                                                                                    rate: gstCalculation.inclusivePrice,
+                                                                                                                    discount: 0
+                                                                                                                }));
+                                                                                                                  setFieldValue(`paymentDetails.${index}.voucherAmount`, calculateLineTotal({
                                                                                                                     ...entry,
                                                                                                                     rate: gstCalculation.inclusivePrice,
                                                                                                                     discount: 0
@@ -906,6 +925,10 @@ const CreateVoucher = () => {
                                                                                                 const quantity = parseFloat(e.target.value) || 1;
                                                                                                 setFieldValue(`paymentDetails.${index}.quantity`, quantity);
                                                                                                 setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
+                                                                                                    ...entry,
+                                                                                                    quantity: quantity
+                                                                                                }));
+                                                                                                 setFieldValue(`paymentDetails.${index}.voucherAmount`, calculateLineTotal({
                                                                                                     ...entry,
                                                                                                     quantity: quantity
                                                                                                 }));
