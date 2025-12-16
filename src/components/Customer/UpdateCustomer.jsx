@@ -204,15 +204,15 @@ const UpdateCustomer = () => {
       countryName: Yup.string().required('Required'),
       city: Yup.string().required('Required'),
       contactNumber: Yup.string().required('Required'),
-      billTo: Yup.string().required('Required'),
+      billTo: Yup.string().optional(),
       email: Yup.string().required('Required'),
-      reference: Yup.string().required('Required'),
+      reference: Yup.string().optional(),
       billingAddress: Yup.string().required('Required'),
       shippingAddress: Yup.string().required('Required'),
-      gstin_vatno: Yup.string().required('Required'),
-      iecNumber: Yup.string().required('Required'),
-      instaId: Yup.string().required('Required'),
-      discount: Yup.string().required('Required'),
+      gstin_vatno: Yup.string().optional(),
+      iecNumber: Yup.string().optional(),
+      instaId: Yup.string().optional(),
+      discount: Yup.string().optional(),
     }),
     onSubmit: (values) => {
       if (values) {
@@ -250,7 +250,7 @@ console.log(initialValues,"ghsons");
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Customer / Add Customer" />
+      <Breadcrumb pageName="Customer / Update Customer" />
       <div>
         <div className="flex flex-col gap-9">
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -292,15 +292,15 @@ console.log(initialValues,"ghsons");
                 countryName: Yup.string().required('Required'),
                 city: Yup.string().required('Required'),
                 contactNumber: Yup.string().required('Required'),
-                billTo: Yup.string().required('Required'),
+                billTo: Yup.string().optional(),
                 email: Yup.string().required('Required'),
-                reference: Yup.string().required('Required'),
+                reference: Yup.string().optional(),
                 billingAddress: Yup.string().required('Required'),
                 shippingAddress: Yup.string().required('Required'),
-                gstin_vatno: Yup.string().required('Required'),
-                iecNumber: Yup.string().required('Required'),
-                instaId: Yup.string().required('Required'),
-                discount: Yup.string().required('Required'),
+                gstin_vatno: Yup.string().optional(),
+                iecNumber: Yup.string().optional(),
+                instaId: Yup.string().optional(),
+                discount: Yup.string().optional(),
               })}
               onSubmit={(values) => {
                 if (values) {
@@ -315,7 +315,7 @@ console.log(initialValues,"ghsons");
                     <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
-                          Customer Name
+                          Customer Name <span className="text-red-600">*</span>
                         </label>
                         <input
                           type="text"
@@ -335,7 +335,7 @@ console.log(initialValues,"ghsons");
                       </div>
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
-                          Customer Group
+                          Customer Group <span className="text-red-600">*</span>
                         </label>
                         <ReactSelect
                           name="customerGroup"
@@ -370,7 +370,7 @@ console.log(initialValues,"ghsons");
                     <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
-                          Country
+                          Country <span className="text-red-600">*</span>
                         </label>
                         <input
                           type="text"
@@ -396,7 +396,7 @@ console.log(initialValues,"ghsons");
 
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
-                          City
+                          City <span className="text-red-600">*</span>
                         </label>
                         <input
                           type="text"
@@ -417,7 +417,7 @@ console.log(initialValues,"ghsons");
                     <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
-                          Contact Number
+                          Contact Number <span className="text-red-600">*</span>
                         </label>
                         <input
                           type="text"
@@ -458,7 +458,7 @@ console.log(initialValues,"ghsons");
                     <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
-                          Email id
+                          Email id <span className="text-red-600">*</span>
                         </label>
                         <input
                           type="text"
@@ -504,7 +504,7 @@ console.log(initialValues,"ghsons");
                     <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
-                          Billing Address
+                          Billing Address <span className="text-red-600">*</span>
                         </label>
                         <input
                           type="text"
@@ -524,7 +524,7 @@ console.log(initialValues,"ghsons");
                       </div>
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
-                          Shipping Address
+                          Shipping Address <span className="text-red-600">*</span>
                         </label>
                         <input
                           type="text"
@@ -604,160 +604,8 @@ console.log(initialValues,"ghsons");
                         ) : null}
                       </div>
                     </div>
-                    <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                      <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                        CUSTOMER INTERACTION
-                      </h3>
-                    </div>
 
-                    {/* First row: Four columns */}
-                    <div className="p-4 grid grid-cols-1 md:grid-cols-4 gap-4">
-                      {/* Retail Location */}
-                      <div className="space-y-2">
-                        <p className="text-left ">Retail Location</p>
-                        <label className="flex items-center">
-
-                          <input
-                            type="radio"
-                            name="retailLocation"
-                            value="SRX"
-                            checked={formik.values.retailLocation === 'SRX'}
-                            onChange={formik.handleChange}
-                          />
-                          <span className="ml-1">SRX</span>
-                        </label>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="retailLocation"
-                            value="Delhi"
-                            checked={formik.values.retailLocation === 'Delhi'}
-                            onChange={formik.handleChange}
-                          />
-                          <span className="ml-1">Delhi</span>
-                        </label>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="retailLocation"
-                            value="SXR and Delhi"
-                            checked={
-                              formik.values.retailLocation === 'SXR and Delhi'
-                            }
-                            onChange={formik.handleChange}
-                          />
-                          <span className="ml-1">SXR and Delhi</span>
-                        </label>
-                      </div>
-
-                      {/* Website */}
-                      <div className="space-y-2">
-                        <p>Website</p>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="website"
-                            value="Subscribed"
-                            checked={formik.values.website === 'Subscribed'}
-                            onChange={formik.handleChange}
-                          />
-                          <span className="ml-1">Subscribed</span>
-                        </label>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="website"
-                            value="Subscribed/Purchased"
-                            checked={
-                              formik.values.website === 'Subscribed/Purchased'
-                            }
-                            onChange={formik.handleChange}
-                          />
-                          <span className="ml-1">Subscribed/Purchased</span>
-                        </label>
-                      </div>
-
-                      {/* Social */}
-                      <div className="space-y-2">
-                        <p>Social</p>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="social"
-                            value="Interaction"
-                            checked={formik.values.social === 'Interaction'}
-                            onChange={formik.handleChange}  // Use formik.handleChange here
-                          />
-                          <span className="ml-1">Interaction</span>
-                        </label>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="social"
-                            value="Purchased"
-                            checked={formik.values.social === 'Purchased'}
-                            onChange={formik.handleChange}  // Use formik.handleChange here
-                          />
-                          <span className="ml-1">Purchased</span>
-                        </label>
-                      </div>
-
-
-                      {/* Event */}
-                      <div className="space-y-2">
-                        <p className="text-left ">Event</p>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="event"
-                            value="Domestic"
-                            checked={formik.values.event === 'Domestic'}
-                            onChange={formik.handleChange}
-                          />
-                          <span className="ml-1">Domestic</span>
-                        </label>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="event"
-                            value="International"
-                            checked={formik.values.event === 'International'}
-                            onChange={formik.handleChange}
-                          />
-                          <span className="ml-1">International</span>
-                        </label>
-                      </div>
-                    </div>
-
-                    {/* Second row: Two columns */}
-                    <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* Event Type */}
-                      <div className="space-y-2">
-                        <p>Event Type</p>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="eventType"
-                            value="Interaction"
-                            checked={formik.values.eventType === 'Interaction'}
-                            onChange={formik.handleChange}
-                          />
-                          <span className="ml-1">Interaction</span>
-                        </label>
-                        <label className="flex items-center">
-                          <input
-                            type="radio"
-                            name="eventType"
-                            value="Purchased"
-                            checked={formik.values.eventType === 'Purchased'}
-                            onChange={formik.handleChange}
-                          />
-                          <span className="ml-1">Purchased</span>
-                        </label>
-                      </div>
-                    </div>
-
-                    <div className="mb-4.5 flex flex-wrap gap-6">
+                     <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
                           Discount Offered(%){' '}
@@ -769,7 +617,7 @@ console.log(initialValues,"ghsons");
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
                           value={formik.values.discount}
-                          className="w-1/2 rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
                         {formik.touched.discount &&
                           formik.errors.discount ? (
@@ -781,6 +629,152 @@ console.log(initialValues,"ghsons");
                     </div>
 
 
+                    <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                      <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
+                        CUSTOMER INTERACTION
+                      </h3>
+                    </div>
+
+                    <div className="p-4 grid grid-cols-1 md:grid-cols-5 gap-6">
+
+  {/* Retail Location */}
+  <div className="space-y-2">
+    <p>Retail Location</p>
+    <label className="flex items-center">
+      <input
+        type="radio"
+        name="retailLocation"
+        value="SRX"
+        checked={formik.values.retailLocation === 'SRX'}
+        onChange={formik.handleChange}
+      />
+      <span className="ml-1">SRX</span>
+    </label>
+    <label className="flex items-center">
+      <input
+        type="radio"
+        name="retailLocation"
+        value="Delhi"
+        checked={formik.values.retailLocation === 'Delhi'}
+        onChange={formik.handleChange}
+      />
+      <span className="ml-1">Delhi</span>
+    </label>
+    <label className="flex items-center">
+      <input
+        type="radio"
+        name="retailLocation"
+        value="SXR and Delhi"
+        checked={formik.values.retailLocation === 'SXR and Delhi'}
+        onChange={formik.handleChange}
+      />
+      <span className="ml-1">SXR and Delhi</span>
+    </label>
+  </div>
+
+  {/* Website */}
+  <div className="space-y-2">
+    <p>Website</p>
+    <label className="flex items-center">
+      <input
+        type="radio"
+        name="website"
+        value="Subscribed"
+        checked={formik.values.website === 'Subscribed'}
+        onChange={formik.handleChange}
+      />
+      <span className="ml-1">Subscribed</span>
+    </label>
+    <label className="flex items-center">
+      <input
+        type="radio"
+        name="website"
+        value="Subscribed/Purchased"
+        checked={formik.values.website === 'Subscribed/Purchased'}
+        onChange={formik.handleChange}
+      />
+      <span className="ml-1">Subscribed/Purchased</span>
+    </label>
+  </div>
+
+  {/* Social */}
+  <div className="space-y-2">
+    <p>Social</p>
+    <label className="flex items-center">
+      <input
+        type="radio"
+        name="social"
+        value="Interaction"
+        checked={formik.values.social === 'Interaction'}
+        onChange={formik.handleChange}
+      />
+      <span className="ml-1">Interaction</span>
+    </label>
+    <label className="flex items-center">
+      <input
+        type="radio"
+        name="social"
+        value="Purchased"
+        checked={formik.values.social === 'Purchased'}
+        onChange={formik.handleChange}
+      />
+      <span className="ml-1">Purchased</span>
+    </label>
+  </div>
+
+  {/* Event */}
+  <div className="space-y-2">
+    <p>Event</p>
+    <label className="flex items-center">
+      <input
+        type="radio"
+        name="event"
+        value="Domestic"
+        checked={formik.values.event === 'Domestic'}
+        onChange={formik.handleChange}
+      />
+      <span className="ml-1">Domestic</span>
+    </label>
+    <label className="flex items-center">
+      <input
+        type="radio"
+        name="event"
+        value="International"
+        checked={formik.values.event === 'International'}
+        onChange={formik.handleChange}
+      />
+      <span className="ml-1">International</span>
+    </label>
+  </div>
+
+  {/* Event Type */}
+  <div className="space-y-2">
+    <p>Event Type</p>
+    <label className="flex items-center">
+      <input
+        type="radio"
+        name="eventType"
+        value="Interaction"
+        checked={formik.values.eventType === 'Interaction'}
+        onChange={formik.handleChange}
+      />
+      <span className="ml-1">Interaction</span>
+    </label>
+    <label className="flex items-center">
+      <input
+        type="radio"
+        name="eventType"
+        value="Purchased"
+        checked={formik.values.eventType === 'Purchased'}
+        onChange={formik.handleChange}
+      />
+      <span className="ml-1">Purchased</span>
+    </label>
+  </div>
+
+</div>
+
+                   
 
 
 
@@ -789,12 +783,24 @@ console.log(initialValues,"ghsons");
 
 
 
-                    <button
+
+
+                    {/* <button
                       type="submit"
                       className="flex  float-end mb-4 justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4"
                     >
                       Update Customer
-                    </button>
+                    </button> */}
+
+                    <div className="flex justify-center mt-4 mb-4 pt-6 border-t border-gray-300 ">
+  <button
+    type="submit"
+    className="flex justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90"
+  >
+    Update Customer
+  </button>
+</div>
+
                   </div>
                 </form>
               )}
