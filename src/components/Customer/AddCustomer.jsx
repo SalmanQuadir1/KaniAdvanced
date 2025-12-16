@@ -409,155 +409,7 @@ const AddCustomer = () => {
                   </div>
                 </div>
 
-                <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                  <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                    CUSTOMER INTERACTION
-                  </h3>
-                </div>
-
-                <div className="p-4 space-y-4 flex flex-col items-center md:space-y-0 md:flex-row md:justify-center md:items-center">
-                  <div className="md:flex-1 md:px-4">
-                    <div>
-                      <p className="flex-none text-left pt-7">Retail Location</p>
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="retailLocation"
-                          value="SRX"
-                          checked={formik.values.retailLocation === 'SRX'}
-                          onChange={handleRadioChange}
-                        />
-                        <span className="ml-1">SRX</span>
-                      </label>
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="retailLocation"
-                          value="Delhi"
-                          checked={formik.values.retailLocation === 'Delhi'}
-                          onChange={handleRadioChange}
-                        />
-                        <span className="ml-1">Delhi</span>
-                      </label>
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="retailLocation"
-                          value="SXR and Delhi"
-                          checked={formik.values.retailLocation === 'SXR and Delhi'}
-                          onChange={handleRadioChange}
-                        />
-                        <span className="ml-1">SXR and Delhi</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="md:flex-1 md:px-4 flex flex-col items-center">
-                    <div>
-                      <p>Website</p>
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="website"
-                          value="Subscribed"
-                          checked={formik.values.website === 'Subscribed'}
-                          onChange={handleRadioChangeWebsite}
-                        />
-                        <span className="ml-1">Subscribed</span>
-                      </label>
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="website"
-                          value="Subscribed/Purchased"
-                          checked={formik.values.website === 'Subscribed/Purchased'}
-                          onChange={handleRadioChangeWebsite}
-                        />
-                        <span className="ml-1">Subscribed/Purchased</span>
-                      </label>
-                    </div>
-                  </div>
-
-                  <div className="md:flex-1 md:px-4">
-                    <div>
-                      <p className="flex-none">Social</p>
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="social"
-                          value="Interaction"
-                          checked={formik.values.social === 'Interaction'}
-                          onChange={handleRadioChangeSocial}
-                        />
-                        <span className="ml-1">Interaction</span>
-                      </label>
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="social"
-                          value="Purchased"
-                          checked={formik.values.social === 'Purchased'}
-                          onChange={handleRadioChangeSocial}
-                        />
-                        <span className="ml-1">Purchased</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-4 space-y-4 flex flex-col items-center md:space-y-0 md:flex-row md:justify-center md:items-center">
-                  <div className="md:flex-1 md:px-4">
-                    <div>
-                      <p className="flex-none text-left pt-7">Event</p>
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="event"
-                          value="Domestic"
-                          checked={formik.values.event === 'Domestic'}
-                          onChange={handleRadioChangeEvent}
-                        />
-                        <span className="ml-1">Domestic</span>
-                      </label>
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="event"
-                          value="International"
-                          checked={formik.values.event === 'International'}
-                          onChange={handleRadioChangeEvent}
-                        />
-                        <span className="ml-1">International</span>
-                      </label>
-                    </div>
-
-                    <div>
-                      <p>Event Type</p>
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="eventType"
-                          value="Interaction"
-                          checked={formik.values.eventType === 'Interaction'}
-                          onChange={handleRadioChangeEventType}
-                        />
-                        <span className="ml-1">Interaction</span>
-                      </label>
-                      <label className="flex items-center">
-                        <input
-                          type="radio"
-                          name="eventType"
-                          value="Purchased"
-                          checked={formik.values.eventType === 'Purchased'}
-                          onChange={handleRadioChangeEventType}
-                        />
-                        <span className="ml-1">Purchased</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mb-4.5 flex flex-wrap gap-6">
+ <div className="mb-4.5 flex flex-wrap gap-6">
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
                       Discount Offered(%) 
@@ -577,6 +429,129 @@ const AddCustomer = () => {
                   </div>
                 </div>
 
+
+                <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                  <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
+                    CUSTOMER INTERACTION
+                  </h3>
+                </div>
+
+               <div className="p-4 flex flex-wrap lg:flex-nowrap gap-8 items-start justify-between">
+
+  {/* Retail Location */}
+  <div className="flex flex-col gap-2 min-w-[180px]">
+    <p className="font-medium">Retail Location</p>
+    <label className="flex items-center gap-2">
+      <input type="radio" name="retailLocation" value="SRX"
+        checked={formik.values.retailLocation === 'SRX'}
+        onChange={handleRadioChange}
+      />
+      SRX
+    </label>
+    <label className="flex items-center gap-2">
+      <input type="radio" name="retailLocation" value="Delhi"
+        checked={formik.values.retailLocation === 'Delhi'}
+        onChange={handleRadioChange}
+      />
+      Delhi
+    </label>
+    <label className="flex items-center gap-2">
+      <input type="radio" name="retailLocation" value="SXR and Delhi"
+        checked={formik.values.retailLocation === 'SXR and Delhi'}
+        onChange={handleRadioChange}
+      />
+      SXR and Delhi
+    </label>
+  </div>
+
+  {/* Website */}
+  <div className="flex flex-col gap-2 min-w-[160px]">
+    <p className="font-medium">Website</p>
+    <label className="flex items-center gap-2">
+      <input type="radio" name="website" value="Subscribed"
+        checked={formik.values.website === 'Subscribed'}
+        onChange={handleRadioChangeWebsite}
+      />
+      Subscribed
+    </label>
+    <label className="flex items-center gap-2">
+      <input type="radio" name="website" value="Subscribed/Purchased"
+        checked={formik.values.website === 'Subscribed/Purchased'}
+        onChange={handleRadioChangeWebsite}
+      />
+      Subscribed / Purchased
+    </label>
+  </div>
+
+  {/* Social */}
+  <div className="flex flex-col gap-2 min-w-[160px]">
+    <p className="font-medium">Social</p>
+    <label className="flex items-center gap-2">
+      <input type="radio" name="social" value="Interaction"
+        checked={formik.values.social === 'Interaction'}
+        onChange={handleRadioChangeSocial}
+      />
+      Interaction
+    </label>
+    <label className="flex items-center gap-2">
+      <input type="radio" name="social" value="Purchased"
+        checked={formik.values.social === 'Purchased'}
+        onChange={handleRadioChangeSocial}
+      />
+      Purchased
+    </label>
+  </div>
+
+  {/* Event */}
+  <div className="flex flex-col gap-2 min-w-[160px]">
+    <p className="font-medium">Event</p>
+    <label className="flex items-center gap-2">
+      <input type="radio" name="event" value="Domestic"
+        checked={formik.values.event === 'Domestic'}
+        onChange={handleRadioChangeEvent}
+      />
+      Domestic
+    </label>
+    <label className="flex items-center gap-2">
+      <input type="radio" name="event" value="International"
+        checked={formik.values.event === 'International'}
+        onChange={handleRadioChangeEvent}
+      />
+      International
+    </label>
+  </div>
+
+  {/* Event Type */}
+  <div className="flex flex-col gap-2 min-w-[170px]">
+    <p className="font-medium">Event Type</p>
+    <label className="flex items-center gap-2">
+      <input type="radio" name="eventType" value="Interaction"
+        checked={formik.values.eventType === 'Interaction'}
+        onChange={handleRadioChangeEventType}
+      />
+      Interaction
+    </label>
+    <label className="flex items-center gap-2">
+      <input type="radio" name="eventType" value="Purchased"
+        checked={formik.values.eventType === 'Purchased'}
+        onChange={handleRadioChangeEventType}
+      />
+      Purchased
+    </label>
+  </div>
+
+</div>
+
+
+                {/* <div className="p-4 space-y-4 flex flex-col items-center md:space-y-0 md:flex-row md:justify-center md:items-center">
+                  <div className="md:flex-1 md:px-4">
+                  
+                   
+                  </div>
+                </div> */}
+
+               
+
                 {/* <button
                   type="submit"
                   className="flex md:w-[240px] w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center items-center bg-primary font-medium text-white hover:bg-opacity-90"
@@ -585,7 +560,7 @@ const AddCustomer = () => {
                 </button> */}
 
 
-                <div className="flex justify-center mt-13">
+                <div className="flex justify-center mt-13  pt-6 border-t border-gray-300">
   <button
     type="submit"
    className="flex md:w-[230px] w-[190px] md:h-[37px] h-[47px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
