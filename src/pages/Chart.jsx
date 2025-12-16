@@ -18,6 +18,7 @@ import { PiGearFineFill } from "react-icons/pi";
 import { CiCalendarDate } from "react-icons/ci";
 import { VscDiffModified } from "react-icons/vsc";
 import { FaBook } from "react-icons/fa6";
+import { TbReorder } from "react-icons/tb";
 
 const Chart = () => {
   const [unitCount, setUnitCount] = useState([]);
@@ -61,6 +62,7 @@ const Chart = () => {
     { title: "Billing Info", link: "/accounts/billing", countKey: "billing", icon: <MdRepartition className="w-10 h-10" />, levelDown: true },
     { title: "Invoices", link: "/accounts/invoices", countKey: "invoices", icon: <MdOutlinePending className="w-10 h-10" />, levelUp: true },
     { title: "Day Book", link: "/configurator/dayBook", countKey: "invoices", icon: <FaBook className="w-10 h-10" />, levelUp: true },
+    { title: "Orders With Vouchers", link: "/configurator/OrderVoucher", countKey: "invoices", icon: <TbReorder className="w-10 h-10" />, levelUp: true },
   ];
   const roleBasedCards = {
     ROLE_ADMIN: [

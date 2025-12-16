@@ -412,6 +412,8 @@ export const SEARCH_DayBook_URL = `${BASE_URL}/entryPayment/search`;
 
 export const GETPRODUCTBYSUPPLIER = `${BASE_URL}/order/order-products/accepted`;
 
+export const SEARCH_OrderVoucher_URL= `${BASE_URL}/voucher/ordersWithVouchers`;
+
 
 //lut 
 
