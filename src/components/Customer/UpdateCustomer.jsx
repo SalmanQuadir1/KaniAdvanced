@@ -292,15 +292,15 @@ console.log(initialValues,"ghsons");
                 countryName: Yup.string().required('Required'),
                 city: Yup.string().required('Required'),
                 contactNumber: Yup.string().required('Required'),
-                billTo: Yup.string().required('Required'),
+                billTo: Yup.string().optional(),
                 email: Yup.string().required('Required'),
-                reference: Yup.string().required('Required'),
+                reference: Yup.string().optional(),
                 billingAddress: Yup.string().required('Required'),
                 shippingAddress: Yup.string().required('Required'),
-                gstin_vatno: Yup.string().required('Required'),
-                iecNumber: Yup.string().required('Required'),
-                instaId: Yup.string().required('Required'),
-                discount: Yup.string().required('Required'),
+                gstin_vatno: Yup.string().optional(),
+                iecNumber: Yup.string().optional(),
+                instaId: Yup.string().optional(),
+                discount: Yup.string().optional(),
               })}
               onSubmit={(values) => {
                 if (values) {
@@ -792,7 +792,7 @@ console.log(initialValues,"ghsons");
                       Update Customer
                     </button> */}
 
-                    <div className="flex justify-center mt-4 mb-4 pt-6 border-t border-gray-300">
+                    <div className="flex justify-center mt-4 mb-4 pt-6 border-t border-gray-300 ">
   <button
     type="submit"
     className="flex justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90"
