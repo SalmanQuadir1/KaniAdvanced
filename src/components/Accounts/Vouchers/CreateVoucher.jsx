@@ -589,7 +589,7 @@ const CreateVoucher = () => {
                                                                         }
 
                                                                         setFieldValue('ledgerId', option?.value || '');
-                                                                        setFieldValue('currentBalance', option?.balance || 0);
+                                                                        setFieldValue('currentBalance', (option?.balance + " " + option.type) || 0);
                                                                         handleLedgerSelect(option);
                                                                     }}
                                                                     // Filter out credit type ledgers from options
@@ -1261,7 +1261,7 @@ const CreateVoucher = () => {
                                                                                 value={LedgerData.find(opt => opt.value === values.toLedgerId)}
                                                                                 onChange={(option) => {
                                                                                     setFieldValue('toLedgerId', option?.value || '');
-                                                                                    setFieldValue('currentBalance2', option?.balance || 0);
+                                                                                    setFieldValue('currentBalance2', option?.balance +" "+ option.type || 0);
                                                                                 }}
                                                                                 options={LedgerData}
                                                                                 className="react-select-container bg-white dark:bg-form-Field w-full"
@@ -1276,8 +1276,9 @@ const CreateVoucher = () => {
                                                                         </td>
                                                                         <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
                                                                             <Field
-                                                                                type="number"
+                                                                                type="text"
                                                                                 name={`currentBalance2`}
+                                                                                readOnly
                                                                                 placeholder="0.00"
                                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-3 text-black dark:bg-form-Field dark:text-white focus:border-primary"
                                                                                 min="0"
@@ -1292,7 +1293,7 @@ const CreateVoucher = () => {
                                                                                 placeholder="0.00"
                                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-3 text-black dark:bg-form-Field dark:text-white focus:border-primary"
                                                                                 min="0"
-                                                                                readOnly
+                                                                           
                                                                                 step="0.01"
                                                                                 validate={(value) => {
                                                                                     const amount = parseFloat(value) || 0;

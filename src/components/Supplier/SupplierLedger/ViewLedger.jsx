@@ -435,8 +435,8 @@ const ViewLedger = () => {
                                         </div>
                                         <div className="bg-gradient-to-br from-red-100 to-red-50 dark:from-red-900/30 dark:to-red-800/20 p-4 rounded-lg border border-red-200 dark:border-red-700">
                                             <h3 className="text-sm font-medium text-red-800 dark:text-red-300 mb-1">Start Opening Bal</h3>
-                                            <p className="text-2xl font-bold text-red-900 dark:text-red-100">
-                                                ₹{SelectedLEDGERData?.previousOpBalance?.toFixed(2)}
+                                            <p className="text-2xl font-bold text-red-900 dark:text-red-100">  
+                                                ₹{SelectedLEDGERData?.previousOpBalance?.toFixed(2) + " (" + SelectedLEDGERData?.previousOpType + ")"   }
                                             </p>
                                         </div>
 
