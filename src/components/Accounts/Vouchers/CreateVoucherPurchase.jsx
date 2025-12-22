@@ -8,18 +8,72 @@ import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import useVoucher from '../../../hooks/useVoucher';
-import { GETPRODUCTBYSUPPLIER, GET_VoucherNos_URL, customStyles as createCustomStyles } from '../../../Constants/utils';
+import { GETPRODUCTBYSUPPLIER, GET_LEDGERSupplierId__URL, GET_VoucherNos_URL, customStyles as createCustomStyles } from '../../../Constants/utils';
 import { useSelector } from 'react-redux';
 import Modall from '../../Products/Modall';
 import NumberingDetailsModal from './NumberingDetailsModal';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import useLedger from '../../../hooks/useLedger';
 import { use } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'react-toastify';
 
-const CreateVoucher = () => {
-    const { id } = useParams();
+
+const CreateVoucherPurchase = () => {
+
+    const { id } = useParams(); // This gets the voucher ID from the URL
+    const location = useLocation();
+    const [ledgerId, setledgerId] = useState(null)
+const [openingbal, setopeningbal] = useState(0)
+    // Destructure with default values
+    const {
+        supplierName = '',
+        supplierId = '',
+        billStatus = '',
+        billStatusId = '',
+        orders = [],
+        totalBillAmount = 0,
+        totalReceivedQty = 0,
+        originalData = null
+    } = location.state || {};
+
+    // Log received data
+    useEffect(() => {
+        console.log('Voucher ID:', id);
+        console.log('Supplier:', supplierName);
+        console.log('Bill Status:', billStatus);
+        console.log('All Orders:', orders);
+        console.log('Total Amount:', totalBillAmount);
+        console.log('Total Quantity:', totalReceivedQty);
+    }, []);
+    // const { id } = useParams();
+
+    const getLedgerId = async () => {
+        try {
+            const response = await fetch(`${GET_LEDGERSupplierId__URL}/${supplierId}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data, "wwwwwwwwwwwwwwwwwwwwwwwwwwwwww");
+
+            setledgerId(data?.id);
+            setopeningbal(data?.openingBalances || 0)
+
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch Size");
+        }
+    }
+    useEffect(() => {
+        getLedgerId()
+    }, [])
+
+
+
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const { GetVoucherById, Vouchers, CreateVoucherEntry, handleCreateVoucher } = useVoucher();
@@ -44,7 +98,8 @@ const CreateVoucher = () => {
 
     console.log(Vouchers, "jharkhand");
 
-    console.log(Ledger, "lolot");
+    console.log(availableOrders, "===============================================");
+
 
     // Filter ledgers based on voucher type
     const getFilteredLedgers = () => {
@@ -66,8 +121,7 @@ const CreateVoucher = () => {
         value: ledg?.id,
         label: ledg?.name,
         obj: ledg,
-        balance: ledg?.openingBalances,
-        type: ledg.typeOfOpeningBalance,
+        balance: ledg?.openingBalance,
         isSupplier: ledg?.supplier !== null
     }));
 
@@ -76,6 +130,7 @@ const CreateVoucher = () => {
     useEffect(() => {
         GetVoucherById(id);
         getLedger();
+        getLedgerId();
     }, []);
 
     // GST Calculation Logic
@@ -155,11 +210,11 @@ const CreateVoucher = () => {
 
         console.log(selectedOrder, "kikidoyopu");
 
-
+        const orderIdd = orders[0].orderId
 
         try {
 
-            const response = await fetch(`http://localhost:8081/order/order-products/by-order-ids?orderIds=${option}`, {
+            const response = await fetch(`http://localhost:8081/order/order-products/by-order-ids?orderIds=${orderIdd}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -177,7 +232,7 @@ const CreateVoucher = () => {
                 const productOptions = data.map(prod => ({
                     value: prod.product.id,
                     orderProdId: prod.id,
-                    label: prod.product.productDescription,
+                    label: prod.product.productId,
                     price: prod.product?.retailMrp,
                     hsnCode: prod.product?.hsnCode || '',
                     obj: prod
@@ -194,6 +249,9 @@ const CreateVoucher = () => {
     }
 
 
+    useEffect(() => {
+        handleOrderSelect()
+    }, [])
 
 
 
@@ -229,81 +287,58 @@ const CreateVoucher = () => {
 
 
     const handleLedgerSelect = async (option) => {
+        console.log("i am here");
+
         setSelectedLedger(option);
         setavailableOrders([]);
+        console.log(Vouchers, "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq");
 
-        if (Vouchers?.typeOfVoucher === "Purchase" && option) {
-            setloadingOrders(true);
-            try {
-                const supplierId = option.obj.supplier.id;
-                const response = await fetch(`http://localhost:8081/order/by-type?id=${supplierId}&type=supplier`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-                });
 
-                const data = await response.json();
-                console.log(data, "Products data");
-                if (response.ok && Array.isArray(data)) {
-                    const orderOptions = data.map(ord => ({
-                        value: ord.orderId,
-                        label: ord.orderNumber,
 
-                        obj: ord
-                    }));
-                    setavailableOrders(orderOptions);
-                }
+        setloadingOrders(true);
+        try {
+            // const supplierId = option.obj.supplier.id;
+            const response = await fetch(`http://localhost:8081/order/by-type?id=${supplierId}&type=supplier`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+            });
 
-                // if (response.ok && Array.isArray(data)) {
-                //     const orderOptions = data.map(order => ({
-                //         value: prod.id,
-                //         label: prod.products.productDescription,
-                //         price: prod.products?.retailMrp,
-                //         hsnCode: prod.products?.hsnCode || '',
-                //         obj: prod
-                //     }));
-                //     setAvailableProducts(productOptions);
-                // }
-            } catch (error) {
-                console.error("Error fetching products:", error);
-            } finally {
-                setLoadingProducts(false);
+            const data = await response.json();
+            console.log(data, "Products data");
+            if (response.ok && Array.isArray(data)) {
+                const orderOptions = data.map(ord => ({
+                    value: ord.orderId,
+                    label: ord.orderNumber,
+
+                    obj: ord
+                }));
+                setavailableOrders(orderOptions);
             }
-        } else if (Vouchers?.typeOfVoucher === "Sales" && option) {
-            // For Sales - fetch customer products
-            setloadingOrders(true);
-            try {
-                const customerId = option.value;
-                const response = await fetch(`http://localhost:8081/order/by-type?id=${customerId}&type=customer`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-                });
 
-                const data = await response.json();
-                console.log(data, "order data");
-
-                if (response.ok && Array.isArray(data)) {
-                    const orderOptions = data.map(ord => ({
-                        value: ord.orderId,
-                        label: ord.orderNumber,
-
-                        obj: ord
-                    }));
-                    setavailableOrders(orderOptions);
-                }
-            } catch (error) {
-                console.error("Error fetching customer products:", error);
-            } finally {
-                setLoadingProducts(false);
-            }
+            // if (response.ok && Array.isArray(data)) {
+            //     const orderOptions = data.map(order => ({
+            //         value: prod.id,
+            //         label: prod.products.productDescription,
+            //         price: prod.products?.retailMrp,
+            //         hsnCode: prod.products?.hsnCode || '',
+            //         obj: prod
+            //     }));
+            //     setAvailableProducts(productOptions);
+            // }
+        } catch (error) {
+            console.error("Error fetching products:", error);
+        } finally {
+            setLoadingProducts(false);
         }
+
     };
 
+    useEffect(() => {
+        handleLedgerSelect()
+    }, [])
 
 
 
@@ -315,11 +350,14 @@ const CreateVoucher = () => {
     };
 
     const getAvailableProductsForRow = (values, currentIndex) => {
+        console.log(values, "7777777777777777777777777777777777777777777777777777777777777");
+
         const usedproductsIds = getUsedproductsIds(values, currentIndex);
         return availableProducts.filter(product =>
             !usedproductsIds.includes(product.value)
         );
     };
+    console.log(availableProducts, "uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
 
     const calculateLineTotal = (entry) => {
         const basePrice = entry.discount > 0 ? entry.rate : entry.exclusiveGst;
@@ -402,8 +440,8 @@ const CreateVoucher = () => {
 
     const validationSchema = Yup.object().shape({
         recieptNumber: Yup.string().required('Voucher number is required'),
-        // supplierInvoiceNumber: Yup.string().required('Supplier invoice number is required'),
-        // date: Yup.date().required('Date is required'),
+        supplierInvoiceNumber: Yup.string().required('Supplier invoice number is required'),
+        date: Yup.date().required('Date is required'),
         ledgerId: Yup.string().required('Party account is required'),
     });
 
@@ -486,7 +524,8 @@ const CreateVoucher = () => {
         }
     };
 
-    console.log(Vouchers?.typeOfVoucher, "-------------------------------");
+    console.log(orders[0].orderId, "Kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
+
 
     return (
         <DefaultLayout>
@@ -498,37 +537,33 @@ const CreateVoucher = () => {
                         supplierInvoiceNumber: '',
                         date: '',
                         voucherId: Number(id),
-                        paymentDate: '',
-                        ledgerId: "",
-                        orderIds: [],
-                        currentBalance: "",
-                        currentBalance2: "",
+                        ledgerId: ledgerId,
+                        orderIds: [orders[0].orderId || ''],
+                        currentBalance:openingbal||0,
                         gstRegistration: Vouchers.defGstRegist || "",
                         narration: "",
                         modeOfPayment: "",
                         chequeNumber: "",
                         cardNumber: "",
                         transactionId: "",
-                        typeOfVoucher: Vouchers?.typeOfVoucher || "",
+
                         isExport: false,
-                        totalAmount: 0,
+                        totalAmount: orders[0]?.totalAmount || 1,
                         totalIgst: 0,
                         totalSgst: 0,
                         totalCgst: 0,
-                        toLedgerId: null,
-                        amount: 0,
 
                         totalGst: 0,
                         paymentDetails: [{
-                            productsId: null,
+                            productsId: orders[0]?.productId || null,
                             orderProductId: null,
-                            mrp: 0,
+                            mrp: orders[0]?.productCost || 0,
                             rate: 0,
                             exclusiveGst: 0,
                             discount: 0,
-                            quantity: 1,
+                            quantity: orders[0]?.receivedQty || 1,
                             value: 0,
-                            voucherAmount: 0,
+                            voucherAmount: orders[0]?.totalAmount || 1,
                             igstRate: 0,
                             gstAmount: 0,
                             gstCalculation: null
@@ -555,7 +590,7 @@ const CreateVoucher = () => {
                                     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                                         <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                                             <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                                                {Vouchers?.typeOfVoucher} Voucher Entry
+                                                Create Entry For {Vouchers?.typeOfVoucher}
                                             </h3>
                                         </div>
 
@@ -573,191 +608,111 @@ const CreateVoucher = () => {
                                                     />
                                                     <ErrorMessage name="recieptNumber" component="div" className="text-red-500" />
                                                 </div>
-                                                {
-                                                    Vouchers?.typeOfVoucher == "Payment" && (
-                                                        <>
-                                                        <div className="flex-2 min-w-[250px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white">Select Account</label>
-                                                            <ReactSelect
-                                                                name='ledgerId'
-                                                                value={LedgerData.find(opt => opt.value === values.ledgerId)}
-                                                                onChange={(option) => {
-                                                                    // Check if selected option is credit type
-                                                                    if (option?.type?.toLowerCase() === 'credit') {
-                                                                        toast.error("Cannot select ledger with Credit balance. Please select a Debit balance ledger.");
-                                                                        return; // Don't set the value
-                                                                    }
 
-                                                                    setFieldValue('ledgerId', option?.value || '');
-                                                                    setFieldValue('currentBalance', option?.balance || 0);
-                                                                    handleLedgerSelect(option);
-                                                                }}
-                                                                // Filter out credit type ledgers from options
-                                                                options={LedgerData.filter(opt =>
-                                                                    opt.type?.toLowerCase() !== 'credit'
-                                                                )}
-                                                                className="react-select-container bg-white dark:bg-form-Field w-full"
-                                                                classNamePrefix="react-select"
-                                                                placeholder={getPartyAccountPlaceholder()}
-                                                                menuPortalTarget={document.body}
-                                                                styles={{
-                                                                    ...customStyles,
-                                                                    menuPortal: (base) => ({ ...base, zIndex: 100000 })
-                                                                }}
-                                                            />
-                                                            {/* Show warning message if current selection is credit type */}
-                                                            {values.ledgerId && LedgerData.find(opt =>
-                                                                opt.value === values.ledgerId &&
-                                                                opt.type?.toLowerCase() === 'credit'
-                                                            ) && (
-                                                                    <div className="text-red-500 text-xs mt-1 flex items-center">
-                                                                        <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                                                        </svg>
-                                                                        This ledger has Credit balance. Please select a Debit balance ledger.
-                                                                    </div>
-                                                                )}
-                                                            <ErrorMessage name="ledgerId" component="div" className="text-red-500 text-xs mt-1" />
-                                                        </div>
-<div className="flex-2 min-w-[250px]">
-    <label className="mb-2.5 block text-black dark:text-white">Payment Date & Time</label>
-    <Field
-        name="paymentDate"
-        type="datetime-local"
-        defaultValue={new Date().toISOString().slice(0, 16)}
-        className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-    />
-    <ErrorMessage name="paymentDate" component="div" className="text-red-500" />
-</div>
-                                                </>
+                                                <div className="flex-2 min-w-[250px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">Supplier Invoice Number</label>
+                                                    <Field
+                                                        type="text"
+                                                        name="supplierInvoiceNumber"
+                                                        placeholder="Enter No"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                    />
+                                                    <ErrorMessage name="supplierInvoiceNumber" component="div" className="text-red-500" />
+                                                </div>
 
+                                                <div className="flex-2 min-w-[250px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">{getPartyAccountLabel()}</label>
+                                                    <ReactSelect
+                                                        name='ledgerId'
+                                                        value={LedgerData.find(opt => opt.value === ledgerId)}
+                                                        onChange={(option) => {
+                                                            setFieldValue('ledgerId', ledgerId || '');
+                                                            setFieldValue('currentBalance', option?.balance || 0);
+                                                            handleLedgerSelect(option);
+                                                        }}
+                                                        options={LedgerData}
+                                                        className="react-select-container bg-white dark:bg-form-Field w-full"
+                                                        classNamePrefix="react-select"
+                                                        placeholder={getPartyAccountPlaceholder()}
+                                                        menuPortalTarget={document.body}
+                                                        styles={{
+                                                            ...customStyles,
+                                                            menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                        }}
+                                                    />
+                                                    <ErrorMessage name="ledgerId" component="div" className="text-red-500 text-xs mt-1" />
+                                                </div>
 
+                                                <div className="flex-2 min-w-[250px] " >
+                                                    <label className="mb-2.5 block text-black dark:text-white">Orders Pending For{getPartyAccountLabel()}</label>
+                                                    <ReactSelect
+                                                        name='orderIds'
+                                                        style={{ height: "20px" }}
+                                                        value={availableOrders?.find(opt => orders[0]?.orderId === opt.value)}
+                                                        onChange={(selectedOptions) => {
+                                                            const selectedValues = selectedOptions?.map(option => option.value) || [];
+                                                            setFieldValue('orderIds', selectedValues);
+                                                            console.log(selectedValues, "jojojazim");
 
-                                                    )
-                                                }
-
-
-
-                                                {
-                                                    Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase" && (
-                                                        <>
-
-                                                            <div className="flex-2 min-w-[250px]">
-                                                                <label className="mb-2.5 block text-black dark:text-white">Supplier Invoice Number</label>
-                                                                <Field
-                                                                    type="text"
-                                                                    name="supplierInvoiceNumber"
-                                                                    placeholder="Enter No"
-                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-                                                                />
-                                                                <ErrorMessage name="supplierInvoiceNumber" component="div" className="text-red-500" />
-                                                            </div>
-
-
-
-
-
-
-
-
-                                                            <div className="flex-2 min-w-[250px]">
-                                                                <label className="mb-2.5 block text-black dark:text-white">{getPartyAccountLabel()}</label>
-                                                                <ReactSelect
-                                                                    name='ledgerId'
-                                                                    value={LedgerData.find(opt => opt.value === values.ledgerId)}
-                                                                    onChange={(option) => {
-                                                                        setFieldValue('ledgerId', option?.value || '');
-                                                                        setFieldValue('currentBalance', option?.balance || 0);
-                                                                        handleLedgerSelect(option);
-                                                                    }}
-                                                                    options={LedgerData}
-                                                                    className="react-select-container bg-white dark:bg-form-Field w-full"
-                                                                    classNamePrefix="react-select"
-                                                                    placeholder={getPartyAccountPlaceholder()}
-                                                                    menuPortalTarget={document.body}
-                                                                    styles={{
-                                                                        ...customStyles,
-                                                                        menuPortal: (base) => ({ ...base, zIndex: 100000 })
-                                                                    }}
-                                                                />
-                                                                <ErrorMessage name="ledgerId" component="div" className="text-red-500 text-xs mt-1" />
-                                                            </div>
-
-                                                            <div className="flex-2 min-w-[250px] " >
-                                                                <label className="mb-2.5 block text-black dark:text-white">Orders Pending For{getPartyAccountLabel()}</label>
-                                                                <ReactSelect
-                                                                    name='orderIds'
-                                                                    style={{ height: "20px" }}
-                                                                    value={availableOrders.filter(opt => values.orderIds?.includes(opt.value))}
-                                                                    onChange={(selectedOptions) => {
-                                                                        const selectedValues = selectedOptions?.map(option => option.value) || [];
-                                                                        setFieldValue('orderIds', selectedValues);
-                                                                        console.log(selectedValues, "jojojazim");
-
-                                                                        // Call handleOrderSelect with selected values (even if empty)
-                                                                        handleOrderSelect(selectedValues);
-                                                                    }}
-                                                                    options={availableOrders}
-                                                                    isMulti={true}
-                                                                    menuPortalTarget={document.body}
-                                                                    styles={{
-                                                                        ...customStyles,
-                                                                        control: (base, state) => ({
-                                                                            ...base,
-                                                                            minHeight: '42px',
-                                                                            maxHeight: '42px',
-                                                                            overflowY: 'auto',
-                                                                            borderColor: state.isFocused ? '#3b82f6' : '#d1d5db',
-                                                                            '&:hover': {
-                                                                                borderColor: '#9ca3af',
-                                                                            },
-                                                                        }),
-                                                                        valueContainer: (base) => ({
-                                                                            ...base,
-                                                                            maxHeight: '36px',
-                                                                            overflowY: 'auto',
-                                                                            flexWrap: 'nowrap',
-                                                                            display: 'flex',
-                                                                        }),
-                                                                        multiValue: (base) => ({
-                                                                            ...base,
-                                                                            backgroundColor: '#3b82f6',
-                                                                            borderRadius: '4px',
-                                                                            margin: '2px',
-                                                                            flexShrink: 0,
-                                                                        }),
-                                                                        multiValueLabel: (base) => ({
-                                                                            ...base,
-                                                                            color: 'white',
-                                                                            padding: '2px 6px',
-                                                                            fontSize: '12px',
-                                                                        }),
-                                                                        multiValueRemove: (base) => ({
-                                                                            ...base,
-                                                                            color: 'white',
-                                                                            ':hover': {
-                                                                                backgroundColor: '#2563eb',
-                                                                                color: 'white',
-                                                                            },
-                                                                        }),
-                                                                        indicatorsContainer: (base) => ({
-                                                                            ...base,
-                                                                            height: '40px',
-                                                                        }),
-                                                                        menuPortal: (base) => ({ ...base, zIndex: 100000 })
-                                                                    }}
-                                                                    components={{
-                                                                        DropdownIndicator: null,
-                                                                        IndicatorSeparator: null,
-                                                                    }}
-                                                                />
-                                                                <ErrorMessage name="orderId" component="div" className="text-red-500 text-xs mt-1" />
-                                                            </div>
-                                                        </>
-                                                    )
-                                                }
-
-
+                                                            // Call handleOrderSelect with selected values (even if empty)
+                                                            handleOrderSelect(selectedValues);
+                                                        }}
+                                                        options={availableOrders}
+                                                        isMulti={true}
+                                                        menuPortalTarget={document.body}
+                                                        styles={{
+                                                            ...customStyles,
+                                                            control: (base, state) => ({
+                                                                ...base,
+                                                                minHeight: '42px',
+                                                                maxHeight: '42px',
+                                                                overflowY: 'auto',
+                                                                borderColor: state.isFocused ? '#3b82f6' : '#d1d5db',
+                                                                '&:hover': {
+                                                                    borderColor: '#9ca3af',
+                                                                },
+                                                            }),
+                                                            valueContainer: (base) => ({
+                                                                ...base,
+                                                                maxHeight: '36px',
+                                                                overflowY: 'auto',
+                                                                flexWrap: 'nowrap',
+                                                                display: 'flex',
+                                                            }),
+                                                            multiValue: (base) => ({
+                                                                ...base,
+                                                                backgroundColor: '#3b82f6',
+                                                                borderRadius: '4px',
+                                                                margin: '2px',
+                                                                flexShrink: 0,
+                                                            }),
+                                                            multiValueLabel: (base) => ({
+                                                                ...base,
+                                                                color: 'white',
+                                                                padding: '2px 6px',
+                                                                fontSize: '12px',
+                                                            }),
+                                                            multiValueRemove: (base) => ({
+                                                                ...base,
+                                                                color: 'white',
+                                                                ':hover': {
+                                                                    backgroundColor: '#2563eb',
+                                                                    color: 'white',
+                                                                },
+                                                            }),
+                                                            indicatorsContainer: (base) => ({
+                                                                ...base,
+                                                                height: '40px',
+                                                            }),
+                                                            menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                        }}
+                                                        components={{
+                                                            DropdownIndicator: null,
+                                                            IndicatorSeparator: null,
+                                                        }}
+                                                    />
+                                                    <ErrorMessage name="orderId" component="div" className="text-red-500 text-xs mt-1" />
+                                                </div>
 
 
                                             </div>
@@ -774,21 +729,7 @@ const CreateVoucher = () => {
                                                         className="w-full bg-gray-100 dark:bg-slate-800 rounded border border-gray-300 py-3 px-5 text-black cursor-not-allowed"
                                                     />
                                                 </div>
-
-
-
-
-
-
-                                               
-
-                                              
-
-                                                {
-                                                    
-                                                    Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase" && (
-                                                        <>
-                                                          <div className="flex-2 min-w-[250px]">
+                                                <div className="flex-2 min-w-[250px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Date</label>
                                                     <Field
                                                         name="date"
@@ -798,34 +739,31 @@ const CreateVoucher = () => {
                                                     />
                                                     <ErrorMessage name="date" component="div" className="text-red-500" />
                                                 </div>
-                                                            <div className="flex-2 min-w-[250px]">
-                                                                <label className="mb-2.5 block text-black dark:text-white">Gst Registration</label>
-                                                                <Field
-                                                                    name="gstRegistration"
-                                                                    type="text"
-                                                                    placeholder="Enter gst Registration"
-                                                                    className=" w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                />
-                                                                <ErrorMessage name="gstRegistration" component="div" className="text-red-500" />
-                                                            </div>
+                                                <div className="flex-2 min-w-[250px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">Gst Registration</label>
+                                                    <Field
+                                                        name="gstRegistration"
+                                                        type="text"
+                                                        placeholder="Enter gst Registration"
+                                                        className=" w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                    />
+                                                    <ErrorMessage name="gstRegistration" component="div" className="text-red-500" />
+                                                </div>
 
-                                                            <div className="flex-2 min-w-[250px] ml-5">
-                                                                <label className="mt-7 mb-2  block text-black dark:text-white">Is Export</label>
-                                                                <div className="flex items-center gap-3">
-                                                                    <Field
-                                                                        name="isExport"
-                                                                        type="checkbox"
-                                                                        className="h-5 w-5 rounded border-stroke bg-transparent text-primary focus:ring-primary dark:border-form-strokedark dark:bg-form-input"
-                                                                    />
-                                                                    <span className="text-sm text-gray-600 dark:text-gray-300">
-                                                                        {values.isExport ? 'Yes (Export)' : 'No (Domestic)'}
-                                                                    </span>
-                                                                </div>
-                                                                <ErrorMessage name="isExport" component="div" className="text-red-500 text-sm mt-1" />
-                                                            </div>
-
-                                                        </>
-                                                    )}
+                                                <div className="flex-2 min-w-[250px] ml-5">
+                                                    <label className="mt-7 mb-2  block text-black dark:text-white">Is Export</label>
+                                                    <div className="flex items-center gap-3">
+                                                        <Field
+                                                            name="isExport"
+                                                            type="checkbox"
+                                                            className="h-5 w-5 rounded border-stroke bg-transparent text-primary focus:ring-primary dark:border-form-strokedark dark:bg-form-input"
+                                                        />
+                                                        <span className="text-sm text-gray-600 dark:text-gray-300">
+                                                            {values.isExport ? 'Yes (Export)' : 'No (Domestic)'}
+                                                        </span>
+                                                    </div>
+                                                    <ErrorMessage name="isExport" component="div" className="text-red-500 text-sm mt-1" />
+                                                </div>
                                             </div>
 
                                             {/* Products Table - Only for Sales and Purchase */}
@@ -864,57 +802,57 @@ const CreateVoucher = () => {
                                                                                 <tr key={entry.id || index} className="hover:bg-gray-50 dark:hover:bg-gray-800">
                                                                                     {/* Product Dropdown */}
                                                                                     <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
-                                                                                        {selectedLedger ? (
-                                                                                            <ReactSelect
-                                                                                                name={`paymentDetails.${index}.productsId`}
-                                                                                                value={rowProducts.find(p => p.value === entry.productsId) || null}
-                                                                                                onChange={(option) => {
-                                                                                                    const mrp = option?.price || 0;
-                                                                                                    const hsnCode = option?.hsnCode || {};
-                                                                                                    const igstRate = hsnCode?.igst || 0;
 
-                                                                                                    // Get customer shipping address for GST calculation
-                                                                                                    const customerAddress = selectedLedger?.obj?.customer?.shippingAddress || '';
-                                                                                                    const gstRegistration = values.gstRegistration || '';
-                                                                                                    const currentDiscount = entry.discount || 0;
+                                                                                        <ReactSelect
+                                                                                          
+                                                                                            name={`paymentDetails.${index}.productsId`}
+                                                                                            value={rowProducts.find(p => p.value === orders[0].productId) || null}
+                                                                                            onChange={(option) => {
+                                                                                                const mrp = option?.price || 0;
+                                                                                                const hsnCode = option?.hsnCode || {};
+                                                                                                const igstRate = hsnCode?.igst || 0;
 
-                                                                                                    // Calculate GST based on location and discount
-                                                                                                    const gstCalculation = calculateGST(mrp, hsnCode, gstRegistration, customerAddress, currentDiscount);
+                                                                                                // Get customer shipping address for GST calculation
+                                                                                                const customerAddress = selectedLedger?.obj?.customer?.shippingAddress || '';
+                                                                                                const gstRegistration = values.gstRegistration || '';
+                                                                                                const currentDiscount = entry.discount || 0;
 
-                                                                                                    setFieldValue(`paymentDetails.${index}.productsId`, option?.value || null);
-                                                                                                    setFieldValue(`paymentDetails.${index}.orderProductId`, option?.orderProdId || null);
-                                                                                                    setFieldValue(`paymentDetails.${index}.mrp`, mrp);
-                                                                                                    setFieldValue(`paymentDetails.${index}.igstRate`, igstRate);
-                                                                                                    setFieldValue(`paymentDetails.${index}.gstAmount`, gstCalculation.totalGstAmount);
-                                                                                                    setFieldValue(`paymentDetails.${index}.exclusiveGst`, gstCalculation.inclusivePrice);
-                                                                                                    setFieldValue(`paymentDetails.${index}.rate`, gstCalculation.inclusivePrice);
-                                                                                                    setFieldValue(`paymentDetails.${index}.gstCalculation`, gstCalculation);
-                                                                                                    setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
-                                                                                                        ...entry,
-                                                                                                        exclusiveGst: gstCalculation.inclusivePrice,
-                                                                                                        rate: gstCalculation.inclusivePrice
-                                                                                                    }));
-                                                                                                    setFieldValue(`paymentDetails.${index}.voucherAmount`, calculateLineTotal({
-                                                                                                        ...entry,
-                                                                                                        exclusiveGst: gstCalculation.inclusivePrice,
-                                                                                                        rate: gstCalculation.inclusivePrice
-                                                                                                    }));
-                                                                                                }}
-                                                                                                options={rowProducts}
-                                                                                                placeholder="Select Product"
-                                                                                                className="react-select-container"
-                                                                                                classNamePrefix="react-select"
-                                                                                                menuPortalTarget={document.body}
-                                                                                                styles={{
-                                                                                                    ...customStyles,
-                                                                                                    menuPortal: base => ({ ...base, zIndex: 9999 })
-                                                                                                }}
-                                                                                                isClearable
-                                                                                                isDisabled={loadingProducts}
-                                                                                            />
-                                                                                        ) : (
-                                                                                            <div className="text-sm text-gray-400">Select party account first</div>
-                                                                                        )}
+                                                                                                // Calculate GST based on location and discount
+                                                                                                const gstCalculation = calculateGST(mrp, hsnCode, gstRegistration, customerAddress, currentDiscount);
+
+                                                                                                setFieldValue(`paymentDetails.${index}.productsId`, option?.value || null);
+                                                                                                setFieldValue(`paymentDetails.${index}.orderProductId`, option?.orderProdId || null);
+                                                                                                setFieldValue(`paymentDetails.${index}.mrp`, mrp);
+                                                                                                setFieldValue(`paymentDetails.${index}.igstRate`, igstRate);
+                                                                                                setFieldValue(`paymentDetails.${index}.gstAmount`, gstCalculation.totalGstAmount);
+                                                                                                setFieldValue(`paymentDetails.${index}.exclusiveGst`, gstCalculation.inclusivePrice);
+                                                                                                setFieldValue(`paymentDetails.${index}.rate`, gstCalculation.inclusivePrice);
+                                                                                                setFieldValue(`paymentDetails.${index}.gstCalculation`, gstCalculation);
+                                                                                                setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
+                                                                                                    ...entry,
+                                                                                                    exclusiveGst: gstCalculation.inclusivePrice,
+                                                                                                    rate: gstCalculation.inclusivePrice
+                                                                                                }));
+                                                                                                setFieldValue(`paymentDetails.${index}.voucherAmount`, calculateLineTotal({
+                                                                                                    ...entry,
+                                                                                                    exclusiveGst: gstCalculation.inclusivePrice,
+                                                                                                    rate: gstCalculation.inclusivePrice
+                                                                                                }));
+                                                                                            }}
+                                                                                            options={rowProducts}
+                                                                                          
+                                                                                            placeholder="Select Product"
+                                                                                            className="react-select-container"
+                                                                                            classNamePrefix="react-select"
+                                                                                            menuPortalTarget={document.body}
+                                                                                            styles={{
+                                                                                                ...customStyles,
+                                                                                                menuPortal: base => ({ ...base, zIndex: 9999 })
+                                                                                            }}
+                                                                                            isClearable
+                                                                                             isDisabled={true}
+                                                                                        />
+
                                                                                         <ErrorMessage name={`paymentDetails.${index}.productsId`} component="div" className="text-red-500 text-xs mt-1" />
                                                                                     </td>
 
@@ -924,6 +862,7 @@ const CreateVoucher = () => {
                                                                                             type="number"
                                                                                             name={`paymentDetails.${index}.mrp`}
                                                                                             placeholder="0.00"
+                                                                                            disabled
                                                                                             readOnly
                                                                                             className="w-full bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm rounded border"
                                                                                         />
@@ -1022,6 +961,7 @@ const CreateVoucher = () => {
                                                                                             type="number"
                                                                                             name={`paymentDetails.${index}.quantity`}
                                                                                             placeholder="1"
+                                                                                              disabled
                                                                                             min="1"
                                                                                             step="1"
                                                                                             className="w-full py-2 px-3 text-sm rounded border focus:border-primary"
@@ -1047,6 +987,7 @@ const CreateVoucher = () => {
                                                                                             <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark font-medium">
                                                                                                 <Field
                                                                                                     type="number"
+                                                                                                      disabled
                                                                                                     name={`paymentDetails.${index}.value`}
                                                                                                     value={calculateLineTotalForPur(entry)}
                                                                                                     readOnly
@@ -1242,61 +1183,28 @@ const CreateVoucher = () => {
                                                         <table className="w-full table-fixed border-collapse">
                                                             <thead>
                                                                 <tr className="bg-gray-2 text-left dark:bg-meta-4">
-                                                                    <th>Particular</th>
-                                                                    <th>Balance</th>
                                                                     <th className="w-[220px] py-4 px-3 font-medium text-black dark:text-white text-sm border-b border-gray-300">
                                                                         Amount
                                                                     </th>
-
+                                                                    <th className="w-[100px] py-4 px-3 font-medium text-black dark:text-white text-sm border-b border-gray-300">
+                                                                        Action
+                                                                    </th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
                                                                 {values.paymentDetails.map((entry, index) => (
                                                                     <tr key={entry.id || index} className="hover:bg-gray-50 dark:hover:bg-gray-800">
-
-
-                                                                        <td>
-
-                                                                            <ReactSelect
-                                                                                name='toLedgerId'
-                                                                                value={LedgerData.find(opt => opt.value === values.toLedgerId)}
-                                                                                onChange={(option) => {
-                                                                                    setFieldValue('toLedgerId', option?.value || '');
-                                                                                    setFieldValue('currentBalance2', option?.balance || 0);
-                                                                                }}
-                                                                                options={LedgerData}
-                                                                                className="react-select-container bg-white dark:bg-form-Field w-full"
-                                                                                classNamePrefix="react-select"
-                                                                                placeholder={"Select Particular"}
-                                                                                menuPortalTarget={document.body}
-                                                                                styles={{
-                                                                                    ...customStyles,
-                                                                                    menuPortal: (base) => ({ ...base, zIndex: 100000 })
-                                                                                }}
-                                                                            />
-                                                                        </td>
                                                                         <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
                                                                             <Field
                                                                                 type="number"
-                                                                                name={`currentBalance2`}
+                                                                                name={`paymentDetails.${index}.amount`}
                                                                                 placeholder="0.00"
                                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-3 text-black dark:bg-form-Field dark:text-white focus:border-primary"
                                                                                 min="0"
                                                                                 step="0.01"
                                                                             />
                                                                         </td>
-
-                                                                        <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
-                                                                            <Field
-                                                                                type="number"
-                                                                                name="amount"
-                                                                                placeholder="0.00"
-                                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-3 text-black dark:bg-form-Field dark:text-white focus:border-primary"
-                                                                                min="0"
-                                                                                step="0.01"
-                                                                            />
-                                                                        </td>
-                                                                        {/* <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark text-center">
+                                                                        <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark text-center">
                                                                             {values.paymentDetails.length > 1 && (
                                                                                 <button
                                                                                     type="button"
@@ -1306,7 +1214,7 @@ const CreateVoucher = () => {
                                                                                     <MdDelete size={22} />
                                                                                 </button>
                                                                             )}
-                                                                        </td> */}
+                                                                        </td>
                                                                     </tr>
                                                                 ))}
                                                             </tbody>
@@ -1327,69 +1235,66 @@ const CreateVoucher = () => {
                                                 </div>
                                             )}
 
-                                            {Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase" && (
-                                                <div>
-                                                    <label className="mb-2.5 block text-black dark:text-white">Mode Of Payment</label>
-                                                    <ReactSelect
-                                                        name="modeOfPayment"
-                                                        options={modeOfpayment}
-                                                        value={modeOfpayment.find(option => option.value === values.modeOfPayment)}
-                                                        onChange={(selectedOption) => {
-                                                            setFieldValue('modeOfPayment', selectedOption ? selectedOption.value : '');
-                                                        }}
-                                                        placeholder="Select Mode Of Payment"
-                                                        className="react-select-container mb-4"
-                                                        classNamePrefix="react-select"
-                                                    />
-                                                    {
-                                                        values.modeOfPayment === 'Cheque' && (
-                                                            <div className="mb-4">
-                                                                <label className="mb-2.5 block text-black dark:text-white">Cheque Number</label>
-                                                                <Field
-                                                                    type="text"
-                                                                    name="chequeNumber"
-                                                                    placeholder="Enter Cheque Number"
-                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                />
-                                                            </div>
-                                                        )
+
+ {(Vouchers?.typeOfVoucher === "Payment" || Vouchers?.typeOfVoucher === "Contra") && (
+                                            <div>
+                                                <label className="mb-2.5 block text-black dark:text-white">Mode Of Payment</label>
+                                                <ReactSelect
+                                                    name="modeOfPayment"
+                                                    options={modeOfpayment}
+                                                    value={modeOfpayment.find(option => option.value === values.modeOfPayment)}
+                                                    onChange={(selectedOption) => {
+                                                        setFieldValue('modeOfPayment', selectedOption ? selectedOption.value : '');
+                                                    }}
+                                                    placeholder="Select Mode Of Payment"
+                                                    className="react-select-container mb-4"
+                                                    classNamePrefix="react-select"
+                                                />
+                                                {
+                                                    values.modeOfPayment === 'Cheque' && (
+                                                        <div className="mb-4">
+                                                            <label className="mb-2.5 block text-black dark:text-white">Cheque Number</label>
+                                                            <Field
+                                                                type="text"
+                                                                name="chequeNumber"
+                                                                placeholder="Enter Cheque Number"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+                                                    )
 
 
-                                                    }
-                                                    {
-                                                        values.modeOfPayment === 'Bank Transfer' && (
-                                                            <div className="mb-4">
-                                                                <label className="mb-2.5 block text-black dark:text-white">Transaction ID</label>
-                                                                <Field
-                                                                    type="text"
-                                                                    name="transactionId"
-                                                                    placeholder="Enter Transaction ID"
-                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                />
-                                                            </div>
-                                                        )
-                                                    }
-                                                    {
-                                                        values.modeOfPayment === 'Card' && (
-                                                            <div className="mb-4">
-                                                                <label className="mb-2.5 block text-black dark:text-white">Card Number</label>
-                                                                <Field
-                                                                    type="text"
-                                                                    name="cardNumber"
-                                                                    placeholder="Enter Card Number"
-                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                />
-                                                            </div>
-                                                        )
-                                                    }
+                                                }
+                                                {
+                                                    values.modeOfPayment === 'Bank Transfer' && (
+                                                        <div className="mb-4">
+                                                            <label className="mb-2.5 block text-black dark:text-white">Transaction ID</label>
+                                                            <Field
+                                                                type="text"
+                                                                name="transactionId"
+                                                                placeholder="Enter Transaction ID"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+                                                    )
+                                                }
+                                                {
+                                                    values.modeOfPayment === 'Card' && (
+                                                        <div className="mb-4">
+                                                            <label className="mb-2.5 block text-black dark:text-white">Card Number</label>
+                                                            <Field
+                                                                type="text"
+                                                                name="cardNumber"
+                                                                placeholder="Enter Card Number"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+                                                    )
+                                                }
 
-                                                </div>
+                                            </div>
 
-                                            )
-
-                                            }
-
-
+                                            )}
 
 
                                             {/* Narration Field */}
@@ -1424,4 +1329,4 @@ const CreateVoucher = () => {
     )
 }
 
-export default CreateVoucher;
+export default CreateVoucherPurchase;

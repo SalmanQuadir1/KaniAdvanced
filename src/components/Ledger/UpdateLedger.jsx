@@ -108,7 +108,7 @@ const UpdateLedger = () => {
         { value: 'capital_account', label: 'Capital Account' }
     ];
     const currentYear = new Date().getFullYear().toString().slice(-2); // Gets last 2 digits (e.g., "25" for 2025)
-    const openingBalanceDate = `1-Apr-${currentYear}`;
+    const openingBalancesDate = `1-Apr-${currentYear}`;
 
 
     return (
@@ -145,9 +145,9 @@ const UpdateLedger = () => {
                         registrationType: Ledger.registrationType || 'regular',
                         gstinOrUin: Ledger.gstinOrUin || '',
                         setAlterAdditionalGstDetails: Ledger?.setAlterAdditionalGstDetails || false,
-                        openingBalance: Ledger.openingBalance || '',
-                        openingBalanceDate: Ledger.openingBalanceDate || '',
-                        typeOfOpeningBalance:Ledger.typeOfOpeningBalance||''
+                        openingBalances: Ledger.openingBalances || 0,
+                        openingBalancesDate: Ledger.openingBalancesDate || '',
+                        typeOfopeningBalances:Ledger.typeOfopeningBalances||''
 
 
 
@@ -488,7 +488,7 @@ const UpdateLedger = () => {
     <label className="flex items-center gap-2">
       <Field
         type="radio"
-        name="typeOfOpeningBalance"
+        name="typeOfopeningBalances"
         value="DR" // Saves as "DR" if selected
         className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
       />
@@ -497,7 +497,7 @@ const UpdateLedger = () => {
     <label className="flex items-center gap-2">
       <Field
         type="radio"
-        name="typeOfOpeningBalance"
+        name="typeOfopeningBalances"
         value="CR" // Saves as "CR" if selected
         className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
       />
@@ -507,18 +507,18 @@ const UpdateLedger = () => {
 
   {/* Opening Balance Input */}
   <h4 className="mb-2.5 font-medium text-black dark:text-white">
-    Opening Balance (on {openingBalanceDate})
+    Opening Balance (on {openingBalancesDate})
   </h4>
   <div className="flex items-center gap-2">
     <div className="flex-1 min-w-[250px]">
       <Field
-        type="text"
-        name="openingBalance"
+        type="number"
+        name="openingBalances"
         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
       />
     </div>
     {/* Display "CR" if Credit is selected */}
-    {values.typeOfOpeningBalance === "CR" && (
+    {values.typeOfopeningBalances === "CR" && (
       <span className="text-lg font-medium text-gray-600 dark:text-gray-300">
         CR
       </span>

@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 // import { GET_Voucher_URL, DELETE_Voucher_URL, UPDATE_Voucher_URL, ADD_Voucher_URL } from "../Constants/utils";
-import { ADD_VoucherEntry_URL, ADD_Voucher_URL, DELETE_Voucher_URL, GET_VoucherBYID, GET_Voucher_URL, UPDATEVoucher_URL } from "../Constants/utils";
+import { ADD_VoucherEntry_URL, ADD_VoucherPaymentEntry_URL, ADD_Voucher_URL, DELETE_Voucher_URL, GET_VoucherBYID, GET_Voucher_URL, UPDATEVoucher_URL } from "../Constants/utils";
 import { fetchHsnCode } from '../redux/Slice/HsnCodeSlice';
 import { useNavigate } from 'react-router-dom';
 const useVoucher = (numberingDetails) => {
-    
+
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const [Vouchers, setVoucher] = useState([]);
@@ -14,73 +14,73 @@ const useVoucher = (numberingDetails) => {
     const [Voucherr, setVoucherr] = useState([]);
     const [edit, setEdit] = useState(false);
     const dispatch = useDispatch();
-const navigate = useNavigate();
+    const navigate = useNavigate();
     useEffect(() => {
 
         dispatch(fetchHsnCode(token))
 
     }, []);
     const [currentVoucher, setCurrentVoucher] = useState({
-       
 
-        name:"",
 
-        abbreviation:"",
-        actVoucher:"",
+        name: "",
 
-        typeOfVoucher:"",
+        abbreviation: "",
+        actVoucher: "",
 
-        methodVouchNumbering:"",
+        typeOfVoucher: "",
 
-        numbInsertDelete:"",
+        methodVouchNumbering: "",
 
-        setAdditionalNumb:"",
+        numbInsertDelete: "",
 
-        unusedVchNos:"",
+        setAdditionalNumb: "",
 
-        dateForVchs:"",
+        unusedVchNos: "",
 
-        zeroTransactionAllowed:"",
+        dateForVchs: "",
 
-        optionalVchType:"",
+        zeroTransactionAllowed: "",
 
-        narrationVchs:"",
+        optionalVchType: "",
 
-        narratLedgerVch:"",
+        narrationVchs: "",
 
-        costPurchase:"",
+        narratLedgerVch: "",
 
-        whatsAppVch:"",
+        costPurchase: "",
 
-        defAccounting:"",
+        whatsAppVch: "",
 
-        inteCompTransfer:"",
+        defAccounting: "",
+
+        inteCompTransfer: "",
         //     Printing
-        printVch:"",
+        printVch: "",
 
-        posInvoicing:"",
+        posInvoicing: "",
 
-        msgPrintOne:"",
+        msgPrintOne: "",
 
-        msgPrintTwo:"",
+        msgPrintTwo: "",
 
-        defaultGodown:{},
+        defaultGodown: {},
 
-        defTitlePrint:"",
+        defTitlePrint: "",
 
-        defJurisdiction:"",
+        defJurisdiction: "",
 
-        defBank:"",
+        defBank: "",
 
-        setAlterDecl:"",
+        setAlterDecl: "",
         //     Statuatory Details
 
-        defGstRegist:"",
+        defGstRegist: "",
 
-        vchNumbGstRegistration:"",
+        vchNumbGstRegistration: "",
 
 
-       gstDetails: "",
+        gstDetails: "",
         productStatus: "",
         gstratedetails: "",
 
@@ -120,63 +120,63 @@ const navigate = useNavigate();
     ];
 
 
- 
 
- 
+
+
 
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({
-      currentPage: 1,
-      totalPages: 1,
-      itemsPerPage: 10,
-      totalItems: 0
+        currentPage: 1,
+        totalPages: 1,
+        itemsPerPage: 10,
+        totalItems: 0
     });
-    
+
     const getVoucherr = async (page = 1) => {
-      setLoading(true);
-      try {
-        const response = await fetch(`${GET_Voucher_URL}?page=${page}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-          }
-        });
-    
-        // Check if response is OK (status 200-299)
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        setLoading(true);
+        try {
+            const response = await fetch(`${GET_Voucher_URL}?page=${page}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            // Check if response is OK (status 200-299)
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            // Handle empty response
+            const text = await response.text();
+            if (!text) {
+                throw new Error("Empty response from server");
+            }
+
+            const data = JSON.parse(text);
+            console.log("Vouchers data:", data);
+
+            // Update state with pagination info if available
+            setVoucherr(data.content || []);
+            setPagination(prev => ({
+                ...prev,
+                currentPage: data.number + 1 || 1,
+                totalPages: data.totalPages || 1,
+                totalItems: data.totalElements || 0
+            }));
+
+        } catch (error) {
+            console.error("Fetch error:", error);
+            toast.error(error.message || "Failed to fetch vouchers");
+            setVoucherr([]); // Reset to empty array on error
+        } finally {
+            setLoading(false);
         }
-    
-        // Handle empty response
-        const text = await response.text();
-        if (!text) {
-          throw new Error("Empty response from server");
-        }
-    
-        const data = JSON.parse(text);
-        console.log("Vouchers data:", data);
-    
-        // Update state with pagination info if available
-        setVoucherr(data.content || []);
-        setPagination(prev => ({
-          ...prev,
-          currentPage: data.number + 1 || 1,
-          totalPages: data.totalPages || 1,
-          totalItems: data.totalElements || 0
-        }));
-    
-      } catch (error) {
-        console.error("Fetch error:", error);
-        toast.error(error.message || "Failed to fetch vouchers");
-        setVoucherr([]); // Reset to empty array on error
-      } finally {
-        setLoading(false);
-      }
     };
-    
+
     // Usage with pagination
-   
+
 
 
 
@@ -251,10 +251,10 @@ const navigate = useNavigate();
     };
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-     
-   const formData={...values,...numberingDetails}
 
-console.log(formData,"jj");
+        const formData = { ...values, ...numberingDetails }
+
+        console.log(formData, "jj");
 
 
         // if (gstDetails && gstDetails.length > 0) {
@@ -295,7 +295,7 @@ console.log(formData,"jj");
 
 
         try {
-            const url =  ADD_Voucher_URL;
+            const url = ADD_Voucher_URL;
             const method = "POST";
 
             const response = await fetch(url, {
@@ -329,52 +329,58 @@ console.log(formData,"jj");
 
 
 
-    
+
     const handleCreateVoucher = async (values) => {
-     
+
         // const formData={...values,...numberingDetails}
-     
-     console.log(values,"vouchercreate");
-     
-             try {
-                 const url =  ADD_VoucherEntry_URL;
-                 const method = "POST";
-     
-                 const response = await fetch(url, {
-                     method: method,
-                     headers: {
-                         "Content-Type": "application/json",
-                         "Authorization": `Bearer ${token}`
-                     },
-                     body: JSON.stringify(values)
-                 });
-     
-                //  const data = await response.json();
-                 let data;
-                 try {
-                   // Try to parse JSON safely
-                   data = await response.json();
-                 } catch {
-                    console.log(data,"catccccccch");
-                   data = { errorMessage: response.errorMessage };
-                 }
-                 if (response.ok) {
-                     toast.success(`Voucher Entry added successfully`);
-                     navigate("/Vouchers/view")
-                     // Fetch updated Voucher
-                 } else {
-                    console.log("i am in error else ");
-                     toast.error(`${data.errorMessage}`);
-                 }
-             } catch (error) {
-                 console.error(error, response);
-                 console.log("i am in error catch ");
-                 toast.error("An error occurred");
-             } finally {
-                console.log("i am in Finally ");
-                 setSubmitting(false);
-             }
-         };
+
+        console.log(values, "vouchercreate");
+
+        try {
+            let url;
+
+            if (values.typeOfVoucher === "Payment") {
+                url = `${ADD_VoucherPaymentEntry_URL}/${values.voucherId}/create`;
+            } else {
+                url = ADD_VoucherEntry_URL;
+            }
+            const method = "POST";
+
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(values)
+            });
+
+            //  const data = await response.json();
+            let data;
+            try {
+                // Try to parse JSON safely
+                data = await response.json();
+            } catch {
+                console.log(data, "catccccccch");
+                data = { errorMessage: response.errorMessage };
+            }
+            if (response.ok) {
+                toast.success(`Voucher Entry added successfully`);
+                navigate("/Vouchers/view")
+                // Fetch updated Voucher
+            } else {
+                console.log("i am in error else ");
+                toast.error(`${data.errorMessage}`);
+            }
+        } catch (error) {
+            console.error(error, response);
+            console.log("i am in error catch ");
+            toast.error("An error occurred");
+        } finally {
+            console.log("i am in Finally ");
+            setSubmitting(false);
+        }
+    };
 
     const handlePageChange = (newPage) => {
 

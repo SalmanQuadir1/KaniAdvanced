@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE ,VIEW_ALL_ORDERS,VIEW_ALL_CUSTOMER, ADD_ORDER_URL, VIEW_ORDERNO, VIEW_ALL_SUPPLIER_URL, VIEW_ALL_PRODID, GET_PRODUCTIDDD_URL, VIEW_ALL_LOCATIONS, } from "../Constants/utils";
+import { GET_PRODUCTIDD_URL, VIEW_ALL_ORDERTYPE ,VIEW_ALL_ORDERS,VIEW_ALL_CUSTOMER, ADD_ORDER_URL, VIEW_ORDERNO, VIEW_ALL_SUPPLIER_URL, VIEW_ALL_PRODID, GET_PRODUCTIDDD_URL, VIEW_ALL_LOCATIONS, GET_VoucherName_URL, } from "../Constants/utils";
 import { useNavigate } from 'react-router-dom';
 import { fetchorder } from '../redux/Slice/OrderNo';
 // import { GET_PRODUCTIDD_URL, VIEW_ALL_CUSTOMER, VIEW_ALL_ORDERTYPE } from "../Constants/utils";
@@ -16,6 +16,8 @@ const useorder = () => {
     const [customer, setcustomer] = useState([])
     const [productIdd, setproductIdd] = useState([])
     const [supplier, setSupplier] = useState([])
+
+    const [VoucherList, setVoucherList] = useState([])
 
     const [orderProduct, setorderProduct] = useState([])
     const [edit, setEdit] = useState(false);
@@ -377,6 +379,32 @@ const handleUpdate = (e, item) => {
             toast.error("Failed to fetch order Number");
         }
     };
+
+
+     const getVoucherList = async (page) => {
+        try {
+            const response = await fetch(`${GET_VoucherName_URL}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+        
+            setVoucherList(data);
+          
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch order Number");
+        }
+    };
+
+
+
+
+
+
    
     const getCustomer = async (page) => {
         try {
@@ -465,7 +493,9 @@ const handleUpdate = (e, item) => {
         supplier,
         getProdId,
         productIdd,
-        getLocation,Location
+        getLocation,Location,
+        getVoucherList,
+        VoucherList,
 
     };
 };

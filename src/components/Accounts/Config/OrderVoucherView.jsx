@@ -367,7 +367,7 @@ const OrderVoucherView = () => {
 
             {/* NEW: Modal for Orders with Vouchers */}
             {showOrdersWithVouchers && selectedOrder && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm">
+                <div className="fixed inset-0 z-1000 flex items-center justify-center p-4 bg-black ml-[200px] bg-opacity-50 backdrop-blur-sm">
                     <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden">
                         <div className="flex justify-between items-center p-6 border-b dark:border-slate-700">
                             <div>
@@ -388,31 +388,7 @@ const OrderVoucherView = () => {
 
                         <div className="p-6 overflow-y-auto max-h-[70vh]">
                             {/* Order Summary */}
-                            <div className="mb-6 bg-gray-50 dark:bg-slate-900 rounded-lg p-4">
-                                <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
-                                    Order Summary
-                                </h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    <div>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">Date:</p>
-                                        <p className="font-medium">{new Date(selectedOrder.orderDate).toLocaleDateString()}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">Voucher Number:</p>
-                                        <p className="font-medium">{selectedOrder.recieptNumber || selectedOrder.voucherNumber || 'N/A'}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">Type:</p>
-                                        <p className="font-medium">{selectedOrder.typeOfVoucher}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">Total Amount:</p>
-                                        <p className="font-medium text-green-600">
-                                            ₹{(selectedOrder.totalVoucherAmount || selectedOrder.debitAmount || selectedOrder.creditAmount || 0).toFixed(2)}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                          
 
                             {/* Products List */}
                             <div className="mb-6">
@@ -437,7 +413,7 @@ const OrderVoucherView = () => {
                                                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Quantity</th>
                                                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Voucher  Amount</th>
                                                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Voucher  Creation Date</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Total</th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Client Shipping Date</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
@@ -459,9 +435,12 @@ const OrderVoucherView = () => {
                                                          <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-300">
                                                             ₹{new Date(product.voucherCreationDate).toLocaleDateString()}
                                                         </td>
-                                                        <td className="px-4 py-3 text-sm font-semibold text-green-600">
-                                                            ₹{((product.quantity || 1) * (product.unitPrice || product.price || 0)).toFixed(2)}
+                                                        <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-300">
+                                                            {product.clientShippingDate || 0}
                                                         </td>
+                                                        {/* <td className="px-4 py-3 text-sm font-semibold text-green-600">
+                                                            ₹{((product.quantity || 1) * (product.unitPrice || product.price || 0)).toFixed(2)}
+                                                        </td> */}
                                                     </tr>
                                                 ))}
                                             </tbody>
@@ -600,46 +579,111 @@ const OrderVoucherView = () => {
                                 &times;
                             </button>
                         </div>
-                        <div className="p-6 overflow-y-auto max-h-[70vh]">
-                            <div className="mb-6">
-                                <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-2">
-                                    Order Details (No Voucher Attached)
-                                </h4>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">Date:</p>
-                                        <p className="font-medium">{new Date(selectedOrder.date).toLocaleDateString()}</p>
+                      
+
+                                 {selectedOrder.productsWithoutVoucher && selectedOrder.productsWithoutVoucher.length > 0 ? (
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+                                            <thead className="bg-gray-100 dark:bg-slate-900">
+                                                <tr>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">#</th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Product Name</th>
+                                                    
+                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Quantity</th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Client Shipping Date</th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 dark:text-gray-300 uppercase tracking-wider">Product Status</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
+                                                {selectedOrder.productsWithoutVoucher.map((product, index) => (
+                                                    <tr key={index} className="hover:bg-gray-50 dark:hover:bg-slate-700">
+                                                        <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-300">
+                                                            {index + 1}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">
+                                                            {product.name || product.productName || 'N/A'}
+                                                        </td>
+                                                        
+                                                        <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-300">
+                                                            {product.clientOrderQuantity || 1}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-300">
+                                                            {new Date(product.clientShippingDate ).toLocaleDateString()}
+                                                        </td>
+                                                         <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-300">
+                                                            {(product.productStatus)}
+                                                        </td>
+                                                     
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                            {/* <tfoot className="bg-gray-50 dark:bg-slate-900">
+                                                <tr>
+                                                    <td colSpan="5" className="px-4 py-3 text-right text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                        Subtotal:
+                                                    </td>
+                                                    <td className="px-4 py-3 text-sm font-bold text-gray-900 dark:text-white">
+                                                        ₹{selectedOrder.products.reduce((sum, product) =>
+                                                            sum + ((product.quantity || 1) * (product.unitPrice || product.price || 0)), 0
+                                                        ).toFixed(2)}
+                                                    </td>
+                                                </tr>
+                                                {selectedOrder.tax && selectedOrder.tax > 0 && (
+                                                    <tr>
+                                                        <td colSpan="5" className="px-4 py-2 text-right text-sm font-medium text-gray-700 dark:text-gray-300">
+                                                            Tax ({selectedOrder.taxRate || 18}%):
+                                                        </td>
+                                                        <td className="px-4 py-2 text-sm font-semibold text-gray-900 dark:text-white">
+                                                            ₹{selectedOrder.tax.toFixed(2)}
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                                <tr>
+                                                    <td colSpan="5" className="px-4 py-3 text-right text-lg font-bold text-gray-900 dark:text-white">
+                                                        Total:
+                                                    </td>
+                                                    <td className="px-4 py-3 text-lg font-bold text-green-600">
+                                                        ₹{(selectedOrder.totalAmount || selectedOrder.debitAmount || selectedOrder.creditAmount || 0).toFixed(2)}
+                                                    </td>
+                                                </tr>
+                                            </tfoot> */}
+                                        </table>
                                     </div>
-                                    <div>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">Type:</p>
-                                        <p className="font-medium">{selectedOrder.typeOfVoucher}</p>
+                                ) : selectedOrder.items && selectedOrder.items.length > 0 ? (
+                                    // Alternative structure: items array
+                                    <div className="space-y-3">
+                                        {selectedOrder.items.map((item, index) => (
+                                            <div key={index} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-slate-900 rounded-lg">
+                                                <div>
+                                                    <p className="font-medium text-gray-900 dark:text-white">{item.name}</p>
+                                                    <p className="text-sm text-gray-500 dark:text-gray-400">{item.description}</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="font-medium text-gray-900 dark:text-white">
+                                                        ₹{(item.amount || item.value || 0).toFixed(2)}
+                                                    </p>
+                                                    {item.quantity && (
+                                                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                                                            {item.quantity} × ₹{(item.unitPrice || item.amount || 0).toFixed(2)}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
-                                    <div>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">Amount:</p>
-                                        <p className="font-medium text-yellow-600">
-                                            {selectedOrder.debitAmount?.toFixed(2) || selectedOrder.creditAmount?.toFixed(2) || '0.00'}
+                                ) : (
+                                    // If no products/items structure found
+                                    <div className="text-center py-8 bg-gray-50 dark:bg-slate-900 rounded-lg">
+                                        <p className="text-gray-500 dark:text-gray-400">No product details available</p>
+                                        <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
+                                            This order doesn't have detailed product information
                                         </p>
                                     </div>
-                                    <div>
-                                        <p className="text-sm text-gray-600 dark:text-gray-400">Status:</p>
-                                        <span className="inline-block px-3 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200 rounded-full">
-                                            No Voucher
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
+                                )}
 
-                            <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
-                                <h5 className="font-medium text-yellow-800 dark:text-yellow-300 mb-2">
-                                    <FiFileText className="inline mr-2" />
-                                    Note
-                                </h5>
-                                <p className="text-yellow-700 dark:text-yellow-400 text-sm">
-                                    This order doesn't have any vouchers attached. You can create a voucher for this order by editing it.
-                                </p>
-                            </div>
-                        </div>
-                        <div className="flex justify-end space-x-4 p-6 border-t dark:border-slate-700">
+
+                        {/* <div className="flex justify-end space-x-4 p-6 border-t dark:border-slate-700">
                             <button
                                 onClick={() => navigate(`/OrderVoucher/edit/${selectedOrder.id}`)}
                                 className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -652,7 +696,7 @@ const OrderVoucherView = () => {
                             >
                                 Close
                             </button>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             )}

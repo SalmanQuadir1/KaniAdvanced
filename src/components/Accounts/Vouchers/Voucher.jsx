@@ -21,7 +21,7 @@ const Voucher = () => {
     const { token } = currentUser;
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
-    
+
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
     const [showNumberingModal, setShowNumberingModal] = useState(false);
@@ -30,19 +30,19 @@ const Voucher = () => {
     const [initialFormValues, setInitialFormValues] = useState(null);
     const [operationType, setOperationType] = useState('create'); // 'create', 'create-sub', 'update'
     const [parentVoucherId, setParentVoucherId] = useState(null);
-    
+
     const { Locations, getAllLocation } = useLocation();
 
     // const hsnCode = useSelector(state => state?.persisted?.hsn);
 
-       useEffect(() => {
+    useEffect(() => {
 
         getAllLocation();
     }, []);
     // Determine operation type from URL
     useEffect(() => {
         const path = location.pathname;
-        
+
         if (path.includes('/update/')) {
             setOperationType('update');
         } else if (id && !path.includes('/update/')) {
@@ -64,27 +64,27 @@ const Voucher = () => {
         { value: 'DebitNote', label: 'Debit Note' },
         { value: 'Contra', label: 'Contra' },
     ];
-    
+
     const gstdetails = [
         { value: 'Specify Slab Based Rates', label: 'Specify Slab Based Rates' },
         { value: 'Use GST Classification', label: 'Use GST Classification' },
     ];
-    
+
     const defGstRegist = [
         { value: 'Registration Delhi', label: 'Registration Delhi' },
         { value: 'Registration Srinagar', label: 'Registration Srinagar' },
     ];
-    
+
     const yesNo = [
         { value: 'true', label: 'Yes' },
         { value: 'false', label: 'No' },
     ];
-    
+
     const NumberingBehaviour = [
         { value: 'ReNumberVoucher', label: 'Re-Number Voucher' },
         { value: 'RetainOriginalVoucherNo', label: 'Retain Original Voucher No' },
     ];
-    
+
     const methodOfvoucher = [
         { value: 'Automatic', label: 'Automatic' },
         { value: 'AutomaticManualOverride', label: 'Automatic (Manual Override)' },
@@ -218,7 +218,7 @@ const Voucher = () => {
     };
 
     const formatVoucherData = (voucherData) => {
-          console.log(voucherData,"sed godown");
+        console.log(voucherData, "sed godown");
         return {
             name: voucherData.name || '',
             typeOfVoucher: voucherData.typeOfVoucher || '',
@@ -241,7 +241,7 @@ const Voucher = () => {
             printVch: voucherData.printVch || false,
             posInvoicing: voucherData.posInvoicing || false,
             setAlterDecl: voucherData.setAlterDecl || false,
-            defaultGodown:voucherData.defaultGodown || '',
+            defaultGodown: voucherData.defaultGodown || '',
             defTitlePrint: voucherData.defTitlePrint || '',
             msgPrintOne: voucherData.msgPrintOne || '',
             msgPrintTwo: voucherData.msgPrintTwo || '',
@@ -258,16 +258,16 @@ const Voucher = () => {
         };
     };
 
-  
-    
+
+
 
     // Handle form submission
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         setLoading(true);
-        
+
         try {
             let url, method, successMessage;
-            
+
             if (operationType === 'update' && id) {
                 // Update existing voucher
                 url = `${UPDATEVoucher_URL}/${id}`;
@@ -284,22 +284,22 @@ const Voucher = () => {
                 method = "POST";
                 successMessage = 'Voucher created successfully';
             }
-            
+
             // Prepare the data
             const formData = {
                 ...values,
                 ...(gstDetails.length > 0 ? { gstDetails } : {})
             };
-            
+
             // Clean up data for ReactSelect fields
             // if (values.hsnCode && typeof values.hsnCode === 'object') {
             //     formData.hsnCode = values.hsnCode.value || values.hsnCode.id;
             // }
-            
+
             if (values.defaultGodown && typeof values.defaultGodown === 'object') {
                 formData.defaultGodown = values.defaultGodown.value;
             }
-            
+
             const response = await fetch(url, {
                 method: method,
                 headers: {
@@ -310,14 +310,15 @@ const Voucher = () => {
             });
 
             const data = await response.json();
-            
+
             if (response.ok) {
                 toast.success(successMessage);
-                
+                navigate('/Vouchers/view');
+
                 if (operationType === 'create' || operationType === 'create-sub') {
                     resetForm();
                 }
-                
+
                 // Navigate based on operation type
                 if (operationType === 'update') {
                     navigate('/configurator/vouchers');
@@ -333,6 +334,7 @@ const Voucher = () => {
             console.error('Submission error:', error);
             toast.error("An error occurred during submission");
         } finally {
+            navigate('/Vouchers/view');
             setLoading(false);
             setSubmitting(false);
         }
@@ -345,7 +347,7 @@ const Voucher = () => {
     // Fetch locations and HSN codes
     // useEffect(() => {
     //     getAllLocation();
-        
+
     //     if (hsnCode.data) {
     //         const formattedOptions = hsnCode.data.map(hsn => ({
     //             value: hsn.id,
@@ -415,7 +417,7 @@ const Voucher = () => {
     return (
         <DefaultLayout>
             <Breadcrumb pageName={getPageTitle()} />
-            
+
             <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                 <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                     <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
@@ -444,7 +446,7 @@ const Voucher = () => {
                                 {/* {operationType === 'create-sub' && (
                                     <Field type="hidden" name="parentVoucherId" />
                                 )} */}
-                                
+
                                 {/* Basic Information */}
                                 <div className="mb-8">
                                     <h4 className="text-lg font-semibold mb-4 text-black dark:text-white">Basic Information</h4>
@@ -459,7 +461,7 @@ const Voucher = () => {
                                             />
                                             <ErrorMessage name="name" component="div" className="text-red-500 text-sm mt-1" />
                                         </div>
-                                        
+
                                         <div>
                                             <label className="mb-2.5 block text-black dark:text-white">Type of Voucher *</label>
                                             <ReactSelect
@@ -472,7 +474,7 @@ const Voucher = () => {
                                                 isDisabled={operationType === 'create-sub'} // Disable for sub-vouchers
                                             />
                                         </div>
-                                        
+
                                         <div>
                                             <label className="mb-2.5 block text-black dark:text-white">Abbreviation</label>
                                             <Field
@@ -482,7 +484,7 @@ const Voucher = () => {
                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
                                             />
                                         </div>
-                                        
+
                                         <div>
                                             <label className="mb-2.5 block text-black dark:text-white">Activate Voucher</label>
                                             <ReactSelect
@@ -512,7 +514,7 @@ const Voucher = () => {
                                                 placeholder="Select method"
                                             />
                                         </div>
-                                        
+
                                         <div>
                                             <label className="mb-2.5 block text-black dark:text-white">Numbering Behavior</label>
                                             <ReactSelect
@@ -525,11 +527,11 @@ const Voucher = () => {
                                             />
                                         </div>
                                     </div>
-                                    
+
                                     <div className="space-y-4">
                                         {renderYesNoRadio('setAdditionalNumb', 'Set Additional Numbering Details', values, setFieldValue)}
                                         {renderYesNoRadio('unusedVchNos', 'Show Unused Voucher Numbers', values, setFieldValue)}
-                                        
+
                                         <div className="flex items-center justify-between mb-4">
                                             <label className="text-black dark:text-white">Use Effective Date for Vouchers</label>
                                             <div className="flex gap-4">
@@ -555,7 +557,7 @@ const Voucher = () => {
                                                 </label>
                                             </div>
                                         </div>
-                                        
+
                                         {values.dateForVchs && (
                                             <div className="ml-4">
                                                 <label className="block mb-2">Effective Date</label>
@@ -566,24 +568,24 @@ const Voucher = () => {
                                                 />
                                             </div>
                                         )}
-                                        
+
                                         {renderYesNoRadio('zeroTransactionAllowed', 'Allow Zero Value Transactions', values, setFieldValue)}
                                         {renderYesNoRadio('optionalVchType', 'Make Voucher Type Optional by Default', values, setFieldValue)}
                                         {renderYesNoRadio('narrationVchs', 'Allow Narration in Voucher', values, setFieldValue)}
                                         {renderYesNoRadio('narratLedgerVch', 'Provide Narration for Each Ledger Entry', values, setFieldValue)}
-                                        
-                                        {values.typeOfVoucher !== "Journal" && 
+
+                                        {values.typeOfVoucher !== "Journal" &&
                                             renderYesNoRadio('defAccounting', 'Enable Default Accounting Allocation', values, setFieldValue)
                                         }
-                                        
+
                                         {(values.typeOfVoucher === "Journal" || values.typeOfVoucher === "Payment" || values.typeOfVoucher === "DebitNote") &&
                                             renderYesNoRadio('costPurchase', 'Track Additional Cost for Purchases', values, setFieldValue)
                                         }
-                                        
+
                                         {values.typeOfVoucher === "Journal" &&
                                             renderYesNoRadio('whatsAppVch', 'Send WhatsApp Notification', values, setFieldValue)
                                         }
-                                        
+
                                         {values.typeOfVoucher === "Sales" &&
                                             renderYesNoRadio('inteCompTransfer', 'Enable Inter-Company Transfer', values, setFieldValue)
                                         }
@@ -595,19 +597,19 @@ const Voucher = () => {
                                     <h4 className="text-lg font-semibold mb-4 text-black dark:text-white">Printing Details</h4>
                                     <div className="space-y-4 mb-6">
                                         {renderYesNoRadio('printVch', 'Print Voucher After Saving', values, setFieldValue)}
-                                        
+
                                         {values.typeOfVoucher === "Sales" && (
                                             <>
                                                 {renderYesNoRadio('posInvoicing', 'Use for POS Invoicing', values, setFieldValue)}
                                                 {renderYesNoRadio('setAlterDecl', 'Set/Alter Declaration Text', values, setFieldValue)}
                                             </>
                                         )}
-                                        
+
                                         {values.typeOfVoucher === "Reciept" &&
                                             renderYesNoRadio('printFormal', 'Print Formal Receipt After Saving', values, setFieldValue)
                                         }
                                     </div>
-                                    
+
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
                                             <label className="mb-2.5 block text-black dark:text-white">Default Godown/Location</label>
@@ -615,12 +617,12 @@ const Voucher = () => {
                                                 name="defaultGodown"
                                                 options={formattedLocation}
                                                 value={formattedLocation?.find(opt => opt.value === values.defaultGodown)}
-                                                onChange={(opt) => setFieldValue('defaultGodown',{id: opt?.value})}
+                                                onChange={(opt) => setFieldValue('defaultGodown', { id: opt?.value })}
                                                 styles={customStyles}
                                                 placeholder="Select location"
                                             />
                                         </div>
-                                        
+
                                         {values.typeOfVoucher === "Sales" && (
                                             <>
                                                 <div>
@@ -632,7 +634,7 @@ const Voucher = () => {
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
                                                     />
                                                 </div>
-                                                
+
                                                 <div>
                                                     <label className="mb-2.5 block text-black dark:text-white">Default Bank</label>
                                                     <Field
@@ -642,7 +644,7 @@ const Voucher = () => {
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
                                                     />
                                                 </div>
-                                                
+
                                                 <div>
                                                     <label className="mb-2.5 block text-black dark:text-white">Default Jurisdiction</label>
                                                     <Field
@@ -655,7 +657,7 @@ const Voucher = () => {
                                             </>
                                         )}
                                     </div>
-                                    
+
                                     {values.posInvoicing && (
                                         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div>
@@ -696,14 +698,14 @@ const Voucher = () => {
                                             />
                                         </div>
                                     </div>
-                                    
+
                                     {renderYesNoRadio('methodVouchNumbering', 'Use Common Voucher Numbering for All GST Registrations', values, setFieldValue)}
                                 </div>
 
-                         
+
 
                                 {/* Submit Button */}
-                                 <div className="flex justify-center mt-8">
+                                <div className="flex justify-center mt-8">
                                     <button
                                         type="submit"
                                         disabled={isSubmitting || loading}
@@ -712,17 +714,17 @@ const Voucher = () => {
                                         {loading ? (
                                             <div className="flex items-center gap-2">
                                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                                                {operationType === 'update' ? 'Updating...' : 
-                                                 operationType === 'create-sub' ? 'Creating Sub-Voucher...' : 
-                                                 'Creating...'}
+                                                {operationType === 'update' ? 'Updating...' :
+                                                    operationType === 'create-sub' ? 'Creating Sub-Voucher...' :
+                                                        'Creating...'}
                                             </div>
                                         ) : (
-                                            operationType === 'update' ? 'Update Voucher' : 
-                                            operationType === 'create-sub' ? 'Create Sub-Voucher' : 
-                                            'Create Voucher'
+                                            operationType === 'update' ? 'Update Voucher' :
+                                                operationType === 'create-sub' ? 'Create Sub-Voucher' :
+                                                    'Create Voucher'
                                         )}
                                     </button>
-                                    
+
                                     <button
                                         type="button"
                                         onClick={() => navigate(-1)}
@@ -736,7 +738,7 @@ const Voucher = () => {
                     )}
                 </Formik>
             </div>
-            
+
             <NumberingDetailsModal
                 show={showNumberingModal}
                 onHide={() => setShowNumberingModal(false)}

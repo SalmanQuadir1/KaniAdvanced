@@ -226,19 +226,17 @@ const ViewLedger = () => {
         };
 
 
-        const openLEDGERModal = (supplierId) => {
-            console.log(supplierId, "suo");
-            console.log(Ledger, ";;'';;'';;''_____");
-            // Find the supplier data from your existing Ledger state
-            const supplierData = Ledger.find(item => item.ledgerId === supplierId);
-            console.log(supplierData, "..,");
-            if (supplierData) {
-                setSelectedLEDGERData(supplierData);
+        const openLEDGERModal = (EntriesData) => {
+            console.log(EntriesData, "llllllllllllllllllllll888888888888888888888888888");
+
+            if (EntriesData) {
+                setSelectedLEDGERData(EntriesData);
                 setIsLEDGERModalOpen(true);
             } else {
                 toast.error("Supplier data not found");
             }
         };
+        console.log(SelectedLEDGERData, "mmmmmmmmmmmmmmmmmmmmmmmmmuuuuuuuuuuuuuuuuuuuuu");
 
 
         // console.log(selectedBOMData, "jijiji");
@@ -275,9 +273,33 @@ const ViewLedger = () => {
                         <p className="text-gray-900 whitespace-no-wrap">null</p>
                     </td>
                 }
+                <td className="px-5 py-5  text-sm">
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-900">{item?.openingBalances}</span>
+                        <span className="text-gray-500">|</span>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${item?.typeOfOpeningBalance?.toLowerCase() === 'credit'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-green-100 text-green-800'
+                            }`}>
+                            {item?.typeOfOpeningBalance}
+                        </span>
+                    </div>
+                </td>
+                <td className="px-5 py-5  text-sm">
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-900">{item?.previousOpBalance}</span>
+                        <span className="text-gray-500">|</span>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${item?.previousOpType?.toLowerCase() === 'credit'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-green-100 text-green-800'
+                            }`}>
+                            {item?.previousOpType}
+                        </span>
+                    </div>
+                </td>
 
                 <td>
-                    <span onClick={() => openLEDGERModal(item?.ledgerId)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> VIEW LEDGER</span>
+                    <span onClick={() => openLEDGERModal(item)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> VIEW LEDGER</span>
                 </td>
                 {/* <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     {item.products &&
@@ -322,9 +344,9 @@ const ViewLedger = () => {
                                 navigate(`/Ledger/updateLedger/${item?.ledgerId}${queryParam ? `?${queryParam}` : ''}`);
                             }}
 
-                        
-                        
-                        title="Edit Ledger"
+
+
+                            title="Edit Ledger"
                         />
 
                         <FiTrash2
@@ -377,104 +399,202 @@ const ViewLedger = () => {
                         </p> */}
                     </div>
                     {IsLEDGERModalOpen && SelectedLEDGERData && (
-                        <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center z-50">
-                            <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px] w-[870px] h-[400px] mt-[60px] dark:bg-slate-600 overflow-auto">
-                                <div className="text-right">
-                                    <button onClick={() => closeLEDGERModal()} className="text-red-500 text-xl font-bold">&times;</button>
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[9999] p-4">
+                            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-6xl max-h-[85vh] flex flex-col overflow-hidden">
+                                {/* Modal Header */}
+                                <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900">
+                                    <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                                        LEDGER DETAILS
+                                    </h2>
+                                    <button
+                                        onClick={closeLEDGERModal}
+                                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl font-bold bg-gray-100 dark:bg-slate-700 w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
+                                    >
+                                        ×
+                                    </button>
                                 </div>
-                                <h2 className="text-2xl text-center mb-4 font-extrabold shadow-sm">
-                                    LEDGER DETAILS OF {SelectedLEDGERData.supplierName?.toUpperCase()}
-                                </h2>
-                                <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
-                                    <table className="min-w-full leading-normal">
-                                        <thead>
-                                            <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                                <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
-                                                <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
-                                                <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Debit</th>
-                                                <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Credit</th>
-                                                <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Balance</th>
-                                                <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Total Bill Amount</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {SelectedLEDGERData?.ledgerSuppliers?.length > 0 ? (
-                                                SelectedLEDGERData.ledgerSuppliers.filter(ledger =>
-                                                    ledger.receivedDate ||
-                                                    ledger.orderNo ||
-                                                    ledger.debit !== null || ledger.credit !== null ||
-                                                    ledger.totalBillAmount !== null ||
-                                                    ledger.balance !== null
-                                                ).map((ledger, index) => (
-                                                    <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
-                                                        <td className="px-2 py-2 border-b dark:text-white">
-                                                            {ledger.receivedDate ? new Date(ledger.receivedDate).toLocaleDateString() : 'N/A'}
-                                                        </td>
-                                                        <td className="px-2 py-2 border-b dark:text-white">
-                                                            {ledger.orderNo || 'N/A'}
-                                                        </td>
-                                                        <td className="px-2 py-2 border-b dark:text-white">
-                                                            {ledger.debit ?? '0'}
-                                                        </td>
-                                                        <td className="px-2 py-2 border-b dark:text-white">
-                                                            {ledger.credit ?? '0'}
-                                                        </td>
 
-                                                        <td className="px-2 py-2 border-b dark:text-white">
-                                                            {ledger.balance ?? '0'}
-                                                        </td>
-                                                        <td className="px-2 py-2 border-b dark:text-white">
-                                                            {ledger.totalBillAmount ?? '0'}
-                                                        </td>
+                                {/* Modal Body */}
+                                <div className="flex-1 overflow-auto p-6">
+                                    {/* Summary Cards */}
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+
+
+                                        <div className="bg-gradient-to-br from-green-100 to-green-50 dark:from-green-900/30 dark:to-green-800/20 p-4 rounded-lg border border-green-200 dark:border-green-700">
+                                            <h3 className="text-sm font-medium text-green-800 dark:text-green-300 mb-1">Total Credit</h3>
+                                            <p className="text-2xl font-bold text-green-900 dark:text-green-100">
+                                                ₹{SelectedLEDGERData?.ledgerPaymentEntries.reduce((sum, entry) => sum + (parseFloat(entry.credit) || 0), 0).toFixed(2)}
+                                            </p>
+                                        </div>
+
+                                        <div className="bg-gradient-to-br from-red-100 to-red-50 dark:from-red-900/30 dark:to-red-800/20 p-4 rounded-lg border border-red-200 dark:border-red-700">
+                                            <h3 className="text-sm font-medium text-red-800 dark:text-red-300 mb-1">Total Debit</h3>
+                                            <p className="text-2xl font-bold text-red-900 dark:text-red-100">
+                                                ₹{SelectedLEDGERData?.ledgerPaymentEntries.reduce((sum, entry) => sum + (parseFloat(entry.debit) || 0), 0).toFixed(2)}
+                                            </p>
+                                        </div>
+                                        <div className="bg-gradient-to-br from-red-100 to-red-50 dark:from-red-900/30 dark:to-red-800/20 p-4 rounded-lg border border-red-200 dark:border-red-700">
+                                            <h3 className="text-sm font-medium text-red-800 dark:text-red-300 mb-1">Start Opening Bal</h3>
+                                            <p className="text-2xl font-bold text-red-900 dark:text-red-100">
+                                                ₹{SelectedLEDGERData?.previousOpBalance?.toFixed(2)}
+                                            </p>
+                                        </div>
+
+                                        <div className="bg-gradient-to-br from-purple-100 to-purple-50 dark:from-purple-900/30 dark:to-purple-800/20 p-4 rounded-lg border border-purple-200 dark:border-purple-700">
+                                            <h3 className="text-sm font-medium text-purple-800 dark:text-purple-300 mb-1">Net Balance</h3>
+                                            <div className="bg-gradient-to-br from-purple-100 to-purple-50 dark:from-purple-900/30 dark:to-purple-800/20 p-4 rounded-lg border border-purple-200 dark:border-purple-700">
+                                                <h3 className="text-sm font-medium text-purple-800 dark:text-purple-300 mb-1">Opening Balance</h3>
+                                                <p className={`text-2xl font-bold ${SelectedLEDGERData?.typeOfOpeningBalance?.toLowerCase() === 'credit'
+                                                    ? 'text-red-600 dark:text-red-400'
+                                                    : 'text-green-600 dark:text-green-400'
+                                                    }`}>
+                                                    ₹{parseFloat(SelectedLEDGERData?.openingBalances || 0).toFixed(2)}
+                                                    <span className="text-sm ml-2 font-normal">
+                                                        ({SelectedLEDGERData?.typeOfOpeningBalance || 'N/A'})
+                                                    </span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        {/* <div className=" justify end bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-900/30 dark:to-blue-800/20 p-4 rounded-lg border border-blue-200 dark:border-blue-700">
+                                            <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-1">Total Entries</h3>
+                                            <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                                                {SelectedLEDGERData?.ledgerPaymentEntries.length || 0}
+                                            </p>
+                                        </div> */}
+                                        <div className="absolute -top-3 -right-3">
+                                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-xl">
+                                                <span className="text-white font-bold text-lg">
+                                                    {SelectedLEDGERData?.ledgerPaymentEntries.length || 0}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Table */}
+                                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm">
+                                        <div className="overflow-x-auto">
+                                            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                                <thead className="bg-gray-50 dark:bg-slate-900">
+                                                    <tr>
+                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Date</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Reference</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Description</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Debit (₹)</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Credit (₹)</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Balance (₹)</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Status</th>
                                                     </tr>
-                                                ))
-                                            ) : (
-                                                <tr className='bg-white dark:bg-slate-700 dark:text-white'>
-                                                    <td colSpan="6" className="px-2 py-2 border-b dark:text-white text-center">
-                                                        No ledger entries found for this supplier
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
-
-                                    {/* Summary Section */}
-                                    <div className="mt-4 flex flex-col items-end space-y-4 pr-4">
-                                        <div className="text-right">
-                                            <p className="font-semibold">Opening Balance:{SelectedLEDGERData.openingBalance ?? '0'}</p>
-
+                                                </thead>
+                                                <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                                    {SelectedLEDGERData?.ledgerPaymentEntries.length > 0 ? (
+                                                        SelectedLEDGERData.ledgerPaymentEntries.map((ledger, index) => (
+                                                            <tr
+                                                                key={index}
+                                                                className={`hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors ${index % 2 === 0 ? 'bg-white dark:bg-slate-800' : 'bg-gray-50/50 dark:bg-slate-800/50'
+                                                                    }`}
+                                                            >
+                                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                                                                    {ledger.receivedDate ? new Date(ledger.receivedDate).toLocaleDateString('en-IN', {
+                                                                        day: '2-digit',
+                                                                        month: 'short',
+                                                                        year: 'numeric'
+                                                                    }) : 'N/A'}
+                                                                </td>
+                                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
+                                                                    {ledger.voucherNumber || '-'}
+                                                                </td>
+                                                                <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-xs truncate">
+                                                                    {ledger.description || ledger.narration || 'No description'}
+                                                                </td>
+                                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-red-600 dark:text-red-400">
+                                                                    {parseFloat(ledger.debit || 0).toFixed(2)}
+                                                                </td>
+                                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600 dark:text-green-400">
+                                                                    {parseFloat(ledger.credit || 0).toFixed(2)}
+                                                                </td>
+                                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800 dark:text-gray-200">
+                                                                    {parseFloat(ledger.balance || 0).toFixed(2)}
+                                                                </td>
+                                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${parseFloat(ledger.balance || 0) >= 0
+                                                                        ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                                                                        : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                                                                        }`}>
+                                                                        {parseFloat(ledger.balance || 0) >= 0 ? 'Positive' : 'Negative'}
+                                                                    </span>
+                                                                </td>
+                                                            </tr>
+                                                        ))
+                                                    ) : (
+                                                        <tr>
+                                                            <td colSpan="7" className="px-6 py-8 text-center">
+                                                                <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
+                                                                    <svg className="w-12 h-12 mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                                                    </svg>
+                                                                    <p className="text-lg font-medium">No ledger entries found</p>
+                                                                    <p className="text-sm mt-1">This ledger doesn't have any transactions yet.</p>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
                                         </div>
-                                        <div className="text-right">
-                                            {/* <p className="font-semibold">Total Debit:   {SelectedLEDGERData.ledgerSuppliers?.reduce(
-                                                (total, ledger) => total + (Number(ledger.debit) || 0),
-                                                0
-                                            ).toFixed(2)}</p> */}
-                                            <p>Total Debit :{SelectedLEDGERData.
-                                                ledgerSuppliers[0].totalDebit}</p>
+                                    </div>
 
+                                    {/* Footer Summary */}
+                                    {SelectedLEDGERData?.length > 0 && (
+                                        <div className="mt-6 p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-slate-900 dark:to-slate-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                                            <div className="flex flex-wrap justify-between items-center">
+                                                <div className="flex items-center space-x-6">
+                                                    <div className="flex items-center">
+                                                        <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+                                                        <span className="text-sm text-gray-700 dark:text-gray-300">Debit: Total Outflow</span>
+                                                    </div>
+                                                    <div className="flex items-center">
+                                                        <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                                                        <span className="text-sm text-gray-700 dark:text-gray-300">Credit: Total Inflow</span>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400">Current Balance</p>
+                                                    <p className={`text-2xl font-bold mt-1 ${SelectedLEDGERData[SelectedLEDGERData.length - 1]?.balance >= 0
+                                                        ? 'text-green-600 dark:text-green-400'
+                                                        : 'text-red-600 dark:text-red-400'
+                                                        }`}>
+                                                        ₹{parseFloat(SelectedLEDGERData[SelectedLEDGERData.length - 1]?.balance || 0).toFixed(2)}
+                                                    </p>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className="text-right">
-                                            {/* <p className="font-semibold">Total Credit: {SelectedLEDGERData.ledgerSuppliers?.reduce(
-                                                (total, ledger) => total + (Number(ledger.totalBillAmount) || 0),
-                                                0
-                                            ).toFixed(2)}</p> */}
-                                            <p>Total Debit :{SelectedLEDGERData.
-                                                ledgerSuppliers[0].totalCredit}</p>
+                                    )}
+                                </div>
 
-                                        </div>
-                                        <div className="text-right">
-                                            {/* <p className="font-semibold">Closing Balance:       {(
-                                                parseFloat(SelectedLEDGERData.openingBalance || 0) +
-                                                SelectedLEDGERData.ledgerSuppliers?.reduce(
-                                                    (sum, ledger) => sum + (parseFloat(ledger.totalBillAmount) || 0), 0
-                                                ) -
-                                                SelectedLEDGERData.ledgerSuppliers?.reduce(
-                                                    (sum, ledger) => sum + (parseFloat(ledger.debit) || 0), 0
-                                                )
-                                            ).toFixed(2)}</p> */}
-                                            <p>Total Closing Balnce :{SelectedLEDGERData.
-                                                ledgerSuppliers[0].totalClosingBalance}</p>
-                                        </div>
+                                {/* Modal Footer */}
+                                <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 flex justify-between items-center">
+                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                        Showing {SelectedLEDGERData?.length || 0} entries • Last updated: {new Date().toLocaleDateString()}
+                                    </p>
+                                    <div className="flex space-x-3">
+                                        <button
+                                            onClick={closeLEDGERModal}
+                                            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors"
+                                        >
+                                            Close
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                // Add export functionality here
+                                                console.log('Export ledger data');
+                                            }}
+                                            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors flex items-center"
+                                        >
+                                            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                                            </svg>
+                                            Export CSV
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -569,6 +689,8 @@ const ViewLedger = () => {
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">LedgerName</th>
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Ledger Group</th>
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">LedgerType</th>
+                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Opening Balance</th>
+                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Starting Opening Balance</th>
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Ledger</th>
                                         {/* <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 

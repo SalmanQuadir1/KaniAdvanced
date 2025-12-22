@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customStyles as createCustomStyles } from '../../Constants/utils';
+import { CgFileAdd } from 'react-icons/cg';
 
 
 
@@ -25,16 +26,18 @@ const productgrp = [
 
 const PendingForBill = () => {
 
-    const { handleUpdate, getorderNumber, orderNo, getSupplier, getProdId, productIdd, supplier, getCustomer, customer } = useorder();
+    const { handleUpdate, getorderNumber, orderNo, getSupplier, getProdId, productIdd, supplier, getCustomer, customer, getVoucherList, VoucherList
+    } = useorder();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
 
     const customStyles = createCustomStyles(theme?.mode);
 
-
+    const [idd, setidd] = useState('')
+    const [selectedVouchers, setSelectedVouchers] = useState({});
     const { token } = currentUser;
 
-    console.log(productIdd, "huhuuhuuuuuuuuuuuuuuuuu");
+    console.log(idd, "huhuuhuuuuuuuuuuuuuuuuu");
 
     const [Order, setOrder] = useState()
 
@@ -48,6 +51,7 @@ const PendingForBill = () => {
         getSupplier();
         getCustomer();
         getProdId();
+        getVoucherList()
 
     }, []);
 
@@ -71,6 +75,12 @@ const PendingForBill = () => {
 
 
 
+    const formattedVoucher = VoucherList.filter(voucher => voucher.typeOfVoucher === 'Purchase').map(voucher => ({
+        label: voucher.name,
+        value: voucher.id
+    }));
+
+    console.log(formattedVoucher, "formattedVoucherformattedVoucher");
 
     const formattedCustomer = customer.map(customer => ({
         label: customer.customerName,
@@ -270,7 +280,7 @@ const PendingForBill = () => {
                             return (
                                 <p key={index} className="text-gray-900 whitespace-nowrap">
 
-                                    {formattedDate},  {  formattedTime}
+                                    {formattedDate},  {formattedTime}
                                 </p>
                             )
                         })}
@@ -316,15 +326,34 @@ const PendingForBill = () => {
                         ))}
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                {item.orders && (
-  <p className="text-gray-900 whitespace-nowrap">
-    {item.orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0)}
-  </p>
-)}
+                    {item.orders && (
+                        <p className="text-gray-900 whitespace-nowrap">
+                            {item.orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0)}
+                        </p>
+                    )}
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.billStatus}</p>
 
+                </td>
+
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <ReactSelect
+                        options={formattedVoucher}
+                        placeholder="Select Voucher"
+                        className="w-full z-90 bg-transparent dark:bg-form-Field"
+                        styles={customStyles}
+                        menuPortalTarget={document.body}
+                        onChange={(selectedOption) => {
+                            // Store the selected voucher ID for this specific billStatusId
+                            setSelectedVouchers(prev => ({
+                                ...prev,
+                                [item?.billStatusId]: selectedOption?.value || null
+                            }));
+                        }}
+                        value={formattedVoucher.find(option => option.value === selectedVouchers[item?.billStatusId])}
+                        menuPosition="fixed"
+                    />
                 </td>
 
 
@@ -340,8 +369,61 @@ const PendingForBill = () => {
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
-                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updatependingforbill/${item?.billStatusId}`)} title='Edit Order' />  |
-                        <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' />
+                        <>
+                            {selectedVouchers[item?.billStatusId] && (
+                                <CgFileAdd
+                                    size={17}
+                                    className='text-teal-500 hover:text-teal-700 mx-2 cursor-pointer'
+                                    onClick={() => {
+                                        // Check if there are orders
+                                        if (!item?.orders || item.orders.length === 0) {
+                                            toast.error('No order data available');
+                                            return;
+                                        }
+
+                                        // Prepare order details array
+                                        const orderDetails = item.orders.map(order => ({
+                                            orderNo: order.orderNo,
+                                            orderId: order.orderId,
+                                            productId: order.productId,
+                                            ProductIdString: order.stringProductId,
+                                            receivedQty: order.receivedQty,
+                                            totalAmount: order.totalAmount,
+                                            productCost: order.productCost,
+                                            // You can add more fields as needed
+                                        }));
+
+                                        navigate(`/Purchasevoucher/create/${selectedVouchers[item?.billStatusId]}`, {
+                                            state: {
+                                                sourcePage: 'PendingForBill',
+                                                // Supplier details
+                                                supplierName: item?.supplierName,
+                                                supplierId: item?.supplierId,
+                                                // Bill status details
+                                                billStatus: item?.billStatus,
+                                                billStatusId: item?.billStatusId,
+                                                // All order details as an array
+                                                orders: orderDetails,
+                                                // Calculated totals
+                                                totalBillAmount: item?.orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0),
+                                                totalReceivedQty: item?.orders.reduce((sum, order) => sum + (order.receivedQty || 0), 0),
+                                                // Original data for reference
+                                                originalData: item
+                                            }
+                                        });
+                                    }}
+                                    title='Create Purchase Voucher'
+                                />
+                            )}
+
+                            <FiEdit
+                                size={17}
+                                className='text-teal-500 hover:text-teal-700 mx-2 cursor-pointer'
+                                onClick={() => navigate(`/Order/updatependingforbill/${item?.billStatusId}`)}
+                                title='Edit Order'
+                            />
+                            {" | "}
+                        </>
                     </p>
                 </td>
             </tr>
@@ -500,6 +582,7 @@ const PendingForBill = () => {
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Total Amount </th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Total Bill Amount </th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Bill Status</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Choose Voucher Type</th>
                                         {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
