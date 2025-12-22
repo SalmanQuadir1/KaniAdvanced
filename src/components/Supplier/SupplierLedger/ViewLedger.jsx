@@ -481,8 +481,8 @@ const ViewLedger = () => {
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Description</th>
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Debit (₹)</th>
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Credit (₹)</th>
-                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Balance (₹)</th>
-                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                                        {/* <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Balance (₹)</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Status</th> */}
                                                     </tr>
                                                 </thead>
                                                 <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -510,7 +510,7 @@ const ViewLedger = () => {
                                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600 dark:text-green-400">
                                                                     {parseFloat(ledger.credit || 0).toFixed(2)}
                                                                 </td>
-                                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800 dark:text-gray-200">
+                                                                {/* <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800 dark:text-gray-200">
                                                                     {parseFloat(ledger.balance || 0).toFixed(2)}
                                                                 </td>
                                                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -520,7 +520,7 @@ const ViewLedger = () => {
                                                                         }`}>
                                                                         {parseFloat(ledger.balance || 0) >= 0 ? 'Positive' : 'Negative'}
                                                                     </span>
-                                                                </td>
+                                                                </td> */}
                                                             </tr>
                                                         ))
                                                     ) : (
