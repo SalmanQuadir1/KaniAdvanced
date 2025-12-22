@@ -576,101 +576,26 @@ const CreateVoucher = () => {
                                                 {
                                                     Vouchers?.typeOfVoucher == "Payment" && (
                                                         <>
-                                                        <div className="flex-2 min-w-[250px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white">Select Account</label>
-                                                            <ReactSelect
-                                                                name='ledgerId'
-                                                                value={LedgerData.find(opt => opt.value === values.ledgerId)}
-                                                                onChange={(option) => {
-                                                                    // Check if selected option is credit type
-                                                                    if (option?.type?.toLowerCase() === 'credit') {
-                                                                        toast.error("Cannot select ledger with Credit balance. Please select a Debit balance ledger.");
-                                                                        return; // Don't set the value
-                                                                    }
-
-                                                                    setFieldValue('ledgerId', option?.value || '');
-                                                                    setFieldValue('currentBalance', option?.balance || 0);
-                                                                    handleLedgerSelect(option);
-                                                                }}
-                                                                // Filter out credit type ledgers from options
-                                                                options={LedgerData.filter(opt =>
-                                                                    opt.type?.toLowerCase() !== 'credit'
-                                                                )}
-                                                                className="react-select-container bg-white dark:bg-form-Field w-full"
-                                                                classNamePrefix="react-select"
-                                                                placeholder={getPartyAccountPlaceholder()}
-                                                                menuPortalTarget={document.body}
-                                                                styles={{
-                                                                    ...customStyles,
-                                                                    menuPortal: (base) => ({ ...base, zIndex: 100000 })
-                                                                }}
-                                                            />
-                                                            {/* Show warning message if current selection is credit type */}
-                                                            {values.ledgerId && LedgerData.find(opt =>
-                                                                opt.value === values.ledgerId &&
-                                                                opt.type?.toLowerCase() === 'credit'
-                                                            ) && (
-                                                                    <div className="text-red-500 text-xs mt-1 flex items-center">
-                                                                        <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                                                        </svg>
-                                                                        This ledger has Credit balance. Please select a Debit balance ledger.
-                                                                    </div>
-                                                                )}
-                                                            <ErrorMessage name="ledgerId" component="div" className="text-red-500 text-xs mt-1" />
-                                                        </div>
-<div className="flex-2 min-w-[250px]">
-    <label className="mb-2.5 block text-black dark:text-white">Payment Date & Time</label>
-    <Field
-        name="paymentDate"
-        type="datetime-local"
-        defaultValue={new Date().toISOString().slice(0, 16)}
-        className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-    />
-    <ErrorMessage name="paymentDate" component="div" className="text-red-500" />
-</div>
-                                                </>
-
-
-
-                                                    )
-                                                }
-
-
-
-                                                {
-                                                    Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase" && (
-                                                        <>
-
                                                             <div className="flex-2 min-w-[250px]">
-                                                                <label className="mb-2.5 block text-black dark:text-white">Supplier Invoice Number</label>
-                                                                <Field
-                                                                    type="text"
-                                                                    name="supplierInvoiceNumber"
-                                                                    placeholder="Enter No"
-                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-                                                                />
-                                                                <ErrorMessage name="supplierInvoiceNumber" component="div" className="text-red-500" />
-                                                            </div>
-
-
-
-
-
-
-
-
-                                                            <div className="flex-2 min-w-[250px]">
-                                                                <label className="mb-2.5 block text-black dark:text-white">{getPartyAccountLabel()}</label>
+                                                                <label className="mb-2.5 block text-black dark:text-white">Select Account</label>
                                                                 <ReactSelect
                                                                     name='ledgerId'
                                                                     value={LedgerData.find(opt => opt.value === values.ledgerId)}
                                                                     onChange={(option) => {
+                                                                        // Check if selected option is credit type
+                                                                        if (option?.type?.toLowerCase() === 'credit') {
+                                                                            toast.error("Cannot select ledger with Credit balance. Please select a Debit balance ledger.");
+                                                                            return; // Don't set the value
+                                                                        }
+
                                                                         setFieldValue('ledgerId', option?.value || '');
                                                                         setFieldValue('currentBalance', option?.balance || 0);
                                                                         handleLedgerSelect(option);
                                                                     }}
-                                                                    options={LedgerData}
+                                                                    // Filter out credit type ledgers from options
+                                                                    options={LedgerData.filter(opt =>
+                                                                        opt.type?.toLowerCase() == 'debit'
+                                                                    )}
                                                                     className="react-select-container bg-white dark:bg-form-Field w-full"
                                                                     classNamePrefix="react-select"
                                                                     placeholder={getPartyAccountPlaceholder()}
@@ -680,81 +605,155 @@ const CreateVoucher = () => {
                                                                         menuPortal: (base) => ({ ...base, zIndex: 100000 })
                                                                     }}
                                                                 />
+                                                                {/* Show warning message if current selection is credit type */}
+                                                                {values.ledgerId && LedgerData.find(opt =>
+                                                                    opt.value === values.ledgerId &&
+                                                                    opt.type?.toLowerCase() === 'credit'
+                                                                ) && (
+                                                                        <div className="text-red-500 text-xs mt-1 flex items-center">
+                                                                            <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                                                                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                                                            </svg>
+                                                                            This ledger has Credit balance. Please select a Debit balance ledger.
+                                                                        </div>
+                                                                    )}
                                                                 <ErrorMessage name="ledgerId" component="div" className="text-red-500 text-xs mt-1" />
                                                             </div>
-
-                                                            <div className="flex-2 min-w-[250px] " >
-                                                                <label className="mb-2.5 block text-black dark:text-white">Orders Pending For{getPartyAccountLabel()}</label>
-                                                                <ReactSelect
-                                                                    name='orderIds'
-                                                                    style={{ height: "20px" }}
-                                                                    value={availableOrders.filter(opt => values.orderIds?.includes(opt.value))}
-                                                                    onChange={(selectedOptions) => {
-                                                                        const selectedValues = selectedOptions?.map(option => option.value) || [];
-                                                                        setFieldValue('orderIds', selectedValues);
-                                                                        console.log(selectedValues, "jojojazim");
-
-                                                                        // Call handleOrderSelect with selected values (even if empty)
-                                                                        handleOrderSelect(selectedValues);
-                                                                    }}
-                                                                    options={availableOrders}
-                                                                    isMulti={true}
-                                                                    menuPortalTarget={document.body}
-                                                                    styles={{
-                                                                        ...customStyles,
-                                                                        control: (base, state) => ({
-                                                                            ...base,
-                                                                            minHeight: '42px',
-                                                                            maxHeight: '42px',
-                                                                            overflowY: 'auto',
-                                                                            borderColor: state.isFocused ? '#3b82f6' : '#d1d5db',
-                                                                            '&:hover': {
-                                                                                borderColor: '#9ca3af',
-                                                                            },
-                                                                        }),
-                                                                        valueContainer: (base) => ({
-                                                                            ...base,
-                                                                            maxHeight: '36px',
-                                                                            overflowY: 'auto',
-                                                                            flexWrap: 'nowrap',
-                                                                            display: 'flex',
-                                                                        }),
-                                                                        multiValue: (base) => ({
-                                                                            ...base,
-                                                                            backgroundColor: '#3b82f6',
-                                                                            borderRadius: '4px',
-                                                                            margin: '2px',
-                                                                            flexShrink: 0,
-                                                                        }),
-                                                                        multiValueLabel: (base) => ({
-                                                                            ...base,
-                                                                            color: 'white',
-                                                                            padding: '2px 6px',
-                                                                            fontSize: '12px',
-                                                                        }),
-                                                                        multiValueRemove: (base) => ({
-                                                                            ...base,
-                                                                            color: 'white',
-                                                                            ':hover': {
-                                                                                backgroundColor: '#2563eb',
-                                                                                color: 'white',
-                                                                            },
-                                                                        }),
-                                                                        indicatorsContainer: (base) => ({
-                                                                            ...base,
-                                                                            height: '40px',
-                                                                        }),
-                                                                        menuPortal: (base) => ({ ...base, zIndex: 100000 })
-                                                                    }}
-                                                                    components={{
-                                                                        DropdownIndicator: null,
-                                                                        IndicatorSeparator: null,
-                                                                    }}
+                                                            <div className="flex-2 min-w-[250px]">
+                                                                <label className="mb-2.5 block text-black dark:text-white">Payment Date & Time</label>
+                                                                <Field
+                                                                    name="paymentDate"
+                                                                    type="datetime-local"
+                                                                    defaultValue={new Date().toISOString().slice(0, 16)}
+                                                                    className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                                 />
-                                                                <ErrorMessage name="orderId" component="div" className="text-red-500 text-xs mt-1" />
+                                                                <ErrorMessage name="paymentDate" component="div" className="text-red-500" />
                                                             </div>
                                                         </>
+
+
+
                                                     )
+                                                }
+
+
+
+                                                {(Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && (
+                                                    <>
+
+                                                        <div className="flex-2 min-w-[250px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">Supplier Invoice Number</label>
+                                                            <Field
+                                                                type="text"
+                                                                name="supplierInvoiceNumber"
+                                                                placeholder="Enter No"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                            />
+                                                            <ErrorMessage name="supplierInvoiceNumber" component="div" className="text-red-500" />
+                                                        </div>
+
+
+
+
+
+
+
+
+                                                        <div className="flex-2 min-w-[250px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">{getPartyAccountLabel()}</label>
+                                                            <ReactSelect
+                                                                name='ledgerId'
+                                                                value={LedgerData.find(opt => opt.value === values.ledgerId)}
+                                                                onChange={(option) => {
+                                                                    setFieldValue('ledgerId', option?.value || '');
+                                                                    setFieldValue('currentBalance', option?.balance || 0);
+                                                                    handleLedgerSelect(option);
+                                                                }}
+                                                                options={LedgerData}
+                                                                className="react-select-container bg-white dark:bg-form-Field w-full"
+                                                                classNamePrefix="react-select"
+                                                                placeholder={getPartyAccountPlaceholder()}
+                                                                menuPortalTarget={document.body}
+                                                                styles={{
+                                                                    ...customStyles,
+                                                                    menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                }}
+                                                            />
+                                                            <ErrorMessage name="ledgerId" component="div" className="text-red-500 text-xs mt-1" />
+                                                        </div>
+
+                                                        <div className="flex-2 min-w-[250px] " >
+                                                            <label className="mb-2.5 block text-black dark:text-white">Orders Pending For{getPartyAccountLabel()}</label>
+                                                            <ReactSelect
+                                                                name='orderIds'
+                                                                style={{ height: "20px" }}
+                                                                value={availableOrders.filter(opt => values.orderIds?.includes(opt.value))}
+                                                                onChange={(selectedOptions) => {
+                                                                    const selectedValues = selectedOptions?.map(option => option.value) || [];
+                                                                    setFieldValue('orderIds', selectedValues);
+                                                                    console.log(selectedValues, "jojojazim");
+
+                                                                    // Call handleOrderSelect with selected values (even if empty)
+                                                                    handleOrderSelect(selectedValues);
+                                                                }}
+                                                                options={availableOrders}
+                                                                isMulti={true}
+                                                                menuPortalTarget={document.body}
+                                                                styles={{
+                                                                    ...customStyles,
+                                                                    control: (base, state) => ({
+                                                                        ...base,
+                                                                        minHeight: '42px',
+                                                                        maxHeight: '42px',
+                                                                        overflowY: 'auto',
+                                                                        borderColor: state.isFocused ? '#3b82f6' : '#d1d5db',
+                                                                        '&:hover': {
+                                                                            borderColor: '#9ca3af',
+                                                                        },
+                                                                    }),
+                                                                    valueContainer: (base) => ({
+                                                                        ...base,
+                                                                        maxHeight: '36px',
+                                                                        overflowY: 'auto',
+                                                                        flexWrap: 'nowrap',
+                                                                        display: 'flex',
+                                                                    }),
+                                                                    multiValue: (base) => ({
+                                                                        ...base,
+                                                                        backgroundColor: '#3b82f6',
+                                                                        borderRadius: '4px',
+                                                                        margin: '2px',
+                                                                        flexShrink: 0,
+                                                                    }),
+                                                                    multiValueLabel: (base) => ({
+                                                                        ...base,
+                                                                        color: 'white',
+                                                                        padding: '2px 6px',
+                                                                        fontSize: '12px',
+                                                                    }),
+                                                                    multiValueRemove: (base) => ({
+                                                                        ...base,
+                                                                        color: 'white',
+                                                                        ':hover': {
+                                                                            backgroundColor: '#2563eb',
+                                                                            color: 'white',
+                                                                        },
+                                                                    }),
+                                                                    indicatorsContainer: (base) => ({
+                                                                        ...base,
+                                                                        height: '40px',
+                                                                    }),
+                                                                    menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                }}
+                                                                components={{
+                                                                    DropdownIndicator: null,
+                                                                    IndicatorSeparator: null,
+                                                                }}
+                                                            />
+                                                            <ErrorMessage name="orderId" component="div" className="text-red-500 text-xs mt-1" />
+                                                        </div>
+                                                    </>
+                                                )
                                                 }
 
 
@@ -780,24 +779,24 @@ const CreateVoucher = () => {
 
 
 
-                                               
 
-                                              
+
+
 
                                                 {
-                                                    
-                                                    Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase" && (
+
+                                                    (Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && (
                                                         <>
-                                                          <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Date</label>
-                                                    <Field
-                                                        name="date"
-                                                        type="date"
-                                                        placeholder="Enter Date"
-                                                        className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                    <ErrorMessage name="date" component="div" className="text-red-500" />
-                                                </div>
+                                                            <div className="flex-2 min-w-[250px]">
+                                                                <label className="mb-2.5 block text-black dark:text-white">Date</label>
+                                                                <Field
+                                                                    name="date"
+                                                                    type="date"
+                                                                    placeholder="Enter Date"
+                                                                    className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                />
+                                                                <ErrorMessage name="date" component="div" className="text-red-500" />
+                                                            </div>
                                                             <div className="flex-2 min-w-[250px]">
                                                                 <label className="mb-2.5 block text-black dark:text-white">Gst Registration</label>
                                                                 <Field
@@ -1293,7 +1292,21 @@ const CreateVoucher = () => {
                                                                                 placeholder="0.00"
                                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-3 text-black dark:bg-form-Field dark:text-white focus:border-primary"
                                                                                 min="0"
+                                                                                readOnly
                                                                                 step="0.01"
+                                                                                validate={(value) => {
+                                                                                    const amount = parseFloat(value) || 0;
+                                                                                    const currentBalance = parseFloat(values.currentBalance) || 0;
+                                                                                    if (amount > currentBalance) {
+                                                                                        return `Amount cannot exceed current balance (₹${currentBalance})`;
+                                                                                    }
+                                                                                    return undefined;
+                                                                                }}
+                                                                            />
+                                                                            <ErrorMessage
+                                                                                name="amount"
+                                                                                component="div"
+                                                                                className="text-red-500 text-xs mt-1"
                                                                             />
                                                                         </td>
                                                                         {/* <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark text-center">
@@ -1327,7 +1340,7 @@ const CreateVoucher = () => {
                                                 </div>
                                             )}
 
-                                            {Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase" && (
+                                            {Vouchers?.typeOfVoucher === "Sales" && (
                                                 <div>
                                                     <label className="mb-2.5 block text-black dark:text-white">Mode Of Payment</label>
                                                     <ReactSelect
