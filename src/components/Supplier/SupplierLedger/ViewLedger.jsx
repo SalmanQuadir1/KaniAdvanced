@@ -477,7 +477,7 @@ const ViewLedger = () => {
                                                 <thead className="bg-gray-50 dark:bg-slate-900">
                                                     <tr>
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Date</th>
-                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Reference</th>
+                                                        
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Description</th>
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Debit (₹)</th>
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Credit (₹)</th>
@@ -494,15 +494,13 @@ const ViewLedger = () => {
                                                                     }`}
                                                             >
                                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                                                                    {ledger.receivedDate ? new Date(ledger.receivedDate).toLocaleDateString('en-IN', {
+                                                                    {ledger?.receivedDate ? new Date(ledger?.receivedDate).toLocaleDateString('en-IN', {
                                                                         day: '2-digit',
                                                                         month: 'short',
                                                                         year: 'numeric'
                                                                     }) : 'N/A'}
                                                                 </td>
-                                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                                                                    {ledger.voucherNumber || '-'}
-                                                                </td>
+                                                             
                                                                 <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-xs truncate">
                                                                     {ledger.description || ledger.narration || 'No description'}
                                                                 </td>

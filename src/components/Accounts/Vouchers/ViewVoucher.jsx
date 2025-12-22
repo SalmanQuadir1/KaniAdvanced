@@ -40,7 +40,7 @@ const ViewVoucher = () => {
 
 
     const { token } = currentUser;
-const [voucherrr, setvoucherrr] = useState([])
+    const [voucherrr, setvoucherrr] = useState([])
 
 
     const [Voucher, setVoucher] = useState()
@@ -63,7 +63,7 @@ const [voucherrr, setvoucherrr] = useState([])
     //     label: supplier.name,
     //     value: supplier.name
     // }));
-   
+
 
     const voucherName = voucherrr && voucherrr.map((vouch) => ({
         label: vouch.name,
@@ -75,7 +75,7 @@ const [voucherrr, setvoucherrr] = useState([])
     }));
 
 
-console.log(voucherType,"type");
+    console.log(voucherType, "type");
 
 
     const [IsVoucherModalOpen, setIsVoucherModalOpen] = useState(false)
@@ -100,26 +100,26 @@ console.log(voucherType,"type");
 
 
 
-    const getVouchernameAndType= async()=>{
+    const getVouchernameAndType = async () => {
         try {
             const response = await fetch(`${GET_VoucherName_URL}`, {
                 method: "GET",
                 headers: {
-                    "Content-Type": "application/json", 
+                    "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
                 },
             });
-            const data = await response.json(); 
+            const data = await response.json();
             setvoucherrr(data);
             console.log("Voucher names and types:", data);
 
-            
+
         } catch (error) {
             logger.error("Error fetching voucher names and types:", error);
         }
     }
 
-  
+
 
 
 
@@ -336,9 +336,24 @@ console.log(voucherType,"type");
                 <td>
                     <span onClick={() => navigate(`/voucher/create/${item.id}`)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> Add Entry</span>
                 </td>
-                <td>
-                    <span onClick={() => navigate(`/voucherEntries/${item.id}`)} className="bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> View Entries</span>
-                </td>
+
+                {
+                    item.typeOfVoucher == "Payment" && (
+                        <td>
+                            <span onClick={() => navigate(`/voucherEntriesPayment/${item.id}`)} className="bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> View Entries</span>
+                        </td>
+                    )
+
+                }
+
+
+                {
+                    item.typeOfVoucher !== "Payment" && (
+                        <td>
+                            <span onClick={() => navigate(`/voucherEntries/${item.id}`)} className="bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> View Entries</span>
+                        </td>
+                    )
+                }
                 {/* <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     {item.products &&
                         item.products.map((prodId, index) => (

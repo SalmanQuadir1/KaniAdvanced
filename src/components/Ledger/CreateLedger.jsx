@@ -97,7 +97,8 @@ const CreateLedger = () => {
                         ifscCode: '',
                         branch: '',
                         accountType: '',
-                        typeOfopeningBalances: ""
+                        typeOfopeningBalance: "",
+                        previousOpType:""
                     }}
                     onSubmit={(values) => {
                         handleSubmit(values)
@@ -430,9 +431,17 @@ const CreateLedger = () => {
                                                 <label className="flex items-center gap-2">
                                                     <Field
                                                         type="radio"
-                                                        name="typeOfopeningBalances"
+                                                        name="typeOfOpeningBalance"
+                                                    
                                                         
                                                         value="DEBIT" // Saves as "DR" if selected
+                                                            onChange={(e) => {
+                                                            setFieldValue('typeOfOpeningBalance', e.target.value);
+                                                            setFieldValue('previousOpType', e.target.value);
+                                                          
+
+
+                                                        }}
                                                         className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
                                                     />
                                                     <span className="text-black dark:text-white">Debit (DR)</span>
@@ -440,8 +449,15 @@ const CreateLedger = () => {
                                                 <label className="flex items-center gap-2">
                                                     <Field
                                                         type="radio"
-                                                        name="typeOfopeningBalances"
+                                                        name="typeOfOpeningBalance"
                                                         value="CREDIT" // Saves as "CR" if selected
+                                                              onChange={(e) => {
+                                                            setFieldValue('typeOfOpeningBalance', e.target.value);
+                                                            setFieldValue('previousOpType', e.target.value);
+                                                          
+
+
+                                                        }}
                                                         className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
                                                     />
                                                     <span className="text-black dark:text-white">Credit (CR)</span>
@@ -455,7 +471,7 @@ const CreateLedger = () => {
                                             <div className="flex items-center gap-2">
                                                 <div className="flex-1 min-w-[250px]">
                                                     <Field
-                                                        type="text"
+                                                        type="number"
                                                         name="openingBalances"
                                                         onChange={(e) => {
                                                             setFieldValue('openingBalances', e.target.value);
@@ -469,7 +485,7 @@ const CreateLedger = () => {
                                                     />
                                                 </div>
                                                 {/* Display "CR" if Credit is selected */}
-                                                {values.typeOfopeningBalances === "CR" ? (
+                                                {values.typeOfopeningBalance === "CR" ? (
                                                     <span className="text-lg font-medium text-gray-600 dark:text-gray-300">
                                                         Cr.
                                                     </span>
