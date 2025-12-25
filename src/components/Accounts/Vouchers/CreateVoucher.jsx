@@ -52,18 +52,22 @@ const CreateVoucher = () => {
 
         if (Vouchers?.typeOfVoucher === "Purchase") {
             // For Purchase - show only suppliers (ledgers with supplier data)
-            return Ledger.filter(ledg => ledg?.supplier !== null);
+            return Ledger.filter(ledg => ledg?.ledgerType == "SUPPLIER");
         } else if (Vouchers?.typeOfVoucher === "Sales") {
             // For Sales - show only customers (ledgers without supplier data)
-            return Ledger.filter(ledg => ledg?.supplier === null);
+            return Ledger.filter(ledg => ledg?.ledgerType == "CUSTOMER");
         } else {
             // For other voucher types (Payment, Contra) - show all ledgers
             return Ledger;
         }
     };
 
+
+
     const LedgerData = getFilteredLedgers()?.map(ledg => ({
         value: ledg?.id,
+        supplierId: ledg?.supplier ? ledg.supplier.id : null,
+        customerId: ledg?.customer ? ledg.customer.id : null,
         label: ledg?.name,
         obj: ledg,
         balance: ledg?.openingBalances,
@@ -71,7 +75,32 @@ const CreateVoucher = () => {
         isSupplier: ledg?.supplier !== null
     }));
 
-    console.log(LedgerData, "Filtered LedgerData");
+
+    //bank ledgers Only
+    const BankLedgers = Ledger.filter(ledg =>
+        ledg?.name && ledg.name.toLowerCase().includes('bank')
+    );
+    const bankData = BankLedgers?.map(ledg => ({
+        value: ledg?.id,
+        label: ledg?.name,
+    }));
+
+    const CashLedgers = Ledger.filter(ledg =>
+        ledg?.name && ledg.name.toLowerCase().includes('cash')
+    );
+    const cashData = CashLedgers?.map(ledg => ({
+        value: ledg?.id,
+        label: ledg?.name,
+    }));
+
+    const cashLedgerId = CashLedgers.length > 0 ? CashLedgers[0].id : null;
+    // if (CashLedgers.length === 0) {
+    //     toast.error("No Cash Ledger Found. Please create a Cash ledger to proceed.");
+    // }
+
+    console.log(BankLedgers, "kkkkkkkkkkkkkkkkkkkkkkkkkkkj");
+
+
 
     useEffect(() => {
         GetVoucherById(id);
@@ -222,6 +251,22 @@ const CreateVoucher = () => {
     ]
 
 
+    const PaymentReceiveType = [
+        {
+            value: "Partially",
+            label: "Partially"
+
+        },
+        {
+            value: "Fully",
+            label: "Fully"
+
+        },
+
+
+    ]
+
+
 
 
 
@@ -275,7 +320,7 @@ const CreateVoucher = () => {
             // For Sales - fetch customer products
             setloadingOrders(true);
             try {
-                const customerId = option.value;
+                const customerId = option?.obj.customer.id;
                 const response = await fetch(`http://localhost:8081/order/by-type?id=${customerId}&type=customer`, {
                     method: "GET",
                     headers: {
@@ -516,7 +561,11 @@ const CreateVoucher = () => {
                         totalSgst: 0,
                         totalCgst: 0,
                         toLedgerId: null,
+                        toLedger: null,
+                        remainingBalance: 0,
+                        amountReceived: 0,
                         amount: 0,
+                        paymentReceivedType: "",
 
                         totalGst: 0,
                         paymentDetails: [{
@@ -1133,99 +1182,178 @@ const CreateVoucher = () => {
 
                                                             {/* GST Summary */}
                                                             {Vouchers?.typeOfVoucher === "Sales" && (
-                                                                <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                                                                    <h4 className="text-lg font-semibold mb-3 text-black dark:text-white">GST Summary</h4>
-                                                                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-sm">
-                                                                        <div>
-                                                                            <p className="text-gray-600 dark:text-gray-400">Total MRP</p>
-                                                                            <p className="font-medium text-black dark:text-white">₹{totals.totalMRP}</p>
-                                                                        </div>
-
-                                                                        <div>
-                                                                            <p className="text-gray-600 dark:text-gray-400">Total Quantity</p>
-                                                                            <p className="font-medium text-black dark:text-white">{totals.totalQuantity}</p>
-                                                                        </div>
-                                                                        {totals.totalDiscount > 0 && (
+                                                                <>
+                                                                    <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                                                        <h4 className="text-lg font-semibold mb-3 text-black dark:text-white">GST Summary</h4>
+                                                                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-sm">
                                                                             <div>
-                                                                                <p className="text-gray-600 dark:text-gray-400">Total Discount</p>
-                                                                                <p className="font-medium text-red-600">-₹{totals.totalDiscount}</p>
+                                                                                <p className="text-gray-600 dark:text-gray-400">Total MRP</p>
+                                                                                <p className="font-medium text-black dark:text-white">₹{totals.totalMRP}</p>
                                                                             </div>
-                                                                        )}
-                                                                        {totals.totalCGST > 0 && (
-                                                                            // <div>
-                                                                            //     <p className="text-gray-600 dark:text-gray-400">CGST</p>
-                                                                            //     <p className="font-medium text-black dark:text-white">₹{totals.totalCGST}</p>
-                                                                            // </div>
 
-                                                                            <div className='flex flex-col'>
-                                                                                <p className="text-gray-600 dark:text-gray-400">CGST</p>
-                                                                                <Field
-                                                                                    type="number"
-                                                                                    name="totalCgst"
-                                                                                    value={totals.totalCGST}
-                                                                                    placeholder="0.00"
-                                                                                    readOnly
-                                                                                    className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
-                                                                                />
+                                                                            <div>
+                                                                                <p className="text-gray-600 dark:text-gray-400">Total Quantity</p>
+                                                                                <p className="font-medium text-black dark:text-white">{totals.totalQuantity}</p>
                                                                             </div>
-                                                                        )}
-                                                                        {totals.totalSGST > 0 && (
-                                                                            // <div>
-                                                                            //     <p className="text-gray-600 dark:text-gray-400">SGST</p>
-                                                                            //     <p className="font-medium text-black dark:text-white">₹{totals.totalSGST}</p>
-                                                                            // </div>
+                                                                            {totals.totalDiscount > 0 && (
+                                                                                <div>
+                                                                                    <p className="text-gray-600 dark:text-gray-400">Total Discount</p>
+                                                                                    <p className="font-medium text-red-600">-₹{totals.totalDiscount}</p>
+                                                                                </div>
+                                                                            )}
+                                                                            {totals.totalCGST > 0 && (
+                                                                                // <div>
+                                                                                //     <p className="text-gray-600 dark:text-gray-400">CGST</p>
+                                                                                //     <p className="font-medium text-black dark:text-white">₹{totals.totalCGST}</p>
+                                                                                // </div>
 
-                                                                            <div className='flex flex-col'>
-                                                                                <p className="text-gray-600 dark:text-gray-400">SGST</p>
-                                                                                <Field
-                                                                                    type="number"
-                                                                                    name="totalSgst"
-                                                                                    value={totals.totalSGST}
-                                                                                    placeholder="0.00"
-                                                                                    readOnly
-                                                                                    className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
-                                                                                />
-                                                                            </div>
-                                                                        )}
-                                                                        {totals.totalIGST > 0 && (
-                                                                            // <div>
-                                                                            //     <p className="text-gray-600 dark:text-gray-400">IGST</p>
-                                                                            //     <p className="font-medium text-black dark:text-white">₹{totals.totalIGST}</p>
-                                                                            // </div>
+                                                                                <div className='flex flex-col'>
+                                                                                    <p className="text-gray-600 dark:text-gray-400">CGST</p>
+                                                                                    <Field
+                                                                                        type="number"
+                                                                                        name="totalCgst"
+                                                                                        value={totals.totalCGST}
+                                                                                        placeholder="0.00"
+                                                                                        readOnly
+                                                                                        className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
+                                                                                    />
+                                                                                </div>
+                                                                            )}
+                                                                            {totals.totalSGST > 0 && (
+                                                                                // <div>
+                                                                                //     <p className="text-gray-600 dark:text-gray-400">SGST</p>
+                                                                                //     <p className="font-medium text-black dark:text-white">₹{totals.totalSGST}</p>
+                                                                                // </div>
 
-                                                                            <div className='flex flex-col'>
-                                                                                <p className="text-gray-600 dark:text-gray-400">IGST</p>
-                                                                                <Field
-                                                                                    type="number"
-                                                                                    name="totalIgst"
-                                                                                    value={totals.totalIGST}
-                                                                                    placeholder="0.00"
-                                                                                    readOnly
-                                                                                    className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
-                                                                                />
+                                                                                <div className='flex flex-col'>
+                                                                                    <p className="text-gray-600 dark:text-gray-400">SGST</p>
+                                                                                    <Field
+                                                                                        type="number"
+                                                                                        name="totalSgst"
+                                                                                        value={totals.totalSGST}
+                                                                                        placeholder="0.00"
+                                                                                        readOnly
+                                                                                        className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
+                                                                                    />
+                                                                                </div>
+                                                                            )}
+                                                                            {totals.totalIGST > 0 && (
+                                                                                // <div>
+                                                                                //     <p className="text-gray-600 dark:text-gray-400">IGST</p>
+                                                                                //     <p className="font-medium text-black dark:text-white">₹{totals.totalIGST}</p>
+                                                                                // </div>
+
+                                                                                <div className='flex flex-col'>
+                                                                                    <p className="text-gray-600 dark:text-gray-400">IGST</p>
+                                                                                    <Field
+                                                                                        type="number"
+                                                                                        name="totalIgst"
+                                                                                        value={totals.totalIGST}
+                                                                                        placeholder="0.00"
+                                                                                        readOnly
+                                                                                        className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
+                                                                                    />
+                                                                                </div>
+                                                                            )}
+                                                                            <div>
+                                                                                <p className="text-gray-600 dark:text-gray-400">Total GST</p>
+                                                                                <p className="font-medium text-black dark:text-white">₹{totals.totalGST}</p>
                                                                             </div>
-                                                                        )}
-                                                                        <div>
-                                                                            <p className="text-gray-600 dark:text-gray-400">Total GST</p>
-                                                                            <p className="font-medium text-black dark:text-white">₹{totals.totalGST}</p>
-                                                                        </div>
-                                                                        {/* <div>
+                                                                            {/* <div>
                                                                             <p className="text-gray-600 dark:text-gray-400">Grand Total</p>
                                                                             <p className="font-medium text-lg text-primary">₹{totals?.subtotal}</p>
                                                                         </div> */}
-                                                                        <div className='flex flex-col'>
-                                                                            <p className="text-gray-600 dark:text-gray-400">Grand Total</p>
-                                                                            <Field
-                                                                                type="number"
-                                                                                name="totalAmount"
-                                                                                value={totals?.subtotal}
-                                                                                placeholder="0.00"
-                                                                                readOnly
-                                                                                className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
-                                                                            />
+                                                                            <div className='flex flex-col'>
+                                                                                <p className="text-gray-600 dark:text-gray-400">Grand Total</p>
+                                                                                <Field
+                                                                                    type="number"
+                                                                                    name="totalAmount"
+                                                                                    value={totals?.subtotal}
+                                                                                    placeholder="0.00"
+                                                                                    readOnly
+                                                                                    className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
+                                                                                />
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
+
+                                                                    <div>
+                                                                        <div>
+                                                                            <label className="mb-2.5 block text-black dark:text-white">Payment Received</label>
+                                                                            <ReactSelect
+                                                                                name="paymentReceivedType"
+                                                                                options={PaymentReceiveType}
+                                                                                value={PaymentReceiveType.find(option => option.value === values.paymentReceivedType)}
+                                                                                onChange={(selectedOption) => {
+                                                                                    const paymentType = selectedOption ? selectedOption.value : '';
+                                                                                    setFieldValue('paymentReceivedType', paymentType);
+
+                                                                                    // Automatically set amount based on payment type
+                                                                                    if (paymentType === 'Fully') {
+                                                                                        setFieldValue('amountReceived', totals.subtotal);
+                                                                                        setFieldValue('remainingBalance', 0);
+                                                                                    } else if (paymentType === 'Partially') {
+                                                                                        // Reset to 0 for partial payment
+                                                                                        setFieldValue('amountReceived', 0);
+                                                                                        setFieldValue('remainingBalance', totals.subtotal);
+                                                                                    } else {
+                                                                                        // For 'Not Received' or other types
+                                                                                        setFieldValue('amountReceived', 0);
+                                                                                        setFieldValue('remainingBalance', totals.subtotal);
+                                                                                    }
+                                                                                }}
+                                                                                placeholder="Payment Received Type"
+                                                                                className="react-select-container mb-4"
+                                                                                classNamePrefix="react-select"
+                                                                            />
+                                                                        </div>
+
+                                                                        {/* Amount Received Field - Show for both Fully and Partially */}
+                                                                        {(values.paymentReceivedType === 'Partially' || values.paymentReceivedType === 'Fully') && (
+                                                                            <div className="mt-4">
+                                                                                <label className="mb-2.5 block text-black dark:text-white">
+                                                                                    Amount Received
+                                                                                    {values.paymentReceivedType === 'Fully' &&
+                                                                                        <span className="text-green-600 text-sm ml-2">(Auto-filled with full amount)</span>
+                                                                                    }
+                                                                                </label>
+                                                                                <Field
+                                                                                    type="number"
+                                                                                    name="amountReceived"
+                                                                                    placeholder="0.00"
+                                                                                    readOnly={values.paymentReceivedType === 'Fully'}
+                                                                                    className={`w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary ${values.paymentReceivedType === 'Fully' ? 'bg-gray-100 dark:bg-slate-800 cursor-not-allowed' : ''
+                                                                                        }`}
+                                                                                    onChange={(e) => {
+                                                                                        const amountReceived = parseFloat(e.target.value) || 0;
+                                                                                        setFieldValue('amountReceived', amountReceived);
+
+                                                                                        // Calculate remaining balance
+                                                                                        const remainingBalance = totals.subtotal - amountReceived;
+                                                                                        setFieldValue('remainingBalance', remainingBalance >= 0 ? remainingBalance : 0);
+                                                                                    }}
+                                                                                />
+                                                                            </div>
+                                                                        )}
+
+                                                                        {/* Show Remaining Balance when payment is not fully received */}
+                                                                        {values.paymentReceivedType === 'Partially' && values.amountReceived > 0 && (
+                                                                            <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded">
+                                                                                <p className="text-blue-600 dark:text-blue-300">
+                                                                                    Remaining Balance: <span className="font-bold">₹{values.remainingBalance || 0}</span>
+                                                                                </p>
+                                                                            </div>
+                                                                        )}
+
+                                                                        {/* Hidden field for remaining balance */}
+                                                                        <Field type="hidden" name="remainingBalance" />
+                                                                    </div>
+
+
+
+                                                                </>
+
+
                                                             )}
 
 
@@ -1261,7 +1389,7 @@ const CreateVoucher = () => {
                                                                                 value={LedgerData.find(opt => opt.value === values.toLedgerId)}
                                                                                 onChange={(option) => {
                                                                                     setFieldValue('toLedgerId', option?.value || '');
-                                                                                    setFieldValue('currentBalance2', option?.balance +" "+ option.type || 0);
+                                                                                    setFieldValue('currentBalance2', option?.balance + " " + option.type || 0);
                                                                                 }}
                                                                                 options={LedgerData}
                                                                                 className="react-select-container bg-white dark:bg-form-Field w-full"
@@ -1293,7 +1421,7 @@ const CreateVoucher = () => {
                                                                                 placeholder="0.00"
                                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-3 text-black dark:bg-form-Field dark:text-white focus:border-primary"
                                                                                 min="0"
-                                                                           
+
                                                                                 step="0.01"
                                                                                 validate={(value) => {
                                                                                     const amount = parseFloat(value) || 0;
@@ -1357,45 +1485,149 @@ const CreateVoucher = () => {
                                                     />
                                                     {
                                                         values.modeOfPayment === 'Cheque' && (
-                                                            <div className="mb-4">
-                                                                <label className="mb-2.5 block text-black dark:text-white">Cheque Number</label>
-                                                                <Field
-                                                                    type="text"
-                                                                    name="chequeNumber"
-                                                                    placeholder="Enter Cheque Number"
-                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                />
+                                                            <div className='flex flex-row'>
+
+                                                                <div>
+                                                                    <label className="mb-2.5 block text-black dark:text-white">Select Bank <span className='text-red-700'>*</span></label>
+                                                                    <ReactSelect
+                                                                        name='toLedger'
+                                                                        value={bankData.find(opt => opt.value === values.toLedger)}
+                                                                        onChange={(option) => {
+                                                                            setFieldValue('toLedger', option?.value || '');
+
+                                                                        }}
+                                                                        options={bankData}
+                                                                        className="react-select-container bg-white dark:bg-form-Field w-full"
+                                                                        classNamePrefix="react-select"
+                                                                        placeholder={"Select Bank You Want To Transfer"}
+                                                                        menuPortalTarget={document.body}
+                                                                        styles={{
+                                                                            ...customStyles,
+                                                                            menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                        }}
+                                                                    />
+                                                                </div>
+
+                                                                <div className="mb-4">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">Cheque Number</label>
+                                                                    <Field
+                                                                        type="text"
+                                                                        name="chequeNumber"
+                                                                        placeholder="Enter Cheque Number"
+                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                    />
+                                                                </div>
+
                                                             </div>
+
                                                         )
 
 
                                                     }
                                                     {
+                                                        values.modeOfPayment === 'Cash' && (
+                                                            <div>
+                                                                {CashLedgers.length === 0 ? (
+                                                                    <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded">
+                                                                        <p className="text-red-600 dark:text-red-400 font-medium">
+                                                                            ⚠️ No Cash Ledger Found
+                                                                        </p>
+                                                                        <p className="text-sm text-red-500 dark:text-red-300 mt-1">
+                                                                            Please create a Cash ledger to proceed with cash transactions.
+                                                                        </p>
+                                                                    </div>
+                                                                ) : (
+                                                                    <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded">
+                                                                        <p className="text-green-600 dark:text-green-400 font-medium">
+                                                                            Cash Account: {CashLedgers[0]?.name}
+                                                                        </p>
+                                                                        <p className="text-sm text-green-500 dark:text-green-300 mt-1">
+                                                                            Cash ledger will be automatically used for this transaction.
+                                                                        </p>
+                                                                        <Field type="hidden" name="toLedger" value={CashLedgers[0]?.id || ''} />
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        )
+                                                    }
+                                                    {
                                                         values.modeOfPayment === 'Bank Transfer' && (
-                                                            <div className="mb-4">
-                                                                <label className="mb-2.5 block text-black dark:text-white">Transaction ID</label>
-                                                                <Field
-                                                                    type="text"
-                                                                    name="transactionId"
-                                                                    placeholder="Enter Transaction ID"
-                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                />
+                                                            <div className='flex flex-row gap-5'>
+
+                                                                <div>
+                                                                    <label className="mb-2.5 block text-black dark:text-white">Select Bank <span className='text-red-700'>*</span></label>
+                                                                    <ReactSelect
+                                                                        name='toLedger'
+                                                                        value={bankData.find(opt => opt.value === values.toLedger)}
+                                                                        onChange={(option) => {
+                                                                            setFieldValue('toLedger', option?.value || '');
+
+                                                                        }}
+                                                                        options={bankData}
+                                                                        className="react-select-container bg-white dark:bg-form-Field w-full"
+                                                                        classNamePrefix="react-select"
+                                                                        placeholder={"Select Bank You Want To Transfer"}
+                                                                        menuPortalTarget={document.body}
+                                                                        styles={{
+                                                                            ...customStyles,
+                                                                            menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                        }}
+                                                                    />
+                                                                </div>
+                                                                <div className="mb-4">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">Transaction ID</label>
+                                                                    <Field
+                                                                        type="text"
+                                                                        name="transactionId"
+                                                                        placeholder="Enter Transaction ID"
+                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                    />
+                                                                </div>
+
+
                                                             </div>
                                                         )
                                                     }
                                                     {
                                                         values.modeOfPayment === 'Card' && (
-                                                            <div className="mb-4">
-                                                                <label className="mb-2.5 block text-black dark:text-white">Card Number</label>
-                                                                <Field
-                                                                    type="text"
-                                                                    name="cardNumber"
-                                                                    placeholder="Enter Card Number"
-                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                />
+
+                                                            <div className='flex flex-row gap-5'>
+
+                                                                <div>
+                                                                    <label className="mb-2.5 block text-black dark:text-white">Select Bank <span className='text-red-700'>*</span></label>
+                                                                    <ReactSelect
+                                                                        name='toLedger'
+                                                                        value={bankData.find(opt => opt.value === values.toLedger)}
+                                                                        onChange={(option) => {
+                                                                            setFieldValue('toLedger', option?.value || '');
+
+                                                                        }}
+                                                                        options={bankData}
+                                                                        className="react-select-container bg-white dark:bg-form-Field w-full"
+                                                                        classNamePrefix="react-select"
+                                                                        placeholder={"Select Bank You Want To Transfer"}
+                                                                        menuPortalTarget={document.body}
+                                                                        styles={{
+                                                                            ...customStyles,
+                                                                            menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                        }}
+                                                                    />
+                                                                </div>
+                                                                <div className="mb-4">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">Card Number</label>
+                                                                    <Field
+                                                                        type="text"
+                                                                        name="cardNumber"
+                                                                        placeholder="Enter Card Number"
+                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                    />
+                                                                </div>
                                                             </div>
                                                         )
                                                     }
+
+
+
 
                                                 </div>
 

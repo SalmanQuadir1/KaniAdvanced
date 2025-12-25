@@ -24,7 +24,7 @@ const CreateVoucherPurchase = () => {
     const { id } = useParams(); // This gets the voucher ID from the URL
     const location = useLocation();
     const [ledgerId, setledgerId] = useState(null)
-const [openingbal, setopeningbal] = useState(0)
+    const [openingbal, setopeningbal] = useState(0)
     // Destructure with default values
     const {
         supplierName = '',
@@ -538,36 +538,61 @@ const [openingbal, setopeningbal] = useState(0)
                         date: '',
                         voucherId: Number(id),
                         ledgerId: ledgerId,
-                        orderIds: [orders[0].orderId || ''],
-                        currentBalance:openingbal||0,
+                        orderIds: orders.map(ord => ord.orderId),
+                        currentBalance: openingbal || 0,
                         gstRegistration: Vouchers.defGstRegist || "",
                         narration: "",
                         modeOfPayment: "",
                         chequeNumber: "",
                         cardNumber: "",
                         transactionId: "",
-
                         isExport: false,
-                        totalAmount: orders[0]?.totalAmount || 1,
+                        // Calculate total amount from ALL orders
+                        totalAmount: orders.reduce((total, order) => total + (order.totalAmount || 0), 0),
                         totalIgst: 0,
                         totalSgst: 0,
                         totalCgst: 0,
-
                         totalGst: 0,
-                        paymentDetails: [{
-                            productsId: orders[0]?.productId || null,
-                            orderProductId: null,
-                            mrp: orders[0]?.productCost || 0,
-                            rate: 0,
-                            exclusiveGst: 0,
-                            discount: 0,
-                            quantity: orders[0]?.receivedQty || 1,
-                            value: 0,
-                            voucherAmount: orders[0]?.totalAmount || 1,
-                            igstRate: 0,
-                            gstAmount: 0,
-                            gstCalculation: null
-                        }]
+                        // Create payment details from ALL orders
+                        paymentDetails: orders.flatMap(order => {
+                            // Get products for each order
+                            if (order.orderProducts && order.orderProducts.length > 0) {
+                                return order.orderProducts.map(orderProduct => ({
+                                    id: uuidv4(),
+                                    productsId: orderProduct.product?.id || null,
+                                    orderProductId: orderProduct.id || null,
+                                    orderId: order.orderId, // Store which order this belongs to
+                                    mrp: orderProduct.product?.retailMrp || 0,
+                                    rate: orderProduct.product?.retailMrp || 0,
+                                    exclusiveGst: orderProduct.product?.retailMrp || 0,
+                                    discount: 0,
+                                    quantity: orderProduct.receivedQuantity || 1,
+                                    value: (orderProduct.product?.retailMrp || 0) * (orderProduct.receivedQuantity || 1),
+                                    voucherAmount: (orderProduct.product?.retailMrp || 0) * (orderProduct.receivedQuantity || 1),
+                                    igstRate: 0,
+                                    gstAmount: 0,
+                                    gstCalculation: null,
+                                    productName: orderProduct.product?.productDescription
+                                }));
+                            }
+                            // If no orderProducts, check for direct product data
+                            return {
+                                id: uuidv4(),
+                                productsId: order.productId || null,
+                                orderProductId: null,
+                                orderId: order.orderId,
+                                mrp: order.productCost || 0,
+                                rate: order.productCost || 0,
+                                exclusiveGst: order.productCost || 0,
+                                discount: 0,
+                                quantity: order.receivedQty || 1,
+                                value: (order.productCost || 0) * (order.receivedQty || 1),
+                                voucherAmount: order.totalAmount || 0,
+                                igstRate: 0,
+                                gstAmount: 0,
+                                gstCalculation: null
+                            };
+                        }).filter(item => item.quantity > 0) // Only include items with quantity > 0
                     }}
                     enableReinitialize={true}
                     validationSchema={validationSchema}
@@ -776,18 +801,19 @@ const [openingbal, setopeningbal] = useState(0)
                                                                     <thead>
                                                                         <tr className="bg-gray-2 text-left dark:bg-meta-4">
                                                                             {[
+                                                                                "Order No",
                                                                                 "Product",
                                                                                 "MRP",
                                                                                 ...(Vouchers?.typeOfVoucher === "Sales" ? ["Rate (inc. GST)"] : []),
                                                                                 ...(Vouchers?.typeOfVoucher === "Sales" ? ["Discount Applied"] : []),
-                                                                                "quantity",
+                                                                                "Quantity",
                                                                                 "Value",
                                                                                 ...(Vouchers?.typeOfVoucher === "Sales" ? ["GST Type"] : []),
                                                                                 "Action"
                                                                             ].map((header, i) => (
                                                                                 <th
                                                                                     key={i}
-                                                                                    className="w-[220px] py-4 px-3 font-medium text-black dark:text-white text-sm border-b border-gray-300 truncate"
+                                                                                    className="w-[200px] py-4 px-3 font-medium text-black dark:text-white text-sm border-b border-gray-300 truncate"
                                                                                 >
                                                                                     {header}
                                                                                 </th>
@@ -798,61 +824,82 @@ const [openingbal, setopeningbal] = useState(0)
                                                                     <tbody>
                                                                         {values.paymentDetails.map((entry, index) => {
                                                                             const rowProducts = getAvailableProductsForRow(values, index);
+
+                                                                            // Find the order for this entry
+                                                                            const order = orders.find(o => o.orderId === entry.orderId);
+                                                                            const orderNumber = order ? order.orderNumber : 'N/A';
+
+                                                                            // Find the product in availableProducts for this entry
+                                                                            const productInfo = availableProducts.find(p => p.value === entry.productsId);
+
                                                                             return (
                                                                                 <tr key={entry.id || index} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                                                                                    {/* Order Number - Read Only */}
+                                                                                    <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
+                                                                                        <div className="text-sm font-medium">
+                                                                                            {orderNumber}
+                                                                                            <Field type="hidden" name={`paymentDetails.${index}.orderId`} value={entry.orderId || ''} />
+                                                                                        </div>
+                                                                                    </td>
+
                                                                                     {/* Product Dropdown */}
                                                                                     <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
+                                                                                        {entry.productsId ? (
+                                                                                            <div className="text-sm font-medium">
+                                                                                                {productInfo?.label || entry.productName || 'Product'}
+                                                                                                <Field type="hidden" name={`paymentDetails.${index}.productsId`} value={entry.productsId || ''} />
+                                                                                                <Field type="hidden" name={`paymentDetails.${index}.orderProductId`} value={entry.orderProductId || ''} />
+                                                                                            </div>
+                                                                                        ) : (
+                                                                                            <ReactSelect
+                                                                                                name={`paymentDetails.${index}.productsId`}
+                                                                                                value={rowProducts.find(p => p.value === entry.productsId) || null}
+                                                                                                onChange={(option) => {
+                                                                                                    const mrp = option?.price || 0;
+                                                                                                    const hsnCode = option?.hsnCode || {};
+                                                                                                    const igstRate = hsnCode?.igst || 0;
 
-                                                                                        <ReactSelect
-                                                                                          
-                                                                                            name={`paymentDetails.${index}.productsId`}
-                                                                                            value={rowProducts.find(p => p.value === orders[0].productId) || null}
-                                                                                            onChange={(option) => {
-                                                                                                const mrp = option?.price || 0;
-                                                                                                const hsnCode = option?.hsnCode || {};
-                                                                                                const igstRate = hsnCode?.igst || 0;
+                                                                                                    // Get customer shipping address for GST calculation
+                                                                                                    const customerAddress = selectedLedger?.obj?.customer?.shippingAddress || '';
+                                                                                                    const gstRegistration = values.gstRegistration || '';
+                                                                                                    const currentDiscount = entry.discount || 0;
 
-                                                                                                // Get customer shipping address for GST calculation
-                                                                                                const customerAddress = selectedLedger?.obj?.customer?.shippingAddress || '';
-                                                                                                const gstRegistration = values.gstRegistration || '';
-                                                                                                const currentDiscount = entry.discount || 0;
+                                                                                                    // Calculate GST based on location and discount
+                                                                                                    const gstCalculation = calculateGST(mrp, hsnCode, gstRegistration, customerAddress, currentDiscount);
 
-                                                                                                // Calculate GST based on location and discount
-                                                                                                const gstCalculation = calculateGST(mrp, hsnCode, gstRegistration, customerAddress, currentDiscount);
-
-                                                                                                setFieldValue(`paymentDetails.${index}.productsId`, option?.value || null);
-                                                                                                setFieldValue(`paymentDetails.${index}.orderProductId`, option?.orderProdId || null);
-                                                                                                setFieldValue(`paymentDetails.${index}.mrp`, mrp);
-                                                                                                setFieldValue(`paymentDetails.${index}.igstRate`, igstRate);
-                                                                                                setFieldValue(`paymentDetails.${index}.gstAmount`, gstCalculation.totalGstAmount);
-                                                                                                setFieldValue(`paymentDetails.${index}.exclusiveGst`, gstCalculation.inclusivePrice);
-                                                                                                setFieldValue(`paymentDetails.${index}.rate`, gstCalculation.inclusivePrice);
-                                                                                                setFieldValue(`paymentDetails.${index}.gstCalculation`, gstCalculation);
-                                                                                                setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
-                                                                                                    ...entry,
-                                                                                                    exclusiveGst: gstCalculation.inclusivePrice,
-                                                                                                    rate: gstCalculation.inclusivePrice
-                                                                                                }));
-                                                                                                setFieldValue(`paymentDetails.${index}.voucherAmount`, calculateLineTotal({
-                                                                                                    ...entry,
-                                                                                                    exclusiveGst: gstCalculation.inclusivePrice,
-                                                                                                    rate: gstCalculation.inclusivePrice
-                                                                                                }));
-                                                                                            }}
-                                                                                            options={rowProducts}
-                                                                                          
-                                                                                            placeholder="Select Product"
-                                                                                            className="react-select-container"
-                                                                                            classNamePrefix="react-select"
-                                                                                            menuPortalTarget={document.body}
-                                                                                            styles={{
-                                                                                                ...customStyles,
-                                                                                                menuPortal: base => ({ ...base, zIndex: 9999 })
-                                                                                            }}
-                                                                                            isClearable
-                                                                                             isDisabled={true}
-                                                                                        />
-
+                                                                                                    setFieldValue(`paymentDetails.${index}.productsId`, option?.value || null);
+                                                                                                    setFieldValue(`paymentDetails.${index}.orderProductId`, option?.orderProdId || null);
+                                                                                                    setFieldValue(`paymentDetails.${index}.orderId`, option?.obj?.orderId || null);
+                                                                                                    setFieldValue(`paymentDetails.${index}.mrp`, mrp);
+                                                                                                    setFieldValue(`paymentDetails.${index}.igstRate`, igstRate);
+                                                                                                    setFieldValue(`paymentDetails.${index}.gstAmount`, gstCalculation.totalGstAmount);
+                                                                                                    setFieldValue(`paymentDetails.${index}.exclusiveGst`, gstCalculation.inclusivePrice);
+                                                                                                    setFieldValue(`paymentDetails.${index}.rate`, gstCalculation.inclusivePrice);
+                                                                                                    setFieldValue(`paymentDetails.${index}.gstCalculation`, gstCalculation);
+                                                                                                    setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
+                                                                                                        ...entry,
+                                                                                                        exclusiveGst: gstCalculation.inclusivePrice,
+                                                                                                        rate: gstCalculation.inclusivePrice
+                                                                                                    }));
+                                                                                                    setFieldValue(`paymentDetails.${index}.voucherAmount`, calculateLineTotal({
+                                                                                                        ...entry,
+                                                                                                        exclusiveGst: gstCalculation.inclusivePrice,
+                                                                                                        rate: gstCalculation.inclusivePrice
+                                                                                                    }));
+                                                                                                }}
+                                                                                                options={rowProducts}
+                                                                                                placeholder="Select Product"
+                                                                                                className="react-select-container"
+                                                                                                classNamePrefix="react-select"
+                                                                                                menuPortalTarget={document.body}
+                                                                                                styles={{
+                                                                                                    ...customStyles,
+                                                                                                    menuPortal: base => ({ ...base, zIndex: 9999 })
+                                                                                                }}
+                                                                                                isClearable
+                                                                                                isDisabled={loadingProducts}
+                                                                                            />
+                                                                                        )}
                                                                                         <ErrorMessage name={`paymentDetails.${index}.productsId`} component="div" className="text-red-500 text-xs mt-1" />
                                                                                     </td>
 
@@ -862,174 +909,137 @@ const [openingbal, setopeningbal] = useState(0)
                                                                                             type="number"
                                                                                             name={`paymentDetails.${index}.mrp`}
                                                                                             placeholder="0.00"
-                                                                                            disabled
-                                                                                            readOnly
-                                                                                            className="w-full bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm rounded border"
+                                                                                            readOnly={!!entry.productsId} // Read-only if product is pre-selected
+                                                                                            className={`w-full py-2 px-3 text-sm rounded border ${entry.productsId ? 'bg-gray-50 dark:bg-slate-800' : ''
+                                                                                                }`}
                                                                                         />
                                                                                     </td>
 
-                                                                                    {/* Rate (inc. GST) */}
-                                                                                    {
-                                                                                        Vouchers?.typeOfVoucher === "Sales" && (
+                                                                                    {/* Rate (inc. GST) - Only for Sales */}
+                                                                                    {Vouchers?.typeOfVoucher === "Sales" && (
+                                                                                        <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
+                                                                                            <Field
+                                                                                                type="number"
+                                                                                                name={`paymentDetails.${index}.exclusiveGst`}
+                                                                                                placeholder="0.00"
+                                                                                                readOnly
+                                                                                                className="w-full bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm rounded border"
+                                                                                            />
+                                                                                        </td>
+                                                                                    )}
 
+                                                                                    {/* Discount Applied - Only for Sales */}
+                                                                                    {Vouchers?.typeOfVoucher === "Sales" && (
+                                                                                        <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
+                                                                                            <Field
+                                                                                                type="number"
+                                                                                                name={`paymentDetails.${index}.discount`}
+                                                                                                placeholder="0"
+                                                                                                min="0"
+                                                                                                max="100"
+                                                                                                step="1"
+                                                                                                className="w-full py-2 px-3 text-sm rounded border focus:border-primary"
+                                                                                                onChange={(e) => {
+                                                                                                    const discount = parseFloat(e.target.value) || 0;
+                                                                                                    setFieldValue(`paymentDetails.${index}.discount`, discount);
 
+                                                                                                    // Recalculate GST when discount changes
+                                                                                                    if (entry.productsId) {
+                                                                                                        const mrp = entry.mrp || 0;
+                                                                                                        const hsnCode = productInfo?.hsnCode || {};
+                                                                                                        const customerAddress = selectedLedger?.obj?.customer?.shippingAddress || '';
+                                                                                                        const gstRegistration = values.gstRegistration || '';
 
-                                                                                            <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
-                                                                                                <Field
-                                                                                                    type="number"
-                                                                                                    name={`paymentDetails.${index}.exclusiveGst`}
-                                                                                                    placeholder="0.00"
-                                                                                                    readOnly
-                                                                                                    className="w-full bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm rounded border"
-                                                                                                />
-                                                                                            </td>
+                                                                                                        // Recalculate GST with new discount
+                                                                                                        const gstCalculation = calculateGST(mrp, hsnCode, gstRegistration, customerAddress, discount);
 
-                                                                                        )
-                                                                                    }
+                                                                                                        setFieldValue(`paymentDetails.${index}.gstCalculation`, gstCalculation);
+                                                                                                        setFieldValue(`paymentDetails.${index}.gstAmount`, gstCalculation.totalGstAmount);
+                                                                                                        setFieldValue(`paymentDetails.${index}.exclusiveGst`, gstCalculation.inclusivePrice);
 
-                                                                                    {/* Discount Applied */}
-
-
-                                                                                    {
-                                                                                        Vouchers.typeOfVoucher === "Sales" && (
-
-                                                                                            <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
-                                                                                                <Field
-                                                                                                    type="number"
-                                                                                                    name={`paymentDetails.${index}.discount`}
-                                                                                                    placeholder="0"
-                                                                                                    min="0"
-                                                                                                    step="1"
-                                                                                                    className="w-full py-2 px-3 text-sm rounded border focus:border-primary"
-                                                                                                    onChange={(e) => {
-                                                                                                        const discount = parseFloat(e.target.value) || 0;
-                                                                                                        setFieldValue(`paymentDetails.${index}.discount`, discount);
-
-                                                                                                        // Recalculate GST when discount changes
-                                                                                                        if (entry.productsId) {
-                                                                                                            const mrp = entry.mrp || 0;
-                                                                                                            const hsnCode = availableProducts.find(p => p.value === entry.productsId)?.hsnCode || {};
-                                                                                                            const customerAddress = selectedLedger?.obj?.customer?.shippingAddress || '';
-                                                                                                            const gstRegistration = values.gstRegistration || '';
-
-                                                                                                            // Recalculate GST with new discount
-                                                                                                            const gstCalculation = calculateGST(mrp, hsnCode, gstRegistration, customerAddress, discount);
-
-                                                                                                            setFieldValue(`paymentDetails.${index}.gstCalculation`, gstCalculation);
-                                                                                                            setFieldValue(`paymentDetails.${index}.gstAmount`, gstCalculation.totalGstAmount);
-                                                                                                            setFieldValue(`paymentDetails.${index}.exclusiveGst`, gstCalculation.inclusivePrice);
-
-                                                                                                            // Recalculate rate and value
-                                                                                                            if (discount > 0) {
-                                                                                                                const discountedRate = gstCalculation.inclusivePrice * (1 - discount / 100);
-                                                                                                                setFieldValue(`paymentDetails.${index}.rate`, discountedRate);
-                                                                                                                setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
-                                                                                                                    ...entry,
-                                                                                                                    rate: discountedRate,
-                                                                                                                    discount: discount
-                                                                                                                }));
-                                                                                                                setFieldValue(`paymentDetails.${index}.voucherAmount`, calculateLineTotal({
-                                                                                                                    ...entry,
-                                                                                                                    rate: discountedRate,
-                                                                                                                    discount: discount
-                                                                                                                }));
-                                                                                                            } else {
-                                                                                                                setFieldValue(`paymentDetails.${index}.rate`, gstCalculation.inclusivePrice);
-                                                                                                                setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
-                                                                                                                    ...entry,
-                                                                                                                    rate: gstCalculation.inclusivePrice,
-                                                                                                                    discount: 0
-                                                                                                                }));
-                                                                                                                setFieldValue(`paymentDetails.${index}.voucherAmount`, calculateLineTotal({
-                                                                                                                    ...entry,
-                                                                                                                    rate: gstCalculation.inclusivePrice,
-                                                                                                                    discount: 0
-                                                                                                                }));
-                                                                                                            }
+                                                                                                        // Recalculate rate and value
+                                                                                                        if (discount > 0) {
+                                                                                                            const discountedRate = gstCalculation.inclusivePrice * (1 - discount / 100);
+                                                                                                            setFieldValue(`paymentDetails.${index}.rate`, discountedRate);
+                                                                                                            setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
+                                                                                                                ...entry,
+                                                                                                                rate: discountedRate,
+                                                                                                                discount: discount
+                                                                                                            }));
+                                                                                                            setFieldValue(`paymentDetails.${index}.voucherAmount`, calculateLineTotal({
+                                                                                                                ...entry,
+                                                                                                                rate: discountedRate,
+                                                                                                                discount: discount
+                                                                                                            }));
+                                                                                                        } else {
+                                                                                                            setFieldValue(`paymentDetails.${index}.rate`, gstCalculation.inclusivePrice);
+                                                                                                            setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
+                                                                                                                ...entry,
+                                                                                                                rate: gstCalculation.inclusivePrice,
+                                                                                                                discount: 0
+                                                                                                            }));
+                                                                                                            setFieldValue(`paymentDetails.${index}.voucherAmount`, calculateLineTotal({
+                                                                                                                ...entry,
+                                                                                                                rate: gstCalculation.inclusivePrice,
+                                                                                                                discount: 0
+                                                                                                            }));
                                                                                                         }
-                                                                                                    }}
-                                                                                                />
-                                                                                            </td>
+                                                                                                    }
+                                                                                                }}
+                                                                                            />
+                                                                                        </td>
+                                                                                    )}
 
-                                                                                        )
-                                                                                    }
-
-
-                                                                                    {/* quantity */}
+                                                                                    {/* Quantity */}
                                                                                     <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
                                                                                         <Field
                                                                                             type="number"
                                                                                             name={`paymentDetails.${index}.quantity`}
                                                                                             placeholder="1"
-                                                                                              disabled
                                                                                             min="1"
                                                                                             step="1"
                                                                                             className="w-full py-2 px-3 text-sm rounded border focus:border-primary"
                                                                                             onChange={(e) => {
                                                                                                 const quantity = parseFloat(e.target.value) || 1;
                                                                                                 setFieldValue(`paymentDetails.${index}.quantity`, quantity);
-                                                                                                setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
-                                                                                                    ...entry,
-                                                                                                    quantity: quantity
-                                                                                                }));
-                                                                                                setFieldValue(`paymentDetails.${index}.voucherAmount`, calculateLineTotal({
-                                                                                                    ...entry,
-                                                                                                    quantity: quantity
-                                                                                                }));
+                                                                                                setFieldValue(`paymentDetails.${index}.value`, Vouchers?.typeOfVoucher === "Purchase"
+                                                                                                    ? calculateLineTotalForPur({ ...entry, quantity: quantity })
+                                                                                                    : calculateLineTotal({ ...entry, quantity: quantity })
+                                                                                                );
+                                                                                                setFieldValue(`paymentDetails.${index}.voucherAmount`, Vouchers?.typeOfVoucher === "Purchase"
+                                                                                                    ? calculateLineTotalForPur({ ...entry, quantity: quantity })
+                                                                                                    : calculateLineTotal({ ...entry, quantity: quantity })
+                                                                                                );
                                                                                             }}
                                                                                         />
                                                                                     </td>
 
                                                                                     {/* Value - Auto-calculated */}
-                                                                                    {
-                                                                                        Vouchers.typeOfVoucher === "Purchase" && (
+                                                                                    <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark font-medium">
+                                                                                        <Field
+                                                                                            type="number"
+                                                                                            name={`paymentDetails.${index}.value`}
+                                                                                            value={Vouchers?.typeOfVoucher === "Purchase"
+                                                                                                ? calculateLineTotalForPur(entry)
+                                                                                                : calculateLineTotal(entry)
+                                                                                            }
+                                                                                            readOnly
+                                                                                            className="w-full bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm rounded border"
+                                                                                        />
+                                                                                    </td>
 
-                                                                                            <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark font-medium">
-                                                                                                <Field
-                                                                                                    type="number"
-                                                                                                      disabled
-                                                                                                    name={`paymentDetails.${index}.value`}
-                                                                                                    value={calculateLineTotalForPur(entry)}
-                                                                                                    readOnly
-                                                                                                    className="w-full bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm rounded border"
-                                                                                                />
-                                                                                            </td>
-                                                                                        )
-                                                                                    }
-                                                                                    {
-                                                                                        Vouchers.typeOfVoucher === "Sales" && (
-
-                                                                                            <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark font-medium">
-                                                                                                <Field
-                                                                                                    type="number"
-                                                                                                    name={`paymentDetails.${index}.value`}
-                                                                                                    value={calculateLineTotal(entry)}
-                                                                                                    readOnly
-                                                                                                    className="w-full bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm rounded border"
-                                                                                                />
-                                                                                            </td>
-
-                                                                                        )
-                                                                                    }
-
-
-                                                                                    {/* GST Type */}
-
-                                                                                    {
-                                                                                        Vouchers?.typeOfVoucher === "Sales" && (
-
-                                                                                            <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
-                                                                                                <span className={`text-xs font-medium px-2 py-1 rounded ${entry.gstCalculation?.type === 'CGST+SGST' ? 'bg-blue-100 text-blue-800' :
+                                                                                    {/* GST Type - Only for Sales */}
+                                                                                    {Vouchers?.typeOfVoucher === "Sales" && (
+                                                                                        <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
+                                                                                            <span className={`text-xs font-medium px-2 py-1 rounded ${entry.gstCalculation?.type === 'CGST+SGST' ? 'bg-blue-100 text-blue-800' :
                                                                                                     entry.gstCalculation?.type === 'IGST' ? 'bg-green-100 text-green-800' :
                                                                                                         entry.gstCalculation?.type === 'No GST (Discount Applied)' ? 'bg-yellow-100 text-yellow-800' :
                                                                                                             'bg-gray-100 text-gray-800'
-                                                                                                    }`}>
-                                                                                                    {entry.gstCalculation?.type || 'No GST'}
-                                                                                                </span>
-                                                                                            </td>
-
-                                                                                        )
-                                                                                    }
+                                                                                                }`}>
+                                                                                                {entry.gstCalculation?.type || 'No GST'}
+                                                                                            </span>
+                                                                                        </td>
+                                                                                    )}
 
                                                                                     {/* Delete Button */}
                                                                                     <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark text-center">
@@ -1049,6 +1059,7 @@ const [openingbal, setopeningbal] = useState(0)
                                                                     </tbody>
                                                                 </table>
                                                             </div>
+
                                                             {/* Add Row Button */}
                                                             <button
                                                                 type="button"
@@ -1056,12 +1067,15 @@ const [openingbal, setopeningbal] = useState(0)
                                                                     push({
                                                                         id: uuidv4(),
                                                                         productsId: null,
+                                                                        orderProductId: null,
+                                                                        orderId: null,
                                                                         mrp: 0,
                                                                         rate: 0,
                                                                         exclusiveGst: 0,
                                                                         discount: 0,
                                                                         quantity: 1,
                                                                         value: 0,
+                                                                        voucherAmount: 0,
                                                                         igstRate: 0,
                                                                         gstAmount: 0,
                                                                         gstCalculation: null
@@ -1073,104 +1087,54 @@ const [openingbal, setopeningbal] = useState(0)
                                                                 <IoMdAdd size={20} /> Add Row
                                                             </button>
 
-                                                            {/* GST Summary */}
-                                                            {Vouchers?.typeOfVoucher === "Sales" && (
-                                                                <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                                                                    <h4 className="text-lg font-semibold mb-3 text-black dark:text-white">GST Summary</h4>
-                                                                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-sm">
+                                                            {/* Summary Section - Updated for Purchase */}
+                                                            <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                                                <h4 className="text-lg font-semibold mb-3 text-black dark:text-white">
+                                                                    {Vouchers?.typeOfVoucher === "Purchase" ? "Purchase" : "Sales"} Summary
+                                                                </h4>
+                                                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-sm">
+                                                                    <div>
+                                                                        <p className="text-gray-600 dark:text-gray-400">Total Items</p>
+                                                                        <p className="font-medium text-black dark:text-white">{values.paymentDetails.length}</p>
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <p className="text-gray-600 dark:text-gray-400">Total Quantity</p>
+                                                                        <p className="font-medium text-black dark:text-white">{totals.totalQuantity}</p>
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <p className="text-gray-600 dark:text-gray-400">Total MRP</p>
+                                                                        <p className="font-medium text-black dark:text-white">₹{totals.totalMRP}</p>
+                                                                    </div>
+
+                                                                    {totals.totalDiscount > 0 && (
                                                                         <div>
-                                                                            <p className="text-gray-600 dark:text-gray-400">Total MRP</p>
-                                                                            <p className="font-medium text-black dark:text-white">₹{totals.totalMRP}</p>
+                                                                            <p className="text-gray-600 dark:text-gray-400">Total Discount</p>
+                                                                            <p className="font-medium text-red-600">-₹{totals.totalDiscount}</p>
                                                                         </div>
+                                                                    )}
 
-                                                                        <div>
-                                                                            <p className="text-gray-600 dark:text-gray-400">Total Quantity</p>
-                                                                            <p className="font-medium text-black dark:text-white">{totals.totalQuantity}</p>
-                                                                        </div>
-                                                                        {totals.totalDiscount > 0 && (
-                                                                            <div>
-                                                                                <p className="text-gray-600 dark:text-gray-400">Total Discount</p>
-                                                                                <p className="font-medium text-red-600">-₹{totals.totalDiscount}</p>
-                                                                            </div>
-                                                                        )}
-                                                                        {totals.totalCGST > 0 && (
-                                                                            // <div>
-                                                                            //     <p className="text-gray-600 dark:text-gray-400">CGST</p>
-                                                                            //     <p className="font-medium text-black dark:text-white">₹{totals.totalCGST}</p>
-                                                                            // </div>
-
-                                                                            <div className='flex flex-col'>
-                                                                                <p className="text-gray-600 dark:text-gray-400">CGST</p>
-                                                                                <Field
-                                                                                    type="number"
-                                                                                    name="totalCgst"
-                                                                                    value={totals.totalCGST}
-                                                                                    placeholder="0.00"
-                                                                                    readOnly
-                                                                                    className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
-                                                                                />
-                                                                            </div>
-                                                                        )}
-                                                                        {totals.totalSGST > 0 && (
-                                                                            // <div>
-                                                                            //     <p className="text-gray-600 dark:text-gray-400">SGST</p>
-                                                                            //     <p className="font-medium text-black dark:text-white">₹{totals.totalSGST}</p>
-                                                                            // </div>
-
-                                                                            <div className='flex flex-col'>
-                                                                                <p className="text-gray-600 dark:text-gray-400">SGST</p>
-                                                                                <Field
-                                                                                    type="number"
-                                                                                    name="totalSgst"
-                                                                                    value={totals.totalSGST}
-                                                                                    placeholder="0.00"
-                                                                                    readOnly
-                                                                                    className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
-                                                                                />
-                                                                            </div>
-                                                                        )}
-                                                                        {totals.totalIGST > 0 && (
-                                                                            // <div>
-                                                                            //     <p className="text-gray-600 dark:text-gray-400">IGST</p>
-                                                                            //     <p className="font-medium text-black dark:text-white">₹{totals.totalIGST}</p>
-                                                                            // </div>
-
-                                                                            <div className='flex flex-col'>
-                                                                                <p className="text-gray-600 dark:text-gray-400">IGST</p>
-                                                                                <Field
-                                                                                    type="number"
-                                                                                    name="totalIgst"
-                                                                                    value={totals.totalIGST}
-                                                                                    placeholder="0.00"
-                                                                                    readOnly
-                                                                                    className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
-                                                                                />
-                                                                            </div>
-                                                                        )}
+                                                                    {Vouchers?.typeOfVoucher === "Sales" && totals.totalGST > 0 && (
                                                                         <div>
                                                                             <p className="text-gray-600 dark:text-gray-400">Total GST</p>
                                                                             <p className="font-medium text-black dark:text-white">₹{totals.totalGST}</p>
                                                                         </div>
-                                                                        {/* <div>
-                                                                            <p className="text-gray-600 dark:text-gray-400">Grand Total</p>
-                                                                            <p className="font-medium text-lg text-primary">₹{totals?.subtotal}</p>
-                                                                        </div> */}
-                                                                        <div className='flex flex-col'>
-                                                                            <p className="text-gray-600 dark:text-gray-400">Grand Total</p>
-                                                                            <Field
-                                                                                type="number"
-                                                                                name="totalAmount"
-                                                                                value={totals?.subtotal}
-                                                                                placeholder="0.00"
-                                                                                readOnly
-                                                                                className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
-                                                                            />
-                                                                        </div>
+                                                                    )}
+
+                                                                    <div className='flex flex-col'>
+                                                                        <p className="text-gray-600 dark:text-gray-400">Grand Total</p>
+                                                                        <Field
+                                                                            type="number"
+                                                                            name="totalAmount"
+                                                                            value={totals?.subtotal}
+                                                                            placeholder="0.00"
+                                                                            readOnly
+                                                                            className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
+                                                                        />
                                                                     </div>
                                                                 </div>
-                                                            )}
-
-
+                                                            </div>
                                                         </div>
                                                     )}
                                                 </FieldArray>
@@ -1236,63 +1200,63 @@ const [openingbal, setopeningbal] = useState(0)
                                             )}
 
 
- {(Vouchers?.typeOfVoucher === "Payment" || Vouchers?.typeOfVoucher === "Contra") && (
-                                            <div>
-                                                <label className="mb-2.5 block text-black dark:text-white">Mode Of Payment</label>
-                                                <ReactSelect
-                                                    name="modeOfPayment"
-                                                    options={modeOfpayment}
-                                                    value={modeOfpayment.find(option => option.value === values.modeOfPayment)}
-                                                    onChange={(selectedOption) => {
-                                                        setFieldValue('modeOfPayment', selectedOption ? selectedOption.value : '');
-                                                    }}
-                                                    placeholder="Select Mode Of Payment"
-                                                    className="react-select-container mb-4"
-                                                    classNamePrefix="react-select"
-                                                />
-                                                {
-                                                    values.modeOfPayment === 'Cheque' && (
-                                                        <div className="mb-4">
-                                                            <label className="mb-2.5 block text-black dark:text-white">Cheque Number</label>
-                                                            <Field
-                                                                type="text"
-                                                                name="chequeNumber"
-                                                                placeholder="Enter Cheque Number"
-                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                            />
-                                                        </div>
-                                                    )
+                                            {(Vouchers?.typeOfVoucher === "Payment" || Vouchers?.typeOfVoucher === "Contra") && (
+                                                <div>
+                                                    <label className="mb-2.5 block text-black dark:text-white">Mode Of Payment</label>
+                                                    <ReactSelect
+                                                        name="modeOfPayment"
+                                                        options={modeOfpayment}
+                                                        value={modeOfpayment.find(option => option.value === values.modeOfPayment)}
+                                                        onChange={(selectedOption) => {
+                                                            setFieldValue('modeOfPayment', selectedOption ? selectedOption.value : '');
+                                                        }}
+                                                        placeholder="Select Mode Of Payment"
+                                                        className="react-select-container mb-4"
+                                                        classNamePrefix="react-select"
+                                                    />
+                                                    {
+                                                        values.modeOfPayment === 'Cheque' && (
+                                                            <div className="mb-4">
+                                                                <label className="mb-2.5 block text-black dark:text-white">Cheque Number</label>
+                                                                <Field
+                                                                    type="text"
+                                                                    name="chequeNumber"
+                                                                    placeholder="Enter Cheque Number"
+                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                />
+                                                            </div>
+                                                        )
 
 
-                                                }
-                                                {
-                                                    values.modeOfPayment === 'Bank Transfer' && (
-                                                        <div className="mb-4">
-                                                            <label className="mb-2.5 block text-black dark:text-white">Transaction ID</label>
-                                                            <Field
-                                                                type="text"
-                                                                name="transactionId"
-                                                                placeholder="Enter Transaction ID"
-                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                            />
-                                                        </div>
-                                                    )
-                                                }
-                                                {
-                                                    values.modeOfPayment === 'Card' && (
-                                                        <div className="mb-4">
-                                                            <label className="mb-2.5 block text-black dark:text-white">Card Number</label>
-                                                            <Field
-                                                                type="text"
-                                                                name="cardNumber"
-                                                                placeholder="Enter Card Number"
-                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                            />
-                                                        </div>
-                                                    )
-                                                }
+                                                    }
+                                                    {
+                                                        values.modeOfPayment === 'Bank Transfer' && (
+                                                            <div className="mb-4">
+                                                                <label className="mb-2.5 block text-black dark:text-white">Transaction ID</label>
+                                                                <Field
+                                                                    type="text"
+                                                                    name="transactionId"
+                                                                    placeholder="Enter Transaction ID"
+                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                />
+                                                            </div>
+                                                        )
+                                                    }
+                                                    {
+                                                        values.modeOfPayment === 'Card' && (
+                                                            <div className="mb-4">
+                                                                <label className="mb-2.5 block text-black dark:text-white">Card Number</label>
+                                                                <Field
+                                                                    type="text"
+                                                                    name="cardNumber"
+                                                                    placeholder="Enter Card Number"
+                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                />
+                                                            </div>
+                                                        )
+                                                    }
 
-                                            </div>
+                                                </div>
 
                                             )}
 

@@ -4,7 +4,7 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import { useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
-import { GET_CUSTOMERBYID_URL, GET_CUSTOMER_URL, GET_LEDGER_ID_URL,  customStyles as createCustomStyles } from '../../Constants/utils';
+import { GET_CUSTOMERBYID_URL, GET_CUSTOMER_URL, GET_LEDGER_ID_URL, customStyles as createCustomStyles } from '../../Constants/utils';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import useLedger from '../../hooks/useLedger';
@@ -123,11 +123,11 @@ const UpdateCustomerLedger = () => {
                         country: Ledger.country || "",
                         city: Customer?.city
                         ,
-                        maximumDiscountApplicable:Customer?.discount|| Ledger.maximumDiscountApplicable || 0,
+                        maximumDiscountApplicable: Customer?.discount || Ledger.maximumDiscountApplicable || 0,
                         setAlterDealingProducts: Ledger.setAlterDealingProducts || false,
                         accountGroup: Ledger?.accountGroup || { id: null },
                         mailingName: Ledger.mailingName || '',
-                        mailingAddress:Customer.shippingAddress|| Ledger.mailingAddress || "",
+                        mailingAddress: Customer.shippingAddress || Ledger.mailingAddress || "",
                         state: Ledger.state || "",
                         mailingCountry: Ledger.mailingCountry || "",
                         pincode: Ledger.pincode || "",
@@ -146,8 +146,9 @@ const UpdateCustomerLedger = () => {
                         registrationType: Ledger.registrationType || 'regular',
                         gstinOrUin: Ledger.gstinOrUin || '',
                         setAlterAdditionalGstDetails: Ledger?.setAlterAdditionalGstDetails || false,
-                        openingBalance: Ledger.openingBalance || '',
+                        openingBalances: Ledger.openingBalances || '',
                         openingBalanceDate: Ledger.openingBalanceDate || '',
+                        typeOfOpeningBalance: Ledger.typeOfOpeningBalance || 'CR',
 
 
                     }}
@@ -481,13 +482,49 @@ const UpdateCustomerLedger = () => {
 
                                         {/* Opening Balance */}
                                         <div className="mb-4.5 border-t border-stroke pt-4 dark:border-strokedark">
-                                            <h4 className="mb-2.5 font-medium text-black dark:text-white">Opening Balance (on {openingBalanceDate})</h4>
-                                            <div className="flex-1 min-w-[250px]">
-                                                <Field
-                                                    type="text"
-                                                    name="openingBalance"
-                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-                                                />
+                                            {/* Radio Buttons for Opening Balance Type */}
+                                            <div className="mb-2.5 flex items-center gap-4">
+                                                <h4 className="font-medium text-black dark:text-white">Opening Balance Type:</h4>
+                                                <label className="flex items-center gap-2">
+                                                    <Field
+                                                        type="radio"
+                                                        name="typeOfOpeningBalance"
+                                                        value="DEBIT" // Saves as "DR" if selected
+                                                        className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
+                                                    />
+                                                    <span className="text-black dark:text-white">Debit (DR)</span>
+                                                </label>
+                                                <label className="flex items-center gap-2">
+                                                    <Field
+                                                        type="radio"
+                                                        name="typeOfOpeningBalance"
+                                                        value="CREDIT" // Saves as "CR" if selected
+                                                        className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
+                                                    />
+                                                    <span className="text-black dark:text-white">Credit (CR)</span>
+                                                </label>
+                                            </div>
+
+                                            {/* Opening Balance Input */}
+                                            <h4 className="mb-2.5 font-medium text-black dark:text-white">
+                                                Opening Balance (on {openingBalanceDate})
+                                            </h4>
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex-1 min-w-[250px]">
+                                                    <Field
+                                                        type="number"
+                                                        name="openingBalances"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                    />
+                                                </div>
+                                                {/* Display "CR" if Credit is selected */}
+                                             {values.typeOfOpeningBalance === "CREDIT" ? (
+                                                    <span className="text-lg font-medium text-gray-600 dark:text-gray-300">
+                                                        Cr.
+                                                    </span>
+                                                ) : <span className="text-lg font-medium text-gray-600 dark:text-gray-300">
+                                                    Dr.
+                                                </span>}
                                             </div>
                                         </div>
 

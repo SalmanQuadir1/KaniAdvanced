@@ -435,8 +435,8 @@ const ViewLedger = () => {
                                         </div>
                                         <div className="bg-gradient-to-br from-red-100 to-red-50 dark:from-red-900/30 dark:to-red-800/20 p-4 rounded-lg border border-red-200 dark:border-red-700">
                                             <h3 className="text-sm font-medium text-red-800 dark:text-red-300 mb-1">Start Opening Bal</h3>
-                                            <p className="text-2xl font-bold text-red-900 dark:text-red-100">  
-                                                ₹{SelectedLEDGERData?.previousOpBalance?.toFixed(2) + " (" + SelectedLEDGERData?.previousOpType + ")"   }
+                                            <p className="text-2xl font-bold text-red-900 dark:text-red-100">
+                                                ₹{SelectedLEDGERData?.previousOpBalance?.toFixed(2) + " (" + SelectedLEDGERData?.previousOpType + ")"}
                                             </p>
                                         </div>
 
@@ -477,8 +477,8 @@ const ViewLedger = () => {
                                                 <thead className="bg-gray-50 dark:bg-slate-900">
                                                     <tr>
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Date</th>
-                                                        
-                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Description</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Transaction Ledger</th>
+                                                        {/* <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Description</th> */}
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Debit (₹)</th>
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Credit (₹)</th>
                                                         {/* <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Balance (₹)</th>
@@ -494,15 +494,26 @@ const ViewLedger = () => {
                                                                     }`}
                                                             >
                                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                                                                    {ledger?.receivedDate ? new Date(ledger?.receivedDate).toLocaleDateString('en-IN', {
-                                                                        day: '2-digit',
-                                                                        month: 'short',
-                                                                        year: 'numeric'
-                                                                    }) : 'N/A'}
+                                                                    {ledger?.receivedDate ? (
+                                                                        <div>
+                                                                            <div>{new Date(ledger?.receivedDate).toLocaleDateString('en-IN', {
+                                                                                day: '2-digit',
+                                                                                month: 'short',
+                                                                                year: 'numeric'
+                                                                            })}</div>
+                                                                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                                                                                {new Date(ledger?.receivedDate).toLocaleTimeString('en-IN', {
+                                                                                    hour: '2-digit',
+                                                                                    minute: '2-digit',
+                                                                                    hour12: true
+                                                                                })}
+                                                                            </div>
+                                                                        </div>
+                                                                    ) : 'N/A'}
                                                                 </td>
-                                                             
+
                                                                 <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-xs truncate">
-                                                                    {ledger.description || ledger.narration || 'No description'}
+                                                                    {ledger.toLedgerName || ledger.toLedgerName || 'No Related Ledger Found'}
                                                                 </td>
                                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-red-600 dark:text-red-400">
                                                                     {parseFloat(ledger.debit || 0).toFixed(2)}
@@ -542,10 +553,10 @@ const ViewLedger = () => {
                                     </div>
 
                                     {/* Footer Summary */}
-                                    {SelectedLEDGERData?.length > 0 && (
+                                    {SelectedLEDGERData?.ledgerPaymentEntries.length > 0 && (
                                         <div className="mt-6 p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-slate-900 dark:to-slate-800 rounded-lg border border-gray-200 dark:border-gray-700">
                                             <div className="flex flex-wrap justify-between items-center">
-                                                <div className="flex items-center space-x-6">
+                                                {/* <div className="flex items-center space-x-6">
                                                     <div className="flex items-center">
                                                         <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
                                                         <span className="text-sm text-gray-700 dark:text-gray-300">Debit: Total Outflow</span>
@@ -554,14 +565,14 @@ const ViewLedger = () => {
                                                         <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
                                                         <span className="text-sm text-gray-700 dark:text-gray-300">Credit: Total Inflow</span>
                                                     </div>
-                                                </div>
+                                                </div> */}
                                                 <div className="text-right">
                                                     <p className="text-sm text-gray-600 dark:text-gray-400">Current Balance</p>
-                                                    <p className={`text-2xl font-bold mt-1 ${SelectedLEDGERData[SelectedLEDGERData.length - 1]?.balance >= 0
+                                                    <p className={`text-2xl font-bold mt-1 ${SelectedLEDGERData.ledgerPaymentEntries[SelectedLEDGERData.ledgerPaymentEntries.length - 1]?.balance >= 0
                                                         ? 'text-green-600 dark:text-green-400'
                                                         : 'text-red-600 dark:text-red-400'
                                                         }`}>
-                                                        ₹{parseFloat(SelectedLEDGERData[SelectedLEDGERData.length - 1]?.balance || 0).toFixed(2)}
+                                                        ₹{parseFloat(SelectedLEDGERData[SelectedLEDGERData.ledgerPaymentEntries.length - 1]?.balance || 0).toFixed(2)}
                                                     </p>
                                                 </div>
                                             </div>
@@ -572,7 +583,7 @@ const ViewLedger = () => {
                                 {/* Modal Footer */}
                                 <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 flex justify-between items-center">
                                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                                        Showing {SelectedLEDGERData?.length || 0} entries • Last updated: {new Date().toLocaleDateString()}
+                                        Showing {SelectedLEDGERData?.ledgerPaymentEntries.length || 0} entries • Last updated: {new Date().toLocaleDateString()}
                                     </p>
                                     <div className="flex space-x-3">
                                         <button
