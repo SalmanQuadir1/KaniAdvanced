@@ -32,6 +32,7 @@ import PrintEntryPayment from './components/Accounts/Vouchers/PrintEntryPayment.
 import PrintPosEntryPayment from './components/Accounts/Vouchers/PrintPosEntryPayment.jsx';
 import ViewVoucher from './components/Accounts/Vouchers/ViewVoucher.jsx';
 
+import KaniOrders from './components/Kani/KaniOrders.jsx';
 
 import CreateLedger from './components/Ledger/CreateLedger.jsx';
 import UpdateCustomerLedger from './components/Ledger/UpdateCustomerLedger.jsx';
@@ -44,6 +45,8 @@ import ViewProduct from './components/Products/ViewProduct.jsx';
 
 import ExcelUploadProduct from './components/Products/ExcelUploadProduct.jsx';
 import ExcelUploadBulkInventory from './components/Products/ExcelUploadBulkInventory.jsx';
+
+import UpdateKani from './components/Kani/UpdateKani.jsx';
 
 
 
@@ -250,6 +253,7 @@ import { signoutSuccess } from './redux/Slice/UserSlice';
 
 // import useInactivity from './hooks/useInactivity';
 
+import ViewKaniProducts from './components/Kani/ViewKaniProducts.jsx';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -897,6 +901,12 @@ function App() {
             }
           />
 
+          <Route path="/UpdateKani/:id" element={<UpdateKani />} />
+
+ {/* View Kani Products route */}
+        <Route path="/kani-products/view/:id" element={<ViewKaniProducts />} />
+          
+
           <Route
             path="/Order/updateorderExecuted/:id"
             element={
@@ -1152,6 +1162,16 @@ function App() {
             }
           />
 
+           <Route
+            path="/UpdateKani"
+            element={
+              <>
+                <PageTitle title="Update Kani" />
+                <UpdateKani />
+              </>
+            }
+          />
+
           <Route
             path="/product/updateInventory/:id"
             element={
@@ -1360,6 +1380,16 @@ function App() {
               <>
                 <PageTitle title="Size" />
                 <Supplier />
+              </>
+            }
+          />
+
+           <Route
+            path="/kaniOrders"
+            element={
+              <>
+                <PageTitle title="Size" />
+                <KaniOrders />
               </>
             }
           />
