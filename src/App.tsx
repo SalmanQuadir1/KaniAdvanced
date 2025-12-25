@@ -24,6 +24,8 @@ import CreateVoucher from './components/Accounts/Vouchers/CreateVoucher.jsx';
 import CreateVoucherPurchase from './components/Accounts/Vouchers/CreateVoucherPurchase.jsx';
 import VoucherEntriesView from './components/Accounts/Vouchers/VoucherEntriesView.jsx';
 
+import VoucherEntriesViewPayment from './components/Accounts/Vouchers/VoucherEntriesViewPayment.jsx'; 
+
 import PrintEntryPayment from './components/Accounts/Vouchers/PrintEntryPayment.jsx';
 
 
@@ -444,6 +446,17 @@ function App() {
                 <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
                 <PageTitle title="Voucher Entries" />
                 <VoucherEntriesView />
+              </>
+            }
+          />
+
+              <Route
+            path="/voucherEntriesPayment/:id"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Voucher Entries Payment" />
+                <VoucherEntriesViewPayment />
               </>
             }
           />

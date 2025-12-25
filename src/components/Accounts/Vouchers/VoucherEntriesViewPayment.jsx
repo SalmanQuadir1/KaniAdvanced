@@ -3,7 +3,7 @@ import DefaultLayout from '../../../layout/DefaultLayout'
 import Breadcrumb from '../../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { GET_VoucherEntriessearch_URL, GET_Vouchersearch_URL, UPDATETOGGLE_Voucher_URL } from "../../../Constants/utils";
+import { GET_VoucherEntriessearch_URL, GET_VoucherEntriessearchPayment_URL, GET_Vouchersearch_URL, UPDATETOGGLE_Voucher_URL } from "../../../Constants/utils";
 import ReactSelect from 'react-select';
 import useOrder from '../../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -21,7 +21,7 @@ import { FaPrint } from "react-icons/fa";
 ;
 
 
-const VoucherEntriesView = () => {
+const VoucherEntriesViewPayment = () => {
 
     const { id } = useParams();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
@@ -82,7 +82,7 @@ const VoucherEntriesView = () => {
 
 
         try {
-            const response = await fetch(`${GET_VoucherEntriessearch_URL}/${id}/search?page=${page}`, {
+            const response = await fetch(`${GET_VoucherEntriessearchPayment_URL}/search/${id}?page=${page}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -222,26 +222,27 @@ console.log(Voucher,"amjh");
                 </td>
 
 
-                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
+                <td className="text-left px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.recieptNumber}</p>
                 </td>
-                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.ledgerName}</p>
+                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm w-[100px]">
+                    <p className="text-white whitespace-no-wrap  bg-gradient-to-r from-red-400 via-orange to-orange-300 p-2 rounded-full">{item?.ledgerName}</p>
+                </td>
+                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm w-[100px]">
+                    <p className="text-white whitespace-no-wrap bg-gradient-to-r from-green-400 via-orange to-green-300 p-2 rounded-full">{item?.toLedgerName}</p>
                 </td>
                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.gstRegistration} </p>
+                    <p className="text-gray-900 whitespace-no-wrap">{new Date(item?.paymentDate).toLocaleDateString()}</p>
                 </td>
 
 
+                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.amount} </p>
+                </td>
                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.narration} </p>
                 </td>
-                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.totalAmount} </p>
-                </td>
-                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.supplierInvoiceNumber} </p>
-                </td>
+             
 
 
 
@@ -444,11 +445,12 @@ console.log(Voucher,"amjh");
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
 
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Reciept Number</th>
-                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Party  Name</th>
-                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">gstRegistration</th>
+                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">From</th>
+                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Particular Ledger</th>
+                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
+                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Amount</th>
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">narration</th>
-                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">totalAmount</th>
-                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">supplierInvoiceNumber</th>
+
 
                                         {/* <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 
@@ -472,4 +474,4 @@ console.log(Voucher,"amjh");
     )
 }
 
-export default VoucherEntriesView
+export default VoucherEntriesViewPayment

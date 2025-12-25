@@ -435,8 +435,8 @@ const ViewLedger = () => {
                                         </div>
                                         <div className="bg-gradient-to-br from-red-100 to-red-50 dark:from-red-900/30 dark:to-red-800/20 p-4 rounded-lg border border-red-200 dark:border-red-700">
                                             <h3 className="text-sm font-medium text-red-800 dark:text-red-300 mb-1">Start Opening Bal</h3>
-                                            <p className="text-2xl font-bold text-red-900 dark:text-red-100">
-                                                ₹{SelectedLEDGERData?.previousOpBalance?.toFixed(2)}
+                                            <p className="text-2xl font-bold text-red-900 dark:text-red-100">  
+                                                ₹{SelectedLEDGERData?.previousOpBalance?.toFixed(2) + " (" + SelectedLEDGERData?.previousOpType + ")"   }
                                             </p>
                                         </div>
 
@@ -477,12 +477,12 @@ const ViewLedger = () => {
                                                 <thead className="bg-gray-50 dark:bg-slate-900">
                                                     <tr>
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Date</th>
-                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Reference</th>
+                                                        
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Description</th>
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Debit (₹)</th>
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Credit (₹)</th>
-                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Balance (₹)</th>
-                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                                        {/* <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Balance (₹)</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Status</th> */}
                                                     </tr>
                                                 </thead>
                                                 <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -494,15 +494,13 @@ const ViewLedger = () => {
                                                                     }`}
                                                             >
                                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                                                                    {ledger.receivedDate ? new Date(ledger.receivedDate).toLocaleDateString('en-IN', {
+                                                                    {ledger?.receivedDate ? new Date(ledger?.receivedDate).toLocaleDateString('en-IN', {
                                                                         day: '2-digit',
                                                                         month: 'short',
                                                                         year: 'numeric'
                                                                     }) : 'N/A'}
                                                                 </td>
-                                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 dark:text-gray-300">
-                                                                    {ledger.voucherNumber || '-'}
-                                                                </td>
+                                                             
                                                                 <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-xs truncate">
                                                                     {ledger.description || ledger.narration || 'No description'}
                                                                 </td>
@@ -512,7 +510,7 @@ const ViewLedger = () => {
                                                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-green-600 dark:text-green-400">
                                                                     {parseFloat(ledger.credit || 0).toFixed(2)}
                                                                 </td>
-                                                                <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800 dark:text-gray-200">
+                                                                {/* <td className="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-800 dark:text-gray-200">
                                                                     {parseFloat(ledger.balance || 0).toFixed(2)}
                                                                 </td>
                                                                 <td className="px-6 py-4 whitespace-nowrap">
@@ -522,7 +520,7 @@ const ViewLedger = () => {
                                                                         }`}>
                                                                         {parseFloat(ledger.balance || 0) >= 0 ? 'Positive' : 'Negative'}
                                                                     </span>
-                                                                </td>
+                                                                </td> */}
                                                             </tr>
                                                         ))
                                                     ) : (
@@ -583,7 +581,7 @@ const ViewLedger = () => {
                                         >
                                             Close
                                         </button>
-                                        <button
+                                        {/* <button
                                             onClick={() => {
                                                 // Add export functionality here
                                                 console.log('Export ledger data');
@@ -594,7 +592,7 @@ const ViewLedger = () => {
                                                 <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
                                             </svg>
                                             Export CSV
-                                        </button>
+                                        </button> */}
                                     </div>
                                 </div>
                             </div>
