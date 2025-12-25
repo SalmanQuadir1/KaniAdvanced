@@ -260,6 +260,10 @@ const handleUpdate = (e, order) => {
         <tr key={order.orderNo || index} className="bg-white dark:bg-boxdark hover:bg-gray-50 dark:hover:bg-gray-800">
           <td className="px-4 py-3 border-b text-center">{startingSerialNumber + index}</td>
           <td className="px-4 py-3 border-b text-center font-medium">
+  {order?.orderNo || "-"}
+</td>
+
+          <td className="px-4 py-3 border-b text-center font-medium">
             {product?.productId || order.productId || "-"}
           </td>
           <td className="px-4 py-3 border-b">
@@ -475,6 +479,7 @@ const handleUpdate = (e, order) => {
               <thead>
                 <tr className="bg-slate-300 dark:bg-slate-700 dark:text-white">
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">SNO</th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">ORDER No</th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">PRODUCT ID</th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider">PRODUCT GROUP</th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider">CATEGORY</th>
