@@ -6,7 +6,7 @@ import ReactSelect from 'react-select';
 import { FiEdit, FiTrash2, FiCreditCard, FiDollarSign, FiTrendingUp, FiTrendingDown } from 'react-icons/fi';
 import { RiBankFill, RiMoneyDollarCircleFill } from "react-icons/ri";
 import { FaUsers, FaHandHoldingUsd } from "react-icons/fa";
-import Pagination from '../../Pagination/Pagination';
+
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -31,16 +31,11 @@ const PaymentSummary = () => {
     
     const navigate = useNavigate();
 
-    const [pagination, setPagination] = useState({
-        totalItems: 0,
-        totalPages: 0,
-        currentPage: 1,
-        itemsPerPage: 10,
-    });
+ 
 
-    const getPaymentSummary = async (page = 1, filters = {}) => {
+    const getPaymentSummary = async ( filters = {}) => {
         try {
-            const response = await fetch(`${SEARCH_PAYMENTSUMMARY_URL}?page=${page}`, {
+            const response = await fetch(`${SEARCH_PAYMENTSUMMARY_URL}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -53,6 +48,7 @@ const PaymentSummary = () => {
             console.log("API Response:", data);
 
             if (data) {
+                console.log("Data fetched successfully:", data);
                 // Process the data to get totals
                 const processedData = processSummaryData(data);
                 setSummaryData(processedData);
@@ -69,12 +65,7 @@ const PaymentSummary = () => {
                 });
             }
 
-            setPagination({
-                totalItems: data?.totalElements || 0,
-                totalPages: data?.totalPages || 0,
-                currentPage: data?.number + 1 || 1,
-                itemsPerPage: data?.size || 10,
-            });
+        
         } catch (error) {
             console.error("Error fetching Payment Summary:", error);
             toast.error("Failed to fetch Payment Summary");
@@ -91,67 +82,82 @@ const PaymentSummary = () => {
         }
     };
 
-    const processSummaryData = (data) => {
-        let bankDebitTotal = 0;
-        let cashDebitTotal = 0;
-        let supplierCreditTotal = 0;
-        let customerCreditTotal = 0;
-        let totalDebit = 0;
-        let totalCredit = 0;
+   const processSummaryData = (data) => {
+    console.log("Received data:", data);
+    
+    // Extract values from the object (with fallbacks)
+    const bankDebitTotal = parseFloat(data?.bankTotalDebitBalance || 0);
+    const bankCreditTotal = parseFloat(data?.bankTotalCreditBalance || 0);
+    const cashDebitTotal = parseFloat(data?.cashTotalDebitBalance || 0);
+    const cashCreditTotal = parseFloat(data?.cashTotalCreditBalance || 0);
+    const supplierDebitTotal = parseFloat(data?.supplierTotalDebitBalance || 0);
+    const supplierCreditTotal = parseFloat(data?.supplierTotalCreditBalance || 0);
+    const customerDebitTotal = parseFloat(data?.customerTotalDebitBalance || 0);
+    const customerCreditTotal = parseFloat(data?.customerTotalCreditBalance || 0);
+    
+    // Calculate totals
+    const totalDebit = bankDebitTotal + cashDebitTotal + supplierDebitTotal + customerDebitTotal;
+    const totalCredit = bankCreditTotal + cashCreditTotal + supplierCreditTotal + customerCreditTotal;
+    const netBalance = totalDebit - totalCredit;
+    
+    // Calculate available funds (debits are positive for bank/cash)
+    const totalBankBalance = bankDebitTotal - bankCreditTotal; // Positive = money in bank
+    const totalCashBalance = cashDebitTotal - cashCreditTotal; // Positive = cash in hand
+    
+    // Calculate liabilities (credits are positive for suppliers/customers)
+    const totalSupplierPayable = supplierCreditTotal - supplierDebitTotal; // Positive = you owe suppliers
+    const totalCustomerReceivable = customerDebitTotal - customerCreditTotal; // Positive = customers owe you
+
+    return {
+        // Original field mapping for cards
+        bankDebitTotal: totalBankBalance > 0 ? totalBankBalance : 0,
+        cashDebitTotal: totalCashBalance > 0 ? totalCashBalance : 0,
+        supplierCreditTotal: totalSupplierPayable > 0 ? totalSupplierPayable : 0,
+        customerCreditTotal: totalCustomerReceivable > 0 ? totalCustomerReceivable : 0,
         
-        // Process entries from the response
-        const entries = data?.content || [];
+        // Detailed breakdown
+        bankDetails: {
+            debit: bankDebitTotal,
+            credit: bankCreditTotal,
+            net: totalBankBalance
+        },
+        cashDetails: {
+            debit: cashDebitTotal,
+            credit: cashCreditTotal,
+            net: totalCashBalance
+        },
+        supplierDetails: {
+            debit: supplierDebitTotal,
+            credit: supplierCreditTotal,
+            net: totalSupplierPayable
+        },
+        customerDetails: {
+            debit: customerDebitTotal,
+            credit: customerCreditTotal,
+            net: totalCustomerReceivable
+        },
         
-        entries.forEach(entry => {
-            // Check ledger type and accumulate amounts
-            const ledgerName = entry.ledgerName?.toLowerCase() || '';
-            const amount = parseFloat(entry.amount || 0);
-            
-            if (entry.debitAmount > 0) {
-                totalDebit += parseFloat(entry.debitAmount || 0);
-                
-                // Check if it's bank or cash debit
-                if (ledgerName.includes('bank')) {
-                    bankDebitTotal += parseFloat(entry.debitAmount || 0);
-                } else if (ledgerName.includes('cash')) {
-                    cashDebitTotal += parseFloat(entry.debitAmount || 0);
-                }
-            }
-            
-            if (entry.creditAmount > 0) {
-                totalCredit += parseFloat(entry.creditAmount || 0);
-                
-                // Check if it's supplier or customer credit
-                if (ledgerName.includes('supplier') || entry.typeOfVoucher === 'PURCHASE') {
-                    supplierCreditTotal += parseFloat(entry.creditAmount || 0);
-                } else if (ledgerName.includes('customer') || entry.typeOfVoucher === 'SALES') {
-                    customerCreditTotal += parseFloat(entry.creditAmount || 0);
-                }
-            }
-        });
-
-        const netBalance = totalDebit - totalCredit;
-
-        return {
-            bankDebitTotal,
-            cashDebitTotal,
-            supplierCreditTotal,
-            customerCreditTotal,
-            totalDebit,
-            totalCredit,
-            netBalance,
-            entries
-        };
+        // Totals
+        totalDebit,
+        totalCredit,
+        netBalance,
+        
+        // Additional calculated fields
+        totalAvailableFunds: (totalBankBalance + totalCashBalance),
+        totalLiabilities: (totalSupplierPayable + Math.abs(totalCustomerReceivable < 0 ? totalCustomerReceivable : 0)),
+        totalAssets: (totalBankBalance + totalCashBalance + totalCustomerReceivable),
+        
+        // Raw data for debugging
+        rawData: data
     };
+};
 
-    useEffect(() => {
-        getPaymentSummary(pagination.currentPage);
-    }, [pagination.currentPage]);
 
-    const handlePageChange = (newPage) => {
-        setPagination(prev => ({ ...prev, currentPage: newPage }));
-        getPaymentSummary(newPage);
-    };
+useEffect(() => {
+getPaymentSummary();
+}, [])
+
+    
 
     const handleSubmit = (values) => {
         const filters = {
