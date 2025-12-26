@@ -182,6 +182,20 @@ const Home = () => {
     };
 
 
+     // Kani-based card mapping
+const kaniModeCards = [
+  {
+    title: "Kani Orders",
+    link: "/kaniOrders",
+    countKey: "kaniOrders",
+    icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
+    levelUp: true,
+  },
+  
+ 
+];
+
+
     //acounts
     const accountsModeCards = [
         { title: "Accounts Dashboard", link: "/accounts/dashboard", countKey: "accountsData", icon: <LuScale className="w-10 h-10" />, levelUp: true },
@@ -200,6 +214,11 @@ const Home = () => {
     if (mode === "accounts" && role.includes("ROLE_ADMIN")) {
       return accountsModeCards;
     }
+     // 🔹 Kani Dashboard
+  if (mode === "kani") {
+    return kaniModeCards;
+  }
+  
   
     return [];
   })();

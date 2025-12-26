@@ -10,6 +10,8 @@ import { setAppMode } from '../../redux/Slice/AppModeSlice';
 import { TbSwitch } from "react-icons/tb";
 import { useState } from 'react';
 import { toast } from 'react-toastify';
+import { AiOutlineShoppingCart } from 'react-icons/ai';
+import { FaKaggle } from 'react-icons/fa6';
 
 const Header = (props) => {
   const appMode = useSelector((state) => state?.persisted?.appMode);
@@ -150,7 +152,7 @@ const Header = (props) => {
           </div>
            <ul>
  
-<TbSwitch
+<FaKaggle
   className="cursor-pointer p-2 bg-slate-500 text-white rounded-full"
   size={31}
   onClick={() => handleModeeChange('kani')}
