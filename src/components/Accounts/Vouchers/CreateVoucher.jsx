@@ -278,9 +278,11 @@ const CreateVoucher = () => {
         setavailableOrders([]);
 
         if (Vouchers?.typeOfVoucher === "Purchase" && option) {
+ 
+            
             setloadingOrders(true);
             try {
-                const supplierId = option.obj.supplier.id;
+                const supplierId = option.obj.supplierId;
                 const response = await fetch(`http://localhost:8081/order/by-type?id=${supplierId}&type=supplier`, {
                     method: "GET",
                     headers: {
@@ -317,10 +319,12 @@ const CreateVoucher = () => {
                 setLoadingProducts(false);
             }
         } else if (Vouchers?.typeOfVoucher === "Sales" && option) {
+            console.log(option,"0000000000000000000000000000000");
+            
             // For Sales - fetch customer products
             setloadingOrders(true);
             try {
-                const customerId = option?.obj.customer.id;
+                const customerId = option?.obj.customerId;
                 const response = await fetch(`http://localhost:8081/order/by-type?id=${customerId}&type=customer`, {
                     method: "GET",
                     headers: {
