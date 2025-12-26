@@ -34,6 +34,8 @@ const PaymentSummary = () => {
  
 
     const getPaymentSummary = async ( filters = {}) => {
+        console.log(filters,"kkkkkkkkkkkkkkkkkkkkkkkkkk");
+        
         try {
             const response = await fetch(`${SEARCH_PAYMENTSUMMARY_URL}`, {
                 method: "POST",
@@ -164,7 +166,7 @@ getPaymentSummary();
             fromDate: values.fromDate || undefined,
             toDate: values.toDate || undefined,
         };
-        getPaymentSummary(1, filters);
+        getPaymentSummary(filters);
     };
 
     // Format currency with Indian numbering system
@@ -289,7 +291,7 @@ getPaymentSummary();
                                                 <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">Start Date</label>
                                                 <Field
                                                     name="fromDate"
-                                                    type="date"
+                                                    type="datetime-local"
                                                     className="form-datepicker w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 py-3 px-4 text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition"
                                                 />
                                             </div>
@@ -298,7 +300,7 @@ getPaymentSummary();
                                                 <label className="mb-2 block text-sm font-medium text-slate-700 dark:text-slate-300">End Date</label>
                                                 <Field
                                                     name="toDate"
-                                                    type="date"
+                                                    type="datetime-local"
                                                     className="form-datepicker w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 py-3 px-4 text-slate-800 dark:text-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:focus:ring-blue-800 outline-none transition"
                                                 />
                                             </div>
