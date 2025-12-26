@@ -67,7 +67,8 @@ const useLedger = () => {
                     "Authorization": `Bearer ${token}`
                 }
             });
-            const data = await response.json();0
+            const data = await response.json();
+            
             console.log(data,"ledger data");
             setLedger(data);
           
@@ -148,7 +149,7 @@ const useLedger = () => {
             const data = await response.json();
             if (response.ok) {
                 toast.success(`Ledger updated successfully`);
-                navigate("/supplier/view")
+                navigate("/ledger/view")
                
               
                 

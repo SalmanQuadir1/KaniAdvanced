@@ -421,6 +421,7 @@ export const GET_VoucherNos_URL = `${BASE_URL}/voucher/getPreviousReceipt`;
 
 export const GET_VoucherBYID = `${BASE_URL}/voucher/get`;
 export const SEARCH_DayBook_URL = `${BASE_URL}/entryPayment/search`;
+export const SEARCH_PAYMENTSUMMARY_URL = `${BASE_URL}/ledger/search-balance-summary`;
 
 export const GETPRODUCTBYSUPPLIER = `${BASE_URL}/order/order-products/accepted`;
 

@@ -578,7 +578,7 @@ console.log(order?.orderCategory,"jjhhjjhh");
                           // value={values?.value} // Ensure it reflects Formik state
                           // onChange={(e) => setFieldValue("productId", e.target.value)} // Update Formik state
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                          placeholder="Enter Product ID"
+                          placeholder="Enter challan No"
                         />
                         <ErrorMessage name="orderNo" component="div" className="text-red-600 text-sm" />
                       </div>
@@ -662,7 +662,7 @@ console.log(order?.orderCategory,"jjhhjjhh");
                           value={values?.updatedBy} // Ensure it reflects Formik state
                           onChange={(e) => setFieldValue("productId", e.target.value)} // Update Formik state
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                          placeholder="Enter Product ID"
+                          placeholder="Last Updated By"
                         />
                         <ErrorMessage name="orderNo" component="div" className="text-red-600 text-sm" />
                       </div>

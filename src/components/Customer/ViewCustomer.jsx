@@ -8,10 +8,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import useCustomer from '../../hooks/useCustomer';
 import {  customStyles as createCustomStyles } from '../../Constants/utils';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
-import { FaBook } from 'react-icons/fa6';
+import { FaBook, FaCross } from 'react-icons/fa6';
 import reactSelect from 'react-select';
 import { useSelector } from 'react-redux';
-
+import { CgCross } from 'react-icons/cg';
+import { ImCross } from "react-icons/im";
+import { TiTickOutline } from 'react-icons/ti';
 
 const ViewCustomer = () => {
   const { Customer,Customerr,getCustomerr, getCustomer, handleDelete, pagination, handleUpdate, handlePageChange, GetCustomerById } = useCustomer();
@@ -90,9 +92,9 @@ const ViewCustomer = () => {
         </td>
         <td className="px-5 py-5  border-b border-gray-200  text-sm">
           <p className="flex text-gray-900 whitespace-no-wrap">
-            {/* {
-            item?.updateLedger && <TiTickOutline size={30}/>
-           } */}
+            {
+            item?.updateLedger==true ? <TiTickOutline size={30} /> : <ImCross size={30} />
+           }
 
           </p>
         </td>

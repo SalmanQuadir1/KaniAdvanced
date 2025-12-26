@@ -34,7 +34,6 @@ const ViewOrderExecuted = () => {
 
     const { token } = currentUser;
 
-    console.log(productIdd, "huhuuhuuuuuuuuuuuuuuuuu");
 
     const [Order, setOrder] = useState()
 
@@ -120,8 +119,7 @@ const ViewOrderExecuted = () => {
 
 
     const getOrder = async (page, filters = {}) => {
-        console.log(filters, "filterssssssssssssssssssssssssssssssssssssssss");
-        console.log("Fetching orders for page", page); // Log the page number being requested
+        
 
         try {
             const response = await fetch(`${VIEW_ALLACCEPTED_ORDERS}?page=${page || 1}`, {
@@ -135,7 +133,7 @@ const ViewOrderExecuted = () => {
 
             const textResponse = await response.text();
 
-            console.log(textResponse, "japaaaaaaaaaaaaaaaaaan");
+         
 
             // Get the raw text response
             // Log raw response before parsing   
