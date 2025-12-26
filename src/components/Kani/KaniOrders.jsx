@@ -3,19 +3,20 @@ import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import DefaultLayout from "../../layout/DefaultLayout";
 import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
-import Pagination from "../../components/Pagination/Pagination"; // Make sure to import Pagination
+import Pagination from "../../components/Pagination/Pagination";
 import { GET_Kani_URL, GET_IMAGE } from "../../Constants/utils";
 import { FiEdit } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
 
 const KaniOrders = () => {
+  const [allFlattenedProducts, setAllFlattenedProducts] = useState([]);
+  const [displayedProducts, setDisplayedProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isImagesModalOpen, setIsImagesModalOpen] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
-const navigate = useNavigate();
-
+  const navigate = useNavigate();
   
   // Pagination state
   const [pagination, setPagination] = useState({
@@ -28,48 +29,68 @@ const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state?.persisted?.user || {});
   const token = currentUser?.token;
 
+  // Try with different approaches
   useEffect(() => {
-    fetchKaniOrders(pagination.currentPage);
-  }, [pagination.currentPage]);
+    // Try approach 1: Fetch without pagination first
+    fetchKaniOrdersWithoutPagination();
+  }, []);
 
-  // const handleUpdate = (e, item) => {
-  //       console.log(item, "jjhh");
+  // Update displayed products when page changes or when all data changes
+  useEffect(() => {
+    updateDisplayedProducts();
+  }, [allFlattenedProducts, pagination.currentPage]);
 
-  //       e.preventDefault();
-  //       if (item && item.id) {
-  //           navigate(`/UpdateKani`);
-  //       } else {
-  //           console.error("Item or its ID is missing");
-  //       }
-  //   };
-//   const handleUpdate = (e, order) => {
-//   e.preventDefault();
+  const updateDisplayedProducts = () => {
+    if (allFlattenedProducts.length === 0) {
+      setDisplayedProducts([]);
+      return;
+    }
+    
+    const startIndex = (pagination.currentPage - 1) * pagination.itemsPerPage;
+    const endIndex = startIndex + pagination.itemsPerPage;
+    const currentPageData = allFlattenedProducts.slice(startIndex, endIndex);
+    setDisplayedProducts(currentPageData);
+  };
 
-//   // If you just want to go to Update page
-//   navigate("/UpdateKani");
+  // Function to flatten order products
+  const flattenOrderProducts = (ordersData) => {
+    const flattened = [];
+    
+    ordersData.forEach(order => {
+      if (order.orderProducts && Array.isArray(order.orderProducts)) {
+        order.orderProducts.forEach(orderProduct => {
+          flattened.push({
+            ...orderProduct,
+            orderInfo: {
+              orderNo: order.orderNo,
+              orderDate: order.orderDate,
+              orderType: order.orderType,
+              customer: order.customer,
+            }
+          });
+        });
+      }
+    });
+    
+    return flattened;
+  };
 
-//   // OR if you want to pass order id later:
-//   // navigate(`/UpdateKani/${order.id}`);
-// };
+  const handleUpdate = (e, orderProduct) => {
+    e.preventDefault();
 
-const handleUpdate = (e, order) => {
-  e.preventDefault();
+    const orderProductId = orderProduct?.id;
 
-  const orderProductId = order?.orderProducts?.[0]?.id;
+    if (!orderProductId) {
+      toast.error("Order Product ID not found");
+      return;
+    }
 
-  if (!orderProductId) {
-    toast.error("Order Product ID not found");
-    return;
-  }
+    navigate(`/UpdateKani/${orderProductId}`);
+  };
 
-  navigate(`/UpdateKani/${orderProductId}`);
-};
-
-
-
-
-  const fetchKaniOrders = async (page = 1) => {
-    console.log("fetchKaniOrders called");
+  // APPROACH 1: Try fetching without any pagination parameters
+  const fetchKaniOrdersWithoutPagination = async () => {
+    console.log("fetchKaniOrdersWithoutPagination called");
 
     if (!token) {
       toast.error("No access token found. Please login.");
@@ -80,10 +101,11 @@ const handleUpdate = (e, order) => {
     setError(null);
 
     try {
-      console.log("Fetching Kani orders from API...");
+      console.log("Fetching Kani orders WITHOUT pagination...");
       
-      // Add pagination parameters to the URL
-      const apiUrl = `${GET_Kani_URL}?page=${page - 1}&size=${pagination.itemsPerPage}`;
+      // Try without any parameters first
+      const apiUrl = `${GET_Kani_URL}`;
+      console.log("API URL:", apiUrl);
       
       const response = await fetch(apiUrl, {
         method: "GET",
@@ -94,50 +116,139 @@ const handleUpdate = (e, order) => {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch Kani Orders: ${response.statusText}`);
+        console.error("Response status:", response.status);
+        
+        // If 500 error with no params, try with default params
+        if (response.status === 500) {
+          console.log("Trying with default page parameters...");
+          await fetchKaniOrdersWithDefaultParams();
+          return;
+        }
+        
+        throw new Error(`Failed to fetch Kani Orders: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json();
       console.log("Data received from API:", data);
-
-      // Handle paginated response
-      if (data?.content) {
-        setOrders(data.content);
-        setPagination(prev => ({
-          ...prev,
-          currentPage: data.number + 1, // Convert 0-based to 1-based
-          totalPages: data.totalPages,
-          totalItems: data.totalElements
-        }));
-      } else if (Array.isArray(data)) {
-        // Handle non-paginated response (backward compatibility)
-        setOrders(data);
-        setPagination(prev => ({
-          ...prev,
-          currentPage: 1,
-          totalPages: Math.ceil(data.length / prev.itemsPerPage),
-          totalItems: data.length
-        }));
-      } else {
-        setOrders([]);
-        setPagination(prev => ({
-          ...prev,
-          currentPage: 1,
-          totalPages: 0,
-          totalItems: 0
-        }));
-      }
+      handleApiResponse(data);
+      
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching Kani orders:", err);
       setError(err.message);
-      toast.error(err.message);
+      toast.error(err.message || "Failed to load Kani orders");
     } finally {
       setLoading(false);
     }
   };
 
+  // APPROACH 2: Try with default page parameters (page=0, size=10)
+  const fetchKaniOrdersWithDefaultParams = async () => {
+    try {
+      console.log("Fetching Kani orders WITH default pagination...");
+      
+      const apiUrl = `${GET_Kani_URL}?page=0&size=10`;
+      console.log("API URL:", apiUrl);
+      
+      const response = await fetch(apiUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed with pagination: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("Data received from API (with params):", data);
+      handleApiResponse(data);
+      
+    } catch (err) {
+      console.error("Error with paginated fetch:", err);
+      
+      // Last resort: Try a different approach
+      await fetchKaniOrdersLastResort();
+    }
+  };
+
+  // APPROACH 3: Last resort - try different parameter combinations
+  const fetchKaniOrdersLastResort = async () => {
+    try {
+      console.log("Trying last resort approach...");
+      
+      // Try without size parameter
+      const apiUrl = `${GET_Kani_URL}?page=0`;
+      console.log("API URL (page only):", apiUrl);
+      
+      const response = await fetch(apiUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Data received (page only):", data);
+        handleApiResponse(data);
+        return;
+      }
+      
+      // If still failing, show error
+      throw new Error("All fetch attempts failed");
+      
+    } catch (err) {
+      console.error("All fetch attempts failed:", err);
+      setError("Unable to load orders. Please check API configuration.");
+      toast.error("Unable to load orders. Please contact administrator.");
+    }
+  };
+
+  // Handle API response data
+  const handleApiResponse = (data) => {
+    let ordersArray = [];
+    let flattened = [];
+    
+    // Check different response formats
+    if (Array.isArray(data)) {
+      // Direct array response
+      ordersArray = data;
+      flattened = flattenOrderProducts(data);
+    } else if (data?.content && Array.isArray(data.content)) {
+      // Paginated response structure
+      ordersArray = data.content;
+      flattened = flattenOrderProducts(data.content);
+    } else {
+      console.warn("Unexpected data format:", data);
+      ordersArray = [];
+      flattened = [];
+    }
+    
+    setOrders(ordersArray);
+    setAllFlattenedProducts(flattened);
+    
+    // Calculate pagination based on flattened products
+    const totalItems = flattened.length;
+    const totalPages = Math.ceil(totalItems / pagination.itemsPerPage);
+    
+    setPagination(prev => ({
+      ...prev,
+      currentPage: 1, // Always start at page 1
+      totalPages: totalPages,
+      totalItems: totalItems
+    }));
+    
+    console.log(`Total orders: ${ordersArray.length}`);
+    console.log(`Total flattened products: ${flattened.length}`);
+    console.log(`Total pages needed: ${totalPages}`);
+  };
+
   // Page change handler
   const handlePageChange = (page) => {
+    console.log(`Changing page from ${pagination.currentPage} to ${page}`);
     setPagination(prev => ({ ...prev, currentPage: page }));
   };
 
@@ -147,12 +258,7 @@ const handleUpdate = (e, order) => {
   };
 
   // Function to get images from the product
-  const getProductImages = (order) => {
-    if (!order || !order.orderProducts || !order.orderProducts[0]) {
-      return { referenceImage: null, actualImage: null };
-    }
-
-    const product = order.orderProducts[0].products;
+  const getProductImages = (product) => {
     if (!product || !product.images || !Array.isArray(product.images)) {
       return { referenceImage: null, actualImage: null };
     }
@@ -233,11 +339,11 @@ const handleUpdate = (e, order) => {
       );
     }
 
-    if (orders.length === 0) {
+    if (displayedProducts.length === 0 && !loading) {
       return (
         <tr>
           <td colSpan="9" className="text-center py-6">
-            No orders found
+            No order products found
           </td>
         </tr>
       );
@@ -245,11 +351,11 @@ const handleUpdate = (e, order) => {
 
     const startingSerialNumber = getStartingSerialNumber();
 
-    return orders.map((order, index) => {
-      const product = order.orderProducts?.[0]?.products;
+    return displayedProducts.map((orderProduct, index) => {
+      const product = orderProduct.products;
       
       // Get images from the product
-      const { referenceImage, actualImage } = getProductImages(order);
+      const { referenceImage, actualImage } = getProductImages(product);
       const refImageUrl = getImageUrl(referenceImage);
       const actImageUrl = getImageUrl(actualImage);
       
@@ -257,14 +363,15 @@ const handleUpdate = (e, order) => {
       const productImages = product?.images || [];
 
       return (
-        <tr key={order.orderNo || index} className="bg-white dark:bg-boxdark hover:bg-gray-50 dark:hover:bg-gray-800">
+        <tr key={`${orderProduct.orderInfo?.orderNo}-${orderProduct.id || index}`} 
+            className="bg-white dark:bg-boxdark hover:bg-gray-50 dark:hover:bg-gray-800">
           <td className="px-4 py-3 border-b text-center">{startingSerialNumber + index}</td>
           <td className="px-4 py-3 border-b text-center font-medium">
-  {order?.orderNo || "-"}
-</td>
+            {orderProduct.orderInfo?.orderNo || "-"}
+          </td>
 
           <td className="px-4 py-3 border-b text-center font-medium">
-            {product?.productId || order.productId || "-"}
+            {product?.productId || "-"}
           </td>
           <td className="px-4 py-3 border-b">
             {product?.productGroup?.productGroupName || "-"}
@@ -283,7 +390,6 @@ const handleUpdate = (e, order) => {
                     className="h-12 w-12 rounded-full object-cover border shadow-sm transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
                     crossOrigin="use-credentials"
                     onError={(e) => {
-                      console.error(`Failed to load refImage: ${refImageUrl}`);
                       e.target.onerror = null;
                       e.target.src = getPlaceholder("Ref");
                     }}
@@ -307,7 +413,6 @@ const handleUpdate = (e, order) => {
                     className="h-12 w-12 rounded-full object-cover border shadow-sm transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
                     crossOrigin="use-credentials"
                     onError={(e) => {
-                      console.error(`Failed to load actImage: ${actImageUrl}`);
                       e.target.onerror = null;
                       e.target.src = getPlaceholder("Act");
                     }}
@@ -332,21 +437,16 @@ const handleUpdate = (e, order) => {
             </div>
           </td>
           
-        <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                              <p className="flex text-gray-900 whitespace-no-wrap">
-                                <FiEdit
-                                      size={17}
-                                      className="text-teal-500 hover:text-teal-700 mx-2 cursor-pointer"
-                                      onClick={(e) => handleUpdate(e, order)}
-                                      title="Edit Product"
-                                    />
-
-                                  {/* <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={(e) => handleUpdate(e, item)} title='Edit Product' />  | */}
-                                  {/* <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' /> */}
-                              </p>
-                          </td>
-
-          
+          <td className="px-5 py-5 border-b border-gray-200 text-sm">
+            <p className="flex text-gray-900 whitespace-no-wrap">
+              <FiEdit
+                size={17}
+                className="text-teal-500 hover:text-teal-700 mx-2 cursor-pointer"
+                onClick={(e) => handleUpdate(e, orderProduct)}
+                title="Edit Product"
+              />
+            </p>
+          </td>
         </tr>
       );
     });
@@ -383,7 +483,6 @@ const handleUpdate = (e, order) => {
                         src={`${GET_IMAGE}/products/getimages/${image.referenceImage}`}
                         alt={`Reference ${index + 1}`}
                         onError={(e) => {
-                          console.error(`Failed to load reference image: ${image.referenceImage}`);
                           e.target.onerror = null;
                           e.target.src = getPlaceholder("Ref");
                         }}
@@ -418,7 +517,6 @@ const handleUpdate = (e, order) => {
                         src={`${GET_IMAGE}/products/getimages/${image.actualImage}`}
                         alt={`Actual ${index + 1}`}
                         onError={(e) => {
-                          console.error(`Failed to load actual image: ${image.actualImage}`);
                           e.target.onerror = null;
                           e.target.src = getPlaceholder("Act");
                         }}
@@ -466,9 +564,15 @@ const handleUpdate = (e, order) => {
               Kani Orders
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Showing {((pagination.currentPage - 1) * pagination.itemsPerPage) + 1}-
-              {Math.min(pagination.currentPage * pagination.itemsPerPage, pagination.totalItems)} 
-              of {pagination.totalItems} orders
+              {pagination.totalItems > 0 ? (
+                <>
+                  Showing {((pagination.currentPage - 1) * pagination.itemsPerPage) + 1}-
+                  {Math.min(pagination.currentPage * pagination.itemsPerPage, pagination.totalItems)} 
+                  of {pagination.totalItems} order products
+                </>
+              ) : (
+                "No order products found"
+              )}
             </p>
           </div>
         </div>
