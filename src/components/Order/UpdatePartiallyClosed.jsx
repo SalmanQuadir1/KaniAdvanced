@@ -561,7 +561,7 @@ const UpdatePartiallyClosed = () => {
 
 
                                   {
-                                    product.productStatus === "Accepted" ? (
+                                    product.productStatus?.toLowerCase() === "accepted" ? (
                                       <div className="flex items-center gap-2">
                                         <span
                                           onClick={() => navigate(`/order/modifyproductafterexecution/${product?.id}`)}
@@ -591,7 +591,7 @@ const UpdatePartiallyClosed = () => {
                                           VIEW PRODUCT DETAILS
                                         </span>
                                       </div>
-                                    ) : product.productStatus === "Closed" ? (
+                                    ) : product.productStatus?.toLowerCase() === "closed" ? (
                                       <div className="flex items-center gap-2">
                                         <span
                                           onClick={() => handleUpdateBom(item?.bom?.id)}

@@ -17,6 +17,8 @@ import Daybook from './components/Accounts/Config/Daybook.jsx';
 import OrderVoucherView from './components/Accounts/Config/OrderVoucherView.jsx';
 
 import AddLut from './components/Accounts/Config/AddLut.jsx';
+import PaymentSummary from './components/Accounts/Config/PaymentSummary.jsx';
+
 import Voucher from './components/Accounts/Vouchers/Voucher.jsx';
 import CreateVoucher from './components/Accounts/Vouchers/CreateVoucher.jsx';
 
@@ -24,7 +26,7 @@ import CreateVoucher from './components/Accounts/Vouchers/CreateVoucher.jsx';
 import CreateVoucherPurchase from './components/Accounts/Vouchers/CreateVoucherPurchase.jsx';
 import VoucherEntriesView from './components/Accounts/Vouchers/VoucherEntriesView.jsx';
 
-import VoucherEntriesViewPayment from './components/Accounts/Vouchers/VoucherEntriesViewPayment.jsx'; 
+import VoucherEntriesViewPayment from './components/Accounts/Vouchers/VoucherEntriesViewPayment.jsx';
 
 import PrintEntryPayment from './components/Accounts/Vouchers/PrintEntryPayment.jsx';
 
@@ -361,7 +363,7 @@ function App() {
             }
           />
 
-            <Route
+          <Route
             path="/configurator/vouchers/:id"
             element={
               <>
@@ -372,7 +374,7 @@ function App() {
             }
           />
 
-              <Route
+          <Route
             path="/Voucher/update/:id"
             element={
               <>
@@ -384,7 +386,7 @@ function App() {
           />
 
 
-            <Route
+          <Route
             path="/configurator/dayBook"
             element={
               <>
@@ -395,7 +397,18 @@ function App() {
             }
           />
 
-               <Route
+          <Route
+            path="/configurator/ledgersummary"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Day Book" />
+                <PaymentSummary />
+              </>
+            }
+          />
+
+          <Route
             path="/configurator/OrderVoucher"
             element={
               <>
@@ -406,7 +419,7 @@ function App() {
             }
           />
 
-              <Route
+          <Route
             path="/configurator/AddLut"
             element={
               <>
@@ -428,7 +441,7 @@ function App() {
             }
           />
 
-           <Route
+          <Route
             path="/Purchasevoucher/create/:id"
             element={
               <>
@@ -439,7 +452,7 @@ function App() {
             }
           />
 
-             <Route
+          <Route
             path="/voucherEntries/:id"
             element={
               <>
@@ -450,7 +463,7 @@ function App() {
             }
           />
 
-              <Route
+          <Route
             path="/voucherEntriesPayment/:id"
             element={
               <>
@@ -462,7 +475,7 @@ function App() {
           />
 
 
-            <Route
+          <Route
             path="/printentrypayment/:id/:gstRegistration"
             element={
               <>
@@ -903,9 +916,9 @@ function App() {
 
           <Route path="/UpdateKani/:id" element={<UpdateKani />} />
 
- {/* View Kani Products route */}
-        <Route path="/kani-products/view/:id" element={<ViewKaniProducts />} />
-          
+          {/* View Kani Products route */}
+          <Route path="/kani-products/view/:id" element={<ViewKaniProducts />} />
+
 
           <Route
             path="/Order/updateorderExecuted/:id"
@@ -1162,7 +1175,7 @@ function App() {
             }
           />
 
-           <Route
+          <Route
             path="/UpdateKani"
             element={
               <>
@@ -1384,7 +1397,7 @@ function App() {
             }
           />
 
-           <Route
+          <Route
             path="/kaniOrders"
             element={
               <>
@@ -1425,7 +1438,7 @@ function App() {
             }
           />
 
-<Route
+          <Route
             path="/ledger/AddBulk"
             element={
               <>

@@ -673,13 +673,17 @@ const CreateVoucherPurchase = () => {
                                                     <ReactSelect
                                                         name='orderIds'
                                                         style={{ height: "20px" }}
-                                                        value={availableOrders?.find(opt => orders[0]?.orderId === opt.value)}
+                                                        value={availableOrders?.filter(opt =>
+                                                            Array.isArray(values.orderIds)
+                                                                ? values.orderIds.includes(opt.value)
+                                                                : false
+                                                        )}
                                                         onChange={(selectedOptions) => {
                                                             const selectedValues = selectedOptions?.map(option => option.value) || [];
                                                             setFieldValue('orderIds', selectedValues);
-                                                            console.log(selectedValues, "jojojazim");
+                                                            console.log(selectedValues, "Selected order IDs");
 
-                                                            // Call handleOrderSelect with selected values (even if empty)
+                                                            // Call handleOrderSelect with selected values
                                                             handleOrderSelect(selectedValues);
                                                         }}
                                                         options={availableOrders}
@@ -827,7 +831,7 @@ const CreateVoucherPurchase = () => {
 
                                                                             // Find the order for this entry
                                                                             const order = orders.find(o => o.orderId === entry.orderId);
-                                                                            const orderNumber = order ? order.orderNumber : 'N/A';
+                                                                          const orderNumber = order ? order.orderNumber : 'N/A';
 
                                                                             // Find the product in availableProducts for this entry
                                                                             const productInfo = availableProducts.find(p => p.value === entry.productsId);
@@ -1032,9 +1036,9 @@ const CreateVoucherPurchase = () => {
                                                                                     {Vouchers?.typeOfVoucher === "Sales" && (
                                                                                         <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
                                                                                             <span className={`text-xs font-medium px-2 py-1 rounded ${entry.gstCalculation?.type === 'CGST+SGST' ? 'bg-blue-100 text-blue-800' :
-                                                                                                    entry.gstCalculation?.type === 'IGST' ? 'bg-green-100 text-green-800' :
-                                                                                                        entry.gstCalculation?.type === 'No GST (Discount Applied)' ? 'bg-yellow-100 text-yellow-800' :
-                                                                                                            'bg-gray-100 text-gray-800'
+                                                                                                entry.gstCalculation?.type === 'IGST' ? 'bg-green-100 text-green-800' :
+                                                                                                    entry.gstCalculation?.type === 'No GST (Discount Applied)' ? 'bg-yellow-100 text-yellow-800' :
+                                                                                                        'bg-gray-100 text-gray-800'
                                                                                                 }`}>
                                                                                                 {entry.gstCalculation?.type || 'No GST'}
                                                                                             </span>
