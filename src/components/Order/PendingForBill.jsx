@@ -261,83 +261,104 @@ const PendingForBill = () => {
 
 
 
-        return Order.map((item, index) => (
+       return Order.map((item, index) => {
+    // Check if any order has fullVoucherCreated === true
+    const hasVoucherCreated = item?.orders?.some(order => order.fullVoucherCreated === true);
+    
+    return (
+        <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
+            <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
+            </td>
 
-            <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
-                </td>
-
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.supplierName}</p>
-
-                </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    {item.orders &&
-                        item?.orders.map((order, index) => {
-                            const formattedDate = new Date(order.updatedAt).toISOString().split("T")[0]
-                            const formattedTime = new Date(order.updatedAt).toTimeString().slice(0, 5);
-                            return (
-                                <p key={index} className="text-gray-900 whitespace-nowrap">
-
-                                    {formattedDate},  {formattedTime}
-                                </p>
-                            )
-                        })}
-                </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    {item.orders &&
-                        item?.orders.map((order, index) => (
+            <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                <p className="text-gray-900 whitespace-no-wrap">{item?.supplierName}</p>
+            </td>
+            
+            <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                {item.orders &&
+                    item?.orders.map((order, index) => {
+                        const formattedDate = new Date(order.updatedAt).toISOString().split("T")[0];
+                        const formattedTime = new Date(order.updatedAt).toTimeString().slice(0, 5);
+                        return (
                             <p key={index} className="text-gray-900 whitespace-nowrap">
-                                {order.productId}
+                                {formattedDate}, {formattedTime}
+                                {order.fullVoucherCreated && (
+                                    <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
+                                        ✓ Voucher Created
+                                    </span>
+                                )}
                             </p>
-                        ))}
-                </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    {item.orders &&
-                        item?.orders.map((order, index) => (
-                            <p key={index} className="text-gray-900 whitespace-nowrap">
-                                {order.orderNo}
-                            </p>
-                        ))}
-                </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    {item.orders &&
-                        item?.orders.map((order, index) => (
-                            <p key={index} className="text-gray-900 whitespace-nowrap">
-                                {order.productCost}
-                            </p>
-                        ))}
-                </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    {item.orders &&
-                        item?.orders.map((order, index) => (
-                            <p key={index} className="text-gray-900 whitespace-nowrap">
-                                {order.receivedQty}
-                            </p>
-                        ))}
-                </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    {item.orders &&
-                        item?.orders.map((order, index) => (
-                            <p key={index} className="text-gray-900 whitespace-nowrap">
-                                {order.totalAmount}
-                            </p>
-                        ))}
-                </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    {item.orders && (
-                        <p className="text-gray-900 whitespace-nowrap">
-                            {item.orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0)}
+                        );
+                    })}
+            </td>
+            
+            <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                {item.orders &&
+                    item?.orders.map((order, index) => (
+                        <p key={index} className="text-gray-900 whitespace-nowrap">
+                            {order.productId}
                         </p>
-                    )}
-                </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.billStatus}</p>
+                    ))}
+            </td>
+            
+            <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                {item.orders &&
+                    item?.orders.map((order, index) => (
+                        <p key={index} className="text-gray-900 whitespace-nowrap">
+                            {order.orderNo}
+                        </p>
+                    ))}
+            </td>
+            
+            <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                {item.orders &&
+                    item?.orders.map((order, index) => (
+                        <p key={index} className="text-gray-900 whitespace-nowrap">
+                            {order.productCost}
+                        </p>
+                    ))}
+            </td>
+            
+            <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                {item.orders &&
+                    item?.orders.map((order, index) => (
+                        <p key={index} className="text-gray-900 whitespace-nowrap">
+                            {order.receivedQty}
+                        </p>
+                    ))}
+            </td>
+            
+            <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                {item.orders &&
+                    item?.orders.map((order, index) => (
+                        <p key={index} className="text-gray-900 whitespace-nowrap">
+                            {order.totalAmount}
+                        </p>
+                    ))}
+            </td>
+            
+            <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                {item.orders && (
+                    <p className="text-gray-900 whitespace-nowrap">
+                        {item.orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0)}
+                    </p>
+                )}
+            </td>
+            
+            <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                <p className="text-gray-900 whitespace-no-wrap">{item?.billStatus}</p>
+            </td>
 
-                </td>
-
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+            {/* Voucher Selection Column - Only show if no voucher created */}
+            <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                {hasVoucherCreated ? (
+                    <div className="flex items-center justify-center">
+                        <span className="px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 text-xs font-medium rounded-full">
+                            Voucher Already Created
+                        </span>
+                    </div>
+                ) : (
                     <ReactSelect
                         options={formattedVoucher}
                         placeholder="Select Voucher"
@@ -345,7 +366,6 @@ const PendingForBill = () => {
                         styles={customStyles}
                         menuPortalTarget={document.body}
                         onChange={(selectedOption) => {
-                            // Store the selected voucher ID for this specific billStatusId
                             setSelectedVouchers(prev => ({
                                 ...prev,
                                 [item?.billStatusId]: selectedOption?.value || null
@@ -354,34 +374,38 @@ const PendingForBill = () => {
                         value={formattedVoucher.find(option => option.value === selectedVouchers[item?.billStatusId])}
                         menuPosition="fixed"
                     />
-                </td>
+                )}
+            </td>
 
-
-
-
-
-
-
-
-
-
-
-
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="flex text-gray-900 whitespace-no-wrap">
+            {/* Actions Column - Show different actions based on voucher status */}
+            <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                <div className="flex text-gray-900 whitespace-no-wrap">
+                    {hasVoucherCreated ? (
+                        // When voucher is already created
+                        <div className="flex items-center space-x-2">
+                            <span className="text-green-600 dark:text-green-400 text-sm font-medium">
+                                ✓ Completed
+                            </span>
+                            <FiEdit
+                                size={17}
+                                className='text-teal-500 hover:text-teal-700 mx-2 cursor-pointer'
+                                onClick={() => navigate(`/Order/updatependingforbill/${item?.billStatusId}`)}
+                                title='View Order'
+                            />
+                        </div>
+                    ) : (
+                        // When no voucher created yet
                         <>
                             {selectedVouchers[item?.billStatusId] && (
                                 <CgFileAdd
                                     size={17}
                                     className='text-teal-500 hover:text-teal-700 mx-2 cursor-pointer'
                                     onClick={() => {
-                                        // Check if there are orders
                                         if (!item?.orders || item.orders.length === 0) {
                                             toast.error('No order data available');
                                             return;
                                         }
 
-                                        // Prepare order details array
                                         const orderDetails = item.orders.map(order => ({
                                             orderNo: order.orderNo,
                                             orderId: order.orderId,
@@ -390,24 +414,18 @@ const PendingForBill = () => {
                                             receivedQty: order.receivedQty,
                                             totalAmount: order.totalAmount,
                                             productCost: order.productCost,
-                                            // You can add more fields as needed
                                         }));
 
                                         navigate(`/Purchasevoucher/create/${selectedVouchers[item?.billStatusId]}`, {
                                             state: {
                                                 sourcePage: 'PendingForBill',
-                                                // Supplier details
                                                 supplierName: item?.supplierName,
                                                 supplierId: item?.supplierId,
-                                                // Bill status details
                                                 billStatus: item?.billStatus,
                                                 billStatusId: item?.billStatusId,
-                                                // All order details as an array
                                                 orders: orderDetails,
-                                                // Calculated totals
                                                 totalBillAmount: item?.orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0),
                                                 totalReceivedQty: item?.orders.reduce((sum, order) => sum + (order.receivedQty || 0), 0),
-                                                // Original data for reference
                                                 originalData: item
                                             }
                                         });
@@ -422,12 +440,13 @@ const PendingForBill = () => {
                                 onClick={() => navigate(`/Order/updatependingforbill/${item?.billStatusId}`)}
                                 title='Edit Order'
                             />
-                            {" | "}
                         </>
-                    </p>
-                </td>
-            </tr>
-        ));
+                    )}
+                </div>
+            </td>
+        </tr>
+    );
+});
     };
 
 

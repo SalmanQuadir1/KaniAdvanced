@@ -339,7 +339,7 @@ getPaymentSummary();
                                         </div>
                                     </div>
                                     <div className="mt-2">
-                                        <p className={`text-3xl font-bold ${card.textColor}`}>
+                                        <p className={`text-xl font-bold ${card.textColor}`}>
                                             {formatCurrency(card.amount)}
                                         </p>
                                     </div>
