@@ -225,11 +225,16 @@ console.log(Voucher,"amjh");
 
     <td className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
         <div className="flex items-center">
-            <div className="h-8 w-8 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mr-3">
-                <span className="text-blue-600 dark:text-blue-400 font-semibold text-xs">#</span>
-            </div>
+            
             <div>
-                <p className="text-sm font-medium text-gray-900 dark:text-white">{item?.recieptNumber}</p>
+                {
+                    item.recieptNumber === null ? (
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">N/A</p>
+                    ) : (
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">{item?.recieptNumber}</p>
+                    
+                    )
+                }
                
             </div>
         </div>
@@ -307,21 +312,21 @@ console.log(Voucher,"amjh");
             <button
                 // onClick={() => navigate(`/printentrypayment/${item.id}/${item.gstRegistration}`)}
                  onClick={() => navigate(`/printentrypayments/${item.id}/${item.gstRegistration}`)}
-                className="flex items-center px-3 py-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white text-xs font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow"
+                
                 title="Print Entry"
             >
-                <FaPrint className="mr-1.5" size={12} />
-                Print
+                <FaPrint  className="text-teal-500 hover:text-teal-700 mx-2" size={17} />
+              
             </button>
 
-            <button
+            {/* <button
                 onClick={(e) => handleDelete(e, item?.id)}
                 className="flex items-center px-3 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-xs font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow"
                 title="Delete Entry"
             >
                 <FiTrash2 className="mr-1.5" size={12} />
                 Delete
-            </button>
+            </button> */}
         </div>
     </td>
 </tr>
@@ -429,19 +434,7 @@ console.log(Voucher,"amjh");
                                         </div>
 
                                         {/* Ledger ID Field */}
-                                        <div className="flex-1 min-w-[300px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">Ledger</label>
-                                            {/* <ReactSelect
-                                                name="ledgerId"
-                                                value={LedgerData?.find(option => option.value === values.ledgerId)}
-                                                onChange={(option) => setFieldValue('ledgerId', option ? option.value : null)}
-                                                options={[{ label: 'Select Ledger', value: null }, ...LedgerData]}
-                                                styles={customStyles}
-                                                className="bg-white dark:bg-form-Field"
-                                                classNamePrefix="react-select"
-                                                placeholder="Select Ledger"
-                                            /> */}
-                                        </div>
+                                    
 
                                         {/* Voucher Name Field */}
 

@@ -287,12 +287,12 @@ console.log(Voucher,"amjh");
                             title="Print Entry"
                         />
 
-                        <FiTrash2
+                        {/* <FiTrash2
                             size={17}
                             className="text-red-500 hover:text-red-700 mx-2"
                             onClick={(e) => handleDelete(e, item?.id)}
                             title="Delete Product"
-                        />
+                        /> */}
                     </p>
                 </td>
 
@@ -400,20 +400,7 @@ console.log(Voucher,"amjh");
                                             />
                                         </div>
 
-                                        {/* Ledger ID Field */}
-                                        <div className="flex-1 min-w-[300px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">Ledger</label>
-                                            {/* <ReactSelect
-                                                name="ledgerId"
-                                                value={LedgerData?.find(option => option.value === values.ledgerId)}
-                                                onChange={(option) => setFieldValue('ledgerId', option ? option.value : null)}
-                                                options={[{ label: 'Select Ledger', value: null }, ...LedgerData]}
-                                                styles={customStyles}
-                                                className="bg-white dark:bg-form-Field"
-                                                classNamePrefix="react-select"
-                                                placeholder="Select Ledger"
-                                            /> */}
-                                        </div>
+                              
 
                                         {/* Voucher Name Field */}
 
