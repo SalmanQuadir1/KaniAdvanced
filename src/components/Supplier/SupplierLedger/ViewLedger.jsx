@@ -255,7 +255,7 @@ const ViewLedger = () => {
 
 
                 <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.supplierName || item?.customerName || item?.name}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{ item?.name}</p>
                 </td>
                 <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.groupName} </p>

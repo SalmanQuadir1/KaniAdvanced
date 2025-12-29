@@ -410,8 +410,8 @@ const PrintPaymentVoucher = () => {
             <table style={styles.table}>
                 <thead>
                     <tr>
-                        <th style={styles.tableHeader} width="50%">PAID FROM (DEBIT)</th>
-                        <th style={styles.tableHeader} width="50%">PAID TO (CREDIT)</th>
+                        <th style={styles.tableHeader} width="50%">PAID FROM</th>
+                        <th style={styles.tableHeader} width="50%">PAID TO </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -420,16 +420,16 @@ const PrintPaymentVoucher = () => {
                             <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                                 {paymentData.ledgerName || 'N/A'}
                             </div>
-                            <div>
+                            {/* <div>
                                 <strong>Ledger ID:</strong> {paymentData.ledgerId || 'N/A'}
-                            </div>
+                            </div> */}
                         </td>
                         <td style={styles.tableCell}>
                             <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>
                                 {paymentData.toLedgerName || 'N/A'}
                             </div>
                             <div>
-                                <strong>Ledger ID:</strong> {paymentData.toLedgerId || 'N/A'}
+                                {/* <strong>Ledger ID:</strong> {paymentData.toLedgerId || 'N/A'} */}
                             </div>
                         </td>
                     </tr>
