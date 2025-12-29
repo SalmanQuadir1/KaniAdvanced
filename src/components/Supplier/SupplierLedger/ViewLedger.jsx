@@ -298,7 +298,7 @@ const ViewLedger = () => {
                     </div>
                 </td>
 
-                <td>
+                <td className='whitespace-nowrap px-5 py-5 bLedger-b bLedger-gray-200 text-sm'>
                     <span onClick={() => openLEDGERModal(item)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> VIEW LEDGER</span>
                 </td>
                 {/* <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
