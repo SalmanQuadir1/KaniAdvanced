@@ -216,88 +216,115 @@ console.log(Voucher,"amjh");
 
         return Voucher.map((item, index) => (
 
-            <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
-                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
-                </td>
+           <tr key={index} className='bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors duration-200'>
+    <td className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+        <span className="text-sm font-medium text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-slate-700 px-2.5 py-1 rounded-full">
+            {startingSerialNumber + index}
+        </span>
+    </td>
 
+    <td className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+        <div className="flex items-center">
+            <div className="h-8 w-8 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mr-3">
+                <span className="text-blue-600 dark:text-blue-400 font-semibold text-xs">#</span>
+            </div>
+            <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">{item?.recieptNumber}</p>
+               
+            </div>
+        </div>
+    </td>
 
-                <td className="text-left px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.recieptNumber}</p>
-                </td>
-                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm w-[100px]">
-                    <p className="text-white whitespace-no-wrap  bg-gradient-to-r from-red-400 via-orange to-orange-300 p-2 rounded-full">{item?.ledgerName}</p>
-                </td>
-                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm w-[100px]">
-                    <p className="text-white whitespace-no-wrap bg-gradient-to-r from-green-400 via-orange to-green-300 p-2 rounded-full">{item?.toLedgerName}</p>
-                </td>
-                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{new Date(item?.paymentDate).toLocaleDateString()}</p>
-                </td>
+    <td className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 whitespace-nowrap">
+        <div className="flex flex-col">
+            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-red-100 to-red-50 dark:from-red-900/30 dark:to-red-800/30 border border-red-200 dark:border-red-700">
+                <div className="h-2 w-2 rounded-full bg-red-500 mr-2"></div>
+                <span className="text-sm font-medium text-red-700 dark:text-red-300">{item?.ledgerName}</span>
+            </div>
+            
+        </div>
+    </td>
 
+    <td className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 whitespace-nowrap">
+        <div className="flex flex-col">
+            <div className="inline-flex items-center px-3 py-1.5 rounded-full bg-gradient-to-r from-green-100 to-green-50 dark:from-green-900/30 dark:to-green-800/30 border border-green-200 dark:border-green-700">
+                <div className="h-2 w-2 rounded-full bg-green-500 mr-2"></div>
+                <span className="text-sm font-medium text-green-700 dark:text-green-300">{item?.toLedgerName}</span>
+            </div>
+            
+        </div>
+    </td>
 
-                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.amount} </p>
-                </td>
-                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.narration} </p>
-                </td>
-             
+    <td className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 whitespace-nowrap">
+        <div className="flex flex-col">
+            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                {new Date(item?.paymentDate).toLocaleDateString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                })}
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+                {new Date(item?.paymentDate).toLocaleTimeString('en-IN', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })}
+            </p>
+        </div>
+    </td>
 
+    <td className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+        <div className="flex flex-col">
+            <span className="text-lg font-bold text-gray-900 dark:text-white">
+                ₹{item?.amount?.toLocaleString('en-IN') || '0.00'}
+            </span>
+            
+        </div>
+    </td>
 
+    <td className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+        <div className="max-w-xs">
+            <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
+                {item?.narration || 'No description'}
+            </p>
+            
+        </div>
+    </td>
 
+    <td className="px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+        <div className="flex items-center space-x-2">
+            {item.posInvoicing === true && (
+                <button
+                    onClick={() => navigate(`/printentrypaymentPos/${item.id}/${item.gstRegistration}`)}
+                    className="flex items-center px-3 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white text-xs font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow"
+                    title="Print POS Entry"
+                >
+                    <FaPrint className="mr-1.5" size={12} />
+                    POS Print
+                </button>
+            )}
+            
+            <button
+                // onClick={() => navigate(`/printentrypayment/${item.id}/${item.gstRegistration}`)}
+                 onClick={() => navigate(`/printentrypayments/${item.id}/${item.gstRegistration}`)}
+                className="flex items-center px-3 py-2 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white text-xs font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow"
+                title="Print Entry"
+            >
+                <FaPrint className="mr-1.5" size={12} />
+                Print
+            </button>
 
-                {/* <td>
-                    <span onClick={() => navigate(`/voucher/create/${item.id}`)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> Add Entry</span>
-                </td>
-                <td>
-                    <span onClick={() => navigate(`/voucher/create/${item.id}`)} className="bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> View Entries</span>
-                </td> */}
-
-
-
-
-
-
-
-
-
-
-
-                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
-                    <p className="flex text-gray-900 whitespace-no-wrap">
-                        {
-                            item.posInvoicing===true &&
-
-                              <FaPrint
-                            size={17}
-                            className="text-teal-500 hover:text-teal-700 mx-2"
-                            onClick={() => navigate(`/printentrypaymentPos/${item.id}/${item.gstRegistration}`)}
-                            title="Print Entry"
-                        />
-
-                        }
-
-                        {
-                            
-                        }
-                        <FaPrint
-                            size={17}
-                            className="text-teal-500 hover:text-teal-700 mx-2"
-                            onClick={() => navigate(`/printentrypayment/${item.id}/${item.gstRegistration}`)}
-                            title="Print Entry"
-                        />
-
-                        <FiTrash2
-                            size={17}
-                            className="text-red-500 hover:text-red-700 mx-2"
-                            onClick={(e) => handleDelete(e, item?.id)}
-                            title="Delete Product"
-                        />
-                    </p>
-                </td>
-
-            </tr>
+            <button
+                onClick={(e) => handleDelete(e, item?.id)}
+                className="flex items-center px-3 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-xs font-medium rounded-lg transition-all duration-200 shadow-sm hover:shadow"
+                title="Delete Entry"
+            >
+                <FiTrash2 className="mr-1.5" size={12} />
+                Delete
+            </button>
+        </div>
+    </td>
+</tr>
         ));
     };
 
