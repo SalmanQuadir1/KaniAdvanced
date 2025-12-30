@@ -416,6 +416,9 @@ export const GET_VoucherEntriessearchPayment_URL = `${BASE_URL}/api/voucher/paym
 
 
 export const PRINTEntries_URL = `${BASE_URL}/entryPayment`;
+export const PRINTPAYMENT_URL = `${BASE_URL}/api/voucher/payment-voucher`;
+
+
 export const GET_VoucherNoss_URL = `${BASE_URL}/voucher/getReceipt`;
 export const GET_VoucherNos_URL = `${BASE_URL}/voucher/getPreviousReceipt`;
 

@@ -561,7 +561,7 @@ const UpdatePartiallyPending = () => {
 
 
 {
-  product.productStatus === "Accepted" ? (
+  product.productStatus.toLowerCase() === "accepted" ? (
     <div className="flex items-center gap-2">
       <span
         onClick={() => navigate(`/order/modifyproductafterexecution/${product?.id}`)}
@@ -576,7 +576,7 @@ const UpdatePartiallyPending = () => {
         VIEW PRODUCT DETAILS
       </span>
     </div>
-  ) : (product.productStatus?.toLowerCase() === "approved" || product.productStatus === "Pending") ? (  
+  ) : (product.productStatus?.toLowerCase() === "approved" || product.productStatus.toLowerCase() === "pending") ? (  
     <div className="flex items-center gap-2">
       <span
         onClick={() => navigate(`/order/updateorderproduct/${product?.id}`)}
@@ -641,7 +641,7 @@ const UpdatePartiallyPending = () => {
 
 
 
-                      <div className="flex justify-center mt-4"> {/* Centering the button */}
+                      {/* <div className="flex justify-center mt-4">
                         <button
                           type="submit"
 
@@ -650,7 +650,7 @@ const UpdatePartiallyPending = () => {
                         >
                           Accept All
                         </button>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
