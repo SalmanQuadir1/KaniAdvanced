@@ -44,7 +44,7 @@ const OrderVoucherView = () => {
         itemsPerPage: 10,
     });
 
-    const getOrderVoucher = async (page = 1, filters = {}) => {
+    const getOrderVoucher = async (page = 0, filters = {}) => {
         try {
             const response = await fetch(`${SEARCH_OrderVoucher_URL}?filter=${voucherFilter}&page=${page}`, {
                 method: "GET",
@@ -113,7 +113,7 @@ const OrderVoucherView = () => {
 
     useEffect(() => {
         getOrderVoucher(pagination.currentPage);
-    }, []);
+    }, [voucherFilter]);
 
     // NEW: Watch for changes in OrderVouchers and apply filter
     useEffect(() => {
@@ -299,8 +299,8 @@ const OrderVoucherView = () => {
                                     All Orders
                                 </button>
                                 <button
-                                    onClick={() => handleVoucherFilterChange('with-voucher')}
-                                    className={`px-3 py-1 text-sm rounded transition-colors ${voucherFilter === 'with-voucher'
+                                    onClick={() => handleVoucherFilterChange('true')}
+                                    className={`px-3 py-1 text-sm rounded transition-colors ${voucherFilter === 'true'
                                         ? 'bg-green-600 text-white'
                                         : 'bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-slate-500'
                                         }`}
@@ -308,8 +308,8 @@ const OrderVoucherView = () => {
                                     With Vouchers
                                 </button>
                                 <button
-                                    onClick={() => handleVoucherFilterChange('without-voucher')}
-                                    className={`px-3 py-1 text-sm rounded transition-colors ${voucherFilter === 'without-voucher'
+                                    onClick={() => handleVoucherFilterChange('false')}
+                                    className={`px-3 py-1 text-sm rounded transition-colors ${voucherFilter === 'false'
                                         ? 'bg-yellow-600 text-white'
                                         : 'bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-slate-500'
                                         }`}
@@ -345,15 +345,15 @@ const OrderVoucherView = () => {
                         <div className="inline-block min-w-full shadow-xl rounded-2xl overflow-hidden border border-gray-200 dark:border-slate-700">
                             <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
                                 <thead>
-                                    <tr className='bg-gradient-to-r from-slate-100 to-gray-100 dark:from-slate-800 dark:to-slate-900'>
-                                        <th className="px-6 py-4 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">S.No</th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">orderNo</th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">status</th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Full Voucher Created</th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Total Voucher Amount</th>
+                                    <tr style={{background: 'linear-gradient(to right, #333a46, #333a49)'}}>
+                                        <th className="px-6 py-4 text-left text-xs font-semibold text-white dark:text-gray-300 uppercase tracking-wider">S.No</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-white uppercase tracking-wider">Date</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-white uppercase tracking-wider">orderNo</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-white uppercase tracking-wider">status</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-white uppercase tracking-wider">Full Voucher Created</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-white uppercase tracking-wider">Total Voucher Amount</th>
 
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Vouchers</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text text-xs font-semibold text-white uppercase tracking-wider">View Vouchers</th>
                                         
                                     </tr>
                                 </thead>
