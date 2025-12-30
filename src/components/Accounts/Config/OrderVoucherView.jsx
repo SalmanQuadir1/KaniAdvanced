@@ -147,6 +147,8 @@ const OrderVoucherView = () => {
         setShowOrdersWithVouchers(false);
         setShowOrdersWithoutVouchers(false);
     };
+    console.log(filteredOrders,"ggggggggggggggggggggggggggggg");
+    
 
     const renderTableRows = () => {
         // Use filteredOrders instead of OrderVouchers
@@ -202,42 +204,49 @@ const OrderVoucherView = () => {
                         )}
                     </td> */}
                     <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <div className="flex space-x-3">
-                            {/* NEW: View buttons for both types */}
-                            <button
-                                onClick={() => openOrdersWithVouchersModal(entry)}
-                                className="flex items-center text-green-600 hover:text-green-800 bg-green-50 hover:bg-green-100 px-3 py-1 rounded text-sm transition-colors"
-                                title="View Orders with Vouchers"
-                            >
-                                <FiFileText className="mr-1" />
-                                With Vouchers
-                            </button>
-                            <button
-                                onClick={() => openOrdersWithoutVouchersModal(entry)}
-                                className="flex items-center text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded text-sm transition-colors"
-                                title="View Orders without Vouchers"
-                            >
-                                <FiEye className="mr-1" />
-                                Without Vouchers
-                            </button>
-                        </div>
+                   <div className="flex space-x-3">
+    {/* With Vouchers Button */}
+    <button
+        onClick={() => openOrdersWithVouchersModal(entry)}
+        className="group relative flex items-center gap-2 text-green-700 hover:text-green-900 bg-green-50 hover:bg-green-100 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-sm border border-green-100 hover:border-green-200"
+        title="View Orders with Vouchers"
+    >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>With Vouchers</span>
+        
+        {/* Animated Badge */}
+        <span className="animate-pulse bg-green-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[24px] flex items-center justify-center shadow-sm">
+            {entry.productsWithVouchers}
+        </span>
+        
+        {/* Hover effect line */}
+        <span className="absolute bottom-0 left-0 w-0 group-hover:w-full h-0.5 bg-green-500 transition-all duration-300 rounded-full"></span>
+    </button>
+
+    {/* Without Vouchers Button */}
+    <button
+        onClick={() => openOrdersWithoutVouchersModal(entry)}
+        className="group relative flex items-center gap-2 text-blue-700 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:shadow-sm border border-blue-100 hover:border-blue-200"
+        title="View Orders without Vouchers"
+    >
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Without Vouchers</span>
+        
+        {/* Animated Badge */}
+        <span className="animate-pulse bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[24px] flex items-center justify-center shadow-sm">
+            {entry.productsWithoutVouchers}
+        </span>
+        
+        {/* Hover effect line */}
+        <span className="absolute bottom-0 left-0 w-0 group-hover:w-full h-0.5 bg-blue-500 transition-all duration-300 rounded-full"></span>
+    </button>
+</div>
                     </td>
-                    <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <div className="flex">
-                            <FiEdit
-                                size={17}
-                                className="text-teal-500 hover:text-teal-700 mx-2 cursor-pointer"
-                                onClick={() => navigate(`/OrderVoucher/edit/${entry.id}`)}
-                                title="Edit Entry"
-                            />
-                            <FiTrash2
-                                size={17}
-                                className="text-red-500 hover:text-red-700 mx-2 cursor-pointer"
-                                onClick={() => handleDelete(entry.id)}
-                                title="Delete Entry"
-                            />
-                        </div>
-                    </td>
+                   
                 </tr>
             );
         });
@@ -344,8 +353,8 @@ const OrderVoucherView = () => {
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Full Voucher Created</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Total Voucher Amount</th>
 
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Orders</th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Action</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Vouchers</th>
+                                        
                                     </tr>
                                 </thead>
                                 <tbody>
