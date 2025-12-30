@@ -575,6 +575,17 @@ const KaniOrders = () => {
               )}
             </p>
           </div>
+        {/* RIGHT SIDE */}
+            <div>
+              <button
+                type="button"
+                onClick={() => navigate("/filter-suppliers")}
+                className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90 transition"
+              >
+                Filter Suppliers
+              </button>
+            </div>
+
         </div>
 
         <div className="my-6 px-6 sm:px-10 py-4 overflow-x-auto">

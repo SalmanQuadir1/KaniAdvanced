@@ -35,6 +35,7 @@ import PrintPosEntryPayment from './components/Accounts/Vouchers/PrintPosEntryPa
 import ViewVoucher from './components/Accounts/Vouchers/ViewVoucher.jsx';
 
 import KaniOrders from './components/Kani/KaniOrders.jsx';
+import FilterSupplier from './components/Kani/FilterSupplier.jsx';
 
 import CreateLedger from './components/Ledger/CreateLedger.jsx';
 import UpdateCustomerLedger from './components/Ledger/UpdateCustomerLedger.jsx';
@@ -256,6 +257,7 @@ import { signoutSuccess } from './redux/Slice/UserSlice';
 // import useInactivity from './hooks/useInactivity';
 
 import ViewKaniProducts from './components/Kani/ViewKaniProducts.jsx';
+import ViewSupplierProduct from './components/Kani/ViewSupplierProduct.jsx';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -918,6 +920,13 @@ function App() {
 
           {/* View Kani Products route */}
           <Route path="/kani-products/view/:id" element={<ViewKaniProducts />} />
+          <Route path="/filter-suppliers" element={<FilterSupplier />} />
+          <Route
+            path="/supplier-product/view/:id"
+            element={<ViewSupplierProduct />}
+          />
+
+
 
 
           <Route
