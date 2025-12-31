@@ -9,18 +9,16 @@ import { FiEdit } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
 
 const KaniOrders = () => {
-  const [allFlattenedProducts, setAllFlattenedProducts] = useState([]);
-  const [displayedProducts, setDisplayedProducts] = useState([]);
-  const [orders, setOrders] = useState([]);
+  const [displayedOrders, setDisplayedOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isImagesModalOpen, setIsImagesModalOpen] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
   const navigate = useNavigate();
   
-  // Pagination state
+  // Change to 0-based indexing for backend
   const [pagination, setPagination] = useState({
-    currentPage: 1,
+    currentPage: 0, // 0-based indexing for backend
     itemsPerPage: 10,
     totalPages: 0,
     totalItems: 0
@@ -29,55 +27,64 @@ const KaniOrders = () => {
   const { currentUser } = useSelector((state) => state?.persisted?.user || {});
   const token = currentUser?.token;
 
-  // Try with different approaches
+  // Fetch orders when page changes
   useEffect(() => {
-    // Try approach 1: Fetch without pagination first
-    fetchKaniOrdersWithoutPagination();
-  }, []);
+    fetchKaniOrders();
+  }, [pagination.currentPage, pagination.itemsPerPage]);
 
-  // Update displayed products when page changes or when all data changes
-  useEffect(() => {
-    updateDisplayedProducts();
-  }, [allFlattenedProducts, pagination.currentPage]);
-
-  const updateDisplayedProducts = () => {
-    if (allFlattenedProducts.length === 0) {
-      setDisplayedProducts([]);
-      return;
+  // Function to group orders by order number and flatten their products
+  const groupOrdersByOrderNo = (ordersData) => {
+    const groupedOrders = {};
+    
+    if (!Array.isArray(ordersData)) {
+      console.warn("ordersData is not an array:", ordersData);
+      return [];
     }
     
-    const startIndex = (pagination.currentPage - 1) * pagination.itemsPerPage;
-    const endIndex = startIndex + pagination.itemsPerPage;
-    const currentPageData = allFlattenedProducts.slice(startIndex, endIndex);
-    setDisplayedProducts(currentPageData);
-  };
-
-  // Function to flatten order products
-  const flattenOrderProducts = (ordersData) => {
-    const flattened = [];
-    
+    // Group orders by orderNo
     ordersData.forEach(order => {
+      const orderNo = order.orderNo;
+      
+      if (!groupedOrders[orderNo]) {
+        groupedOrders[orderNo] = {
+          orderNo: orderNo,
+          orderDate: order.orderDate,
+          shippingDate: order.shippingDate,
+          tagsAndLabels: order.tagsAndLabels,
+          orderType: order.orderType,
+          customer: order.customer,
+          status: order.status,
+          products: [] // This will contain all orderProducts
+        };
+      }
+      
+      // Add all orderProducts from this order
       if (order.orderProducts && Array.isArray(order.orderProducts)) {
         order.orderProducts.forEach(orderProduct => {
-          flattened.push({
+          groupedOrders[orderNo].products.push({
             ...orderProduct,
             orderInfo: {
               orderNo: order.orderNo,
               orderDate: order.orderDate,
+              shippingDate: order.shippingDate,
               orderType: order.orderType,
               customer: order.customer,
+              status: order.status
             }
           });
         });
       }
     });
     
-    return flattened;
+    // Convert to array format for easier mapping
+    const groupedArray = Object.values(groupedOrders);
+    console.log(`Grouped ${ordersData.length} orders into ${groupedArray.length} unique order numbers`);
+    
+    return groupedArray;
   };
 
-  const handleUpdate = (e, orderProduct) => {
+  const handleUpdate = (e, orderProduct, orderNo) => {
     e.preventDefault();
-
     const orderProductId = orderProduct?.id;
 
     if (!orderProductId) {
@@ -88,9 +95,9 @@ const KaniOrders = () => {
     navigate(`/UpdateKani/${orderProductId}`);
   };
 
-  // APPROACH 1: Try fetching without any pagination parameters
-  const fetchKaniOrdersWithoutPagination = async () => {
-    console.log("fetchKaniOrdersWithoutPagination called");
+  // Fetch Kani orders with proper pagination
+  const fetchKaniOrders = async () => {
+    console.log("Fetching Kani orders for page:", pagination.currentPage, "size:", pagination.itemsPerPage);
 
     if (!token) {
       toast.error("No access token found. Please login.");
@@ -101,11 +108,12 @@ const KaniOrders = () => {
     setError(null);
 
     try {
-      console.log("Fetching Kani orders WITHOUT pagination...");
+      // Try different approaches
+      let apiUrl;
       
-      // Try without any parameters first
-      const apiUrl = `${GET_Kani_URL}`;
-      console.log("API URL:", apiUrl);
+      // Approach 1: Try with page parameter (0-based)
+      apiUrl = `${GET_Kani_URL}?page=${pagination.currentPage}&size=${pagination.itemsPerPage}`;
+      console.log("Trying API URL:", apiUrl);
       
       const response = await fetch(apiUrl, {
         method: "GET",
@@ -117,19 +125,21 @@ const KaniOrders = () => {
 
       if (!response.ok) {
         console.error("Response status:", response.status);
+        const responseText = await response.text();
+        console.error("Response text:", responseText);
         
-        // If 500 error with no params, try with default params
+        // If 500 error with page parameter, try without page parameter
         if (response.status === 500) {
-          console.log("Trying with default page parameters...");
-          await fetchKaniOrdersWithDefaultParams();
+          console.log("Trying without page parameter...");
+          await fetchKaniOrdersAlternative();
           return;
         }
         
-        throw new Error(`Failed to fetch Kani Orders: ${response.status} ${response.statusText}`);
+        throw new Error(`Failed to fetch Kani Orders: ${response.status} - ${responseText}`);
       }
 
       const data = await response.json();
-      console.log("Data received from API:", data);
+      console.log("API Response data:", data);
       handleApiResponse(data);
       
     } catch (err) {
@@ -141,48 +151,18 @@ const KaniOrders = () => {
     }
   };
 
-  // APPROACH 2: Try with default page parameters (page=0, size=10)
-  const fetchKaniOrdersWithDefaultParams = async () => {
+  // Alternative fetch - try without page parameter or with different parameters
+  const fetchKaniOrdersAlternative = async () => {
     try {
-      console.log("Fetching Kani orders WITH default pagination...");
+      // Try different parameter combinations
+      let apiUrl;
+      let response;
       
-      const apiUrl = `${GET_Kani_URL}?page=0&size=10`;
-      console.log("API URL:", apiUrl);
+      // Try 1: Without any parameters
+      apiUrl = `${GET_Kani_URL}`;
+      console.log("Trying without parameters:", apiUrl);
       
-      const response = await fetch(apiUrl, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed with pagination: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      console.log("Data received from API (with params):", data);
-      handleApiResponse(data);
-      
-    } catch (err) {
-      console.error("Error with paginated fetch:", err);
-      
-      // Last resort: Try a different approach
-      await fetchKaniOrdersLastResort();
-    }
-  };
-
-  // APPROACH 3: Last resort - try different parameter combinations
-  const fetchKaniOrdersLastResort = async () => {
-    try {
-      console.log("Trying last resort approach...");
-      
-      // Try without size parameter
-      const apiUrl = `${GET_Kani_URL}?page=0`;
-      console.log("API URL (page only):", apiUrl);
-      
-      const response = await fetch(apiUrl, {
+      response = await fetch(apiUrl, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -192,69 +172,159 @@ const KaniOrders = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Data received (page only):", data);
+        console.log("Success without parameters");
         handleApiResponse(data);
         return;
       }
       
-      // If still failing, show error
+      // Try 2: With size only
+      apiUrl = `${GET_Kani_URL}?size=${pagination.itemsPerPage}`;
+      console.log("Trying with size only:", apiUrl);
+      
+      response = await fetch(apiUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Success with size only");
+        handleApiResponse(data);
+        return;
+      }
+      
+      // Try 3: With 1-based indexing (page + 1)
+      const pageOneBased = pagination.currentPage + 1;
+      apiUrl = `${GET_Kani_URL}?page=${pageOneBased}&size=${pagination.itemsPerPage}`;
+      console.log("Trying with 1-based indexing:", apiUrl);
+      
+      response = await fetch(apiUrl, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Success with 1-based indexing");
+        handleApiResponse(data);
+        return;
+      }
+      
       throw new Error("All fetch attempts failed");
       
     } catch (err) {
-      console.error("All fetch attempts failed:", err);
+      console.error("Error with alternative fetch:", err);
       setError("Unable to load orders. Please check API configuration.");
       toast.error("Unable to load orders. Please contact administrator.");
     }
   };
 
-  // Handle API response data
+  // Handle API response data - specifically for Spring Data pagination format
   const handleApiResponse = (data) => {
-    let ordersArray = [];
-    let flattened = [];
+    console.log("Handling API response:", data);
     
-    // Check different response formats
-    if (Array.isArray(data)) {
-      // Direct array response
-      ordersArray = data;
-      flattened = flattenOrderProducts(data);
-    } else if (data?.content && Array.isArray(data.content)) {
-      // Paginated response structure
+    let ordersArray = [];
+    let groupedOrders = [];
+    
+    // Check if this is a Spring Data paginated response
+    if (data.content && Array.isArray(data.content)) {
+      console.log("Detected Spring Data paginated response");
       ordersArray = data.content;
-      flattened = flattenOrderProducts(data.content);
+      groupedOrders = groupOrdersByOrderNo(data.content);
+      
+      // Set the grouped orders for display
+      setDisplayedOrders(groupedOrders);
+      
+      // Extract pagination info from Spring Data response
+      const totalItems = data.totalElements || 0;
+      const totalPages = data.totalPages || 0;
+      
+      console.log(`Pagination info: totalElements=${totalItems}, totalPages=${totalPages}`);
+      console.log(`Displaying ${groupedOrders.length} grouped orders`);
+      
+      setPagination(prev => ({
+        ...prev,
+        totalPages: totalPages,
+        totalItems: totalItems
+      }));
+      
+    } else if (Array.isArray(data)) {
+      // Direct array response (no pagination from backend)
+      console.log("Detected direct array response (no pagination)");
+      ordersArray = data;
+      groupedOrders = groupOrdersByOrderNo(data);
+      
+      // Client-side pagination for this format
+      const startIndex = pagination.currentPage * pagination.itemsPerPage;
+      const endIndex = startIndex + pagination.itemsPerPage;
+      const currentPageData = groupedOrders.slice(startIndex, endIndex);
+      
+      setDisplayedOrders(currentPageData);
+      
+      const totalItems = groupedOrders.length;
+      const totalPages = Math.ceil(totalItems / pagination.itemsPerPage);
+      
+      setPagination(prev => ({
+        ...prev,
+        totalPages: totalPages,
+        totalItems: totalItems
+      }));
+      
+    } else if (data.data && Array.isArray(data.data)) {
+      // Another common API response format
+      console.log("Detected data.data array response");
+      ordersArray = data.data;
+      groupedOrders = groupOrdersByOrderNo(data.data);
+      
+      const totalItems = data.total || groupedOrders.length;
+      const totalPages = data.totalPages || Math.ceil(totalItems / pagination.itemsPerPage);
+      
+      // Client-side pagination for this format
+      const startIndex = pagination.currentPage * pagination.itemsPerPage;
+      const endIndex = startIndex + pagination.itemsPerPage;
+      const currentPageData = groupedOrders.slice(startIndex, endIndex);
+      
+      setDisplayedOrders(currentPageData);
+      setPagination(prev => ({
+        ...prev,
+        totalPages: totalPages,
+        totalItems: totalItems
+      }));
+      
     } else {
       console.warn("Unexpected data format:", data);
-      ordersArray = [];
-      flattened = [];
+      setDisplayedOrders([]);
+      setPagination(prev => ({
+        ...prev,
+        totalPages: 0,
+        totalItems: 0
+      }));
+      toast.error("Unexpected data format received from server");
     }
-    
-    setOrders(ordersArray);
-    setAllFlattenedProducts(flattened);
-    
-    // Calculate pagination based on flattened products
-    const totalItems = flattened.length;
-    const totalPages = Math.ceil(totalItems / pagination.itemsPerPage);
-    
-    setPagination(prev => ({
-      ...prev,
-      currentPage: 1, // Always start at page 1
-      totalPages: totalPages,
-      totalItems: totalItems
-    }));
-    
-    console.log(`Total orders: ${ordersArray.length}`);
-    console.log(`Total flattened products: ${flattened.length}`);
-    console.log(`Total pages needed: ${totalPages}`);
   };
 
-  // Page change handler
+  // Page change handler - converts from 1-based (UI) to 0-based (backend)
   const handlePageChange = (page) => {
-    console.log(`Changing page from ${pagination.currentPage} to ${page}`);
-    setPagination(prev => ({ ...prev, currentPage: page }));
+    console.log(`Changing page from ${pagination.currentPage + 1} to ${page}`);
+    // Convert from 1-based (Pagination component) to 0-based (backend)
+    setPagination(prev => ({ ...prev, currentPage: page - 1 }));
   };
 
-  // Calculate starting index for serial numbers
+  // Calculate starting index for serial numbers (1-based for display)
   const getStartingSerialNumber = () => {
-    return (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
+    return (pagination.currentPage * pagination.itemsPerPage) + 1;
+  };
+
+  // Calculate ending index for display
+  const getEndingSerialNumber = () => {
+    const start = getStartingSerialNumber();
+    return Math.min(start + displayedOrders.length - 1, pagination.totalItems);
   };
 
   // Function to get images from the product
@@ -278,7 +348,7 @@ const KaniOrders = () => {
     return { referenceImage, actualImage };
   };
 
-  // Function to open image modal
+  // Function to open image modal for a specific product
   const openImageModal = (images) => {
     console.log("Opening image modal with:", images);
     setSelectedImages(images || []);
@@ -315,6 +385,139 @@ const KaniOrders = () => {
     return `data:image/svg+xml;base64,${btoa(svg)}`;
   };
 
+  // Render product details for each order product in the same row
+  const renderOrderProducts = (order, orderIndex) => {
+    if (!order.products || order.products.length === 0) {
+      return (
+        <tr key={`${order.orderNo}-empty`} className="bg-white dark:bg-boxdark">
+          <td className="px-4 py-3 border-b text-center">{getStartingSerialNumber() + orderIndex}</td>
+          <td className="px-4 py-3 border-b text-center font-medium">{order.orderNo}</td>
+          <td colSpan="7" className="px-4 py-3 border-b text-center text-gray-500">
+            No products found for this order
+          </td>
+        </tr>
+      );
+    }
+
+    return order.products.map((orderProduct, productIndex) => {
+      const product = orderProduct.products;
+      
+      if (!product) {
+        console.warn("No product data for orderProduct:", orderProduct);
+        return null;
+      }
+      
+      // Get images from the product
+      const { referenceImage, actualImage } = getProductImages(product);
+      const refImageUrl = getImageUrl(referenceImage);
+      const actImageUrl = getImageUrl(actualImage);
+      
+      // Get all images for the product
+      const productImages = product?.images || [];
+
+      // Determine border classes - only show bottom border for the last product in the order
+      const isLastProduct = productIndex === order.products.length - 1;
+      const borderClass = isLastProduct ? "border-b" : "border-b-0";
+      
+      return (
+        <tr key={`${order.orderNo}-${orderProduct.id || productIndex}`} 
+            className={`bg-white dark:bg-boxdark hover:bg-gray-50 dark:hover:bg-gray-800 ${
+              productIndex > 0 ? "border-t-0" : ""
+            }`}>
+          {/* Only show order number for the first product in the order */}
+          {productIndex === 0 ? (
+            <>
+              <td rowSpan={order.products.length} className="px-4 py-3 border-b text-center align-middle">
+                {getStartingSerialNumber() + orderIndex}
+              </td>
+              <td rowSpan={order.products.length} className="px-4 py-3 border-b text-center font-medium align-middle">
+                {order.orderNo}
+              </td>
+            </>
+          ) : null}
+          
+          <td className={`px-4 py-3 ${borderClass} text-center font-medium`}>
+            {product?.productId || "-"}
+          </td>
+          <td className={`px-4 py-3 ${borderClass}`}>
+            {product?.productGroup?.productGroupName || "-"}
+          </td>
+          <td className={`px-4 py-3 ${borderClass}`}>
+            {product?.productCategory?.productCategoryName || "-"}
+          </td>
+       
+          <td className={`px-4 py-3 ${borderClass}`}>
+            <div className="flex justify-center">
+              {refImageUrl ? (
+                <div className="relative group">
+                  <img
+                    src={refImageUrl}
+                    alt="Reference"
+                    className="h-12 w-12 rounded-full object-cover border shadow-sm transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                    crossOrigin="use-credentials"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = getPlaceholder("Ref");
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="h-12 w-12 rounded-full border border-dashed border-gray-300 bg-gray-100 flex items-center justify-center">
+                  <span className="text-gray-400 text-xs">No Ref</span>
+                </div>
+              )}
+            </div>
+          </td>
+
+          <td className={`px-4 py-3 ${borderClass}`}>
+            <div className="flex justify-center">
+              {actImageUrl ? (
+                <div className="relative group">
+                  <img
+                    src={actImageUrl}
+                    alt="Actual"
+                    className="h-12 w-12 rounded-full object-cover border shadow-sm transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                    crossOrigin="use-credentials"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = getPlaceholder("Act");
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="h-12 w-12 rounded-full border border-dashed border-gray-300 bg-gray-100 flex items-center justify-center">
+                  <span className="text-gray-400 text-xs">No Act</span>
+                </div>
+              )}
+            </div>
+          </td>
+          
+          <td className={`px-4 py-3 ${borderClass}`}>
+            <div className="flex justify-center">
+              <span 
+                onClick={() => openImageModal(productImages)}
+                className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer hover:bg-green-200 dark:hover:bg-gray-600 transition-colors"
+              >
+                VIEW 
+              </span>
+            </div>
+          </td>
+          
+          <td className={`px-5 py-5 ${borderClass} border-gray-200 text-sm`}>
+            <p className="flex text-gray-900 whitespace-no-wrap">
+              <FiEdit
+                size={17}
+                className="text-teal-500 hover:text-teal-700 mx-2 cursor-pointer"
+                onClick={(e) => handleUpdate(e, orderProduct, order.orderNo)}
+                title="Edit Product"
+              />
+            </p>
+          </td>
+        </tr>
+      );
+    }).filter(Boolean); // Filter out any null entries
+  };
+
   const renderTableRows = () => {
     if (loading) {
       return (
@@ -339,117 +542,23 @@ const KaniOrders = () => {
       );
     }
 
-    if (displayedProducts.length === 0 && !loading) {
+    if (displayedOrders.length === 0 && !loading) {
       return (
         <tr>
           <td colSpan="9" className="text-center py-6">
-            No order products found
+            No orders found
           </td>
         </tr>
       );
     }
 
-    const startingSerialNumber = getStartingSerialNumber();
-
-    return displayedProducts.map((orderProduct, index) => {
-      const product = orderProduct.products;
-      
-      // Get images from the product
-      const { referenceImage, actualImage } = getProductImages(product);
-      const refImageUrl = getImageUrl(referenceImage);
-      const actImageUrl = getImageUrl(actualImage);
-      
-      // Get all images for the product
-      const productImages = product?.images || [];
-
-      return (
-        <tr key={`${orderProduct.orderInfo?.orderNo}-${orderProduct.id || index}`} 
-            className="bg-white dark:bg-boxdark hover:bg-gray-50 dark:hover:bg-gray-800">
-          <td className="px-4 py-3 border-b text-center">{startingSerialNumber + index}</td>
-          <td className="px-4 py-3 border-b text-center font-medium">
-            {orderProduct.orderInfo?.orderNo || "-"}
-          </td>
-
-          <td className="px-4 py-3 border-b text-center font-medium">
-            {product?.productId || "-"}
-          </td>
-          <td className="px-4 py-3 border-b">
-            {product?.productGroup?.productGroupName || "-"}
-          </td>
-          <td className="px-4 py-3 border-b">
-            {product?.productCategory?.productCategoryName || "-"}
-          </td>
-       
-          <td className="px-4 py-3 border-b">
-            <div className="flex justify-center">
-              {refImageUrl ? (
-                <div className="relative group">
-                  <img
-                    src={refImageUrl}
-                    alt="Reference"
-                    className="h-12 w-12 rounded-full object-cover border shadow-sm transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
-                    crossOrigin="use-credentials"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = getPlaceholder("Ref");
-                    }}
-                  />
-                </div>
-              ) : (
-                <div className="h-12 w-12 rounded-full border border-dashed border-gray-300 bg-gray-100 flex items-center justify-center">
-                  <span className="text-gray-400 text-xs">No Ref</span>
-                </div>
-              )}
-            </div>
-          </td>
-
-          <td className="px-4 py-3 border-b">
-            <div className="flex justify-center">
-              {actImageUrl ? (
-                <div className="relative group">
-                  <img
-                    src={actImageUrl}
-                    alt="Actual"
-                    className="h-12 w-12 rounded-full object-cover border shadow-sm transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
-                    crossOrigin="use-credentials"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = getPlaceholder("Act");
-                    }}
-                  />
-                </div>
-              ) : (
-                <div className="h-12 w-12 rounded-full border border-dashed border-gray-300 bg-gray-100 flex items-center justify-center">
-                  <span className="text-gray-400 text-xs">No Act</span>
-                </div>
-              )}
-            </div>
-          </td>
-          
-          <td className="px-4 py-3 border-b">
-            <div className="flex justify-center">
-              <span 
-                onClick={() => openImageModal(productImages)}
-                className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer hover:bg-green-200 dark:hover:bg-gray-600 transition-colors"
-              >
-                VIEW 
-              </span>
-            </div>
-          </td>
-          
-          <td className="px-5 py-5 border-b border-gray-200 text-sm">
-            <p className="flex text-gray-900 whitespace-no-wrap">
-              <FiEdit
-                size={17}
-                className="text-teal-500 hover:text-teal-700 mx-2 cursor-pointer"
-                onClick={(e) => handleUpdate(e, orderProduct)}
-                title="Edit Product"
-              />
-            </p>
-          </td>
-        </tr>
-      );
+    const rows = [];
+    displayedOrders.forEach((order, orderIndex) => {
+      const productRows = renderOrderProducts(order, orderIndex);
+      rows.push(...productRows);
     });
+
+    return rows;
   };
 
   // Render Images Modal
@@ -550,6 +659,13 @@ const KaniOrders = () => {
     );
   };
 
+  // Calculate total products across all displayed orders
+  const calculateTotalProducts = () => {
+    return displayedOrders.reduce((total, order) => {
+      return total + (order.products?.length || 0);
+    }, 0);
+  };
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Kani Orders" />
@@ -566,26 +682,28 @@ const KaniOrders = () => {
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               {pagination.totalItems > 0 ? (
                 <>
-                  Showing {((pagination.currentPage - 1) * pagination.itemsPerPage) + 1}-
-                  {Math.min(pagination.currentPage * pagination.itemsPerPage, pagination.totalItems)} 
-                  of {pagination.totalItems} order products
+                  Showing {getStartingSerialNumber()}-
+                  {getEndingSerialNumber()} 
+                  of {pagination.totalItems} orders
+                  {/* <span className="ml-2 text-blue-600 dark:text-blue-400">
+                    ({calculateTotalProducts()} products)
+                  </span> */}
+                  {loading && " (loading...)"}
                 </>
               ) : (
-                "No order products found"
+                "No orders found"
               )}
             </p>
           </div>
-        {/* RIGHT SIDE */}
-            <div>
-              <button
-                type="button"
-                onClick={() => navigate("/filter-suppliers")}
-                className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90 transition"
-              >
-                Filter Suppliers
-              </button>
-            </div>
-
+          <div>
+            <button
+              type="button"
+              onClick={() => navigate("/filter-suppliers")}
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90 transition"
+            >
+              Filter Suppliers
+            </button>
+          </div>
         </div>
 
         <div className="my-6 px-6 sm:px-10 py-4 overflow-x-auto">
@@ -608,11 +726,11 @@ const KaniOrders = () => {
             </table>
             
             {/* Add Pagination Component */}
-            {pagination.totalPages > 0 && (
+            {pagination.totalPages > 1 && (
               <div className="mt-4">
                 <Pagination 
                   totalPages={pagination.totalPages}
-                  currentPage={pagination.currentPage}
+                  currentPage={pagination.currentPage + 1} // Convert to 1-based for UI display
                   handlePageChange={handlePageChange}
                 />
               </div>
