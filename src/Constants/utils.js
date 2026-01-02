@@ -389,6 +389,8 @@ export const DELETE_HSNCODE_URL = `${BASE_URL}/hsncode`;
 
 export const GET_Kani_URL = `${BASE_URL}/order/kani`;
 
+export const GET_SUPPLIER_ORDERS_URL = `${BASE_URL}/order`;
+
 //dahsboard
 
 //acountsss

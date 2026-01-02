@@ -36,6 +36,7 @@ import ViewVoucher from './components/Accounts/Vouchers/ViewVoucher.jsx';
 
 import KaniOrders from './components/Kani/KaniOrders.jsx';
 import FilterSupplier from './components/Kani/FilterSupplier.jsx';
+import SupplierOrder from './components/Kani/SupplierOrder.jsx';
 
 import CreateLedger from './components/Ledger/CreateLedger.jsx';
 import UpdateCustomerLedger from './components/Ledger/UpdateCustomerLedger.jsx';
@@ -935,6 +936,7 @@ function App() {
             path="/supplier-product/view/:id"
             element={<ViewSupplierProduct />}
           />
+           <Route path="/supplier-order/:id" element={<SupplierOrder />} />
 
 
 
