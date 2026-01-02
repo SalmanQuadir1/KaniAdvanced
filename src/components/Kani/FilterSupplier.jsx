@@ -6,7 +6,6 @@ import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 import Pagination from "../../components/Pagination/Pagination";
 import { GET_Kani_URL } from "../../Constants/utils";
 import { useNavigate } from "react-router-dom";
-import { FiEdit } from "react-icons/fi";
 
 const FilterSupplier = () => {
   const [allFlattenedProducts, setAllFlattenedProducts] = useState([]);
@@ -19,6 +18,15 @@ const FilterSupplier = () => {
 
   const handleViewSupplierProduct = (productId) => {
     navigate(`/supplier-product/view/${productId}`);
+  };
+
+  // Add new handler for supplier navigation
+  const handleViewSupplier = (supplierId) => {
+    if (supplierId) {
+      navigate(`/supplier-order/${supplierId}`);
+    } else {
+      toast.error("Supplier ID not found");
+    }
   };
 
   // Pagination state
@@ -78,6 +86,8 @@ const FilterSupplier = () => {
             orderDate: order.orderDate,
             customer: order.customer,
           },
+          // Get supplier from productSuppliers array
+          supplier: orderProduct?.productSuppliers?.[0]?.supplier || orderProduct?.products?.supplierCode
         });
       });
     });
@@ -243,11 +253,36 @@ const FilterSupplier = () => {
     return (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
   };
 
+  // Helper function to format date
+  const formatDate = (dateString) => {
+    if (!dateString) return null;
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-GB'); // DD/MM/YYYY format
+    } catch (error) {
+      return dateString; // Return as-is if parsing fails
+    }
+  };
+
+  // Helper function to get status color
+  const getStatusColor = (status) => {
+    if (!status) return 'bg-gray-100 text-gray-800';
+    
+    const statusLower = status.toLowerCase();
+    if (statusLower.includes('closed')) return 'bg-green-100 text-green-800';
+    if (statusLower.includes('pending')) return 'bg-yellow-100 text-yellow-800';
+    if (statusLower.includes('progress') || statusLower.includes('in progress')) return 'bg-blue-100 text-blue-800';
+    if (statusLower.includes('partial')) return 'bg-orange-100 text-orange-800';
+    if (statusLower.includes('cancel')) return 'bg-red-100 text-red-800';
+    if (statusLower.includes('created')) return 'bg-purple-100 text-purple-800';
+    return 'bg-gray-100 text-gray-800';
+  };
+
   const renderTableRows = () => {
     if (loading) {
       return (
         <tr>
-          <td colSpan="5" className="text-center py-6">
+          <td colSpan="9" className="text-center py-6">
             <div className="flex items-center justify-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
               <span className="ml-2">Loading suppliers...</span>
@@ -260,7 +295,7 @@ const FilterSupplier = () => {
     if (error) {
       return (
         <tr>
-          <td colSpan="5" className="text-center py-6 text-red-500">
+          <td colSpan="9" className="text-center py-6 text-red-500">
             {error}
           </td>
         </tr>
@@ -270,7 +305,7 @@ const FilterSupplier = () => {
     if (displayedProducts.length === 0 && !loading) {
       return (
         <tr>
-          <td colSpan="5" className="text-center py-6">
+          <td colSpan="9" className="text-center py-6">
             No supplier data found
           </td>
         </tr>
@@ -280,7 +315,23 @@ const FilterSupplier = () => {
     const startingSerialNumber = getStartingSerialNumber();
 
     return displayedProducts.map((orderProduct, index) => {
-      const supplier = orderProduct?.productSuppliers?.[0];
+      // Try to get supplier details from multiple possible locations
+      const supplierFromSuppliers = orderProduct?.productSuppliers?.[0]?.supplier;
+      const supplierFromProducts = orderProduct?.products?.supplierCode;
+      const supplier = supplierFromSuppliers || supplierFromProducts || {};
+      
+      // Get supplier ID from the supplier object
+      const supplierId = supplier?.id;
+      
+      // Get supplier order quantity
+      const supplierOrderQty = orderProduct?.productSuppliers?.[0]?.supplierOrderQty || 0;
+      
+      // Get the fields directly from orderProduct (from your console data)
+      const productStatus = orderProduct?.productStatus; // Direct from orderProduct
+      const expectedDate = orderProduct?.expectedDate; // Direct from orderProduct
+      const challanNo = orderProduct?.challanNo; // Direct from orderProduct
+      const receivedDate = orderProduct?.receivedDate; // Direct from orderProduct
+      const productId = orderProduct?.products?.productId; // Product ID from products object
 
       return (
         <tr
@@ -292,17 +343,80 @@ const FilterSupplier = () => {
             {startingSerialNumber + index}
           </td>
 
-          {/* SUPPLIER NAME */}
+          {/* PRODUCT ID */}
           <td className="px-4 py-3 border-b text-center">
-            {supplier?.supplier?.name || (
+            {productId ? (
+              <span className="text-gray-800 dark:text-gray-300 font-medium">
+                {productId}
+              </span>
+            ) : (
               <span className="text-gray-400">—</span>
             )}
           </td>
 
+          {/* SUPPLIER NAME - Clickable but normal appearance */}
+<td className="px-4 py-3 border-b text-center">
+  {supplier?.name || supplier?.supplierName ? (
+    <span
+      onClick={() => handleViewSupplier(supplierId)}
+      className="text-gray-800 dark:text-gray-300 font-medium cursor-pointer hover:text-gray-600 dark:hover:text-gray-400 transition-colors duration-200"
+      title="Click to view supplier details"
+    >
+      {supplier?.name || supplier?.supplierName}
+    </span>
+  ) : (
+    <span className="text-gray-400">—</span>
+  )}
+</td>
+
           {/* SUPPLIER QUANTITY */}
           <td className="px-4 py-3 border-b text-center">
-            {supplier?.supplierOrderQty ?? (
+            {supplierOrderQty > 0 ? supplierOrderQty : (
               <span className="text-gray-400">0</span>
+            )}
+          </td>
+
+          {/* PRODUCT STATUS */}
+          <td className="px-4 py-3 border-b text-center">
+            {productStatus ? (
+              <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(productStatus)}`}>
+                {productStatus}
+              </span>
+            ) : (
+              <span className="text-gray-400">—</span>
+            )}
+          </td>
+
+          {/* EXPECTED DATE */}
+          <td className="px-4 py-3 border-b text-center">
+            {expectedDate ? (
+              <span className="text-gray-800 dark:text-gray-300">
+                {formatDate(expectedDate)}
+              </span>
+            ) : (
+              <span className="text-gray-400">—</span>
+            )}
+          </td>
+
+          {/* RECEIVED DATE */}
+          <td className="px-4 py-3 border-b text-center">
+            {receivedDate ? (
+              <span className="text-gray-800 dark:text-gray-300">
+                {formatDate(receivedDate)}
+              </span>
+            ) : (
+              <span className="text-gray-400 italic">Not received</span>
+            )}
+          </td>
+
+          {/* CHALLAN NO */}
+          <td className="px-4 py-3 border-b text-center">
+            {challanNo ? (
+              <span className="text-gray-800 dark:text-gray-300 font-medium">
+                {challanNo}
+              </span>
+            ) : (
+              <span className="text-gray-400">—</span>
             )}
           </td>
 
@@ -314,29 +428,16 @@ const FilterSupplier = () => {
           </td>
 
           {/* ACTIONS */}
-          {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
-            <p className="flex text-gray-900 whitespace-no-wrap justify-center">
-              <FiEdit
-                size={17}
-                className="text-teal-500 hover:text-teal-700 mx-2 cursor-pointer"
-                onClick={() => handleViewSupplierProduct(orderProduct.id)}
-                title="View Supplier Product"
-              />
-            </p>
-          </td> */}
-          <td className="px-5 py-5 border-b border-gray-200 text-sm">
-  <div className="flex justify-center">
-    <span
-      onClick={() => handleViewSupplierProduct(orderProduct.id)}
-      className="bg-green-100 text-green-800 text-[10px] font-medium px-2.5 py-1 rounded
-                 dark:bg-gray-700 dark:text-green-400 border border-green-400
-                 cursor-pointer w-[120px] text-center hover:bg-green-200"
-    >
-      VIEW PRODUCT
-    </span>
-  </div>
-</td>
-
+          <td className="px-4 py-3 border-b text-center">
+            <span
+              onClick={() => handleViewSupplierProduct(orderProduct.id)}
+              className="inline-block bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded
+                         dark:bg-gray-700 dark:text-green-400 border border-green-400
+                         cursor-pointer hover:bg-green-200 transition-colors duration-200"
+            >
+              VIEW PRODUCT
+            </span>
+          </td>
         </tr>
       );
     });
@@ -375,8 +476,13 @@ const FilterSupplier = () => {
               <thead>
                 <tr className="bg-slate-300 dark:bg-slate-700 dark:text-white">
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">SNO</th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Product ID</th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Supplier Name</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Supplier Quantity</th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Supplier Qty</th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Status</th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Expected Date</th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Received Date</th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Challan No</th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Product Group</th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Actions</th>
                 </tr>
