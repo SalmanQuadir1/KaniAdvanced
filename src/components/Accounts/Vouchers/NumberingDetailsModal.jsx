@@ -60,7 +60,7 @@ const NumberingDetailsModal = ({ show, onHide, onSubmit }) => {
                 zIndex: 30000,
                 backgroundColor: 'rgba(0,0,0,0.5)'
             }}
-            className='h-[900px] w-[1800px] ml-[100px]  pt-16'
+            className='h-[900px] w-[1800px] ml-[250px]  pt-16'
         >
             <Modal.Header className="bg-slate-50 relative w-[1100px]">
                 <Modal.Title className="font-semibold text-xl font-satoshi text-center mt-2 w-full">
@@ -246,6 +246,7 @@ const NumberingDetailsModal = ({ show, onHide, onSubmit }) => {
             </Modal.Body>
 
             <Modal.Footer className=' flex bg-slate-200 w-[1100px] gap-5 p-4'>
+                
                 <MdOutlineCancel color='red' size={30} onClick={onHide}/>
              
                 <TiTickOutline color='green' size={30} onClick={handleSubmit}/>

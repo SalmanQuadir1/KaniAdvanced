@@ -34,7 +34,7 @@ const CreateVoucher = () => {
 
     const [selectedOrder, setselectedOrder] = useState(null)
 
-
+    const [isPaymentInParts, setIsPaymentInParts] = useState(false);
 
     const [availableProducts, setAvailableProducts] = useState([]);
 
@@ -45,6 +45,9 @@ const CreateVoucher = () => {
     console.log(Vouchers, "jharkhand");
 
     console.log(Ledger, "lolot");
+
+    console.log(selectedLedger, "3333333333333333333333333333333333333333333333333");
+
 
     // Filter ledgers based on voucher type
     const getFilteredLedgers = () => {
@@ -127,19 +130,28 @@ const CreateVoucher = () => {
         }
 
         const igstRate = hsnCode?.igst || 0;
-        // const cgstRate = hsnCode?.cgstRate || 0;
-        // const sgstRate = hsnCode?.sgstRate || 0;
+        const cgstRate = hsnCode?.cgst || 0;
+        const sgstRate = hsnCode?.sgst || 0;
 
-        // Check if same state (both contain "Srinagar")
-        const isSameState = gstRegistration?.toLowerCase().includes('srinagar') &&
-            customerAddress?.toLowerCase().includes('srinagar');
+        // Normalize addresses for case-insensitive comparison
+        const registration = gstRegistration?.toLowerCase() || '';
+        const address = customerAddress?.toLowerCase() || '';
+
+        // Check for Srinagar state (Jammu & Kashmir)
+        const isSrinagarRegistration = registration.includes('srinagar');
+        const isSrinagarAddress = address.includes('srinagar');
+
+        // Check for Delhi state
+        const isDelhiRegistration = registration.includes('delhi');
+        const isDelhiAddress = address.includes('delhi');
+
+        // Determine if same state transaction
+        const isSameState =
+            (isSrinagarRegistration && isSrinagarAddress) ||
+            (isDelhiRegistration && isDelhiAddress);
 
         if (isSameState) {
-            // Same state - apply CGST + SGST (each half of IGST rate)
-            // const cgstRate = igstRate / 2;
-            // const sgstRate = igstRate / 2;
-            const cgstRate = hsnCode?.cgst || 0;
-            const sgstRate = hsnCode?.sgst || 0;
+            // Same state - apply CGST + SGST
             const cgstAmount = mrp * (cgstRate / 100);
             const sgstAmount = mrp * (sgstRate / 100);
             const totalGstAmount = cgstAmount + sgstAmount;
@@ -154,10 +166,11 @@ const CreateVoucher = () => {
                 totalGstAmount,
                 inclusivePrice,
                 isSameState: true,
+                state: isSrinagarRegistration ? 'Srinagar' : 'Delhi',
                 discountApplied: false
             };
         } else {
-            // Different state - apply IGST
+            // Different state or mixed - apply IGST
             const gstAmount = mrp * (igstRate / 100);
             const inclusivePrice = mrp + gstAmount;
 
@@ -168,6 +181,7 @@ const CreateVoucher = () => {
                 totalGstAmount: gstAmount,
                 inclusivePrice,
                 isSameState: false,
+                state: 'Inter-State',
                 discountApplied: false
             };
         }
@@ -278,8 +292,8 @@ const CreateVoucher = () => {
         setavailableOrders([]);
 
         if (Vouchers?.typeOfVoucher === "Purchase" && option) {
- 
-            
+
+
             setloadingOrders(true);
             try {
                 const supplierId = option.obj.supplierId;
@@ -319,8 +333,8 @@ const CreateVoucher = () => {
                 setLoadingProducts(false);
             }
         } else if (Vouchers?.typeOfVoucher === "Sales" && option) {
-            console.log(option,"0000000000000000000000000000000");
-            
+            console.log(option, "0000000000000000000000000000000");
+
             // For Sales - fetch customer products
             setloadingOrders(true);
             try {
@@ -475,8 +489,8 @@ const CreateVoucher = () => {
 
             if (response.ok) {
                 // Simple and direct approach
-                setvoucherNos(data);
-                return data;
+                setvoucherNos(data.nextReceipt);
+                return data.nextReceipt;
 
 
             } else {
@@ -499,17 +513,20 @@ const CreateVoucher = () => {
     }, [Vouchers.id]);
 
 
+    console.log(voucherNos, "3333333333333333333333333333333");
+
+
     //   console.log(voucherNos,"jugnu");
-    let lastvoucher = 0;
-    if (voucherNos?.receipts?.length > 0) {
-        console.log(voucherNos, "jugnu");
+    // let lastvoucher = 0;
+    // if (voucherNos?.receipts?.length > 0) {
+    //     console.log(voucherNos, "jugnu");
 
-        lastvoucher = Number(voucherNos.receipts[voucherNos.receipts.length - 1]) || 0;
-        console.log(lastvoucher, "lastvoucher");
+    //     lastvoucher = Number(voucherNos.receipts[voucherNos.receipts.length - 1]) || 0;
+    //     console.log(lastvoucher, "lastvoucher");
 
-    }
+    // }
 
-    const nextVoucher = lastvoucher + 1;
+    // const nextVoucher = lastvoucher + 1;
 
     // Get placeholder text for party account based on voucher type
     const getPartyAccountPlaceholder = () => {
@@ -537,13 +554,79 @@ const CreateVoucher = () => {
 
     console.log(Vouchers?.typeOfVoucher, "-------------------------------");
 
+    const [paymentMethods, setPaymentMethods] = useState([]);
+
+    // Helper functions for multiple payment methods
+    const addPaymentMethod = (defaultMode = '') => {
+        const newMethod = {
+            mode: defaultMode,
+            amount: '',
+            bankId: '',
+            chequeNumber: '',
+            transactionId: '',
+            cardNumber: ''
+        };
+        setPaymentMethods([...paymentMethods, newMethod]);
+    };
+
+    const removePaymentMethod = (index) => {
+        const newMethods = [...paymentMethods];
+        newMethods.splice(index, 1);
+        setPaymentMethods(newMethods);
+        // Update Formik fields after removal
+        updateFormikFieldsFromPaymentMethods();
+    };
+
+    const updatePaymentMethod = (index, field, value) => {
+        const newMethods = [...paymentMethods];
+        newMethods[index] = { ...newMethods[index], [field]: value };
+        setPaymentMethods(newMethods);
+    };
+
+    const calculateTotalAllocatedPayments = () => {
+        return paymentMethods.reduce((total, payment) => {
+            return total + (parseFloat(payment.amount) || 0);
+        }, 0);
+    };
+
+    const isPaymentAllocationValid = (amountReceived) => {
+        const totalAmount = parseFloat(amountReceived) || 0;
+        const totalAllocated = calculateTotalAllocatedPayments();
+        return Math.abs(totalAllocated - totalAmount) < 0.01;
+    };
+
+    const getBalanceColor = (amountReceived) => {
+        const balance = (parseFloat(amountReceived) || 0) - calculateTotalAllocatedPayments();
+        if (Math.abs(balance) < 0.01) return 'text-green-600 dark:text-green-400 font-semibold';
+        if (balance > 0) return 'text-yellow-600 dark:text-yellow-400 font-semibold';
+        return 'text-red-600 dark:text-red-400 font-semibold';
+    };
+
+    // Function to sync paymentMethods with Formik fields
+
+
+    // Add useEffect to sync when paymentMethods change
+
+      const salesChannel = [
+    { value: 'WS-Domestic', label: 'WS-Domestic' },
+    { value: 'Websale', label: 'Websale' },
+    { value: 'Social Media', label: 'Social Media' },
+    { value: 'Shop-in-Shop', label: 'Shop-in-Shop' },
+    { value: 'WS-International', label: 'WS-International' },
+    { value: 'Event-International', label: 'Event-International' },
+    { value: 'Event-Domestic', label: 'Event-Domestic' },
+    { value: 'Retail-Delhi', label: 'Retail-Delhi' },
+    { value: 'Retail-SXR', label: 'Retail-SXR' },
+  ];
+
+
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Configurator/Create Voucher" />
             <div>
                 <Formik
                     initialValues={{
-                        recieptNumber: `${nextVoucher}`,
+                        recieptNumber: `${voucherNos}`,
                         supplierInvoiceNumber: '',
                         date: '',
                         voucherId: Number(id),
@@ -558,6 +641,25 @@ const CreateVoucher = () => {
                         chequeNumber: "",
                         cardNumber: "",
                         transactionId: "",
+                        salesChannel:"",
+
+
+                        cashAmount: null,
+                        cashLedgerId: null,
+
+                        cardAmount: null,
+                        cardLedgerId: null,
+
+                        bankAmount: null,
+                        bankLedgerId: null,
+
+                        chequeAmount: null,
+                        chequeLedgerId: null,
+
+
+
+
+
                         typeOfVoucher: Vouchers?.typeOfVoucher || "",
                         isExport: false,
                         totalAmount: 0,
@@ -570,6 +672,7 @@ const CreateVoucher = () => {
                         amountReceived: 0,
                         amount: 0,
                         paymentReceivedType: "",
+
 
                         totalGst: 0,
                         paymentDetails: [{
@@ -593,6 +696,112 @@ const CreateVoucher = () => {
                 >
                     {({ isSubmitting, setFieldValue, values }) => {
                         const totals = calculateTotals(values);
+                        const updateFormikFieldsFromPaymentMethods = () => {
+                            // Clear all individual fields first
+                            setFieldValue('chequeNumber', '');
+                            setFieldValue('cardNumber', '');
+                            setFieldValue('transactionId', '');
+                            setFieldValue('cashAmount', null);
+                            setFieldValue('cardAmount', null);
+                            setFieldValue('bankAmount', null);
+                            setFieldValue('chequeAmount', null);
+                            setFieldValue('cashLedgerId', null);
+                            setFieldValue('cardLedgerId', null);
+                            setFieldValue('bankLedgerId', null);
+                            setFieldValue('chequeLedgerId', null);
+
+                            // Aggregate values by payment method type
+                            let cashTotal = 0;
+                            let cardTotal = 0;
+                            let bankTotal = 0;
+                            let chequeTotal = 0;
+
+                            // For multiple payments, we need to handle multiple entries of the same type
+                            const chequeEntries = [];
+                            const cardEntries = [];
+                            const bankEntries = [];
+
+                            paymentMethods.forEach(payment => {
+                                const amount = parseFloat(payment.amount) || 0;
+
+                                switch (payment.mode) {
+                                    case 'Cash':
+                                        cashTotal += amount;
+                                        setFieldValue('cashLedgerId', CashLedgers[0]?.id || null);
+                                        break;
+                                    case 'Card':
+                                        cardTotal += amount;
+                                        if (payment.bankId) {
+                                            cardEntries.push({
+                                                ledgerId: payment.bankId,
+                                                cardNumber: payment.cardNumber || '',
+                                                amount: amount
+                                            });
+                                        }
+                                        break;
+                                    case 'Bank Transfer':
+                                        bankTotal += amount;
+                                        if (payment.bankId) {
+                                            bankEntries.push({
+                                                ledgerId: payment.bankId,
+                                                transactionId: payment.transactionId || '',
+                                                amount: amount
+                                            });
+                                        }
+                                        break;
+                                    case 'Cheque':
+                                        chequeTotal += amount;
+                                        if (payment.bankId) {
+                                            chequeEntries.push({
+                                                ledgerId: payment.bankId,
+                                                chequeNumber: payment.chequeNumber || '',
+                                                amount: amount
+                                            });
+                                        }
+                                        break;
+                                }
+                            });
+
+                            // Set totals for each payment type
+                            setFieldValue('cashAmount', cashTotal > 0 ? cashTotal : null);
+                            setFieldValue('cardAmount', cardTotal > 0 ? cardTotal : null);
+                            setFieldValue('bankAmount', bankTotal > 0 ? bankTotal : null);
+                            setFieldValue('chequeAmount', chequeTotal > 0 ? chequeTotal : null);
+
+                            // For multiple entries of same type, we need to decide how to handle
+                            // Option 1: Use the first entry (simple approach)
+                            if (chequeEntries.length > 0) {
+                                setFieldValue('chequeLedgerId', chequeEntries[0].ledgerId);
+                                setFieldValue('chequeNumber', chequeEntries[0].chequeNumber);
+                            }
+                            if (cardEntries.length > 0) {
+                                setFieldValue('cardLedgerId', cardEntries[0].ledgerId);
+                                setFieldValue('cardNumber', cardEntries[0].cardNumber);
+                            }
+                            if (bankEntries.length > 0) {
+                                setFieldValue('bankLedgerId', bankEntries[0].ledgerId);
+                                setFieldValue('transactionId', bankEntries[0].transactionId);
+                            }
+
+                            // Option 2: If you need to handle multiple entries of same type,
+                            // you might need to modify your backend to accept arrays
+                            // For now, we'll stick with the first entry approach
+                        };
+
+                        useEffect(() => {
+                            if (isPaymentInParts && paymentMethods.length > 0) {
+                                updateFormikFieldsFromPaymentMethods();
+                            }
+                        }, [paymentMethods, isPaymentInParts]);
+
+
+                        useEffect(() => {
+                            if (isPaymentInParts) {
+                                // Clear modeOfPayment field since we're using multiple methods
+                                setFieldValue('modeOfPayment', '');
+                                // The amountReceived should already be set by the user
+                            }
+                        }, [isPaymentInParts]);
 
                         useEffect(() => {
                             setFieldValue('totalAmount', totals.subtotal);
@@ -690,20 +899,44 @@ const CreateVoucher = () => {
                                                 }
 
 
+                                                {(Vouchers?.typeOfVoucher === "Purchase") && (
+
+                                                    <div className="flex-2 min-w-[250px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">Supplier Invoice Number</label>
+                                                        <Field
+                                                            type="text"
+                                                            name="supplierInvoiceNumber"
+                                                            placeholder="Enter No"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                        />
+                                                        <ErrorMessage name="supplierInvoiceNumber" component="div" className="text-red-500" />
+                                                    </div>
+                                                )}
+                                                {(Vouchers?.typeOfVoucher === "Sales") && (
+
+                                                    <div className="flex-2 min-w-[250px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">Sales Channel</label>
+                                                        <ReactSelect
+                                                            name="salesChannel"
+                                                            value={salesChannel.find(option => option.value === values.salesChannel)}
+                                                            onChange={(option) => setFieldValue('salesChannel', option.value)}
+                                                        
+                                                            options={salesChannel}
+                                                            styles={customStyles}
+                                                            className="bg-white dark:bg-form-input"
+                                                            classNamePrefix="react-select"
+                                                            placeholder="Select"
+                                                        />
+                                                        <ErrorMessage name="salesChannel" component="div" className="text-red-500" />
+                                                    </div>
+                                                )}
+
+
 
                                                 {(Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && (
                                                     <>
 
-                                                        <div className="flex-2 min-w-[250px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white">Supplier Invoice Number</label>
-                                                            <Field
-                                                                type="text"
-                                                                name="supplierInvoiceNumber"
-                                                                placeholder="Enter No"
-                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
-                                                            />
-                                                            <ErrorMessage name="supplierInvoiceNumber" component="div" className="text-red-500" />
-                                                        </div>
+
 
 
 
@@ -926,7 +1159,7 @@ const CreateVoucher = () => {
                                                                                                     const igstRate = hsnCode?.igst || 0;
 
                                                                                                     // Get customer shipping address for GST calculation
-                                                                                                    const customerAddress = selectedLedger?.obj?.customer?.shippingAddress || '';
+                                                                                                    const customerAddress = selectedLedger?.obj?.shippingAddress || '';
                                                                                                     const gstRegistration = values.gstRegistration || '';
                                                                                                     const currentDiscount = entry.discount || 0;
 
@@ -1022,7 +1255,7 @@ const CreateVoucher = () => {
                                                                                                         if (entry.productsId) {
                                                                                                             const mrp = entry.mrp || 0;
                                                                                                             const hsnCode = availableProducts.find(p => p.value === entry.productsId)?.hsnCode || {};
-                                                                                                            const customerAddress = selectedLedger?.obj?.customer?.shippingAddress || '';
+                                                                                                            const customerAddress = selectedLedger?.obj?.shippingAddress || '';
                                                                                                             const gstRegistration = values.gstRegistration || '';
 
                                                                                                             // Recalculate GST with new discount
@@ -1476,163 +1709,538 @@ const CreateVoucher = () => {
                                             {Vouchers?.typeOfVoucher === "Sales" && (
                                                 <div>
                                                     <label className="mb-2.5 block text-black dark:text-white">Mode Of Payment</label>
-                                                    <ReactSelect
-                                                        name="modeOfPayment"
-                                                        options={modeOfpayment}
-                                                        value={modeOfpayment.find(option => option.value === values.modeOfPayment)}
-                                                        onChange={(selectedOption) => {
-                                                            setFieldValue('modeOfPayment', selectedOption ? selectedOption.value : '');
-                                                        }}
-                                                        placeholder="Select Mode Of Payment"
-                                                        className="react-select-container mb-4"
-                                                        classNamePrefix="react-select"
-                                                    />
-                                                    {
-                                                        values.modeOfPayment === 'Cheque' && (
-                                                            <div className='flex flex-row'>
 
-                                                                <div>
-                                                                    <label className="mb-2.5 block text-black dark:text-white">Select Bank <span className='text-red-700'>*</span></label>
-                                                                    <ReactSelect
-                                                                        name='toLedger'
-                                                                        value={bankData.find(opt => opt.value === values.toLedger)}
-                                                                        onChange={(option) => {
-                                                                            setFieldValue('toLedger', option?.value || '');
+                                                    {/* Checkbox for payment in parts */}
+                                                    <div className="mb-4 flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                                                        <input
+                                                            type="checkbox"
+                                                            id="paymentInParts"
+                                                            checked={isPaymentInParts}
+                                                            onChange={(e) => {
+                                                                setIsPaymentInParts(e.target.checked);
+                                                                if (!e.target.checked) {
+                                                                    // Clear all payment methods when switching to single mode
+                                                                    setPaymentMethods([]);
+                                                                }
+                                                            }}
+                                                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                        />
+                                                        <label htmlFor="paymentInParts" className="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
+                                                            Payment in Multiple Parts
+                                                        </label>
+                                                        <span className="text-xs text-gray-500 dark:text-gray-400 ml-auto">
+                                                            (Split payment across multiple methods)
+                                                        </span>
+                                                    </div>
 
-                                                                        }}
-                                                                        options={bankData}
-                                                                        className="react-select-container bg-white dark:bg-form-Field w-full"
-                                                                        classNamePrefix="react-select"
-                                                                        placeholder={"Select Bank You Want To Transfer"}
-                                                                        menuPortalTarget={document.body}
-                                                                        styles={{
-                                                                            ...customStyles,
-                                                                            menuPortal: (base) => ({ ...base, zIndex: 100000 })
-                                                                        }}
-                                                                    />
-                                                                </div>
+                                                    {!isPaymentInParts ? (
+                                                        // OLD LOGIC - Single Payment Method
+                                                        <div>
+                                                            <ReactSelect
+                                                                name="modeOfPayment"
+                                                                options={modeOfpayment}
+                                                                value={modeOfpayment.find(option => option.value === values.modeOfPayment)}
+                                                                onChange={(selectedOption) => {
+                                                                    const mode = selectedOption?.value || '';
+                                                                    setFieldValue('modeOfPayment', mode);
 
-                                                                <div className="mb-4">
-                                                                    <label className="mb-2.5 block text-black dark:text-white">Cheque Number</label>
-                                                                    <Field
-                                                                        type="text"
-                                                                        name="chequeNumber"
-                                                                        placeholder="Enter Cheque Number"
-                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                    />
-                                                                </div>
+                                                                    // When changing mode in single payment, set the full amountReceived to that method
+                                                                    const amountReceived = parseFloat(values.amountReceived) || 0;
 
-                                                            </div>
+                                                                    // Clear all individual payment fields first
+                                                                    setFieldValue('chequeNumber', '');
+                                                                    setFieldValue('cardNumber', '');
+                                                                    setFieldValue('transactionId', '');
+                                                                    setFieldValue('cashAmount', null);
+                                                                    setFieldValue('cardAmount', null);
+                                                                    setFieldValue('bankAmount', null);
+                                                                    setFieldValue('chequeAmount', null);
+                                                                    setFieldValue('cashLedgerId', null);
+                                                                    setFieldValue('cardLedgerId', null);
+                                                                    setFieldValue('bankLedgerId', null);
+                                                                    setFieldValue('chequeLedgerId', null);
 
-                                                        )
+                                                                    // Set the appropriate amount field to full amountReceived
+                                                                    if (mode === 'Cash' && amountReceived > 0) {
+                                                                        setFieldValue('cashAmount', amountReceived);
+                                                                        setFieldValue('cashLedgerId', CashLedgers[0]?.id || null);
+                                                                    }
+                                                                    if (mode === 'Card' && amountReceived > 0) {
+                                                                        setFieldValue('cardAmount', amountReceived);
+                                                                    }
+                                                                    if (mode === 'Bank Transfer' && amountReceived > 0) {
+                                                                        setFieldValue('bankAmount', amountReceived);
+                                                                    }
+                                                                    if (mode === 'Cheque' && amountReceived > 0) {
+                                                                        setFieldValue('chequeAmount', amountReceived);
+                                                                    }
+                                                                }}
+                                                                placeholder="Select Mode Of Payment"
+                                                                className="react-select-container mb-4"
+                                                                classNamePrefix="react-select"
+                                                            />
 
-
-                                                    }
-                                                    {
-                                                        values.modeOfPayment === 'Cash' && (
-                                                            <div>
-                                                                {CashLedgers.length === 0 ? (
-                                                                    <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded">
-                                                                        <p className="text-red-600 dark:text-red-400 font-medium">
-                                                                            ⚠️ No Cash Ledger Found
-                                                                        </p>
-                                                                        <p className="text-sm text-red-500 dark:text-red-300 mt-1">
-                                                                            Please create a Cash ledger to proceed with cash transactions.
-                                                                        </p>
+                                                            {values.modeOfPayment === 'Cheque' && (
+                                                                <div className='flex flex-row gap-4'>
+                                                                    <div className="flex-1">
+                                                                        <label className="mb-2.5 block text-black dark:text-white">Select Bank <span className='text-red-700'>*</span></label>
+                                                                        <ReactSelect
+                                                                            name='chequeLedgerId'
+                                                                            value={bankData.find(opt => opt.value === values.chequeLedgerId)}
+                                                                            onChange={(option) => {
+                                                                                setFieldValue('chequeLedgerId', option?.value || '');
+                                                                            }}
+                                                                            options={bankData}
+                                                                            className="react-select-container bg-white dark:bg-form-Field w-full"
+                                                                            classNamePrefix="react-select"
+                                                                            placeholder="Select Bank"
+                                                                            menuPortalTarget={document.body}
+                                                                            styles={{
+                                                                                ...customStyles,
+                                                                                menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                            }}
+                                                                        />
                                                                     </div>
-                                                                ) : (
-                                                                    <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded">
-                                                                        <p className="text-green-600 dark:text-green-400 font-medium">
-                                                                            Cash Account: {CashLedgers[0]?.name}
-                                                                        </p>
-                                                                        <p className="text-sm text-green-500 dark:text-green-300 mt-1">
-                                                                            Cash ledger will be automatically used for this transaction.
-                                                                        </p>
-                                                                        <Field type="hidden" name="toLedger" value={CashLedgers[0]?.id || ''} />
+                                                                    <div className="flex-1">
+                                                                        <label className="mb-2.5 block text-black dark:text-white">Cheque Number</label>
+                                                                        <Field
+                                                                            type="text"
+                                                                            name="chequeNumber"
+                                                                            placeholder="Enter Cheque Number"
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                        />
                                                                     </div>
-                                                                )}
-                                                            </div>
-                                                        )
-                                                    }
-                                                    {
-                                                        values.modeOfPayment === 'Bank Transfer' && (
-                                                            <div className='flex flex-row gap-5'>
+                                                                    <div className="flex-1">
+                                                                        <label className="mb-2.5 block text-black dark:text-white">Cheque Amount</label>
+                                                                        <Field
+                                                                            type="number"
+                                                                            name="chequeAmount"
+                                                                            placeholder="Enter Amount"
+                                                                            value={values.chequeAmount || ''}
+                                                                            onChange={(e) => {
+                                                                                setFieldValue('chequeAmount', e.target.value);
+                                                                                setFieldValue('amountReceived', e.target.value);
+                                                                            }}
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            )}
 
+                                                            {values.modeOfPayment === 'Cash' && (
                                                                 <div>
-                                                                    <label className="mb-2.5 block text-black dark:text-white">Select Bank <span className='text-red-700'>*</span></label>
-                                                                    <ReactSelect
-                                                                        name='toLedger'
-                                                                        value={bankData.find(opt => opt.value === values.toLedger)}
-                                                                        onChange={(option) => {
-                                                                            setFieldValue('toLedger', option?.value || '');
-
-                                                                        }}
-                                                                        options={bankData}
-                                                                        className="react-select-container bg-white dark:bg-form-Field w-full"
-                                                                        classNamePrefix="react-select"
-                                                                        placeholder={"Select Bank You Want To Transfer"}
-                                                                        menuPortalTarget={document.body}
-                                                                        styles={{
-                                                                            ...customStyles,
-                                                                            menuPortal: (base) => ({ ...base, zIndex: 100000 })
-                                                                        }}
-                                                                    />
+                                                                    {CashLedgers.length === 0 ? (
+                                                                        <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded">
+                                                                            <p className="text-red-600 dark:text-red-400 font-medium">⚠️ No Cash Ledger Found</p>
+                                                                            <p className="text-sm text-red-500 dark:text-red-300 mt-1">
+                                                                                Please create a Cash ledger to proceed with cash transactions.
+                                                                            </p>
+                                                                        </div>
+                                                                    ) : (
+                                                                        <div className='flex flex-row gap-4'>
+                                                                            <div className="flex-1">
+                                                                                <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded">
+                                                                                    <p className="text-green-600 dark:text-green-400 font-medium">
+                                                                                        Cash Account: {CashLedgers[0]?.name}
+                                                                                    </p>
+                                                                                    <Field type="hidden" name="cashLedgerId" value={CashLedgers[0]?.id || ''} />
+                                                                                </div>
+                                                                            </div>
+                                                                            <div className="flex-1">
+                                                                                <label className="mb-2.5 block text-black dark:text-white">Cash Amount</label>
+                                                                                <Field
+                                                                                    type="number"
+                                                                                    name="cashAmount"
+                                                                                    placeholder="Enter Amount"
+                                                                                    value={values.cashAmount || ''}
+                                                                                    onChange={(e) => {
+                                                                                        setFieldValue('cashAmount', e.target.value);
+                                                                                        setFieldValue('amountReceived', e.target.value);
+                                                                                    }}
+                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
                                                                 </div>
-                                                                <div className="mb-4">
-                                                                    <label className="mb-2.5 block text-black dark:text-white">Transaction ID</label>
-                                                                    <Field
-                                                                        type="text"
-                                                                        name="transactionId"
-                                                                        placeholder="Enter Transaction ID"
-                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                    />
+                                                            )}
+
+                                                            {values.modeOfPayment === 'Bank Transfer' && (
+                                                                <div className='flex flex-row gap-4'>
+                                                                    <div className="flex-1">
+                                                                        <label className="mb-2.5 block text-black dark:text-white">Select Bank <span className='text-red-700'>*</span></label>
+                                                                        <ReactSelect
+                                                                            name='bankLedgerId'
+                                                                            value={bankData.find(opt => opt.value === values.bankLedgerId)}
+                                                                            onChange={(option) => {
+                                                                                setFieldValue('bankLedgerId', option?.value || '');
+                                                                            }}
+                                                                            options={bankData}
+                                                                            className="react-select-container bg-white dark:bg-form-Field w-full"
+                                                                            classNamePrefix="react-select"
+                                                                            placeholder="Select Bank"
+                                                                            menuPortalTarget={document.body}
+                                                                            styles={{
+                                                                                ...customStyles,
+                                                                                menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                            }}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="flex-1">
+                                                                        <label className="mb-2.5 block text-black dark:text-white">Transaction ID</label>
+                                                                        <Field
+                                                                            type="text"
+                                                                            name="transactionId"
+                                                                            placeholder="Enter Transaction ID"
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                        />
+                                                                    </div>
+                                                                    <div className="flex-1">
+                                                                        <label className="mb-2.5 block text-black dark:text-white">Bank Amount</label>
+                                                                        <Field
+                                                                            type="number"
+                                                                            name="bankAmount"
+                                                                            placeholder="Enter Amount"
+                                                                            value={values.bankAmount || ''}
+                                                                            onChange={(e) => {
+                                                                                setFieldValue('bankAmount', e.target.value);
+                                                                                setFieldValue('amountReceived', e.target.value);
+                                                                            }}
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            )}
+
+                                                            {values.modeOfPayment === 'Card' && (
+                                                                <div className='flex flex-row gap-4'>
+                                                                    <div className="flex-1">
+                                                                        <label className="mb-2.5 block text-black dark:text-white">Select Bank <span className='text-red-700'>*</span></label>
+                                                                        <ReactSelect
+                                                                            name='cardLedgerId'
+                                                                            value={bankData.find(opt => opt.value === values.cardLedgerId)}
+                                                                            onChange={(option) => {
+                                                                                setFieldValue('cardLedgerId', option?.value || '');
+                                                                            }}
+                                                                            options={bankData}
+                                                                            className="react-select-container bg-white dark:bg-form-Field w-full"
+                                                                            classNamePrefix="react-select"
+                                                                            placeholder="Select Bank"
+                                                                            menuPortalTarget={document.body}
+                                                                            styles={{
+                                                                                ...customStyles,
+                                                                                menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                            }}
+                                                                        />
+                                                                    </div>
+                                                                    <div className="flex-1">
+                                                                        <label className="mb-2.5 block text-black dark:text-white">Card Number</label>
+                                                                        <Field
+                                                                            type="text"
+                                                                            name="cardNumber"
+                                                                            placeholder="Enter Card Number"
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                        />
+                                                                    </div>
+                                                                    <div className="flex-1">
+                                                                        <label className="mb-2.5 block text-black dark:text-white">Card Amount</label>
+                                                                        <Field
+                                                                            type="number"
+                                                                            name="cardAmount"
+                                                                            placeholder="Enter Amount"
+                                                                            value={values.cardAmount || ''}
+                                                                            onChange={(e) => {
+                                                                                setFieldValue('cardAmount', e.target.value);
+                                                                                setFieldValue('amountReceived', e.target.value);
+                                                                            }}
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    ) : (
+                                                        // NEW LOGIC - Multiple Payment Methods - Split amountReceived
+                                                        <div className="space-y-4">
+                                                            {/* Payment Summary - amountReceived is the total to be split */}
+                                                            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                                                                <div className="flex justify-between items-center mb-2">
+                                                                    <h4 className="font-medium text-blue-800 dark:text-blue-300">Payment Allocation</h4>
+                                                                    <div className="text-right">
+                                                                        <div className="text-sm text-blue-600 dark:text-blue-400">
+                                                                            Total to Split: <span className="font-bold text-lg">₹{values.amountReceived || 0}</span>
+                                                                        </div>
+                                                                        <div className={`text-sm font-semibold ${getBalanceColor()}`}>
+                                                                            Remaining: ₹{(values.amountReceived - calculateTotalAllocatedPayments()).toFixed(2)}
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
 
-
+                                                                {/* Quick Add Buttons */}
+                                                                <div className="flex flex-wrap gap-2 mt-3">
+                                                                    <span className="text-xs text-gray-600 dark:text-gray-400 mr-2">Quick add:</span>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => addPaymentMethod('Cash')}
+                                                                        className="text-xs px-3 py-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-full"
+                                                                    >
+                                                                        + Cash
+                                                                    </button>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => addPaymentMethod('Cheque')}
+                                                                        className="text-xs px-3 py-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-full"
+                                                                    >
+                                                                        + Cheque
+                                                                    </button>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => addPaymentMethod('Bank Transfer')}
+                                                                        className="text-xs px-3 py-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-full"
+                                                                    >
+                                                                        + Bank Transfer
+                                                                    </button>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => addPaymentMethod('Card')}
+                                                                        className="text-xs px-3 py-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-full"
+                                                                    >
+                                                                        + Card
+                                                                    </button>
+                                                                </div>
                                                             </div>
-                                                        )
-                                                    }
-                                                    {
-                                                        values.modeOfPayment === 'Card' && (
 
-                                                            <div className='flex flex-row gap-5'>
+                                                            {/* Add Payment Method Button */}
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => addPaymentMethod('')}
+                                                                className="w-full py-2.5 bg-green-500 hover:bg-green-600 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                                                            >
+                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                                                                </svg>
+                                                                Add Payment Method
+                                                            </button>
 
-                                                                <div>
-                                                                    <label className="mb-2.5 block text-black dark:text-white">Select Bank <span className='text-red-700'>*</span></label>
-                                                                    <ReactSelect
-                                                                        name='toLedger'
-                                                                        value={bankData.find(opt => opt.value === values.toLedger)}
-                                                                        onChange={(option) => {
-                                                                            setFieldValue('toLedger', option?.value || '');
+                                                            {/* Payment Methods List */}
+                                                            <div className="space-y-4">
+                                                                {paymentMethods.map((payment, index) => {
+                                                                    const currentAmount = parseFloat(payment.amount) || 0;
+                                                                    const otherAmountsTotal = paymentMethods.reduce((total, pmt, idx) => {
+                                                                        if (idx !== index) {
+                                                                            return total + (parseFloat(pmt.amount) || 0);
+                                                                        }
+                                                                        return total;
+                                                                    }, 0);
+                                                                    const maxAvailable = (parseFloat(values.amountReceived) || 0) - otherAmountsTotal;
 
-                                                                        }}
-                                                                        options={bankData}
-                                                                        className="react-select-container bg-white dark:bg-form-Field w-full"
-                                                                        classNamePrefix="react-select"
-                                                                        placeholder={"Select Bank You Want To Transfer"}
-                                                                        menuPortalTarget={document.body}
-                                                                        styles={{
-                                                                            ...customStyles,
-                                                                            menuPortal: (base) => ({ ...base, zIndex: 100000 })
-                                                                        }}
-                                                                    />
-                                                                </div>
-                                                                <div className="mb-4">
-                                                                    <label className="mb-2.5 block text-black dark:text-white">Card Number</label>
-                                                                    <Field
-                                                                        type="text"
-                                                                        name="cardNumber"
-                                                                        placeholder="Enter Card Number"
-                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                    />
-                                                                </div>
+                                                                    return (
+                                                                        <div key={index} className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50 relative">
+                                                                            {/* Remove Button */}
+                                                                            <button
+                                                                                type="button"
+                                                                                onClick={() => removePaymentMethod(index)}
+                                                                                className="absolute top-3 right-3 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                                                                            >
+                                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                                                                </svg>
+                                                                            </button>
+
+                                                                            <h5 className="font-medium text-gray-800 dark:text-gray-300 mb-3 pr-8">
+                                                                                Payment Method #{index + 1}
+                                                                            </h5>
+
+                                                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                                                {/* Payment Mode */}
+                                                                                <div>
+                                                                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                                                        Payment Mode *
+                                                                                    </label>
+                                                                                    <ReactSelect
+                                                                                        value={modeOfpayment.find(opt => opt.value === payment.mode)}
+                                                                                        onChange={(option) => updatePaymentMethod(index, 'mode', option?.value || '')}
+                                                                                        options={modeOfpayment}
+                                                                                        placeholder="Select Mode"
+                                                                                        className="react-select-container"
+                                                                                        classNamePrefix="react-select"
+                                                                                    />
+                                                                                </div>
+
+                                                                                {/* Amount */}
+                                                                                <div>
+                                                                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                                                        Amount *
+                                                                                    </label>
+                                                                                    <div className="relative">
+                                                                                        <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400">₹</span>
+                                                                                        <input
+                                                                                            type="number"
+                                                                                            value={payment.amount}
+                                                                                            onChange={(e) => {
+                                                                                                let value = e.target.value;
+                                                                                                const floatValue = parseFloat(value) || 0;
+
+                                                                                                // Validate max value
+                                                                                                if (floatValue > maxAvailable) {
+                                                                                                    value = maxAvailable.toString();
+                                                                                                }
+
+                                                                                                updatePaymentMethod(index, 'amount', value);
+
+                                                                                                // Update the individual Formik fields for this payment method
+                                                                                                updateFormikFieldsFromPaymentMethods();
+                                                                                            }}
+                                                                                            placeholder="Enter Amount"
+                                                                                            className="w-full pl-8 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                                                            min="0"
+                                                                                            max={maxAvailable}
+                                                                                            step="0.01"
+                                                                                        />
+                                                                                    </div>
+                                                                                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                                                        Max available: ₹{maxAvailable.toFixed(2)}
+                                                                                    </div>
+                                                                                </div>
+
+                                                                                {/* Bank Selection for Cheque/Bank Transfer/Card */}
+                                                                                {(payment.mode === 'Cheque' || payment.mode === 'Bank Transfer' || payment.mode === 'Card') && (
+                                                                                    <div>
+                                                                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                                                            Select Bank *
+                                                                                        </label>
+                                                                                        <ReactSelect
+                                                                                            value={bankData.find(opt => opt.value === payment.bankId)}
+                                                                                            onChange={(option) => {
+                                                                                                updatePaymentMethod(index, 'bankId', option?.value || '');
+                                                                                                updateFormikFieldsFromPaymentMethods();
+                                                                                            }}
+                                                                                            options={bankData}
+                                                                                            placeholder="Select Bank"
+                                                                                            className="react-select-container"
+                                                                                            classNamePrefix="react-select"
+                                                                                            menuPortalTarget={document.body}
+                                                                                            styles={{
+                                                                                                ...customStyles,
+                                                                                                menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                                            }}
+                                                                                        />
+                                                                                    </div>
+                                                                                )}
+
+                                                                                {/* Additional Fields based on Payment Mode */}
+                                                                                {payment.mode === 'Cheque' && (
+                                                                                    <div>
+                                                                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                                                            Cheque Number *
+                                                                                        </label>
+                                                                                        <input
+                                                                                            type="text"
+                                                                                            value={payment.chequeNumber || ''}
+                                                                                            onChange={(e) => {
+                                                                                                updatePaymentMethod(index, 'chequeNumber', e.target.value);
+                                                                                                updateFormikFieldsFromPaymentMethods();
+                                                                                            }}
+                                                                                            placeholder="Enter Cheque Number"
+                                                                                            className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                                                        />
+                                                                                    </div>
+                                                                                )}
+
+                                                                                {payment.mode === 'Bank Transfer' && (
+                                                                                    <div>
+                                                                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                                                            Transaction ID *
+                                                                                        </label>
+                                                                                        <input
+                                                                                            type="text"
+                                                                                            value={payment.transactionId || ''}
+                                                                                            onChange={(e) => {
+                                                                                                updatePaymentMethod(index, 'transactionId', e.target.value);
+                                                                                                updateFormikFieldsFromPaymentMethods();
+                                                                                            }}
+                                                                                            placeholder="Enter Transaction ID"
+                                                                                            className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                                                        />
+                                                                                    </div>
+                                                                                )}
+
+                                                                                {payment.mode === 'Card' && (
+                                                                                    <div>
+                                                                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                                                            Card Number *
+                                                                                        </label>
+                                                                                        <input
+                                                                                            type="text"
+                                                                                            value={payment.cardNumber || ''}
+                                                                                            onChange={(e) => {
+                                                                                                updatePaymentMethod(index, 'cardNumber', e.target.value);
+                                                                                                updateFormikFieldsFromPaymentMethods();
+                                                                                            }}
+                                                                                            placeholder="Enter Card Number"
+                                                                                            className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 py-2 px-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                                                        />
+                                                                                    </div>
+                                                                                )}
+
+                                                                                {/* Cash Note */}
+                                                                                {payment.mode === 'Cash' && (
+                                                                                    <div className="col-span-2">
+                                                                                        <div className="p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded">
+                                                                                            <p className="text-green-600 dark:text-green-400 font-medium">
+                                                                                                Cash Account: {CashLedgers[0]?.name}
+                                                                                            </p>
+                                                                                            <input type="hidden" value={CashLedgers[0]?.id || ''} />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                )}
+                                                                            </div>
+
+                                                                            {/* Payment Method Summary */}
+                                                                            <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                                                                                <div className="flex justify-between text-sm">
+                                                                                    <span className="text-gray-600 dark:text-gray-400">
+                                                                                        {payment.mode || 'Not selected'}
+                                                                                    </span>
+                                                                                    <span className="font-semibold text-gray-800 dark:text-gray-200">
+                                                                                        ₹{currentAmount.toFixed(2)}
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    );
+                                                                })}
                                                             </div>
-                                                        )
-                                                    }
 
-
-
-
+                                                            {/* Validation Message */}
+                                                            {paymentMethods.length > 0 && (
+                                                                <div className={`p-4 rounded-lg border ${isPaymentAllocationValid(values.amountReceived) ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800' : 'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800'}`}>
+                                                                    <div className="flex items-start gap-3">
+                                                                        <div className={`flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ${isPaymentAllocationValid(values.amountReceived) ? 'bg-green-500' : 'bg-yellow-500'}`}>
+                                                                            {isPaymentAllocationValid(values.amountReceived) ? (
+                                                                                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                                                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                                                                </svg>
+                                                                            ) : (
+                                                                                <span className="text-white text-sm font-bold">!</span>
+                                                                            )}
+                                                                        </div>
+                                                                        <div>
+                                                                            <p className={`font-medium ${isPaymentAllocationValid(values.amountReceived) ? 'text-green-700 dark:text-green-400' : 'text-yellow-700 dark:text-yellow-400'}`}>
+                                                                                {isPaymentAllocationValid(values.amountReceived) ? 'Payment allocation complete!' : 'Payment allocation incomplete'}
+                                                                            </p>
+                                                                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                                                                {isPaymentAllocationValid(values.amountReceived)
+                                                                                    ? `Total allocated: ₹${calculateTotalAllocatedPayments().toFixed(2)} matches total amount.`
+                                                                                    : `Allocated: ₹${calculateTotalAllocatedPayments().toFixed(2)} / Total: ₹${values.amountReceived}. Remaining: ₹${(values.amountReceived - calculateTotalAllocatedPayments()).toFixed(2)}`
+                                                                                }
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    )}
                                                 </div>
 
                                             )

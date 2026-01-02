@@ -60,7 +60,7 @@ export const GET_LEDGERSupplierId__URL = `${BASE_URL}/ledger`;
 
 
 export const VIEW_SUPPLIER_LEDGERBYID = `${BASE_URL}/supplier/getBySupplierLedger`;
-
+export const VIEW_LEDGERBYDATE = `${BASE_URL}/ledger/getLedger`;
 
 
 //Material Url's
@@ -420,7 +420,7 @@ export const PRINTPAYMENT_URL = `${BASE_URL}/api/voucher/payment-voucher`;
 
 
 export const GET_VoucherNoss_URL = `${BASE_URL}/voucher/getReceipt`;
-export const GET_VoucherNos_URL = `${BASE_URL}/voucher/getPreviousReceipt`;
+export const GET_VoucherNos_URL = `${BASE_URL}/voucher/getNextReceipt`;
 
 export const GET_VoucherBYID = `${BASE_URL}/voucher/get`;
 export const SEARCH_DayBook_URL = `${BASE_URL}/entryPayment/search`;

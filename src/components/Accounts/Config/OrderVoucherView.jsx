@@ -88,6 +88,8 @@ const OrderVoucherView = () => {
 
     // NEW: Function to apply voucher filter
     const applyVoucherFilter = (orders, filterType) => {
+        console.log(orders,"kkkkkkkkkkkkkkkkkkkkkk");
+        
         let filtered = [];
 
         switch (filterType) {
@@ -97,6 +99,9 @@ const OrderVoucherView = () => {
             case 'without-voucher':
                 filtered = orders.filter(order => !order.hasVoucher && !order.voucherId);
                 break;
+                //  case 'partial':
+                // filtered = orders.filter(order => order.hasVoucher === partial && !order.voucherId);
+                // break;
             default: // 'all'
                 filtered = orders;
                 break;
@@ -315,6 +320,15 @@ const OrderVoucherView = () => {
                                         }`}
                                 >
                                     Without Vouchers
+                                </button>
+                                        <button
+                                    onClick={() => handleVoucherFilterChange('partial')}
+                                    className={`px-3 py-1 text-sm rounded transition-colors ${voucherFilter === 'partial'
+                                        ? 'bg-yellow-600 text-white'
+                                        : 'bg-gray-200 dark:bg-slate-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-slate-500'
+                                        }`}
+                                >
+                                    Partially Created Vouchers
                                 </button>
                             </div>
                         </div>

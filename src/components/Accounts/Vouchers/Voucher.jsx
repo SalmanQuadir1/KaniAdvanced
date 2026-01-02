@@ -30,15 +30,84 @@ const Voucher = () => {
     const [initialFormValues, setInitialFormValues] = useState(null);
     const [operationType, setOperationType] = useState('create'); // 'create', 'create-sub', 'update'
     const [parentVoucherId, setParentVoucherId] = useState(null);
+    const [generatedVoucherNo, setGeneratedVoucherNo] = useState(''); // Store generated voucher number
 
     const { Locations, getAllLocation } = useLocation();
 
-    // const hsnCode = useSelector(state => state?.persisted?.hsn);
+    // Function to generate voucher number based on modal data
+    const generateVoucherNumber = (numberingData) => {
+        const {
+            startingNum = '1',
+            widthNumPart = '3',
+            prefillZero = false,
+            prefixParticular = '',
+            suffixParticular = '',
+            restartNumStartNum = '',
+            restartNumAppForm = '',
+            restartPeriodicity = ''
+        } = numberingData;
+
+        // Get current financial year for suffix (like 24/25)
+        const getCurrentFinancialYear = () => {
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth() + 1;
+            
+            // Financial year runs from April to March
+            let financialYearStart, financialYearEnd;
+            
+            if (currentMonth >= 4) {
+                // April or later in the year
+                financialYearStart = currentYear;
+                financialYearEnd = currentYear + 1;
+            } else {
+                // January to March
+                financialYearStart = currentYear - 1;
+                financialYearEnd = currentYear;
+            }
+            
+            // Get last two digits
+            const startShort = financialYearStart.toString().slice(-2);
+            const endShort = financialYearEnd.toString().slice(-2);
+            
+            return `${startShort}-${endShort}`;
+        };
+
+        // Generate numerical part
+        let numericalPart = restartNumStartNum || startingNum;
+        
+        // Pad with zeros if needed
+        if (prefillZero && widthNumPart) {
+            const width = parseInt(widthNumPart) || 3;
+            numericalPart = numericalPart.toString().padStart(width, '0');
+        }
+
+        // Generate prefix
+        let prefix = prefixParticular || '';
+        
+        // Generate suffix - use provided suffix or financial year
+        let suffix = suffixParticular || getCurrentFinancialYear();
+        
+        // Construct final voucher number
+        let voucherNo = '';
+        
+        if (prefix) {
+            voucherNo +=`${prefix} `;
+        }
+        
+        voucherNo +=`${numericalPart}`;
+        
+        if (suffix) {
+            voucherNo +=`/${suffix}`;
+        }
+
+        return voucherNo;
+    };
 
     useEffect(() => {
-
         getAllLocation();
     }, []);
+
     // Determine operation type from URL
     useEffect(() => {
         const path = location.pathname;
@@ -92,6 +161,7 @@ const Voucher = () => {
         { value: 'MultiUserAuto', label: 'Multi-User Auto' },
         { value: 'None', label: 'None' },
     ];
+console.log(generatedVoucherNo);
 
     // Initial values
     const defaultInitialValues = {
@@ -108,6 +178,7 @@ const Voucher = () => {
         zeroTransactionAllowed: false,
         optionalVchType: false,
         narrationVchs: false,
+        autoReceiptNumber:generatedVoucherNo,
         narratLedgerVch: false,
         defAccounting: false,
         costPurchase: false,
@@ -129,6 +200,7 @@ const Voucher = () => {
         // hsnCode: null,
         gstDescription: '',
         hsn_Sac: '',
+        generatedVoucherNo: '', // Add field for generated voucher number
         parentVoucherId: null,
     };
 
@@ -196,6 +268,7 @@ const Voucher = () => {
                     parentVoucherId: parentId,
                     typeOfVoucher: parentData.typeOfVoucher || '',
                     abbreviation: parentData.abbreviation ? `${parentData.abbreviation}_SUB` : '',
+                    generatedVoucherNo: parentData.generatedVoucherNo || '', // Inherit voucher number
                     // Add other fields you want to inherit from parent
                 };
                 setInitialFormValues(subVoucherData);
@@ -227,6 +300,7 @@ const Voucher = () => {
             methodOfvoucher: voucherData.methodOfvoucher || '',
             numbInsertDelete: voucherData.numbInsertDelete || '',
             setAdditionalNumb: voucherData.setAdditionalNumb || false,
+            autoReceiptNumber:voucherData.autoReceiptNumber || '',  
             unusedVchNos: voucherData.unusedVchNos || false,
             dateForVchs: voucherData.dateForVchs || false,
             effectiveDate: voucherData.effectiveDate || '',
@@ -254,16 +328,16 @@ const Voucher = () => {
             // hsnCode: voucherData.hsnCode || null,
             gstDescription: voucherData.gstDescription || '',
             hsn_Sac: voucherData.hsn_Sac || '',
+            generatedVoucherNo: voucherData.generatedVoucherNo || '',
             // parentVoucherId: voucherData.parentVoucherId || null,
         };
     };
 
-
-
-
     // Handle form submission
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+        console.log(values,"handle submittttt");
         setLoading(true);
+        
 
         try {
             let url, method, successMessage;
@@ -288,17 +362,15 @@ const Voucher = () => {
             // Prepare the data
             const formData = {
                 ...values,
+                autoReceiptNumber: generatedVoucherNo.toUpperCase(), // Include generated voucher number
                 ...(gstDetails.length > 0 ? { gstDetails } : {})
             };
 
             // Clean up data for ReactSelect fields
-            // if (values.hsnCode && typeof values.hsnCode === 'object') {
-            //     formData.hsnCode = values.hsnCode.value || values.hsnCode.id;
-            // }
-
             if (values.defaultGodown && typeof values.defaultGodown === 'object') {
                 formData.defaultGodown = values.defaultGodown.value;
             }
+            console.log(formData,"form dataaa");
 
             const response = await fetch(url, {
                 method: method,
@@ -313,8 +385,7 @@ const Voucher = () => {
 
             if (response.ok) {
                 toast.success(successMessage);
-                navigate('/Vouchers/view');
-
+                
                 if (operationType === 'create' || operationType === 'create-sub') {
                     resetForm();
                 }
@@ -334,7 +405,6 @@ const Voucher = () => {
             console.error('Submission error:', error);
             toast.error("An error occurred during submission");
         } finally {
-            navigate('/Vouchers/view');
             setLoading(false);
             setSubmitting(false);
         }
@@ -343,20 +413,6 @@ const Voucher = () => {
     useEffect(() => {
         fetchData();
     }, [operationType, id, parentVoucherId]);
-
-    // Fetch locations and HSN codes
-    // useEffect(() => {
-    //     getAllLocation();
-
-    //     if (hsnCode.data) {
-    //         const formattedOptions = hsnCode.data.map(hsn => ({
-    //             value: hsn.id,
-    //             label: hsn?.hsnCodeName,
-    //             hsnObject: hsn,
-    //         }));
-    //         setHsnOptions(formattedOptions);
-    //     }
-    // }, [hsnCode.data]);
 
     const formattedLocation = Locations?.map(loc => ({
         label: loc.address,
@@ -391,6 +447,31 @@ const Voucher = () => {
             </div>
         </div>
     );
+
+    // Show generated voucher number in the form
+    const renderGeneratedVoucherNumber = () => {
+        if (generatedVoucherNo) {
+            return (
+                <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                    <h5 className="text-lg font-semibold text-green-700 dark:text-green-300 mb-2">
+                        Generated Voucher Number
+                    </h5>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-green-600 dark:text-green-400 font-bold text-2xl">
+                                {generatedVoucherNo}
+                            </p>
+                            <p className="text-sm text-green-500 dark:text-green-300 mt-1">
+                                This voucher number will be used for entries
+                            </p>
+                        </div>
+                        <Field type="hidden" name="generatedVoucherNo" value={generatedVoucherNo} />
+                    </div>
+                </div>
+            );
+        }
+        return null;
+    };
 
     const getPageTitle = () => {
         switch (operationType) {
@@ -442,10 +523,8 @@ const Voucher = () => {
                     {({ isSubmitting, setFieldValue, values }) => (
                         <Form>
                             <div className="p-6.5">
-                                {/* Hidden parent voucher ID for sub-vouchers */}
-                                {/* {operationType === 'create-sub' && (
-                                    <Field type="hidden" name="parentVoucherId" />
-                                )} */}
+                                {/* Show generated voucher number */}
+                                {renderGeneratedVoucherNumber()}
 
                                 {/* Basic Information */}
                                 <div className="mb-8">
@@ -531,6 +610,22 @@ const Voucher = () => {
                                     <div className="space-y-4">
                                         {renderYesNoRadio('setAdditionalNumb', 'Set Additional Numbering Details', values, setFieldValue)}
                                         {renderYesNoRadio('unusedVchNos', 'Show Unused Voucher Numbers', values, setFieldValue)}
+                                        
+                                        {/* Show button to open numbering modal if setAdditionalNumb is true */}
+                                        {values.setAdditionalNumb === true && !generatedVoucherNo && (
+                                            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowNumberingModal(true)}
+                                                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                                >
+                                                    Configure Voucher Numbering Details
+                                                </button>
+                                                <p className="text-sm text-blue-600 dark:text-blue-300 mt-2">
+                                                    Click to set starting number, prefix, suffix, and other numbering details
+                                                </p>
+                                            </div>
+                                        )}
 
                                         <div className="flex items-center justify-between mb-4">
                                             <label className="text-black dark:text-white">Use Effective Date for Vouchers</label>
@@ -702,13 +797,11 @@ const Voucher = () => {
                                     {renderYesNoRadio('methodVouchNumbering', 'Use Common Voucher Numbering for All GST Registrations', values, setFieldValue)}
                                 </div>
 
-
-
                                 {/* Submit Button */}
                                 <div className="flex justify-center mt-8">
                                     <button
                                         type="submit"
-                                        disabled={isSubmitting || loading}
+                                        disabled={isSubmitting || loading || (values.setAdditionalNumb && !generatedVoucherNo)}
                                         className="flex items-center justify-center md:w-[150px] w-full md:h-[44px] h-[44px] rounded-lg bg-primary font-medium text-white hover:bg-primary/90 disabled:opacity-50"
                                     >
                                         {loading ? (
@@ -743,8 +836,20 @@ const Voucher = () => {
                 show={showNumberingModal}
                 onHide={() => setShowNumberingModal(false)}
                 onSubmit={(data) => {
+                    // Generate voucher number from modal data
+                    const voucherNumber = generateVoucherNumber(data);
+                    setGeneratedVoucherNo(voucherNumber);
+                    
+                    // Store the gst details
                     setGstDetails(data);
+                    
+                    // Close modal
                     setShowNumberingModal(false);
+                    
+                    // Show success message
+                    toast.success(`Voucher number generated: ${voucherNumber}`);
+                    
+                    console.log("Generated Voucher No:", voucherNumber);
                 }}
             />
         </DefaultLayout>
