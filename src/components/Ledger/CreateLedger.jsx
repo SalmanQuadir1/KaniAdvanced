@@ -20,12 +20,14 @@ const CreateLedger = () => {
         { value: 'regular', label: 'Regular' },
         { value: 'unregistered', label: 'Unregistered/Consumer' }
     ];
-     const ledgerType = [
+    const ledgerType = [
         { value: '', label: 'SELECT' },
         { value: 'BANK', label: 'BANK' },
         { value: 'CASH', label: 'CASH' },
         { value: 'SUPPLIER', label: 'SUPPLIER' },
-        { value: 'CUSTOMER', label: 'CUSTOMER' }
+        { value: 'CUSTOMER', label: 'CUSTOMER' },
+        { value: 'SALES', label: 'SALES' },
+        { value: 'PURCHASE', label: 'PURCHASE' },
     ];
     useEffect(() => {
         getGroup()
@@ -52,7 +54,7 @@ const CreateLedger = () => {
                     initialValues={{
                         name: '',
                         mobileNo: '',
-                        ledgerType:"",
+                        ledgerType: "",
                         email: '',
                         city: "",
 
@@ -106,7 +108,7 @@ const CreateLedger = () => {
                         branch: '',
                         accountType: '',
                         typeOfopeningBalance: "",
-                        previousOpType:""
+                        previousOpType: ""
                     }}
                     onSubmit={(values) => {
                         handleSubmit(values)
@@ -135,18 +137,18 @@ const CreateLedger = () => {
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
-                                                     <div className="flex-1 min-w-[250px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">Ledger Category</label>
-                                                        <ReactSelect
-                                                            name="ledgerType"
-                                                            value={ledgerType.find(option => option.value === values.ledgerType)}
-                                                            onChange={(option) => setFieldValue('ledgerType', option.value)}
-                                                            options={ledgerType}
-                                                            styles={customStyles}
-                                                            className="bg-white dark:bg-form-Field w-full"
-                                                            classNamePrefix="react-select"
-                                                        />
-                                                    </div>
+                                                <div className="flex-1 min-w-[250px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">Ledger Category</label>
+                                                    <ReactSelect
+                                                        name="ledgerType"
+                                                        value={ledgerType.find(option => option.value === values.ledgerType)}
+                                                        onChange={(option) => setFieldValue('ledgerType', option.value)}
+                                                        options={ledgerType}
+                                                        styles={customStyles}
+                                                        className="bg-white dark:bg-form-Field w-full"
+                                                        classNamePrefix="react-select"
+                                                    />
+                                                </div>
 
                                                 <div className="flex-1 min-w-[200px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Mobile No</label>
@@ -452,13 +454,13 @@ const CreateLedger = () => {
                                                     <Field
                                                         type="radio"
                                                         name="typeOfOpeningBalance"
-                                                    
-                                                        
+
+
                                                         value="DEBIT" // Saves as "DR" if selected
-                                                            onChange={(e) => {
+                                                        onChange={(e) => {
                                                             setFieldValue('typeOfOpeningBalance', e.target.value);
                                                             setFieldValue('previousOpType', e.target.value);
-                                                          
+
 
 
                                                         }}
@@ -471,10 +473,10 @@ const CreateLedger = () => {
                                                         type="radio"
                                                         name="typeOfOpeningBalance"
                                                         value="CREDIT" // Saves as "CR" if selected
-                                                              onChange={(e) => {
+                                                        onChange={(e) => {
                                                             setFieldValue('typeOfOpeningBalance', e.target.value);
                                                             setFieldValue('previousOpType', e.target.value);
-                                                          
+
 
 
                                                         }}
@@ -496,7 +498,7 @@ const CreateLedger = () => {
                                                         onChange={(e) => {
                                                             setFieldValue('openingBalances', e.target.value);
                                                             setFieldValue('previousOpBalance', e.target.value);
-                                                          
+
 
 
                                                         }}
