@@ -63,7 +63,7 @@ const UpdateKaniProducts = () => {
     
 
 
-  const handleUpdateSubmit = async (values, { setSubmitting }) => {
+   const handleUpdateSubmit = async (values, { setSubmitting }) => {
     console.log("Product ID from useParams:", id);
     console.log("Product ID from values:", values.id);
     console.log(values, "Submitted values:");
@@ -77,68 +77,14 @@ const UpdateKaniProducts = () => {
 
     if (!productIdToUpdate) {
         toast.error("Product ID is required for update");
-        // Fix: Check if setSubmitting exists before calling it
-        if (setSubmitting) setSubmitting(false);
+        setSubmitting(false);
         return;
     }
 
-    // Get existing images from product state
-    const currentImages = product?.images || [];
-    console.log("Current images from product state:", currentImages);
-
-    // Prepare images array - START WITH EXISTING IMAGES
-    let imagesArray = [];
-    
-    // Add existing images (preserve their IDs and filenames)
-    currentImages.forEach(img => {
-        imagesArray.push({
-            id: img.id,
-            referenceImage: img.referenceImage,
-            actualImage: img.actualImage
-        });
-    });
-
-    // Add new reference images from previews
-    if (previews && previews.length > 0) {
-        previews.forEach((preview, index) => {
-            if (preview.file && preview.file instanceof File) {
-                // For new images, ID is null and we send the original filename
-                imagesArray.push({
-                    id: null,
-                    referenceImage: `referenceImage_${Date.now()}_${index}.${preview.file.name.split('.').pop()}`,
-                    actualImage: null
-                });
-                
-                // Add file to FormData
-                formData.append('referenceImages', preview.file);
-                console.log("Adding new reference image:", preview.file.name);
-            }
-        });
-    }
-
-    // Add new actual images from previewsActual
-    if (previewsActual && previewsActual.length > 0) {
-        previewsActual.forEach((preview, index) => {
-            if (preview.file && preview.file instanceof File) {
-                // For new images, ID is null and we send a generated filename
-                imagesArray.push({
-                    id: null,
-                    referenceImage: null,
-                    actualImage: `actualImage_${Date.now()}_${index}.${preview.file.name.split('.').pop()}`
-                });
-                
-                // Add file to FormData
-                formData.append('actualImages', preview.file);
-                console.log("Adding new actual image:", preview.file.name);
-            }
-        });
-    }
-
-    console.log("Final images array:", imagesArray);
-
-    // Build the product object - FIXED VERSION
-    const productData = {
-        // Include only essential fields
+    // Map the necessary fields to create the product object
+    console.log(values, "umershahkkk");
+    const product = {
+        // Don't include the ID in the product object - it's in the URL
         productGroup: { id: values.productGroup?.id || 0 },
         colors: { id: values.colors?.id || 0 },
         productCategory: { id: values.productCategory?.id || 0 },
@@ -150,57 +96,55 @@ const UpdateKaniProducts = () => {
         colorWeave: values.colorWeave || "",
         barcode: values.barcode || "",
         productDescription: values.productDescription || "",
-        supplier: values?.supplier?.map((supp) => ({ id: supp?.id || supp?.supplier?.id || 0 })),
+       supplier: Array.isArray(values.supplier) && values.supplier.length > 0
+    ? values.supplier.map((supp) => ({ 
+        id: supp?.supplier?.id || supp?.id || 0  // Check nested supplier object first
+      }))
+    : [],
         supplierCode: { id: values.supplierCode?.id || 0 },
+        warpColors: values.warpColors || "",
+        weftColors: values.weftColors || "",
+        warpYarn: values.warpYarn || "",
+        weftYarn: values.weftYarn || "",
+        weave: values.weave || "",
         finishedWeight: values.finishedWeight || 0,
         materialWeight: values.materialWeight || 0,
+        pixAndReed: values.pixAndReed || "",
         cost: values.cost || "",
         dyeingCost: values.dyeingCost || "",
+        baseColour: values.baseColour || "",
+        embroideryColors: values.embroideryColors || "",
+        fabricWeave: values.fabricWeave || "",
+        fabricCode: values.fabricCode || "",
+        fabricCost: values.fabricCost || 0,
+        embroideryCost: values.embroideryCost || 0,
+        totalCost: values.totalCost || 0,
+        kaniColors: values.kaniColors || "",
         mrp: values.mrp || "",
         wholesalePrice: values.wholesalePrice || "",
+        description: values.productDescription || "",
+        patternColor: values.patternColor || "",
         usdPrice: values.usdPrice || "",
         euroPrice: values.euroPrice || "",
         gbpPrice: values.gbpPrice || "",
         rmbPrice: values.rmbPrice || "",
         productStatus: values.productStatus || "",
-        unit: values.unit ? { id: values.unit?.id || 0 } : null,
-        // CRITICAL: Include images array
-        images: imagesArray,
-        // FIX: gstDetails should be a string, not an array
-        // gstDetails: values.gstDetails || "", // Empty string instead of empty array
-         gstDetails: product?.gstDetails || "", // Change from [] to ""
+        gstDetails: values.gstDetails || "",
+        hsnCodes: values.hsnCodes || "",
+        hsn_Sac: values.hsn_Sac || "",
+        gstDescription: values.gstDescription || "",
         taxationType: values.taxationType || "",
-        typeOfSupply: values.typeOfSupply || ""
+        gstRate: values.gstRate || 0,
+        typeOfSupply: values.typeOfSupply || "",
+        unit: values.unit ? { id: values.unit?.id || 0 } : null
     };
 
-    // Add optional fields only if they exist
-    if (values.warpColors) productData.warpColors = values.warpColors;
-    if (values.weftColors) productData.weftColors = values.weftColors;
-    if (values.warpYarn) productData.warpYarn = values.warpYarn;
-    if (values.weftYarn) productData.weftYarn = values.weftYarn;
-    if (values.weave) productData.weave = values.weave;
-    if (values.pixAndReed) productData.pixAndReed = values.pixAndReed;
-    if (values.baseColour) productData.baseColour = values.baseColour;
-    if (values.embroideryColors) productData.embroideryColors = values.embroideryColors;
-    if (values.fabricWeave) productData.fabricWeave = values.fabricWeave;
-    if (values.fabricCode) productData.fabricCode = values.fabricCode;
-    if (values.fabricCost) productData.fabricCost = values.fabricCost;
-    if (values.embroideryCost) productData.embroideryCost = values.embroideryCost;
-    if (values.totalCost) productData.totalCost = values.totalCost;
-    if (values.kaniColors) productData.kaniColors = values.kaniColors;
-    if (values.patternColor) productData.patternColor = values.patternColor;
-    
-    // GST fields - only if they have values
-    if (values.hsnCodes) productData.hsnCodes = values.hsnCodes;
-    if (values.hsn_Sac) productData.hsn_Sac = values.hsn_Sac;
-    if (values.gstDescription) productData.gstDescription = values.gstDescription;
-    if (values.gstRate) productData.gstRate = values.gstRate;
-    
-    // GST details - handle properly
-    if (values.gstratedetails === "Specify Slab Based Rates" && values.slabBasedRates) {
-        productData.slabBasedRates = values.slabBasedRates;
+    // Handle GST details based on selection
+    if (values.gstratedetails === "Specify Slab Based Rates") {
+        product.slabBasedRates = values.slabBasedRates || [];
+        // Don't include hsnCode for slab-based rates
     } else if (values.gstratedetails === "useGstClassification" && values.hsnCode?.id) {
-        productData.hsnCode = { 
+        product.hsnCode = { 
             id: values.hsnCode.id,
             hsnCodeName: values.hsnCode.hsnCodeName || "",
             sgst: values.hsnCode.sgst || 0,
@@ -209,26 +153,46 @@ const UpdateKaniProducts = () => {
         };
     }
 
-    console.log('Product data to send:', productData);
+    console.log('Product data to send:', product);
 
     // Append product data as JSON
-    formData.append("product", JSON.stringify(productData));
-
-    // Log what we're sending
-    console.log("FormData entries:");
-    for (let [key, value] of formData.entries()) {
-        if (value instanceof File) {
-            console.log(`${key}: File - ${value.name} (${value.size} bytes)`);
-        } else if (key === 'product') {
-            console.log(`${key}: JSON data`);
-            console.log("JSON content:", value);
-        } else {
-            console.log(`${key}: ${value}`);
+    formData.append("product", JSON.stringify(product, (key, value) => {
+        // Remove null, undefined, empty strings
+        if (value === null || value === undefined || value === "") {
+            return undefined;
         }
+        if (Array.isArray(value) && value.length === 0) {
+            return undefined;
+        }
+        return value;
+    }));
+    
+    // Add reference images
+    if (referenceImages && referenceImages.length > 0) {
+        Array.from(referenceImages).forEach((file) => {
+            if (file instanceof File) {
+                formData.append('referenceImages', file);
+            }
+        });
+    }
+    
+    // Add actual images
+    if (actualImages && actualImages.length > 0) {
+        Array.from(actualImages).forEach((file) => {
+            if (file instanceof File) {
+                formData.append('actualImages', file);
+            }
+        });
+    }
+
+    // Log the FormData content (for debugging)
+    console.log("FormData content:");
+    for (let [key, value] of formData.entries()) {
+        console.log(key, value instanceof File ? `File: ${value.name}` : value);
     }
 
     try {
-        // Use the correct endpoint
+        // Use the correct product ID
         const url = `${GET_PRODUCTS_URL}/${productIdToUpdate}`;
         console.log("Update URL:", url);
 
@@ -240,6 +204,7 @@ const UpdateKaniProducts = () => {
             body: formData,
         });
 
+        // Read response as text first
         const responseText = await response.text();
         console.log("Raw response text:", responseText);
         
@@ -251,15 +216,8 @@ const UpdateKaniProducts = () => {
         }
 
         if (response.ok) {
-            console.log("Update successful. Response:", data);
+            console.log("Update response:", data);
             toast.success("Product updated successfully");
-            
-            // Refresh product data
-            await getProductById();
-            
-            // Clear previews
-            setPreviews([]);
-            setPreviewsActual([]);
         } else {
             console.error("Update failed. Status:", response.status, response.statusText);
             console.error("Response data:", data);
@@ -279,7 +237,6 @@ const UpdateKaniProducts = () => {
         console.error("Error during update:", error);
         toast.error(`Error: ${error.message}`);
     } finally {
-        // Fix: Check if setSubmitting exists before calling it
         if (setSubmitting) setSubmitting(false);
     }
 };
