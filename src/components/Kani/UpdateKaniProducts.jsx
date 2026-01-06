@@ -895,7 +895,7 @@ const UpdateKaniProducts = () => {
 
                                                 </div>
                                             </div>
-                                            <div className="flex-1 min-w-[300px]">
+                                            {/* <div className="flex-1 min-w-[300px]">
                                                 <label className="mb-2.5 block text-black dark:text-white"> Size(in cms) <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                 <div className="relative z-20 bg-transparent dark:bg-form-Field">
                                                     <ReactSelect
@@ -919,7 +919,51 @@ const UpdateKaniProducts = () => {
                                                     />
 
                                                 </div>
-                                            </div>
+                                            </div> */}
+
+                                            <div className="flex-1 min-w-[300px]">
+  <label className="mb-2.5 block text-black dark:text-white">
+    Size (in cms)
+    <span className="text-red-700 text-xl ml-1">*</span>
+  </label>
+
+  <div className="relative z-20 bg-transparent dark:bg-form-Field">
+    <ReactSelect
+      name="sizes"
+
+      value={
+        sizeOptions.find(
+          (option) => option.value === values.sizes?.id
+        ) || null
+      }
+
+      options={sizeOptions}
+
+      onChange={(selectedOption) => {
+        setFieldValue(
+          "sizes",
+          selectedOption
+            ? { id: selectedOption.value }
+            : null
+        );
+      }}
+
+      styles={{
+        ...customStyles,
+        menuPortal: (base) => ({
+          ...base,
+          zIndex: 9999,
+        }),
+      }}
+
+      className="bg-white dark:bg-form-Field"
+      classNamePrefix="react-select"
+      placeholder="Select Size"
+      menuPortalTarget={document.body}
+    />
+  </div>
+</div>
+
                                         </div>
 
 
