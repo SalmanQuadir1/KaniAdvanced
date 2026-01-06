@@ -259,6 +259,8 @@ import { signoutSuccess } from './redux/Slice/UserSlice';
 
 import ViewKaniProducts from './components/Kani/ViewKaniProducts.jsx';
 import ViewSupplierProduct from './components/Kani/ViewSupplierProduct.jsx';
+import KaniInProgress from './components/Kani/KaniInProgress.jsx';
+import UpdateKaniProducts from './components/Kani/UpdateKaniProducts.jsx';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -937,6 +939,12 @@ function App() {
             element={<ViewSupplierProduct />}
           />
            <Route path="/supplier-order/:id" element={<SupplierOrder />} />
+           <Route path="/kani-in-progress" element={<KaniInProgress />} />
+           <Route
+              path="/UpdateKaniProducts/:id"
+              element={<UpdateKaniProducts />}
+            />
+
 
 
 
