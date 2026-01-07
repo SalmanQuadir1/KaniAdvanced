@@ -266,6 +266,7 @@ export const VIEW_ALLACCEPTED_ORDERS = `${BASE_URL}/order/searchAccepted`;
 export const VIEW_PARTIALLYAPPROVED_ORDERS = `${BASE_URL}/order/searchApprovedAndAccepted`;
 
 export const VIEW_APPROVED_ORDERS = `${BASE_URL}/order/searchApproved`; 
+export const VIEW_APPROVED_KANI_ORDERS = `${BASE_URL}/order/inProgress-kani`; 
 
 //pending for bill
 
@@ -393,6 +394,7 @@ export const DELETE_HSNCODE_URL = `${BASE_URL}/hsncode`;
 export const GET_Kani_URL = `${BASE_URL}/order/kani`;
 
 export const GET_SUPPLIER_ORDERS_URL = `${BASE_URL}/order`;
+export const GET_PRODUCTS_URL = `${BASE_URL}/products/updateProduct`;
 
 //dahsboard
 

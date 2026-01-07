@@ -20,6 +20,11 @@ const FilterSupplier = () => {
     navigate(`/supplier-product/view/${productId}`);
   };
 
+  const handleAddProduct = (id) => {
+  navigate(`/UpdateKaniProducts/${id}`);
+};
+
+
   // Add new handler for supplier navigation
   const handleViewSupplier = (supplierId) => {
     if (supplierId) {
@@ -282,7 +287,7 @@ const FilterSupplier = () => {
     if (loading) {
       return (
         <tr>
-          <td colSpan="9" className="text-center py-6">
+          <td colSpan="10" className="text-center py-6">
             <div className="flex items-center justify-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
               <span className="ml-2">Loading suppliers...</span>
@@ -295,7 +300,7 @@ const FilterSupplier = () => {
     if (error) {
       return (
         <tr>
-          <td colSpan="9" className="text-center py-6 text-red-500">
+          <td colSpan="10" className="text-center py-6 text-red-500">
             {error}
           </td>
         </tr>
@@ -305,7 +310,7 @@ const FilterSupplier = () => {
     if (displayedProducts.length === 0 && !loading) {
       return (
         <tr>
-          <td colSpan="9" className="text-center py-6">
+          <td colSpan="10" className="text-center py-6">
             No supplier data found
           </td>
         </tr>
@@ -332,6 +337,7 @@ const FilterSupplier = () => {
       const challanNo = orderProduct?.challanNo; // Direct from orderProduct
       const receivedDate = orderProduct?.receivedDate; // Direct from orderProduct
       const productId = orderProduct?.products?.productId; // Product ID from products object
+      const orderNo = orderProduct?.orderInfo?.orderNo; // Get Order No from orderInfo
 
       return (
         <tr
@@ -341,6 +347,17 @@ const FilterSupplier = () => {
           {/* SNO */}
           <td className="px-4 py-3 border-b text-center">
             {startingSerialNumber + index}
+          </td>
+
+          {/* ORDER NO - ADDED THIS COLUMN */}
+          <td className="px-4 py-3 border-b text-center">
+            {orderNo ? (
+              <span className="text-gray-800 dark:text-gray-300 font-medium bg-blue-50 dark:bg-gray-800 px-2 py-1 rounded">
+                {orderNo}
+              </span>
+            ) : (
+              <span className="text-gray-400">—</span>
+            )}
           </td>
 
           {/* PRODUCT ID */}
@@ -355,19 +372,19 @@ const FilterSupplier = () => {
           </td>
 
           {/* SUPPLIER NAME - Clickable but normal appearance */}
-<td className="px-4 py-3 border-b text-center">
-  {supplier?.name || supplier?.supplierName ? (
-    <span
-      onClick={() => handleViewSupplier(supplierId)}
-      className="text-gray-800 dark:text-gray-300 font-medium cursor-pointer hover:text-gray-600 dark:hover:text-gray-400 transition-colors duration-200"
-      title="Click to view supplier details"
-    >
-      {supplier?.name || supplier?.supplierName}
-    </span>
-  ) : (
-    <span className="text-gray-400">—</span>
-  )}
-</td>
+          <td className="px-4 py-3 border-b text-center">
+            {supplier?.name || supplier?.supplierName ? (
+              <span
+                onClick={() => handleViewSupplier(supplierId)}
+                className="text-gray-800 dark:text-gray-300 font-medium cursor-pointer hover:text-gray-600 dark:hover:text-gray-400 transition-colors duration-200"
+                title="Click to view supplier details"
+              >
+                {supplier?.name || supplier?.supplierName}
+              </span>
+            ) : (
+              <span className="text-gray-400">—</span>
+            )}
+          </td>
 
           {/* SUPPLIER QUANTITY */}
           <td className="px-4 py-3 border-b text-center">
@@ -381,39 +398,6 @@ const FilterSupplier = () => {
             {productStatus ? (
               <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(productStatus)}`}>
                 {productStatus}
-              </span>
-            ) : (
-              <span className="text-gray-400">—</span>
-            )}
-          </td>
-
-          {/* EXPECTED DATE */}
-          <td className="px-4 py-3 border-b text-center">
-            {expectedDate ? (
-              <span className="text-gray-800 dark:text-gray-300">
-                {formatDate(expectedDate)}
-              </span>
-            ) : (
-              <span className="text-gray-400">—</span>
-            )}
-          </td>
-
-          {/* RECEIVED DATE */}
-          <td className="px-4 py-3 border-b text-center">
-            {receivedDate ? (
-              <span className="text-gray-800 dark:text-gray-300">
-                {formatDate(receivedDate)}
-              </span>
-            ) : (
-              <span className="text-gray-400 italic">Not received</span>
-            )}
-          </td>
-
-          {/* CHALLAN NO */}
-          <td className="px-4 py-3 border-b text-center">
-            {challanNo ? (
-              <span className="text-gray-800 dark:text-gray-300 font-medium">
-                {challanNo}
               </span>
             ) : (
               <span className="text-gray-400">—</span>
@@ -437,6 +421,16 @@ const FilterSupplier = () => {
             >
               VIEW PRODUCT
             </span>
+
+           <span
+                onClick={() => handleAddProduct(orderProduct.id)}
+                className="inline-block mt-2 bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded
+                          dark:bg-gray-700 dark:text-green-400 border border-green-400
+                          cursor-pointer hover:bg-green-200 transition-colors duration-200"
+              >
+                ADD PRODUCT
+              </span>
+
           </td>
         </tr>
       );
@@ -449,26 +443,37 @@ const FilterSupplier = () => {
 
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:bg-boxdark mb-6">
         <div className="flex justify-between items-center border-b border-stroke dark:border-strokedark py-4 px-6">
-          <div>
-            <h3 className="text-xl font-medium text-slate-500 dark:text-white">
-              Kani Suppliers
-            </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              {pagination.totalItems > 0 ? (
-                <>
-                  Showing {((pagination.currentPage - 1) * pagination.itemsPerPage) + 1}-
-                  {Math.min(pagination.currentPage * pagination.itemsPerPage, pagination.totalItems)} 
-                  of {pagination.totalItems} suppliers
-                  {useClientPagination && (
-                    <span className="ml-2 text-xs text-yellow-600"></span>
-                  )}
-                </>
-              ) : (
-                "No suppliers found"
-              )}
-            </p>
+  <div>
+    <h3 className="text-xl font-medium text-slate-500 dark:text-white">
+      Kani Suppliers
+    </h3>
+    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+      {pagination.totalItems > 0 ? (
+        <>
+          Showing {((pagination.currentPage - 1) * pagination.itemsPerPage) + 1}-
+          {Math.min(pagination.currentPage * pagination.itemsPerPage, pagination.totalItems)} 
+          of {pagination.totalItems} suppliers
+          {useClientPagination && (
+            <span className="ml-2 text-xs text-yellow-600"></span>
+          )}
+        </>
+      ) : (
+        "No suppliers found"
+      )}
+    </p>
+  </div>
+  
+  {/* In Progress Button */}
+  <div>
+<button
+    type="button"
+    onClick={() => navigate("/kani-in-progress")} // or your specific path
+    className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90 transition"
+  >
+    In Progress Orders
+  </button>
           </div>
-        </div>
+</div>
 
         <div className="my-6 px-6 sm:px-10 py-4 overflow-x-auto">
           <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
@@ -476,13 +481,14 @@ const FilterSupplier = () => {
               <thead>
                 <tr className="bg-slate-300 dark:bg-slate-700 dark:text-white">
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">SNO</th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Order No</th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Product ID</th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Supplier Name</th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Supplier Qty</th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Status</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Expected Date</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Received Date</th>
-                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Challan No</th>
+                  {/* <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Expected Date</th> */}
+                  {/* <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Received Date</th> */}
+                  {/* <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Challan No</th> */}
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Product Group</th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Actions</th>
                 </tr>
