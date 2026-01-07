@@ -141,7 +141,7 @@ const Voucher = () => {
 
     const defGstRegist = [
         { value: 'Registration Delhi', label: 'Registration Delhi' },
-        { value: 'Registration Srinagar', label: 'Registration Srinagar' },
+        { value: 'Registration Jammu And Kashmir', label: 'Registration Jammu And Kashmir' },
     ];
 
     const yesNo = [

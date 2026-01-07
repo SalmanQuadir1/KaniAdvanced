@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 // import { GET_Ledger_URL, DELETE_Ledger_URL, UPDATE_Ledger_URL, ADD_Ledger_URL } from "../Constants/utils";
-import { ADD_Ledger_URL, DELETE_Ledger_URL, GET_Groupss_URL, GET_LEDGERR__URL, GET_LEDGER_ID_URL, GET_LEDGER__URL, UPDATE_Ledger_URL, } from "../Constants/utils";
+import { ADD_Ledger_URL, DELETE_Ledger_URL, GET_Groupss_URL, GET_LEDGERRExpense__URL, GET_LEDGERR__URL, GET_LEDGER_ID_URL, GET_LEDGER__URL, UPDATE_Ledger_URL, } from "../Constants/utils";
 import { useNavigate, useNavigation } from 'react-router-dom';
 const useLedger = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
@@ -10,6 +10,7 @@ const useLedger = () => {
     const [Group, setGroup] = useState([])
     const navigate= useNavigate()
     const [Ledger, setLedger] = useState([]);
+    const [LedgerIncome, setLedgerIncome] = useState([])
     const [edit, setEdit] = useState(false);
     const [currentLedger, setCurrentLedger] = useState({
        groupName:"",
@@ -77,6 +78,30 @@ const useLedger = () => {
             toast.error("Failed to fetch Ledger");
         }
     };
+
+
+     const getLedgerIncome = async (page) => {
+        try {
+            const response = await fetch(`${GET_LEDGERRExpense__URL}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            
+            console.log(data,"ledger data");
+            setLedgerIncome(data);
+          
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch Ledger");
+        }
+    };
+
+
+
     const getGroup = async (page) => {
         try {
             const response = await fetch(`${GET_Groupss_URL}`, {
@@ -248,7 +273,9 @@ const useLedger = () => {
         getGroup,
         Group,
         handleUpdateSubmit,
-        handleUpdateSubmitt
+        handleUpdateSubmitt,
+        LedgerIncome,
+        getLedgerIncome
     };
 };
 

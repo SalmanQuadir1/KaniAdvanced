@@ -257,6 +257,8 @@ const ViewVoucher = () => {
 
 
         console.log(Voucher, "jumping");
+
+
         const handleToggle = async (voucher) => {
             try {
                 const newStatus = !voucher.actVoucher; // flip the current status
@@ -278,7 +280,7 @@ const ViewVoucher = () => {
                 toast.success(`Voucher ${newStatus ? "Activated" : "Deactivated"} successfully`);
 
                 // Refresh the table after update
-                getVoucher(pagination.currentPage - 1);
+                getVoucher(pagination.currentPage );
             } catch (err) {
                 console.error(err);
                 toast.error("Error updating voucher status");

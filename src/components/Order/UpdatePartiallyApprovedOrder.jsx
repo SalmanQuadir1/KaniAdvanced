@@ -576,7 +576,7 @@ const UpdatePartiallyApprovedOrder = () => {
         VIEW PRODUCT DETAILS
       </span>
     </div>
-  ) : (product.productStatus?.toLowerCase() === "approved" || product.productStatus === "Pending") ? (  
+  ) : (product.productStatus?.toLowerCase() === "approved" || product.productStatus?.toLowerCase() === "pending") ? (  
     <div className="flex items-center gap-2">
       <span
         onClick={() => navigate(`/order/updateorderproduct/${product?.id}`)}

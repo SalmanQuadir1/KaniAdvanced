@@ -18,13 +18,15 @@ import { use } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'react-toastify';
 
+
+
 const CreateVoucher = () => {
     const { id } = useParams();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const { GetVoucherById, Vouchers, CreateVoucherEntry, handleCreateVoucher } = useVoucher();
     const [voucherNos, setvoucherNos] = useState([])
-    const { getLedger, Ledger } = useLedger();
+    const { getLedger, Ledger, getLedgerIncome, LedgerIncome } = useLedger();
     const theme = useSelector(state => state?.persisted?.theme);
     const [vaaluee, setvaaluee] = useState({});
     const customStyles = createCustomStyles(theme?.mode);
@@ -41,12 +43,22 @@ const CreateVoucher = () => {
     const [availableOrders, setavailableOrders] = useState([])
     const [loadingProducts, setLoadingProducts] = useState(false);
     const [loadingOrders, setloadingOrders] = useState(false)
+    const [isExport, setisExport] = useState(false)
+    const [gsttype, setgsttype] = useState("")
+
+    const [custaddress, setcustaddress] = useState('')
+
+    console.log(custaddress, "--------------------");
+
 
     console.log(Vouchers, "jharkhand");
 
     console.log(Ledger, "lolot");
 
     console.log(selectedLedger, "3333333333333333333333333333333333333333333333333");
+
+    console.log(gsttype, "............000..................");
+
 
 
     // Filter ledgers based on voucher type
@@ -78,6 +90,8 @@ const CreateVoucher = () => {
         isSupplier: ledg?.supplier !== null
     }));
 
+    console.log(LedgerData, "LedgerDataLedgerDataLedgerData");
+
 
     //bank ledgers Only
     const BankLedgers = Ledger.filter(ledg =>
@@ -101,17 +115,25 @@ const CreateVoucher = () => {
     //     toast.error("No Cash Ledger Found. Please create a Cash ledger to proceed.");
     // }
 
-    console.log(BankLedgers, "kkkkkkkkkkkkkkkkkkkkkkkkkkkj");
+    console.log(LedgerIncome, "kkkkkkkkkkkkkkkkkkkkkkkkkkkj");
 
-
+    const destinationledger = LedgerIncome.map(ledg => ({
+        value: ledg?.id,
+        label: ledg?.name,
+    }));
 
     useEffect(() => {
         GetVoucherById(id);
         getLedger();
+        getLedgerIncome();
     }, []);
 
+
+
+
+
     // GST Calculation Logic
-    const calculateGST = (mrp, hsnCode, gstRegistration, customerAddress, discount = 0) => {
+    const calculateGST = (mrp, hsnCode, gstRegistration, customerAddress, discount = 0, customerState) => {
         // If discount is applied, no GST will be applied
         if (discount > 0) {
             return {
@@ -133,22 +155,38 @@ const CreateVoucher = () => {
         const cgstRate = hsnCode?.cgst || 0;
         const sgstRate = hsnCode?.sgst || 0;
 
-        // Normalize addresses for case-insensitive comparison
-        const registration = gstRegistration?.toLowerCase() || '';
-        const address = customerAddress?.toLowerCase() || '';
+        // Normalize state codes - ensure they are strings and handle undefined/null
+        const registrationCode = String(gstRegistration || '').trim();
+        const customerStateCode = String(customerState || '').trim();
 
-        // Check for Srinagar state (Jammu & Kashmir)
-        const isSrinagarRegistration = registration.includes('srinagar');
-        const isSrinagarAddress = address.includes('srinagar');
+        // Function to convert state name to state code if needed
+        const getStateCode = (state) => {
+            const stateStr = String(state || '').toLowerCase().trim();
 
-        // Check for Delhi state
-        const isDelhiRegistration = registration.includes('delhi');
-        const isDelhiAddress = address.includes('delhi');
+            // Check for Jammu & Kashmir variations
+            if (stateStr === '01' ||
+                stateStr.includes('jammu') ||
+                stateStr.includes('kashmir') ||
+                stateStr.includes('srinagar')) {
+                return '01';
+            }
+
+            // Check for Delhi variations
+            if (stateStr === '07' || stateStr.includes('delhi')) {
+                return '07';
+            }
+
+            // Return the original if it's already a code (01-35, 97, 98)
+            return stateStr;
+        };
+
+        // Get standardized state codes
+        const registrationStateCode = getStateCode(registrationCode);
+        const customerStateCodeStandardized = getStateCode(customerStateCode);
 
         // Determine if same state transaction
-        const isSameState =
-            (isSrinagarRegistration && isSrinagarAddress) ||
-            (isDelhiRegistration && isDelhiAddress);
+        const isSameState = registrationStateCode === customerStateCodeStandardized &&
+            (registrationStateCode === '01' || registrationStateCode === '07');
 
         if (isSameState) {
             // Same state - apply CGST + SGST
@@ -156,32 +194,44 @@ const CreateVoucher = () => {
             const sgstAmount = mrp * (sgstRate / 100);
             const totalGstAmount = cgstAmount + sgstAmount;
             const inclusivePrice = mrp + totalGstAmount;
+            setgsttype("SGST+CGST");
 
             return {
                 type: 'CGST+SGST',
                 cgstRate,
                 sgstRate,
+                igstRate: 0,
                 cgstAmount,
                 sgstAmount,
+                gstAmount: 0,
                 totalGstAmount,
                 inclusivePrice,
                 isSameState: true,
-                state: isSrinagarRegistration ? 'Srinagar' : 'Delhi',
+                registrationStateCode,
+                customerStateCode: customerStateCodeStandardized,
+                stateName: registrationStateCode === '01' ? 'Jammu And Kashmir' : 'Delhi',
                 discountApplied: false
             };
         } else {
             // Different state or mixed - apply IGST
             const gstAmount = mrp * (igstRate / 100);
             const inclusivePrice = mrp + gstAmount;
+            setgsttype("IGST");
 
             return {
                 type: 'IGST',
                 igstRate,
+                cgstRate: 0,
+                sgstRate: 0,
                 gstAmount,
+                cgstAmount: 0,
+                sgstAmount: 0,
                 totalGstAmount: gstAmount,
                 inclusivePrice,
                 isSameState: false,
-                state: 'Inter-State',
+                registrationStateCode,
+                customerStateCode: customerStateCodeStandardized,
+                stateName: 'Inter-State',
                 discountApplied: false
             };
         }
@@ -554,6 +604,8 @@ const CreateVoucher = () => {
 
     console.log(Vouchers?.typeOfVoucher, "-------------------------------");
 
+
+
     const [paymentMethods, setPaymentMethods] = useState([]);
 
     // Helper functions for multiple payment methods
@@ -607,17 +659,100 @@ const CreateVoucher = () => {
 
     // Add useEffect to sync when paymentMethods change
 
-      const salesChannel = [
-    { value: 'WS-Domestic', label: 'WS-Domestic' },
-    { value: 'Websale', label: 'Websale' },
-    { value: 'Social Media', label: 'Social Media' },
-    { value: 'Shop-in-Shop', label: 'Shop-in-Shop' },
-    { value: 'WS-International', label: 'WS-International' },
-    { value: 'Event-International', label: 'Event-International' },
-    { value: 'Event-Domestic', label: 'Event-Domestic' },
-    { value: 'Retail-Delhi', label: 'Retail-Delhi' },
-    { value: 'Retail-SXR', label: 'Retail-SXR' },
-  ];
+    const salesChannel = [
+        { value: 'WS-Domestic', label: 'WS-Domestic' },
+        { value: 'Websale', label: 'Websale' },
+        { value: 'Social Media', label: 'Social Media' },
+        { value: 'Shop-in-Shop', label: 'Shop-in-Shop' },
+        { value: 'WS-International', label: 'WS-International' },
+        { value: 'Event-International', label: 'Event-International' },
+        { value: 'Event-Domestic', label: 'Event-Domestic' },
+        { value: 'Retail-Delhi', label: 'Retail-Delhi' },
+        { value: 'Retail-SXR', label: 'Retail-SXR' },
+    ];
+
+
+
+    console.log(Vouchers.defGstRegist, "4545454545");
+
+
+
+    console.log(Vouchers.defGstRegist, "4545454545");
+
+    function determineDestinationLedger(Vouchers, custAddress, isExport, destinationledgerOptions) {
+        const typeOfVoucher = Vouchers?.typeOfVoucher?.toLowerCase() || '';
+        const defGstRegist = Vouchers?.defGstRegist || '';
+
+        // Determine registration location from GST registration
+        const getRegistrationLocation = (gstReg) => {
+            if (!gstReg) return null;
+            const regLower = gstReg.toLowerCase();
+
+            if (regLower.includes('jammu') || regLower.includes('kashmir') || regLower.includes('j&k') || regLower.includes('jk')) {
+                return 'jammu_and_kashmir';
+            } else if (regLower.includes('delhi') || regLower.includes('ncr') || regLower.includes('nct')) {
+                return 'delhi';
+            }
+            return null;
+        };
+
+        // Extract GST code from customer address (assuming GST code is in the address)
+        const getCustGstCode = (address) => {
+            if (!address) return null;
+            // Look for GST codes like 01, 02, 07, etc.
+            const gstCodeMatch = address.match(/\b(0[1-9]|[1-9][0-9])\b/);
+            return gstCodeMatch ? gstCodeMatch[0] : null;
+        };
+
+        // Determine ledger type based on conditions
+        const determineLedgerType = () => {
+            const regLocation = getRegistrationLocation(defGstRegist);
+            const custGstCode = getCustGstCode(custAddress);
+
+            // Base ledger type from voucher type
+            const baseType = typeOfVoucher === 'purchase' ? 'purchase' : 'sales';
+
+            if (isExport) {
+                return `${baseType} export ${regLocation || 'delhi'}`;
+            }
+
+            if (!regLocation) {
+                return `${baseType} igst delhi`; // Default
+            }
+
+            // Map GST codes to locations
+            const gstCodeMapping = {
+                '01': 'jammu_and_kashmir',
+                '07': 'delhi'
+            };
+
+            const custLocation = custGstCode ? gstCodeMapping[custGstCode] : null;
+
+            if (!custLocation) {
+                // Can't determine customer location, use IGST
+                return `${baseType} igst ${regLocation}`;
+            }
+
+            // Check if same state (local) or different state (IGST)
+            if (regLocation === custLocation) {
+                return `${baseType} local ${regLocation}`;
+            } else {
+                return `${baseType} igst ${regLocation}`;
+            }
+        };
+
+        const ledgerType = determineLedgerType();
+
+        // Find the matching option in destinationledger
+        const matchedOption = destinationledgerOptions?.find(option =>
+            option.label?.toLowerCase().includes(ledgerType.toLowerCase()) ||
+            option.value?.toString().toLowerCase().includes(ledgerType.toLowerCase())
+        );
+
+        return matchedOption?.value || null;
+    }
+
+
 
 
     return (
@@ -633,6 +768,12 @@ const CreateVoucher = () => {
                         paymentDate: '',
                         ledgerId: "",
                         orderIds: [],
+                        destinationledgerId: determineDestinationLedger(
+                            Vouchers,
+                            custaddress,
+                            false, // default isExport value
+                            destinationledger
+                        ),
                         currentBalance: "",
                         currentBalance2: "",
                         gstRegistration: Vouchers.defGstRegist || "",
@@ -641,7 +782,7 @@ const CreateVoucher = () => {
                         chequeNumber: "",
                         cardNumber: "",
                         transactionId: "",
-                        salesChannel:"",
+                        salesChannel: "",
 
 
                         cashAmount: null,
@@ -811,6 +952,33 @@ const CreateVoucher = () => {
                             setFieldValue('totalSgst', totals.totalSGST);
                         }, [totals.subtotal, totals.totalGST, totals.totalCGST, totals.totalIGST, totals.totalSGST, setFieldValue]);
 
+
+
+
+                        useEffect(() => {
+                            // Auto-select destination ledger when conditions change
+                            if (Vouchers?.typeOfVoucher && Vouchers?.defGstRegist && destinationledger.length > 0) {
+                                const selectedValue = determineDestinationLedger(
+                                    Vouchers,
+                                    custaddress, // Make sure you have this variable
+                                    values.isExport,
+                                    destinationledger
+                                );
+
+                                if (selectedValue && selectedValue !== values.destinationledgerId) {
+                                    setFieldValue('destinationledgerId', selectedValue);
+                                }
+                            }
+                        }, [Vouchers?.typeOfVoucher, Vouchers?.defGstRegist, values.isExport, custaddress, destinationledger]);
+
+                        // Function to handle manual selection
+                        const handleDestinationLedgerChange = (option) => {
+                            setFieldValue('destinationledgerId', option?.value || '');
+                            // You can also update related fields if needed
+                            // setFieldValue('currentBalance2', option?.balance || 0);
+                        };
+
+
                         return (
                             <Form>
                                 <div className="flex flex-col gap-9">
@@ -920,7 +1088,7 @@ const CreateVoucher = () => {
                                                             name="salesChannel"
                                                             value={salesChannel.find(option => option.value === values.salesChannel)}
                                                             onChange={(option) => setFieldValue('salesChannel', option.value)}
-                                                        
+
                                                             options={salesChannel}
                                                             styles={customStyles}
                                                             className="bg-white dark:bg-form-input"
@@ -954,6 +1122,7 @@ const CreateVoucher = () => {
                                                                     setFieldValue('ledgerId', option?.value || '');
                                                                     setFieldValue('currentBalance', option?.balance || 0);
                                                                     handleLedgerSelect(option);
+                                                                    setcustaddress(option?.obj?.shippingState || '')
                                                                 }}
                                                                 options={LedgerData}
                                                                 className="react-select-container bg-white dark:bg-form-Field w-full"
@@ -1048,8 +1217,28 @@ const CreateVoucher = () => {
                                             </div>
 
                                             <div className='flex flex-row gap-4 mb-6'>
-
                                                 <div className="flex-2 min-w-[250px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">Destination Ledger</label>
+                                                    <ReactSelect
+                                                        name='destinationledgerId'
+                                                        value={destinationledger.find(opt => opt.value === values.destinationledgerId)}
+                                                        onChange={handleDestinationLedgerChange}
+                                                        options={destinationledger}
+                                                        className="react-select-container bg-white dark:bg-form-Field w-full"
+                                                        classNamePrefix="react-select"
+                                                        placeholder="Select Ledger"
+                                                        menuPortalTarget={document.body}
+                                                        styles={{
+                                                            ...customStyles,
+                                                            menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                        }}
+                                                        
+                                                    />
+                                                    <ErrorMessage name="destinationledgerId" component="div" className="text-red-500 text-xs mt-1" />
+                                                   
+                                                </div>
+
+                                                <div className="flex-2 min-w-[150px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Current Balance</label>
                                                     <Field
                                                         type="text"
@@ -1160,11 +1349,12 @@ const CreateVoucher = () => {
 
                                                                                                     // Get customer shipping address for GST calculation
                                                                                                     const customerAddress = selectedLedger?.obj?.shippingAddress || '';
+                                                                                                    const customerState = selectedLedger?.obj?.shippingState || '';
                                                                                                     const gstRegistration = values.gstRegistration || '';
                                                                                                     const currentDiscount = entry.discount || 0;
 
                                                                                                     // Calculate GST based on location and discount
-                                                                                                    const gstCalculation = calculateGST(mrp, hsnCode, gstRegistration, customerAddress, currentDiscount);
+                                                                                                    const gstCalculation = calculateGST(mrp, hsnCode, gstRegistration, customerAddress, currentDiscount, customerState);
 
                                                                                                     setFieldValue(`paymentDetails.${index}.productsId`, option?.value || null);
                                                                                                     setFieldValue(`paymentDetails.${index}.orderProductId`, option?.orderProdId || null);
