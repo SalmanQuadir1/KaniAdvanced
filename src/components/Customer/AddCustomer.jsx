@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
-import { useFormik } from 'formik';
+import { Field, useFormik } from 'formik';
 import * as Yup from 'yup';
 import ReactSelect from 'react-select';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
@@ -18,6 +18,48 @@ const AddCustomer = () => {
     handleSubmit,
   } = useCustomer();
 
+  const stateOption = [
+    { value: '01', label: 'Jammu & Kashmir' },
+    { value: '02', label: 'Himachal Pradesh' },
+    { value: '03', label: 'Punjab' },
+    { value: '04', label: 'Chandigarh' },
+    { value: '05', label: 'Uttarakhand' },
+    { value: '06', label: 'Haryana' },
+    { value: '07', label: 'Delhi' },
+    { value: '08', label: 'Rajasthan' },
+    { value: '09', label: 'Uttar Pradesh' },
+    { value: '10', label: 'Bihar' },
+    { value: '11', label: 'Sikkim' },
+    { value: '12', label: 'Arunachal Pradesh' },
+    { value: '13', label: 'Nagaland' },
+    { value: '14', label: 'Manipur' },
+    { value: '15', label: 'Mizoram' },
+    { value: '16', label: 'Tripura' },
+    { value: '17', label: 'Meghalaya' },
+    { value: '18', label: 'Assam' },
+    { value: '19', label: 'West Bengal' },
+    { value: '20', label: 'Jharkhand' },
+    { value: '21', label: 'Odisha' },
+    { value: '22', label: 'Chhattisgarh' },
+    { value: '23', label: 'Madhya Pradesh' },
+    { value: '24', label: 'Gujarat' },
+    { value: '25', label: 'Daman & Diu' },
+    { value: '26', label: 'Dadra & Nagar Haveli' },
+    { value: '27', label: 'Maharashtra' },
+    { value: '28', label: 'Andhra Pradesh' },
+    { value: '29', label: 'Karnataka' },
+    { value: '30', label: 'Goa' },
+    { value: '31', label: 'Lakshadweep' },
+    { value: '32', label: 'Kerala' },
+    { value: '33', label: 'Tamil Nadu' },
+    { value: '34', label: 'Puducherry' },
+    { value: '35', label: 'Andaman & Nicobar Islands' },
+    { value: '36', label: 'Telangana' },
+    { value: '37', label: 'Andhra Pradesh (New)' },
+    { value: '38', label: 'Ladakh' }
+  ];
+
+
   useEffect(() => {
     if (customerGroup.data) {
       const formattedOptions = customerGroup.data.content.map((customer) => ({
@@ -30,11 +72,11 @@ const AddCustomer = () => {
   }, [customerGroup.data]);
 
   const customStyles = createCustomStyles(theme?.mode);
-  
+
   // Safe error display function
   const renderError = (error) => {
     if (!error) return null;
-    
+
     // Convert error to string safely
     let errorMessage = '';
     if (typeof error === 'string') {
@@ -51,7 +93,7 @@ const AddCustomer = () => {
     } else {
       errorMessage = String(error);
     }
-    
+
     return <div className="text-red-600 text-sm mt-1">{errorMessage}</div>;
   };
 
@@ -67,6 +109,7 @@ const AddCustomer = () => {
       reference: '',
       billingAddress: '',
       shippingAddress: '',
+      shippingState: '',
       gstin_vatno: '',
       iecNumber: '',
       instaId: '',
@@ -76,6 +119,10 @@ const AddCustomer = () => {
       social: '',
       event: '',
       eventType: '',
+      typeOfopeningBalance: "",
+      previousOpType: "",
+      openingBalances: '',
+      previousOpBalance: '',
     },
     validationSchema: Yup.object().shape({
       customerName: Yup.string().required('Customer Name is required'),
@@ -90,14 +137,15 @@ const AddCustomer = () => {
       contactNumber: Yup.string()
         .matches(/^[0-9]{8,}$/, 'Contact number must be at least 8 digits')
         .required('Contact Number is required'),
-    //  billTo: Yup.string().nullable(),
-    billTo: Yup.string().optional(),
+      //  billTo: Yup.string().nullable(),
+      billTo: Yup.string().optional(),
       email: Yup.string()
         .email('Invalid email format')
         .required('Email is required'),
       reference: Yup.string().optional(),
       billingAddress: Yup.string().required('Billing Address is required'),
       shippingAddress: Yup.string().required('Shipping Address is required'),
+      shippingState: Yup.string().required('Shipping State is required'),
       gstin_vatno: Yup.string().optional(),
       iecNumber: Yup.string().nullable(),
       instaId: Yup.string().optional(),
@@ -119,19 +167,19 @@ const AddCustomer = () => {
   const handleRadioChange = (event) => {
     formik.setFieldValue('retailLocation', event.target.value);
   };
-  
+
   const handleRadioChangeWebsite = (event) => {
     formik.setFieldValue('website', event.target.value);
   };
-  
+
   const handleRadioChangeSocial = (event) => {
     formik.setFieldValue('social', event.target.value);
   };
-  
+
   const handleRadioChangeEvent = (event) => {
     formik.setFieldValue('event', event.target.value);
   };
-  
+
   const handleRadioChangeEventType = (event) => {
     formik.setFieldValue('eventType', event.target.value);
   };
@@ -175,7 +223,7 @@ const AddCustomer = () => {
                       renderError(formik.errors.customerName)
                     )}
                   </div>
-                  
+
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
                       Customer Group <span className="text-red-600">*</span>
@@ -220,7 +268,7 @@ const AddCustomer = () => {
                       renderError(formik.errors.countryName)
                     )}
                   </div>
-                  
+
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
                       City <span className="text-red-600">*</span>
@@ -258,10 +306,10 @@ const AddCustomer = () => {
                       renderError(formik.errors.contactNumber)
                     )}
                   </div>
-                  
+
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Bill To 
+                      Bill To
                     </label>
                     <input
                       type="text"
@@ -296,10 +344,10 @@ const AddCustomer = () => {
                       renderError(formik.errors.email)
                     )}
                   </div>
-                  
+
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Reference 
+                      Reference
                     </label>
                     <input
                       type="text"
@@ -334,7 +382,7 @@ const AddCustomer = () => {
                       renderError(formik.errors.billingAddress)
                     )}
                   </div>
-                  
+
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
                       Shipping Address <span className="text-red-600">*</span>
@@ -357,7 +405,32 @@ const AddCustomer = () => {
                 <div className="mb-4.5 flex flex-wrap gap-6">
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      GSTIN/VAT No 
+                      Shipping State <span className="text-red-600">*</span>
+                    </label>
+                    <ReactSelect
+                      name="shippingState"
+                      styles={customStyles}
+                      value={stateOption.find(option => option.value === formik.values.shippingState) || null}
+
+                      onChange={(option) =>
+                        formik.setFieldValue(
+                          'shippingState',
+                          option ? option.value : null,
+                        )
+                      }
+                      onBlur={() => formik.setFieldTouched('shippingState', true)}
+                      options={stateOption}
+                      className="bg-white dark:bg-form-input"
+                      classNamePrefix="react-select"
+                      placeholder="Select Shipping State"
+                    />
+                    {formik.touched.shippingState && formik.errors.shippingState && (
+                      renderError(formik.errors.shippingState)
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-[300px]">
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      GSTIN/VAT No
                     </label>
                     <input
                       type="text"
@@ -372,7 +445,7 @@ const AddCustomer = () => {
                       renderError(formik.errors.gstin_vatno)
                     )}
                   </div>
-                  
+
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
                       IEC No
@@ -392,7 +465,7 @@ const AddCustomer = () => {
                 <div className="mb-4.5 flex flex-wrap gap-6">
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Instagram ID 
+                      Instagram ID
                     </label>
                     <input
                       type="text"
@@ -407,12 +480,9 @@ const AddCustomer = () => {
                       renderError(formik.errors.instaId)
                     )}
                   </div>
-                </div>
-
- <div className="mb-4.5 flex flex-wrap gap-6">
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">
-                      Discount Offered(%) 
+                      Discount Offered(%)
                     </label>
                     <input
                       type="text"
@@ -429,6 +499,71 @@ const AddCustomer = () => {
                   </div>
                 </div>
 
+                <div className="mb-4.5 flex flex-wrap gap-6">
+                  <div className="mb-4.5 border-t border-stroke pt-4 dark:border-strokedark w-full">
+                    {/* Radio Buttons for Opening Balance Type */}
+                    <div className="mb-2.5 flex items-center gap-4">
+                      <h4 className="font-medium text-black dark:text-white">Opening Balance Type:</h4>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="typeOfopeningBalance"
+                          value="DEBIT"
+                          checked={formik.values.typeOfopeningBalance === "DEBIT"}
+                          onChange={(e) => {
+                            formik.setFieldValue('typeOfopeningBalance', e.target.value);
+                            formik.setFieldValue('previousOpType', e.target.value);
+                          }}
+                          className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
+                        />
+                        <span className="text-black dark:text-white">Debit (DR)</span>
+                      </label>
+                      <label className="flex items-center gap-2">
+                        <input
+                          type="radio"
+                          name="typeOfopeningBalance"
+                          value="CREDIT"
+                          checked={formik.values.typeOfopeningBalance === "CREDIT"}
+                          onChange={(e) => {
+                            formik.setFieldValue('typeOfopeningBalance', e.target.value);
+                            formik.setFieldValue('previousOpType', e.target.value);
+                          }}
+                          className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
+                        />
+                        <span className="text-black dark:text-white">Credit (CR)</span>
+                      </label>
+                    </div>
+
+                    {/* Opening Balance Input */}
+                    <div className="flex items-center gap-2 mt-2">
+                      <div className="flex-1 min-w-[250px]">
+                        <input
+                          type="number"
+                          name="openingBalances"
+                          placeholder="Opening Balance"
+                          onChange={(e) => {
+                            formik.handleChange(e);
+                            formik.setFieldValue('previousOpBalance', e.target.value);
+                          }}
+                          onBlur={formik.handleBlur}
+                          value={formik.values.openingBalances}
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                        />
+                      </div>
+                      {/* Display "CR" if Credit is selected */}
+                      {formik.values.typeOfopeningBalance === "CREDIT" ? (
+                        <span className="text-lg font-medium text-gray-600 dark:text-gray-300">
+                          Cr.
+                        </span>
+                      ) : (
+                        <span className="text-lg font-medium text-gray-600 dark:text-gray-300">
+                          Dr.
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
 
                 <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                   <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
@@ -436,111 +571,111 @@ const AddCustomer = () => {
                   </h3>
                 </div>
 
-               <div className="p-4 flex flex-wrap lg:flex-nowrap gap-8 items-start justify-between">
+                <div className="p-4 flex flex-wrap lg:flex-nowrap gap-8 items-start justify-between">
 
-  {/* Retail Location */}
-  <div className="flex flex-col gap-2 min-w-[180px]">
-    <p className="font-medium">Retail Location</p>
-    <label className="flex items-center gap-2">
-      <input type="radio" name="retailLocation" value="SRX"
-        checked={formik.values.retailLocation === 'SRX'}
-        onChange={handleRadioChange}
-      />
-      SRX
-    </label>
-    <label className="flex items-center gap-2">
-      <input type="radio" name="retailLocation" value="Delhi"
-        checked={formik.values.retailLocation === 'Delhi'}
-        onChange={handleRadioChange}
-      />
-      Delhi
-    </label>
-    <label className="flex items-center gap-2">
-      <input type="radio" name="retailLocation" value="SXR and Delhi"
-        checked={formik.values.retailLocation === 'SXR and Delhi'}
-        onChange={handleRadioChange}
-      />
-      SXR and Delhi
-    </label>
-  </div>
+                  {/* Retail Location */}
+                  <div className="flex flex-col gap-2 min-w-[180px]">
+                    <p className="font-medium">Retail Location</p>
+                    <label className="flex items-center gap-2">
+                      <input type="radio" name="retailLocation" value="SRX"
+                        checked={formik.values.retailLocation === 'SRX'}
+                        onChange={handleRadioChange}
+                      />
+                      SRX
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input type="radio" name="retailLocation" value="Delhi"
+                        checked={formik.values.retailLocation === 'Delhi'}
+                        onChange={handleRadioChange}
+                      />
+                      Delhi
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input type="radio" name="retailLocation" value="SXR and Delhi"
+                        checked={formik.values.retailLocation === 'SXR and Delhi'}
+                        onChange={handleRadioChange}
+                      />
+                      SXR and Delhi
+                    </label>
+                  </div>
 
-  {/* Website */}
-  <div className="flex flex-col gap-2 min-w-[160px]">
-    <p className="font-medium">Website</p>
-    <label className="flex items-center gap-2">
-      <input type="radio" name="website" value="Subscribed"
-        checked={formik.values.website === 'Subscribed'}
-        onChange={handleRadioChangeWebsite}
-      />
-      Subscribed
-    </label>
-    <label className="flex items-center gap-2">
-      <input type="radio" name="website" value="Subscribed/Purchased"
-        checked={formik.values.website === 'Subscribed/Purchased'}
-        onChange={handleRadioChangeWebsite}
-      />
-      Subscribed / Purchased
-    </label>
-  </div>
+                  {/* Website */}
+                  <div className="flex flex-col gap-2 min-w-[160px]">
+                    <p className="font-medium">Website</p>
+                    <label className="flex items-center gap-2">
+                      <input type="radio" name="website" value="Subscribed"
+                        checked={formik.values.website === 'Subscribed'}
+                        onChange={handleRadioChangeWebsite}
+                      />
+                      Subscribed
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input type="radio" name="website" value="Subscribed/Purchased"
+                        checked={formik.values.website === 'Subscribed/Purchased'}
+                        onChange={handleRadioChangeWebsite}
+                      />
+                      Subscribed / Purchased
+                    </label>
+                  </div>
 
-  {/* Social */}
-  <div className="flex flex-col gap-2 min-w-[160px]">
-    <p className="font-medium">Social</p>
-    <label className="flex items-center gap-2">
-      <input type="radio" name="social" value="Interaction"
-        checked={formik.values.social === 'Interaction'}
-        onChange={handleRadioChangeSocial}
-      />
-      Interaction
-    </label>
-    <label className="flex items-center gap-2">
-      <input type="radio" name="social" value="Purchased"
-        checked={formik.values.social === 'Purchased'}
-        onChange={handleRadioChangeSocial}
-      />
-      Purchased
-    </label>
-  </div>
+                  {/* Social */}
+                  <div className="flex flex-col gap-2 min-w-[160px]">
+                    <p className="font-medium">Social</p>
+                    <label className="flex items-center gap-2">
+                      <input type="radio" name="social" value="Interaction"
+                        checked={formik.values.social === 'Interaction'}
+                        onChange={handleRadioChangeSocial}
+                      />
+                      Interaction
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input type="radio" name="social" value="Purchased"
+                        checked={formik.values.social === 'Purchased'}
+                        onChange={handleRadioChangeSocial}
+                      />
+                      Purchased
+                    </label>
+                  </div>
 
-  {/* Event */}
-  <div className="flex flex-col gap-2 min-w-[160px]">
-    <p className="font-medium">Event</p>
-    <label className="flex items-center gap-2">
-      <input type="radio" name="event" value="Domestic"
-        checked={formik.values.event === 'Domestic'}
-        onChange={handleRadioChangeEvent}
-      />
-      Domestic
-    </label>
-    <label className="flex items-center gap-2">
-      <input type="radio" name="event" value="International"
-        checked={formik.values.event === 'International'}
-        onChange={handleRadioChangeEvent}
-      />
-      International
-    </label>
-  </div>
+                  {/* Event */}
+                  <div className="flex flex-col gap-2 min-w-[160px]">
+                    <p className="font-medium">Event</p>
+                    <label className="flex items-center gap-2">
+                      <input type="radio" name="event" value="Domestic"
+                        checked={formik.values.event === 'Domestic'}
+                        onChange={handleRadioChangeEvent}
+                      />
+                      Domestic
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input type="radio" name="event" value="International"
+                        checked={formik.values.event === 'International'}
+                        onChange={handleRadioChangeEvent}
+                      />
+                      International
+                    </label>
+                  </div>
 
-  {/* Event Type */}
-  <div className="flex flex-col gap-2 min-w-[170px]">
-    <p className="font-medium">Event Type</p>
-    <label className="flex items-center gap-2">
-      <input type="radio" name="eventType" value="Interaction"
-        checked={formik.values.eventType === 'Interaction'}
-        onChange={handleRadioChangeEventType}
-      />
-      Interaction
-    </label>
-    <label className="flex items-center gap-2">
-      <input type="radio" name="eventType" value="Purchased"
-        checked={formik.values.eventType === 'Purchased'}
-        onChange={handleRadioChangeEventType}
-      />
-      Purchased
-    </label>
-  </div>
+                  {/* Event Type */}
+                  <div className="flex flex-col gap-2 min-w-[170px]">
+                    <p className="font-medium">Event Type</p>
+                    <label className="flex items-center gap-2">
+                      <input type="radio" name="eventType" value="Interaction"
+                        checked={formik.values.eventType === 'Interaction'}
+                        onChange={handleRadioChangeEventType}
+                      />
+                      Interaction
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input type="radio" name="eventType" value="Purchased"
+                        checked={formik.values.eventType === 'Purchased'}
+                        onChange={handleRadioChangeEventType}
+                      />
+                      Purchased
+                    </label>
+                  </div>
 
-</div>
+                </div>
 
 
                 {/* <div className="p-4 space-y-4 flex flex-col items-center md:space-y-0 md:flex-row md:justify-center md:items-center">
@@ -550,7 +685,7 @@ const AddCustomer = () => {
                   </div>
                 </div> */}
 
-               
+
 
                 {/* <button
                   type="submit"
@@ -561,13 +696,13 @@ const AddCustomer = () => {
 
 
                 <div className="flex justify-center mt-13  pt-6 border-t border-gray-300">
-  <button
-    type="submit"
-   className="flex md:w-[230px] w-[190px] md:h-[37px] h-[47px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
-  >
-    Add Customer
-  </button>
-</div>
+                  <button
+                    type="submit"
+                    className="flex md:w-[230px] w-[190px] md:h-[37px] h-[47px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
+                  >
+                    Add Customer
+                  </button>
+                </div>
               </div>
             </form>
           </div>

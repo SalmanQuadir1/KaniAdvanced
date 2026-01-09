@@ -56,6 +56,9 @@ export const GET_LEDGER_ID_URL = `${BASE_URL}/ledger/get`;
 export const GET_LEDGER__URL = `${BASE_URL}/ledger/viewAll`;
 export const GET_LEDGERR__URL = `${BASE_URL}/ledger/getAll`;
 
+
+export const GET_LEDGERRExpense__URL = `${BASE_URL}/ledger/dropdown/income-expense`;
+
 export const GET_LEDGERSupplierId__URL = `${BASE_URL}/ledger`;
 
 
