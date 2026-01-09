@@ -65,6 +65,20 @@ const kaniModeCards = [
     icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
     levelUp: true,
   },
+  {
+    title: "Client Orders",
+    link: "/ClientOrders",
+    countKey: "ClientOrders",
+    icon: <RiUserReceived2Fill className="w-10 h-10" />,
+    levelUp: true,
+  },
+  {
+    title: "Retail Client Orders",
+    link: "/RetailClientOrders",
+    countKey: "RetailClientOrders",
+    icon:  <AiOutlinePartition className="w-10 h-10" />,
+    levelUp: true,
+  },
   
  
 ];

@@ -37,6 +37,7 @@ import ViewVoucher from './components/Accounts/Vouchers/ViewVoucher.jsx';
 import KaniOrders from './components/Kani/KaniOrders.jsx';
 import FilterSupplier from './components/Kani/FilterSupplier.jsx';
 import SupplierOrder from './components/Kani/SupplierOrder.jsx';
+import KaniClientOrders from './components/Kani/KaniClientOrders.jsx';
 
 import CreateLedger from './components/Ledger/CreateLedger.jsx';
 import UpdateCustomerLedger from './components/Ledger/UpdateCustomerLedger.jsx';
@@ -932,6 +933,7 @@ function App() {
           <Route path="/UpdateKani/:id" element={<UpdateKani />} />
 
           {/* View Kani Products route */}
+          
           <Route path="/kani-products/view/:id" element={<ViewKaniProducts />} />
           <Route path="/filter-suppliers" element={<FilterSupplier />} />
           <Route
@@ -944,6 +946,7 @@ function App() {
               path="/UpdateKaniProducts/:id"
               element={<UpdateKaniProducts />}
             />
+             <Route path="/ClientOrders" element={<KaniClientOrders />} />
 
 
 
