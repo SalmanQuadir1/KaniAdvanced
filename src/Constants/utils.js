@@ -395,6 +395,7 @@ export const GET_Kani_URL = `${BASE_URL}/order/kani`;
 export const GET_SUPPLIER_ORDERS_URL = `${BASE_URL}/order`;
 export const GET_PRODUCTS_URL = `${BASE_URL}/products/updateProduct`;
 export const GET_Kani_CLIENTORDERS_URL = `${BASE_URL}/order/kani-clientOrder`;
+export const GET_RETAIL_CLIENTORDERS_URL = `${BASE_URL}/order/kani/retail-client-orders`;
 
 //dahsboard
 

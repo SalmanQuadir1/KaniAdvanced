@@ -38,6 +38,7 @@ import KaniOrders from './components/Kani/KaniOrders.jsx';
 import FilterSupplier from './components/Kani/FilterSupplier.jsx';
 import SupplierOrder from './components/Kani/SupplierOrder.jsx';
 import KaniClientOrders from './components/Kani/KaniClientOrders.jsx';
+import RetailClientOrders from './components/Kani/RetailClientOrders.jsx';
 
 import CreateLedger from './components/Ledger/CreateLedger.jsx';
 import UpdateCustomerLedger from './components/Ledger/UpdateCustomerLedger.jsx';
@@ -947,6 +948,8 @@ function App() {
               element={<UpdateKaniProducts />}
             />
              <Route path="/ClientOrders" element={<KaniClientOrders />} />
+             <Route path="/RetailClientOrders" element={<RetailClientOrders />} />
+
 
 
 
