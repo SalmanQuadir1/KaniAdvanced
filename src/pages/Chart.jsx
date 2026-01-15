@@ -86,6 +86,13 @@ const kaniModeCards = [
     icon:  <RiAlignItemBottomFill className="w-10 h-10" />,
     levelUp: true,
   },
+  {
+    title: "Klc Orders",
+    link: "/KlcOrders",
+    countKey: "KlcOrders",
+    icon:  <TbReorder className="w-10 h-10" />,
+    levelUp: true,
+  },
   
  
 ];

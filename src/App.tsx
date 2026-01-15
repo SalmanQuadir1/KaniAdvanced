@@ -39,6 +39,8 @@ import FilterSupplier from './components/Kani/FilterSupplier.jsx';
 import SupplierOrder from './components/Kani/SupplierOrder.jsx';
 import KaniClientOrders from './components/Kani/KaniClientOrders.jsx';
 import RetailClientOrders from './components/Kani/RetailClientOrders.jsx';
+import WholesaleClientOrders from './components/Kani/WholesaleClientOrders.jsx';
+import KlcOrders from './components/Kani/KlcOrders.jsx';
 
 import CreateLedger from './components/Ledger/CreateLedger.jsx';
 import UpdateCustomerLedger from './components/Ledger/UpdateCustomerLedger.jsx';
@@ -949,6 +951,8 @@ function App() {
             />
              <Route path="/ClientOrders" element={<KaniClientOrders />} />
              <Route path="/RetailClientOrders" element={<RetailClientOrders />} />
+             <Route path="/WholesaleClientOrders" element={<WholesaleClientOrders />} />
+             <Route path="/KlcOrders" element={<KlcOrders />} />
 
 
 
