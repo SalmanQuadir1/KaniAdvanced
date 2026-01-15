@@ -8,7 +8,7 @@ import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import useVoucher from '../../../hooks/useVoucher';
-import { GETPRODUCTBYSUPPLIER, GET_VoucherNos_URL, customStyles as createCustomStyles } from '../../../Constants/utils';
+import { ADD_CUSTOMER_URL, GETPRODUCTBYSUPPLIER, GETPRODUCTS, GET_VoucherNos_URL, customStyles as createCustomStyles } from '../../../Constants/utils';
 import { useSelector } from 'react-redux';
 import Modall from '../../Products/Modall';
 import NumberingDetailsModal from './NumberingDetailsModal';
@@ -17,6 +17,7 @@ import useLedger from '../../../hooks/useLedger';
 import { use } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from 'react-toastify';
+import Modalll from '../../Order/Modallll';
 
 
 
@@ -33,6 +34,7 @@ const CreateVoucher = () => {
     const [ledgers, setLedgers] = useState([]);
     const [openingbalance2, setopeningbalance2] = useState(0)
     const [selectedLedger, setSelectedLedger] = useState(null);
+    const [isCustModelOpen, setisCustModelOpen] = useState(false)
 
     const [selectedOrder, setselectedOrder] = useState(null)
 
@@ -45,19 +47,17 @@ const CreateVoucher = () => {
     const [loadingOrders, setloadingOrders] = useState(false)
     const [isExport, setisExport] = useState(false)
     const [gsttype, setgsttype] = useState("")
-
+    const [newCustomerName, setnewCustomerName] = useState('')
     const [custaddress, setcustaddress] = useState('')
+    const [shippingAddress, setShippingAddress] = useState('');
+    const [shippingState, setShippingState] = useState('');
+    const [openingBalanceType, setOpeningBalanceType] = useState('DEBIT');
+    const [openingBalance, setOpeningBalance] = useState('');
 
-    console.log(custaddress, "--------------------");
+    const [addingNewProduct, setAddingNewProduct] = useState(false);
+    const [newProductRowIndex, setNewProductRowIndex] = useState(null);
 
-
-    console.log(Vouchers, "jharkhand");
-
-    console.log(Ledger, "lolot");
-
-    console.log(selectedLedger, "3333333333333333333333333333333333333333333333333");
-
-    console.log(gsttype, "............000..................");
+    const [newShippingState, setnewShippingState] = useState('')
 
 
 
@@ -90,13 +90,32 @@ const CreateVoucher = () => {
         isSupplier: ledg?.supplier !== null
     }));
 
-    console.log(LedgerData, "LedgerDataLedgerDataLedgerData");
 
+    const giftvoucherledgers = Ledger.filter(ledg =>
+        ledg?.ledgerType === "GIFTVOUCHER"
+    )
+
+    const giftledgOptions = giftvoucherledgers?.map(ledg => ({
+        value: ledg?.id,
+        label: ledg?.name,
+    }));
 
     //bank ledgers Only
     const BankLedgers = Ledger.filter(ledg =>
         ledg?.name && ledg.name.toLowerCase().includes('bank')
     );
+
+
+
+    const cardLedgers = Ledger.filter(ledg =>
+        ledg?.name && (ledg.name.toLowerCase().includes('visa') || ledg.name.toLowerCase().includes('amex'))
+    )
+
+    const cardData = cardLedgers?.map(ledg => ({
+        value: ledg?.id,
+        label: ledg?.name,
+    }));
+
     const bankData = BankLedgers?.map(ledg => ({
         value: ledg?.id,
         label: ledg?.name,
@@ -111,11 +130,9 @@ const CreateVoucher = () => {
     }));
 
     const cashLedgerId = CashLedgers.length > 0 ? CashLedgers[0].id : null;
-    // if (CashLedgers.length === 0) {
-    //     toast.error("No Cash Ledger Found. Please create a Cash ledger to proceed.");
-    // }
 
-    console.log(LedgerIncome, "kkkkkkkkkkkkkkkkkkkkkkkkkkkj");
+
+
 
     const destinationledger = LedgerIncome.map(ledg => ({
         value: ledg?.id,
@@ -128,7 +145,46 @@ const CreateVoucher = () => {
         getLedgerIncome();
     }, []);
 
-
+    const stateOption = [
+        { value: '01', label: 'Jammu & Kashmir' },
+        { value: '02', label: 'Himachal Pradesh' },
+        { value: '03', label: 'Punjab' },
+        { value: '04', label: 'Chandigarh' },
+        { value: '05', label: 'Uttarakhand' },
+        { value: '06', label: 'Haryana' },
+        { value: '07', label: 'Delhi' },
+        { value: '08', label: 'Rajasthan' },
+        { value: '09', label: 'Uttar Pradesh' },
+        { value: '10', label: 'Bihar' },
+        { value: '11', label: 'Sikkim' },
+        { value: '12', label: 'Arunachal Pradesh' },
+        { value: '13', label: 'Nagaland' },
+        { value: '14', label: 'Manipur' },
+        { value: '15', label: 'Mizoram' },
+        { value: '16', label: 'Tripura' },
+        { value: '17', label: 'Meghalaya' },
+        { value: '18', label: 'Assam' },
+        { value: '19', label: 'West Bengal' },
+        { value: '20', label: 'Jharkhand' },
+        { value: '21', label: 'Odisha' },
+        { value: '22', label: 'Chhattisgarh' },
+        { value: '23', label: 'Madhya Pradesh' },
+        { value: '24', label: 'Gujarat' },
+        { value: '25', label: 'Daman & Diu' },
+        { value: '26', label: 'Dadra & Nagar Haveli' },
+        { value: '27', label: 'Maharashtra' },
+        { value: '28', label: 'Andhra Pradesh' },
+        { value: '29', label: 'Karnataka' },
+        { value: '30', label: 'Goa' },
+        { value: '31', label: 'Lakshadweep' },
+        { value: '32', label: 'Kerala' },
+        { value: '33', label: 'Tamil Nadu' },
+        { value: '34', label: 'Puducherry' },
+        { value: '35', label: 'Andaman & Nicobar Islands' },
+        { value: '36', label: 'Telangana' },
+        { value: '37', label: 'Andhra Pradesh (New)' },
+        { value: '38', label: 'Ladakh' }
+    ];
 
 
 
@@ -158,6 +214,9 @@ const CreateVoucher = () => {
         // Normalize state codes - ensure they are strings and handle undefined/null
         const registrationCode = String(gstRegistration || '').trim();
         const customerStateCode = String(customerState || '').trim();
+        const newShippingStateCode = newShippingState ? String(newShippingState).trim() : null;
+        console.log(newShippingStateCode, "3333333333333333333333333333333336");
+
 
         // Function to convert state name to state code if needed
         const getStateCode = (state) => {
@@ -182,10 +241,19 @@ const CreateVoucher = () => {
 
         // Get standardized state codes
         const registrationStateCode = getStateCode(registrationCode);
-        const customerStateCodeStandardized = getStateCode(customerStateCode);
+
+        // Determine which customer state to use based on newShippingState availability
+        let customerStateToCompare = newShippingStateCode;
+
+        // If newShippingState is not provided or is empty, fall back to original customerState
+        if (!customerStateToCompare || customerStateToCompare === '') {
+            customerStateToCompare = getStateCode(customerStateCode);
+        } else {
+            customerStateToCompare = getStateCode(newShippingStateCode);
+        }
 
         // Determine if same state transaction
-        const isSameState = registrationStateCode === customerStateCodeStandardized &&
+        const isSameState = registrationStateCode === customerStateToCompare &&
             (registrationStateCode === '01' || registrationStateCode === '07');
 
         if (isSameState) {
@@ -194,7 +262,10 @@ const CreateVoucher = () => {
             const sgstAmount = mrp * (sgstRate / 100);
             const totalGstAmount = cgstAmount + sgstAmount;
             const inclusivePrice = mrp + totalGstAmount;
-            setgsttype("SGST+CGST");
+            // Note: setgsttype should be defined outside this function scope
+            if (typeof setgsttype === 'function') {
+                setgsttype("SGST+CGST");
+            }
 
             return {
                 type: 'CGST+SGST',
@@ -208,15 +279,19 @@ const CreateVoucher = () => {
                 inclusivePrice,
                 isSameState: true,
                 registrationStateCode,
-                customerStateCode: customerStateCodeStandardized,
+                customerStateCode: customerStateToCompare,
                 stateName: registrationStateCode === '01' ? 'Jammu And Kashmir' : 'Delhi',
-                discountApplied: false
+                discountApplied: false,
+                usedShippingState: newShippingStateCode ? 'newShippingState' : 'customerState'
             };
         } else {
             // Different state or mixed - apply IGST
             const gstAmount = mrp * (igstRate / 100);
             const inclusivePrice = mrp + gstAmount;
-            setgsttype("IGST");
+            // Note: setgsttype should be defined outside this function scope
+            if (typeof setgsttype === 'function') {
+                setgsttype("IGST");
+            }
 
             return {
                 type: 'IGST',
@@ -230,12 +305,19 @@ const CreateVoucher = () => {
                 inclusivePrice,
                 isSameState: false,
                 registrationStateCode,
-                customerStateCode: customerStateCodeStandardized,
+                customerStateCode: customerStateToCompare,
                 stateName: 'Inter-State',
-                discountApplied: false
+                discountApplied: false,
+                usedShippingState: newShippingStateCode ? 'newShippingState' : 'customerState'
             };
         }
     };
+
+
+    useEffect(() => {
+        calculateGST()
+    }, [newShippingState])
+
 
 
 
@@ -268,12 +350,13 @@ const CreateVoucher = () => {
 
             if (response.ok && Array.isArray(data)) {
                 const productOptions = data.map(prod => ({
-                    value: prod.product.id,
+                    value: prod.id,
                     orderProdId: prod.id,
                     label: prod.product.productDescription,
                     price: prod.product?.retailMrp,
                     hsnCode: prod.product?.hsnCode || '',
-                    obj: prod
+                    obj: prod,
+                    fromOrder: false
                 }));
                 setAvailableProducts(productOptions);
             }
@@ -521,7 +604,7 @@ const CreateVoucher = () => {
     });
 
 
-    console.log(Vouchers, "humsath");
+
 
     const GetVoucherNos = async () => {
         try {
@@ -563,20 +646,9 @@ const CreateVoucher = () => {
     }, [Vouchers.id]);
 
 
-    console.log(voucherNos, "3333333333333333333333333333333");
 
 
-    //   console.log(voucherNos,"jugnu");
-    // let lastvoucher = 0;
-    // if (voucherNos?.receipts?.length > 0) {
-    //     console.log(voucherNos, "jugnu");
 
-    //     lastvoucher = Number(voucherNos.receipts[voucherNos.receipts.length - 1]) || 0;
-    //     console.log(lastvoucher, "lastvoucher");
-
-    // }
-
-    // const nextVoucher = lastvoucher + 1;
 
     // Get placeholder text for party account based on voucher type
     const getPartyAccountPlaceholder = () => {
@@ -673,84 +745,91 @@ const CreateVoucher = () => {
 
 
 
-    console.log(Vouchers.defGstRegist, "4545454545");
 
 
 
-    console.log(Vouchers.defGstRegist, "4545454545");
 
-    function determineDestinationLedger(Vouchers, custAddress, isExport, destinationledgerOptions) {
-        const typeOfVoucher = Vouchers?.typeOfVoucher?.toLowerCase() || '';
-        const defGstRegist = Vouchers?.defGstRegist || '';
 
-        // Determine registration location from GST registration
-        const getRegistrationLocation = (gstReg) => {
-            if (!gstReg) return null;
-            const regLower = gstReg.toLowerCase();
 
-            if (regLower.includes('jammu') || regLower.includes('kashmir') || regLower.includes('j&k') || regLower.includes('jk')) {
-                return 'jammu_and_kashmir';
-            } else if (regLower.includes('delhi') || regLower.includes('ncr') || regLower.includes('nct')) {
-                return 'delhi';
+    const [allProducts, setAllProducts] = useState([]);
+    const [loadingAllProducts, setLoadingAllProducts] = useState(false);
+
+    // Function to fetch all products
+    const fetchAllProducts = async () => {
+        if (loadingAllProducts) return; // Prevent multiple calls
+
+        setLoadingAllProducts(true);
+        try {
+            // Replace with your actual API endpoint for all products
+            const response = await fetch(`${GETPRODUCTS}`, { // Updated API endpoint
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+            });
+
+            const data = await response.json();
+            console.log(data, "All products data");
+
+            if (response.ok && Array.isArray(data.content)) {
+                const productOptions = data?.content?.map(product => ({
+                    value: product.id,
+                    label: product?.productDescription,
+                    price: product?.retailMrp,
+                    hsnCode: product?.hsnCode || {},
+                    obj: product,
+                    fromOrder: false // Mark as not from order
+                }));
+                setAllProducts(productOptions);
             }
-            return null;
-        };
+        } catch (error) {
+            console.error("Error fetching all products:", error);
+            toast.error("Failed to load all products");
+        } finally {
+            setLoadingAllProducts(false);
+        }
+    };
 
-        // Extract GST code from customer address (assuming GST code is in the address)
-        const getCustGstCode = (address) => {
-            if (!address) return null;
-            // Look for GST codes like 01, 02, 07, etc.
-            const gstCodeMatch = address.match(/\b(0[1-9]|[1-9][0-9])\b/);
-            return gstCodeMatch ? gstCodeMatch[0] : null;
-        };
+    // Call this function when component mounts or when needed
+    useEffect(() => {
+        // Preload all products when component mounts for faster access later
+        if (Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") {
+            fetchAllProducts();
+        }
+    }, [Vouchers?.typeOfVoucher]);
 
-        // Determine ledger type based on conditions
-        const determineLedgerType = () => {
-            const regLocation = getRegistrationLocation(defGstRegist);
-            const custGstCode = getCustGstCode(custAddress);
+    console.log(allProducts, "56565");
 
-            // Base ledger type from voucher type
-            const baseType = typeOfVoucher === 'purchase' ? 'purchase' : 'sales';
 
-            if (isExport) {
-                return `${baseType} export ${regLocation || 'delhi'}`;
-            }
+    // Updated helper function to get all products for "Add New Product" rows
+    const getAllAvailableProducts = (rowProducts, values, currentIndex) => {
+        const usedProductsIds = getUsedproductsIds(values, currentIndex);
 
-            if (!regLocation) {
-                return `${baseType} igst delhi`; // Default
-            }
-
-            // Map GST codes to locations
-            const gstCodeMapping = {
-                '01': 'jammu_and_kashmir',
-                '07': 'delhi'
-            };
-
-            const custLocation = custGstCode ? gstCodeMapping[custGstCode] : null;
-
-            if (!custLocation) {
-                // Can't determine customer location, use IGST
-                return `${baseType} igst ${regLocation}`;
-            }
-
-            // Check if same state (local) or different state (IGST)
-            if (regLocation === custLocation) {
-                return `${baseType} local ${regLocation}`;
-            } else {
-                return `${baseType} igst ${regLocation}`;
-            }
-        };
-
-        const ledgerType = determineLedgerType();
-
-        // Find the matching option in destinationledger
-        const matchedOption = destinationledgerOptions?.find(option =>
-            option.label?.toLowerCase().includes(ledgerType.toLowerCase()) ||
-            option.value?.toString().toLowerCase().includes(ledgerType.toLowerCase())
+        // Filter out already used products from all products
+        const availableAllProducts = allProducts.filter(product =>
+            !usedProductsIds.includes(product.value)
         );
 
-        return matchedOption?.value || null;
-    }
+        // Combine order products with available all products
+        const orderProducts = rowProducts.filter(p => p.fromOrder);
+        const nonOrderAllProducts = availableAllProducts.filter(allProduct =>
+            !orderProducts.some(op => op.value === allProduct.value)
+        );
+        console.log(nonOrderAllProducts, "klklklkl");
+
+        return [
+            ...orderProducts.map(op => ({ ...op, isOrderProduct: true })),
+            ...nonOrderAllProducts.map(p => ({
+                ...p,
+                isOrderProduct: false,
+                label: `${p.label} (new)`
+            }))
+        ];
+    };
+
+    console.log(newShippingState, "buchhhhhhhhhhhhhhhhhhhh");
+
 
 
 
@@ -768,12 +847,14 @@ const CreateVoucher = () => {
                         paymentDate: '',
                         ledgerId: "",
                         orderIds: [],
-                        destinationledgerId: determineDestinationLedger(
-                            Vouchers,
-                            custaddress,
-                            false, // default isExport value
-                            destinationledger
-                        ),
+                        // destinationLedgerId: determineDestinationLedger(
+                        //     Vouchers,
+                        //     custaddress,
+                        //     false, // default isExport value
+                        //     destinationledger,
+                        //     newShippingState
+
+                        // ),
                         currentBalance: "",
                         currentBalance2: "",
                         gstRegistration: Vouchers.defGstRegist || "",
@@ -783,6 +864,11 @@ const CreateVoucher = () => {
                         cardNumber: "",
                         transactionId: "",
                         salesChannel: "",
+                        giftVoucherAmount: 0,
+                        giftVoucherLedgerId: null,
+                        isGiftVoucherUsed: false,
+                        customerNewDeliveryShippingAddress: "",
+                        customerNewDeliveryShippingState: "",
 
 
                         cashAmount: null,
@@ -808,7 +894,7 @@ const CreateVoucher = () => {
                         totalSgst: 0,
                         totalCgst: 0,
                         toLedgerId: null,
-                        toLedger: null,
+                        // toLedger: null,
                         remainingBalance: 0,
                         amountReceived: 0,
                         amount: 0,
@@ -929,6 +1015,104 @@ const CreateVoucher = () => {
                             // For now, we'll stick with the first entry approach
                         };
 
+                        function determineDestinationLedger(Vouchers, custAddress, isExport, destinationledgerOptions, newShippingState) {
+                            const typeOfVoucher = Vouchers?.typeOfVoucher?.toLowerCase() || '';
+                            const defGstRegist = Vouchers?.defGstRegist || '';
+
+                            console.log(isExport, "exxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+
+                            // Determine registration location from GST registration
+                            const getRegistrationLocation = (gstReg) => {
+                                if (!gstReg) return null;
+                                const regLower = gstReg.toLowerCase();
+
+                                if (regLower.includes('jammu') || regLower.includes('kashmir') || regLower.includes('j&k') || regLower.includes('jk')) {
+                                    return 'jammu_and_kashmir';
+                                } else if (regLower.includes('delhi') || regLower.includes('ncr') || regLower.includes('nct')) {
+                                    return 'delhi';
+                                }
+                                return null;
+                            };
+
+                            // Extract GST code from customer address (assuming GST code is in the address)
+                            const getCustGstCode = (address) => {
+                                if (!address) return null;
+                                // Look for GST codes like 01, 02, 07, etc.
+                                const gstCodeMatch = address.match(/\b(0[1-9]|[1-9][0-9])\b/);
+                                return gstCodeMatch ? gstCodeMatch[0] : null;
+                            };
+
+                            const baseType = typeOfVoucher === 'Purchase' ? 'Purchase' : 'Sales';
+
+
+
+
+                            const determineLedgerType = () => {
+                                const regLocation = getRegistrationLocation(defGstRegist);
+                                const custGstCode = getCustGstCode(custAddress);
+
+                                // Base ledger type from voucher type
+                                const baseType = typeOfVoucher === 'Purchase' ? 'Purchase' : 'Sales';
+                                if (regLocation) {
+                                    if (isExport === true) {
+                                        console.log(`${baseType} Export`, "hereeeeeeeeeeeeeeeeeeeeeee");
+
+                                        return `${baseType} Export`; // Export case    }`;
+                                    }
+
+                                }
+
+
+                                else if (!regLocation) {
+                                    return `${baseType} igst delhi`; // Default
+                                }
+
+                                // Map GST codes to locations
+                                const gstCodeMapping = {
+                                    '01': 'jammu_and_kashmir',
+                                    '07': 'delhi'
+                                };
+
+                                const custLocation = custGstCode ? gstCodeMapping[custGstCode] : null;
+
+                                const newShippingStateLocation = newShippingState ? gstCodeMapping[newShippingState] : null;
+
+
+                                if (newShippingStateLocation) {
+                                    if (regLocation === newShippingStateLocation) {
+                                        return `${baseType} local ${regLocation}`;
+                                    } else {
+                                        return `${baseType} igst ${regLocation}`;
+                                    }
+                                }
+
+                                else if (!custLocation) {
+                                    // Can't determine customer location, use IGST
+                                    return `${baseType} igst ${regLocation}`;
+                                }
+                                console.log(regLocation, custLocation, "1111111111111111001111111111111111111111");
+
+
+                                // Check if same state (local) or different state (IGST)
+                                if (regLocation === custLocation) {
+                                    return `${baseType} local ${regLocation}`;
+                                } else {
+                                    return `${baseType} igst ${regLocation}`;
+                                }
+                            };
+
+                            const ledgerType = determineLedgerType();
+
+                            // Find the matching option in destinationledger
+                            const matchedOption = destinationledgerOptions?.find(option =>
+                                option.label?.toLowerCase().includes(ledgerType.toLowerCase()) ||
+                                option.value?.toString().toLowerCase().includes(ledgerType.toLowerCase())
+                            );
+
+                            return matchedOption?.value || null;
+                        }
+
+
                         useEffect(() => {
                             if (isPaymentInParts && paymentMethods.length > 0) {
                                 updateFormikFieldsFromPaymentMethods();
@@ -962,20 +1146,89 @@ const CreateVoucher = () => {
                                     Vouchers,
                                     custaddress, // Make sure you have this variable
                                     values.isExport,
-                                    destinationledger
+                                    destinationledger,
+                                    newShippingState
                                 );
 
-                                if (selectedValue && selectedValue !== values.destinationledgerId) {
-                                    setFieldValue('destinationledgerId', selectedValue);
+                                if (selectedValue && selectedValue !== values.destinationLedgerId) {
+                                    setFieldValue('destinationLedgerId', selectedValue);
                                 }
                             }
                         }, [Vouchers?.typeOfVoucher, Vouchers?.defGstRegist, values.isExport, custaddress, destinationledger]);
 
                         // Function to handle manual selection
                         const handleDestinationLedgerChange = (option) => {
-                            setFieldValue('destinationledgerId', option?.value || '');
+                            setFieldValue('destinationLedgerId', option?.value || '');
                             // You can also update related fields if needed
                             // setFieldValue('currentBalance2', option?.balance || 0);
+                        };
+
+                        const handleAddCustomer = async (customerData) => {
+
+                            console.log(customerData, "lklk");
+
+                            //  const values = {
+                            //    customerName: name,
+                            //    customerGroup: { id: group?.id }
+                            //  };
+
+                            try {
+                                const response = await fetch(ADD_CUSTOMER_URL, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        Authorization: `Bearer ${token}`,
+                                    },
+                                    body: JSON.stringify(customerData),
+                                });
+
+                                const data = await response.json();
+
+                                if (response.ok) {
+                                    toast.success('Customer added successfully');
+
+                                    // Simply refetch all customers after successful addition
+                                    await getLedger();
+
+                                    setisCustModelOpen(false);
+
+                                } else {
+                                    toast.error(data.errorMessage || 'Failed to add customer');
+                                }
+                            } catch (error) {
+                                console.error(error);
+                                toast.error('An error occurred');
+                            }
+                        };
+
+                        // Helper function to find the selected product in any product list
+                        const getSelectedProductValue = (productsId, rowProducts, values, index) => {
+                            if (!productsId) return null;
+
+                            // First, try to find in rowProducts (order products)
+                            const foundInRowProducts = rowProducts.find(p => p.value === productsId);
+                            if (foundInRowProducts) return foundInRowProducts;
+
+                            // If not found in order products, try to find in all products
+                            // (for rows where isNewProduct is true or when product is from all products)
+                            if (allProducts.length > 0) {
+                                const foundInAllProducts = allProducts.find(p => p.value === productsId);
+                                if (foundInAllProducts) {
+                                    return {
+                                        ...foundInAllProducts,
+                                        label: `${foundInAllProducts.label} (All Products)`
+                                    };
+                                }
+                            }
+
+                            // If still not found, check if it's in the combined list for new products
+                            if (values.paymentDetails[index]?.isNewProduct || newProductRowIndex === index) {
+                                const combinedProducts = getAllAvailableProducts(rowProducts, values, index);
+                                const foundInCombined = combinedProducts.find(p => p.value === productsId);
+                                if (foundInCombined) return foundInCombined;
+                            }
+
+                            return null;
                         };
 
 
@@ -1135,6 +1388,19 @@ const CreateVoucher = () => {
                                                                 }}
                                                             />
                                                             <ErrorMessage name="ledgerId" component="div" className="text-red-500 text-xs mt-1" />
+                                                            {(Vouchers?.typeOfVoucher === "Sales") && (
+                                                                <div
+                                                                    style={{ backgroundColor: "#333A48" }}
+                                                                    className="flex w-[150px] items-center gap-2 rounded-xl cursor-pointer  mx-2 px-2 text-white mt-2 py-2 rounded-md hover:bg-opacity-90 transition-colors"
+                                                                    onClick={() => {
+                                                                        setisCustModelOpen(true)
+                                                                        // Your add customer logic here
+                                                                    }}
+                                                                >
+                                                                    <IoMdAdd size={20} />
+                                                                    <span className="cursor-pointer text-sm">Add Customer</span>
+                                                                </div>
+                                                            )}
                                                         </div>
 
                                                         <div className="flex-2 min-w-[250px] " >
@@ -1215,13 +1481,68 @@ const CreateVoucher = () => {
 
 
                                             </div>
+                                            {
+                                                (Vouchers?.typeOfVoucher === "Sales") && (
+
+                                                    <div className='flex flex-row gap-4 mb-6'>
+                                                        <div className="flex min-w-[250px] gap-3 items-center">
+                                                            <label className="mb-2.5 block text-black dark:text-white">Is Delivery Different</label>
+
+                                                            <Field
+                                                                type="checkbox"
+                                                                name="isDeliveryDifferent"
+                                                                className="h-5 w-5 rounded border-stroke bg-transparent text-primary focus:ring-primary dark:border-form-strokedark dark:bg-form-input"
+                                                            />
+                                                        </div>
+
+                                                        {values.isDeliveryDifferent && (
+                                                            <>
+                                                                <div className="flex-2 min-w-[250px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">New Delivery Address</label>
+                                                                    <Field
+                                                                        as="textarea"
+                                                                        name="customerNewDeliveryShippingAddress"
+                                                                        placeholder="Enter Delivery Address"
+                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                                    />
+                                                                    <ErrorMessage name="customerNewDeliveryShippingAddress" component="div" className="text-red-500" />
+                                                                </div>
+
+                                                                <div className="mb-4">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">
+                                                                        New Shipping State <span className="text-red-600">*</span>
+                                                                    </label>
+                                                                    <ReactSelect
+                                                                        value={stateOption.find(opt => opt.value === values.customerNewDeliveryShippingState)}
+                                                                        onChange={(option) => {
+
+                                                                            setFieldValue('customerNewDeliveryShippingState', option?.value || '');
+
+                                                                            setnewShippingState(option?.value || '')
+                                                                        }}
+                                                                        options={stateOption}
+                                                                        styles={customStyles}
+                                                                        className="bg-white dark:bg-form-input"
+                                                                        classNamePrefix="react-select"
+                                                                        placeholder="Select Shipping State"
+                                                                    />
+                                                                </div>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                )
+
+                                            }
+
+
+
 
                                             <div className='flex flex-row gap-4 mb-6'>
                                                 <div className="flex-2 min-w-[250px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Destination Ledger</label>
                                                     <ReactSelect
-                                                        name='destinationledgerId'
-                                                        value={destinationledger.find(opt => opt.value === values.destinationledgerId)}
+                                                        name='destinationLedgerId'
+                                                        value={destinationledger.find(opt => opt.value === values.destinationLedgerId)}
                                                         onChange={handleDestinationLedgerChange}
                                                         options={destinationledger}
                                                         className="react-select-container bg-white dark:bg-form-Field w-full"
@@ -1232,10 +1553,10 @@ const CreateVoucher = () => {
                                                             ...customStyles,
                                                             menuPortal: (base) => ({ ...base, zIndex: 100000 })
                                                         }}
-                                                        
+
                                                     />
                                                     <ErrorMessage name="destinationledgerId" component="div" className="text-red-500 text-xs mt-1" />
-                                                   
+
                                                 </div>
 
                                                 <div className="flex-2 min-w-[150px]">
@@ -1334,6 +1655,9 @@ const CreateVoucher = () => {
                                                                     <tbody>
                                                                         {values.paymentDetails.map((entry, index) => {
                                                                             const rowProducts = getAvailableProductsForRow(values, index);
+
+                                                                            console.log(rowProducts, "jaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaayyyy");
+
                                                                             return (
                                                                                 <tr key={entry.id || index} className="hover:bg-gray-50 dark:hover:bg-gray-800">
                                                                                     {/* Product Dropdown */}
@@ -1341,8 +1665,11 @@ const CreateVoucher = () => {
                                                                                         {selectedLedger ? (
                                                                                             <ReactSelect
                                                                                                 name={`paymentDetails.${index}.productsId`}
-                                                                                                value={rowProducts.find(p => p.value === entry.productsId) || null}
+                                                                                                value={getSelectedProductValue(entry.productsId, rowProducts, values, index)}
                                                                                                 onChange={(option) => {
+
+                                                                                                    console.log(option, "umermukhtar");
+
                                                                                                     const mrp = option?.price || 0;
                                                                                                     const hsnCode = option?.hsnCode || {};
                                                                                                     const igstRate = hsnCode?.igst || 0;
@@ -1356,7 +1683,7 @@ const CreateVoucher = () => {
                                                                                                     // Calculate GST based on location and discount
                                                                                                     const gstCalculation = calculateGST(mrp, hsnCode, gstRegistration, customerAddress, currentDiscount, customerState);
 
-                                                                                                    setFieldValue(`paymentDetails.${index}.productsId`, option?.value || null);
+                                                                                                    setFieldValue(`paymentDetails.${index}.productsId`, option?.obj?.product?.id || option?.obj.id || null);
                                                                                                     setFieldValue(`paymentDetails.${index}.orderProductId`, option?.orderProdId || null);
                                                                                                     setFieldValue(`paymentDetails.${index}.mrp`, mrp);
                                                                                                     setFieldValue(`paymentDetails.${index}.igstRate`, igstRate);
@@ -1375,7 +1702,12 @@ const CreateVoucher = () => {
                                                                                                         rate: gstCalculation.inclusivePrice
                                                                                                     }));
                                                                                                 }}
-                                                                                                options={rowProducts}
+                                                                                                options={
+                                                                                                    // Show all products for rows marked as new product, otherwise show order products
+                                                                                                    entry.isNewProduct || newProductRowIndex === index
+                                                                                                        ? getAllAvailableProducts(rowProducts, values, index)
+                                                                                                        : rowProducts
+                                                                                                }
                                                                                                 placeholder="Select Product"
                                                                                                 className="react-select-container"
                                                                                                 classNamePrefix="react-select"
@@ -1384,6 +1716,21 @@ const CreateVoucher = () => {
                                                                                                     ...customStyles,
                                                                                                     menuPortal: base => ({ ...base, zIndex: 9999 })
                                                                                                 }}
+                                                                                                formatOptionLabel={(option) => (
+                                                                                                    <div className="flex flex-col">
+                                                                                                        <div className="flex items-center justify-between">
+                                                                                                            <span>{option.label}</span>
+                                                                                                            {option.fromOrder && (
+                                                                                                                <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                                                                                                                    Order Product
+                                                                                                                </span>
+                                                                                                            )}
+                                                                                                        </div>
+                                                                                                        {option.orderInfo && (
+                                                                                                            <span className="text-xs text-gray-500 mt-1">{option.orderInfo}</span>
+                                                                                                        )}
+                                                                                                    </div>
+                                                                                                )}
                                                                                                 isClearable
                                                                                                 isDisabled={loadingProducts}
                                                                                             />
@@ -1584,28 +1931,62 @@ const CreateVoucher = () => {
                                                                 </table>
                                                             </div>
                                                             {/* Add Row Button */}
-                                                            <button
-                                                                type="button"
-                                                                onClick={() =>
-                                                                    push({
-                                                                        id: uuidv4(),
-                                                                        productsId: null,
-                                                                        mrp: 0,
-                                                                        rate: 0,
-                                                                        exclusiveGst: 0,
-                                                                        discount: 0,
-                                                                        quantity: 1,
-                                                                        value: 0,
-                                                                        igstRate: 0,
-                                                                        gstAmount: 0,
-                                                                        gstCalculation: null
-                                                                    })
-                                                                }
-                                                                disabled={!selectedLedger}
-                                                                className="flex items-center gap-2 mt-4 text-primary hover:text-primary/80 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
-                                                            >
-                                                                <IoMdAdd size={20} /> Add Row
-                                                            </button>
+
+                                                            <div className="flex items-center gap-4 mt-4">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() =>
+                                                                        push({
+                                                                            id: uuidv4(),
+                                                                            productsId: null,
+                                                                            mrp: 0,
+                                                                            rate: 0,
+                                                                            exclusiveGst: 0,
+                                                                            discount: 0,
+                                                                            quantity: 1,
+                                                                            value: 0,
+                                                                            igstRate: 0,
+                                                                            gstAmount: 0,
+                                                                            gstCalculation: null
+                                                                        })
+                                                                    }
+                                                                    disabled={!selectedLedger}
+                                                                    className="flex items-center gap-2 mt-4 text-primary hover:text-primary/80 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
+                                                                >
+                                                                    <IoMdAdd size={20} /> Add Row
+                                                                </button>
+
+                                                                <span className="text-gray-400">|</span>
+
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() => {
+                                                                        // Add a new row and mark it for all products
+                                                                        const newIndex = values.paymentDetails.length;
+                                                                        push({
+                                                                            id: uuidv4(),
+                                                                            productsId: null,
+                                                                            mrp: 0,
+                                                                            rate: 0,
+                                                                            exclusiveGst: 0,
+                                                                            discount: 0,
+                                                                            quantity: 1,
+                                                                            value: 0,
+                                                                            igstRate: 0,
+                                                                            gstAmount: 0,
+                                                                            gstCalculation: null,
+                                                                            isNewProduct: true // Flag to indicate this is for new product
+                                                                        });
+                                                                        setNewProductRowIndex(newIndex);
+                                                                        setAddingNewProduct(true);
+                                                                    }}
+
+                                                                    className="flex items-center gap-2 text-green-600 hover:text-green-700 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
+                                                                >
+                                                                    <IoMdAdd size={20} /> Add New Product (Not in Order)
+                                                                </button>
+
+                                                            </div>
 
                                                             {/* GST Summary */}
                                                             {Vouchers?.typeOfVoucher === "Sales" && (
@@ -1782,6 +2163,76 @@ const CreateVoucher = () => {
 
 
                                                             )}
+
+
+                                                            {Vouchers?.typeOfVoucher === "Sales" && (
+
+                                                                <>
+
+                                                                    <div className='flex items-center gap-3'>
+                                                                        <label className="mb-2.5 block text-black dark:text-white">Gift Voucher Used</label>
+
+                                                                        <Field
+                                                                            type="checkbox"
+                                                                            name="isGiftVoucherUsed"
+                                                                            checked={values.isGiftVoucherUsed}
+                                                                            onChange={(e) => {
+                                                                                const isChecked = e.target.checked;
+                                                                                setFieldValue('isGiftVoucherUsed', isChecked);
+                                                                                if (!isChecked) {
+                                                                                    // Clear gift voucher related fields if unchecked
+                                                                                    setFieldValue('giftVoucherLedgerId', null);
+                                                                                    setFieldValue('giftVoucherAmount', 0);
+                                                                                }
+                                                                            }}
+                                                                        />
+                                                                    </div>
+
+                                                                    <div>
+
+                                                                        {values.isGiftVoucherUsed && (values.amountReceived > 0) && (
+
+                                                                            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                                                <div>
+                                                                                    <label className="mb-2.5 block text-black dark:text-white">Select Gift Voucher Ledger <span className='text-red-700'>*</span></label>
+                                                                                    <ReactSelect
+                                                                                        options={giftledgOptions}
+                                                                                        value={giftledgOptions?.find(option => option.value === values.giftVoucherLedgerId)}
+                                                                                        onChange={(selectedOption) => {
+                                                                                            setFieldValue('giftVoucherLedgerId', selectedOption?.value);
+                                                                                            setFieldValue('giftVoucherAmount', 0);
+                                                                                        }}
+                                                                                    />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <label className="mb-2.5 block text-black dark:text-white">Gift Voucher Amount <span className='text-red-700'>*</span></label>
+                                                                                    <Field
+
+                                                                                        type="number"
+                                                                                        name="giftVoucherAmount"
+                                                                                        placeholder="Enter Gift Voucher Amount"
+                                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                        onChange={(e) => {
+                                                                                            const giftAmount = parseFloat(e.target.value) || 0;
+                                                                                            setFieldValue('giftVoucherAmount', giftAmount);
+                                                                                            // Adjust amount received based on gift voucher
+                                                                                            const adjustedAmountReceived = totals.subtotal - giftAmount;
+                                                                                            // setFieldValue('amountReceived', adjustedAmountReceived >= 0 ? adjustedAmountReceived : 0);
+                                                                                            const remainingBalance = totals.subtotal - (values.amountReceived + giftAmount);
+                                                                                            setFieldValue('remainingBalance', remainingBalance >= 0 ? remainingBalance : 0);
+                                                                                        }}
+                                                                                    />
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+
+
+
+                                                                </>
+
+                                                            )
+                                                            }
 
 
                                                         </div>
@@ -2105,17 +2556,17 @@ const CreateVoucher = () => {
                                                             {values.modeOfPayment === 'Card' && (
                                                                 <div className='flex flex-row gap-4'>
                                                                     <div className="flex-1">
-                                                                        <label className="mb-2.5 block text-black dark:text-white">Select Bank <span className='text-red-700'>*</span></label>
+                                                                        <label className="mb-2.5 block text-black dark:text-white">Select Card <span className='text-red-700'>*</span></label>
                                                                         <ReactSelect
                                                                             name='cardLedgerId'
-                                                                            value={bankData.find(opt => opt.value === values.cardLedgerId)}
+                                                                            value={cardData.find(opt => opt.value === values.cardLedgerId)}
                                                                             onChange={(option) => {
                                                                                 setFieldValue('cardLedgerId', option?.value || '');
                                                                             }}
-                                                                            options={bankData}
+                                                                            options={cardData}
                                                                             className="react-select-container bg-white dark:bg-form-Field w-full"
                                                                             classNamePrefix="react-select"
-                                                                            placeholder="Select Bank"
+                                                                            placeholder="Select Card"
                                                                             menuPortalTarget={document.body}
                                                                             styles={{
                                                                                 ...customStyles,
@@ -2294,7 +2745,7 @@ const CreateVoucher = () => {
                                                                                 </div>
 
                                                                                 {/* Bank Selection for Cheque/Bank Transfer/Card */}
-                                                                                {(payment.mode === 'Cheque' || payment.mode === 'Bank Transfer' || payment.mode === 'Card') && (
+                                                                                {(payment.mode === 'Cheque' || payment.mode === 'Bank Transfer') && (
                                                                                     <div>
                                                                                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                                                                             Select Bank *
@@ -2307,6 +2758,29 @@ const CreateVoucher = () => {
                                                                                             }}
                                                                                             options={bankData}
                                                                                             placeholder="Select Bank"
+                                                                                            className="react-select-container"
+                                                                                            classNamePrefix="react-select"
+                                                                                            menuPortalTarget={document.body}
+                                                                                            styles={{
+                                                                                                ...customStyles,
+                                                                                                menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                                            }}
+                                                                                        />
+                                                                                    </div>
+                                                                                )}
+                                                                                {(payment.mode === 'Card') && (
+                                                                                    <div>
+                                                                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                                                            Select Card *
+                                                                                        </label>
+                                                                                        <ReactSelect
+                                                                                            value={cardData.find(opt => opt.value === payment.bankId)}
+                                                                                            onChange={(option) => {
+                                                                                                updatePaymentMethod(index, 'bankId', option?.value || '');
+                                                                                                updateFormikFieldsFromPaymentMethods();
+                                                                                            }}
+                                                                                            options={cardData}
+                                                                                            placeholder="Select Card"
                                                                                             className="react-select-container"
                                                                                             classNamePrefix="react-select"
                                                                                             menuPortalTarget={document.body}
@@ -2463,6 +2937,154 @@ const CreateVoucher = () => {
                                         </div>
                                     </div>
                                 </div>
+                                {
+                                    isCustModelOpen && (
+                                        <Modalll
+                                            isOpen={isCustModelOpen}
+                                            onRequestClose={() => setisCustModelOpen(false)}
+                                            className="modal mr-[200px] mt-[30px] mb-[50px]"
+                                            overlayClassName="modal-overlay"
+                                            width="900px" // Increased width to accommodate more fields
+                                        >
+                                            <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                                                <h3 className="font-medium text-slate-500 text-center text-xl dark:text-black">
+                                                    Add New Customer
+                                                </h3>
+                                            </div>
+
+                                            <div className="p-4 max-h-[70vh] overflow-y-auto">
+                                                <div className='flex flex-row gap-4'>
+
+
+                                                    {/* Customer Name Field */}
+                                                    <div className="mb-4">
+                                                        <label className="block text-black dark:text-white mb-2">
+                                                            Customer Name <span className="text-red-600">*</span>
+                                                        </label>
+                                                        <input
+                                                            type="text"
+                                                            value={newCustomerName}
+                                                            onChange={(e) => setnewCustomerName(e.target.value)}
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                            placeholder="Enter customer name"
+                                                        />
+                                                    </div>
+
+
+
+                                                    {/* Shipping Address Field */}
+                                                    <div className="mb-4">
+                                                        <label className="mb-2.5 block text-black dark:text-white">
+                                                            Shipping Address <span className="text-red-600">*</span>
+                                                        </label>
+                                                        <textarea
+                                                            value={shippingAddress}
+                                                            onChange={(e) => setShippingAddress(e.target.value)}
+                                                            placeholder="Shipping Address"
+                                                            rows="3"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+
+                                                    {/* Shipping State Field */}
+                                                    <div className="mb-4">
+                                                        <label className="mb-2.5 block text-black dark:text-white">
+                                                            Shipping State <span className="text-red-600">*</span>
+                                                        </label>
+                                                        <ReactSelect
+                                                            value={stateOption.find(option => option.value === shippingState) || null}
+                                                            onChange={(option) => setShippingState(option ? option.value : '')}
+                                                            options={stateOption}
+                                                            styles={customStyles}
+                                                            className="bg-white dark:bg-form-input"
+                                                            classNamePrefix="react-select"
+                                                            placeholder="Select Shipping State"
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                {/* Opening Balance Section */}
+                                                <div className="mb-4 border-t border-stroke pt-4 dark:border-strokedark">
+                                                    <h4 className="font-medium text-black dark:text-white mb-3">Opening Balance:</h4>
+
+                                                    {/* Opening Balance Type Radio Buttons */}
+                                                    <div className="mb-4">
+                                                        <div className="flex items-center gap-4 mb-3">
+                                                            <label className="flex items-center gap-2">
+                                                                <input
+                                                                    type="radio"
+                                                                    name="openingBalanceType"
+                                                                    value="DEBIT"
+                                                                    checked={openingBalanceType === "DEBIT"}
+                                                                    onChange={(e) => setOpeningBalanceType(e.target.value)}
+                                                                    className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
+                                                                />
+                                                                <span className="text-black dark:text-white">Debit (DR)</span>
+                                                            </label>
+                                                            <label className="flex items-center gap-2">
+                                                                <input
+                                                                    type="radio"
+                                                                    name="openingBalanceType"
+                                                                    value="CREDIT"
+                                                                    checked={openingBalanceType === "CREDIT"}
+                                                                    onChange={(e) => setOpeningBalanceType(e.target.value)}
+                                                                    className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
+                                                                />
+                                                                <span className="text-black dark:text-white">Credit (CR)</span>
+                                                            </label>
+                                                        </div>
+
+                                                        {/* Opening Balance Amount Input */}
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="flex-1">
+                                                                <input
+                                                                    type="number"
+                                                                    value={openingBalance}
+                                                                    onChange={(e) => setOpeningBalance(e.target.value)}
+                                                                    placeholder="Opening Balance Amount"
+                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                                />
+                                                            </div>
+                                                            <span className="text-lg font-medium text-gray-600 dark:text-gray-300">
+                                                                {openingBalanceType === "CREDIT" ? "Cr." : "Dr."}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* Buttons */}
+                                                <div className="flex justify-end gap-2 mt-6 pt-4 border-t border-gray-300">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setisCustModelOpen(false)}
+                                                        className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition-colors"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleAddCustomer({
+                                                            customerName: newCustomerName,
+
+
+                                                            shippingAddress: shippingAddress,
+                                                            shippingState: shippingState,
+                                                            typeOfopeningBalance: openingBalanceType,
+                                                            openingBalances: openingBalance,
+                                                            previousOpType: openingBalanceType,
+                                                            previousOpBalance: openingBalance
+                                                        })}
+                                                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                                                        disabled={!newCustomerName.trim() || !shippingAddress.trim() || !shippingState}
+                                                    >
+                                                        Add Customer
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </Modalll>
+                                    )
+                                }
+
                             </Form>
                         )
                     }}

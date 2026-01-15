@@ -237,6 +237,7 @@ const useLedger = () => {
             const data = await response.json();
             if (response.ok) {
                 toast.success(`Ledger'added successfully`);
+                navigate("/ledger/view")
                 resetForm();
                 setEdit(false);
              
