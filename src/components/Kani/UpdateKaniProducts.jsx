@@ -82,7 +82,7 @@ const UpdateKaniProducts = () => {
     }
 
     // Map the necessary fields to create the product object
-    console.log(values, "umershahkkk");
+    console.log(values, "Values in submit handler");
     const product = {
         // Don't include the ID in the product object - it's in the URL
         productGroup: { id: values.productGroup?.id || 0 },
@@ -1256,7 +1256,7 @@ const UpdateKaniProducts = () => {
                                                     {/* Color Way Field */}
                                                     <div className="flex-1 min-w-[200px]">
                                                          <label className="mb-2.5 block text-black dark:text-white">
-                                                        Color Weave
+                                                        Color Way
                                                         </label>
                                                         <Field
                                                        
@@ -1273,7 +1273,7 @@ const UpdateKaniProducts = () => {
                                                     <div className="flex-1 min-w-[300px]">
                                                         <label className="mb-2.5 block text-black dark:text-white"> Cost Price </label>
                                                         <Field
-                                                            readOnly
+                                                           
                                                             name='cost'
                                                             type="text"
                                                             placeholder="Enter Cost Price"
