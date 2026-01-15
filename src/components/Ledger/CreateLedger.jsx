@@ -28,6 +28,7 @@ const CreateLedger = () => {
         { value: 'CUSTOMER', label: 'CUSTOMER' },
         { value: 'SALES', label: 'SALES' },
         { value: 'PURCHASE', label: 'PURCHASE' },
+        { value: 'GIFTVOUCHER', label: 'GIFT VOUCHER' },
     ];
     useEffect(() => {
         getGroup()
