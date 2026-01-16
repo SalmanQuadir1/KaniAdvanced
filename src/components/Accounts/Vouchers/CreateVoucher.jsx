@@ -190,6 +190,8 @@ const CreateVoucher = () => {
 
     // GST Calculation Logic
     const calculateGST = (mrp, hsnCode, gstRegistration, customerAddress, discount = 0, customerState) => {
+        console.log(gstRegistration,"545499889999999999999999999999999");
+        
         // If discount is applied, no GST will be applied
         if (discount > 0) {
             return {
@@ -674,7 +676,7 @@ const CreateVoucher = () => {
         }
     };
 
-    console.log(Vouchers?.typeOfVoucher, "-------------------------------");
+    console.log(Vouchers, "-------------------------------");
 
 
 
@@ -857,7 +859,7 @@ const CreateVoucher = () => {
                         // ),
                         currentBalance: "",
                         currentBalance2: "",
-                        gstRegistration: Vouchers.defGstRegist || "",
+                        gstRegistration: Vouchers?.defGstRegist?.id || "",
                         narration: "",
                         modeOfPayment: "",
                         chequeNumber: "",
@@ -1023,8 +1025,13 @@ const CreateVoucher = () => {
 
                             // Determine registration location from GST registration
                             const getRegistrationLocation = (gstReg) => {
+
+                            
                                 if (!gstReg) return null;
-                                const regLower = gstReg.toLowerCase();
+                                const regLower = gstReg?.state?.toLowerCase();
+
+                                console.log(regLower,"66666666666666666666");
+                                
 
                                 if (regLower.includes('jammu') || regLower.includes('kashmir') || regLower.includes('j&k') || regLower.includes('jk')) {
                                     return 'jammu_and_kashmir';
@@ -1053,6 +1060,8 @@ const CreateVoucher = () => {
 
                                 // Base ledger type from voucher type
                                 const baseType = typeOfVoucher === 'Purchase' ? 'Purchase' : 'Sales';
+
+
                                 if (regLocation) {
                                     if (isExport === true) {
                                         console.log(`${baseType} Export`, "hereeeeeeeeeeeeeeeeeeeeeee");
@@ -1076,6 +1085,9 @@ const CreateVoucher = () => {
                                 const custLocation = custGstCode ? gstCodeMapping[custGstCode] : null;
 
                                 const newShippingStateLocation = newShippingState ? gstCodeMapping[newShippingState] : null;
+
+                                console.log(newShippingStateLocation, regLocation, "newShippingStateLocation21212120000000000000000000");
+                                
 
 
                                 if (newShippingStateLocation) {
@@ -1597,6 +1609,7 @@ const CreateVoucher = () => {
                                                                 <label className="mb-2.5 block text-black dark:text-white">Gst Registration</label>
                                                                 <Field
                                                                     name="gstRegistration"
+                                                                    value={ (Vouchers?.defGstRegist?.state || '')}
                                                                     type="text"
                                                                     placeholder="Enter gst Registration"
                                                                     className=" w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
@@ -1677,7 +1690,7 @@ const CreateVoucher = () => {
                                                                                                     // Get customer shipping address for GST calculation
                                                                                                     const customerAddress = selectedLedger?.obj?.shippingAddress || '';
                                                                                                     const customerState = selectedLedger?.obj?.shippingState || '';
-                                                                                                    const gstRegistration = values.gstRegistration || '';
+                                                                                                    const gstRegistration = Vouchers?.defGstRegist?.state || '';
                                                                                                     const currentDiscount = entry.discount || 0;
 
                                                                                                     // Calculate GST based on location and discount

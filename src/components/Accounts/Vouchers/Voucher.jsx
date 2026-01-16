@@ -52,10 +52,10 @@ const Voucher = () => {
             const currentDate = new Date();
             const currentYear = currentDate.getFullYear();
             const currentMonth = currentDate.getMonth() + 1;
-            
+
             // Financial year runs from April to March
             let financialYearStart, financialYearEnd;
-            
+
             if (currentMonth >= 4) {
                 // April or later in the year
                 financialYearStart = currentYear;
@@ -65,17 +65,17 @@ const Voucher = () => {
                 financialYearStart = currentYear - 1;
                 financialYearEnd = currentYear;
             }
-            
+
             // Get last two digits
             const startShort = financialYearStart.toString().slice(-2);
             const endShort = financialYearEnd.toString().slice(-2);
-            
+
             return `${startShort}-${endShort}`;
         };
 
         // Generate numerical part
         let numericalPart = restartNumStartNum || startingNum;
-        
+
         // Pad with zeros if needed
         if (prefillZero && widthNumPart) {
             const width = parseInt(widthNumPart) || 3;
@@ -84,21 +84,21 @@ const Voucher = () => {
 
         // Generate prefix
         let prefix = prefixParticular || '';
-        
+
         // Generate suffix - use provided suffix or financial year
         let suffix = suffixParticular || getCurrentFinancialYear();
-        
+
         // Construct final voucher number
         let voucherNo = '';
-        
+
         if (prefix) {
-            voucherNo +=`${prefix} `;
+            voucherNo += `${prefix} `;
         }
-        
-        voucherNo +=`${numericalPart}`;
-        
+
+        voucherNo += `${numericalPart}`;
+
         if (suffix) {
-            voucherNo +=`/${suffix}`;
+            voucherNo += `/${suffix}`;
         }
 
         return voucherNo;
@@ -161,7 +161,7 @@ const Voucher = () => {
         { value: 'MultiUserAuto', label: 'Multi-User Auto' },
         { value: 'None', label: 'None' },
     ];
-console.log(generatedVoucherNo);
+    console.log(generatedVoucherNo);
 
     // Initial values
     const defaultInitialValues = {
@@ -178,7 +178,7 @@ console.log(generatedVoucherNo);
         zeroTransactionAllowed: false,
         optionalVchType: false,
         narrationVchs: false,
-        autoReceiptNumber:generatedVoucherNo,
+        autoReceiptNumber: generatedVoucherNo,
         narratLedgerVch: false,
         defAccounting: false,
         costPurchase: false,
@@ -194,7 +194,7 @@ console.log(generatedVoucherNo);
         defBank: '',
         defJurisdiction: '',
         printFormal: false,
-        defGstRegist: '',
+        defGstRegist: { id: '' },
         methodVouchNumbering: false,
         gstratedetails: '',
         // hsnCode: null,
@@ -300,7 +300,7 @@ console.log(generatedVoucherNo);
             methodOfvoucher: voucherData.methodOfvoucher || '',
             numbInsertDelete: voucherData.numbInsertDelete || '',
             setAdditionalNumb: voucherData.setAdditionalNumb || false,
-            autoReceiptNumber:voucherData.autoReceiptNumber || '',  
+            autoReceiptNumber: voucherData.autoReceiptNumber || '',
             unusedVchNos: voucherData.unusedVchNos || false,
             dateForVchs: voucherData.dateForVchs || false,
             effectiveDate: voucherData.effectiveDate || '',
@@ -322,7 +322,7 @@ console.log(generatedVoucherNo);
             defBank: voucherData.defBank || '',
             defJurisdiction: voucherData.defJurisdiction || '',
             printFormal: voucherData.printFormal || false,
-            defGstRegist: voucherData.defGstRegist || '',
+            defGstRegist: { id: voucherData.defGstRegist || '' },
             methodVouchNumbering: voucherData.methodVouchNumbering || false,
             gstratedetails: voucherData.gstratedetails || '',
             // hsnCode: voucherData.hsnCode || null,
@@ -335,9 +335,9 @@ console.log(generatedVoucherNo);
 
     // Handle form submission
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-        console.log(values,"handle submittttt");
+        console.log(values, "handle submittttt");
         setLoading(true);
-        
+
 
         try {
             let url, method, successMessage;
@@ -370,7 +370,7 @@ console.log(generatedVoucherNo);
             if (values.defaultGodown && typeof values.defaultGodown === 'object') {
                 formData.defaultGodown = values.defaultGodown.value;
             }
-            console.log(formData,"form dataaa");
+            console.log(formData, "form dataaa");
 
             const response = await fetch(url, {
                 method: method,
@@ -385,7 +385,7 @@ console.log(generatedVoucherNo);
 
             if (response.ok) {
                 toast.success(successMessage);
-                
+
                 if (operationType === 'create' || operationType === 'create-sub') {
                     resetForm();
                 }
@@ -418,6 +418,14 @@ console.log(generatedVoucherNo);
         label: loc.address,
         value: loc.id
     }));
+
+    const formattedGstLocation = Locations?.map(loc => ({
+        label: `Registration ${loc.state}`,
+        value: loc.id
+    }));
+
+    console.log(formattedGstLocation, "heyyyyyyyyyyyyyyyyyyyyyyyy");
+
 
     // Helper function for yes/no radio buttons
     const renderYesNoRadio = (name, label, values, setFieldValue) => (
@@ -610,7 +618,7 @@ console.log(generatedVoucherNo);
                                     <div className="space-y-4">
                                         {renderYesNoRadio('setAdditionalNumb', 'Set Additional Numbering Details', values, setFieldValue)}
                                         {renderYesNoRadio('unusedVchNos', 'Show Unused Voucher Numbers', values, setFieldValue)}
-                                        
+
                                         {/* Show button to open numbering modal if setAdditionalNumb is true */}
                                         {values.setAdditionalNumb === true && !generatedVoucherNo && (
                                             <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
@@ -785,9 +793,9 @@ console.log(generatedVoucherNo);
                                             <label className="mb-2.5 block text-black dark:text-white">Default GST Registration</label>
                                             <ReactSelect
                                                 name="defGstRegist"
-                                                value={defGstRegist.find(opt => opt.value === values.defGstRegist)}
-                                                onChange={(opt) => setFieldValue('defGstRegist', opt?.value)}
-                                                options={defGstRegist}
+                                                value={formattedGstLocation.find(opt => opt.value === values.defGstRegist)}
+                                                onChange={(opt) => setFieldValue('defGstRegist', { id: opt?.value })}
+                                                options={formattedGstLocation}
                                                 styles={customStyles}
                                                 placeholder="Select registration"
                                             />
@@ -839,16 +847,16 @@ console.log(generatedVoucherNo);
                     // Generate voucher number from modal data
                     const voucherNumber = generateVoucherNumber(data);
                     setGeneratedVoucherNo(voucherNumber);
-                    
+
                     // Store the gst details
                     setGstDetails(data);
-                    
+
                     // Close modal
                     setShowNumberingModal(false);
-                    
+
                     // Show success message
                     toast.success(`Voucher number generated: ${voucherNumber}`);
-                    
+
                     console.log("Generated Voucher No:", voucherNumber);
                 }}
             />
