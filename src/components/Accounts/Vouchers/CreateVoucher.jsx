@@ -8,7 +8,7 @@ import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import useVoucher from '../../../hooks/useVoucher';
-import { ADD_CUSTOMER_URL, GETPRODUCTBYSUPPLIER, GETPRODUCTS, GET_VoucherNos_URL, customStyles as createCustomStyles } from '../../../Constants/utils';
+import { ADD_CUSTOMER_URL, GETPRODUCTBYSUPPLIER, GETPRODUCTS, GET_INVENTORYLOCATION, GET_VoucherNos_URL, customStyles as createCustomStyles } from '../../../Constants/utils';
 import { useSelector } from 'react-redux';
 import Modall from '../../Products/Modall';
 import NumberingDetailsModal from './NumberingDetailsModal';
@@ -190,8 +190,8 @@ const CreateVoucher = () => {
 
     // GST Calculation Logic
     const calculateGST = (mrp, hsnCode, gstRegistration, customerAddress, discount = 0, customerState) => {
-        console.log(gstRegistration,"545499889999999999999999999999999");
-        
+        console.log(gstRegistration, "545499889999999999999999999999999");
+
         // If discount is applied, no GST will be applied
         if (discount > 0) {
             return {
@@ -832,6 +832,75 @@ const CreateVoucher = () => {
 
     console.log(newShippingState, "buchhhhhhhhhhhhhhhhhhhh");
 
+    const [SelectedINVENTORYData, setSelectedINVENTORYData] = useState([])
+    const [isINVENTORYModalOpen, setIsINVENTORYModalOpen] = useState(false);
+
+    const openINVENTORYModal = (id) => {
+
+
+        const getInventory = async () => {
+
+            try {
+                const response = await fetch(`${GET_INVENTORYLOCATION}/${id}`, {
+                    method: "GET",
+                    headers: {
+                        // "Content-Type": "multipart/form-data",
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+
+                // setLocation(data);
+                setSelectedINVENTORYData(data);
+
+
+            } catch (error) {
+                console.error(error);
+                toast.error("Failed to fetch Product");
+            }
+        };
+
+        getInventory()
+            // useEffect(() => {
+            //     getInventory()
+            // }, [])
+
+
+
+
+            ;
+        setIsINVENTORYModalOpen(true);
+    };
+
+    const closeINVENTORYModal = () => {
+        setIsINVENTORYModalOpen(false);
+        setSelectedINVENTORYData(null);
+    };
+
+     const getInventoryByLocation = async () => {
+
+            try {
+                const response = await fetch(`${GET_INVENTORYLOCATION}/${id}`, {
+                    method: "GET",
+                    headers: {
+                        // "Content-Type": "multipart/form-data",
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+
+                // setLocation(data);
+                setSelectedINVENTORYData(data);
+
+
+            } catch (error) {
+                console.error(error);
+                toast.error("Failed to fetch Product");
+            }
+        };
+
 
 
 
@@ -860,6 +929,7 @@ const CreateVoucher = () => {
                         currentBalance: "",
                         currentBalance2: "",
                         gstRegistration: Vouchers?.defGstRegist?.id || "",
+                        locationId: Vouchers?.defGstRegist?.id || "",
                         narration: "",
                         modeOfPayment: "",
                         chequeNumber: "",
@@ -1026,12 +1096,12 @@ const CreateVoucher = () => {
                             // Determine registration location from GST registration
                             const getRegistrationLocation = (gstReg) => {
 
-                            
+
                                 if (!gstReg) return null;
                                 const regLower = gstReg?.state?.toLowerCase();
 
-                                console.log(regLower,"66666666666666666666");
-                                
+                                console.log(regLower, "66666666666666666666");
+
 
                                 if (regLower.includes('jammu') || regLower.includes('kashmir') || regLower.includes('j&k') || regLower.includes('jk')) {
                                     return 'jammu_and_kashmir';
@@ -1087,7 +1157,7 @@ const CreateVoucher = () => {
                                 const newShippingStateLocation = newShippingState ? gstCodeMapping[newShippingState] : null;
 
                                 console.log(newShippingStateLocation, regLocation, "newShippingStateLocation21212120000000000000000000");
-                                
+
 
 
                                 if (newShippingStateLocation) {
@@ -1609,7 +1679,7 @@ const CreateVoucher = () => {
                                                                 <label className="mb-2.5 block text-black dark:text-white">Gst Registration</label>
                                                                 <Field
                                                                     name="gstRegistration"
-                                                                    value={ (Vouchers?.defGstRegist?.state || '')}
+                                                                    value={(Vouchers?.defGstRegist?.state || '')}
                                                                     type="text"
                                                                     placeholder="Enter gst Registration"
                                                                     className=" w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
@@ -1647,6 +1717,7 @@ const CreateVoucher = () => {
                                                                         <tr className="bg-gray-2 text-left dark:bg-meta-4">
                                                                             {[
                                                                                 "Product",
+                                                                                "View Inventory",
                                                                                 "MRP",
                                                                                 ...(Vouchers?.typeOfVoucher === "Sales" ? ["Rate (inc. GST)"] : []),
                                                                                 ...(Vouchers?.typeOfVoucher === "Sales" ? ["Discount Applied"] : []),
@@ -1669,7 +1740,7 @@ const CreateVoucher = () => {
                                                                         {values.paymentDetails.map((entry, index) => {
                                                                             const rowProducts = getAvailableProductsForRow(values, index);
 
-                                                                            console.log(rowProducts, "jaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaayyyy");
+                                                                            console.log(rowProducts, entry, "javaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaidddddddddddddddddddddddddddddddddddddddddddddddddddd");
 
                                                                             return (
                                                                                 <tr key={entry.id || index} className="hover:bg-gray-50 dark:hover:bg-gray-800">
@@ -1751,6 +1822,14 @@ const CreateVoucher = () => {
                                                                                             <div className="text-sm text-gray-400">Select party account first</div>
                                                                                         )}
                                                                                         <ErrorMessage name={`paymentDetails.${index}.productsId`} component="div" className="text-red-500 text-xs mt-1" />
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <div >
+
+                                                                                            <span onClick={() => openINVENTORYModal(entry?.productsId)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[220px]"> VIEW INVENTORY</span>
+
+
+                                                                                        </div>
                                                                                     </td>
 
                                                                                     {/* MRP */}
@@ -2950,6 +3029,79 @@ const CreateVoucher = () => {
                                         </div>
                                     </div>
                                 </div>
+                                {isINVENTORYModalOpen && (
+                                    <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50">
+                                        <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px]  w-[870px] h-[400px] mt-[60px] overflow-auto">
+                                            <div className="text-right">
+                                                <button onClick={closeINVENTORYModal} className="text-red-500 text-xl  font-bold">&times;</button>
+                                            </div>
+                                            <h2 className="text-2xl text-center mb-4 font-extrabold">INVENTORY  DETAILS</h2>
+                                            <div className="inline-block min-w-full shadow-md rounded-lg overflow-auto">
+                                                <table className="min-w-full leading-normal">
+                                                    <thead>
+                                                        <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
+                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >LOCATION</th>
+                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">OPENING BALANCE</th>
+                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">BRANCH TRANSFER (INWARDS)</th>
+                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">BRANCH TRANSFER (OUTWARDS)</th>
+                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">CLOSING BALANCE</th>
+                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">PURCHASE</th>
+                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">SALE</th>
+                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">IN PROGRESS ORDERS</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+
+
+                                                        {SelectedINVENTORYData?.map((row, index) => (
+                                                            <tr key={row.id}>
+                                                                <td className="px-2 py-2 border-b">
+                                                                    <p>{row?.location?.address}</p>
+
+                                                                </td>
+                                                                <td className="px-2 py-2 border-b">
+                                                                    <p>{row?.openingBalance}</p>
+
+                                                                </td>
+                                                                <td className="px-2 py-2 border-b">
+                                                                    {row.branchTransferInwards}
+                                                                </td>
+                                                                <td className="px-2 py-2 border-b">
+                                                                    {row.branchTransferOutwards}
+
+                                                                </td>
+                                                                <td className="px-2 py-2 border-b">
+                                                                    {row.closingBalance}
+                                                                </td>
+                                                                <td className="px-2 py-2 border-b">
+                                                                    {row.purchase}
+
+                                                                </td>
+                                                                <td className="px-2 py-2 border-b">
+                                                                    {row.sale}
+
+                                                                </td>
+                                                                <td className="px-2 py-2 border-b">
+                                                                    {row.inProgressOrders}
+
+                                                                </td>
+                                                                {/* <td className="px-2 py-2 border-b">
+                                                        <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' title='Delete BOM' />
+
+                                                    </td> */}
+
+                                                            </tr>
+                                                        ))}
+
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            {/* <pre>{JSON.stringify(selectedBOMData, null, 2)}</pre> */}
+                                        </div>
+                                    </div>
+                                )}
                                 {
                                     isCustModelOpen && (
                                         <Modalll
