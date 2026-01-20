@@ -777,7 +777,7 @@ const CreateVoucher = () => {
             if (response.ok && Array.isArray(data.content)) {
                 const productOptions = data?.content?.map(product => ({
                     value: product.id,
-                    label: product?.productDescription,
+                    label: `${product?.productDescription} ${product.barcode}`,
                     price: product?.retailMrp,
                     hsnCode: product?.hsnCode || {},
                     obj: product,
@@ -878,28 +878,28 @@ const CreateVoucher = () => {
         setSelectedINVENTORYData(null);
     };
 
-     const getInventoryByLocation = async () => {
+    const getInventoryByLocation = async () => {
 
-            try {
-                const response = await fetch(`${GET_INVENTORYLOCATION}/${id}`, {
-                    method: "GET",
-                    headers: {
-                        // "Content-Type": "multipart/form-data",
-                        "Authorization": `Bearer ${token}`
-                    }
-                });
-                const data = await response.json();
-
-
-                // setLocation(data);
-                setSelectedINVENTORYData(data);
+        try {
+            const response = await fetch(`${GET_INVENTORYLOCATION}/${id}`, {
+                method: "GET",
+                headers: {
+                    // "Content-Type": "multipart/form-data",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
 
 
-            } catch (error) {
-                console.error(error);
-                toast.error("Failed to fetch Product");
-            }
-        };
+            // setLocation(data);
+            setSelectedINVENTORYData(data);
+
+
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch Product");
+        }
+    };
 
 
 

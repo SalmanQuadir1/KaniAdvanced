@@ -728,7 +728,7 @@ console.log(newRate,"umershah");
                                                     <Field
                                                         name="billtoEmail"
                                                         type="text"
-                                                        placeholder="Enter Weft Colors"
+                                                        placeholder="Enter Bill To Email"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -742,7 +742,7 @@ console.log(newRate,"umershah");
                                                     <Field
                                                         name="shipTo"
                                                         type="text"
-                                                        placeholder="Enter Warp Colors"
+                                                        placeholder="Enter Ship To"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -753,7 +753,7 @@ console.log(newRate,"umershah");
                                                     <Field
                                                         name="shipToEmail"
                                                         type="text"
-                                                        placeholder="Enter Weft Colors"
+                                                        placeholder="Enter Ship To Email"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
