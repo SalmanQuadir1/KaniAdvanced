@@ -393,6 +393,17 @@ const FilterSupplier = () => {
             )}
           </td>
 
+          {/* CHALLAN NO  */}
+  <td className="px-4 py-3 border-b text-center">
+    {orderProduct?.challanNo ? (
+      <span className="text-gray-800 dark:text-gray-300 font-medium bg-yellow-50 dark:bg-gray-800 px-2 py-1 rounded">
+        {orderProduct.challanNo}
+      </span>
+    ) : (
+      <span className="text-gray-400">—</span>
+    )}
+  </td>
+
           {/* PRODUCT STATUS */}
           <td className="px-4 py-3 border-b text-center">
             {productStatus ? (
@@ -485,10 +496,11 @@ const FilterSupplier = () => {
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Product ID</th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Supplier Name</th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Supplier Qty</th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Challan No</th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Status</th>
                   {/* <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Expected Date</th> */}
                   {/* <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Received Date</th> */}
-                  {/* <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Challan No</th> */}
+                  
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Product Group</th>
                   <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-center">Actions</th>
                 </tr>
