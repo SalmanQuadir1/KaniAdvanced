@@ -92,6 +92,8 @@ import Style from './components/Configurator/Style.jsx';
 import Currency from './components/Configurator/Currency.jsx';
 import Unit from './components/Configurator/Unit.jsx';
 import ProductGroup from './components/Configurator/ProductGroup.jsx';
+
+import ProductSubGroup from './components/Configurator/ProductSubGroup.jsx';
 import AddColorGroup from './components/Configurator/AddColorGroup.jsx';
 import AddProductCategory from './components/Configurator/AddProductCategory.jsx';
 import CustomerGroup from './components/Configurator/CustomerGroup.jsx';
@@ -494,7 +496,7 @@ function App() {
               </>
             }
           />
-           <Route
+          <Route
             path="/printentrypayments/:id/:gstRegistration"
             element={
               <>
@@ -936,7 +938,7 @@ function App() {
           <Route path="/UpdateKani/:id" element={<UpdateKani />} />
 
           {/* View Kani Products route */}
-          
+
           <Route path="/kani-products/view/:id" element={<ViewKaniProducts />} />
           <Route path="/filter-suppliers" element={<FilterSupplier />} />
           <Route
@@ -953,6 +955,14 @@ function App() {
              <Route path="/RetailClientOrders" element={<RetailClientOrders />} />
              <Route path="/WholesaleClientOrders" element={<WholesaleClientOrders />} />
              <Route path="/KlcOrders" element={<KlcOrders />} />
+          <Route path="/supplier-order/:id" element={<SupplierOrder />} />
+          <Route path="/kani-in-progress" element={<KaniInProgress />} />
+          <Route
+            path="/UpdateKaniProducts/:id"
+            element={<UpdateKaniProducts />}
+          />
+          <Route path="/ClientOrders" element={<KaniClientOrders />} />
+          <Route path="/RetailClientOrders" element={<RetailClientOrders />} />
 
 
 
@@ -1544,6 +1554,17 @@ function App() {
               </>
             }
           />
+
+          <Route
+            path="/configurator/addproductSubgroup"
+            element={
+              <>
+                <PageTitle title="Add Product Group" />
+                <ProductSubGroup />
+              </>
+            }
+          />
+
           <Route
             path="/configurator/addcolorgroup"
             element={

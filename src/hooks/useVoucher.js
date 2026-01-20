@@ -336,50 +336,50 @@ const useVoucher = (numberingDetails) => {
 
         console.log(values, "vouchercreate");
 
-        // try {
-        //     let url;
+        try {
+            let url;
 
-        //     if (values.typeOfVoucher === "Payment") {
-        //         url = `${ADD_VoucherPaymentEntry_URL}/${values.voucherId}/create`;
-        //     } else {
-        //         url = ADD_VoucherEntry_URL;
-        //     }
-        //     const method = "POST";
+            if (values.typeOfVoucher === "Payment") {
+                url = `${ADD_VoucherPaymentEntry_URL}/${values.voucherId}/create`;
+            } else {
+                url = ADD_VoucherEntry_URL;
+            }
+            const method = "POST";
 
-        //     const response = await fetch(url, {
-        //         method: method,
-        //         headers: {
-        //             "Content-Type": "application/json",
-        //             "Authorization": `Bearer ${token}`
-        //         },
-        //         body: JSON.stringify(values)
-        //     });
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(values)
+            });
 
-        //     //  const data = await response.json();
-        //     let data;
-        //     try {
-        //         // Try to parse JSON safely
-        //         data = await response.json();
-        //     } catch {
-        //         console.log(data, "catccccccch");
-        //         data = { errorMessage: response.errorMessage };
-        //     }
-        //     if (response.ok) {
-        //         toast.success(`Voucher Entry added successfully`);
-        //         navigate("/Vouchers/view")
-        //         // Fetch updated Voucher
-        //     } else {
-        //         console.log("i am in error else ");
-        //         toast.error(`${data.errorMessage}`);
-        //     }
-        // } catch (error) {
-        //     console.error(error, response);
-        //     console.log("i am in error catch ");
-        //     toast.error("An error occurred");
-        // } finally {
-        //     console.log("i am in Finally ");
-        //     setSubmitting(false);
-        // }
+            //  const data = await response.json();
+            let data;
+            try {
+                // Try to parse JSON safely
+                data = await response.json();
+            } catch {
+                console.log(data, "catccccccch");
+                data = { errorMessage: response.errorMessage };
+            }
+            if (response.ok) {
+                toast.success(`Voucher Entry added successfully`);
+                navigate("/Vouchers/view")
+                // Fetch updated Voucher
+            } else {
+                console.log("i am in error else ");
+                toast.error(`${data.errorMessage}`);
+            }
+        } catch (error) {
+            console.error(error, response);
+            console.log("i am in error catch ");
+            toast.error("An error occurred");
+        } finally {
+            console.log("i am in Finally ");
+            setSubmitting(false);
+        }
     };
 
     const handlePageChange = (newPage) => {

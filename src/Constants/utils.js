@@ -9,9 +9,9 @@ export const VIEW_ALL_UNITS = `${BASE_URL}/unit/viewAll`;
 export const DELETE_UNIT_URL = `${BASE_URL}/unit/deleteUnit/`;
 //BOM
 
-export const ADDBOM=`${BASE_URL}/bom`
-export const VIEWBOM=`${BASE_URL}/bom`
-export const UPDATEBOM=`${BASE_URL}/bom/update`
+export const ADDBOM = `${BASE_URL}/bom`
+export const VIEWBOM = `${BASE_URL}/bom`
+export const UPDATEBOM = `${BASE_URL}/bom/update`
 //Location Url's
 export const ADD_LOCATION_URL = `${BASE_URL}/location/add`;
 export const GET_LOCATION_URL = `${BASE_URL}/location/all`;
@@ -42,7 +42,7 @@ export const GET_GODOWN = `${BASE_URL}/productInventory/searchGoDown`;
 
 // Supplier Urls's
 export const ADD_SUPPLIER_URL = `${BASE_URL}/supplier/addSupplier`;
-export const  GET_SUPPLIER_URL = `${BASE_URL}/supplier/viewAll`;
+export const GET_SUPPLIER_URL = `${BASE_URL}/supplier/viewAll`;
 export const VIEW_ALL_SUPPLIER_URL = `${BASE_URL}/supplier/getAll`;
 export const GET_SUPPLIER_ID_URL = `${BASE_URL}/supplier/getSupplier`;
 export const GET_SUPPLIERLedger_ID_URL = `${BASE_URL}/supplier/getSupplierWithLedger`;
@@ -128,6 +128,20 @@ export const GET_PRODUCT_GROUP_URL = `${BASE_URL}/productgroup`;
 export const UPDATE_PRODUCT_GROUP_URL = `${BASE_URL}/productgroup`;
 export const VIEW_ALL_PRODUCT_GROUP_URL = `${BASE_URL}/productgroup/viewAll`;
 export const DELETE_PRODUCT_GROUP_URL = `${BASE_URL}/productgroup/`;
+export const GET_GROUPS_URL = `${BASE_URL}/productgroup/`;
+
+
+
+//productSub group 
+export const ADD_PRODUCT_SUBGROUP_URL = `${BASE_URL}/productgroup`;
+
+
+export const ADD_PRODUCT_SUBGROUPS_BULK_URL = `${BASE_URL}/productgroup`;
+export const GET_PRODUCT_SUBGROUP_URL = `${BASE_URL}/productgroup`;
+
+export const UPDATE_PRODUCT_SUBGROUP_URL = `${BASE_URL}/productgroup`;
+export const VIEW_ALL_PRODUCT_SUBGROUP_URL = `${BASE_URL}/productgroup/viewAll`;
+export const DELETE_PRODUCT_SUBGROUP_URL = `${BASE_URL}/productgroup/`;
 
 //Currency
 export const ADD_CURRENCY_URL = `${BASE_URL}/currency`;
@@ -253,87 +267,87 @@ export const GET_PRODUCTIDDD_URL = `${BASE_URL}/order`;
 
 //ORDER
 export const VIEW_ALL_ORDERS = `${BASE_URL}/order/search`;
-   
-export const VIEW_CREATED_ORDERS = `${BASE_URL}/order/searchCreated`; 
-export const EDIT_CREATED_ORDERS = `${BASE_URL}/order/searchCreatedEditOrder`; 
 
-export const GET_PID = `${BASE_URL}/order/generateOrderProforma`; 
+export const VIEW_CREATED_ORDERS = `${BASE_URL}/order/searchCreated`;
+export const EDIT_CREATED_ORDERS = `${BASE_URL}/order/searchCreatedEditOrder`;
+
+export const GET_PID = `${BASE_URL}/order/generateOrderProforma`;
 export const GET_PROFORMAID_URL = `${BASE_URL}/order/getOrderProforma`;
 
 export const UPDATE_PROFORMA_URL = `${BASE_URL}/order/updateOrderProforma`;
-export const VIEW_ALLACCEPTED_ORDERS = `${BASE_URL}/order/searchAccepted`;  
+export const VIEW_ALLACCEPTED_ORDERS = `${BASE_URL}/order/searchAccepted`;
 
 export const VIEW_PARTIALLYAPPROVED_ORDERS = `${BASE_URL}/order/searchApprovedAndAccepted`;
 
-export const VIEW_APPROVED_ORDERS = `${BASE_URL}/order/searchApproved`; 
-export const VIEW_APPROVED_KANI_ORDERS = `${BASE_URL}/order/inProgress-kani`; 
+export const VIEW_APPROVED_ORDERS = `${BASE_URL}/order/searchApproved`;
+export const VIEW_APPROVED_KANI_ORDERS = `${BASE_URL}/order/inProgress-kani`;
 
 //pending for bill
 
-export const VIEW_SEARCHBILL = `${BASE_URL}/order/searchBillStatus`; 
+export const VIEW_SEARCHBILL = `${BASE_URL}/order/searchBillStatus`;
 
-export const VIEW_PENDINGFORBILLBYID = `${BASE_URL}/order/getBillStatus`; 
+export const VIEW_PENDINGFORBILLBYID = `${BASE_URL}/order/getBillStatus`;
 
-export const UPDATE_PENDINGFORBILLBYID = `${BASE_URL}/order/updatePhysicalBillNo`; 
+export const UPDATE_PENDINGFORBILLBYID = `${BASE_URL}/order/updatePhysicalBillNo`;
 
 //ledger
 
 
 
 
-export const UPDATE_Ledger_URL = `${BASE_URL}/ledger/update`; 
-export const ADD_Ledger_URL = `${BASE_URL}/ledger/add`; 
-export const DELETE_Ledger_URL = `${BASE_URL}/order/delete`; 
+export const UPDATE_Ledger_URL = `${BASE_URL}/ledger/update`;
+export const ADD_Ledger_URL = `${BASE_URL}/ledger/add`;
+export const DELETE_Ledger_URL = `${BASE_URL}/order/delete`;
 // export const GET_Ledger_URL = `${BASE_URL}/order/get`; 
-export const GET_GROUPLedger_URL = `${BASE_URL}/ledger/getLedgerByAcountGroup`; 
-export const VIEW_PROFORMA = `${BASE_URL}/order/searchOrderProforma`; 
-export const VIEW_PROFORMABYID= `${BASE_URL}/order/getOrderProforma`; 
+export const GET_GROUPLedger_URL = `${BASE_URL}/ledger/getLedgerByAcountGroup`;
+export const VIEW_PROFORMA = `${BASE_URL}/order/searchOrderProforma`;
+export const VIEW_PROFORMABYID = `${BASE_URL}/order/getOrderProforma`;
 
 
-export const VIEW_CANCELLED_ORDERS = `${BASE_URL}/order/searchCancel`; 
-export const VIEW_REPORT = `${BASE_URL}/report/search`; 
+export const VIEW_CANCELLED_ORDERS = `${BASE_URL}/order/searchCancel`;
+export const VIEW_REPORT = `${BASE_URL}/report/search`;
 
-export const VIEW_ORDERSHIPPING_ORDERS = `${BASE_URL}/order/searchShippingDate`; 
-
-
-export const VIEW_NEEDMODIFICATION_ORDERS = `${BASE_URL}/order/searchModification`; 
-export const VIEW_RECIEVEDQUANTITY_ORDERS = `${BASE_URL}/order/searchEditReceivedQty`; 
-
-export const VIEW_PARTIALLYCLOSED_ORDERS = `${BASE_URL}/order/searchPartiallyClosed`; 
+export const VIEW_ORDERSHIPPING_ORDERS = `${BASE_URL}/order/searchShippingDate`;
 
 
-export const VIEW_PARTIALLYCREATED_ORDERS = `${BASE_URL}/order/searchCreatedAndAccepted`; 
+export const VIEW_NEEDMODIFICATION_ORDERS = `${BASE_URL}/order/searchModification`;
+export const VIEW_RECIEVEDQUANTITY_ORDERS = `${BASE_URL}/order/searchEditReceivedQty`;
 
-export const VIEW_CLOSED_ORDERS = `${BASE_URL}/order/searchClosed`; 
-
-export const VIEW_CHALLAN_ORDERS = `${BASE_URL}/order/searchUpdateChallan`; 
-export const VIEW_EXPECTEDDATE_ORDERS = `${BASE_URL}/order/searchSupplierData`; 
-export const VIEW_RECIEVINGQTY_ORDERS = `${BASE_URL}/order/searchSupplierReceiving`; 
+export const VIEW_PARTIALLYCLOSED_ORDERS = `${BASE_URL}/order/searchPartiallyClosed`;
 
 
+export const VIEW_PARTIALLYCREATED_ORDERS = `${BASE_URL}/order/searchCreatedAndAccepted`;
 
-export const VIEW_PENDING_ORDERS = `${BASE_URL}/order/searchPending`; 
-export const VIEW_REJECTED_ORDERS = `${BASE_URL}/order/searchRejected`; 
+export const VIEW_CLOSED_ORDERS = `${BASE_URL}/order/searchClosed`;
+
+export const VIEW_CHALLAN_ORDERS = `${BASE_URL}/order/searchUpdateChallan`;
+export const VIEW_EXPECTEDDATE_ORDERS = `${BASE_URL}/order/searchSupplierData`;
+export const VIEW_RECIEVINGQTY_ORDERS = `${BASE_URL}/order/searchSupplierReceiving`;
 
 
 
-export const VIEW_PARTIALLYPENDING_ORDERS = `${BASE_URL}/order/searchPendingPartially`; 
-export const VIEW_FORCEDCLOSURE_ORDERS = `${BASE_URL}/order/searchForcedClosure`; 
-export const UPDATE_ORDERCREATED_ALL= `${BASE_URL}/order/updateOrderProductsAccepted`; 
-export const ADD_ORDERPROFORMA= `${BASE_URL}/order/saveOrderProforma`; 
+export const VIEW_PENDING_ORDERS = `${BASE_URL}/order/searchPending`;
+export const VIEW_REJECTED_ORDERS = `${BASE_URL}/order/searchRejected`;
 
 
-export const UPDATE_CANCELLEDORDER_ALL= `${BASE_URL}/order/updateOrderProductsCancelled`; 
 
-export const UPDATE_ORDERCREATEDDATE= `${BASE_URL}/order/updateShipDate`; 
+export const VIEW_PARTIALLYPENDING_ORDERS = `${BASE_URL}/order/searchPendingPartially`;
+export const VIEW_FORCEDCLOSURE_ORDERS = `${BASE_URL}/order/searchForcedClosure`;
+export const UPDATE_ORDERCREATED_ALL = `${BASE_URL}/order/updateOrderProductsAccepted`;
+export const ADD_ORDERPROFORMA = `${BASE_URL}/order/saveOrderProforma`;
 
-export const UPDATE_ORDERPRODUCT_ALL= `${BASE_URL}/order/orderProducts`; 
-export const VIEW_ORDERPRODUCT_ALL= `${BASE_URL}/order/orderProduct`; 
-export const UPDATE_ISSUECHALLAN= `${BASE_URL}/order/orderProductsIssue`; 
 
-export const UPDATE_CHALLAN= `${BASE_URL}/order/challan`; 
-export const UPDATE_EXPECTEDDATE= `${BASE_URL}/order/updateOrderProductExpectDate`; 
-export const UPDATE_ORDERRECIEVED= `${BASE_URL}/order/orderProductRecievDetail`; 
+export const UPDATE_CANCELLEDORDER_ALL = `${BASE_URL}/order/updateOrderProductsCancelled`;
+
+export const UPDATE_ORDERCREATEDDATE = `${BASE_URL}/order/updateShipDate`;
+
+export const UPDATE_ORDERPRODUCT_ALL = `${BASE_URL}/order/orderProducts`;
+export const VIEW_ORDERPRODUCT_ALL = `${BASE_URL}/order/orderProduct`;
+export const UPDATE_ISSUECHALLAN = `${BASE_URL}/order/orderProductsIssue`;
+
+export const UPDATE_CHALLAN = `${BASE_URL}/order/challan`;
+export const UPDATE_EXPECTEDDATE = `${BASE_URL}/order/updateOrderProductExpectDate`;
+export const UPDATE_ORDERRECIEVED = `${BASE_URL}/order/orderProductRecievDetail`;
 
 
 
@@ -439,7 +453,7 @@ export const SEARCH_PAYMENTSUMMARY_URL = `${BASE_URL}/ledger/search-balance-summ
 
 export const GETPRODUCTBYSUPPLIER = `${BASE_URL}/order/order-products/accepted`;
 
-export const SEARCH_OrderVoucher_URL= `${BASE_URL}/voucher/ordersWithVouchers`;
+export const SEARCH_OrderVoucher_URL = `${BASE_URL}/voucher/ordersWithVouchers`;
 
 
 //lut 
@@ -487,7 +501,7 @@ export const customStyles = (theme) => ({
     control: (provided, state) => ({
         ...provided,
         minHeight: '50px',
-        minWidth:"150px",
+        minWidth: "150px",
         fontSize: '16px',
         backgroundColor: theme === 'dark' ? '#1D2A39' : '#fff',
         color: theme === 'dark' ? '#fff' : '#000',
