@@ -9,8 +9,12 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import useProduct from '../../hooks/useProduct';
 import { useSelector } from 'react-redux';
 import Modall from "./Modall.jsx"
-import { customStyles as createCustomStyles } from '../../Constants/utils';
+import { customStyles as createCustomStyles, GET_PRODUCT_GROUP_SUBGROUP_URL } from '../../Constants/utils';
 const AddProduct = () => {
+
+
+    const { currentUser } = useSelector((state) => state?.persisted?.user);
+    const { token } = currentUser;
 
     const [productGroupOption, setproductGroupOption] = useState([])
     const [colorGroupOptions, setcolorGroupOptions] = useState([])
@@ -40,7 +44,7 @@ const AddProduct = () => {
 
 
 
-
+    const [subGroupOptions, setsubGroupOptions] = useState([])
 
 
 
@@ -305,7 +309,7 @@ const AddProduct = () => {
 
     const changeTextColor = () => {
         setIsOptionSelected(true); console.log(productGroup, 'productGroup');
-  
+
     };
 
     const [productIdField, setproductIdField] = useState("")
@@ -392,6 +396,7 @@ const AddProduct = () => {
 
     }
 
+    console.log(subGroupOptions, "[[[[[[[[[[[[[");
 
 
     return (
@@ -433,9 +438,43 @@ const AddProduct = () => {
 
                         }, [values.fabricCost, values.embroideryCost])
 
+                        console.log(values.productGroup, "741258");
 
-                        // We call updateProductId every time Formik's `values` change
-                        // Trigger when values change (e.g., size, color, etc.)
+                        const { id } = values.productGroup || {};
+
+
+
+                        useEffect(() => {
+                            const getSubGroup = async () => {
+                                try {
+                                    const response = await fetch(`${GET_PRODUCT_GROUP_SUBGROUP_URL}/${id}`, {
+                                        method: "GET",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                            "Authorization": `Bearer ${token}`
+                                        }
+                                    });
+                                    const data = await response.json();
+                                    console.log(data, "987456");
+
+                                    const subgroupOptions = data && data.map(subgroup => ({
+                                        value: subgroup.id,
+                                        label: subgroup.productSubGroupName,
+                                        subGroupObject: subgroup,
+                                    }));
+                                    setsubGroupOptions(subgroupOptions);
+
+
+
+                                } catch (error) {
+                                    console.error(error);
+                                    toast.error("Failed to fetch Style");
+                                }
+                            };
+                            getSubGroup();
+
+                        }, [values.productGroup])
+
 
                         return (
                             <Form>
@@ -461,6 +500,24 @@ const AddProduct = () => {
                                                             onChange={(option) => setFieldValue('productGroup', option ? option.productGroupObject : null)}
                                                             options={productGroupOption}
                                                             styles={customStyles}
+                                                            className="bg-white dark:bg-form-Field"
+
+                                                            classNamePrefix="react-select"
+                                                            placeholder="Select Product Group"
+                                                        />
+                                                    </div>
+
+                                                </div>
+                                                <div className="flex-1 min-w-[300px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">Sub Group <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                    <div className="bg-white dark:bg-form-Field">
+                                                        <ReactSelect
+                                                            name="subGroup"
+                                                            value={subGroupOptions?.find(option => option.value === values.subGroup?.id) || null}
+                                                            onChange={(option) => setFieldValue('subGroup', {id:option ? option.value : null})}
+                                                            options={subGroupOptions}
+                                                            styles={customStyles}
+                                                            isDisabled={!values.productGroup || !subGroupOptions.length} // Disable if no product group is selected
                                                             className="bg-white dark:bg-form-Field"
                                                             classNamePrefix="react-select"
                                                             placeholder="Select Product Group"
@@ -1155,7 +1212,7 @@ const AddProduct = () => {
                                                             />
                                                         </div> */}
 
-                                                         <div className="flex-1 min-w-[300px]">
+                                                        <div className="flex-1 min-w-[300px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> Dyeing Cost </label>
                                                             <Field
                                                                 name='dyeingCost'
@@ -1164,7 +1221,7 @@ const AddProduct = () => {
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                             />
                                                         </div>
-                                                        
+
 
                                                     </div>
 
@@ -2451,11 +2508,12 @@ const AddProduct = () => {
                                                                             <button
                                                                                 onClick={(e) => {
                                                                                     e.preventDefault()
-                                                                                    handleRemoveActual(index)}
+                                                                                    handleRemoveActual(index)
+                                                                                }
                                                                                 }
                                                                                 className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                                                                             >
-                                                                              
+
                                                                                 &times;
                                                                             </button>
                                                                         </div>

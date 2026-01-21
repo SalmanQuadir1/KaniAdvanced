@@ -43,6 +43,8 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
     const [currentProduct, setCurrentProduct] = useState({
         productGroup: {},
 
+        subGroup:{},
+
         colors: {
             // Default value
         },

@@ -136,8 +136,10 @@ export const GET_GROUPS_URL = `${BASE_URL}/productgroup/`;
 export const ADD_PRODUCT_SUBGROUP_URL = `${BASE_URL}/productgroup`;
 
 
-export const ADD_PRODUCT_SUBGROUPS_BULK_URL = `${BASE_URL}/productgroup`;
-export const GET_PRODUCT_SUBGROUP_URL = `${BASE_URL}/productgroup`;
+export const ADD_PRODUCT_SUBGROUPS_BULK_URL = `${BASE_URL}/subGroup/save`;
+export const GET_PRODUCT_SUBGROUP_URL = `${BASE_URL}/subGroup/getAll`;
+export const GET_PRODUCT_GROUP_SUBGROUP_URL = `${BASE_URL}/subGroup`;
+
 
 export const UPDATE_PRODUCT_SUBGROUP_URL = `${BASE_URL}/productgroup`;
 export const VIEW_ALL_PRODUCT_SUBGROUP_URL = `${BASE_URL}/productgroup/viewAll`;
