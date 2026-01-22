@@ -227,6 +227,7 @@ const UpdateProduct = () => {
         const product = {
             ...values,
             productGroup: { id: values.productGroup?.id || 0 },
+           subGroup: { id: values.subGroup?.id || 0 },
             supplier: values?.supplier?.map((supp) => ({ id: supp?.id })),
             supplierCode: { id: values.supplierCode?.id || 0 },
         };
@@ -300,7 +301,7 @@ const UpdateProduct = () => {
             if (response.ok) {
                 console.log(data, "Update response:");
                 toast.success("Product updated successfully");
-                //navigate('/product/viewProducts');
+                navigate('/product/viewProducts');
             } else {
                 console.error("Update failed. Status:", response.status, response.statusText);
                 console.error("Raw response:", data);
@@ -449,8 +450,8 @@ const UpdateProduct = () => {
     // }, [supplier.data]);
     const formikRef = useRef(null);
 
-    const { id: idd } = product?.productGroup || {};
     useEffect(() => {
+        const { id: idd } = product?.productGroup || {};
         if (productGroup?.data && Array.isArray(productGroup.data)) {
             const formattedOptions = productGroup.data.map(product => ({
                 value: product.id,
@@ -459,13 +460,13 @@ const UpdateProduct = () => {
             }));
             setproductGroupOption(formattedOptions);
         } else {
-            
+
             setproductGroupOption([]); // Clear options if data is unavailable
         }
 
 
 
-       
+
 
 
         const getSubGroup = async () => {
@@ -491,12 +492,12 @@ const UpdateProduct = () => {
 
             } catch (error) {
                 console.error(error);
-                toast.error("Failed to fetch SubGroup");
+
             }
         };
 
         getSubGroup();
-    }, [productGroup,product?.productGroup]);
+    }, [ product?.productGroup]);
 
 
     const gstOptions = [
@@ -581,7 +582,7 @@ const UpdateProduct = () => {
                         ...product,
                         // id: product?.id || "",
                         productGroup: product?.productGroup,
-                        subGroup: product?.subGroup,
+                       subGroup: product?.subGroup ? { id: product.subGroup.id } : { id: 0 },
                         colors: product?.colors || { id: 0 },
                         // colors: product?.colors?.id || '',
 
@@ -694,7 +695,7 @@ const UpdateProduct = () => {
                                                         className="bg-white dark:bg-form-Field"
                                                         classNamePrefix="react-select"
                                                         placeholder="Select Product Group"
-                                                          // This makes the select readonly
+                                                    // This makes the select readonly
                                                     />
                                                 </div>
                                             </div>
@@ -704,13 +705,12 @@ const UpdateProduct = () => {
                                                     <ReactSelect
                                                         name="subGroup"
                                                         value={subGroupOptions?.find(option => option.value === values?.subGroup?.id) || null}
-                                                        onChange={(option) => setFieldValue('subGroup', option ? option.subGroupObject : null)}
+                                                        onChange={(option) => setFieldValue('subGroup', option ? { id: option.subGroupObject.id } : null)}
                                                         options={subGroupOptions}
                                                         styles={customStyles}
                                                         className="bg-white dark:bg-form-Field"
                                                         classNamePrefix="react-select"
                                                         placeholder="Select Sub Group"
-                                                          // This makes the select readonly
                                                     />
                                                 </div>
                                             </div>
