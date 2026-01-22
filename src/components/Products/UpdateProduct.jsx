@@ -459,6 +459,7 @@ const UpdateProduct = () => {
             }));
             setproductGroupOption(formattedOptions);
         } else {
+            
             setproductGroupOption([]); // Clear options if data is unavailable
         }
 

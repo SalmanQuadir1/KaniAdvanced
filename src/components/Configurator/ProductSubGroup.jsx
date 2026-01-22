@@ -261,29 +261,10 @@ const ProductSubGroup = () => {
                   ) : (
                     // Group and display data
                     (() => {
-                      // Group subgroups by their parent group
-                      const groupedByGroup = productSubGroup.reduce((acc, subgroup) => {
-                        const groupId = subgroup.groupId || (subgroup.group && subgroup.group.id);
-                        const groupName = subgroup?.productGroupName || subgroup.group?.name || 'Unknown Group';
-                        console.log(groupName, "5454669");
+                
 
 
-                        if (!acc[groupId]) {
-                          acc[groupId] = {
-                            id: groupId,
-                            name: groupName,
-                            subgroups: []
-                          };
-                        }
-                        acc[groupId].subgroups.push(subgroup);
-                        return acc;
-                      }, {});
-
-                      // Convert to array
-                      const groupedArray = Object.values(groupedByGroup);
-
-
-                      return groupedArray.map((group, groupIndex) => (
+                      return productSubGroup.map((group, groupIndex) => (
                         <React.Fragment key={group.id}>
                           {/* Group Row */}
                           <tr className="bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
@@ -295,12 +276,12 @@ const ProductSubGroup = () => {
                                 <svg className="w-5 h-5 mr-2 text-primary" fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                                 </svg>
-                                {group.name}
+                                {group?.productGroupName}
                               </div>
                             </td>
                             <td className="px-6 py-4">
                               <div className="flex flex-wrap gap-1 max-w-xs">
-                                {group.subgroups[0].subgroups.map((subgroup, index) => (
+                                {group?.subgroups.map((subgroup, index) => (
                                   <span
                                     key={subgroup.id}
                                     className="inline-flex items-center px-2 py-1 mb-1 text-xs font-medium bg-primary/10 text-primary rounded"
@@ -315,7 +296,7 @@ const ProductSubGroup = () => {
                               <div className=" space-x-3">
                                 {/* Edit Button */}
 
-                                {group.subgroups[0].subgroups.map((subgroup, index) => (
+                               
                                   <button
                                     onClick={(e) => handleUpdate(e, subgroup)}
                                     className="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300"
@@ -325,7 +306,7 @@ const ProductSubGroup = () => {
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                     </svg>
                                   </button>
-                                ))}
+                             
 
 
                                 {/* Delete Button */}
