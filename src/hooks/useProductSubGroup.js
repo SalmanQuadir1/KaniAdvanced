@@ -18,7 +18,7 @@ const useproductSubGroup = () => {
   const [edit, setEdit] = useState(false);
   const [currentproductSubGroup, setCurrentproductSubGroup] = useState({
     productSubGroupName: '',
-    groupId: '', // NEW: Add groupId
+    groupId: null, // NEW: Add groupId
   });
 
   const [pagination, setPagination] = useState({
@@ -100,10 +100,11 @@ const useproductSubGroup = () => {
     }
   };
 
-  const handleUpdate = (e, item) => {
+ const handleUpdate = (e, item) => {
     e.preventDefault();
     setEdit(true);
     setCurrentproductSubGroup({
+      id: item.id, // ADD THIS: Store the subgroup ID
       productSubGroupName: item.productSubGroupName,
       groupId: item.group?.id || item.groupId,
     });
@@ -112,7 +113,7 @@ const useproductSubGroup = () => {
   // NEW: Bulk create function
   const handleBulkCreate = async (groupId, subgroups) => {
 
-    
+
     try {
       const response = await fetch(ADD_PRODUCT_SUBGROUPS_BULK_URL, {
         method: 'POST',
@@ -121,7 +122,7 @@ const useproductSubGroup = () => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          groupId,
+          productGroupId: Number(groupId),
           subgroups: subgroups.map(name => ({ productSubGroupName: name }))
         }),
       });
@@ -145,8 +146,8 @@ const useproductSubGroup = () => {
   // Existing single create/update function
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
 
-    console.log(values,"lklklk");
-    
+    console.log(values, "lklklk");
+
 
 
     // try {
