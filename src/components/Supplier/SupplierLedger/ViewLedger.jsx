@@ -255,7 +255,7 @@ const ViewLedger = () => {
 
 
                 <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{ item?.name}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.name}</p>
                 </td>
                 <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.groupName} </p>
@@ -386,29 +386,29 @@ const ViewLedger = () => {
 
 
     ///date logic
-        const [dateFilter, setDateFilter] = useState({
+    const [dateFilter, setDateFilter] = useState({
         fromDate: '',
         toDate: ''
     });
     const [quickFilter, setQuickFilter] = useState('month');
     const [filteredLedgerEntries, setFilteredLedgerEntries] = useState([]);
-   
+
 
     // Function to set current month as default
     const setCurrentMonthFilter = () => {
         const today = new Date();
         const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
         const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-        
+
         setDateFilter({
             fromDate: firstDay.toISOString().split('T')[0],
             toDate: lastDay.toISOString().split('T')[0]
         });
     };
-  
+
 
     // Function to fetch filtered ledger data
-   
+
 
     // Function to reset date filter
     const resetDateFilter = () => {
@@ -422,7 +422,7 @@ const ViewLedger = () => {
     const applyQuickFilter = (filterType) => {
         const today = new Date();
         let fromDate, toDate;
-        
+
         switch (filterType) {
             case 'today':
                 fromDate = today.toISOString().split('T')[0];
@@ -449,7 +449,7 @@ const ViewLedger = () => {
             default:
                 return;
         }
-        
+
         setDateFilter({ fromDate, toDate });
         setQuickFilter(filterType);
     };
@@ -462,7 +462,7 @@ const ViewLedger = () => {
     };
 
     // Calculate period balance
-   
+
 
     // Get quick filter label
     const getQuickFilterLabel = () => {
@@ -497,7 +497,7 @@ const ViewLedger = () => {
             toast.error("Supplier data not found");
         }
     };
-        const closeLEDGERModal = () => {
+    const closeLEDGERModal = () => {
         setIsLEDGERModalOpen(false);
         setSelectedLEDGERData(null);
         setFilteredLedgerEntries([]);
@@ -509,118 +509,161 @@ const ViewLedger = () => {
 
     // Add these calculation functions in your component
 
-// Calculate total credit for filtered entries
-// Update calculation functions with better array checking
-const calculateTotalCredit = () => {
-    if (!filteredLedgerEntries || !Array.isArray(filteredLedgerEntries) || filteredLedgerEntries.length === 0) {
-        return 0;
-    }
-    
-    try {
-        return filteredLedgerEntries.reduce((sum, entry) => {
-            // Safely parse credit value
-            const creditValue = entry?.credit !== undefined ? parseFloat(entry.credit) : 0;
-            return isNaN(creditValue) ? sum : sum + creditValue;
-        }, 0);
-    } catch (error) {
-        console.error('Error calculating total credit:', error);
-        return 0;
-    }
-};
+    // Calculate total credit for filtered entries
+    // Update calculation functions with better array checking
 
-const calculateTotalDebit = () => {
-    if (!filteredLedgerEntries || !Array.isArray(filteredLedgerEntries) || filteredLedgerEntries.length === 0) {
-        return 0;
-    }
-    
-    try {
-        return filteredLedgerEntries.reduce((sum, entry) => {
-            // Safely parse debit value
-            const debitValue = entry?.debit !== undefined ? parseFloat(entry.debit) : 0;
-            return isNaN(debitValue) ? sum : sum + debitValue;
-        }, 0);
-    } catch (error) {
-        console.error('Error calculating total debit:', error);
-        return 0;
-    }
-};
 
-const calculatePeriodBalance = () => {
-    try {
-        return calculateTotalCredit() - calculateTotalDebit();
-    } catch (error) {
-        console.error('Error calculating period balance:', error);
-        return 0;
-    }
-};
 
-// Update the fetchFilteredLedgerData function to recalculate after fetch
-// Update your fetchFilteredLedgerData function to handle both formats
-const fetchFilteredLedgerData = async () => {
-    if (!SelectedLEDGERData?.ledgerId) return;
-    
-    setisLoading(true);
-    try {
-        const params = new URLSearchParams();
-        if (dateFilter.fromDate) params.append('fromDate', dateFilter.fromDate);
-        if (dateFilter.toDate) params.append('toDate', dateFilter.toDate);
-        
-        const url = `${VIEW_LEDGERBYDATE}/${SelectedLEDGERData.ledgerId}/filterByDate?${params.toString()}`;
-        
-        const response = await fetch(url, {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-            },
-        });
 
-        const data = await response.json();
-        console.log('API Response:', data); // Debug log to see format
-        
-        if (response.ok) {
-            // Handle both response formats
-            let entries = [];
-            
-            // Check if response has 'content' property (paginated response)
-            if (data && typeof data === 'object' && 'content' in data) {
-                entries = data.content;
-            } 
-            // Check if response is an array (direct array response)
-            else if (Array.isArray(data)) {
-                entries = data;
-            }
-            // Check if response has 'data' property
-            else if (data && typeof data === 'object' && 'data' in data) {
-                entries = Array.isArray(data.data) ? data.data : [];
-            }
-            // If it's an object but not in expected format, extract values
-            else if (data && typeof data === 'object' && !Array.isArray(data)) {
-                // Try to find array values in the object
-                const possibleArrays = Object.values(data).filter(val => Array.isArray(val));
-                if (possibleArrays.length > 0) {
-                    entries = possibleArrays[0];
+    const calculateTotalCredit = () => {
+        if (!Array.isArray(filteredLedgerEntries) || filteredLedgerEntries.length === 0) {
+            return 0;
+        }
+
+        try {
+            let totalCredit = 0;
+
+            // 1. Add normal credit entries
+            totalCredit = filteredLedgerEntries.reduce((sum, entry) => {
+                const creditValue = entry?.credit !== undefined ? parseFloat(entry.credit) : 0;
+                return isNaN(creditValue) ? sum : sum + creditValue;
+            }, 0);
+
+            // 2. Add opening balance if it is CREDIT (from first item)
+            const firstItem = filteredLedgerEntries[0];
+            console.log(SelectedLEDGERData.typeOfOpeningBalance, "1111111111112 cr");
+
+            if (
+                SelectedLEDGERData?.previousOpType.toLowerCase() === "credit" &&
+                SelectedLEDGERData?.previousOpBalance !== undefined
+            ) {
+                const openingValue = parseFloat(SelectedLEDGERData.previousOpBalance);
+                if (!isNaN(openingValue)) {
+                    totalCredit += openingValue;
                 }
             }
-            
-            console.log('Processed entries:', entries);
-            setFilteredLedgerEntries(entries);
-        } else {
-            toast.error(data.message || "Failed to fetch filtered data");
-            setFilteredLedgerEntries([]);
+
+            return totalCredit;
+        } catch (error) {
+            console.error("Error calculating total credit:", error);
+            return 0;
         }
-    } catch (error) {
-        console.error("Error fetching filtered ledger data:", error);
-        toast.error("Error fetching data");
-        setFilteredLedgerEntries([]);
-    } finally {
-        setisLoading(false);
-    }
-};
-
-// Update the openLEDGERModal function to ensure initial array
+    };
 
 
-console.log(filteredLedgerEntries,"666666666666666666");
+    const calculateTotalDebit = () => {
+        if (!Array.isArray(filteredLedgerEntries) || filteredLedgerEntries.length === 0) {
+            return 0;
+        }
+
+        try {
+            let totalDebit = 0;
+
+            // 1. Add normal debit entries
+            totalDebit = filteredLedgerEntries.reduce((sum, entry) => {
+                const debitValue = entry?.debit !== undefined ? parseFloat(entry.debit) : 0;
+                return isNaN(debitValue) ? sum : sum + debitValue;
+            }, 0);
+
+            // 2. Add opening balance if it is DEBIT (from first item)
+            const firstItem = filteredLedgerEntries[0];
+            console.log(SelectedLEDGERData.typeOfOpeningBalance, "1111111111112");
+
+
+            if (
+                SelectedLEDGERData?.previousOpType.toLowerCase() === "debit" &&
+                SelectedLEDGERData?.previousOpBalance !== undefined
+            ) {
+                const openingValue = parseFloat(SelectedLEDGERData.previousOpBalance);
+                if (!isNaN(openingValue)) {
+                    totalDebit += openingValue;
+                }
+            }
+
+            return totalDebit;
+        } catch (error) {
+            console.error("Error calculating total debit:", error);
+            return 0;
+        }
+    };
+
+
+    const calculatePeriodBalance = () => {
+        try {
+            return calculateTotalCredit() - calculateTotalDebit();
+        } catch (error) {
+            console.error('Error calculating period balance:', error);
+            return 0;
+        }
+    };
+
+    // Update the fetchFilteredLedgerData function to recalculate after fetch
+    // Update your fetchFilteredLedgerData function to handle both formats
+    const fetchFilteredLedgerData = async () => {
+        if (!SelectedLEDGERData?.ledgerId) return;
+
+        setisLoading(true);
+        try {
+            const params = new URLSearchParams();
+            if (dateFilter.fromDate) params.append('fromDate', dateFilter.fromDate);
+            if (dateFilter.toDate) params.append('toDate', dateFilter.toDate);
+
+            const url = `${VIEW_LEDGERBYDATE}/${SelectedLEDGERData.ledgerId}/filterByDate?${params.toString()}`;
+
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+
+            const data = await response.json();
+            console.log('API Response:', data); // Debug log to see format
+
+            if (response.ok) {
+                // Handle both response formats
+                let entries = [];
+
+                // Check if response has 'content' property (paginated response)
+                if (data && typeof data === 'object' && 'content' in data) {
+                    entries = data.content;
+                }
+                // Check if response is an array (direct array response)
+                else if (Array.isArray(data)) {
+                    entries = data;
+                }
+                // Check if response has 'data' property
+                else if (data && typeof data === 'object' && 'data' in data) {
+                    entries = Array.isArray(data.data) ? data.data : [];
+                }
+                // If it's an object but not in expected format, extract values
+                else if (data && typeof data === 'object' && !Array.isArray(data)) {
+                    // Try to find array values in the object
+                    const possibleArrays = Object.values(data).filter(val => Array.isArray(val));
+                    if (possibleArrays.length > 0) {
+                        entries = possibleArrays[0];
+                    }
+                }
+
+                console.log('Processed entries:', entries);
+                setFilteredLedgerEntries(entries);
+            } else {
+                toast.error(data.message || "Failed to fetch filtered data");
+                setFilteredLedgerEntries([]);
+            }
+        } catch (error) {
+            console.error("Error fetching filtered ledger data:", error);
+            toast.error("Error fetching data");
+            setFilteredLedgerEntries([]);
+        } finally {
+            setisLoading(false);
+        }
+    };
+
+    // Update the openLEDGERModal function to ensure initial array
+
+
+    console.log(filteredLedgerEntries, "666666666666666666");
 
     return (
         <DefaultLayout>
@@ -633,448 +676,450 @@ console.log(filteredLedgerEntries,"666666666666666666");
                             TOTAL PRODUCTS: {pagination.totalItems}
                         </p> */}
                     </div>
- {IsLEDGERModalOpen && SelectedLEDGERData && (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[9999] p-4">
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-6xl max-h-[85vh] flex flex-col overflow-hidden">
-            {/* Modal Header */}
-            <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900">
-                <div className="flex flex-col">
-                    <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
-                        LEDGER DETAILS - {SelectedLEDGERData?.name}
-                    </h2>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        Ledger ID: {SelectedLEDGERData?.ledgerId} • Type: {SelectedLEDGERData?.groupName}
-                    </p>
-                </div>
-                <button
-                    onClick={closeLEDGERModal}
-                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl font-bold bg-gray-100 dark:bg-slate-700 w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
-                >
-                    ×
-                </button>
-            </div>
-
-            {/* Date Filter Section */}
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900">
-                <div className="flex flex-col md:flex-row gap-4 items-end">
-                    <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                From Date
-                            </label>
-                            <input
-                                type="date"
-                                value={dateFilter.fromDate}
-                                onChange={(e) => setDateFilter({ ...dateFilter, fromDate: e.target.value })}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                To Date
-                            </label>
-                            <input
-                                type="date"
-                                value={dateFilter.toDate}
-                                onChange={(e) => setDateFilter({ ...dateFilter, toDate: e.target.value })}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                            />
-                        </div>
-                        <div className="flex mt-5  gap-2">
-                            <button
-                                onClick={() => fetchFilteredLedgerData()}
-                                className="flex-1 px-4 h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
-                            >
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                                </svg>
-                                Apply Filter
-                            </button>
-                            <button
-                                onClick={() => resetDateFilter()}
-                                className="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg transition-colors"
-                            >
-                                Reset
-                            </button>
-                        </div>
-                    </div>
-                    
-                    {/* Quick Date Filters */}
-                    <div className="flex gap-2 flex-wrap">
-                        <button
-                            onClick={() => setQuickFilterHandler('today')}
-                            className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-                                quickFilter === 'today' 
-                                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-700'
-                                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300'
-                            }`}
-                        >
-                            Today
-                        </button>
-                        <button
-                            onClick={() => setQuickFilterHandler('month')}
-                            className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-                                quickFilter === 'month' 
-                                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-700'
-                                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300'
-                            }`}
-                        >
-                            This Month
-                        </button>
-                        <button
-                            onClick={() => setQuickFilterHandler('quarter')}
-                            className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-                                quickFilter === 'quarter' 
-                                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-700'
-                                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300'
-                            }`}
-                        >
-                            This Quarter
-                        </button>
-                        <button
-                            onClick={() => setQuickFilterHandler('year')}
-                            className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-                                quickFilter === 'year' 
-                                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-700'
-                                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300'
-                            }`}
-                        >
-                            This Year
-                        </button>
-                        <button
-                            onClick={() => setQuickFilterHandler('all')}
-                            className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-                                quickFilter === 'all' 
-                                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-700'
-                                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300'
-                            }`}
-                        >
-                            All Time
-                        </button>
-                    </div>
-                </div>
-                
-                {/* Loading State */}
-                {isLoading && (
-                    <div className="mt-3 flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                        Loading ledger data...
-                    </div>
-                )}
-            </div>
-
-            {/* Modal Body */}
-            <div className="flex-1 overflow-auto p-6">
-                {/* Beautiful Summary Cards - RESTORED */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                    {/* Total Credit Card */}
-                    <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-4 rounded-xl border border-green-200 dark:border-green-700/50 shadow-sm">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h3 className="text-sm font-medium text-green-800 dark:text-green-300 mb-1">Total Credit</h3>
-                                <p className="text-2xl font-bold text-green-900 dark:text-green-100">
-                                    ₹{calculateTotalCredit().toFixed(2)}
-                                </p>
-                            </div>
-                            <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-                                <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div className="mt-2 text-xs text-green-600 dark:text-green-400">
-                            <span className="font-medium">Period:</span> {dateFilter.fromDate} to {dateFilter.toDate}
-                        </div>
-                    </div>
-
-                    {/* Total Debit Card */}
-                    <div className="bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 p-4 rounded-xl border border-red-200 dark:border-red-700/50 shadow-sm">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h3 className="text-sm font-medium text-red-800 dark:text-red-300 mb-1">Total Debit</h3>
-                                <p className="text-2xl font-bold text-red-900 dark:text-red-100">
-                                    ₹{calculateTotalDebit().toFixed(2)}
-                                </p>
-                            </div>
-                            <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
-                                <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div className="mt-2 text-xs text-red-600 dark:text-red-400">
-                            <span className="font-medium">Period:</span> {dateFilter.fromDate} to {dateFilter.toDate}
-                        </div>
-                    </div>
-
-                    {/* Start Opening Balance Card */}
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-4 rounded-xl border border-blue-200 dark:border-blue-700/50 shadow-sm">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-1">Start Opening Bal</h3>
-                                <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
-                                    ₹{SelectedLEDGERData?.previousOpBalance?.toFixed(2)}
-                                </p>
-                                <div className="mt-1">
-                                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                                        SelectedLEDGERData?.previousOpType?.toLowerCase() === 'credit'
-                                            ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                                            : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                                    }`}>
-                                        {SelectedLEDGERData?.previousOpType}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                                <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Current Opening Balance Card */}
-                    <div className="bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 p-4 rounded-xl border border-purple-200 dark:border-purple-700/50 shadow-sm relative overflow-hidden shadow-sm">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h3 className="text-sm font-medium text-purple-800 dark:text-purple-300 mb-1">Current Opening Balance</h3>
-                                <p className={`text-2xl font-bold ${
-                                    SelectedLEDGERData?.typeOfOpeningBalance?.toLowerCase() === 'credit'
-                                        ? 'text-red-600 dark:text-red-400'
-                                        : 'text-green-600 dark:text-green-400'
-                                }`}>
-                                    ₹{parseFloat(SelectedLEDGERData?.openingBalances || 0).toFixed(2)}
-                                </p>
-                                <div className="mt-1">
-                                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                                        SelectedLEDGERData?.typeOfOpeningBalance?.toLowerCase() === 'credit'
-                                            ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                                            : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
-                                    }`}>
-                                        {SelectedLEDGERData?.typeOfOpeningBalance || 'N/A'}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
-                                <svg className="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                                </svg>
-                            </div>
-                        </div>
-                        {/* Entry Count Badge */}
-                        <div className="absolute top-2 right-2">
-                            <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-violet-500 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-sm">
-                                {filteredLedgerEntries?.length || 0}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Net Balance for Period Card */}
-                <div className="mb-6">
-                    <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between">
-                            <div>
-                                <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-1">Net Balance for Selected Period</h3>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">
-                                    From {dateFilter.fromDate} to {dateFilter.toDate} • {getQuickFilterLabel()}
-                                </p>
-                            </div>
-                            <div className="mt-3 md:mt-0 text-center md:text-right">
-                                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Balance</p>
-                                <p className={`text-3xl font-bold ${
-                                    calculatePeriodBalance() >= 0
-                                        ? 'text-green-600 dark:text-green-400'
-                                        : 'text-red-600 dark:text-red-400'
-                                }`}>
-                                    ₹{calculatePeriodBalance().toFixed(2)}
-                                    <span className="text-lg ml-2">
-                                        ({calculatePeriodBalance() >= 0 ? 'Credit' : 'Debit'})
-                                    </span>
-                                </p>
-                                <div className="mt-2 flex items-center justify-center md:justify-end gap-4">
-                                    <div className="flex items-center">
-                                        <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-                                        <span className="text-xs text-gray-600 dark:text-gray-400">Credit: ₹{calculateTotalCredit().toFixed(2)}</span>
+                    {IsLEDGERModalOpen && SelectedLEDGERData && (
+                        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[9999] p-4">
+                            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-6xl max-h-[85vh] flex flex-col overflow-hidden">
+                                {/* Modal Header */}
+                                <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900">
+                                    <div className="flex flex-col">
+                                        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                                            LEDGER DETAILS - {SelectedLEDGERData?.name}
+                                        </h2>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                                            Ledger ID: {SelectedLEDGERData?.ledgerId} • Type: {SelectedLEDGERData?.groupName}
+                                        </p>
                                     </div>
-                                    <div className="flex items-center">
-                                        <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
-                                        <span className="text-xs text-gray-600 dark:text-gray-400">Debit: ₹{calculateTotalDebit().toFixed(2)}</span>
-                                    </div>
+                                    <button
+                                        onClick={closeLEDGERModal}
+                                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl font-bold bg-gray-100 dark:bg-slate-700 w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
+                                    >
+                                        ×
+                                    </button>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                {/* Table */}
-                <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm">
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                            <thead className="bg-gray-50 dark:bg-slate-900">
-                                <tr>
-                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Date</th>
-                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Transaction Ledger</th>
-                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Description</th>
-                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Debit (₹)</th>
-                                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Credit (₹)</th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-gray-700">
-                                {filteredLedgerEntries && filteredLedgerEntries.length > 0 ? (
-                                    filteredLedgerEntries.map((ledger, index) => (
-                                        <tr key={index} className={`hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors ${index % 2 === 0 ? 'bg-white dark:bg-slate-800' : 'bg-gray-50/50 dark:bg-slate-800/50'}`}>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm font-medium text-gray-900 dark:text-white">
-                                                    {ledger?.receivedDate ? (
-                                                        <>
-                                                            <div>{new Date(ledger?.receivedDate).toLocaleDateString('en-IN', {
-                                                                day: '2-digit',
-                                                                month: 'short',
-                                                                year: 'numeric'
-                                                            })}</div>
-                                                            <div className="text-xs text-gray-500 dark:text-gray-400">
-                                                                {new Date(ledger?.receivedDate).toLocaleTimeString('en-IN', {
-                                                                    hour: '2-digit',
-                                                                    minute: '2-digit',
-                                                                    hour12: true
-                                                                })}
-                                                            </div>
-                                                        </>
-                                                    ) : 'N/A'}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                                                <div className="font-medium">{ledger.toLedgerName || 'No Related Ledger Found'}</div>
-                                                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                                    {ledger.voucherNumber ? `Voucher: ${ledger.voucherNumber}` : 'No Voucher'}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-xs">
-                                                <div className="truncate" title={ledger.description || 'No description'}>
-                                                    {ledger.description || 'No description'}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className={`text-sm font-semibold ${parseFloat(ledger.debit || 0) > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-400'}`}>
-                                                    {parseFloat(ledger.debit || 0) > 0 ? `₹${parseFloat(ledger.debit || 0).toFixed(2)}` : '-'}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className={`text-sm font-semibold ${parseFloat(ledger.credit || 0) > 0 ? 'text-green-600 dark:text-green-400' : 'text-gray-400'}`}>
-                                                    {parseFloat(ledger.credit || 0) > 0 ? `₹${parseFloat(ledger.credit || 0).toFixed(2)}` : '-'}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="5" className="px-6 py-12 text-center">
-                                            <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
-                                                <svg className="w-16 h-16 mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                                                </svg>
-                                                <p className="text-lg font-medium mb-1">No transactions found</p>
-                                                <p className="text-sm">Try adjusting your date filters or select a different period.</p>
+                                {/* Date Filter Section */}
+                                <div className="p-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900">
+                                    <div className="flex flex-col md:flex-row gap-4 items-end">
+                                        <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                    From Date
+                                                </label>
+                                                <input
+                                                    type="date"
+                                                    value={dateFilter.fromDate}
+                                                    onChange={(e) => setDateFilter({ ...dateFilter, fromDate: e.target.value })}
+                                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                />
                                             </div>
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                                    To Date
+                                                </label>
+                                                <input
+                                                    type="date"
+                                                    value={dateFilter.toDate}
+                                                    onChange={(e) => setDateFilter({ ...dateFilter, toDate: e.target.value })}
+                                                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                />
+                                            </div>
+                                            <div className="flex mt-5  gap-2">
+                                                <button
+                                                    onClick={() => fetchFilteredLedgerData()}
+                                                    className="flex-1 px-4 h-12 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                                                >
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                                                    </svg>
+                                                    Apply Filter
+                                                </button>
+                                                <button
+                                                    onClick={() => resetDateFilter()}
+                                                    className="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg transition-colors"
+                                                >
+                                                    Reset
+                                                </button>
+                                            </div>
+                                        </div>
 
-                {/* Footer Summary */}
-                {filteredLedgerEntries && filteredLedgerEntries.length > 0 && (
-                    <div className="mt-6 p-5 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-slate-900 dark:to-slate-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-                        <div className="flex flex-col md:flex-row justify-between items-center">
-                            <div className="mb-4 md:mb-0">
-                                <p className="text-sm text-gray-600 dark:text-gray-400">
-                                    <span className="font-semibold">{filteredLedgerEntries.length}</span> entries • 
-                                    Showing data for <span className="font-semibold">{getQuickFilterLabel()}</span>
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                                    Generated on {new Date().toLocaleDateString('en-IN', { 
-                                        weekday: 'short', 
-                                        year: 'numeric', 
-                                        month: 'short', 
-                                        day: 'numeric',
-                                        hour: '2-digit',
-                                        minute: '2-digit'
-                                    })}
-                                </p>
-                            </div>
-                            <div className="text-center md:text-right">
-                                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Period Summary</p>
-                                <div className="flex items-center gap-4">
-                                    <div className="text-center">
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">Credit Total</p>
-                                        <p className="text-lg font-bold text-green-600 dark:text-green-400">
-                                            ₹{calculateTotalCredit().toFixed(2)}
-                                        </p>
+                                        {/* Quick Date Filters */}
+                                        <div className="flex gap-2 flex-wrap">
+                                            <button
+                                                onClick={() => setQuickFilterHandler('today')}
+                                                className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${quickFilter === 'today'
+                                                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-700'
+                                                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300'
+                                                    }`}
+                                            >
+                                                Today
+                                            </button>
+                                            <button
+                                                onClick={() => setQuickFilterHandler('month')}
+                                                className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${quickFilter === 'month'
+                                                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-700'
+                                                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300'
+                                                    }`}
+                                            >
+                                                This Month
+                                            </button>
+                                            <button
+                                                onClick={() => setQuickFilterHandler('quarter')}
+                                                className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${quickFilter === 'quarter'
+                                                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-700'
+                                                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300'
+                                                    }`}
+                                            >
+                                                This Quarter
+                                            </button>
+                                            <button
+                                                onClick={() => setQuickFilterHandler('year')}
+                                                className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${quickFilter === 'year'
+                                                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-700'
+                                                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300'
+                                                    }`}
+                                            >
+                                                This Year
+                                            </button>
+                                            <button
+                                                onClick={() => setQuickFilterHandler('all')}
+                                                className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${quickFilter === 'all'
+                                                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 border border-blue-300 dark:border-blue-700'
+                                                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-300'
+                                                    }`}
+                                            >
+                                                All Time
+                                            </button>
+                                        </div>
                                     </div>
-                                    <div className="h-8 w-px bg-gray-300 dark:bg-gray-600"></div>
-                                    <div className="text-center">
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">Debit Total</p>
-                                        <p className="text-lg font-bold text-red-600 dark:text-red-400">
-                                            ₹{calculateTotalDebit().toFixed(2)}
-                                        </p>
+
+                                    {/* Loading State */}
+                                    {isLoading && (
+                                        <div className="mt-3 flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400">
+                                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                                            Loading ledger data...
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Modal Body */}
+                                <div className="flex-1 overflow-auto p-6">
+                                    {/* Beautiful Summary Cards - RESTORED */}
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                                        {/* Total Credit Card */}
+                                        <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-4 rounded-xl border border-green-200 dark:border-green-700/50 shadow-sm">
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <h3 className="text-sm font-medium text-green-800 dark:text-green-300 mb-1">Total Credit</h3>
+                                                    <p className="text-2xl font-bold text-green-900 dark:text-green-100">
+                                                        ₹{calculateTotalCredit().toFixed(2)}
+                                                    </p>
+                                                </div>
+                                                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
+                                                    <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div className="mt-2 text-xs text-green-600 dark:text-green-400">
+                                                <span className="font-medium">Period:</span> {dateFilter.fromDate} to {dateFilter.toDate}
+                                            </div>
+                                        </div>
+
+                                        {/* Total Debit Card */}
+                                        <div className="bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 p-4 rounded-xl border border-red-200 dark:border-red-700/50 shadow-sm">
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <h3 className="text-sm font-medium text-red-800 dark:text-red-300 mb-1">Total Debit</h3>
+                                                    <p className="text-2xl font-bold text-red-900 dark:text-red-100">
+                                                        ₹{calculateTotalDebit().toFixed(2)}
+                                                    </p>
+                                                </div>
+                                                <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center">
+                                                    <svg className="w-5 h-5 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div className="mt-2 text-xs text-red-600 dark:text-red-400">
+                                                <span className="font-medium">Period:</span> {dateFilter.fromDate} to {dateFilter.toDate}
+                                            </div>
+                                        </div>
+
+                                        {/* Start Opening Balance Card */}
+                                        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-4 rounded-xl border border-blue-200 dark:border-blue-700/50 shadow-sm">
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-1"> Opening Balance</h3>
+                                                    <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                                                        ₹{SelectedLEDGERData?.previousOpBalance?.toFixed(2)}
+                                                    </p>
+                                                    <div className="mt-1">
+                                                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${SelectedLEDGERData?.previousOpType?.toLowerCase() === 'credit'
+                                                            ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                                                            : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                                                            }`}>
+                                                            {SelectedLEDGERData?.previousOpType}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
+                                                    <svg className="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                     
+                                        <div className="bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 p-4 rounded-xl border border-purple-200 dark:border-purple-700/50 shadow-sm relative overflow-hidden shadow-sm">
+                                            <div className="flex items-center justify-between">
+                                                <div>
+                                                    <h3 className="text-sm font-medium text-purple-800 dark:text-purple-300 mb-1">Closing Balance</h3>
+                                                         <p className={`text-3xl font-bold ${calculatePeriodBalance() >= 0
+                                                        ? 'text-green-600 dark:text-green-400'
+                                                        : 'text-red-600 dark:text-red-400'
+                                                        }`}>
+                                                        ₹{calculatePeriodBalance().toFixed(2)}
+                                                        <span className="text-lg ml-2">
+                                                            ({calculatePeriodBalance() >= 0 ? 'Credit' : 'Debit'})
+                                                        </span>
+                                                    </p>
+                                                    <div className="mt-1">
+                                                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${SelectedLEDGERData?.typeOfOpeningBalance?.toLowerCase() === 'credit'
+                                                            ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
+                                                            : 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                                                            }`}>
+                                                            {SelectedLEDGERData?.typeOfOpeningBalance || 'N/A'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
+                                                    <svg className="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            {/* Entry Count Badge */}
+                                            <div className="absolute top-2 right-2">
+                                                <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-violet-500 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-sm">
+                                                    {filteredLedgerEntries?.length || 0}
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
-                                    <div className="h-8 w-px bg-gray-300 dark:bg-gray-600"></div>
-                                    <div className="text-center">
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">Net Balance</p>
-                                        <p className={`text-lg font-bold ${
-                                            calculatePeriodBalance() >= 0 
-                                                ? 'text-green-600 dark:text-green-400' 
-                                                : 'text-red-600 dark:text-red-400'
-                                        }`}>
-                                            ₹{calculatePeriodBalance().toFixed(2)}
-                                        </p>
+
+                                    {/* Net Balance for Period Card */}
+                                    <div className="mb-6">
+                                        <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                                            <div className="flex flex-col md:flex-row md:items-center justify-between">
+                                                <div>
+                                                    <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-1">Net Balance for Selected Period</h3>
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                        From {dateFilter.fromDate} to {dateFilter.toDate} • {getQuickFilterLabel()}
+                                                    </p>
+                                                </div>
+                                                <div className="mt-3 md:mt-0 text-center md:text-right">
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Balance</p>
+                                                    <p className={`text-3xl font-bold ${calculatePeriodBalance() >= 0
+                                                        ? 'text-green-600 dark:text-green-400'
+                                                        : 'text-red-600 dark:text-red-400'
+                                                        }`}>
+                                                        ₹{calculatePeriodBalance().toFixed(2)}
+                                                        <span className="text-lg ml-2">
+                                                            ({calculatePeriodBalance() >= 0 ? 'Credit' : 'Debit'})
+                                                        </span>
+                                                    </p>
+                                                    <div className="mt-2 flex items-center justify-center md:justify-end gap-4">
+                                                        <div className="flex items-center">
+                                                            <div className="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                                                            <span className="text-xs text-gray-600 dark:text-gray-400">Credit: ₹{calculateTotalCredit().toFixed(2)}</span>
+                                                        </div>
+                                                        <div className="flex items-center">
+                                                            <div className="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+                                                            <span className="text-xs text-gray-600 dark:text-gray-400">Debit: ₹{calculateTotalDebit().toFixed(2)}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Table */}
+                                    <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden shadow-sm">
+                                        <div className="overflow-x-auto">
+                                            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                                <thead className="bg-gray-50 dark:bg-slate-900">
+                                                    <tr>
+                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Date</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Transaction Ledger</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Description</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Voucher Type</th>
+
+                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Debit (₹)</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Credit (₹)</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                                    {filteredLedgerEntries && filteredLedgerEntries.length > 0 ? (
+                                                        filteredLedgerEntries.map((ledger, index) => (
+                                                            <tr key={index} className={`hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors ${index % 2 === 0 ? 'bg-white dark:bg-slate-800' : 'bg-gray-50/50 dark:bg-slate-800/50'}`}>
+                                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                                    <div className="text-sm font-medium text-gray-900 dark:text-white">
+                                                                        {ledger?.receivedDate ? (
+                                                                            <>
+                                                                                <div>{new Date(ledger?.receivedDate).toLocaleDateString('en-IN', {
+                                                                                    day: '2-digit',
+                                                                                    month: 'short',
+                                                                                    year: 'numeric'
+                                                                                })}</div>
+                                                                                <div className="text-xs text-gray-500 dark:text-gray-400">
+                                                                                    {new Date(ledger?.receivedDate).toLocaleTimeString('en-IN', {
+                                                                                        hour: '2-digit',
+                                                                                        minute: '2-digit',
+                                                                                        hour12: true
+                                                                                    })}
+                                                                                </div>
+                                                                            </>
+                                                                        ) : 'N/A'}
+                                                                    </div>
+                                                                </td>
+                                                                <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                                                    <div className="font-medium">{ledger.toLedgerName || 'No Related Ledger Found'}</div>
+                                                                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                                        {ledger.voucherNumber ? `Voucher: ${ledger.voucherNumber}` : 'No Voucher'}
+                                                                    </div>
+                                                                </td>
+                                                                <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-xs">
+                                                                    <div className="truncate" title={ledger.description || 'No description'}>
+                                                                        {ledger.description || 'No description'}
+                                                                    </div>
+                                                                </td>
+                                                                <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-xs">
+                                                                    <div className="truncate" title={ledger.voucherType || 'No voucherType'}>
+                                                                        {ledger.voucherType || 'No voucherType'}
+                                                                    </div>
+                                                                </td>
+
+                                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                                    <div className={`text-sm font-semibold ${parseFloat(ledger.debit || 0) > 0 ? 'text-red-600 dark:text-red-400' : 'text-gray-400'}`}>
+                                                                        {parseFloat(ledger.debit || 0) > 0 ? `₹${parseFloat(ledger.debit || 0).toFixed(2)}` : '-'}
+                                                                    </div>
+                                                                </td>
+                                                                <td className="px-6 py-4 whitespace-nowrap">
+                                                                    <div className={`text-sm font-semibold ${parseFloat(ledger.credit || 0) > 0 ? 'text-green-600 dark:text-green-400' : 'text-gray-400'}`}>
+                                                                        {parseFloat(ledger.credit || 0) > 0 ? `₹${parseFloat(ledger.credit || 0).toFixed(2)}` : '-'}
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        ))
+                                                    ) : (
+                                                        <tr>
+                                                            <td colSpan="5" className="px-6 py-12 text-center">
+                                                                <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400">
+                                                                    <svg className="w-16 h-16 mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                                                    </svg>
+                                                                    <p className="text-lg font-medium mb-1">No transactions found</p>
+                                                                    <p className="text-sm">Try adjusting your date filters or select a different period.</p>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    {/* Footer Summary */}
+                                    {filteredLedgerEntries && filteredLedgerEntries.length > 0 && (
+                                        <div className="mt-6 p-5 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-slate-900 dark:to-slate-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+                                            <div className="flex flex-col md:flex-row justify-between items-center">
+                                                <div className="mb-4 md:mb-0">
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                                                        <span className="font-semibold">{filteredLedgerEntries.length}</span> entries •
+                                                        Showing data for <span className="font-semibold">{getQuickFilterLabel()}</span>
+                                                    </p>
+                                                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                                                        Generated on {new Date().toLocaleDateString('en-IN', {
+                                                            weekday: 'short',
+                                                            year: 'numeric',
+                                                            month: 'short',
+                                                            day: 'numeric',
+                                                            hour: '2-digit',
+                                                            minute: '2-digit'
+                                                        })}
+                                                    </p>
+                                                </div>
+                                                <div className="text-center md:text-right">
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Period Summary</p>
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="text-center">
+                                                            <p className="text-xs text-gray-500 dark:text-gray-400">Credit Total</p>
+                                                            <p className="text-lg font-bold text-green-600 dark:text-green-400">
+                                                                ₹{calculateTotalCredit().toFixed(2)}
+                                                            </p>
+                                                        </div>
+                                                        <div className="h-8 w-px bg-gray-300 dark:bg-gray-600"></div>
+                                                        <div className="text-center">
+                                                            <p className="text-xs text-gray-500 dark:text-gray-400">Debit Total</p>
+                                                            <p className="text-lg font-bold text-red-600 dark:text-red-400">
+                                                                ₹{calculateTotalDebit().toFixed(2)}
+                                                            </p>
+                                                        </div>
+                                                        <div className="h-8 w-px bg-gray-300 dark:bg-gray-600"></div>
+                                                        <div className="text-center">
+                                                            <p className="text-xs text-gray-500 dark:text-gray-400">Net Closing Balance</p>
+                                                            <p className={`text-lg font-bold ${calculatePeriodBalance() >= 0
+                                                                ? 'text-green-600 dark:text-green-400'
+                                                                : 'text-red-600 dark:text-red-400'
+                                                                }`}>
+                                                                ₹{calculatePeriodBalance().toFixed(2)}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Modal Footer */}
+                                <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 flex justify-between items-center">
+                                    <div className="flex items-center gap-3">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                                            <span className="text-xs text-gray-600 dark:text-gray-400">Credit</span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                                            <span className="text-xs text-gray-600 dark:text-gray-400">Debit</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex space-x-3">
+                                        <button
+                                            onClick={() => {
+                                                // Export functionality
+                                                console.log('Export filtered data');
+                                            }}
+                                            className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors flex items-center gap-2"
+                                        >
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                            Export
+                                        </button>
+                                        <button
+                                            onClick={closeLEDGERModal}
+                                            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                                        >
+                                            Close
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                )}
-            </div>
-
-            {/* Modal Footer */}
-            <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 flex justify-between items-center">
-                <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                        <span className="text-xs text-gray-600 dark:text-gray-400">Credit</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                        <span className="text-xs text-gray-600 dark:text-gray-400">Debit</span>
-                    </div>
-                </div>
-                <div className="flex space-x-3">
-                    <button
-                        onClick={() => {
-                            // Export functionality
-                            console.log('Export filtered data');
-                        }}
-                        className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors flex items-center gap-2"
-                    >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Export
-                    </button>
-                    <button
-                        onClick={closeLEDGERModal}
-                        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
-                    >
-                        Close
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-)}
+                    )}
 
                     <div className='items-center justify-center'>
                         <Formik
