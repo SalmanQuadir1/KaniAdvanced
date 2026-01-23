@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
+
 import { useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 import DefaultLayout from "../../layout/DefaultLayout";
@@ -13,6 +14,11 @@ const FilterSupplier = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [useClientPagination, setUseClientPagination] = useState(true);
+  const [openDropdownId, setOpenDropdownId] = useState(null);
+  const dropdownRef = useRef(null);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
+
+
 
   const navigate = useNavigate();
 
@@ -79,6 +85,24 @@ const FilterSupplier = () => {
     const currentPageData = allFlattenedProducts.slice(startIndex, endIndex);
     setDisplayedProducts(currentPageData);
   };
+
+  useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target)
+    ) {
+      setOpenDropdownId(null);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, []);
+
 
   const flattenOrderProducts = (ordersData) => {
     const flattened = [];
@@ -184,6 +208,23 @@ const FilterSupplier = () => {
     
     setAllFlattenedProducts(flattened);
   };
+
+ const openUpdateChallan = (event, id) => {
+  const rect = event.currentTarget.getBoundingClientRect();
+
+  setDropdownPos({
+    top: rect.bottom + window.scrollY,
+    left: rect.left + rect.width / 2,
+  });
+
+  setOpenDropdownId(id);
+};
+
+
+const closeUpdateChallan = () => {
+  setOpenDropdownId(null);
+};
+
 
   // Handle client-side pagination
   const handleClientSidePagination = (ordersArray) => {
@@ -394,7 +435,7 @@ const FilterSupplier = () => {
           </td>
 
           {/* CHALLAN NO  */}
-  <td className="px-4 py-3 border-b text-center">
+  {/* <td className="px-4 py-3 border-b text-center">
     {orderProduct?.challanNo ? (
       <span className="text-gray-800 dark:text-gray-300 font-medium bg-yellow-50 dark:bg-gray-800 px-2 py-1 rounded">
         {orderProduct.challanNo}
@@ -402,7 +443,89 @@ const FilterSupplier = () => {
     ) : (
       <span className="text-gray-400">—</span>
     )}
-  </td>
+  </td> */}
+  <td
+ className="px-4 py-3 border-b text-center cursor-pointer"
+  onClick={(e) => openUpdateChallan(e, orderProduct.id)}
+>
+  {orderProduct?.challanNo ? (
+    <span className="bg-yellow-50 px-2 py-1 rounded">
+      {orderProduct.challanNo}
+    </span>
+  ) : (
+    <span className="text-gray-400">—</span>
+  )}
+  
+
+  {/* Dropdown */}
+  {openDropdownId === orderProduct.id && (
+    <div
+      ref={dropdownRef}
+      className="
+        fixed
+        absolute left-1/2 -translate-x-1/2
+        mt-2
+        w-70
+        bg-white
+        border border-gray-200
+        rounded-md
+        shadow-lg
+        z-50
+      "
+      onClick={(e) => e.stopPropagation()} // prevents close on click inside
+    >
+      {/* Header */}
+      <div className="px-4 py-2 border-b text-[12px] font-medium text-gray-700 flex justify-between">
+        <span>Update Challan</span>
+        <span
+          onClick={closeUpdateChallan}
+          className="cursor-pointer text-gray-400 hover:text-gray-600"
+        >
+          ✕
+        </span>
+      </div>
+
+      {/* Body */}
+      <div className="px-4 py-3 space-y-2">
+        <label className="block text-[11px] text-gray-600">
+          Challan No
+        </label>
+
+        <input
+          type="text"
+          defaultValue={orderProduct?.challanNo || ""}
+          placeholder="Enter challan no"
+          className="
+            w-full
+            border border-gray-300
+            rounded
+            px-2 py-1
+            text-[11px]
+            focus:outline-none
+            focus:ring-1 focus:ring-blue-400
+          "
+        />
+
+        <button
+          className="
+            w-full
+            mt-2
+            bg-blue-600
+            text-white
+            text-[11px]
+            py-1.5
+            rounded
+            hover:bg-blue-700
+            transition
+          "
+        >
+          Update
+        </button>
+      </div>
+    </div>
+  )}
+</td>
+
 
           {/* PRODUCT STATUS */}
           <td className="px-4 py-3 border-b text-center">
