@@ -1129,7 +1129,9 @@ const CreateVoucher = () => {
                                 const custGstCode = getCustGstCode(custAddress);
 
                                 // Base ledger type from voucher type
-                                const baseType = typeOfVoucher === 'Purchase' ? 'Purchase' : 'Sales';
+                                const baseType = Vouchers.typeOfVoucher === 'Purchase' ? 'Purchase' : 'Sales';
+
+console.log(baseType,"9999999999999999999999999999999999999999999993");
 
 
                                 if (regLocation) {
@@ -1169,6 +1171,21 @@ const CreateVoucher = () => {
                                 }
 
                                 else if (!custLocation) {
+                                    if (Vouchers?.typeOfVoucher === "Purchase") {
+
+                                        if (regLocation === 'delhi') {
+
+                                            console.log(`${baseType} ${regLocation}`, "hereeeeeeeeeeeeeeeeeeeeeee");
+                                            return `${baseType} ${regLocation}`;
+                                            
+                                        }
+                                        else {
+                                             console.log(`${baseType} ${regLocation}`, "hereeeeeeeeeeeeeeeeeeeeeee");
+                                            return `${baseType} ${regLocation}`;
+                                        }
+
+
+                                    }
                                     // Can't determine customer location, use IGST
                                     return `${baseType} igst ${regLocation}`;
                                 }
