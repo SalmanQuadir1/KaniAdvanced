@@ -412,6 +412,9 @@ export const GET_SUPPLIER_ORDERS_URL = `${BASE_URL}/order`;
 export const GET_PRODUCTS_URL = `${BASE_URL}/products/updateProduct`;
 export const GET_Kani_CLIENTORDERS_URL = `${BASE_URL}/order/kani-clientOrder`;
 export const GET_RETAIL_CLIENTORDERS_URL = `${BASE_URL}/order/kani/retail-client-orders`;
+export const GET_WHOLESALE_CLIENTORDERS_URL = `${BASE_URL}/order/kani/ws-client-orders`;
+export const GET_KLCORDERS_URL = `${BASE_URL}/order/klcc`;
+
 
 //dahsboard
 

@@ -18,6 +18,7 @@ import { PiGearFineFill } from "react-icons/pi";
 import { CiCalendarDate } from "react-icons/ci";
 import { VscDiffModified } from "react-icons/vsc";
 import { toast } from 'react-toastify';
+import { TbReorder } from 'react-icons/tb';
 
 const Home = () => {
     const [unitCount, setUnitCount] = useState([]);
@@ -212,7 +213,13 @@ const kaniModeCards = [
     icon:  <RiAlignItemBottomFill className="w-10 h-10" />,
     levelUp: true,
   },
-  
+   {
+      title: "Klc Orders",
+      link: "/KlcOrders",
+      countKey: "KlcOrders",
+      icon:  <TbReorder className="w-10 h-10" />,
+      levelUp: true,
+    },
  
 ];
 
