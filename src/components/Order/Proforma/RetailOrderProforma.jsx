@@ -17,6 +17,7 @@ import { useNavigate, useNavigation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { MdDelete } from 'react-icons/md';
+import useLocation from '../../../hooks/useLocation';
 const RetailOrderProforma = () => {
     const navigate = useNavigate();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
@@ -27,7 +28,7 @@ const RetailOrderProforma = () => {
     const [prodIdOptions, setprodIdOptions] = useState([])
     const [Total, setTotal] = useState(0)
     const [gst, setgst] = useState(0)
-  
+
     const [Totall, setTotall] = useState(0)
     const [order, setOrder] = useState(null); // To store fetched product data
 
@@ -354,6 +355,25 @@ const RetailOrderProforma = () => {
         // You can now send `finalData` to the backend or do any other operation with it
     };
 
+    const { Locations, getAllLocation } = useLocation();
+
+    useEffect(() => {
+        getAllLocation();
+    }, [])
+    
+
+
+
+      const formattedLocation = Locations?.map(loc => ({
+        label: loc.address,
+        value: loc.id
+    }));
+
+    const formattedGstLocation = Locations?.map(loc => ({
+        label: `Registration ${loc.state}`,
+        value: loc.id
+    }));
+
 
 
 
@@ -451,7 +471,7 @@ const RetailOrderProforma = () => {
                                 order?.orderProducts?.forEach((product, index) => {
                                     // Calculate the new rate: rate / currentrate
                                     const newRate = product?.products?.retailMrp / values.currentrate || 0;
-console.log(newRate,"umershah");
+                                    console.log(newRate, "umershah");
                                     // Update the rate for the product
                                     setFieldValue(`orderProducts[${index}].rate`, newRate);
                                 });
@@ -464,8 +484,8 @@ console.log(newRate,"umershah");
 
                             console.log("current rate:", rate);
                             console.log("discount:", discount);
-                            console.log("quantity=======",orderQty);
-                           
+                            console.log("quantity=======", orderQty);
+
                             let discountedPricee = (discount * rate) / 100;
                             console.log("discountedPrice (calculated):", discountedPricee);
 
@@ -474,43 +494,43 @@ console.log(newRate,"umershah");
                             console.log("final discountedPrice:", discountedPricee);
                             setFieldValue(`orderProducts[${index}].discountedPrice`, discountedPricee);
 
-                            const discountedValue=  discountedPricee*orderQty
-                            console.log("discountedprice&&&&quantity&&&&",discountedPricee,orderQty);
+                            const discountedValue = discountedPricee * orderQty
+                            console.log("discountedprice&&&&quantity&&&&", discountedPricee, orderQty);
 
-                           
+
                             setFieldValue('total', discountedValue)
                             setFieldValue('outstandingBalance', discountedValue);
                             setTotal(discountedValue)
-                            console.log("discountedValue=========",discountedValue);
+                            console.log("discountedValue=========", discountedValue);
 
-                 
 
-                            let taxableValue =0;
-                         
+
+                            let taxableValue = 0;
+
                             if (discountedPricee >= 1000) {
                                 // Check if the product unit is 'Mtrs' or others
                                 const prodUnit = values.orderProducts[index]?.unit;
                                 if (prodUnit === 'Mtrs') {
-                                   taxableValue= Math.floor((discountedPricee/105)*100) // Apply 5% GST for meters
+                                    taxableValue = Math.floor((discountedPricee / 105) * 100) // Apply 5% GST for meters
                                 } else {
-                                    taxableValue= Math.floor((discountedPricee/112)*100)  // Apply 12% GST for other units
+                                    taxableValue = Math.floor((discountedPricee / 112) * 100)  // Apply 12% GST for other units
                                 }
                             } else if (discountedPricee < 1000) {
-                       
-                                taxableValue= Math.floor((discountedPricee/105)*100)
-                            }
-                            var totalValue=Math.floor(taxableValue*orderQty)
 
-                 
+                                taxableValue = Math.floor((discountedPricee / 105) * 100)
+                            }
+                            var totalValue = Math.floor(taxableValue * orderQty)
+
+
                             setFieldValue(`orderProducts[${index}].taxibleValue`, taxableValue);
                             setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
 
-                            const gst = discountedValue-totalValue
+                            const gst = discountedValue - totalValue
 
-                            
+
                             setFieldValue('gst', gst);
                             setgst(gst)
-                       
+
                             // console.log("GST Tax (Calculated):", gstTax);
                             console.log("Total Value (Calculated):", totalValue);
                         };
@@ -553,14 +573,14 @@ console.log(newRate,"umershah");
                                 console.log(values.modeOfShipment, "kkllkkll");
                                 if (values.modeOfShipment === 'Courier' || values.modeOfShipment === '') {
                                     console.log(values?.gst, "gsttststst");
-                                    setFieldValue("gst",gst)
-                                    setFieldValue("total",Total)
+                                    setFieldValue("gst", gst)
+                                    setFieldValue("total", Total)
                                     setFieldValue('outstandingBalance', Total)
                                     // If mode of shipment is Courier, sum all GST values
 
-                                   
-                                 
-                                   
+
+
+
 
                                 } else if (values.modeOfShipment === 'Commercial') {
                                     // If mode of shipment is Commercial, set GST to 0 and recalculate total
@@ -571,7 +591,7 @@ console.log(newRate,"umershah");
 
                                     setFieldValue('total', totalWithoutGst);
                                     setFieldValue('outstandingBalance', totalWithoutGst)
-                                    ; // No GST, only totalValue sum
+                                        ; // No GST, only totalValue sum
                                 }
                             }
                         }, [values.modeOfShipment, values.orderProducts, setFieldValue]);
@@ -634,7 +654,7 @@ console.log(newRate,"umershah");
                             // Step 3: Update outstandingBalance
                             setFieldValue('outstandingBalance', updatedTotal);
 
-                        }, [values.advanceReceived,  setFieldValue]);
+                        }, [values.advanceReceived, setFieldValue]);
 
 
 
@@ -714,6 +734,22 @@ console.log(newRate,"umershah");
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
+                                             
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                                        <div>
+                                                            <label className="mb-2.5 block text-black dark:text-white">Default GST Registration</label>
+                                                            <ReactSelect
+                                                                name="defGstRegist"
+                                                                value={formattedGstLocation.find(opt => opt.value === values.defGstRegist)}
+                                                                onChange={(opt) => setFieldValue('defGstRegist', { id: opt?.value })}
+                                                                options={formattedGstLocation}
+                                                                styles={customStyles}
+                                                                placeholder="Select registration"
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                         
 
 
                                             </div>
@@ -939,7 +975,7 @@ console.log(newRate,"umershah");
                                                             <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                                                 MRP
                                                             </th>
-                                                         
+
 
 
                                                             <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
@@ -1066,7 +1102,7 @@ console.log(newRate,"umershah");
 
 
 
-                                                             
+
 
 
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">

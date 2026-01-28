@@ -9,6 +9,10 @@ import { Field, Form, Formik } from 'formik';
 import ReactSelect from 'react-select';
 import { useSelector } from 'react-redux';
 import useProduct from '../../hooks/useProduct';
+import { AiFillProduct } from 'react-icons/ai';
+import { MdDateRange } from 'react-icons/md';
+import { TbBaselineDensityMedium } from 'react-icons/tb';
+import { PiArrowsMergeFill } from 'react-icons/pi';
 
 const ViewStockJournels = () => {
   const location = useSelector(state => state?.nonPersisted?.location);
@@ -41,7 +45,7 @@ const ViewStockJournels = () => {
 
   console.log(productList, "545454");
 
-  const productsOptions= productList.map(product => ({
+  const productsOptions = productList.map(product => ({
     value: product.id,
     label: product.productId,
     productId: product.productId,
@@ -67,9 +71,9 @@ const ViewStockJournels = () => {
   const formatStatusOptions = () => {
     return [
       { value: '', label: 'Select Status' },
-      { value: 'Created', label: 'Created' },
-      { value: 'Approved', label: 'Approved' },
-      { value: 'Rejected', label: 'Rejected' },
+      { value: 'created', label: 'Created' },
+      { value: 'approved', label: 'Approved' },
+      { value: 'rejected', label: 'Rejected' },
     ];
   };
 
@@ -105,8 +109,8 @@ const ViewStockJournels = () => {
               <div className="text-xs text-gray-500 dark:text-gray-300">
                 Transfer Qty: {product.transferQty} |
                 Received Qty: {product.receivedQty} |
-                From: Location {product.sourceLocationId} |
-                To: Location {product.destinationLocationId}
+                From: Location {product.sourceLocationName} |
+                To: Location {product.destinationLocationName}
               </div>
             </div>
           ))}
@@ -138,9 +142,12 @@ const ViewStockJournels = () => {
   const handleSubmit = (values) => {
     console.log(values, "from frontttttt");
     const filters = {
-      address: values.address || undefined, // Source Location
-      description: values.description || undefined, // Source Material
-      journalStatus: values.status || undefined, // Journal Status
+      toDate: values.toDate || undefined, // Source Location
+      fromDate: values.fromDate || undefined, // Source Material
+      journalStatus: values.journalStatus || undefined, // Journal Status
+      voucherNo: values.voucherNo || undefined, // Voucher Number
+      productId: values.productId || undefined, // Source Material
+     
     };
     ViewStock(pagination.currentPage, filters);
   };
@@ -173,12 +180,12 @@ const ViewStockJournels = () => {
               {({ setFieldValue, values }) => (
                 <Form>
                   <div className="flex flex-col gap-9">
-                    <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark p-3">
+                    <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark p-7">
                       <div className="mb-4.5 flex flex-wrap gap-6">
 
-                        <div className="flex-1 min-w-[300px]">
-                          <label className="mb-2.5 block text-black dark:text-white">
-                            Products
+                        <div className="flex-1 min-w-[200px]">
+                          <label className=" flex mb-2.5 block text-slate-700 dark:text-white gap-2">
+                           <AiFillProduct /> Products
                           </label>
                           <ReactSelect
                             name="productId"
@@ -186,9 +193,9 @@ const ViewStockJournels = () => {
                             onChange={(option) =>
                               setFieldValue(
                                 'productId',
-                                option?.productId === 'Select'
+                                option?.value === 'Select'
                                   ? ''
-                                  : option?.productId || '',
+                                  : option?.value || '',
                               )
                             }
                             value={productsOptions.find(
@@ -199,35 +206,80 @@ const ViewStockJournels = () => {
                             placeholder="Select Description"
                           />
                         </div>
-                        <div className=" w-[378px]">
-                          <label className="mb-2.5 block text-black dark:text-white">
-                            Status
+
+                        <div className="flex-1 min-w-[200px]">
+                          <label className="flex mb-2.5 block text-black dark:text-white">
+                           <MdDateRange/> From Date
+                          </label>
+
+                          <Field
+                            type="date"
+                            name="fromDate"
+                            placeholder="From Date"
+                            className="bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary w-full"
+                          />
+                        </div>
+                          <div className="flex-1 min-w-[200px]">
+                          <label className="flex mb-2.5 block text-black dark:text-white">
+                           <MdDateRange/> To Date
+                          </label>
+
+                          <Field
+                            type="date"
+                            name="toDate"
+                            placeholder="To Date"
+                            className="bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary w-full"
+                          />
+                        </div>
+                          <div className="flex-1 min-w-[200px]">
+                          <label className="flex mb-2.5 block text-black dark:text-white">
+                          <TbBaselineDensityMedium/> Voucher Number
+                          </label>
+
+                          <Field
+                            type="text"
+                            name="voucherNo"
+                            placeholder="Voucher Number"
+                            className="bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary w-full"
+                          />
+                        </div>
+
+                        <div className=" w-[200px]">
+                          <label className="flex mb-2.5 block text-black dark:text-white">
+                           <PiArrowsMergeFill/> Status
                           </label>
                           <Field
-                            name="status"
+                            name="journalStatus"
                             component={ReactSelect}
                             options={statusSel}
                             styles={customStyles}
                             placeholder="Select Status"
                             value={statusSel.find(
-                              (option) => option.value === values.status,
+                              (option) => option.value === values.journalStatus,
                             )}
                             onChange={(option) =>
-                              setFieldValue('status', option?.value || '')
+                              setFieldValue('journalStatus', option?.value || '')
                             }
                           />
                         </div>
+
                       </div>
-                      <div className="mt-6 flex justify-center">
-                        <button
-                          type="submit"
-                          className="inline-flex justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-opacity-70 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 w-[150px]"
-                        >
-                          Search
-                        </button>
-                      </div>
+
+
+
+
+
+                    </div>
+                    <div className="mt-6 flex justify-center">
+                      <button
+                        type="submit"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-opacity-70 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 w-[150px]"
+                      >
+                        Search
+                      </button>
                     </div>
                   </div>
+
                 </Form>
               )}
             </Formik>
@@ -274,7 +326,7 @@ const ViewStockJournels = () => {
           </div>
         </div>
       </div>
-    </DefaultLayout>
+    </DefaultLayout >
   );
 };
 
