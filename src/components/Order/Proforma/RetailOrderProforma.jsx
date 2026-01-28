@@ -375,6 +375,7 @@ const RetailOrderProforma = () => {
     }));
 
 
+console.log(order,"myyyyy54");
 
 
     return (
@@ -684,7 +685,7 @@ const RetailOrderProforma = () => {
 
 
 
-                                                <div className="flex-2 min-w-[200px]">
+                                                <div className="flex-1 min-w-[200px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">
                                                         Date
                                                     </label>
@@ -711,7 +712,7 @@ const RetailOrderProforma = () => {
 
 
 
-                                                <div className="flex-2 min-w-[270px]">
+                                                <div className="flex-1 min-w-[200px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">PI</label>
                                                     <Field
                                                         name="pid"
@@ -723,7 +724,7 @@ const RetailOrderProforma = () => {
                                                     <ErrorMessage name="orderType" component="div" className="text-red-600 text-sm" />
                                                 </div>
 
-                                                <div className="flex-2 min-w-[270px]">
+                                                <div className="flex-1 min-w-[200px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">
                                                         Bill To
                                                     </label>
@@ -735,8 +736,8 @@ const RetailOrderProforma = () => {
                                                     />
                                                 </div>
                                              
-                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                                        <div>
+                                                    
+                                                          <div className="flex-1 min-w-[200px]">
                                                             <label className="mb-2.5 block text-black dark:text-white">Default GST Registration</label>
                                                             <ReactSelect
                                                                 name="defGstRegist"
@@ -747,7 +748,7 @@ const RetailOrderProforma = () => {
                                                                 placeholder="Select registration"
                                                             />
                                                         </div>
-                                                    </div>
+                                                  
 
                          
 
