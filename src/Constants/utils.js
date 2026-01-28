@@ -114,7 +114,7 @@ export const VERIFY_STOCK_JOURNAL = `${BASE_URL}/stockjournals/updateStockJourna
 
 
 
-export const GET_STOCK_URL = `${BASE_URL}/stockjournal/search`
+export const GET_STOCK_URL = `${BASE_URL}/stockjournals/search`
 export const GET_STOCKBYID_URL = `${BASE_URL}/stockjournal`
 export const UPDATE_STOCK_URL = `${BASE_URL}/stockjournal`
 export const DELETE_STOCK_URL = `${BASE_URL}/stockjournal/delete`

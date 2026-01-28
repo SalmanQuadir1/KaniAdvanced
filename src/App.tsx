@@ -246,8 +246,8 @@ import UpdateInventory from './components/ProductsInventory/UpdateInventory.jsx'
 
 
 import AddStockJournell from './components/StockJournel/AddStockJournell.jsx';
-import ViewStockJournel from './components/StockJournel/ViewStockJournel.jsx';
-
+// import ViewStockJournel from './components/StockJournel/ViewStockJournel.jsx';
+import ViewStockJournels from './components/StockJournel/ViewStockJournels.jsx';
 
 import VerifyStockJournal from './components/StockJournel/VerifyStockJournal.jsx';
 import Godown from './components/Godown/Godown.jsx'
@@ -1826,8 +1826,8 @@ function App() {
             path="/stockJournal/ViewStockJournal"
             element={
               <>
-                <PageTitle title="Add Stock Journal" />
-                <ViewStockJournel />
+                <PageTitle title="View Stock Journal" />
+                <ViewStockJournels />
               </>
             }
           />

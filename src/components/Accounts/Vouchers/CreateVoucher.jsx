@@ -746,6 +746,15 @@ const CreateVoucher = () => {
     ];
 
 
+    const currencies = [
+        { value: 'INR', label: 'INR - Indian Rupee' },
+        { value: 'USD', label: 'USD - US Dollar' },
+        { value: 'EUR', label: 'EUR - Euro' },
+        { value: 'GBP', label: 'GBP - British Pound' },
+        { value: 'JPY', label: 'JPY - Japanese Yen' },
+        { value: 'AED', label: 'AED - UAE Dirham' }
+    ];
+
 
 
 
@@ -974,6 +983,9 @@ const CreateVoucher = () => {
 
 
                         totalGst: 0,
+                        currency: "INR",
+                        currencyValue: 1,
+                        totalCurrencyValue: 0,
                         paymentDetails: [{
                             productsId: null,
                             orderProductId: null,
@@ -1131,7 +1143,7 @@ const CreateVoucher = () => {
                                 // Base ledger type from voucher type
                                 const baseType = Vouchers.typeOfVoucher === 'Purchase' ? 'Purchase' : 'Sales';
 
-console.log(baseType,"9999999999999999999999999999999999999999999993");
+                                console.log(Vouchers.typeOfVoucher, "9999999999999999999999999999999999999999999993");
 
 
                                 if (regLocation) {
@@ -1177,14 +1189,20 @@ console.log(baseType,"9999999999999999999999999999999999999999999993");
 
                                             console.log(`${baseType} ${regLocation}`, "hereeeeeeeeeeeeeeeeeeeeeee");
                                             return `${baseType} ${regLocation}`;
-                                            
+
                                         }
                                         else {
-                                             console.log(`${baseType} ${regLocation}`, "hereeeeeeeeeeeeeeeeeeeeeee");
+                                            console.log(`${baseType} ${regLocation}`, "hereeeeeeeeeeeeeeeeeeeeeee");
                                             return `${baseType} ${regLocation}`;
                                         }
 
 
+                                    }
+                                    else if (Vouchers?.typeOfVoucher === "Payment") {
+                                        console.log(`${(Vouchers?.typeOfVoucher).toUpperCase()}`, "000.00");
+
+                                        // For ALL payment types (Visa, Amex, etc.), return "PAYMENT"
+                                        return `${(Vouchers?.typeOfVoucher).toUpperCase()}`;
                                     }
                                     // Can't determine customer location, use IGST
                                     return `${baseType} igst ${regLocation}`;
@@ -1226,13 +1244,27 @@ console.log(baseType,"9999999999999999999999999999999999999999999993");
                                 // The amountReceived should already be set by the user
                             }
                         }, [isPaymentInParts]);
+                        console.log(totals, "masjidddddddddddddddd");
+
+
+
 
                         useEffect(() => {
-                            setFieldValue('totalAmount', totals.subtotal);
-                            setFieldValue('totalGst', totals.totalGST);
-                            setFieldValue('totalCgst', totals.totalCGST);
-                            setFieldValue('totalIgst', totals.totalIGST);
-                            setFieldValue('totalSgst', totals.totalSGST);
+
+                            if (Vouchers?.typeOfVoucher === "Purchase") {
+
+                                setFieldValue('totalAmount', totals.totalMRP);
+                            } else {
+                                // For other voucher types like Sales
+
+                                setFieldValue('totalAmount', totals.subtotal);
+                                setFieldValue('totalAmount', totals.subtotal);
+                                setFieldValue('totalGst', totals.totalGST);
+                                setFieldValue('totalCgst', totals.totalCGST);
+                                setFieldValue('totalIgst', totals.totalIGST);
+                                setFieldValue('totalSgst', totals.totalSGST);
+                            }
+
                         }, [totals.subtotal, totals.totalGST, totals.totalCGST, totals.totalIGST, totals.totalSGST, setFieldValue]);
 
 
@@ -2097,6 +2129,51 @@ console.log(baseType,"9999999999999999999999999999999999999999999993");
 
                                                             </div>
 
+                                                            {Vouchers?.typeOfVoucher === "Purchase" && (
+                                                                <>
+                                                                    <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                                                        <h4 className="text-lg font-semibold mb-3 text-black dark:text-white">GST Summary</h4>
+                                                                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-sm">
+                                                                            <div>
+                                                                                <p className="text-gray-600 dark:text-gray-400">Total MRP</p>
+                                                                                <p className="font-medium text-black dark:text-white">₹{totals.totalMRP}</p>
+                                                                            </div>
+
+                                                                            <div>
+                                                                                <p className="text-gray-600 dark:text-gray-400">Total Quantity</p>
+                                                                                <p className="font-medium text-black dark:text-white">{totals.totalQuantity}</p>
+                                                                            </div>
+
+                                                                            {/* <div>
+                                                                            <p className="text-gray-600 dark:text-gray-400">Grand Total</p>
+                                                                            <p className="font-medium text-lg text-primary">₹{totals?.subtotal}</p>
+                                                                        </div> */}
+                                                                            <div className='flex flex-col'>
+                                                                                <p className="text-gray-600 dark:text-gray-400">Grand Total</p>
+                                                                                <Field
+                                                                                    type="number"
+                                                                                    name="totalAmount"
+                                                                                    value={totals?.totalMRP}
+                                                                                    placeholder="0.00"
+                                                                                    readOnly
+                                                                                    className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
+                                                                                />
+                                                                            </div>
+
+
+
+                                                                        </div>
+                                                                    </div>
+
+
+
+
+
+                                                                </>
+
+
+                                                            )}
+
                                                             {/* GST Summary */}
                                                             {Vouchers?.typeOfVoucher === "Sales" && (
                                                                 <>
@@ -2192,6 +2269,61 @@ console.log(baseType,"9999999999999999999999999999999999999999999993");
                                                                                 />
                                                                             </div>
                                                                         </div>
+                                                                        <div className='flex gap-5 mt-4'>
+                                                                            <div className="min-w-[250px]">
+                                                                                <label className="mb-2.5 block text-black dark:text-white">Currency (Optional)</label>
+                                                                                <ReactSelect
+                                                                                    name="currency"
+                                                                                    value={currencies.find(option => option.value === values.currency)}
+                                                                                    onChange={(option) => {
+                                                                                        setFieldValue('currency', option.value);
+                                                                                        // Auto-calculate currency value when currency changes
+                                                                                        if (values.currencyValue && totals?.subtotal) {
+                                                                                            const calculatedValue = totals.subtotal / values.currencyValue;
+                                                                                            setFieldValue('totalCurrencyValue', calculatedValue.toFixed(2));
+                                                                                        }
+                                                                                    }}
+                                                                                    options={currencies}
+                                                                                    styles={customStyles}
+                                                                                    className="bg-white dark:bg-form-input"
+                                                                                    classNamePrefix="react-select"
+                                                                                    placeholder="Select"
+                                                                                />
+                                                                                <ErrorMessage name="currency" component="div" className="text-red-500" />
+                                                                            </div>
+
+                                                                            <div className='flex flex-col'>
+                                                                                <label className="mb-2.5 block text-black dark:text-white">Exchange Rate (1 {values.currency || 'Currency'} = ? INR)</label>
+                                                                                <Field
+                                                                                    type="number"
+                                                                                    name='currencyValue'
+                                                                                    value={values.currencyValue}
+                                                                                    placeholder="0.00"
+                                                                                    onChange={(e) => {
+                                                                                        const rate = e.target.value;
+                                                                                        setFieldValue('currencyValue', rate);
+                                                                                        // Recalculate total when exchange rate changes
+                                                                                        if (rate && totals?.subtotal) {
+                                                                                            const calculatedValue = totals.subtotal / rate;
+                                                                                            setFieldValue('totalCurrencyValue', calculatedValue.toFixed(2));
+                                                                                        }
+                                                                                    }}
+                                                                                    className="w-full bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm rounded border"
+                                                                                />
+                                                                            </div>
+
+                                                                            <div className='flex flex-col'>
+                                                                                <label className="mb-2.5 block text-black dark:text-white">Total in {values.currency || 'Selected Currency'}</label>
+                                                                                <Field
+                                                                                    type="number"
+                                                                                    name='totalCurrencyValue'
+                                                                                    value={values.totalCurrencyValue}
+                                                                                    placeholder="0.00"
+                                                                                    readOnly
+                                                                                    className="w-full bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm rounded border"
+                                                                                />
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
 
                                                                     <div>
@@ -2272,6 +2404,8 @@ console.log(baseType,"9999999999999999999999999999999999999999999993");
 
 
                                                             )}
+
+
 
 
                                                             {Vouchers?.typeOfVoucher === "Sales" && (

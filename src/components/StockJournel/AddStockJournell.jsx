@@ -151,7 +151,7 @@ const AddStockJournell = () => {
       product: { id: values.stockJournals[index]?.productId?.value || values.stockJournals[index]?.productId },
       sourceLocation: { id: values.stockJournals[index]?.location?.value || values.stockJournals[index]?.location },
       transferQty: Number(values.stockJournals[index]?.transferQuantity), 
-      inventoryQty: Number(values.stockJournals[index]?.quantity), // this quanity is inventory quantity
+      // inventoryQty: Number(values.stockJournals[index]?.quantity), // this quanity is inventory quantity
       destinationLocation: { id: values.stockJournals[index]?.destinationLocation?.value || values.stockJournals[index]?.destinationLocation }
     }));
 
@@ -277,7 +277,7 @@ const AddStockJournell = () => {
                       <div className="flex justify-center w-full">  {/* Wrapper div for centering the input */}
                         <Field
                           name="voucherNo"
-                          type="number"
+                          type="text"
                           placeholder="Voucher Number"
                           className="bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary w-[200px]"  // Removed justify-center and items-center
                         />

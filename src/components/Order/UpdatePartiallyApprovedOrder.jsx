@@ -427,9 +427,7 @@ const UpdatePartiallyApprovedOrder = () => {
                         <table className="min-w-full leading-normal overflow-auto">
                           <thead>
                             <tr className="bg-slate-300 dark:bg-slate-700 dark:text-white">
-                              <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Select
-                              </th>
+
                               <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Order No
                               </th>
@@ -454,25 +452,7 @@ const UpdatePartiallyApprovedOrder = () => {
                             {order?.orderProducts?.map((product, index) => (
                               <tr key={product.id}>
                                 {/* Radio Button */}
-                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                  <Field
-                                    type="checkbox"
-                                    name="selectedRows"
-                                    value={product.id} // Value of the checkbox (product ID)
-                                    checked={values.selectedRows.includes(product.id)} // Check if product ID is in selectedRows
-                                    onChange={(e) => {
-                                      const checked = e.target.checked;
-                                      if (checked) {
-                                        // If checked, add the product ID to selectedRows
-                                        setFieldValue("selectedRows", [...values.selectedRows, product.id]);
-                                      } else {
-                                        // If unchecked, remove the product ID from selectedRows
-                                        setFieldValue("selectedRows", values.selectedRows.filter(id => id !== product.id));
-                                      }
-                                    }}
-                                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                                  />
-                                </td>
+
 
                                 {/* Product ID */}
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
@@ -560,54 +540,54 @@ const UpdatePartiallyApprovedOrder = () => {
                                 >
 
 
-{
-  product.productStatus.toLowerCase() === "accepted" ? (
-    <div className="flex items-center gap-2">
-      <span
-        onClick={() => navigate(`/order/modifyproductafterexecution/${product?.id}`)}
-        className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
-      >
-        ISSUE CHALAAN
-      </span>
-      <span
-        onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
-        className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
-      >
-        VIEW PRODUCT DETAILS
-      </span>
-    </div>
-  ) : (product.productStatus?.toLowerCase() === "approved" || product.productStatus?.toLowerCase() === "pending") ? (  
-    <div className="flex items-center gap-2">
-      <span
-        onClick={() => navigate(`/order/updateorderproduct/${product?.id}`)}
-        className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
-      >
-        RECEIVING DETAILS
-      </span>
-      <span
-        onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
-        className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
-      >
-        VIEW PRODUCT DETAILS
-      </span>
-    </div>
-  ) : (
-    <div className="flex items-center gap-2">
-      <span
-        onClick={() => navigate(`/order/modifyorderproduct/${product?.id}`)}
-        className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
-      >
-        VIEW ORDER PRODUCT
-      </span>
-      <span
-        onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
-        className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
-      >
-        VIEW PRODUCT DETAILS
-      </span>
-    </div>
-  )
-}
+                                  {
+                                    product.productStatus.toLowerCase() === "accepted" ? (
+                                      <div className="flex items-center gap-2">
+                                        <span
+                                          onClick={() => navigate(`/order/modifyproductafterexecution/${product?.id}`)}
+                                          className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
+                                        >
+                                          ISSUE CHALAAN
+                                        </span>
+                                        <span
+                                          onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
+                                          className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
+                                        >
+                                          VIEW PRODUCT DETAILS
+                                        </span>
+                                      </div>
+                                    ) : (product.productStatus?.toLowerCase() === "approved" || product.productStatus?.toLowerCase() === "pending") ? (
+                                      <div className="flex items-center gap-2">
+                                        <span
+                                          onClick={() => navigate(`/order/updateorderproduct/${product?.id}`)}
+                                          className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
+                                        >
+                                          RECEIVING DETAILS
+                                        </span>
+                                        <span
+                                          onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
+                                          className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
+                                        >
+                                          VIEW PRODUCT DETAILS
+                                        </span>
+                                      </div>
+                                    ) : (
+                                      <div className="flex items-center gap-2">
+                                        <span
+                                          onClick={() => navigate(`/order/modifyorderproduct/${product?.id}`)}
+                                          className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
+                                        >
+                                          VIEW ORDER PRODUCT
+                                        </span>
+                                        <span
+                                          onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
+                                          className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
+                                        >
+                                          VIEW PRODUCT DETAILS
+                                        </span>
+                                      </div>
+                                    )
+                                  }
 
 
 

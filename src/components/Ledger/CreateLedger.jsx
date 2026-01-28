@@ -26,6 +26,7 @@ const CreateLedger = () => {
         { value: 'CASH', label: 'CASH' },
         { value: 'SUPPLIER', label: 'SUPPLIER' },
         { value: 'CUSTOMER', label: 'CUSTOMER' },
+         { value: 'PAYMENT', label: 'PAYMENT' },
         { value: 'SALES', label: 'SALES' },
         { value: 'PURCHASE', label: 'PURCHASE' },
         { value: 'GIFTVOUCHER', label: 'GIFT VOUCHER' },
