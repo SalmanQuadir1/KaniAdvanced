@@ -409,6 +409,7 @@ const ViewLedger = () => {
 
     // Function to fetch filtered ledger data
 
+console.log(SelectedLEDGERData,"22222222222222222222222");
 
     // Function to reset date filter
     const resetDateFilter = () => {
@@ -513,6 +514,7 @@ const ViewLedger = () => {
     // Update calculation functions with better array checking
 
 
+console.log(filteredLedgerEntries,"7890");
 
 
     const calculateTotalCredit = () => {
@@ -588,14 +590,60 @@ const ViewLedger = () => {
     };
 
 
-    const calculatePeriodBalance = () => {
-        try {
-            return calculateTotalCredit() - calculateTotalDebit();
-        } catch (error) {
-            console.error('Error calculating period balance:', error);
-            return 0;
+  const calculatePeriodBalance = () => {
+    try {
+        const groupName = SelectedLEDGERData?.groupName?.toLowerCase() || '';
+        
+        // IMPORTANT: Since your calculateTotalDebit() and calculateTotalCredit()
+        // already include opening balance, we need to subtract it first
+        const rawTotalDebit = calculateTotalDebit();
+        const rawTotalCredit = calculateTotalCredit();
+        
+        const openingBalance = parseFloat(SelectedLEDGERData?.previousOpBalance) || 0;
+        const openingType = SelectedLEDGERData?.previousOpType?.toLowerCase() || 'debit';
+        
+        // Remove opening balance from totals (since it's already included)
+        let totalDebit = rawTotalDebit;
+        let totalCredit = rawTotalCredit;
+        
+        if (openingType === 'debit') {
+            totalDebit -= openingBalance; // Remove opening from debit total
+        } else {
+            totalCredit -= openingBalance; // Remove opening from credit total
         }
-    };
+        
+        // Now calculate based on group type
+        let closingBalance = 0;
+        
+        if (groupName.includes('sundry creditor') || 
+            groupName.includes('creditor') ||
+            groupName.includes('duties') ||
+            groupName.includes('tax') ||
+            groupName.includes('gst') ||
+            groupName.includes('tds') ||
+            groupName.includes('loan') ||
+            groupName.includes('capital') ||
+            groupName.includes('liabilit') ||
+            groupName.includes('sales') || 
+            groupName.includes('income') || 
+            groupName.includes('revenue')) {
+            // Liability/Income: (Opening + Credits) - Debits
+            // But since opening is already in totals, we use:
+            // Closing = TotalCredit - TotalDebit
+            closingBalance = rawTotalCredit - rawTotalDebit;
+        } else {
+            // Asset/Expense: (Opening + Debits) - Credits
+            // Closing = TotalDebit - TotalCredit
+            closingBalance = rawTotalDebit - rawTotalCredit;
+        }
+        
+        return closingBalance;
+        
+    } catch (error) {
+        console.error('Error calculating period balance:', error);
+        return 0;
+    }
+};
 
     // Update the fetchFilteredLedgerData function to recalculate after fetch
     // Update your fetchFilteredLedgerData function to handle both formats
