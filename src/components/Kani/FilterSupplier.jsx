@@ -5,7 +5,8 @@ import { toast } from "react-hot-toast";
 import DefaultLayout from "../../layout/DefaultLayout";
 import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 import Pagination from "../../components/Pagination/Pagination";
-import { GET_Kani_URL } from "../../Constants/utils";
+import axios from "axios"; 
+import { GET_Kani_URL ,UPDATE_ORDER_URL,UPDATE_ISSUECHALLAN } from "../../Constants/utils";
 import { useNavigate } from "react-router-dom";
 
 const FilterSupplier = () => {
@@ -19,6 +20,11 @@ const FilterSupplier = () => {
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
 
 
+  // New states for challan update
+  const [editingChallanNo, setEditingChallanNo] = useState("");
+  const [updatingId, setUpdatingId] = useState(null);
+  const [updateLoading, setUpdateLoading] = useState(false);
+
 
   const navigate = useNavigate();
 
@@ -28,6 +34,127 @@ const FilterSupplier = () => {
 
   const handleAddProduct = (id) => {
   navigate(`/UpdateKaniProducts/${id}`);
+};
+
+ const handleChallanInputChange = (e) => {
+    setEditingChallanNo(e.target.value);
+  };
+
+const handleUpdateChallan = async (id) => {
+  try {
+    console.log('🔍 Updating challan for orderProduct ID:', id);
+    
+    // Find the order product
+    const orderProduct = allFlattenedProducts.find(item => item.id === id) || 
+                        displayedProducts.find(item => item.id === id);
+    
+    if (!orderProduct) {
+      toast.error("Order product not found");
+      return;
+    }
+    
+    // Validate challan number
+    if (!editingChallanNo.trim()) {
+      toast.error("Please enter a challan number");
+      return;
+    }
+    
+    // Set loading state
+    setUpdatingId(id);
+    setUpdateLoading(true);
+    
+    // Try to get order ID from multiple possible sources
+    const orderId = orderProduct.order?.id || orderProduct.orderId;
+    
+    // Prepare update data
+    const updateData = {
+      challanNo: editingChallanNo.trim(),
+      // Include product reference if available
+      products: orderProduct.products ? { 
+        id: orderProduct.products.id 
+      } : null,
+      // Include order reference - use the orderId we found
+      order: orderId ? { 
+        id: orderId 
+      } : null,
+    };
+    
+    console.log('📤 Sending challan update:', updateData);
+    console.log('🔗 Using endpoint:', `${UPDATE_ISSUECHALLAN}/${id}`);
+    
+    // Prepare headers
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    // USE THE CONSTANT: UPDATE_ISSUECHALLAN already includes BASE_URL
+    const response = await axios.put(
+      `${UPDATE_ISSUECHALLAN}/${id}`,  // ← Directly use the constant
+      updateData,
+      { headers }
+    );
+    
+    console.log('✅ Challan updated successfully:', response.data);
+    
+    // Update local state
+    setAllFlattenedProducts(prev => 
+      prev.map(item => 
+        item.id === id 
+          ? { 
+              ...item, 
+              challanNo: editingChallanNo.trim(),
+              productStatus: "approved"
+            }
+          : item
+      )
+    );
+    
+    // Update displayed products too
+    setDisplayedProducts(prev => 
+      prev.map(item => 
+        item.id === id 
+          ? { 
+              ...item, 
+              challanNo: editingChallanNo.trim(),
+              productStatus: "approved"
+            }
+          : item
+      )
+    );
+    
+    // Close dropdown and reset
+    setOpenDropdownId(null);
+    setEditingChallanNo("");
+    toast.success(`Challan No: ${editingChallanNo} updated successfully!`);
+    
+  } catch (error) {
+    console.error('❌ Challan update failed:', error);
+    console.error('❌ Error details:', {
+      status: error.response?.status,
+      data: error.response?.data,
+      url: error.config?.url,
+    });
+    
+    if (error.response?.status === 404) {
+      toast.error(`Endpoint not found: ${error.config?.url}`);
+      console.log('Make sure your backend endpoint matches:', `${UPDATE_ISSUECHALLAN}/{id}`);
+      console.log('Full URL attempted:', error.config?.url);
+    } else if (error.response?.status === 401) {
+      toast.error("Unauthorized. Please login again.");
+    } else if (error.response?.data) {
+      toast.error(error.response.data.message || "Update failed");
+    } else {
+      toast.error("Network error. Please try again.");
+    }
+    
+  } finally {
+    setUpdateLoading(false);
+    setUpdatingId(null);
+  }
 };
 
 
@@ -209,17 +336,18 @@ const FilterSupplier = () => {
     setAllFlattenedProducts(flattened);
   };
 
- const openUpdateChallan = (event, id) => {
-  const rect = event.currentTarget.getBoundingClientRect();
-
-  setDropdownPos({
-    top: rect.bottom + window.scrollY,
-    left: rect.left + rect.width / 2,
-  });
-
-  setOpenDropdownId(id);
-};
-
+ const openUpdateChallan = (event, id, currentChallanNo) => {
+    event.stopPropagation();
+    const rect = event.currentTarget.getBoundingClientRect();
+    
+    setDropdownPos({
+      top: rect.bottom + window.scrollY,
+      left: rect.left + rect.width / 2,
+    });
+    
+    setOpenDropdownId(id);
+    setEditingChallanNo(currentChallanNo || "");
+  };
 
 const closeUpdateChallan = () => {
   setOpenDropdownId(null);
@@ -444,88 +572,80 @@ const closeUpdateChallan = () => {
       <span className="text-gray-400">—</span>
     )}
   </td> */}
-  <td
- className="px-4 py-3 border-b text-center cursor-pointer"
-  onClick={(e) => openUpdateChallan(e, orderProduct.id)}
->
-  {orderProduct?.challanNo ? (
-    <span className="bg-yellow-50 px-2 py-1 rounded">
-      {orderProduct.challanNo}
-    </span>
-  ) : (
-    <span className="text-gray-400">—</span>
-  )}
-  
+  {/* CHALLAN NO - SIMPLE VERSION */}
+          <td className="px-4 py-3 border-b text-center relative">
+            <div
+              className="cursor-pointer inline-block"
+              onClick={(e) => openUpdateChallan(e, orderProduct.id, challanNo)}
+            >
+              {challanNo ? (
+                <span className="bg-yellow-100 px-3 py-1.5 rounded-md text-gray-800 hover:bg-yellow-200 font-medium">
+                  {challanNo}
+                </span>
+              ) : (
+                <span className="text-blue-600 italic hover:text-blue-800 px-2 py-1 border border-dashed border-gray-300 rounded">
+                  Add Challan
+                </span>
+              )}
+            </div>
 
-  {/* Dropdown */}
-  {openDropdownId === orderProduct.id && (
-    <div
-      ref={dropdownRef}
-      className="
-        fixed
-        absolute left-1/2 -translate-x-1/2
-        mt-2
-        w-70
-        bg-white
-        border border-gray-200
-        rounded-md
-        shadow-lg
-        z-50
-      "
-      onClick={(e) => e.stopPropagation()} // prevents close on click inside
-    >
-      {/* Header */}
-      <div className="px-4 py-2 border-b text-[12px] font-medium text-gray-700 flex justify-between">
-        <span>Update Challan</span>
-        <span
-          onClick={closeUpdateChallan}
-          className="cursor-pointer text-gray-400 hover:text-gray-600"
-        >
-          ✕
-        </span>
-      </div>
-
-      {/* Body */}
-      <div className="px-4 py-3 space-y-2">
-        <label className="block text-[11px] text-gray-600">
-          Challan No
-        </label>
-
-        <input
-          type="text"
-          defaultValue={orderProduct?.challanNo || ""}
-          placeholder="Enter challan no"
-          className="
-            w-full
-            border border-gray-300
-            rounded
-            px-2 py-1
-            text-[11px]
-            focus:outline-none
-            focus:ring-1 focus:ring-blue-400
-          "
-        />
-
-        <button
-          className="
-            w-full
-            mt-2
-            bg-blue-600
-            text-white
-            text-[11px]
-            py-1.5
-            rounded
-            hover:bg-blue-700
-            transition
-          "
-        >
-          Update
-        </button>
-      </div>
-    </div>
-  )}
-</td>
-
+            {openDropdownId === orderProduct.id && (
+              <div
+                ref={dropdownRef}
+                className="fixed z-50 mt-2 w-72 bg-white border border-gray-300 rounded-lg shadow-xl"
+                style={{
+                  top: `${dropdownPos.top}px`,
+                  left: `${dropdownPos.left}px`,
+                  transform: 'translateX(-50%)'
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="px-4 py-3 border-b bg-gray-50 rounded-t-lg flex justify-between items-center">
+                  <h3 className="text-sm font-semibold text-gray-800">Update Challan</h3>
+                  <button onClick={closeUpdateChallan} className="text-gray-400 hover:text-gray-600 text-lg">✕</button>
+                </div>
+                
+                <div className="p-4">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Challan Number</label>
+                      <input
+                        type="text"
+                        value={editingChallanNo}
+                        onChange={handleChallanInputChange}
+                        placeholder="Enter challan number"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onKeyPress={(e) => e.key === 'Enter' && handleUpdateChallan(orderProduct.id)}
+                        autoFocus
+                      />
+                    </div>
+                    
+                    {/* <div className="bg-blue-50 p-3 rounded-md">
+                      <p className="text-xs text-gray-600">
+                        <span className="font-medium">Order:</span> {orderNo || 'N/A'}
+                      </p>
+                      <p className="text-xs text-gray-600 mt-1">
+                        <span className="font-medium">Product:</span> {productId || 'N/A'}
+                      </p>
+                    </div> */}
+                    
+                    <button
+                      onClick={() => handleUpdateChallan(orderProduct.id)}
+                      disabled={updateLoading && updatingId === orderProduct.id}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2.5 rounded-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                    >
+                      {updateLoading && updatingId === orderProduct.id ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                          Updating...
+                        </>
+                      ) : 'Update '}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </td>
 
           {/* PRODUCT STATUS */}
           <td className="px-4 py-3 border-b text-center">
