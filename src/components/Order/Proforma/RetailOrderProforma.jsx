@@ -50,6 +50,12 @@ const RetailOrderProforma = () => {
         { value: 'AED', label: 'AED' },
     ];
 
+    const [stateCodeMapping, setStateCodeMapping] = useState({
+        'Jammu and Kashmir': '01',
+        'Delhi': '07',
+        // Add other states as needed
+    });
+
     const modeOfShipmentOptions = [
         { value: 'Courier', label: 'Courier' },
         { value: 'Commercial', label: 'Commercial' },
@@ -360,11 +366,11 @@ const RetailOrderProforma = () => {
     useEffect(() => {
         getAllLocation();
     }, [])
-    
 
 
 
-      const formattedLocation = Locations?.map(loc => ({
+
+    const formattedLocation = Locations?.map(loc => ({
         label: loc.address,
         value: loc.id
     }));
@@ -375,7 +381,7 @@ const RetailOrderProforma = () => {
     }));
 
 
-console.log(order,"myyyyy54");
+    console.log(order, "myyyyy54");
 
 
     return (
@@ -480,9 +486,19 @@ console.log(order,"myyyyy54");
                         }, [values.currency, values.currentrate, order?.orderProducts, setFieldValue]);
 
 
+                        const getGstRegistrationState = () => {
+                            if (!values.defGstRegist) return null;
+                            const selectedLocation = formattedGstLocation?.find(
+                                loc => loc.value === values.defGstRegist?.id
+                            );
+                            return selectedLocation?.state || null;
+                        };
+
+                        // Get shipping state code from order
+                        const shippingStateCode = order?.customer?.shippingState || null;
+
+
                         const calculateValues = (index, rate, orderQty, discount, currentRate) => {
-
-
                             console.log("current rate:", rate);
                             console.log("discount:", discount);
                             console.log("quantity=======", orderQty);
@@ -490,7 +506,6 @@ console.log(order,"myyyyy54");
                             let discountedPricee = (discount * rate) / 100;
                             console.log("discountedPrice (calculated):", discountedPricee);
 
-                            // Subtract the discounted price from the original rate to get the final discounted price
                             discountedPricee = rate - discountedPricee;
                             console.log("final discountedPrice:", discountedPricee);
                             setFieldValue(`orderProducts[${index}].discountedPrice`, discountedPricee);
@@ -498,43 +513,61 @@ console.log(order,"myyyyy54");
                             const discountedValue = discountedPricee * orderQty
                             console.log("discountedprice&&&&quantity&&&&", discountedPricee, orderQty);
 
-
-                            setFieldValue('total', discountedValue)
+                            setFieldValue('total', discountedValue);
                             setFieldValue('outstandingBalance', discountedValue);
-                            setTotal(discountedValue)
+                            setTotal(discountedValue);
                             console.log("discountedValue=========", discountedValue);
 
+                            // Get GST registration state
+                            const gstRegistState = getGstRegistrationState();
 
+                            // Check if transaction is interstate
+                            const isInterstate = isInterstateTransaction(gstRegistState, shippingStateCode);
+
+                            // Get HSN code for the product
+                            const hsnCode = values.orderProducts[index]?.hsnCode;
 
                             let taxableValue = 0;
 
+                            console.log(hsnCode,"55555555555555555555555555556");
+                            
+
                             if (discountedPricee >= 1000) {
-                                // Check if the product unit is 'Mtrs' or others
-                                const prodUnit = values.orderProducts[index]?.unit;
-                                if (prodUnit === 'Mtrs') {
-                                    taxableValue = Math.floor((discountedPricee / 105) * 100) // Apply 5% GST for meters
+                                // New logic based on GST registration and shipping state
+                                if (hsnCode) {
+                                    taxableValue = calculateTaxableValue(discountedPricee, hsnCode, isInterstate);
                                 } else {
-                                    taxableValue = Math.floor((discountedPricee / 112) * 100)  // Apply 12% GST for other units
+                                    // Fallback to old logic if no HSN code
+                                    const prodUnit = values.orderProducts[index]?.unit;
+                                    if (prodUnit === 'Mtrs') {
+                                        taxableValue = Math.floor((discountedPricee / 105) * 100);
+                                    } else {
+                                        taxableValue = Math.floor((discountedPricee / 112) * 100);
+                                    }
                                 }
                             } else if (discountedPricee < 1000) {
-
-                                taxableValue = Math.floor((discountedPricee / 105) * 100)
+                                if (hsnCode) {
+                                    taxableValue = calculateTaxableValue(discountedPricee, hsnCode, isInterstate);
+                                } else {
+                                    // Fallback for price < 1000
+                                    taxableValue = Math.floor((discountedPricee / 105) * 100);
+                                }
                             }
-                            var totalValue = Math.floor(taxableValue * orderQty)
 
+                            const totalValue = Math.floor(taxableValue * orderQty);
 
                             setFieldValue(`orderProducts[${index}].taxibleValue`, taxableValue);
                             setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
 
-                            const gst = discountedValue - totalValue
-
-
+                            const gst = discountedValue - totalValue;
                             setFieldValue('gst', gst);
-                            setgst(gst)
+                            setgst(gst);
 
-                            // console.log("GST Tax (Calculated):", gstTax);
+                            console.log(`Transaction Type: ${isInterstate ? 'Interstate' : 'Intrastate'}`);
+                            console.log("Taxable Value (Calculated):", taxableValue);
                             console.log("Total Value (Calculated):", totalValue);
                         };
+
 
                         useEffect(() => {
                             // Calculate the sum of orderQty when the orderProducts data is loaded or updated
@@ -620,7 +653,7 @@ console.log(order,"myyyyy54");
 
 
 
-                        // fro total based on courrier
+
                         useEffect(() => {
                             // Step 1: Get the current total from the form state (starting fresh)
                             let currentTotal = values.total || 0;
@@ -657,6 +690,34 @@ console.log(order,"myyyyy54");
 
                         }, [values.advanceReceived, setFieldValue]);
 
+
+                        const isInterstateTransaction = (defGstRegistState, shippingStateCode) => {
+                            // Get state code from state name mapping
+                            const defGstRegistCode = stateCodeMapping[defGstRegistState];
+
+                            // Compare state codes
+                            return defGstRegistCode !== shippingStateCode;
+                        };
+
+                        // Function to calculate taxable value based on HSN code and transaction type
+                        const calculateTaxableValue = (discountedPrice, hsnCode, isInterstate) => {
+
+                            console.log(hsnCode,isInterstate,"9888888888888888888888889");
+                            
+                            if (!hsnCode) return discountedPrice; // Default if no HSN code
+
+                            if (isInterstate) {
+                                // Interstate transaction - use IGST
+                                const igstRate = hsnCode.igst || 0;
+                                return Math.floor((discountedPrice * 100) / (100 + igstRate));
+                            } else {
+                                // Intrastate transaction - use CGST + SGST
+                                const cgstRate = hsnCode.cgst || 0;
+                                const sgstRate = hsnCode.sgst || 0;
+                                const totalGstRate = cgstRate + sgstRate;
+                                return Math.floor((discountedPrice * 100) / (100 + totalGstRate));
+                            }
+                        };
 
 
 
@@ -735,22 +796,22 @@ console.log(order,"myyyyy54");
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
-                                             
-                                                    
-                                                          <div className="flex-1 min-w-[200px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white">Default GST Registration</label>
-                                                            <ReactSelect
-                                                                name="defGstRegist"
-                                                                value={formattedGstLocation.find(opt => opt.value === values.defGstRegist)}
-                                                                onChange={(opt) => setFieldValue('defGstRegist', { id: opt?.value })}
-                                                                options={formattedGstLocation}
-                                                                styles={customStyles}
-                                                                placeholder="Select registration"
-                                                            />
-                                                        </div>
-                                                  
 
-                         
+
+                                                <div className="flex-1 min-w-[200px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">Default GST Registration</label>
+                                                    <ReactSelect
+                                                        name="defGstRegist"
+                                                        value={formattedGstLocation.find(opt => opt.value === values.defGstRegist)}
+                                                        onChange={(opt) => setFieldValue('defGstRegist', { id: opt?.value, state: opt?.state })}
+                                                        options={formattedGstLocation}
+                                                        styles={customStyles}
+                                                        placeholder="Select registration"
+                                                    />
+                                                </div>
+
+
+
 
 
                                             </div>
@@ -1182,6 +1243,19 @@ console.log(order,"myyyyy54");
                                                     </tbody>
                                                 </table>
                                             </div>
+
+                                            {values.defGstRegist && order?.customer?.shippingState && (
+                                                <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900 rounded">
+                                                    <p className="text-blue-700 dark:text-blue-200 font-medium">
+                                                        Transaction Type: {
+                                                            isInterstateTransaction(
+                                                                getGstRegistrationState(),
+                                                                shippingStateCode
+                                                            ) ? 'Interstate (IGST applicable)' : 'Intrastate (CGST + SGST applicable)'
+                                                        }
+                                                    </p>
+                                                </div>
+                                            )}
 
 
                                             <div className='flex justify-between mt-4'>

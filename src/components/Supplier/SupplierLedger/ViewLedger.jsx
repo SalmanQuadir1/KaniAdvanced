@@ -273,7 +273,7 @@ const ViewLedger = () => {
                         <p className="text-gray-900 whitespace-no-wrap">null</p>
                     </td>
                 }
-                <td className="px-5 py-5  text-sm">
+                {/* <td className="px-5 py-5  text-sm">
                     <div className="flex items-center gap-2">
                         <span className="text-gray-900">{item?.openingBalances}</span>
                         <span className="text-gray-500">|</span>
@@ -284,7 +284,7 @@ const ViewLedger = () => {
                             {item?.typeOfOpeningBalance}
                         </span>
                     </div>
-                </td>
+                </td> */}
                 <td className="px-5 py-5  text-sm">
                     <div className="flex items-center gap-2">
                         <span className="text-gray-900">{item?.previousOpBalance}</span>
@@ -297,6 +297,17 @@ const ViewLedger = () => {
                         </span>
                     </div>
                 </td>
+                {/* <td className="px-5 py-5  text-sm">
+                    <div className="flex items-center gap-2">
+                        <p className={`text-lg font-bold ${calculatePeriodBalance() >= 0
+                            ? 'text-green-600 dark:text-green-400'
+                            : 'text-red-600 dark:text-red-400'
+                            }`}>
+                            ₹{calculatePeriodBalance().toFixed(2)}
+                        </p>
+
+                    </div>
+                </td> */}
 
                 <td className='whitespace-nowrap px-5 py-5 bLedger-b bLedger-gray-200 text-sm'>
                     <span onClick={() => openLEDGERModal(item)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> VIEW LEDGER</span>
@@ -409,6 +420,7 @@ const ViewLedger = () => {
 
     // Function to fetch filtered ledger data
 
+    console.log(SelectedLEDGERData, "22222222222222222222222");
 
     // Function to reset date filter
     const resetDateFilter = () => {
@@ -513,6 +525,7 @@ const ViewLedger = () => {
     // Update calculation functions with better array checking
 
 
+    console.log(filteredLedgerEntries, "7890");
 
 
     const calculateTotalCredit = () => {
@@ -590,7 +603,53 @@ const ViewLedger = () => {
 
     const calculatePeriodBalance = () => {
         try {
-            return calculateTotalCredit() - calculateTotalDebit();
+            const groupName = SelectedLEDGERData?.groupName?.toLowerCase() || '';
+
+            // IMPORTANT: Since your calculateTotalDebit() and calculateTotalCredit()
+            // already include opening balance, we need to subtract it first
+            const rawTotalDebit = calculateTotalDebit();
+            const rawTotalCredit = calculateTotalCredit();
+
+            const openingBalance = parseFloat(SelectedLEDGERData?.previousOpBalance) || 0;
+            const openingType = SelectedLEDGERData?.previousOpType?.toLowerCase() || 'debit';
+
+            // Remove opening balance from totals (since it's already included)
+            let totalDebit = rawTotalDebit;
+            let totalCredit = rawTotalCredit;
+
+            if (openingType === 'debit') {
+                totalDebit -= openingBalance; // Remove opening from debit total
+            } else {
+                totalCredit -= openingBalance; // Remove opening from credit total
+            }
+
+            // Now calculate based on group type
+            let closingBalance = 0;
+
+            if (groupName.includes('sundry creditor') ||
+                groupName.includes('creditor') ||
+                groupName.includes('duties') ||
+                groupName.includes('tax') ||
+                groupName.includes('gst') ||
+                groupName.includes('tds') ||
+                groupName.includes('loan') ||
+                groupName.includes('capital') ||
+                groupName.includes('liabilit') ||
+                groupName.includes('sales') ||
+                groupName.includes('income') ||
+                groupName.includes('revenue')) {
+                // Liability/Income: (Opening + Credits) - Debits
+                // But since opening is already in totals, we use:
+                // Closing = TotalCredit - TotalDebit
+                closingBalance = rawTotalCredit - rawTotalDebit;
+            } else {
+                // Asset/Expense: (Opening + Debits) - Credits
+                // Closing = TotalDebit - TotalCredit
+                closingBalance = rawTotalDebit - rawTotalCredit;
+            }
+
+            return closingBalance;
+
         } catch (error) {
             console.error('Error calculating period balance:', error);
             return 0;
@@ -664,6 +723,8 @@ const ViewLedger = () => {
 
 
     console.log(filteredLedgerEntries, "666666666666666666");
+    const currentYear = new Date().getFullYear().toString().slice(-2); // Gets last 2 digits (e.g., "25" for 2025)
+    const openingBalancesDate = `1-Apr-${currentYear}`;
 
     return (
         <DefaultLayout>
@@ -849,7 +910,7 @@ const ViewLedger = () => {
                                         <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-4 rounded-xl border border-blue-200 dark:border-blue-700/50 shadow-sm">
                                             <div className="flex items-center justify-between">
                                                 <div>
-                                                    <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-1"> Opening Balance</h3>
+                                                    <h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-1"> Opening Balance <br />(as of {openingBalancesDate})</h3>
                                                     <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
                                                         ₹{SelectedLEDGERData?.previousOpBalance?.toFixed(2)}
                                                     </p>
@@ -870,12 +931,12 @@ const ViewLedger = () => {
                                             </div>
                                         </div>
 
-                                     
+
                                         <div className="bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 p-4 rounded-xl border border-purple-200 dark:border-purple-700/50 shadow-sm relative overflow-hidden shadow-sm">
                                             <div className="flex items-center justify-between">
                                                 <div>
                                                     <h3 className="text-sm font-medium text-purple-800 dark:text-purple-300 mb-1">Closing Balance</h3>
-                                                         <p className={`text-3xl font-bold ${calculatePeriodBalance() >= 0
+                                                    <p className={`text-3xl font-bold ${calculatePeriodBalance() >= 0
                                                         ? 'text-green-600 dark:text-green-400'
                                                         : 'text-red-600 dark:text-red-400'
                                                         }`}>
@@ -1209,8 +1270,8 @@ const ViewLedger = () => {
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">LedgerName</th>
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Ledger Group</th>
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">LedgerType</th>
-                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Opening Balance</th>
-                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Starting Opening Balance</th>
+                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Opening Balance <br /> (as of {openingBalancesDate})</th>
+                                        {/* <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Closing Balance</th> */}
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Ledger</th>
                                         {/* <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 

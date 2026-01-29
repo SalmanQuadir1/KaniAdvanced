@@ -57,7 +57,7 @@ const UpdateLedger = () => {
         };
         GetSupplierById()
 
-    }, [])
+    }, [id])
     console.log(Supplier?.name, "kk+++++++++++");
 
     useEffect(() => {
@@ -89,8 +89,8 @@ const UpdateLedger = () => {
         };
         GetLedgerById()
 
-    }, [Supplier])
-    console.log(Supplier?.name, "kk+++++++++++");
+    }, [Supplier?.ledger?.id])
+   
 
 
     const theme = useSelector(state => state?.persisted?.theme);
