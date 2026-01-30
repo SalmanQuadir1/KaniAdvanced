@@ -120,9 +120,15 @@ const ViewStockJournels = () => {
           ))}
         </td>
 
-         <td className="px-5 py-5 border-b border-gray-200 text-sm">
-         <FcAcceptDatabase  size={20} onClick={()=>navigate(`/stockjournel/acceptStockJournal/${item.id}`)} />
-         </td>
+        <td className="px-5 py-5 border-b border-gray-200 text-sm">
+          <button
+            onClick={() => navigate(`/stockjournel/acceptStockJournal/${item.id}`)}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow hover:shadow-lg transform hover:-translate-y-0.5"
+          >
+            <FcAcceptDatabase size={18} />
+            <span className="font-medium">Accept</span>
+          </button>
+        </td>
 
 
 
@@ -155,7 +161,7 @@ const ViewStockJournels = () => {
       journalStatus: values.journalStatus || undefined, // Journal Status
       voucherNo: values.voucherNo || undefined, // Voucher Number
       productId: values.productId || undefined, // Source Material
-     
+
     };
     ViewStock(pagination.currentPage, filters);
   };
@@ -193,7 +199,7 @@ const ViewStockJournels = () => {
 
                         <div className="flex-1 min-w-[200px]">
                           <label className=" flex mb-2.5 block text-slate-700 dark:text-white gap-2">
-                           <AiFillProduct /> Products
+                            <AiFillProduct /> Products
                           </label>
                           <ReactSelect
                             name="productId"
@@ -217,7 +223,7 @@ const ViewStockJournels = () => {
 
                         <div className="flex-1 min-w-[200px]">
                           <label className="flex mb-2.5 block text-black dark:text-white">
-                           <MdDateRange/> From Date
+                            <MdDateRange /> From Date
                           </label>
 
                           <Field
@@ -227,9 +233,9 @@ const ViewStockJournels = () => {
                             className="bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary w-full"
                           />
                         </div>
-                          <div className="flex-1 min-w-[200px]">
+                        <div className="flex-1 min-w-[200px]">
                           <label className="flex mb-2.5 block text-black dark:text-white">
-                           <MdDateRange/> To Date
+                            <MdDateRange /> To Date
                           </label>
 
                           <Field
@@ -239,9 +245,9 @@ const ViewStockJournels = () => {
                             className="bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary w-full"
                           />
                         </div>
-                          <div className="flex-1 min-w-[200px]">
+                        <div className="flex-1 min-w-[200px]">
                           <label className="flex mb-2.5 block text-black dark:text-white">
-                          <TbBaselineDensityMedium/> Voucher Number
+                            <TbBaselineDensityMedium /> Voucher Number
                           </label>
 
                           <Field
@@ -254,7 +260,7 @@ const ViewStockJournels = () => {
 
                         <div className=" w-[200px]">
                           <label className="flex mb-2.5 block text-black dark:text-white">
-                           <PiArrowsMergeFill/> Status
+                            <PiArrowsMergeFill /> Status
                           </label>
                           <Field
                             name="journalStatus"
@@ -322,7 +328,7 @@ const ViewStockJournels = () => {
                         Actions
                       </th> */}
 
-                       <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Action
                     </th>
                   </tr>

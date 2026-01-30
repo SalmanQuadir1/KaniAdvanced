@@ -146,11 +146,11 @@ const VerifyStockJournals = () => {
       stockJournalId: values?.stockJournalId,
       acceptedBy: currentUser?.user.username,
       acceptances: selectedIndexes.map(index => ({
-        transferProductId: values.stockJournal[index]?.product?.id,
+        transferProductId: values?.stockJournal[index]?.product.productIdd,
         // transferQty: Number(values.stockJournal[index]?.transferedQuantity),
-        acceptedQty: Number(values.stockJournal[index]?.acceptedQty) || 0,
-        rejectedQty: Number(values.stockJournal[index]?.rejectedQty) || 0,
-        remarks: values.stockJournal[index]?.remarks || ""
+        acceptedQty: Number(values?.stockJournal[index]?.acceptedQty) || 0,
+        rejectedQty: Number(values?.stockJournal[index]?.rejectedQty) || 0,
+        remarks: values?.stockJournal[index]?.remarks || ""
       }))
     };
 
@@ -176,7 +176,7 @@ const VerifyStockJournals = () => {
       const data = await response.json();
       if (response.ok) {
         toast.success(`Journal Verified successfully`);
-        navigate("/stockJournal/verify");
+        navigate("/stockJournal/ViewStockJournal");
       } else {
         toast.error(`${data.errorMessage}`);
       }
@@ -249,7 +249,7 @@ const VerifyStockJournals = () => {
 
               product: {
                 ...product.product,
-                productId: product.product?.productId || '',  // Set initial value for productId
+                productIdd: product.id || '',  // Set initial value for productId
               },
               sourceLocation: product?.sourceLocation?.address, // we have to add here city also
               destinationLocation: product?.destinationLocation?.address,
