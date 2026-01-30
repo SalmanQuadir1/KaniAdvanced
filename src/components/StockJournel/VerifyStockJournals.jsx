@@ -256,9 +256,9 @@ const VerifyStockJournals = () => {
               transferStatus: product?.transferStatus,
 
               transferedQuantity: product.transferQty || '',
-              acceptedQty: null,
-              rejectedQty: null,
-              remarks: '',
+              acceptedQty: product.acceptedQty || 0,
+              rejectedQty: product.rejectedQty || 0,
+              remarks: product.remarks || "",
 
 
 
@@ -677,12 +677,12 @@ const VerifyStockJournals = () => {
                                     // Show status badge for non-Pending items
                                     <div className="flex justify-center">
                                       <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${item.transferStatus === "ACCEPTED" || item.transferStatus === "Accepted" || item.transferStatus === "APPROVED"
-                                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                                          : item.transferStatus === "REJECTED" || item.transferStatus === "Rejected"
-                                            ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                                            : item.transferStatus === "COMPLETED" || item.transferStatus === "Completed"
-                                              ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-                                              : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                                        ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                        : item.transferStatus === "REJECTED" || item.transferStatus === "Rejected"
+                                          ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                                          : item.transferStatus === "COMPLETED" || item.transferStatus === "Completed"
+                                            ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                                            : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
                                         }`}>
                                         {item.transferStatus}
                                       </span>
