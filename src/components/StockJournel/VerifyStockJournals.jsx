@@ -157,11 +157,11 @@ const VerifyStockJournals = () => {
     console.log(finalData, "Final data to submit");
 
     // Uncomment the API call when ready
- 
+
     try {
       const url = `${VERIFY_STOCK_JOURNAL}`;
       const method = "POST";
-  
+
       const response = await fetch(url, {
         method: method,
         headers: {
@@ -170,9 +170,9 @@ const VerifyStockJournals = () => {
         },
         body: JSON.stringify(finalData)
       });
-      console.log(response,"kjkjkj");
-      
-  
+      console.log(response, "kjkjkj");
+
+
       const data = await response.json();
       if (response.ok) {
         toast.success(`Journal Verified successfully`);
@@ -184,7 +184,7 @@ const VerifyStockJournals = () => {
       console.error(error);
       toast.error("An error occurred");
     }
-  
+
   };
 
 
@@ -630,46 +630,64 @@ const VerifyStockJournals = () => {
                                 </td>
                                 {/* Radio Button */}
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                  <Field
-                                    type="checkbox"
-                                    name="selectedRows"
-                                    value={item.product?.id} // Use product id instead of item.id
-                                    checked={values.selectedRows.includes(item.product?.id)}
-                                    onChange={(e) => {
-                                      const checked = e.target.checked;
-                                      const productId = item.product?.id;
+                                  {item.transferStatus === "PENDING" || item.transferStatus === "Pending" ? (
+                                    // Show checkbox for Pending items
+                                    <Field
+                                      type="checkbox"
+                                      name="selectedRows"
+                                      value={item.product?.id}
+                                      checked={values.selectedRows.includes(item.product?.id)}
+                                      onChange={(e) => {
+                                        const checked = e.target.checked;
+                                        const productId = item.product?.id;
 
-                                      if (checked) {
-                                        // If checked, add the product ID to selectedRows
-                                        setFieldValue("selectedRows", [...values.selectedRows, productId]);
+                                        if (checked) {
+                                          // If checked, add the product ID to selectedRows
+                                          setFieldValue("selectedRows", [...values.selectedRows, productId]);
 
-                                        // Auto-fill accepted quantity with transfered quantity
-                                        setFieldValue(
-                                          `stockJournal[${index}].acceptedQty`,
-                                          values.stockJournal[index]?.acceptedQty || 0
-                                        );
+                                          // Auto-fill accepted quantity with transfered quantity
+                                          setFieldValue(
+                                            `stockJournal[${index}].acceptedQty`,
+                                            values.stockJournal[index]?.acceptedQty || 0
+                                          );
 
-                                        // Auto-calculate rejected quantity
-                                        const transferedQty = Number(values.stockJournal[index]?.transferedQuantity) || 0;
-                                        const acceptedQty = Number(values.stockJournal[index]?.acceptedQty) || 0;
-                                        setFieldValue(
-                                          `stockJournal[${index}].rejectedQty`,
-                                          transferedQty - acceptedQty
-                                        );
-                                      } else {
-                                        // If unchecked, remove the product ID from selectedRows
-                                        setFieldValue(
-                                          "selectedRows",
-                                          values.selectedRows.filter(id => id !== productId)
-                                        );
+                                          // Auto-calculate rejected quantity
+                                          const transferedQty = Number(values.stockJournal[index]?.transferedQuantity) || 0;
+                                          const acceptedQty = Number(values.stockJournal[index]?.acceptedQty) || 0;
+                                          setFieldValue(
+                                            `stockJournal[${index}].rejectedQty`,
+                                            transferedQty - acceptedQty
+                                          );
+                                        } else {
+                                          // If unchecked, remove the product ID from selectedRows
+                                          setFieldValue(
+                                            "selectedRows",
+                                            values.selectedRows.filter(id => id !== productId)
+                                          );
 
-                                        // Clear the accepted and rejected quantities
-                                        setFieldValue(`stockJournal[${index}].acceptedQty`, "");
-                                        setFieldValue(`stockJournal[${index}].rejectedQty`, "");
-                                      }
-                                    }}
-                                    className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                                  />
+                                          // Clear the accepted and rejected quantities
+                                          setFieldValue(`stockJournal[${index}].acceptedQty`, "");
+                                          setFieldValue(`stockJournal[${index}].rejectedQty`, "");
+                                        }
+                                      }}
+                                      className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+                                      title="Select this pending item"
+                                    />
+                                  ) : (
+                                    // Show status badge for non-Pending items
+                                    <div className="flex justify-center">
+                                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${item.transferStatus === "ACCEPTED" || item.transferStatus === "Accepted" || item.transferStatus === "APPROVED"
+                                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                          : item.transferStatus === "REJECTED" || item.transferStatus === "Rejected"
+                                            ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                                            : item.transferStatus === "COMPLETED" || item.transferStatus === "Completed"
+                                              ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                                              : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                                        }`}>
+                                        {item.transferStatus}
+                                      </span>
+                                    </div>
+                                  )}
                                 </td>
 
 
