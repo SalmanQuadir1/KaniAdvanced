@@ -250,6 +250,8 @@ import AddStockJournell from './components/StockJournel/AddStockJournell.jsx';
 import ViewStockJournels from './components/StockJournel/ViewStockJournels.jsx';
 
 import VerifyStockJournal from './components/StockJournel/VerifyStockJournal.jsx';
+import VerifyStockJournals from './components/StockJournel/VerifyStockJournals.jsx';
+
 import Godown from './components/Godown/Godown.jsx'
 
 import ViewStockJournalCreated from './components/StockJournel/ViewStockJournalCreated.jsx';
@@ -1841,6 +1843,17 @@ function App() {
               </>
             }
           />
+           <Route
+            path="/stockjournel/acceptStockJournal/:id"
+            element={
+              <>
+                <PageTitle title="Verify Stock Journal" />
+                <VerifyStockJournals />
+              </>
+            }
+          />
+
+
           {/* <Route
             path="/stockJournal/verify"
             element={

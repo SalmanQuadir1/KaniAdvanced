@@ -523,36 +523,24 @@ const RetailOrderProforma = () => {
 
                             // Check if transaction is interstate
                             const isInterstate = isInterstateTransaction(gstRegistState, shippingStateCode);
+                            console.log(order.orderProducts[index].products.hsnCode, "9898989898");
 
                             // Get HSN code for the product
-                            const hsnCode = values.orderProducts[index]?.hsnCode;
+                            const hsnCode = order.orderProducts[index].products.hsnCode;
 
                             let taxableValue = 0;
 
-                            console.log(hsnCode,"55555555555555555555555555556");
-                            
+                            console.log(discountedPricee, hsnCode, isInterstate, "55555555555555555555555555556");
 
-                            if (discountedPricee >= 1000) {
-                                // New logic based on GST registration and shipping state
-                                if (hsnCode) {
-                                    taxableValue = calculateTaxableValue(discountedPricee, hsnCode, isInterstate);
-                                } else {
-                                    // Fallback to old logic if no HSN code
-                                    const prodUnit = values.orderProducts[index]?.unit;
-                                    if (prodUnit === 'Mtrs') {
-                                        taxableValue = Math.floor((discountedPricee / 105) * 100);
-                                    } else {
-                                        taxableValue = Math.floor((discountedPricee / 112) * 100);
-                                    }
-                                }
-                            } else if (discountedPricee < 1000) {
-                                if (hsnCode) {
-                                    taxableValue = calculateTaxableValue(discountedPricee, hsnCode, isInterstate);
-                                } else {
-                                    // Fallback for price < 1000
-                                    taxableValue = Math.floor((discountedPricee / 105) * 100);
-                                }
+
+
+                            if (hsnCode) {
+                                taxableValue = calculateTaxableValue(discountedPricee, hsnCode, isInterstate);
+                            } else {
+                                // Fallback for price < 1000
+                                taxableValue = Math.floor((discountedPricee / 105) * 100);
                             }
+
 
                             const totalValue = Math.floor(taxableValue * orderQty);
 
@@ -702,8 +690,8 @@ const RetailOrderProforma = () => {
                         // Function to calculate taxable value based on HSN code and transaction type
                         const calculateTaxableValue = (discountedPrice, hsnCode, isInterstate) => {
 
-                            console.log(hsnCode,isInterstate,"9888888888888888888888889");
-                            
+                            console.log(hsnCode, isInterstate, "9888888888888888888888889");
+
                             if (!hsnCode) return discountedPrice; // Default if no HSN code
 
                             if (isInterstate) {

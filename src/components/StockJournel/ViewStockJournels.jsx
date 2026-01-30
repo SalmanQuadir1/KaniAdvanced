@@ -13,6 +13,8 @@ import { AiFillProduct } from 'react-icons/ai';
 import { MdDateRange } from 'react-icons/md';
 import { TbBaselineDensityMedium } from 'react-icons/tb';
 import { PiArrowsMergeFill } from 'react-icons/pi';
+import { FcAcceptDatabase } from 'react-icons/fc';
+import { useNavigate } from 'react-router-dom';
 
 const ViewStockJournels = () => {
   const location = useSelector(state => state?.nonPersisted?.location);
@@ -23,6 +25,8 @@ const ViewStockJournels = () => {
   const [descriptionSel, setDescriptionSel] = useState([]);
   const { stockJournal, ViewStock, handleDelete, handleUpdate, handlePageChange, pagination } = useStockJournal();
   const [statusSel, setStatusSel] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     ViewStock();
@@ -115,6 +119,10 @@ const ViewStockJournels = () => {
             </div>
           ))}
         </td>
+
+         <td className="px-5 py-5 border-b border-gray-200 text-sm">
+         <FcAcceptDatabase  size={20} onClick={()=>navigate(`/stockjournel/acceptStockJournal/${item.id}`)} />
+         </td>
 
 
 
@@ -313,6 +321,10 @@ const ViewStockJournels = () => {
                     {/* <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                         Actions
                       </th> */}
+
+                       <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Action
+                    </th>
                   </tr>
                 </thead>
                 <tbody>{renderTableRows()}</tbody>

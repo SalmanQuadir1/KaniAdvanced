@@ -114,6 +114,9 @@ const useStockJournel = () => {
                 },
                 body: JSON.stringify(filters)
             });
+
+            console.log(response,"3001");
+            
     
             if (!response.ok) {
                 throw new Error('Network response was not ok');
