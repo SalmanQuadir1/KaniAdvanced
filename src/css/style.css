@@ -64,6 +64,8 @@ table::-webkit-scrollbar-track {
   border-radius: 4px;
 }
 
+
+
 /* General circle style for status indicators */
 .dot {
   display: inline-block;
@@ -141,6 +143,290 @@ table::-webkit-scrollbar-track {
   background-color: #F44336;
   /* Red */
 }
+
+
+
+
+/* 
+table start */
+
+
+.min-w-full {
+  min-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* Table header styles */
+.min-w-full thead {
+  background: linear-gradient(135deg, #4b69f3 0%, #764ba2 100%);
+}
+
+.min-w-full thead th {
+  padding: 1rem 1.5rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: white;
+   background: linear-gradient(135deg, #333A48 0%, #1f2937 100%);
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.min-w-full thead th:first-child {
+  border-top-left-radius: 0.75rem;
+  padding-left: 2rem;
+}
+
+.min-w-full thead th:last-child {
+  border-top-right-radius: 0.75rem;
+  padding-right: 2rem;
+}
+
+/* Table body styles */
+.min-w-full tbody tr {
+  transition: all 0.2s ease;
+}
+
+/* Striped rows */
+.min-w-full tbody tr:nth-child(odd) {
+  background-color: #f9fafb;
+}
+
+.min-w-full tbody tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+/* Dark mode support */
+.dark .min-w-full tbody tr:nth-child(odd) {
+  background-color: #1f2937;
+}
+
+.dark .min-w-full tbody tr:nth-child(even) {
+  background-color: #111827;
+}
+
+/* Hover effect */
+.min-w-full tbody tr:hover {
+  background-color: #f3f4f6;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.dark .min-w-full tbody tr:hover {
+  background-color: #374151;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+/* Table cell styles */
+.min-w-full tbody td {
+  padding: 1rem 1.5rem;
+  font-size: 0.875rem;
+  color: #4b5563;
+  border-bottom: 1px solid #e5e7eb;
+  transition: color 0.2s ease;
+}
+
+.dark .min-w-full tbody td {
+  color: #d1d5db;
+  border-bottom: 1px solid #374151;
+}
+
+/* First and last cell padding */
+.min-w-full tbody td:first-child {
+  padding-left: 2rem;
+}
+
+.min-w-full tbody td:last-child {
+  padding-right: 2rem;
+}
+
+/* Last row border radius */
+.min-w-full tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 0.75rem;
+}
+
+.min-w-full tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 0.75rem;
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+  .min-w-full {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .min-w-full thead th,
+  .min-w-full tbody td {
+    padding: 0.75rem 1rem;
+    font-size: 0.8125rem;
+  }
+  
+  .min-w-full thead th:first-child,
+  .min-w-full tbody td:first-child {
+    padding-left: 1rem;
+  }
+  
+  .min-w-full thead th:last-child,
+  .min-w-full tbody td:last-child {
+    padding-right: 1rem;
+  }
+}
+
+/* Glass morphism effect (optional) */
+.glass-table .min-w-full {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass-table .min-w-full {
+  background: rgba(31, 41, 55, 0.7);
+  border: 1px solid rgba(75, 85, 99, 0.2);
+}
+
+/* Alternative gradient header */
+.gradient-header .min-w-full thead {
+  background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+}
+
+/* Modern shadow effect */
+.shadow-table .min-w-full {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 
+              0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.dark .shadow-table .min-w-full {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 
+              0 10px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+/* Status indicators */
+.status-cell {
+  position: relative;
+}
+
+.status-cell::before {
+  content: '';
+  position: absolute;
+  left: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-active::before {
+  background-color: #10b981;
+}
+
+.status-pending::before {
+  background-color: #f59e0b;
+}
+
+.status-inactive::before {
+  background-color: #ef4444;
+}
+
+/* Action buttons in table */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.min-w-full tbody tr:hover .action-buttons {
+  opacity: 1;
+}
+
+/* Scrollbar styling for table container */
+.table-container {
+  overflow-x: auto;
+  border-radius: 0.75rem;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.dark .table-container {
+  scrollbar-color: #4b5563 #1f2937;
+}
+
+.table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.dark .table-container::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.dark .table-container::-webkit-scrollbar-thumb {
+  background: #4b5563;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.dark .table-container::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+
+
+
+
+
+
+
+
+
+/* table end */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

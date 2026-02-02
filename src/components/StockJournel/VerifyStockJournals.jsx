@@ -302,7 +302,7 @@ const VerifyStockJournals = () => {
                             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Complete journal information</p>
                           </div>
 
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                          <div className="grid  grid-cols-1 md:grid-cols-3 gap-8">
                             {[
                               {
                                 key: 'voucherNo',
@@ -335,9 +335,9 @@ const VerifyStockJournals = () => {
                                 text: 'text-purple-800 dark:text-purple-200'
                               }
                             ].map((item) => (
-                              <div key={item.key} className="relative group">
+                              <div key={item.key} className=" relative group">
                                 <div className={`absolute -inset-1 bg-gradient-to-r ${item.gradient} rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-500`}></div>
-                                <div className="relative bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm rounded-xl p-6 border ${item.border}">
+                                <div className="h-[150px] relative bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm rounded-xl p-6 border ${item.border}">
                                   <div className="flex items-center justify-center mb-4">
                                     <div className={`p-2 bg-gradient-to-br ${item.gradient.replace('/20', '')} rounded-lg shadow-md`}>
                                       <span className="text-xl font-bold text-white">{item.icon}</span>
@@ -347,7 +347,7 @@ const VerifyStockJournals = () => {
                                     {item.label}
                                   </label>
                                   {item.key === 'journalStatus' ? (
-                                    <div className={`text-center text-xl font-bold ${item.text} px-4 py-3 rounded-lg bg-white/50 dark:bg-gray-800/50`}>
+                                    <div className={`text-center text-xl font-bold ${item.text} px-4  rounded-lg bg-white/50 dark:bg-gray-800/50`}>
                                       {item.value || 'N/A'}
                                     </div>
                                   ) : (
@@ -622,6 +622,7 @@ const VerifyStockJournals = () => {
                                   <Field
                                     type="textarea"
                                     name={`stockJournal[${index}].remarks`}
+                                    rows="3"
                                     // onChange={(e) => {
                                     //   const newValue = e.target.value;
                                     //   console.log(`New Product ID: ${newValue}`);
@@ -630,7 +631,7 @@ const VerifyStockJournals = () => {
                                     //     newValue
                                     //   );
                                     // }}
-                                    className="w-[150px] bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                    className="w-[350px] h-20 bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                     placeholder="Enter Remarks"
                                   />
                                   <ErrorMessage
@@ -662,11 +663,11 @@ const VerifyStockJournals = () => {
                                       )}
                                       <span className="capitalize">{item.transferStatus?.replace('_', ' ')}</span>
                                     </span>
-                                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    {/* <span className="text-xs text-gray-500 dark:text-gray-400">
                                       {item.transferStatus === "partially_accepted" ? "Partially Verified" :
                                         item.transferStatus === "fully_accepted" ? "Fully Verified" :
                                           "Not Verified"}
-                                    </span>
+                                    </span> */}
                                   </div>
 
                                 </td>
