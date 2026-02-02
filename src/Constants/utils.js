@@ -500,52 +500,185 @@ export const options = {
 
 
 export const customStyles = (theme) => ({
-    control: (provided, state) => ({
-        ...provided,
-        minHeight: '50px',
-        minWidth: "150px",
-        fontSize: '16px',
-        backgroundColor: theme === 'dark' ? '#1D2A39' : '#fff',
-        color: theme === 'dark' ? '#fff' : '#000',
-        border: `1.5px solid ${theme === 'dark' ? '#3D4D60' : '#E5E5E5'}`, // Border color based on theme
-        borderRadius: '4px', // Assuming the same rounded border
-        boxShadow: 'none', // Remove any default box shadow
-        '&:hover': {
-            borderColor: state.isFocused ? '#3B82F6' : theme === 'dark' ? '#3D4D60' : '#E5E5E5', // Hover border color
-        },
-        '&:focus': {
-            borderColor: state.isFocused ? '#3B82F6' : theme === 'dark' ? '#3D4D60' : '#E5E5E5', // Focus border color
-        },
-        '&:active': {
-            borderColor: state.isFocused ? '#3B82F6' : theme === 'dark' ? '#3D4D60' : '#E5E5E5', // Active border color
-        },
-    }),
-    valueContainer: (provided) => ({
-        ...provided,
-        padding: '10px 10px',
-        // zIndex: 9999,
-
-    }),
-    input: (provided) => ({
-        ...provided,
-        fontSize: '16px',
-        color: theme === 'dark' ? '#fff' : '#000',
-    }),
-    singleValue: (provided) => ({
-        ...provided,
-        fontSize: '16px',
-        color: theme === 'dark' ? '#fff' : '#000',
-    }),
-    menu: (provided) => ({
-        ...provided,
-        backgroundColor: theme === 'dark' ? '#1D2A39' : '#fff',
-        zIndex: 99999,
-    }),
-    option: (provided, state) => ({
-        ...provided,
-        backgroundColor: state.isFocused ? (theme === 'dark' ? '#000' : '#f0f0f0') : 'transparent',
-        color: state.isFocused ? (theme === 'dark' ? '#fff' : '#000') : (theme === 'dark' ? '#fff' : '#000'),
-    }),
+  control: (provided, state) => ({
+    ...provided,
+    minHeight: '52px',
+    fontSize: '14px',
+    backgroundColor: theme === 'dark' ? '#1E293B' : '#FFFFFF',
+    color: theme === 'dark' ? '#F8FAFC' : '#0F172A',
+    border: `2px solid ${state.isFocused 
+      ? '#3B82F6' 
+      : theme === 'dark' ? '#334155' : '#E2E8F0'
+    }`,
+    borderRadius: '12px',
+    boxShadow: state.isFocused 
+      ? `0 0 0 3px ${theme === 'dark' ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.1)'}`
+      : `0 1px 3px 0 ${theme === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.05)'}`,
+    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+    '&:hover': {
+      borderColor: state.isFocused ? '#3B82F6' : theme === 'dark' ? '#475569' : '#CBD5E1',
+      boxShadow: `0 4px 6px -1px ${theme === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.1)'}`,
+    },
+    '&:focus-within': {
+      borderColor: '#3B82F6',
+      boxShadow: `0 0 0 3px ${theme === 'dark' ? 'rgba(59, 130, 246, 0.3)' : 'rgba(59, 130, 246, 0.2)'}`,
+    },
+    cursor: 'pointer',
+  }),
+  
+  valueContainer: (provided) => ({
+    ...provided,
+    padding: '12px 16px',
+  }),
+  
+  input: (provided) => ({
+    ...provided,
+    fontSize: '14px',
+    color: theme === 'dark' ? '#F8FAFC' : '#0F172A',
+    margin: 0,
+    padding: 0,
+  }),
+  
+  singleValue: (provided) => ({
+    ...provided,
+    fontSize: '14px',
+    color: theme === 'dark' ? '#F8FAFC' : '#0F172A',
+    fontWeight: '500',
+  }),
+  
+  multiValue: (provided) => ({
+    ...provided,
+    backgroundColor: theme === 'dark' ? '#3B82F6' : '#EFF6FF',
+    borderRadius: '8px',
+    padding: '2px 4px',
+  }),
+  
+  multiValueLabel: (provided) => ({
+    ...provided,
+    color: theme === 'dark' ? '#FFFFFF' : '#1E40AF',
+    fontSize: '12px',
+    fontWeight: '500',
+  }),
+  
+  multiValueRemove: (provided) => ({
+    ...provided,
+    color: theme === 'dark' ? '#FFFFFF' : '#1E40AF',
+    '&:hover': {
+      backgroundColor: theme === 'dark' ? '#1D4ED8' : '#DBEAFE',
+      color: theme === 'dark' ? '#FFFFFF' : '#1E3A8A',
+    },
+  }),
+  
+  placeholder: (provided) => ({
+    ...provided,
+    fontSize: '14px',
+    color: theme === 'dark' ? '#94A3B8' : '#64748B',
+    fontWeight: '400',
+  }),
+  
+  menu: (provided) => ({
+    ...provided,
+    backgroundColor: theme === 'dark' ? '#1E293B' : '#FFFFFF',
+    borderRadius: '12px',
+    boxShadow: `0 10px 25px -5px ${theme === 'dark' ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.1)'}, 0 8px 10px -6px ${theme === 'dark' ? 'rgba(0, 0, 0, 0.3)' : 'rgba(0, 0, 0, 0.05)'}`,
+    border: `1px solid ${theme === 'dark' ? '#334155' : '#E2E8F0'}`,
+    overflow: 'hidden',
+    zIndex: 99999,
+    marginTop: '4px',
+  }),
+  
+  menuList: (provided) => ({
+    ...provided,
+    padding: '8px',
+    maxHeight: '300px',
+    '&::-webkit-scrollbar': {
+      width: '8px',
+    },
+    '&::-webkit-scrollbar-track': {
+      background: theme === 'dark' ? '#334155' : '#F1F5F9',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: theme === 'dark' ? '#475569' : '#CBD5E1',
+      borderRadius: '4px',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+      background: theme === 'dark' ? '#64748B' : '#94A3B8',
+    },
+  }),
+  
+  option: (provided, state) => ({
+    ...provided,
+    fontSize: '14px',
+    padding: '12px 16px',
+    borderRadius: '8px',
+    marginBottom: '4px',
+    backgroundColor: state.isSelected 
+      ? (theme === 'dark' ? '#3B82F6' : '#EFF6FF')
+      : state.isFocused 
+        ? (theme === 'dark' ? '#334155' : '#F8FAFC')
+        : 'transparent',
+    color: state.isSelected 
+      ? (theme === 'dark' ? '#FFFFFF' : '#1E40AF')
+      : (theme === 'dark' ? '#F8FAFC' : '#0F172A'),
+    fontWeight: state.isSelected ? '600' : '400',
+    cursor: 'pointer',
+    transition: 'all 0.15s ease',
+    '&:active': {
+      backgroundColor: theme === 'dark' ? '#475569' : '#F1F5F9',
+    },
+    '&:last-of-type': {
+      marginBottom: 0,
+    },
+  }),
+  
+  indicatorSeparator: (provided) => ({
+    ...provided,
+    backgroundColor: theme === 'dark' ? '#475569' : '#CBD5E1',
+    marginTop: '12px',
+    marginBottom: '12px',
+  }),
+  
+  dropdownIndicator: (provided, state) => ({
+    ...provided,
+    color: theme === 'dark' ? '#94A3B8' : '#64748B',
+    padding: '0 12px',
+    transition: 'transform 0.2s ease',
+    transform: state.selectProps.menuIsOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+    '&:hover': {
+      color: theme === 'dark' ? '#F8FAFC' : '#0F172A',
+    },
+  }),
+  
+  clearIndicator: (provided) => ({
+    ...provided,
+    color: theme === 'dark' ? '#94A3B8' : '#64748B',
+    padding: '0 12px',
+    '&:hover': {
+      color: theme === 'dark' ? '#F87171' : '#DC2626',
+    },
+  }),
+  
+  loadingIndicator: (provided) => ({
+    ...provided,
+    color: theme === 'dark' ? '#3B82F6' : '#3B82F6',
+  }),
+  
+  noOptionsMessage: (provided) => ({
+    ...provided,
+    color: theme === 'dark' ? '#94A3B8' : '#64748B',
+    fontSize: '14px',
+    padding: '16px',
+    textAlign: 'center',
+  }),
+  
+  loadingMessage: (provided) => ({
+    ...provided,
+    color: theme === 'dark' ? '#94A3B8' : '#64748B',
+    fontSize: '14px',
+    padding: '16px',
+    textAlign: 'center',
+  }),
 });
 
 

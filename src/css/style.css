@@ -402,6 +402,456 @@ table start */
 
 
 
+/* field :start */
+
+/* Base rounded field styling */
+.rounded {
+  border-radius: 0.75rem;
+  border: 2px solid #e5e7eb;
+  background-color: white;
+  padding: 0.875rem 1.25rem;
+  font-size: 0.9375rem;
+  color: #1f2937;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  outline: none;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  width: 100%;
+  line-height: 1.5;
+}
+
+/* Focus state */
+.rounded:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+/* Hover state */
+.rounded:hover:not(:focus) {
+  border-color: #9ca3af;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Disabled state */
+.rounded:disabled {
+  background-color: #f9fafb;
+  border-color: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Read-only state */
+.rounded[readonly] {
+  background-color: #f9fafb;
+  border-color: #e5e7eb;
+  color: #6b7280;
+}
+
+/* Error state */
+.rounded.error {
+  border-color: #ef4444;
+  background-color: #fef2f2;
+}
+
+.rounded.error:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* Success state */
+.rounded.success {
+  border-color: #10b981;
+  background-color: #f0fdf4;
+}
+
+.rounded.success:focus {
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+/* Dark mode support */
+.dark .rounded {
+  background-color: #1f2937;
+  border-color: #4b5563;
+  color: #f3f4f6;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.dark .rounded:focus {
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+  background-color: #111827;
+}
+
+.dark .rounded:hover:not(:focus) {
+  border-color: #6b7280;
+  background-color: #374151;
+}
+
+.dark .rounded:disabled {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #9ca3af;
+}
+
+.dark .rounded[readonly] {
+  background-color: #374151;
+  border-color: #4b5563;
+  color: #9ca3af;
+}
+
+.dark .rounded.error {
+  border-color: #f87171;
+  background-color: #450a0a;
+}
+
+.dark .rounded.success {
+  border-color: #34d399;
+  background-color: #064e3b;
+}
+
+/* Different input types */
+.rounded[type="date"],
+.rounded[type="time"],
+.rounded[type="datetime-local"] {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.25rem;
+  padding-right: 3rem;
+}
+
+.dark .rounded[type="date"],
+.dark .rounded[type="time"],
+.dark .rounded[type="datetime-local"] {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.rounded[type="number"] {
+  appearance: textfield;
+}
+
+.rounded[type="number"]::-webkit-inner-spin-button,
+.rounded[type="number"]::-webkit-outer-spin-button {
+  opacity: 1;
+  height: 1.5rem;
+}
+
+/* For textarea */
+.rounded.textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* For select dropdowns */
+.rounded.select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.25rem;
+  padding-right: 3rem;
+}
+
+.dark .rounded.select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239ca3af'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+}
+
+/* For file input */
+.rounded[type="file"] {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+}
+
+.rounded[type="file"]::file-selector-button {
+  margin-right: 1rem;
+  border: none;
+  background: #3b82f6;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.rounded[type="file"]::file-selector-button:hover {
+  background: #2563eb;
+}
+
+.dark .rounded[type="file"]::file-selector-button {
+  background: #1d4ed8;
+}
+
+/* Glass morphism effect */
+.rounded.glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .rounded.glass {
+  background: rgba(31, 41, 55, 0.6);
+  border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+/* Gradient border effect */
+.rounded.gradient-border {
+  border: 2px solid transparent;
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(135deg, #667eea 0%, #764ba2 100%) border-box;
+}
+
+.dark .rounded.gradient-border {
+  background: linear-gradient(#1f2937, #1f2937) padding-box,
+              linear-gradient(135deg, #667eea 0%, #764ba2 100%) border-box;
+}
+
+/* Shadow effect */
+.rounded.shadow {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 
+              0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.dark .rounded.shadow {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 
+              0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
+
+/* With icon */
+.rounded.with-icon {
+  padding-left: 3rem;
+}
+
+.input-with-icon {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #6b7280;
+  pointer-events: none;
+}
+
+.dark .input-icon {
+  color: #9ca3af;
+}
+
+
+
+/* field end */
+
+
+
+/* label :start */
+
+
+/* Base label styling */
+.block {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  transition: color 0.2s ease;
+  line-height: 1.25;
+  letter-spacing: 0.025em;
+}
+
+/* Required field indicator */
+.block.required::after {
+  content: "*";
+  color: #ef4444;
+  margin-left: 0.25rem;
+}
+
+/* Focused label (when input is focused) */
+.block.focused {
+  color: #3b82f6;
+  font-weight: 600;
+}
+
+/* Error state label */
+.block.error {
+  color: #ef4444;
+}
+
+/* Success state label */
+.block.success {
+  color: #10b981;
+}
+
+/* Disabled state label */
+.block.disabled {
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Dark mode support */
+.dark .block {
+  color: #e5e7eb;
+}
+
+.dark .block.focused {
+  color: #60a5fa;
+}
+
+.dark .block.error {
+  color: #f87171;
+}
+
+.dark .block.success {
+  color: #34d399;
+}
+
+.dark .block.disabled {
+  color: #6b7280;
+}
+
+/* With icon */
+.block.with-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.label-icon {
+  width: 1rem;
+  height: 1rem;
+  color: inherit;
+}
+
+/* Floating label effect */
+.floating-label {
+  position: relative;
+  margin-top: 1.5rem;
+}
+
+.floating-label .block {
+  position: absolute;
+  top: -1.75rem;
+  left: 0;
+  font-size: 0.75rem;
+  opacity: 0.8;
+  background: linear-gradient(to bottom, transparent 0%, white 50%);
+  padding: 0 0.25rem;
+  margin: 0;
+}
+
+.dark .floating-label .block {
+  background: linear-gradient(to bottom, transparent 0%, #1f2937 50%);
+}
+
+/* Animated underline label */
+.animated-label {
+  position: relative;
+  padding-bottom: 0.25rem;
+}
+
+.animated-label::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);
+  transition: width 0.3s ease;
+}
+
+.animated-label.focused::after {
+  width: 100%;
+}
+
+/* Badge label */
+.badge-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background-color: #f3f4f6;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.dark .badge-label {
+  background-color: #374151;
+}
+
+.badge-label.primary {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.dark .badge-label.primary {
+  background-color: #1e3a8a;
+  color: #93c5fd;
+}
+
+.badge-label.success {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.dark .badge-label.success {
+  background-color: #064e3b;
+  color: #6ee7b7;
+}
+
+/* Tooltip label */
+.tooltip-label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.tooltip-label:hover .label-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.label-tooltip {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background-color: #1f2937;
+  color: white;
+  font-size: 0.75rem;
+  border-radius: 0.375rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease;
+  z-index: 10;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.label-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 1rem;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid #1f2937;
+}
+
+
+
+/* label end */
+
+
+
+
 
 
 
