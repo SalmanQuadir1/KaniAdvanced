@@ -93,7 +93,17 @@ console.log(filteredSupplier,"filteredddddddddddddd");
       <Breadcrumb pageName="Supplier / View Supplier" />
       <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
         <div className="pt-5">
-          <div className="flex justify-center items-center p-3">
+       
+         <div className='flex flex-row items-center justify-between w-full'>
+  <h2 className="text-xl text-slate-500 font-semibold w-full flex items-center justify-between">
+    <span>View SUPPLIER</span>
+    <span className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-blue-900/20 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-800/30 text-sm font-semibold text-blue-700 dark:text-blue-300 ml-4">
+      TOTAL SUPPLIERS: {pagination.totalItems}
+    </span>
+  </h2>
+</div>
+
+   <div className="flex justify-center items-center p-3">
             <input
               type="text"
               name="search"
@@ -103,12 +113,6 @@ console.log(filteredSupplier,"filteredddddddddddddd");
               onChange={handleSearch}
             />
             <button className='w-[80px] h-12 rounded-lg bg-blue-700 text-white dark:bg-blue-600 dark:text-slate-300  ml-4'>Search</button>
-          </div>
-          <div className='flex justify-between mt-10'>
-            <h2 className="text-xl font-semibold leading-tight">VIEW SUPPLIER</h2>
-            <p className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium bg-success text-success  dark:bg-white dark:text-slate-800`}>
-              Total Supplier: {pagination.totalItems}
-            </p>
           </div>
           <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
             <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
