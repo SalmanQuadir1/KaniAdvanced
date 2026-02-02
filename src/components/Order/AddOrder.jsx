@@ -1106,7 +1106,7 @@ const AddOrder = () => {
 
                                     <div >
 
-                                      <span onClick={() => openINVENTORYModal(item?.id)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[220px]"> VIEW INVENTORY</span>
+                                      <span onClick={() => openINVENTORYModal(item?.id)} className="bg-green-100 view-badge text-green-800 text-[10px] font-medium me-2 text-center py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[220px]"> VIEW INVENTORY</span>
 
 
                                     </div>

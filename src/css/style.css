@@ -85,9 +85,473 @@ table::-webkit-scrollbar-track {
   background-color: #00008B;
   /* Dark Blue */
 }
+
+
+
+/* button start  */
+
+/* Modern Primary Button Styling */
 .bg-primary {
-    background-color: #333A48 !important;
+  background: linear-gradient(135deg, #333A48 0%, #2C3240 100%) !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 14px 28px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.3px !important;
+  text-transform: uppercase !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-shadow: 0 4px 15px rgba(51, 58, 72, 0.2) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  min-width: 120px !important;
+  text-align: center !important;
+  line-height: 1.5 !important;
 }
+
+/* Hover Effect */
+.bg-primary:hover {
+  background: linear-gradient(135deg, #3D4557 0%, #353C4E 100%) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 25px rgba(51, 58, 72, 0.3) !important;
+}
+
+/* Active/Focus State */
+.bg-primary:focus,
+.bg-primary:active {
+  outline: none !important;
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 10px rgba(51, 58, 72, 0.4) !important;
+  background: linear-gradient(135deg, #2A303C 0%, #242935 100%) !important;
+}
+
+/* Disabled State */
+.bg-primary:disabled {
+  background: linear-gradient(135deg, #4A5263 0%, #424A5A 100%) !important;
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: 0 2px 5px rgba(51, 58, 72, 0.1) !important;
+}
+
+/* Ripple Effect */
+.bg-primary::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%);
+  transform-origin: 50% 50%;
+}
+
+.bg-primary:focus:not(:active)::after {
+  animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0, 0);
+    opacity: 0.5;
+  }
+  20% {
+    transform: scale(25, 25);
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(40, 40);
+  }
+}
+
+/* With Icon */
+.bg-primary.with-icon {
+  padding: 12px 24px !important;
+}
+
+.bg-primary.with-icon svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+/* Loading State */
+.bg-primary.loading {
+  position: relative !important;
+  color: transparent !important;
+}
+
+.bg-primary.loading::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #FFFFFF;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Different Sizes */
+.bg-primary.small {
+  padding: 10px 20px !important;
+  font-size: 13px !important;
+  border-radius: 10px !important;
+  min-width: 100px !important;
+}
+
+.bg-primary.large {
+  padding: 18px 36px !important;
+  font-size: 16px !important;
+  border-radius: 14px !important;
+  min-width: 140px !important;
+}
+
+/* Outline Variant */
+.bg-primary.outline {
+  background: transparent !important;
+  color: #333A48 !important;
+  border: 2px solid #333A48 !important;
+  box-shadow: none !important;
+}
+
+.bg-primary.outline:hover {
+  background: #333A48 !important;
+  color: #FFFFFF !important;
+  border-color: #333A48 !important;
+}
+
+/* Glass Morphism Effect */
+.bg-primary.glass {
+  background: rgba(51, 58, 72, 0.85) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+}
+
+.bg-primary.glass:hover {
+  background: rgba(61, 69, 87, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Gradient Variant */
+.bg-primary.gradient {
+  background: linear-gradient(135deg, #333A48 0%, #4A5263 50%, #333A48 100%) !important;
+  background-size: 200% 100% !important;
+  transition: background-position 0.5s ease !important;
+}
+
+.bg-primary.gradient:hover {
+  background-position: 100% 0 !important;
+}
+
+/* Pill Shape */
+.bg-primary.pill {
+  border-radius: 50px !important;
+  padding: 14px 32px !important;
+}
+
+/* Block/Full Width */
+.bg-primary.block {
+  display: flex !important;
+  width: 100% !important;
+  min-width: auto !important;
+}
+
+/* Button Groups */
+.button-group .bg-primary {
+  border-radius: 0 !important;
+  margin: 0 !important;
+}
+
+.button-group .bg-primary:first-child {
+  border-radius: 12px 0 0 12px !important;
+}
+
+.button-group .bg-primary:last-child {
+  border-radius: 0 12px 12px 0 !important;
+}
+
+/* Dark Mode Specific Enhancements */
+.dark .bg-primary {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .bg-primary:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark .bg-primary.glass {
+  background: rgba(51, 58, 72, 0.7) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Focus Accessibility */
+.bg-primary:focus-visible {
+  outline: 3px solid rgba(51, 58, 72, 0.3) !important;
+  outline-offset: 2px !important;
+}
+
+/* Loading Text */
+.bg-primary .loading-text {
+  opacity: 0;
+}
+
+.bg-primary.loading .loading-text {
+  opacity: 1;
+  margin-left: 30px;
+}
+
+/* With Badge */
+.bg-primary.with-badge {
+  position: relative !important;
+}
+
+.bg-primary.with-badge::before {
+  content: attr(data-badge);
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #FF4757;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+/* button end  */
+
+
+/* span :start */
+/* Modern Badge/Span Styling */
+.view-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
+  color: #065f46 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  padding: 8px 16px !important;
+  border-radius: 8px !important;
+  border: 1.5px solid #10b981 !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  white-space: nowrap !important;
+  min-width: 140px !important;
+  max-width: 100% !important;
+  height: 36px !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15) !important;
+}
+
+/* Hover Effect */
+.view-badge:hover {
+  background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.25) !important;
+  border-color: #059669 !important;
+  color: #064e3b !important;
+}
+
+/* Active State */
+.view-badge:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 1px 4px rgba(16, 185, 129, 0.2) !important;
+}
+
+/* Focus State */
+.view-badge:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3) !important;
+}
+
+/* With Icon */
+.view-badge.with-icon {
+  padding: 8px 16px 8px 12px !important;
+}
+
+.view-badge.with-icon svg {
+  width: 14px !important;
+  height: 14px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Dark Mode */
+.dark .view-badge {
+  background: linear-gradient(135deg, #064e3b 0%, #047857 100%) !important;
+  color: #a7f3d0 !important;
+  border-color: #10b981 !important;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2) !important;
+}
+
+.dark .view-badge:hover {
+  background: linear-gradient(135deg, #047857 0%, #059669 100%) !important;
+  color: #d1fae5 !important;
+  border-color: #34d399 !important;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3) !important;
+}
+
+/* Different Sizes */
+.view-badge.small {
+  font-size: 10px !important;
+  padding: 6px 12px !important;
+  height: 28px !important;
+  min-width: 120px !important;
+  letter-spacing: 0.3px !important;
+}
+
+.view-badge.large {
+  font-size: 14px !important;
+  padding: 10px 20px !important;
+  height: 40px !important;
+  min-width: 160px !important;
+  letter-spacing: 0.7px !important;
+}
+
+/* Outline Variant */
+.view-badge.outline {
+  background: transparent !important;
+  color: #065f46 !important;
+  border: 2px solid #10b981 !important;
+}
+
+.dark .view-badge.outline {
+  color: #a7f3d0 !important;
+  border-color: #10b981 !important;
+}
+
+.view-badge.outline:hover {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
+  color: #065f46 !important;
+}
+
+.dark .view-badge.outline:hover {
+  background: linear-gradient(135deg, #064e3b 0%, #047857 100%) !important;
+  color: #a7f3d0 !important;
+}
+
+/* Glass Morphism Effect */
+.view-badge.glass {
+  background: rgba(209, 250, 229, 0.8) !important;
+  backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(16, 185, 129, 0.2) !important;
+}
+
+.dark .view-badge.glass {
+  background: rgba(6, 78, 59, 0.6) !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+}
+
+/* Full Width */
+.view-badge.block {
+  display: flex !important;
+  width: 100% !important;
+  min-width: auto !important;
+  justify-content: center !important;
+}
+
+/* Loading State */
+.view-badge.loading {
+  position: relative !important;
+  color: transparent !important;
+}
+
+.view-badge.loading::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(6, 95, 70, 0.2);
+  border-top-color: #065f46;
+  border-radius: 50%;
+  animation: badge-spin 1s linear infinite;
+}
+
+.dark .view-badge.loading::before {
+  border: 2px solid rgba(167, 243, 208, 0.2);
+  border-top-color: #a7f3d0;
+}
+
+@keyframes badge-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Disabled State */
+.view-badge:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  pointer-events: none !important;
+}
+
+/* Text Ellipsis for Very Long Text */
+.view-badge.ellipsis {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  max-width: 200px !important;
+  padding-right: 8px !important;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .view-badge {
+    font-size: 11px !important;
+    padding: 6px 12px !important;
+    min-width: 120px !important;
+    height: 32px !important;
+  }
+  
+  .view-badge.large {
+    font-size: 12px !important;
+    padding: 8px 16px !important;
+    min-width: 140px !important;
+  }
+  
+  .view-badge.small {
+    font-size: 9px !important;
+    padding: 4px 8px !important;
+    min-width: 100px !important;
+  }
+}
+
+/* For your specific use case - prevents text splitting */
+.view-badge.nowrap {
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+}
+
+/* span end  */
+
 
 .dot-blue {
   background-color: #0000FF;
