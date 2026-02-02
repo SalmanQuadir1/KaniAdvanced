@@ -333,19 +333,19 @@ const ViewProduct = () => {
                     </div>
                 </td>
 
-                <td className="px-2 py-5  md:w-[50px] border-b border-gray-200 text-xs">
-                    <span onClick={() => openImageModal(item?.images)} className="bg-green-100 text-green-800  font-medium me-2 px-1 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer "> VIEW</span>
+                <td className="px-2 py-5  md:w-[50px] border-b border-gray-200 font-xs text-xs">
+                    <span onClick={() => openImageModal(item?.images)} className="bg-green-100 text-green-800  font-xs text-xs me-2 px-1 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer "> VIEW</span>
 
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.productId?.substring(0, 14) + ".."}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.productId?.substring(0, 34) + ".."}</p>
 
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.productGroup?.productGroupName.substring(0, 10) + ".."}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item.productGroup?.productGroupName.substring(0, 40)}</p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.productCategory?.productCategoryName.substring(0, 5) + ".."}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item.productCategory?.productCategoryName.substring(0, 50) }</p>
                 </td>
 
                 {/* BOM View Button */}

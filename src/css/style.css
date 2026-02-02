@@ -1130,7 +1130,7 @@ table start */
   border: 2px solid #e5e7eb;
   background-color: white;
   padding: 0.875rem 1.25rem;
-  font-size: 0.9375rem;
+  /* font-size: 0.9375rem; */
   color: #1f2937;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
