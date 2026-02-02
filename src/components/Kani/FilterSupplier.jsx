@@ -519,9 +519,9 @@ const closeUpdateChallan = () => {
           </td>
 
           {/* ORDER NO - ADDED THIS COLUMN */}
-          <td className="px-4 py-3 border-b text-center">
+          <td className="px-4 py-3 border-b text-center ">
             {orderNo ? (
-              <span className="text-gray-800 dark:text-gray-300 font-medium bg-blue-50 dark:bg-gray-800 px-2 py-1 rounded">
+              <span className="text-gray-800 dark:text-gray-300 font-medium bg-blue-50 dark:bg-gray-800 px-2 py-1 rounded view-badge">
                 {orderNo}
               </span>
             ) : (
