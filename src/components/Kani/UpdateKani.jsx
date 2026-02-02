@@ -809,8 +809,11 @@ const UpdateKani = () => {
 <button
       type="button"   // prevents form submission
       onClick={handleViewProduct}
-      className="w-1/3 px-6 py-2 text-white bg-blue-600 rounded-lg shadow
-                 hover:bg-blue-700 focus:outline-none transition"
+      // className="w-1/3 px-6 py-2 text-white bg-blue-600 rounded-lg shadow
+      //            hover:bg-blue-700 focus:outline-none transition"
+      className="w-1/3 px-6 py-2 text-white bg-black rounded-lg shadow
+           hover:bg-gray-800 focus:outline-none transition"
+
     >
       View Product
     </button>
