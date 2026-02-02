@@ -120,14 +120,14 @@ const ViewStockJournels = () => {
           ))}
         </td>
 
-        <td className="px-5 py-5 border-b border-gray-200 text-sm">
+        <td className="px-2 py-2 border-b border-gray-200 text-sm">
           <button
             onClick={() => navigate(`/stockjournel/acceptStockJournal/${item.id}`)}
             disabled={item.journalStatus == 'FULLY_ACCEPTED'}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow hover:shadow-lg transform hover:-translate-y-0.5"
+            className="flex items-center   bg-primary text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow hover:shadow-lg transform hover:-translate-y-0.5"
           >
             <FcAcceptDatabase size={18} />
-            <span className="font-medium">Accept</span>
+            <span className="text-xs">Accept</span>
           </button>
         </td>
 
@@ -312,7 +312,7 @@ const ViewStockJournels = () => {
                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
-                            <span className="text-lg">Search</span>
+                            <span className="text-xs">Search</span>
                           </div>
                           <div className="absolute inset-0 border-2 border-white/20 rounded-2xl group-hover:border-white/40 transition-all duration-300"></div>
                         </button>
