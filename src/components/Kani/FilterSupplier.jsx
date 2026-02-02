@@ -592,7 +592,7 @@ const closeUpdateChallan = () => {
             {openDropdownId === orderProduct.id && (
               <div
                 ref={dropdownRef}
-                className="fixed z-50 mt-2 w-72 bg-white border border-gray-300 rounded-lg shadow-xl"
+                className="fixed z-50 mt-2 w-72 bg-white border border-gray-300 rounded-lg shadow-xl "
                 style={{
                   top: `${dropdownPos.top}px`,
                   left: `${dropdownPos.left}px`,
