@@ -178,7 +178,7 @@ const ViewStockJournels = () => {
               View Stock Journal
             </h2>
             <p className="inline-flex rounded-full bg-opacity-10 py-1 px-3 mb-2 text-sm font-medium bg-success text-success dark:bg-white dark:text-slate-800">
-              Total PO: {pagination.totalItems}
+              Total SJ: {pagination.totalItems}
             </p>
           </div>
           <div>

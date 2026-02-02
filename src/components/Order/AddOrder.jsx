@@ -668,7 +668,7 @@ const AddOrder = () => {
                                   <button
                                     type="button"
                                     onClick={() => setIsCustomerModalOpen(true)}
-                                    className="mt-10 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                                    className="mt-10 max-w-xs px-4 py-2 bg-primary text-white rounded hover:bg-blue-600 transition-colors"
                                   >
                                     Add New Customer
                                   </button>
@@ -762,7 +762,7 @@ const AddOrder = () => {
                                 }
                                 dateFormat="yyyy-MM-dd" // Display format in the picker
                                 placeholderText="Select Order Date"
-                                className="form-datepicker w-[430px] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                               />
                             )}
                           </Field>
