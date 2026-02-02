@@ -286,7 +286,7 @@ const VerifyStockJournals = () => {
                 <div className="flex flex-col gap-9">
                   {/* Form fields */}
                   <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                  
+
                     <div className="p-6.5">
                       <div className="flex flex-col gap-4">
                         <div className="bg-gradient-to-br from-white/20 to-white/5 dark:from-gray-900/50 dark:to-gray-800/50 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-white/20 dark:border-gray-700/50">
@@ -527,31 +527,68 @@ const VerifyStockJournals = () => {
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <Field
                                     name={`stockJournal[${index}].acceptedQty`}
+                                    min="1"
+                                    type="number"
                                     onChange={(e) => {
                                       const transferedQty = Number(values.stockJournal[index]?.transferedQuantity) || 0;
-                                      const inputQty = Number(e.target.value) || 0;
+                                      const inputValue = e.target.value;
+                                      const inputQty = Number(inputValue) || 0;
+
+                                      // Handle empty input (when user clears the field)
+                                      if (inputValue === '') {
+                                        setFieldValue(`stockJournal[${index}].acceptedQty`, '');
+                                        setFieldValue(`stockJournal[${index}].rejectedQty`, transferedQty);
+                                        return;
+                                      }
+
+                                      // Handle 0 value
+                                      if (inputQty === 0) {
+                                        toast.error("Accepted Quantity cannot be 0");
+                                        setFieldValue(`stockJournal[${index}].acceptedQty`, '');
+                                        setFieldValue(`stockJournal[${index}].rejectedQty`, transferedQty);
+                                        return;
+                                      }
+
+                                      // Handle greater than transfered quantity
                                       if (inputQty > transferedQty) {
                                         toast.error("Accepted Quantity cannot be greater than Transfered Quantity");
                                         setFieldValue(`stockJournal[${index}].acceptedQty`, transferedQty);
+                                        setFieldValue(`stockJournal[${index}].rejectedQty`, 0);
                                         return;
                                       }
-                                      else if (inputQty === 0) {
-                                        toast.error("0 cannot be accepted");
-                                        setFieldValue(`stockJournal[${index}].acceptedQty`, 1);
-                                        setFieldValue(`stockJournal[${index}].rejectedQty`, transferedQty - 1);
-                                        return;
-                                      }
+
+                                      // Valid input - calculate rejected quantity
                                       const rejectedQty = transferedQty - inputQty;
                                       setFieldValue(`stockJournal[${index}].rejectedQty`, rejectedQty);
-                                      const newValue = e.target.value;
-                                      console.log(`New Product ID: ${newValue}`);
-                                      setFieldValue(
-                                        `stockJournal[${index}].acceptedQty`,
-                                        newValue
-                                      );
+                                      setFieldValue(`stockJournal[${index}].acceptedQty`, inputValue);
+                                    }}
+                                    onBlur={(e) => {
+                                      // Additional validation on blur
+                                      const value = e.target.value;
+                                      const numValue = Number(value) || 0;
+                                      const transferedQty = Number(values.stockJournal[index]?.transferedQuantity) || 0;
+
+                                      if (value === '' || numValue === 0) {
+                                        setFieldValue(`stockJournal[${index}].acceptedQty`, '');
+                                        setFieldValue(`stockJournal[${index}].rejectedQty`, transferedQty);
+                                      } else if (numValue > transferedQty) {
+                                        setFieldValue(`stockJournal[${index}].acceptedQty`, transferedQty);
+                                        setFieldValue(`stockJournal[${index}].rejectedQty`, 0);
+                                      }
+                                    }}
+                                    validate={(value) => {
+                                      const numValue = Number(value) || 0;
+                                      const transferedQty = Number(values.stockJournal[index]?.transferedQuantity) || 0;
+
+                                      if (value === '' || numValue === 0) {
+                                        return "Accepted Quantity cannot be empty or 0";
+                                      }
+                                      if (numValue > transferedQty) {
+                                        return "Cannot exceed transferred quantity";
+                                      }
                                     }}
                                     className="w-[150px] bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                    placeholder="Enter Recieved Quantity"
+                                    placeholder="Enter Received Quantity"
                                   />
                                   <ErrorMessage
                                     name={`stockJournal[${index}].acceptedQty`}
@@ -603,37 +640,36 @@ const VerifyStockJournals = () => {
                                   />
                                 </td>
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <div className="flex flex-col items-center gap-1">
-      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${
-        item.transferStatus === "partially_accepted"
-          ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800"
-          : item.transferStatus === "fully_accepted"
-          ? "bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-200 dark:border-green-700"
-          : "bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800"
-      }`}>
-        {item.transferStatus === "partially_accepted" ? (
-          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-          </svg>
-        ) : item.transferStatus === "fully_accepted" ? (
-          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-          </svg>
-        ) : (
-          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        )}
-        <span className="capitalize">{item.transferStatus?.replace('_', ' ')}</span>
-      </span>
-      <span className="text-xs text-gray-500 dark:text-gray-400">
-        {item.transferStatus === "partially_accepted" ? "Partially Verified" :
-         item.transferStatus === "fully_accepted" ? "Fully Verified" :
-         "Not Verified"}
-      </span>
-    </div>
-                                
-                                                                </td>
+                                  <div className="flex flex-col items-center gap-1">
+                                    <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${item.transferStatus === "partially_accepted"
+                                      ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800"
+                                      : item.transferStatus === "fully_accepted"
+                                        ? "bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-200 dark:border-green-700"
+                                        : "bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800"
+                                      }`}>
+                                      {item.transferStatus === "partially_accepted" ? (
+                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                      ) : item.transferStatus === "fully_accepted" ? (
+                                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                        </svg>
+                                      ) : (
+                                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                      )}
+                                      <span className="capitalize">{item.transferStatus?.replace('_', ' ')}</span>
+                                    </span>
+                                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                                      {item.transferStatus === "partially_accepted" ? "Partially Verified" :
+                                        item.transferStatus === "fully_accepted" ? "Fully Verified" :
+                                          "Not Verified"}
+                                    </span>
+                                  </div>
+
+                                </td>
                                 {/* Radio Button */}
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   {item.transferStatus === "PENDING" || item.transferStatus === "Pending" ? (

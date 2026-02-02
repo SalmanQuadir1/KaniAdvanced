@@ -311,7 +311,7 @@ const handleUpdate=(id)=>{
                                     <div className="flex justify-center">
                                         <button
                                             type="submit"
-                                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold h-12 w-[150px] rounded-lg"
+                                            className="bg-primary hover:bg-blue-600 text-white font-bold h-10 w-[150px] rounded-lg"
                                         >
                                             Search
                                         </button>
