@@ -138,7 +138,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {/* <!-- Menu Item Dashboard --> */}
               <NavLink
                 to="/chart"
-                className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes('chart') && 'bg-graydark dark:bg-meta-4'
+                className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes('chart') && 'bg-graydark dark:bg-meta-4'
                   }`}
               >
                 <svg
@@ -186,7 +186,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       {mode === "accounts" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
                             pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
                             }`}
@@ -228,7 +228,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/configurator/groups"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -242,7 +242,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/configurator/vouchers"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -254,7 +254,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/configurator/dayBook"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -267,7 +267,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/configurator/AddLut"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -292,7 +292,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         {mode === "kani" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
           <NavLink
             to="#"
-            className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4`}
+            className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4`}
             onClick={(e) => {
               e.preventDefault();
               sidebarExpanded
@@ -323,7 +323,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               <NavLink
                 to="/kaniOrders"
                 className={({ isActive }) =>
-                  'group flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 hover:text-white ' +
+                  'group flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 hover:text-white ' +
                   (isActive && '!text-white')
                 }
               >
@@ -355,7 +355,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       {mode === "accounts" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
                             pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
                             }`}
@@ -397,7 +397,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/inventory/addProductInventory"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -408,7 +408,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/Ledger/CreateLedger"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -421,7 +421,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/ledger/view"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -432,7 +432,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/ledger/AddBulk"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -458,7 +458,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       {mode === "accounts" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
                             pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
                             }`}
@@ -500,7 +500,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/inventory/addProductInventory"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -511,7 +511,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                              <NavLink
                               to="/configurator/vouchers"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -524,7 +524,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/Vouchers/view"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -554,7 +554,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 <NavLink
                   to="/configurator/addcustomergroup"
                   className={({ isActive }) =>
-                    'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                    'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                     (isActive && '!text-white')
                   }
                 >
@@ -588,7 +588,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       {mode === "production" && roles.some(role => ['ROLE_ADMIN', 'ROLE_ADMIN_SXR'].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
                             pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
                             }`}
@@ -630,7 +630,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               <NavLink
                                 to="/product/addProduct"
                                 className={({ isActive }) =>
-                                  'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                  'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                   (isActive && '!text-white')
                                 }
                               >
@@ -642,7 +642,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/product/viewProducts"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -654,7 +654,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/product/addExcelProduct"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -666,7 +666,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/product/addBulkInventory"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -692,7 +692,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
                             pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
                             }`}
@@ -734,7 +734,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/inventory/addProductInventory"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -747,7 +747,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/godown/viewGodown"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -774,7 +774,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
                             pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
                             }`}
@@ -816,7 +816,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/inventory/addProductInventory"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -829,7 +829,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/ledger/view"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -856,7 +856,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       {mode === "production" && roles.some(role => ['ROLE_ADMIN', 'ROLE_ADMIN_SXR'].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
                             pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
                             }`}
@@ -898,7 +898,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               <NavLink
                                 to="/configurator/addbudget"
                                 className={({ isActive }) =>
-                                  'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                  'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                   (isActive && '!text-white')
                                 }
                               >
@@ -910,7 +910,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/budget/viewBudget"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -932,7 +932,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {mode === "production" && roles.some(role => ['ROLE_ADMIN', 'ROLE_ADMIN_DLI', 'ROLE_EXECUTOR', 'ROLE_ADMIN_SXR', "ROLE_USER"].includes(role)) ? (
                 <NavLink
                   to="/Reports"
-                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 
                   }`}
                 >
                   <TbReport size={24} />
@@ -944,7 +944,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {mode === "production" && roles.some(role => ['ROLE_ADMIN', 'ROLE_EXECUTOR', 'ROLE_ADMIN_SXR'].includes(role)) ? (
                 <NavLink
                   to="/Order/ViewOrder"
-                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 
                   }`}
                 >
                   <FcSearch size={24} />
@@ -997,7 +997,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
                             pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
                             }`}
@@ -1042,7 +1042,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/inventory/viewProductInventory"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1071,7 +1071,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       {mode === "production" && roles.some(role => ['ROLE_ADMIN', "ROLE_ADMIN_DLI"].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
                             pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
                             }`}
@@ -1112,7 +1112,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/Order/addOrder"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1124,7 +1124,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/Order/ViewOrder"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1136,7 +1136,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/Order/ViewOrderCreated"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1166,7 +1166,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       {mode === "production" && roles.some(role => ['ROLE_ADMIN', "ROLE_ADMIN_DLI"].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
                             pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
                             }`}
@@ -1207,7 +1207,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/stockJournal/AddStockJournal"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1219,7 +1219,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/stockJournal/ViewStockJournal"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1231,7 +1231,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/Order/ViewOrderCreated"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1262,7 +1262,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
                             pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
                             }`}
@@ -1304,7 +1304,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/configurator/addunit"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1315,7 +1315,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/configurator/location"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1327,7 +1327,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/configurator/addcurrency"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1338,7 +1338,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/configurator/addSize"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1350,7 +1350,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/configurator/adddesign"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1361,7 +1361,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/configurator/addstyle"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1372,7 +1372,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/configurator/addproductgroup"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1384,7 +1384,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/configurator/addproductSubgroup"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1396,7 +1396,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/configurator/addcolorgroup"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1407,7 +1407,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/configurator/addproductcategory"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1418,7 +1418,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/configurator/addcustomergroup"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1429,7 +1429,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/configurator/addordertype"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1440,7 +1440,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/configurator/addgstclassification"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1471,7 +1471,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       {mode === "production" && roles.some(role => ['ROLE_ADMIN', "ROLE_ADMIN_DLI"].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
                             pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
                             }`}
@@ -1512,7 +1512,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/customer/addCustomer"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1523,7 +1523,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/customer/addCustomerBulk"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1534,7 +1534,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/customer/viewCustomer"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1562,7 +1562,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
                             pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
                             }`}
@@ -1603,7 +1603,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/supplier/add"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1614,7 +1614,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/supplier/addBulkSupplier"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1625,7 +1625,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/supplier/view"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
@@ -1672,7 +1672,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/auth' || pathname.includes('auth')) &&
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/auth' || pathname.includes('auth')) &&
                             'bg-graydark dark:bg-meta-4'
                             }`}
                           onClick={(e) => {
@@ -1741,7 +1741,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/auth/signup"
                               className={({ isActive }) =>
-                                'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
