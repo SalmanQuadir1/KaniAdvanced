@@ -336,13 +336,13 @@ const ViewVoucher = () => {
 
 
                 <td>
-                    <span onClick={() => navigate(`/voucher/create/${item.id}`)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> Add Entry</span>
+                    <span onClick={() => navigate(`/voucher/create/${item.id}`)} className=" view-badge bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> Add Entry</span>
                 </td>
 
                 {
                     item.typeOfVoucher == "Payment" && (
                         <td>
-                            <span onClick={() => navigate(`/voucherEntriesPayment/${item.id}`)} className="bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> View Entries</span>
+                            <span onClick={() => navigate(`/voucherEntriesPayment/${item.id}`)} className=" view-badge bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> View Entries</span>
                         </td>
                     )
 
@@ -352,7 +352,7 @@ const ViewVoucher = () => {
                 {
                     item.typeOfVoucher !== "Payment" && (
                         <td>
-                            <span onClick={() => navigate(`/voucherEntries/${item.id}`)} className="bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> View Entries</span>
+                            <span onClick={() => navigate(`/voucherEntries/${item.id}`)} className="view-badge bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> View Entries</span>
                         </td>
                     )
                 }

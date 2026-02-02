@@ -10,13 +10,15 @@
   }
 
 }
+
 .modal-backdrop {
   background-color: rgba(0, 0, 0, 0.5);
- 
+
 }
 
 .modal {
-  z-index: 1050; /* Ensure it's above other content */
+  z-index: 1050;
+  /* Ensure it's above other content */
 }
 
 /* For the entire scrollbar track */
@@ -164,10 +166,12 @@ table::-webkit-scrollbar-track {
     transform: scale(0, 0);
     opacity: 0.5;
   }
+
   20% {
     transform: scale(25, 25);
     opacity: 0.3;
   }
+
   100% {
     opacity: 0;
     transform: scale(40, 40);
@@ -350,15 +354,15 @@ table::-webkit-scrollbar-track {
   align-items: center !important;
   justify-content: center !important;
   gap: 6px !important;
-  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%) !important;
-  color: #065f46 !important;
+  background: linear-gradient(135deg, #333A48 0%, #333A48 100%) !important;
+  color: white !important;
   font-size: 12px !important;
   font-weight: 600 !important;
   letter-spacing: 0.5px !important;
   text-transform: uppercase !important;
   padding: 8px 16px !important;
   border-radius: 8px !important;
-  border: 1.5px solid #10b981 !important;
+  border: 1.5px solid #333A48 !important;
   cursor: pointer !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   white-space: nowrap !important;
@@ -372,7 +376,7 @@ table::-webkit-scrollbar-track {
 
 /* Hover Effect */
 .view-badge:hover {
-  background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%) !important;
+  background: linear-gradient(135deg, #b6c8ed 0%, #7a87a1 100%) !important;
   transform: translateY(-2px) !important;
   box-shadow: 0 4px 16px rgba(16, 185, 129, 0.25) !important;
   border-color: #059669 !important;
@@ -529,13 +533,13 @@ table::-webkit-scrollbar-track {
     min-width: 120px !important;
     height: 32px !important;
   }
-  
+
   .view-badge.large {
     font-size: 12px !important;
     padding: 8px 16px !important;
     min-width: 140px !important;
   }
-  
+
   .view-badge.small {
     font-size: 9px !important;
     padding: 4px 8px !important;
@@ -634,8 +638,24 @@ table start */
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: white;
-   background: linear-gradient(135deg, #333A48 0%, #1f2937 100%);
+  background: linear-gradient(135deg, #333A48 0%, #1f2937 100%);
   border-bottom: 2px solid #e5e7eb;
+
+    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  
+  /* Ensure content stays on one line */
+  word-break: keep-all;
+  overflow-wrap: normal;
+  
+  /* Better alignment */
+  position: relative;
+  vertical-align: middle;
+  
+  /* Add tooltip for truncated text */
+  cursor: help;
+  position: relative;
 }
 
 .min-w-full thead th:first-child {
@@ -690,7 +710,12 @@ table start */
   color: #4b5563;
   border-bottom: 1px solid #e5e7eb;
   transition: color 0.2s ease;
+
+  
 }
+
+
+
 
 .dark .min-w-full tbody td {
   color: #d1d5db;
@@ -722,18 +747,18 @@ table start */
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-  
+
   .min-w-full thead th,
   .min-w-full tbody td {
     padding: 0.75rem 1rem;
     font-size: 0.8125rem;
   }
-  
+
   .min-w-full thead th:first-child,
   .min-w-full tbody td:first-child {
     padding-left: 1rem;
   }
-  
+
   .min-w-full thead th:last-child,
   .min-w-full tbody td:last-child {
     padding-right: 1rem;
@@ -759,15 +784,15 @@ table start */
 
 /* Modern shadow effect */
 .shadow-table .min-w-full {
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 
-              0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
   border-radius: 0.75rem;
   overflow: hidden;
 }
 
 .dark .shadow-table .min-w-full {
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 
-              0 10px 10px -5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3),
+    0 10px 10px -5px rgba(0, 0, 0, 0.2);
 }
 
 /* Status indicators */
@@ -1064,23 +1089,23 @@ table start */
 .rounded.gradient-border {
   border: 2px solid transparent;
   background: linear-gradient(white, white) padding-box,
-              linear-gradient(135deg, #667eea 0%, #764ba2 100%) border-box;
+    linear-gradient(135deg, #667eea 0%, #764ba2 100%) border-box;
 }
 
 .dark .rounded.gradient-border {
   background: linear-gradient(#1f2937, #1f2937) padding-box,
-              linear-gradient(135deg, #667eea 0%, #764ba2 100%) border-box;
+    linear-gradient(135deg, #667eea 0%, #764ba2 100%) border-box;
 }
 
 /* Shadow effect */
 .rounded.shadow {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 
-              0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 .dark .rounded.shadow {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 
-              0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3),
+    0 4px 6px -2px rgba(0, 0, 0, 0.2);
 }
 
 /* With icon */
@@ -1371,11 +1396,11 @@ table start */
 
 /* third-party libraries CSS */
 
-.tableCheckbox:checked ~ div span {
+.tableCheckbox:checked~div span {
   @apply opacity-100;
 }
 
-.tableCheckbox:checked ~ div {
+.tableCheckbox:checked~div {
   @apply bg-primary border-primary;
 }
 
@@ -1408,7 +1433,8 @@ table start */
   @apply border-strokedark bg-meta-4 dark:border-strokedark dark:bg-meta-4;
 }
 
-.apexcharts-xaxistooltip, .apexcharts-yaxistooltip {
+.apexcharts-xaxistooltip,
+.apexcharts-yaxistooltip {
   @apply border-meta-4 bg-meta-4 text-bodydark dark:text-bodydark1;
 }
 

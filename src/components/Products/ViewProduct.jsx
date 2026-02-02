@@ -379,8 +379,8 @@ const ViewProduct = () => {
                                 onClick={() => openBOMModal(item.bom)}
                             > */}
                             <div className='flex flex-col gap-2 mx-3'>
-                                <span onClick={() => openINVENTORYModal(item.id)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[110px]"> VIEW INVENTORY</span>
-                                <span onClick={() => handleUpdateInventory(item?.id)} className=" bg-red-100 text-red-800 text-[10px] font-medium me-2  text-center py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400 cursor-pointer w-[110px]">UPDATE INVENTORY</span>
+                                <span onClick={() => openINVENTORYModal(item.id)} className="view-badge bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[110px]"> VIEW INVENTORY</span>
+                                <span onClick={() => handleUpdateInventory(item?.id)} className="view-badge bg-red-100 text-red-800 text-[10px] font-medium me-2  text-center py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400 cursor-pointer w-[110px]">UPDATE INVENTORY</span>
                             </div>
 
                             {/* </button> */}
@@ -555,8 +555,8 @@ const ViewProduct = () => {
                     {isImagesModalOpen && (
 
 
-                        <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center z-50">
-                            <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px] w-[870px] h-[400px] mt-[60px] dark:bg-slate-600 overflow-auto">
+                        <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center z-999">
+                            <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[300px] w-[270px] h-[400px] mt-[60px] dark:bg-slate-600 overflow-auto">
                                 <div className="text-right">
                                     <button onClick={() => setisImagesModalOpen(false)} className="text-red-500 text-xl font-bold">&times;</button>
                                 </div>
