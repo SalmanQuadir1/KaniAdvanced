@@ -671,7 +671,7 @@ const closeUpdateChallan = () => {
               onClick={() => handleViewSupplierProduct(orderProduct.id)}
               className="inline-block bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded
                          dark:bg-gray-700 dark:text-green-400 border border-green-400
-                         cursor-pointer hover:bg-green-200 transition-colors duration-200"
+                         cursor-pointer hover:bg-green-200 transition-colors duration-200 view-badge"
             >
               VIEW PRODUCT
             </span>
@@ -680,7 +680,7 @@ const closeUpdateChallan = () => {
                 onClick={() => handleAddProduct(orderProduct.id)}
                 className="inline-block mt-2 bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded
                           dark:bg-gray-700 dark:text-green-400 border border-green-400
-                          cursor-pointer hover:bg-green-200 transition-colors duration-200"
+                          cursor-pointer hover:bg-green-200 transition-colors duration-200 view-badge"
               >
                 ADD PRODUCT
               </span>
@@ -722,7 +722,7 @@ const closeUpdateChallan = () => {
 <button
     type="button"
     onClick={() => navigate("/kani-in-progress")} // or your specific path
-    className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90 transition"
+    className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90 transition view-badge"
   >
     In Progress Orders
   </button>

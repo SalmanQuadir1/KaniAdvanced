@@ -596,9 +596,10 @@ const KaniOrders = () => {
                           e.target.src = getPlaceholder("Ref");
                         }}
                       />
-                      <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-                        Ref {index + 1}
-                      </div>
+                     <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] px-1 py-[1px] rounded-sm">
+  Ref {index + 1}
+</div>
+
                     </div>
                   );
                 }
@@ -630,7 +631,7 @@ const KaniOrders = () => {
                           e.target.src = getPlaceholder("Act");
                         }}
                       />
-                      <div className="absolute bottom-2 right-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
+                      <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] px-1 py-[1px] rounded-sm">
                         Act {index + 1}
                       </div>
                     </div>
@@ -699,7 +700,7 @@ const KaniOrders = () => {
             <button
               type="button"
               onClick={() => navigate("/filter-suppliers")}
-              className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90 transition"
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90 transition view-badge"
             >
               Filter Suppliers
             </button>
