@@ -99,7 +99,7 @@ table::-webkit-scrollbar-track {
   border: none !important;
   border-radius: 12px !important;
   padding: 14px 28px !important;
-  font-size: 15px !important;
+  font-size: 12px !important;
   font-weight: 600 !important;
   letter-spacing: 0.3px !important;
   text-transform: uppercase !important;
@@ -615,7 +615,232 @@ table::-webkit-scrollbar-track {
 
 /* header :start */
 
+/* Modern .text-slate-500 styling - WITH BACKGROUND FOR WHITE BG */
+.text-slate-500 {
+  color: transparent !important;
+  background: linear-gradient(135deg, #334155 0%, #475569 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.15em !important;
+  text-transform: uppercase !important;
+ 
+  padding: 12px 24px !important;
+  border-radius: 12px !important;
+  background-color: rgba(241, 245, 249, 0.8) !important; /* Light blue-gray bg */
+  backdrop-filter: blur(8px) !important;
+  box-shadow: 
+    0 4px 12px rgba(100, 116, 139, 0.08),
+    0 1px 2px rgba(100, 116, 139, 0.05),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.8) !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  line-height: 1.6 !important;
 
+  margin-bottom: 1rem !important;
+  overflow: hidden !important;
+}
+
+/* Hover effect */
+.text-slate-500:hover {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 
+    0 8px 24px rgba(100, 116, 139, 0.15),
+    0 2px 4px rgba(100, 116, 139, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9) !important;
+  letter-spacing: 0.18em !important;
+  background-color: rgba(248, 250, 252, 0.95) !important; /* Lighter on hover */
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Animated border effect */
+.text-slate-500::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  border-radius: 10px !important;
+  padding: 2px !important;
+  background: linear-gradient(135deg, 
+    rgba(100, 116, 139, 0.2) 0%, 
+    rgba(71, 85, 105, 0.2) 25%,
+    rgba(148, 163, 184, 0.2) 50%,
+    rgba(203, 213, 225, 0.2) 75%,
+    rgba(100, 116, 139, 0.2) 100%) !important;
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0) !important;
+  -webkit-mask-composite: xor !important;
+  mask-composite: exclude !important;
+  animation: borderRotate 4s linear infinite !important;
+  opacity: 0.6 !important;
+}
+
+@keyframes borderRotate {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* For headings with .text-slate-500 */
+h1.text-slate-500,
+h2.text-slate-500,
+h3.text-slate-500,
+h4.text-slate-500 {
+  padding: 16px 32px !important;
+  background-color: rgba(241, 245, 249, 0.9) !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* Special heading underline */
+h1.text-slate-500::after,
+h2.text-slate-500::after,
+h3.text-slate-500::after,
+h4.text-slate-500::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: -6px !important;
+  left: 24px !important;
+  right: 24px !important;
+  height: 3px !important;
+  background: linear-gradient(90deg, 
+    rgba(100, 116, 139, 0.4) 0%, 
+    rgba(71, 85, 105, 0.6) 50%,
+    rgba(100, 116, 139, 0.4) 100%) !important;
+  border-radius: 1.5px !important;
+  transition: all 0.4s ease !important;
+  box-shadow: 0 2px 4px rgba(100, 116, 139, 0.1) !important;
+}
+
+h1.text-slate-500:hover::after,
+h2.text-slate-500:hover::after,
+h3.text-slate-500:hover::after,
+h4.text-slate-500:hover::after {
+  height: 4px !important;
+  background: linear-gradient(90deg, 
+    rgba(100, 116, 139, 0.6) 0%, 
+    rgba(71, 85, 105, 0.8) 50%,
+    rgba(100, 116, 139, 0.6) 100%) !important;
+  box-shadow: 0 4px 8px rgba(100, 116, 139, 0.2) !important;
+}
+
+/* Dark mode - subtle background for dark theme */
+.dark .text-slate-500 {
+  background: linear-gradient(135deg, #cbd5e1 0%, #e2e8f0 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  background-color: rgba(30, 41, 59, 0.6) !important; /* Dark blue-gray bg */
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.2),
+    0 1px 2px rgba(0, 0, 0, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .text-slate-500:hover {
+  background: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  background-color: rgba(51, 65, 85, 0.7) !important;
+  box-shadow: 
+    0 8px 24px rgba(0, 0, 0, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15) !important;
+}
+
+.dark .text-slate-500::before {
+  background: linear-gradient(135deg, 
+    rgba(148, 163, 184, 0.2) 0%, 
+    rgba(203, 213, 225, 0.2) 25%,
+    rgba(226, 232, 240, 0.2) 50%,
+    rgba(241, 245, 249, 0.2) 75%,
+    rgba(148, 163, 184, 0.2) 100%) !important;
+}
+
+/* For paragraphs with .text-slate-500 - Smaller bg */
+p.text-slate-500 {
+  padding: 8px 16px !important;
+  background-color: rgba(241, 245, 249, 0.6) !important;
+  line-height: 1.8 !important;
+  margin-bottom: 1.25rem !important;
+  font-size: 0.9375rem !important;
+  letter-spacing: 0.12em !important;
+}
+
+/* For small text with .text-slate-500 */
+small.text-slate-500,
+.text-sm.text-slate-500 {
+  padding: 4px 10px !important;
+  background-color: rgba(241, 245, 249, 0.5) !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.1em !important;
+  line-height: 1.8 !important;
+}
+
+/* Different bg styles */
+.text-slate-500.bg-gradient {
+  background-color: transparent !important;
+  background-image: 
+    linear-gradient(135deg, rgba(241, 245, 249, 0.9) 0%, rgba(226, 232, 240, 0.9) 100%),
+    linear-gradient(135deg, #334155 0%, #475569 100%) !important;
+  -webkit-background-clip: text, border-box !important;
+  background-clip: text, border-box !important;
+}
+
+.text-slate-500.bg-solid {
+  background-color: #f1f5f9 !important;
+  box-shadow: 
+    0 4px 12px rgba(100, 116, 139, 0.1),
+    inset 0 0 0 1px #e2e8f0 !important;
+}
+
+.dark .text-slate-500.bg-solid {
+  background-color: #1e293b !important;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.2),
+    inset 0 0 0 1px #334155 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .text-slate-500 {
+    padding: 10px 16px !important;
+    font-size: 0.8125rem !important;
+    letter-spacing: 0.1em !important;
+    line-height: 1.7 !important;
+  }
+  
+  h1.text-slate-500,
+  h2.text-slate-500,
+  h3.text-slate-500 {
+    padding: 12px 20px !important;
+    font-size: 1.125rem !important;
+    letter-spacing: 0.15em !important;
+  }
+}
+
+/* Remove bg for specific cases */
+.text-slate-500.no-bg {
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.text-slate-500.no-bg::before {
+  display: none !important;
+}
 
 /* end */
 
@@ -905,7 +1130,7 @@ table start */
   border: 2px solid #e5e7eb;
   background-color: white;
   padding: 0.875rem 1.25rem;
-  font-size: 0.9375rem;
+  /* font-size: 0.9375rem; */
   color: #1f2937;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   outline: none;
