@@ -3172,7 +3172,7 @@ const CreateVoucher = () => {
                                                 <button
                                                     type="submit"
                                                     disabled={isSubmitting}
-                                                    className="flex md:w-[120px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
+                                                    className="flex md:w-[220px] w-[270px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                                 >
                                                     {isSubmitting ? 'Saving...' : 'Create Voucher'}
                                                 </button>
