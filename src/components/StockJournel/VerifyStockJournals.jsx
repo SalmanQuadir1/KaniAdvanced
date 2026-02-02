@@ -286,21 +286,17 @@ const VerifyStockJournals = () => {
                 <div className="flex flex-col gap-9">
                   {/* Form fields */}
                   <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                    <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                      <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                        Verify Stock Journal
-                      </h3>
-                    </div>
+                  
                     <div className="p-6.5">
                       <div className="flex flex-col gap-4">
                         <div className="bg-gradient-to-br from-white/20 to-white/5 dark:from-gray-900/50 dark:to-gray-800/50 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-white/20 dark:border-gray-700/50">
                           <div className="flex flex-col items-center mb-8">
-                            <div className="p-3 mb-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-xl">
+                            <div className="p-3 mb-3 bg-primary rounded-2xl shadow-xl">
                               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                               </svg>
                             </div>
-                            <h3 className="text-2xl font-bold text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text">
+                            <h3 className="text-2xl font-bold text-transparent bg-primary bg-clip-text">
                               Journal Details
                             </h3>
                             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Complete journal information</p>
@@ -369,7 +365,7 @@ const VerifyStockJournals = () => {
                           </div>
                         </div>
                       </div>
-                      <h6 className='text-sm text-red-500'> * Hover On The Field To View The Full Title</h6>
+                      <h6 className='text-sm text-red-500 mt-3'> * Hover On The Field To View The Full Title</h6>
 
 
 
@@ -607,27 +603,37 @@ const VerifyStockJournals = () => {
                                   />
                                 </td>
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                  <Field
-                                    type="text"
-                                    name={`stockJournal[${index}].transferStatus`}
-                                    readOnly
-                                    // onChange={(e) => {
-                                    //   const newValue = e.target.value;
-                                    //   console.log(`New Product ID: ${newValue}`);
-                                    //   setFieldValue(
-                                    //     `orderProducts[${index}].products.productId`,
-                                    //     newValue
-                                    //   );
-                                    // }}
-                                    className="w-[150px] bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                  // placeholder="Enter Transfer Status"
-                                  />
-                                  <ErrorMessage
-                                    name={`stockJournal[${index}].transferStatus`}
-                                    component="div"
-                                    className="text-red-600 text-sm"
-                                  />
-                                </td>
+                                <div className="flex flex-col items-center gap-1">
+      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${
+        item.transferStatus === "partially_accepted"
+          ? "bg-green-50 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800"
+          : item.transferStatus === "fully_accepted"
+          ? "bg-green-100 text-green-800 border-green-300 dark:bg-green-900 dark:text-green-200 dark:border-green-700"
+          : "bg-red-50 text-red-700 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-800"
+      }`}>
+        {item.transferStatus === "partially_accepted" ? (
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+          </svg>
+        ) : item.transferStatus === "fully_accepted" ? (
+          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
+        ) : (
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        )}
+        <span className="capitalize">{item.transferStatus?.replace('_', ' ')}</span>
+      </span>
+      <span className="text-xs text-gray-500 dark:text-gray-400">
+        {item.transferStatus === "partially_accepted" ? "Partially Verified" :
+         item.transferStatus === "fully_accepted" ? "Fully Verified" :
+         "Not Verified"}
+      </span>
+    </div>
+                                
+                                                                </td>
                                 {/* Radio Button */}
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   {item.transferStatus === "PENDING" || item.transferStatus === "Pending" ? (
