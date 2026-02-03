@@ -260,7 +260,11 @@ const ViewLedger = () => {
                 <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.groupName} </p>
                 </td>
-                {
+  <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.ledgerType
+} </p>
+                </td>
+                {/* {
                     item.supplierName ? (
                         <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                             <p className="text-gray-900 whitespace-no-wrap">Supplier</p>
@@ -272,7 +276,7 @@ const ViewLedger = () => {
                     ) : <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                         <p className="text-gray-900 whitespace-no-wrap">null</p>
                     </td>
-                }
+                } */}
                 {/* <td className="px-5 py-5  text-sm">
                     <div className="flex items-center gap-2">
                         <span className="text-gray-900">{item?.openingBalances}</span>
