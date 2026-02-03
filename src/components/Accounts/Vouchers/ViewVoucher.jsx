@@ -302,15 +302,41 @@ const ViewVoucher = () => {
                 </td>
                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.typeOfVoucher} </p>
+
+
+                </td>
+
+                <td>
+                    <span onClick={() => navigate(`/voucher/create/${item.id}`)} className=" view-badge bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> Add Entry</span>
+                </td>
+
+                {
+                    item.typeOfVoucher == "Payment" && (
+                        <td>
+                            <span onClick={() => navigate(`/voucherEntriesPayment/${item.id}`)} className=" view-badge bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> View Entries</span>
+                        </td>
+                    )
+
+                }
+
+
+                {
+                    item.typeOfVoucher !== "Payment" && (
+                        <td>
+                            <span onClick={() => navigate(`/voucherEntries/${item.id}`)} className="view-badge bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> View Entries</span>
+                        </td>
+                    )
+                }
+
+                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
+                    <IoIosAdd size={30} onClick={() => navigate(`/configurator/vouchers/${item.id}`)} />
                 </td>
 
 
                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.defGstRegist && item?.defGstRegist?.state} </p>
                 </td>
-                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
-                    <IoIosAdd size={30} onClick={() => navigate(`/configurator/vouchers/${item.id}`)} />
-                </td>
+
                 <td className="px-5 py-5  text-sm">
                     <label className="inline-flex items-center cursor-pointer">
                         <input
@@ -335,27 +361,7 @@ const ViewVoucher = () => {
 
 
 
-                <td>
-                    <span onClick={() => navigate(`/voucher/create/${item.id}`)} className=" view-badge bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> Add Entry</span>
-                </td>
 
-                {
-                    item.typeOfVoucher == "Payment" && (
-                        <td>
-                            <span onClick={() => navigate(`/voucherEntriesPayment/${item.id}`)} className=" view-badge bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> View Entries</span>
-                        </td>
-                    )
-
-                }
-
-
-                {
-                    item.typeOfVoucher !== "Payment" && (
-                        <td>
-                            <span onClick={() => navigate(`/voucherEntries/${item.id}`)} className="view-badge bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> View Entries</span>
-                        </td>
-                    )
-                }
                 {/* <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     {item.products &&
                         item.products.map((prodId, index) => (
@@ -530,11 +536,12 @@ const ViewVoucher = () => {
 
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">VoucherName</th>
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Voucher Type</th>
-                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">GST REGISTRATION</th>
-                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">ADD SUB VOUCHER</th>
-                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Activation Status</th>
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Add Entries</th>
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Entries</th>
+                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">ADD SUB VOUCHER</th>
+                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">GST REGISTRATION</th>
+                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Activation Status</th>
+
                                         {/* <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 
                                         <th className="px-5 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>

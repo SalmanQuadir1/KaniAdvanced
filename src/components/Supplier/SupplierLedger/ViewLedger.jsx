@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customStyles as createCustomStyles } from '../../../Constants/utils';
 import { MdCreateNewFolder } from "react-icons/md";
-
+import useLedger from '../../../hooks/useLedger';
 
 
 
@@ -26,26 +26,38 @@ const productgrp = [
 
 const ViewLedger = () => {
 
-    const { handleUpdate, getLedgerNumber, OrderNo, getSupplier, productId,
-        getprodId, supplier, getCustomer, customer } = useOrder();
+    const { ledgerName, getLedgerName } = useLedger()
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
     const [isLoading, setisLoading] = useState(false)
     const customStyles = createCustomStyles(theme?.mode);
     const [prodIdOptions, setprodIdOptions] = useState([])
+
+    const [ledgerNameOptions, setledgerNameOptions] = useState([])
+
+
     useEffect(() => {
-
-        getSupplier();
-
+        getLedgerName()
 
 
-    }, []);
+        const formattedLedgerName = ledgerName?.map(ledg => ({
+            label: ledg?.name,
+            value: ledg?.name
+        }));
+        setledgerNameOptions(formattedLedgerName);
+    }, [])
 
+    console.log(ledgerName,"llllllllllllllllllllllllllllllllllllllllllllll");
+    
+ const formattedLedgerName = ledgerName?.map(ledg => ({
+            label: ledg?.name,
+            value: ledg?.name
+        }));
 
 
     const { token } = currentUser;
 
-    console.log(productId, "huhuuhuuuuuuuuuuuuuuuuu");
+
 
     const [Ledger, setLedger] = useState()
 
@@ -58,17 +70,21 @@ const ViewLedger = () => {
     const navigate = useNavigate();
 
 
-    console.log(supplier, customer, productId, "LedgerNo");
 
 
 
-    const formattedSupplier = supplier.map(supplier => ({
-        label: supplier.name,
-        value: supplier.name
-    }));
+
+
+    
     const LedgerType = [
         { value: 'supplier', label: 'supplier' },
         { value: 'customer', label: 'customer' },
+        { value: 'cash', label: 'cash' },
+        { value: 'sales', label: 'sales' },
+        { value: 'purchase', label: 'purchase' },
+        { value: 'GIFTVOUCHER', label: 'gift voucher' },
+        { value: 'bank', label: 'bank' },
+
 
     ];
 
@@ -95,17 +111,17 @@ const ViewLedger = () => {
     });
 
 
-    useEffect(() => {
-        if (supplier.data) {
-            const formattedOptions = supplier.data.map(supp => ({
-                value: supp.id,
-                label: supp?.name,
-                supplierNameObject: supp,
-                suplierid: { id: supp.id }
-            }));
-            setsupplierNameOptions(formattedOptions);
-        }
-    }, [supplier.data]);
+    // useEffect(() => {
+    //     if (supplier.data) {
+    //         const formattedOptions = supplier.data.map(supp => ({
+    //             value: supp.id,
+    //             label: supp?.name,
+    //             supplierNameObject: supp,
+    //             suplierid: { id: supp.id }
+    //         }));
+    //         setsupplierNameOptions(formattedOptions);
+    //     }
+    // }, [supplier.data]);
 
 
 
@@ -260,9 +276,9 @@ const ViewLedger = () => {
                 <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.groupName} </p>
                 </td>
-  <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
+                <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.ledgerType
-} </p>
+                    } </p>
                 </td>
                 {/* {
                     item.supplierName ? (
@@ -388,7 +404,8 @@ const ViewLedger = () => {
 
 
             // name: values.supplierName || undefined,
-            type: values?.type || undefined
+            name: values?.ledgerName || undefined,
+            type: values?.type || undefined,
 
 
         };
@@ -1196,6 +1213,7 @@ const ViewLedger = () => {
                                 // supplierName: "",
                                 // ProductId: "",
                                 type: "",
+                                ledgerName:"",
 
 
 
@@ -1240,15 +1258,15 @@ const ViewLedger = () => {
                                                 <ReactSelect
                                                     name="ledgerName"
 
-                                                    value={productgrp.find(option => option.value === values.customerName)}
-                                                    onChange={(option) => setFieldValue('supplierName', option ? option.value : null)}
+                                                    value={formattedLedgerName.find(option => option.value === values.ledgerName)}
+                                                    onChange={(option) => setFieldValue('ledgerName', option ? option.value : null)}
                                                     // options={formattedSupplier}
 
-                                                    options={[{ label: 'View All Suppliers', value: null }, ...formattedSupplier]}
-                                                    styles={customStyles} // Pass custom styles here
+                                                    options={[{ label: 'View All Ledgers', value: null }, ...formattedLedgerName]}
+                                                    styles={customStyles} 
                                                     className="bg-white dark:bg-form-Field"
                                                     classNamePrefix="react-select"
-                                                    placeholder="Select supplier Name"
+                                                    placeholder="Select Ledger Name"
                                                 />
                                             </div>
                                         </div>
