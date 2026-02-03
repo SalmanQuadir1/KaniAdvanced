@@ -65,7 +65,7 @@ const Unit = () => {
                                     <div className="p-6.5">
                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white">UNIT NAME</label>
+                                                <label className="mb-2.5 block text-black dark:text-white">UNIT NAME <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="name"
@@ -78,7 +78,7 @@ const Unit = () => {
                                         <div className="flex justify-center mt-4 items-center">
                                             <button
                                                 type="submit"
-                                                className="flex md:w-[120px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
+                                                className="flex md:w-[230px] w-[190px] md:h-[37px] h-[47px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                                 disabled={isSubmitting}
                                             >
                                                 {edit ? 'UPDATE UNIT' : 'CREATE UNIT'}
@@ -91,7 +91,7 @@ const Unit = () => {
                                     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                                         <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                                             <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                                                <div className="flex justify-center items-center p-3">
+                                                {/* <div className="flex justify-center items-center p-3">
                                                     <input
                                                         type="text"
                                                         name="search"
@@ -100,7 +100,7 @@ const Unit = () => {
                                                         onChange={(e) => setsearchvalue(e.target.value)}
                                                     />
                                                     <button type="button" className="w-[80px] md:h-10 rounded-lg bg-blue-700 text-white dark:bg-blue-600 text-sm dark:text-slate-200 ml-4" onClick={handleSearch}>Search</button>
-                                                </div>
+                                                </div> */}
                                                 <ViewTable units={units} searchvalue={searchvalue} pagination={pagination} totalItems={pagination.totalItems} title={'Unit'} handleDelete={handleDelete} handleUpdate={handleUpdate} />
                                                 <Pagination
                                                     totalPages={pagination.totalPages}

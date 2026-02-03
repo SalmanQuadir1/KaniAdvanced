@@ -11,7 +11,7 @@ import { FaBook } from "react-icons/fa6";
 import { TiTickOutline } from "react-icons/ti";
 const ViewSupplier = () => {
 
-  const navigate= useNavigate()
+  const navigate = useNavigate()
   const { Supplier, getSupplier, handleDelete, pagination, handleUpdate, handlePageChange, GetSupplierById } = useSupplier();
   const [showModal, setShowModal] = useState(false);
   const [selectedMaterialPos, setSelectedMaterialPos] = useState([]);
@@ -31,20 +31,20 @@ const ViewSupplier = () => {
   };
 
   const filteredSupplier = Supplier?.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
-console.log(filteredSupplier,"filteredddddddddddddd");
+  console.log(filteredSupplier, "filteredddddddddddddd");
   const renderTableRows = () => {
     if (!filteredSupplier || !filteredSupplier.length) return (
       <tr>
         <td colSpan="6" className="text-center">No results found</td>
       </tr>
     );
-  
+
     const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
     return filteredSupplier.map((item, index) => (
       <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
         <td className="px-5 py-5 border-b border-gray-200 text-sm">
           <p className="text-gray-900 whitespace-no-wrap">
-          {startingSerialNumber + index}
+            {startingSerialNumber + index}
           </p>
         </td>
         <td className="px-5 py-5 border-b border-gray-200 text-sm">
@@ -65,16 +65,16 @@ console.log(filteredSupplier,"filteredddddddddddddd");
         </td>
         <td className="px-5 py-5  border-b border-gray-200  text-sm">
           <p className="flex text-gray-900 whitespace-no-wrap">
-            <FaBook size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={(e) => navigate(`/supplier/updateLedger/${item.id}`)} title='Update Ledger' />  
-           
+            <FaBook size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={(e) => navigate(`/supplier/updateLedger/${item.id}`)} title='Update Ledger' />
+
           </p>
         </td>
         <td className="px-5 py-5  border-b border-gray-200  text-sm">
           <p className="flex text-gray-900 whitespace-no-wrap">
-           {
-            item?.updateLedger && <TiTickOutline size={30}/>
-           }
-           
+            {
+              item?.updateLedger && <TiTickOutline size={30} />
+            }
+
           </p>
         </td>
 
@@ -93,27 +93,31 @@ console.log(filteredSupplier,"filteredddddddddddddd");
       <Breadcrumb pageName="Supplier / View Supplier" />
       <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
         <div className="pt-5">
-       
-         <div className='flex flex-row items-center justify-between w-full'>
-  <h2 className="text-xl text-slate-500 font-semibold w-full flex items-center justify-between">
-    <span>View SUPPLIER</span>
-    <span className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-blue-900/20 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-800/30 text-sm font-semibold text-blue-700 dark:text-blue-300 ml-4">
-      TOTAL SUPPLIERS: {pagination.totalItems}
-    </span>
-  </h2>
-</div>
 
-   <div className="flex justify-center items-center p-3">
+          <div className='flex flex-row items-center justify-between w-full'>
+            <h2 className="text-xl text-slate-500 font-semibold w-full flex items-center justify-between">
+              <span>SUPPLIER VIEW</span>
+              <span className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-blue-900/20 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-800/30 text-sm font-semibold text-blue-700 dark:text-blue-300 ml-4">
+                TOTAL SUPPLIERS: {pagination.totalItems}
+              </span>
+            </h2>
+          </div>
+
+          <div className="flex items-center">
             <input
               type="text"
               name="search"
               placeholder="Search by Name"
-              className="w-[300px] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+              className="w-[180px] h-9 rounded-lg border-2 border-gray-300 bg-white py-2 px-4 text-sm text-gray-700 outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:focus:border-blue-500 dark:focus:ring-blue-900/50"
               value={searchQuery}
               onChange={handleSearch}
             />
-            <button className='w-[80px] h-12 rounded-lg bg-blue-700 text-white dark:bg-blue-600 dark:text-slate-300  ml-4'>Search</button>
+            <button className='ml-3 h-9 px-4 rounded-lg bg-primary text-white text-sm font-medium hover:bg-blue-700 transition-colors dark:bg-blue-700 dark:hover:bg-blue-600'>
+              Search
+            </button>
           </div>
+
+
           <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
             <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
               <table className="min-w-full leading-normal">

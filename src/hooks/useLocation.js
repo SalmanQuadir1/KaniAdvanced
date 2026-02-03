@@ -11,8 +11,8 @@ const useLocation = () => {
     const [edit, setEdit] = useState(false);
     const [currentLocation, setCurrentLocation] = useState({
         address: "",
-        locationId:"",
-        locationName:"",
+        locationId: "",
+        locationName: "",
         city: "",
         state: "",
         gstin: "",
@@ -24,7 +24,7 @@ const useLocation = () => {
         data: [],
         totalPages: 0,
         currentPage: 1,
-        itemsPerPage:0
+        itemsPerPage: 0
     });
 
     useEffect(() => {
@@ -41,13 +41,16 @@ const useLocation = () => {
                 }
             });
             const data = await response.json();
-            setLocation(data.content);
+            setLocation(data.content.map(item => {
+                const { locationId, ...rest } = item;
+                return rest;
+            }));
             setPagination({
                 totalItems: data.totalElements,
                 pagUnitList: data.content,
                 totalPages: data.totalPages,
                 currentPage: data.number + 1,
-                itemsPerPage:data.size
+                itemsPerPage: data.size
             });
         } catch (error) {
             console.error(error);

@@ -48,7 +48,7 @@ const HsnCode = () => {
                                     <div className="p-6.5">
                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> HSN CODE</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> HSN CODE <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="hsnCodeName"
@@ -58,7 +58,7 @@ const HsnCode = () => {
                                                 <ErrorMessage name="hsnCodeName" component="div" className="text-red-500" />
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> IGST (%)</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> IGST (%) <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="number"
                                                     name="igst"
@@ -71,7 +71,7 @@ const HsnCode = () => {
                                         <div className="mb-4.5 flex flex-wrap gap-6">
 
                                                <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Gst (%)</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Gst (%)<span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="number"
                                                     name="gst"
@@ -88,7 +88,7 @@ const HsnCode = () => {
                                                 <ErrorMessage name="gst" component="div" className="text-red-500" />
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> CGST (%)</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> CGST (%) <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="number"
                                                     name="cgst"
@@ -98,7 +98,7 @@ const HsnCode = () => {
                                                 <ErrorMessage name="cgst" component="div" className="text-red-500" />
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> SGST (%)</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> SGST (%) <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="number"
                                                     name="sgst"
@@ -125,8 +125,8 @@ const HsnCode = () => {
                                            
                                         </div>
                                         <div className="flex justify-center mt-4 items-center">
-                                            <button type="submit" className="flex md:w-[240px] w-[230px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90">
-                                                {edit ? "UPDATE GST CLASSIFICATION" : "CREATE GST CLASSIFICATION"}
+                                            <button type="submit" className="flex md:w-[230px] w-[190px] md:h-[37px] h-[47px] justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4">
+                                                {edit ? "UPDATE GST" : "ADD GST CLASSIFICATION"}
                                             </button>
                                         </div>
                                     </div>

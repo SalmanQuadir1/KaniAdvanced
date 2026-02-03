@@ -183,7 +183,7 @@ const AddSupplier = () => {
                                     <div className="p-6.5">
                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white">Supplier Code</label>
+                                                <label className="mb-2.5 block text-black dark:text-white">Supplier Code <span className="text-red-500">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="supplierCode"
@@ -193,7 +193,7 @@ const AddSupplier = () => {
                                                 <ErrorMessage name="supplierCode" component="div" className="text-red-500" />
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white">Name</label>
+                                                <label className="mb-2.5 block text-black dark:text-white">Name<span className="text-red-500">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="name"
@@ -203,7 +203,7 @@ const AddSupplier = () => {
                                                 <ErrorMessage name="name" component="div" className="text-red-500" />
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white">Phone</label>
+                                                <label className="mb-2.5 block text-black dark:text-white">Phone<span className="text-red-500">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="phoneNumber"
@@ -223,7 +223,7 @@ const AddSupplier = () => {
                                                 <ErrorMessage name="emailId" component="div" className="text-red-500" />
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white">Address</label>
+                                                <label className="mb-2.5 block text-black dark:text-white">Address<span className="text-red-500">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="address"
@@ -247,7 +247,7 @@ const AddSupplier = () => {
                                                 <ErrorMessage name="supplierType" component="div" className="text-red-600 text-sm" />
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white">Bank Name</label>
+                                                <label className="mb-2.5 block text-black dark:text-white">Bank Name<span className="text-red-500">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="bankName"
@@ -257,7 +257,7 @@ const AddSupplier = () => {
                                                 <ErrorMessage name="bankName" component="div" className="text-red-500" />
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white">Bank Account Number</label>
+                                                <label className="mb-2.5 block text-black dark:text-white">Bank Account Number<span className="text-red-500">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="accountNo"
@@ -267,7 +267,7 @@ const AddSupplier = () => {
                                                 <ErrorMessage name="accountNo" component="div" className="text-red-500" />
                                             </div>
                                             <div className="min-w-[320px] sm:min-w-[400px]">
-                                                <label className="mb-2.5 block text-black dark:text-white">IFSC Code</label>
+                                                <label className="mb-2.5 block text-black dark:text-white">IFSC Code<span className="text-red-500">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="ifscCode"
@@ -381,7 +381,7 @@ const AddSupplier = () => {
                                                 </>
                                             )}
                                          <div className="flex justify-center mt-4 items-center">
-                                        <button type="submit" className="flex w-[300px] justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4">
+                                        <button type="submit" className="flex md:w-[230px] w-[190px] md:h-[37px] h-[47px] justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4">
                                             Add Supplier
                                         </button>
                                         </div>

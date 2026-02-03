@@ -329,9 +329,20 @@ const ViewLedger = () => {
                     </div>
                 </td> */}
 
-                <td className='whitespace-nowrap px-5 py-5 bLedger-b bLedger-gray-200 text-sm'>
-                    <span onClick={() => openLEDGERModal(item)} className="view-badge bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> VIEW LEDGER</span>
-                </td>
+              <td className='whitespace-nowrap px-5 py-5 bLedger-b bLedger-gray-200 text-sm'>
+  <span 
+    onClick={() => openLEDGERModal(item)} 
+    className="view-badge bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer inline-block w-[10%] min-w-[60px]"
+     style={{ 
+     
+      width: "2% !important",
+      minWidth: "10px !important"
+    }}
+  
+  >
+    VIEW
+  </span>
+</td>
                 {/* <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     {item.products &&
                         item.products.map((prodId, index) => (
@@ -359,7 +370,7 @@ const ViewLedger = () => {
 
 
 
-                <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
+                {/* <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
                         <FiEdit
                             size={17}
@@ -387,7 +398,7 @@ const ViewLedger = () => {
                             title="Delete Product"
                         />
                     </p>
-                </td>
+                </td> */}
 
             </tr>
         ));
@@ -1304,10 +1315,10 @@ const ViewLedger = () => {
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">LedgerType</th>
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Opening Balance <br /> (as of {openingBalancesDate})</th>
                                         {/* <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Closing Balance</th> */}
-                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Ledger</th>
+                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Ledger Transactions</th>
                                         {/* <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 
-                                        <th className="px-5 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+                                        {/* <th className="px-5 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th> */}
                                     </tr>
                                 </thead>
                                 <tbody>

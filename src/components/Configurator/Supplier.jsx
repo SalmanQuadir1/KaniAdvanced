@@ -117,7 +117,7 @@ const Supplier = () => {
                                         <div className="mb-4.5 flex flex-wrap gap-6">
 
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Name</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Name <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="name"
@@ -128,7 +128,7 @@ const Supplier = () => {
 
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Phone</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Phone <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="Number"
                                                     name="phoneNumber"
@@ -139,7 +139,7 @@ const Supplier = () => {
 
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Email</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Email <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="email"
                                                     name="emailId"
@@ -150,7 +150,7 @@ const Supplier = () => {
 
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Supplier Code</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Supplier Code <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="String"
                                                     name="supplierCode"
@@ -162,7 +162,7 @@ const Supplier = () => {
                                             </div>
 
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Address</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Address <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="address"
@@ -186,7 +186,7 @@ const Supplier = () => {
 
 
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Account Number</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Account Number <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="accountNo"
