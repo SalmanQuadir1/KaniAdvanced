@@ -268,16 +268,16 @@ const AddOrder = () => {
   ];
   const theme = useSelector(state => state?.persisted?.theme);
   const customStyles = createCustomStyles(theme?.mode);
-  // const validationSchema = Yup.object().shape({
-  //   orderType: Yup.string().required('Order Type is required'),
-  //   orderDate: Yup.date().required('Order Date is required'),
-  //   shippingDate: Yup.date().required('Shipping Date is required'),
-  //   tags: Yup.string().required('Tags are required'),
-  //   logoNo: Yup.string().required('Logo No is required'),
-  //   productId: Yup.string().required('Product Id is required'),
-  //   clientInstruction: Yup.string().required('Client Instruction is required'),
-  //   customer: orderType ? Yup.string().required('Customer is required') : Yup.string(),
-  // });
+  const validationSchema = Yup.object().shape({
+    // orderType: Yup.string().required('Order Type is required'),
+    orderDate: Yup.date().required('Order Date is required'),
+    shippingDate: Yup.date().required('Shipping Date is required'),
+    tags: Yup.string().required('Tags are required'),
+    logoNo: Yup.string().required('Logo No is required'),
+    productId: Yup.string().required('Product Id is required'),
+    clientInstruction: Yup.string().required('Client Instruction is required'),
+    customer: orderType ? Yup.string().required('Customer is required') : Yup.string(),
+  });
 
   const handleProductIdChange = (option, setFieldValue) => {
 
@@ -354,11 +354,7 @@ const AddOrder = () => {
 
 
 
-  // console.log("Initial Values: ", prodIdModal?.map(item => ({
-  //   products: { id: item?.productId || "" },
-  //   orderCategory: item?.orderCatagory || "",
-  //   orderQuantity: item?.orderQuantity || "",
-  // })));
+
   const handleDeleteSupplier = (rowIndex, supplierIndex) => {
     setSelectedSuppliers((prev) => {
       const updated = [...prev];
@@ -498,7 +494,7 @@ const AddOrder = () => {
             }]
 
           }}
-          // validationSchema={validationSchema}
+          validationSchema={validationSchema}
           // onSubmit={(values) => {
 
           //   console.log("Formik Values: ", values); // Log the entire form values
@@ -584,7 +580,7 @@ const AddOrder = () => {
                     <div className="p-6.5">
                       <div className="flex flex-wrap gap-4">
                         <div className="flex-1 min-w-[200px]">
-                          <label className="mb-2.5 block text-black dark:text-white">Order Type</label>
+                          <label className="mb-2.5 block text-black dark:text-white">Order Type <span className="text-red-500 ml-1">*</span></label>
                           <ReactSelect
                             name="orderType"
                             value={
@@ -610,7 +606,7 @@ const AddOrder = () => {
 
                           <div className="flex-1 min-w-[200px]">
                             <label className="mb-2.5 block text-black dark:text-white">
-                              Order Date
+                              Order Date <span className="text-red-500 ml-1">*</span>
                             </label>
                             <Field name="orderDate">
                               {({ field, form }) => (
@@ -684,7 +680,7 @@ const AddOrder = () => {
                                     placeholder="Enter Prchase Order"
                                     className="bg-white dark:bg-form-input w-full rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                   />
-                                  <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                  <ErrorMessage name="purchaseOrderNo" component="div" className="text-red-600 text-sm" />
                                 </div>
                                 <div className="flex-1 min-w-[200px] mt-7">
                                   <label className="mb-2.5 block text-black dark:text-white">PO Date</label>
@@ -748,7 +744,7 @@ const AddOrder = () => {
 
                       <div className="flex flex-wrap gap-4">
                         <div className="flex-1 min-w-[300px] mt-4">
-                          <label className="mb-2.5 block text-black dark:text-white">Shipping Date</label>
+                          <label className="mb-2.5 block text-black dark:text-white">Shipping Date <span className="text-red-500 ml-1">*</span></label>
                           <Field name="shippingDate">
                             {({ field, form }) => (
                               <ReactDatePicker
@@ -761,7 +757,7 @@ const AddOrder = () => {
                                   )
                                 }
                                 dateFormat="yyyy-MM-dd" // Display format in the picker
-                                placeholderText="Select Order Date"
+                                placeholderText="Select Shipping Date"
                                 className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                               />
                             )}
@@ -770,7 +766,7 @@ const AddOrder = () => {
                         </div>
 
                         <div className="flex-1 min-w-[300px] mt-4">
-                          <label className="mb-2.5 block text-black dark:text-white">Tags</label>
+                          <label className="mb-2.5 block text-black dark:text-white">Tags <span className="text-red-500 ml-1">*</span></label>
                           <ReactSelect
                             name="tagsAndLabels"
                             value={productgrp.find(option => option.value === values.tags)}
@@ -787,7 +783,7 @@ const AddOrder = () => {
                       </div>
 
                       <div className="flex-1 min-w-[300px] mt-4">
-                        <label className="mb-2.5 block text-black dark:text-white">Logo No</label>
+                        <label className="mb-2.5 block text-black dark:text-white">Logo No <span className="text-red-500 ml-1">*</span></label>
                         <div>
                           <label className="flex items-center">
                             <Field type="radio" name="logoNo" value="Yes" />
@@ -899,7 +895,7 @@ const AddOrder = () => {
 
 
                       <div className="flex-1 min-w-[200px] mt-11">
-                        <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
+                        <label className="mb-2.5 block text-black dark:text-white">Product Id <span className="text-red-500 ml-1">*</span></label>
                         <ReactSelect
                           name="productId"
                           value={prodIdOptions?.find(option => option.value === values.productId?.id) || null}
@@ -953,7 +949,7 @@ const AddOrder = () => {
                                 <th
                                   className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
                                 >
-                                  Units
+                                  Units             .       .
                                 </th>
                                 <th
                                   className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
@@ -1029,7 +1025,7 @@ const AddOrder = () => {
                                         }}
                                         className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                       />
-                                      <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                      <ErrorMessage name={`orderProducts[${index}].products.id`} component="div" className="text-red-600 text-sm" />
                                     </div>
                                   </td>
                                   <td className="px-5 py-5 border-b border-gray-200  text-sm">
@@ -1068,7 +1064,7 @@ const AddOrder = () => {
                                       <ErrorMessage name="clientOrderQuantity" component="div" className="text-red-600 text-sm" />
                                     </div>
                                   </td>
-                                  <td className="px-5 py-5 border-b border-gray-200  text-sm">
+                                  <td className="px-1 py-5 border-b border-gray-200  text-sm">
 
 
                                     <div >
@@ -1077,7 +1073,7 @@ const AddOrder = () => {
                                         name={`orderProducts[${index}].units`}
                                         // value={item?.units}
                                         placeholder="Enter Units"
-                                        className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                        className=" w-[230px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                       />
                                       <ErrorMessage name="Units" component="div" className="text-red-600 text-sm" />
                                     </div>
@@ -1328,7 +1324,7 @@ const AddOrder = () => {
 
 
                       <div className="flex-1 min-w-[200px] mt-11">
-                        <label className="mb-2.5 block text-black dark:text-white">Client Instruction</label>
+                        <label className="mb-2.5 block text-black dark:text-white">Client Instruction <span className="text-red-500 ml-1">*</span></label>
                         <Field
                           as="textarea"
                           name="clientInstruction"
