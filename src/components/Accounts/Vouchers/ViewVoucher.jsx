@@ -426,7 +426,7 @@ const ViewVoucher = () => {
 
 
         };
-        getVoucher(pagination.currentPage - 1, filters);
+        getVoucher(pagination.currentPage , filters);
         // ViewInventory(pagination.currentPage, filters);
     };
 
