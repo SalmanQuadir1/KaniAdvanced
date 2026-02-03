@@ -196,8 +196,7 @@ const ProductSubGroup = () => {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex w-48 justify-center items-center py-2.5 rounded-lg bg-primary font-medium text-white hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                      >
+                       className="flex md:w-[230px] w-[190px] md:h-[37px] h-[47px] justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4">
                         {isSubmitting ? (
                           <>
                             <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">

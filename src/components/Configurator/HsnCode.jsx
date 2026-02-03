@@ -30,6 +30,22 @@ const HsnCode = () => {
                         if (!values.hsnCodeName || values.hsnCodeName === " ") {
                             errors.hsnCodeName = 'Hsn Code Cannot Be Null';
                         }
+                        
+                        if (!values.igst || values.igst === " ") {
+                            errors.igst = 'IGST Cannot Be Null';
+                        }
+                        
+                        if (!values.gst || values.gst === " ") {
+                            errors.gst = 'GST Cannot Be Null';
+                        }
+                        
+                        if (!values.cgst || values.cgst === " ") {
+                            errors.cgst = 'CGST Cannot Be Null';
+                        }
+                        
+                        if (!values.sgst || values.sgst === " ") {
+                            errors.sgst = 'SGST Cannot Be Null';
+                        }
 
                         return errors;
                     }}
