@@ -35,9 +35,9 @@ const HsnCode = () => {
                             errors.igst = 'IGST Cannot Be Null';
                         }
                         
-                        if (!values.gst || values.gst === " ") {
-                            errors.gst = 'GST Cannot Be Null';
-                        }
+                        // if (!values.gst || values.gst === " ") {
+                        //     errors.gst = 'GST Cannot Be Null';
+                        // }
                         
                         if (!values.cgst || values.cgst === " ") {
                             errors.cgst = 'CGST Cannot Be Null';

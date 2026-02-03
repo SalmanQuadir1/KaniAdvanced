@@ -947,9 +947,9 @@ const AddOrder = () => {
                                   Client Order Qty
                                 </th>
                                 <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[200px]"
                                 >
-                                  Units             .       .
+                                  Units 
                                 </th>
                                 <th
                                   className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
@@ -1070,10 +1070,11 @@ const AddOrder = () => {
                                     <div >
 
                                       <Field
+                                      style={{width: '5px !important'}}
                                         name={`orderProducts[${index}].units`}
                                         // value={item?.units}
                                         placeholder="Enter Units"
-                                        className=" w-[230px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                        className=" bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                       />
                                       <ErrorMessage name="Units" component="div" className="text-red-600 text-sm" />
                                     </div>
@@ -1420,7 +1421,7 @@ const AddOrder = () => {
             </div>
             <div className="p-4">
               <div className="mb-4">
-                <label className="block text-black dark:text-white mb-2">Customer Name</label>
+                <label className="block text-black dark:text-white mb-2">Customer Name <span className="text-red-500 ml-1">*</span></label>
                 <input
                   type="text"
                   value={newCustomerName}
@@ -1431,7 +1432,7 @@ const AddOrder = () => {
               </div>
 
               <div className="mb-4">
-                <label className="mb-2.5 block text-black dark:text-white">Customer Group</label>
+                <label className="mb-2.5 block text-black dark:text-white">Customer Group <span className="text-red-500 ml-1">*</span></label>
                 <ReactSelect
                   name="customerGroup"
                   value={customerGroupList?.find(option => option.value === selectedCustomerGroup?.id) || null}
@@ -1460,7 +1461,7 @@ const AddOrder = () => {
                 <button
                   type="button"
                   onClick={() => handleAddCustomer(newCustomerName, selectedCustomerGroup)}
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                  className="px-4 py-2 bg-primary text-white rounded hover:bg-blue-600 transition-colors"
                   disabled={!newCustomerName.trim()}
                 >
                   Add Customer
