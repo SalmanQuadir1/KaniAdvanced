@@ -1139,6 +1139,18 @@ table start */
   line-height: 1.5;
 }
 
+.react-datepicker {
+  z-index: 9999 !important;
+}
+
+.react-datepicker-popper {
+  z-index: 9999 !important;
+}
+
+.react-datepicker__triangle {
+  z-index: 9999 !important;
+}
+
 /* Focus state */
 .rounded:focus {
   border-color: #3b82f6;

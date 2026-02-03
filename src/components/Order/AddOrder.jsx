@@ -268,16 +268,33 @@ const AddOrder = () => {
   ];
   const theme = useSelector(state => state?.persisted?.theme);
   const customStyles = createCustomStyles(theme?.mode);
-  const validationSchema = Yup.object().shape({
-    // orderType: Yup.string().required('Order Type is required'),
-    orderDate: Yup.date().required('Order Date is required'),
-    shippingDate: Yup.date().required('Shipping Date is required'),
-    tags: Yup.string().required('Tags are required'),
-    logoNo: Yup.string().required('Logo No is required'),
-    productId: Yup.string().required('Product Id is required'),
-    clientInstruction: Yup.string().required('Client Instruction is required'),
-    customer: orderType ? Yup.string().required('Customer is required') : Yup.string(),
-  });
+ const validationSchema = Yup.object().shape({
+  orderType: Yup.object()
+    .shape({
+      id: Yup.string().required('Order Type is required')
+    })
+    .nullable()
+    .required('Order Type is required'),
+  
+  orderDate: Yup.string()
+    .required('Order Date is required'),
+  
+  shippingDate: Yup.string()
+    .required('Shipping Date is required'),
+  
+  tagsAndLabels: Yup.string()
+    .required('Tags are required'),
+  
+  logoNo: Yup.string()
+    .oneOf(['Yes', 'No'], 'Please select Yes or No')
+    .required('Logo No is required'),
+  
+  clientInstruction: Yup.string()
+    .required('Client Instruction is required')
+    .min(10, 'Client instruction should be at least 10 characters'),
+  
+
+});
 
   const handleProductIdChange = (option, setFieldValue) => {
 
@@ -494,7 +511,7 @@ const AddOrder = () => {
             }]
 
           }}
-          validationSchema={validationSchema}
+         validationSchema={validationSchema}
           // onSubmit={(values) => {
 
           //   console.log("Formik Values: ", values); // Log the entire form values
@@ -1070,7 +1087,7 @@ const AddOrder = () => {
                                     <div >
 
                                       <Field
-                                        
+
                                         name={`orderProducts[${index}].units`}
                                         // value={item?.units}
                                         placeholder="Enter Units"
@@ -1144,10 +1161,7 @@ const AddOrder = () => {
                                     <div >
 
 
-                                      <div
-                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus-within:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus-within:border-primary"
-                                        onClick={(e) => e.stopPropagation()} // Prevents event bubbling
-                                      >
+                                      <div  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus-within:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus-within:border-primary">
                                         <ReactDatePicker
                                           selected={values.orderProducts[index]?.clientShippingDate || null}
                                           onChange={(date) => setFieldValue(`orderProducts[${index}].clientShippingDate`, date ? format(date, "yyyy-MM-dd") : "")}
@@ -1155,6 +1169,8 @@ const AddOrder = () => {
                                           placeholderText="Enter Client Shipping Date"
                                           className="w-full bg-transparent outline-none"
                                           wrapperClassName="w-full"
+                                          withPortal
+                                          portalId={`datepicker-portal-${index}`}
                                         />
                                       </div>
 
@@ -1175,6 +1191,8 @@ const AddOrder = () => {
                                           placeholderText="Enter Client expected Date"
                                           className="w-full bg-transparent outline-none"
                                           wrapperClassName="w-full"
+                                          withPortal
+                                          portalId={`datepicker-portal-${index}`}
                                         />
                                       </div>
                                       <ErrorMessage name="ExpectedDate" component="div" className="text-red-600 text-sm" />
@@ -1364,12 +1382,12 @@ const AddOrder = () => {
 
 
                       <button
-                        type="submit"
-                        className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4"
-                        disabled={isSubmitting}
-                      >
-                        Add Order
-                      </button>
+      type="submit"
+      className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+      disabled={isSubmitting || !values.orderType?.id}
+    >
+      {isSubmitting ? 'Adding Order...' : 'Add Order'}
+    </button>
                     </div>
                   </div>
                 </div>

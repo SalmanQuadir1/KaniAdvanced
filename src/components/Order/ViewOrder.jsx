@@ -11,7 +11,7 @@ import Pagination from '../Pagination/Pagination';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import {  customStyles as createCustomStyles } from '../../Constants/utils';
+import { customStyles as createCustomStyles } from '../../Constants/utils';
 
 
 
@@ -29,7 +29,7 @@ const ViewOrder = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
 
-const customStyles = createCustomStyles(theme?.mode);
+    const customStyles = createCustomStyles(theme?.mode);
 
 
     const { token } = currentUser;
@@ -106,12 +106,12 @@ const customStyles = createCustomStyles(theme?.mode);
 
 
 
-    const getOrder = async (page, filters={}) => {
-        console.log(filters,"filterssssssssssssssssssssssssssssssssssssssss");
+    const getOrder = async (page, filters = {}) => {
+        console.log(filters, "filterssssssssssssssssssssssssssssssssssssssss");
         console.log("Fetching orders for page", page); // Log the page number being requested
 
         try {
-            const response = await fetch(`${VIEW_ALL_ORDERS}?page=${page||1}`, {
+            const response = await fetch(`${VIEW_ALL_ORDERS}?page=${page || 1}`, {
                 method: "POST", // GET method
                 headers: {
                     "Content-Type": "application/json",
@@ -205,14 +205,14 @@ const customStyles = createCustomStyles(theme?.mode);
                         "Authorization": `Bearer ${token}`,
                     },
                 });
-        
+
                 const data = await response.json();
                 if (response.ok) {
                     toast.success(`Order Deleted Successfully !!`);
-        
+
                     // Check if the current page becomes empty
                     const isCurrentPageEmpty = Order.length === 1;
-        
+
                     if (isCurrentPageEmpty && pagination.currentPage > 1) {
                         const previousPage = pagination.currentPage - 1;
                         handlePageChange(previousPage); // Go to the previous page if current page becomes empty
@@ -227,12 +227,12 @@ const customStyles = createCustomStyles(theme?.mode);
                 toast.error("An error occurred");
             }
         };
-        
 
 
 
 
-console.log(order,"jjk");
+
+        console.log(order, "jjk");
 
 
         return Order.map((item, index) => (
@@ -251,7 +251,7 @@ console.log(order,"jjk");
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     {
-                        item.productIds.map((prodId)=>(
+                        item.productIds.map((prodId) => (
                             <p className="text-gray-900 whitespace-no-wrap">{prodId}</p>
                         ))
                     }
@@ -273,7 +273,7 @@ console.log(order,"jjk");
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
-                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={()=>navigate(`/Order/updateorder/${item?.id}`)} title='Edit Product' />  |
+                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updateorder/${item?.id}`)} title='Edit Product' />  |
                         <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' />
                     </p>
                 </td>
@@ -290,14 +290,14 @@ console.log(order,"jjk");
 
 
 
-            orderNo:values.orderNo || undefined,
-            supplierName:values.supplierName || undefined,
+            orderNo: values.orderNo || undefined,
+            supplierName: values.supplierName || undefined,
 
-            fromDate:values.fromDate || undefined,
-            toDate:values.toDate || undefined,
-            customerName:values.customerName || undefined,
+            fromDate: values.fromDate || undefined,
+            toDate: values.toDate || undefined,
+            customerName: values.customerName || undefined,
         };
-        getOrder(pagination.currentPage,filters);
+        getOrder(pagination.currentPage, filters);
         // ViewInventory(pagination.currentPage, filters);
     };
 
@@ -306,14 +306,14 @@ console.log(order,"jjk");
             <Breadcrumb pageName="Order/ View Order" />
             <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
                 <div className="pt-5">
-                   <div className='flex flex-row items-center justify-between w-full'>
-  <h2 className="text-xl text-slate-500 font-semibold w-full flex items-center justify-between">
-    <span>View Order</span>
-    <span className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-blue-900/20 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-800/30 text-sm font-semibold text-blue-700 dark:text-blue-300 ml-4">
-      TOTAL ORDERS: {pagination.totalItems}
-    </span>
-  </h2>
-</div>
+                    <div className='flex flex-row items-center justify-between w-full'>
+                        <h2 className="text-xl text-slate-500 font-semibold w-full flex items-center justify-between">
+                            <span>View Order</span>
+                            <span className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-blue-900/20 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-800/30 text-sm font-semibold text-blue-700 dark:text-blue-300 ml-4">
+                                TOTAL ORDERS: {pagination.totalItems}
+                            </span>
+                        </h2>
+                    </div>
 
 
                     <div className='items-center justify-center'>
@@ -375,7 +375,7 @@ console.log(order,"jjk");
                                             <div className="z-20 bg-transparent dark:bg-form-Field">
                                                 <ReactSelect
                                                     name="supplierName"
-                                                 
+
                                                     value={productgrp.find(option => option.value === values.customerName)}
                                                     onChange={(option) => setFieldValue('supplierName', option ? option.value : null)}
                                                     // options={formattedSupplier}
@@ -426,7 +426,7 @@ console.log(order,"jjk");
                                                 value={productgrp.find(option => option.value === values.customerName)}
                                                 onChange={(option) => {
                                                     setFieldValue('customerName', option.value);
-                                                   
+
                                                 }}
                                                 onBlur={handleBlur}
                                                 // options={formattedCustomer}
