@@ -949,7 +949,7 @@ const AddOrder = () => {
                                 <th
                                   className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[200px]"
                                 >
-                                  Units 
+                                  Units
                                 </th>
                                 <th
                                   className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
@@ -1070,7 +1070,7 @@ const AddOrder = () => {
                                     <div >
 
                                       <Field
-                                      style={{width: '5px !important'}}
+                                        
                                         name={`orderProducts[${index}].units`}
                                         // value={item?.units}
                                         placeholder="Enter Units"
