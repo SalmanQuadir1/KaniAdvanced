@@ -1193,7 +1193,7 @@ const UpdateKaniProducts = () => {
                                                     </div>
 
                                                     <div className="flex-2 min-w-[200px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                        <label className="mb-1.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[30px] justify-center items-center'> *</span></label>
                                                         <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                             <ReactSelect
                                                                 name="unit"

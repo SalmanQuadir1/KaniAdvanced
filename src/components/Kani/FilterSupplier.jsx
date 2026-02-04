@@ -741,7 +741,7 @@ const FilterSupplier = () => {
           onClick={(e) => e.stopPropagation()}
         >
           <div className="px-4 py-3 border-b bg-gray-50 dark:bg-gray-900 dark:border-gray-700 rounded-t-lg flex justify-between items-center">
-            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Update Challan</h3>
+            <h3 className=" text-sm font-semibold text-gray-800 dark:text-gray-200">Update Challan</h3>
             <button 
               onClick={closeUpdateChallan} 
               className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-lg transition-colors"
@@ -761,7 +761,11 @@ const FilterSupplier = () => {
                   value={editingChallanNo}
                   onChange={handleChallanInputChange}
                   placeholder="Enter challan number"
-                  className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  className="w-full border border-black dark:border-black rounded-md
+           px-3 py-2.5 text-sm
+           focus:outline-none focus:ring-2 focus:ring-black
+           dark:bg-black dark:text-white"
+
                   onKeyPress={(e) => e.key === 'Enter' && handleUpdateChallan(openDropdownId)}
                   autoFocus
                 />
@@ -770,14 +774,18 @@ const FilterSupplier = () => {
               <button
                 onClick={() => handleUpdateChallan(openDropdownId)}
                 disabled={updateLoading && updatingId === openDropdownId}
-                className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white text-sm font-medium py-2.5 rounded-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
+               className="w-full bg-black hover:bg-gray-800 dark:bg-black dark:hover:bg-gray-700
+           text-white text-sm font-medium py-2.5 rounded-md
+           disabled:opacity-50 disabled:cursor-not-allowed
+           flex items-center justify-center transition-colors"
+
               >
                 {updateLoading && updatingId === openDropdownId ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                     Updating...
                   </>
-                ) : 'Update Challan'}
+                ) : 'Update '}
               </button>
             </div>
           </div>
