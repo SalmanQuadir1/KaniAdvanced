@@ -853,7 +853,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {mode === "production" && roles.some(role => ['ROLE_ADMIN', 'ROLE_ADMIN_SXR'].includes(role)) ? (
+                      {mode === "accounts" && roles.some(role => ['ROLE_ADMIN', 'ROLE_ADMIN_SXR'].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
@@ -893,7 +893,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                          {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                          {mode === "accounts" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
                             <li>
                               <NavLink
                                 to="/configurator/addbudget"

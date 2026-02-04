@@ -244,6 +244,7 @@ const ViewOrderPartiallyCreated = () => {
 
 
 
+console.log(order,"jkjkjkj");
 
 
 
