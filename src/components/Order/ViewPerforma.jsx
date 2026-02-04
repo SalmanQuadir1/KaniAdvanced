@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
-//  import Flatpickr from 'react-flatpickr';
 import { DELETE_ORDER_URL, VIEW_ALL_ORDERS, VIEW_APPROVED_ORDERS, VIEW_CREATED_ORDERS, VIEW_PARTIALLYAPPROVED_ORDERS, VIEW_PROFORMA } from "../../Constants/utils";
 import ReactSelect from 'react-select';
 import useorder from '../../hooks/useOrder';
@@ -124,6 +123,19 @@ const ViewOrderApproved = () => {
         console.log(filters, "filterssssssssssssssssssssssssssssssssssssssss");
         console.log("Fetching orders for page", page); // Log the page number being requested
 
+        // Format dates to YYYY-MM-DD before sending
+        const formattedFilters = { ...filters };
+        
+        if (formattedFilters.fromDate) {
+            const fromDate = new Date(formattedFilters.fromDate);
+            formattedFilters.fromDate = fromDate.toISOString().split('T')[0]; // YYYY-MM-DD
+        }
+        
+        if (formattedFilters.toDate) {
+            const toDate = new Date(formattedFilters.toDate);
+            formattedFilters.toDate = toDate.toISOString().split('T')[0]; // YYYY-MM-DD
+        }
+
         try {
             const response = await fetch(`${VIEW_PROFORMA}?page=${page || 1}`, {
                 method: "POST", // GET method
@@ -131,7 +143,7 @@ const ViewOrderApproved = () => {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
                 },
-                body: JSON.stringify(filters)
+                body: JSON.stringify(formattedFilters)
             });
 
             const textResponse = await response.text();
@@ -384,15 +396,12 @@ const ViewOrderApproved = () => {
 
         console.log(values, "valiiiiii");
         const filters = {
-
-
-
-
             orderNo: values.orderNo || undefined,
             supplierName: values.supplierName || undefined,
-
             customerName: values.customerName || undefined,
-            productId: values.productId || undefined
+            productId: values.productId || undefined,
+            fromDate: values.fromDate || undefined,
+            toDate: values.toDate || undefined
         };
         getOrder(pagination.currentPage, filters);
         // ViewInventory(pagination.currentPage, filters);
@@ -414,25 +423,16 @@ const ViewOrderApproved = () => {
                     <div className='items-center justify-center'>
                         <Formik
                             initialValues={{
-
                                 customerName: "",
-
-
-
-
-
+                                fromDate: "",
+                                toDate: ""
                             }}
                             onSubmit={handleSubmit}
                         >
                             {({ setFieldValue, values, handleBlur }) => (
                                 <Form>
-
-
-
-
-
+                                    {/* Customer Row */}
                                     <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-
                                         <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Customer</label>
                                             <ReactSelect
@@ -440,25 +440,42 @@ const ViewOrderApproved = () => {
                                                 value={productgrp.find(option => option.value === values.customerName)}
                                                 onChange={(option) => {
                                                     setFieldValue('customerName', option.value);
-
                                                 }}
                                                 onBlur={handleBlur}
-                                                // options={formattedCustomer}
                                                 options={[{ label: 'View All Customers', value: null }, ...formattedCustomer]}
                                                 styles={customStyles}
                                                 className="bg-white dark:bg-form-input"
                                                 classNamePrefix="react-select"
                                                 placeholder="Select"
                                             />
-
                                         </div>
-
                                     </div>
 
-                                    <div className="flex justify-center">
+                                    {/* Date Range Row */}
+                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-6">
+                                        <div className="flex-1 min-w-[200px]">
+                                            <label className="mb-2.5 block text-black dark:text-white">From Date</label>
+                                            <Field
+                                                type="date"
+                                                name="fromDate"
+                                                className="w-full rounded border border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                                            />
+                                        </div>
+
+                                        <div className="flex-1 min-w-[200px]">
+                                            <label className="mb-2.5 block text-black dark:text-white">To Date</label>
+                                            <Field
+                                                type="date"
+                                                name="toDate"
+                                                className="w-full rounded border border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex justify-center mt-4">
                                         <button
                                             type="submit"
-                                            className="flex md:w-[240px] w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
+                                            className="flex md:w-[240px] w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                         >
                                             Search
                                         </button>
