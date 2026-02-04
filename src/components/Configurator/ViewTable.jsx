@@ -39,7 +39,7 @@ const ViewTable = ({ title, units, totalItems, handleDelete, handleUpdate, pagin
         return units.map((item, rowIndex) => {
             const updatedItem = { ...item, id: startingSerialNumber + rowIndex }; // Update id value with index + 1
             return (
-                <tr key={rowIndex} className='bg-white dark:bg-slate-700 dark:text-white'>
+                <tr key={rowIndex} className='bg-white dark:bg-slate-700 text-left dark:text-white'>
                     {Object.values(updatedItem).map((value, colIndex) => (
                         <td key={colIndex} className="px-5 py-5 border-b border-gray-200 text-sm">
                             <p className="text-gray-900 whitespace-no-wrap">{value}</p>
@@ -72,20 +72,22 @@ const ViewTable = ({ title, units, totalItems, handleDelete, handleUpdate, pagin
                         Total {title} : {totalItems}
                     </p>
                 </div>
-                <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-                    <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
-                        <table className="min-w-full leading-normal">
-                            <thead>
-                                <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                    {renderTableHeaders()}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {renderTableRows()}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+      <div className="relative -mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
+  <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
+    <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-700 dark:scrollbar-track-gray-900">
+      <table className="min-w-full leading-normal">
+        <thead>
+          <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
+            {renderTableHeaders()}
+          </tr>
+        </thead>
+        <tbody>
+          {renderTableRows()}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
             </div>
         </div>
     );

@@ -111,7 +111,7 @@ const Location = () => {
                                         <div className="mb-4.5 flex flex-wrap gap-6">
 
                                             <div className="flex-2 min-w-[270px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Address</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Address <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="address"
@@ -121,8 +121,8 @@ const Location = () => {
                                                 <ErrorMessage name="address" component="div" className="text-red-500" />
 
                                             </div>
-                                            <div className="flex-2 min-w-[270px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Location Id</label>
+                                            {/* <div className="flex-2 min-w-[270px]">
+                                                <label className="mb-2.5 block text-black dark:text-white"> Location Id <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="locationId"
@@ -131,9 +131,9 @@ const Location = () => {
                                                 />
                                                 <ErrorMessage name="locationId" component="div" className="text-red-500" />
 
-                                            </div>
+                                            </div> */}
                                             <div className="flex-2 min-w-[270px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Location Name</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Location Name <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="locationName"
@@ -145,13 +145,8 @@ const Location = () => {
                                             </div>
 
 
-
-                                        </div>
-
-
-                                        <div className="mb-4.5 flex flex-wrap gap-6">
                                             <div className="flex-2 min-w-[270px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> City</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> City <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="city"
@@ -162,8 +157,13 @@ const Location = () => {
 
                                             </div>
 
+                                        </div>
+
+
+                                        <div className="mb-4.5 flex flex-wrap gap-6">
+
                                             <div className="flex-2 min-w-[270px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> State</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> State <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="state"
@@ -176,7 +176,7 @@ const Location = () => {
 
 
                                             <div className="flex-2 min-w-[270px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Gstin</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Gstin <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="gstin"
@@ -186,14 +186,8 @@ const Location = () => {
                                                 <ErrorMessage name="gstin" component="div" className="text-red-500" />
 
                                             </div>
-                                        </div>
-
-
-
-                                        <div className="mb-4.5 flex flex-wrap gap-6 md:w-[420px]">
-
                                             <div className="flex-2 min-w-[270px] ">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Pincode</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Pincode <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="number"
                                                     name="pinCode"
@@ -203,13 +197,19 @@ const Location = () => {
                                                 <ErrorMessage name="pinCode" component="div" className="text-red-500" />
 
                                             </div>
+                                        </div>
+
+
+
+                                        <div className="mb-4.5 flex flex-wrap gap-6 md:w-[420px]">
+
 
 
 
                                         </div>
 
                                         <div className="flex justify-center mt-4 items-center">
-                                            <button type="submit" className="flex md:w-[120px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90">
+                                            <button type="submit" className="flex md:w-[230px] w-[190px] md:h-[37px] h-[47px] justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4">
                                                 {edit ? "Update Location" : "Create Location"}
                                             </button>
                                         </div>

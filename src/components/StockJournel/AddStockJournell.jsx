@@ -284,7 +284,7 @@ const AddStockJournell = () => {
 
                   <div className="w-full md:w-auto">
                     <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                      Voucher Number *
+                      Voucher Number <span className="text-red-500 ml-1">*</span>
                     </label>
                     <div className="relative">
                       <Field
@@ -332,19 +332,19 @@ const AddStockJournell = () => {
                     <thead>
                       <tr className="bg-gray-50 dark:bg-gray-900/50 border-b border-gray-200 dark:border-gray-700">
                         <th className="py-4 px-6 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                          Product
+                          Product <span className="text-red-500 ml-1">*</span>
                         </th>
                         <th className="py-4 px-6 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                          Source Location
+                          Source Location <span className="text-red-500 ml-1">*</span>
                         </th>
                         <th className="py-4 px-6 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                           Available Qty
                         </th>
                         <th className="py-4 px-6 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                          Transfer Qty
+                          Transfer Qty <span className="text-red-500 ml-1">*</span>
                         </th>
                         <th className="py-4 px-6 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                          Destination
+                          Destination <span className="text-red-500 ml-1">*</span>
                         </th>
                         <th className="py-4 px-6 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                           Actions
@@ -443,7 +443,7 @@ const AddStockJournell = () => {
                                   }}
                                   menuPortalTarget={document.body}
                                   menuPosition="fixed"
-                                  placeholder="Select source"
+                                  placeholder="Location"
                                   isClearable
                                   isOptionDisabled={(option) => {
                                     return rows.some((r, i) =>
@@ -534,7 +534,7 @@ const AddStockJournell = () => {
                                   }}
                                   menuPortalTarget={document.body}
                                   menuPosition="fixed"
-                                  placeholder="Select destination"
+                                  placeholder="Location"
                                   isClearable
                                 />
                                 <ErrorMessage

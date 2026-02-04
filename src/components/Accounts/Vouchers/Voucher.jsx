@@ -171,7 +171,7 @@ const Voucher = () => {
         actVoucher: 'true',
         methodOfvoucher: '',
         numbInsertDelete: '',
-        setAdditionalNumb: false,
+        setAdditionalNumb: true,
         unusedVchNos: false,
         dateForVchs: false,
         effectiveDate: '',
@@ -299,7 +299,7 @@ const Voucher = () => {
             actVoucher: voucherData.actVoucher?.toString() || 'true',
             methodOfvoucher: voucherData.methodOfvoucher || '',
             numbInsertDelete: voucherData.numbInsertDelete || '',
-            setAdditionalNumb: voucherData.setAdditionalNumb || false,
+            setAdditionalNumb: voucherData.setAdditionalNumb || true,
             autoReceiptNumber: voucherData.autoReceiptNumber || '',
             unusedVchNos: voucherData.unusedVchNos || false,
             dateForVchs: voucherData.dateForVchs || false,
@@ -621,18 +621,21 @@ const Voucher = () => {
 
                                         {/* Show button to open numbering modal if setAdditionalNumb is true */}
                                         {values.setAdditionalNumb === true && !generatedVoucherNo && (
+                                            <>
+                                                 <p className="text-sm text-red-600 dark:text-blue-300 mt-2">
+                                                    Click to set starting number, prefix, suffix, and other numbering details Eg : 001/SAL/24-25
+                                                </p>
                                             <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                                                 <button
                                                     type="button"
                                                     onClick={() => setShowNumberingModal(true)}
-                                                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                                    className="px-4 py-2 bg-primary text-white rounded hover:bg-blue-700"
                                                 >
-                                                    Configure Voucher Numbering Details
+                                                    Configure Voucher Numbering Details (Mandatory For Voucher Creation)
                                                 </button>
-                                                <p className="text-sm text-blue-600 dark:text-blue-300 mt-2">
-                                                    Click to set starting number, prefix, suffix, and other numbering details
-                                                </p>
+                                               
                                             </div>
+                                            </>
                                         )}
 
                                         <div className="flex items-center justify-between mb-4">
@@ -809,7 +812,7 @@ const Voucher = () => {
                                 <div className="flex justify-center mt-8">
                                     <button
                                         type="submit"
-                                        disabled={isSubmitting || loading || (values.setAdditionalNumb && !generatedVoucherNo)}
+                                        disabled={isSubmitting || loading ||!generatedVoucherNo|| (values.setAdditionalNumb && !generatedVoucherNo)}
                                         className="flex items-center justify-center md:w-[150px] w-full md:h-[44px] h-[44px] rounded-lg bg-primary font-medium text-white hover:bg-primary/90 disabled:opacity-50"
                                     >
                                         {loading ? (

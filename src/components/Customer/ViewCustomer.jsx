@@ -6,7 +6,7 @@ import { FiEdit, FiTrash2 } from "react-icons/fi";
 import Pagination from '../Pagination/Pagination';
 import { Link, useNavigate } from 'react-router-dom';
 import useCustomer from '../../hooks/useCustomer';
-import {  customStyles as createCustomStyles } from '../../Constants/utils';
+import { customStyles as createCustomStyles } from '../../Constants/utils';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import { FaBook, FaCross } from 'react-icons/fa6';
 import reactSelect from 'react-select';
@@ -16,9 +16,9 @@ import { ImCross } from "react-icons/im";
 import { TiTickOutline } from 'react-icons/ti';
 
 const ViewCustomer = () => {
-  const { Customer,Customerr,getCustomerr, getCustomer, handleDelete, pagination, handleUpdate, handlePageChange, GetCustomerById } = useCustomer();
+  const { Customer, Customerr, getCustomerr, getCustomer, handleDelete, pagination, handleUpdate, handlePageChange, GetCustomerById } = useCustomer();
   const [showModal, setShowModal] = useState(false);
-  const navigate= useNavigate();
+  const navigate = useNavigate();
   const theme = useSelector(state => state?.persisted?.theme);
   const customStyles = createCustomStyles(theme?.mode);
   const [selectedMaterialPos, setSelectedMaterialPos] = useState([]);
@@ -41,7 +41,7 @@ const ViewCustomer = () => {
   const formattedCustomer = Customerr.map(cust => ({
     label: cust.customerName,
     value: cust.customerName
-}));
+  }));
 
   // const filteredCustomer = Customer?.filter(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
   // console.log(filteredCustomer,"filteredddddddddddddd");
@@ -93,8 +93,8 @@ const ViewCustomer = () => {
         <td className="px-5 py-5  border-b border-gray-200  text-sm">
           <p className="flex text-gray-900 whitespace-no-wrap">
             {
-            item?.updateLedger==true ? <TiTickOutline size={30} /> : <ImCross size={30} />
-           }
+              item?.updateLedger == true ? <TiTickOutline size={30} /> : <ImCross size={30} />
+            }
 
           </p>
         </td>
@@ -124,7 +124,7 @@ const ViewCustomer = () => {
       customerName: values.customerName || undefined,
     };
     getCustomer(pagination.currentPage, filters);
-};
+  };
 
   return (
     <DefaultLayout>
@@ -140,6 +140,16 @@ const ViewCustomer = () => {
             >
               {({ setFieldValue, values }) => (
                 <Form>
+
+                  <div className='flex flex-row items-center justify-between w-full'>
+                    <h2 className="text-xl text-slate-500 font-semibold w-full flex items-center justify-between">
+                      <span>CUSTOMER VIEW</span>
+                      <span className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-blue-900/20 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-800/30 text-sm font-semibold text-blue-700 dark:text-blue-300 ml-4">
+                        TOTAL CUSTOMERS: {pagination.totalItems}
+                      </span>
+                    </h2>
+                  </div>
+
                   <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
                     <div className="flex-1 min-w-[300px]">
                       <label className="mb-2.5 block text-black dark:text-white">Customer</label>
@@ -179,16 +189,7 @@ const ViewCustomer = () => {
               Search
             </button>
           </div> */}
-          <div className="flex justify-between mt-10">
-            <h2 className="text-xl font-semibold leading-tight">
-              View Customer
-            </h2>
-            <p
-              className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium bg-success text-success  dark:bg-white dark:text-slate-800`}
-            >
-              Total Customer: {pagination.totalItems}
-            </p>
-          </div>
+
           <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
             <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
               <table className="min-w-full leading-normal">

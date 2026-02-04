@@ -51,7 +51,7 @@ const Currency = () => {
                                     <div className="p-6.5 flex flex-col">
                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Currency Name</label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Currency Name <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="text"
                                                     name="currencyName"
@@ -62,7 +62,7 @@ const Currency = () => {
                                             </div>
                                         </div>
                                         <div className="flex justify-center mt-4 items-center">
-                                        <button type="submit" className="flex md:w-[180px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90">
+                                        <button type="submit" className="flex md:w-[230px] w-[190px] md:h-[37px] h-[47px] justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4">
                                             {edit ? "UPDATE CURRENCY" : "CREATE CURRENCY"}
                                         </button>
 

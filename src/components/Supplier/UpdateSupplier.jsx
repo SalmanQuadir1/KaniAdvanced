@@ -238,7 +238,7 @@ const UpdateSupplier = () => {
                     <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
-                          Supplier Code
+                          Supplier Code <span className="text-red-500 ml-1">*</span>
                         </label>
                         <Field
                           readOnly
@@ -255,7 +255,7 @@ const UpdateSupplier = () => {
                       </div>
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
-                          Name
+                          Name <span className="text-red-500 ml-1">*</span>
                         </label>
                         <Field
                           type="text"
@@ -273,7 +273,7 @@ const UpdateSupplier = () => {
                     <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
-                          Phone Number
+                          Phone Number <span className="text-red-500 ml-1">*</span>
                         </label>
                         <Field
                           type="text"
@@ -307,7 +307,7 @@ const UpdateSupplier = () => {
                     <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
-                          Address
+                          Address <span className="text-red-500 ml-1">*</span>
                         </label>
                         <Field
                           type="text"
@@ -323,7 +323,7 @@ const UpdateSupplier = () => {
                       </div>
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
-                          Bank Name
+                          Bank Name <span className="text-red-500 ml-1">*</span>
                         </label>
                         <Field
                           type="text"
@@ -341,7 +341,7 @@ const UpdateSupplier = () => {
                     <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
-                          Account Number
+                          Account Number <span className="text-red-500 ml-1">*</span>
                         </label>
                         <Field
                           type="text"
@@ -357,7 +357,7 @@ const UpdateSupplier = () => {
                       </div>
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
-                          IFSC Code
+                          IFSC Code <span className="text-red-500 ml-1">*</span>
                         </label>
                         <Field
                           type="text"
@@ -373,7 +373,7 @@ const UpdateSupplier = () => {
                       </div>
                       <div className="min-w-[320px] sm:min-w-[400px]">
                         <label className="mb-2.5 block text-black dark:text-white">
-                          Supplier Type
+                          Supplier Type 
                         </label>
                         <ReactSelect
                           // isDisabled
@@ -497,12 +497,14 @@ const UpdateSupplier = () => {
                       </div>
                     </div>
                   )}
+                    <div className="flex justify-center mt-4 items-center mb-2">
                   <button
                     type="submit"
-                    className="bg-primary w-[140px] sm:w-[150px] flex  float-end text-center sm:ml-[20px] mb-4 text-white py-2 px-4 rounded hover:bg-primary-dark  mt-3 ml-5 mr-10 z-[3000]"
-                  >
+                    className="flex md:w-[230px] w-[190px] md:h-[37px] h-[47px] justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4">
+              
                     Update Supplier
                   </button>
+                  </div>
                 </div>
               </div>
             </Form>

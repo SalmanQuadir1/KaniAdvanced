@@ -49,11 +49,11 @@ const CustomerGroup = () => {
                                 <div className="p-6.5">
                                     <div className="mb-4.5 flex flex-wrap gap-6">
                                         <div className="flex-1 min-w-[300px]">
-                                            <label className="mb-2.5 block text-black dark:text-white"> Design Name</label>
+                                            <label className="mb-2.5 block text-black dark:text-white"> Customer Group Name <span className="text-red-500 ml-1">*</span> </label>
                                             <Field
                                                 type="text"
                                                 name="customerGroupName"
-                                                placeholder="Enter product Category Name"
+                                                placeholder="Enter Customer Group Name"
                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                             />
                                             <ErrorMessage name="customerGroupName" component="div" className="text-red-500" />

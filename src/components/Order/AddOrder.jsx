@@ -268,16 +268,33 @@ const AddOrder = () => {
   ];
   const theme = useSelector(state => state?.persisted?.theme);
   const customStyles = createCustomStyles(theme?.mode);
-  // const validationSchema = Yup.object().shape({
-  //   orderType: Yup.string().required('Order Type is required'),
-  //   orderDate: Yup.date().required('Order Date is required'),
-  //   shippingDate: Yup.date().required('Shipping Date is required'),
-  //   tags: Yup.string().required('Tags are required'),
-  //   logoNo: Yup.string().required('Logo No is required'),
-  //   productId: Yup.string().required('Product Id is required'),
-  //   clientInstruction: Yup.string().required('Client Instruction is required'),
-  //   customer: orderType ? Yup.string().required('Customer is required') : Yup.string(),
-  // });
+ const validationSchema = Yup.object().shape({
+  orderType: Yup.object()
+    .shape({
+      id: Yup.string().required('Order Type is required')
+    })
+    .nullable()
+    .required('Order Type is required'),
+  
+  orderDate: Yup.string()
+    .required('Order Date is required'),
+  
+  shippingDate: Yup.string()
+    .required('Shipping Date is required'),
+  
+  tagsAndLabels: Yup.string()
+    .required('Tags are required'),
+  
+  logoNo: Yup.string()
+    .oneOf(['Yes', 'No'], 'Please select Yes or No')
+    .required('Logo No is required'),
+  
+  clientInstruction: Yup.string()
+    .required('Client Instruction is required')
+    .min(10, 'Client instruction should be at least 10 characters'),
+  
+
+});
 
   const handleProductIdChange = (option, setFieldValue) => {
 
@@ -354,11 +371,7 @@ const AddOrder = () => {
 
 
 
-  // console.log("Initial Values: ", prodIdModal?.map(item => ({
-  //   products: { id: item?.productId || "" },
-  //   orderCategory: item?.orderCatagory || "",
-  //   orderQuantity: item?.orderQuantity || "",
-  // })));
+
   const handleDeleteSupplier = (rowIndex, supplierIndex) => {
     setSelectedSuppliers((prev) => {
       const updated = [...prev];
@@ -498,7 +511,7 @@ const AddOrder = () => {
             }]
 
           }}
-          // validationSchema={validationSchema}
+         validationSchema={validationSchema}
           // onSubmit={(values) => {
 
           //   console.log("Formik Values: ", values); // Log the entire form values
@@ -584,7 +597,7 @@ const AddOrder = () => {
                     <div className="p-6.5">
                       <div className="flex flex-wrap gap-4">
                         <div className="flex-1 min-w-[200px]">
-                          <label className="mb-2.5 block text-black dark:text-white">Order Type</label>
+                          <label className="mb-2.5 block text-black dark:text-white">Order Type <span className="text-red-500 ml-1">*</span></label>
                           <ReactSelect
                             name="orderType"
                             value={
@@ -610,7 +623,7 @@ const AddOrder = () => {
 
                           <div className="flex-1 min-w-[200px]">
                             <label className="mb-2.5 block text-black dark:text-white">
-                              Order Date
+                              Order Date <span className="text-red-500 ml-1">*</span>
                             </label>
                             <Field name="orderDate">
                               {({ field, form }) => (
@@ -684,7 +697,7 @@ const AddOrder = () => {
                                     placeholder="Enter Prchase Order"
                                     className="bg-white dark:bg-form-input w-full rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                   />
-                                  <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                  <ErrorMessage name="purchaseOrderNo" component="div" className="text-red-600 text-sm" />
                                 </div>
                                 <div className="flex-1 min-w-[200px] mt-7">
                                   <label className="mb-2.5 block text-black dark:text-white">PO Date</label>
@@ -748,7 +761,7 @@ const AddOrder = () => {
 
                       <div className="flex flex-wrap gap-4">
                         <div className="flex-1 min-w-[300px] mt-4">
-                          <label className="mb-2.5 block text-black dark:text-white">Shipping Date</label>
+                          <label className="mb-2.5 block text-black dark:text-white">Shipping Date <span className="text-red-500 ml-1">*</span></label>
                           <Field name="shippingDate">
                             {({ field, form }) => (
                               <ReactDatePicker
@@ -761,7 +774,7 @@ const AddOrder = () => {
                                   )
                                 }
                                 dateFormat="yyyy-MM-dd" // Display format in the picker
-                                placeholderText="Select Order Date"
+                                placeholderText="Select Shipping Date"
                                 className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                               />
                             )}
@@ -770,7 +783,7 @@ const AddOrder = () => {
                         </div>
 
                         <div className="flex-1 min-w-[300px] mt-4">
-                          <label className="mb-2.5 block text-black dark:text-white">Tags</label>
+                          <label className="mb-2.5 block text-black dark:text-white">Tags <span className="text-red-500 ml-1">*</span></label>
                           <ReactSelect
                             name="tagsAndLabels"
                             value={productgrp.find(option => option.value === values.tags)}
@@ -787,7 +800,7 @@ const AddOrder = () => {
                       </div>
 
                       <div className="flex-1 min-w-[300px] mt-4">
-                        <label className="mb-2.5 block text-black dark:text-white">Logo No</label>
+                        <label className="mb-2.5 block text-black dark:text-white">Logo No <span className="text-red-500 ml-1">*</span></label>
                         <div>
                           <label className="flex items-center">
                             <Field type="radio" name="logoNo" value="Yes" />
@@ -899,7 +912,7 @@ const AddOrder = () => {
 
 
                       <div className="flex-1 min-w-[200px] mt-11">
-                        <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
+                        <label className="mb-2.5 block text-black dark:text-white">Product Id <span className="text-red-500 ml-1">*</span></label>
                         <ReactSelect
                           name="productId"
                           value={prodIdOptions?.find(option => option.value === values.productId?.id) || null}
@@ -951,7 +964,7 @@ const AddOrder = () => {
                                   Client Order Qty
                                 </th>
                                 <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
+                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[200px]"
                                 >
                                   Units
                                 </th>
@@ -1029,7 +1042,7 @@ const AddOrder = () => {
                                         }}
                                         className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                       />
-                                      <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                                      <ErrorMessage name={`orderProducts[${index}].products.id`} component="div" className="text-red-600 text-sm" />
                                     </div>
                                   </td>
                                   <td className="px-5 py-5 border-b border-gray-200  text-sm">
@@ -1068,16 +1081,17 @@ const AddOrder = () => {
                                       <ErrorMessage name="clientOrderQuantity" component="div" className="text-red-600 text-sm" />
                                     </div>
                                   </td>
-                                  <td className="px-5 py-5 border-b border-gray-200  text-sm">
+                                  <td className="px-1 py-5 border-b border-gray-200  text-sm">
 
 
                                     <div >
 
                                       <Field
+
                                         name={`orderProducts[${index}].units`}
                                         // value={item?.units}
                                         placeholder="Enter Units"
-                                        className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                        className=" bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                       />
                                       <ErrorMessage name="Units" component="div" className="text-red-600 text-sm" />
                                     </div>
@@ -1147,10 +1161,7 @@ const AddOrder = () => {
                                     <div >
 
 
-                                      <div
-                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus-within:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus-within:border-primary"
-                                        onClick={(e) => e.stopPropagation()} // Prevents event bubbling
-                                      >
+                                      <div  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus-within:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus-within:border-primary">
                                         <ReactDatePicker
                                           selected={values.orderProducts[index]?.clientShippingDate || null}
                                           onChange={(date) => setFieldValue(`orderProducts[${index}].clientShippingDate`, date ? format(date, "yyyy-MM-dd") : "")}
@@ -1158,6 +1169,8 @@ const AddOrder = () => {
                                           placeholderText="Enter Client Shipping Date"
                                           className="w-full bg-transparent outline-none"
                                           wrapperClassName="w-full"
+                                          withPortal
+                                          portalId={`datepicker-portal-${index}`}
                                         />
                                       </div>
 
@@ -1178,6 +1191,8 @@ const AddOrder = () => {
                                           placeholderText="Enter Client expected Date"
                                           className="w-full bg-transparent outline-none"
                                           wrapperClassName="w-full"
+                                          withPortal
+                                          portalId={`datepicker-portal-${index}`}
                                         />
                                       </div>
                                       <ErrorMessage name="ExpectedDate" component="div" className="text-red-600 text-sm" />
@@ -1328,7 +1343,7 @@ const AddOrder = () => {
 
 
                       <div className="flex-1 min-w-[200px] mt-11">
-                        <label className="mb-2.5 block text-black dark:text-white">Client Instruction</label>
+                        <label className="mb-2.5 block text-black dark:text-white">Client Instruction <span className="text-red-500 ml-1">*</span></label>
                         <Field
                           as="textarea"
                           name="clientInstruction"
@@ -1367,12 +1382,12 @@ const AddOrder = () => {
 
 
                       <button
-                        type="submit"
-                        className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4"
-                        disabled={isSubmitting}
-                      >
-                        Add Order
-                      </button>
+      type="submit"
+      className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+      disabled={isSubmitting || !values.orderType?.id}
+    >
+      {isSubmitting ? 'Adding Order...' : 'Add Order'}
+    </button>
                     </div>
                   </div>
                 </div>
@@ -1424,7 +1439,7 @@ const AddOrder = () => {
             </div>
             <div className="p-4">
               <div className="mb-4">
-                <label className="block text-black dark:text-white mb-2">Customer Name</label>
+                <label className="block text-black dark:text-white mb-2">Customer Name <span className="text-red-500 ml-1">*</span></label>
                 <input
                   type="text"
                   value={newCustomerName}
@@ -1435,7 +1450,7 @@ const AddOrder = () => {
               </div>
 
               <div className="mb-4">
-                <label className="mb-2.5 block text-black dark:text-white">Customer Group</label>
+                <label className="mb-2.5 block text-black dark:text-white">Customer Group <span className="text-red-500 ml-1">*</span></label>
                 <ReactSelect
                   name="customerGroup"
                   value={customerGroupList?.find(option => option.value === selectedCustomerGroup?.id) || null}
@@ -1464,7 +1479,7 @@ const AddOrder = () => {
                 <button
                   type="button"
                   onClick={() => handleAddCustomer(newCustomerName, selectedCustomerGroup)}
-                  className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                  className="px-4 py-2 bg-primary text-white rounded hover:bg-blue-600 transition-colors"
                   disabled={!newCustomerName.trim()}
                 >
                   Add Customer

@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customStyles as createCustomStyles } from '../../../Constants/utils';
 import { MdCreateNewFolder } from "react-icons/md";
-
+import useLedger from '../../../hooks/useLedger';
 
 
 
@@ -26,26 +26,38 @@ const productgrp = [
 
 const ViewLedger = () => {
 
-    const { handleUpdate, getLedgerNumber, OrderNo, getSupplier, productId,
-        getprodId, supplier, getCustomer, customer } = useOrder();
+    const { ledgerName, getLedgerName } = useLedger()
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
     const [isLoading, setisLoading] = useState(false)
     const customStyles = createCustomStyles(theme?.mode);
     const [prodIdOptions, setprodIdOptions] = useState([])
+
+    const [ledgerNameOptions, setledgerNameOptions] = useState([])
+
+
     useEffect(() => {
-
-        getSupplier();
-
+        getLedgerName()
 
 
-    }, []);
+        const formattedLedgerName = ledgerName?.map(ledg => ({
+            label: ledg?.name,
+            value: ledg?.name
+        }));
+        setledgerNameOptions(formattedLedgerName);
+    }, [])
 
+    console.log(ledgerName,"llllllllllllllllllllllllllllllllllllllllllllll");
+    
+ const formattedLedgerName = ledgerName?.map(ledg => ({
+            label: ledg?.name,
+            value: ledg?.name
+        }));
 
 
     const { token } = currentUser;
 
-    console.log(productId, "huhuuhuuuuuuuuuuuuuuuuu");
+
 
     const [Ledger, setLedger] = useState()
 
@@ -58,17 +70,21 @@ const ViewLedger = () => {
     const navigate = useNavigate();
 
 
-    console.log(supplier, customer, productId, "LedgerNo");
 
 
 
-    const formattedSupplier = supplier.map(supplier => ({
-        label: supplier.name,
-        value: supplier.name
-    }));
+
+
+    
     const LedgerType = [
         { value: 'supplier', label: 'supplier' },
         { value: 'customer', label: 'customer' },
+        { value: 'cash', label: 'cash' },
+        { value: 'sales', label: 'sales' },
+        { value: 'purchase', label: 'purchase' },
+        { value: 'GIFTVOUCHER', label: 'gift voucher' },
+        { value: 'bank', label: 'bank' },
+
 
     ];
 
@@ -95,17 +111,17 @@ const ViewLedger = () => {
     });
 
 
-    useEffect(() => {
-        if (supplier.data) {
-            const formattedOptions = supplier.data.map(supp => ({
-                value: supp.id,
-                label: supp?.name,
-                supplierNameObject: supp,
-                suplierid: { id: supp.id }
-            }));
-            setsupplierNameOptions(formattedOptions);
-        }
-    }, [supplier.data]);
+    // useEffect(() => {
+    //     if (supplier.data) {
+    //         const formattedOptions = supplier.data.map(supp => ({
+    //             value: supp.id,
+    //             label: supp?.name,
+    //             supplierNameObject: supp,
+    //             suplierid: { id: supp.id }
+    //         }));
+    //         setsupplierNameOptions(formattedOptions);
+    //     }
+    // }, [supplier.data]);
 
 
 
@@ -260,7 +276,11 @@ const ViewLedger = () => {
                 <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.groupName} </p>
                 </td>
-                {
+                <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.ledgerType
+                    } </p>
+                </td>
+                {/* {
                     item.supplierName ? (
                         <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                             <p className="text-gray-900 whitespace-no-wrap">Supplier</p>
@@ -272,7 +292,7 @@ const ViewLedger = () => {
                     ) : <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                         <p className="text-gray-900 whitespace-no-wrap">null</p>
                     </td>
-                }
+                } */}
                 {/* <td className="px-5 py-5  text-sm">
                     <div className="flex items-center gap-2">
                         <span className="text-gray-900">{item?.openingBalances}</span>
@@ -309,9 +329,20 @@ const ViewLedger = () => {
                     </div>
                 </td> */}
 
-                <td className='whitespace-nowrap px-5 py-5 bLedger-b bLedger-gray-200 text-sm'>
-                    <span onClick={() => openLEDGERModal(item)} className="view-badge bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[210px]"> VIEW LEDGER</span>
-                </td>
+              <td className='whitespace-nowrap px-5 py-5 bLedger-b bLedger-gray-200 text-sm'>
+  <span 
+    onClick={() => openLEDGERModal(item)} 
+    className="view-badge bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer inline-block w-[10%] min-w-[60px]"
+     style={{ 
+     
+      width: "2% !important",
+      minWidth: "10px !important"
+    }}
+  
+  >
+    VIEW
+  </span>
+</td>
                 {/* <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     {item.products &&
                         item.products.map((prodId, index) => (
@@ -339,7 +370,7 @@ const ViewLedger = () => {
 
 
 
-                <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
+                {/* <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
                         <FiEdit
                             size={17}
@@ -367,7 +398,7 @@ const ViewLedger = () => {
                             title="Delete Product"
                         />
                     </p>
-                </td>
+                </td> */}
 
             </tr>
         ));
@@ -384,7 +415,8 @@ const ViewLedger = () => {
 
 
             // name: values.supplierName || undefined,
-            type: values?.type || undefined
+            name: values?.ledgerName || undefined,
+            type: values?.type || undefined,
 
 
         };
@@ -729,13 +761,15 @@ const ViewLedger = () => {
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Ledger/ View Ledger" />
-            <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
-                <div className="pt-5">
-                    <div className='flex justify-between'>
-                        <h2 className="text-xl font-semibold leading-tight">View Ledger</h2>
-                        {/* <p className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium bg-success text-success dark:bg-white dark:text-slate-800`}>
-                            TOTAL PRODUCTS: {pagination.totalItems}
-                        </p> */}
+            <div className="container  px-4 sm:px-8 bg-white dark:bg-slate-800">
+                <div className="pt-5 ">
+                    <div className='flex flex-row items-center justify-between w-full'>
+                        <h2 className="text-xl text-slate-500 font-semibold w-full flex items-center justify-between">
+                            <span>View Ledger</span>
+                            <span className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-blue-900/20 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-800/30 text-sm font-semibold text-blue-700 dark:text-blue-300 ml-4">
+                                TOTAL LEDGERS: {pagination.totalItems}
+                            </span>
+                        </h2>
                     </div>
                     {IsLEDGERModalOpen && SelectedLEDGERData && (
                         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[9999] p-4">
@@ -1190,6 +1224,7 @@ const ViewLedger = () => {
                                 // supplierName: "",
                                 // ProductId: "",
                                 type: "",
+                                ledgerName:"",
 
 
 
@@ -1207,21 +1242,7 @@ const ViewLedger = () => {
                                                 Ledger Type
                                                 <span className="text-red-700 text-xl mt-[40px] justify-center items-center"> *</span>
                                             </label>
-                                            {/* <div className="z-20 bg-transparent dark:bg-form-Field">
-                                                <ReactSelect
-                                                    name="supplierName"
 
-                                                    value={productgrp.find(option => option.value === values.customerName)}
-                                                    onChange={(option) => setFieldValue('supplierName', option ? option.value : null)}
-                                                    // options={formattedSupplier}
-
-                                                    options={[{ label: 'View All Suppliers', value: null }, ...formattedSupplier]}
-                                                    styles={customStyles} // Pass custom styles here
-                                                    className="bg-white dark:bg-form-Field"
-                                                    classNamePrefix="react-select"
-                                                    placeholder="Select supplier Name"
-                                                />
-                                            </div> */}
                                             <div className="z-20 bg-transparent dark:bg-form-Field">
                                                 <ReactSelect
                                                     name="type"
@@ -1235,6 +1256,28 @@ const ViewLedger = () => {
                                                     className="bg-white dark:bg-form-Field"
                                                     classNamePrefix="react-select"
                                                     placeholder="Select Type"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="flex-1 min-w-[300px]">
+                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                Ledger NAME
+                                                <span className="text-red-700 text-xl mt-[40px] justify-center items-center"> *</span>
+                                            </label>
+
+                                            <div className="z-20 bg-transparent dark:bg-form-Field">
+                                                <ReactSelect
+                                                    name="ledgerName"
+
+                                                    value={formattedLedgerName.find(option => option.value === values.ledgerName)}
+                                                    onChange={(option) => setFieldValue('ledgerName', option ? option.value : null)}
+                                                    // options={formattedSupplier}
+
+                                                    options={[{ label: 'View All Ledgers', value: null }, ...formattedLedgerName]}
+                                                    styles={customStyles} 
+                                                    className="bg-white dark:bg-form-Field"
+                                                    classNamePrefix="react-select"
+                                                    placeholder="Select Ledger Name"
                                                 />
                                             </div>
                                         </div>
@@ -1272,10 +1315,10 @@ const ViewLedger = () => {
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">LedgerType</th>
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Opening Balance <br /> (as of {openingBalancesDate})</th>
                                         {/* <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Closing Balance</th> */}
-                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Ledger</th>
+                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Ledger Transactions</th>
                                         {/* <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 
-                                        <th className="px-5 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+                                        {/* <th className="px-5 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th> */}
                                     </tr>
                                 </thead>
                                 <tbody>

@@ -29,15 +29,15 @@ const Reports = () => {
     const { productGroup, Supplier, orderType, getSupplier,
         getOrderNo,
         getProdId, orderNo,
-        prodId, getCustomer, Customer,getorderType } = useReports();
+        prodId, getCustomer, Customer, getorderType } = useReports();
 
-        const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
 
     const customStyles = createCustomStyles(theme?.mode);
-const [report, setreport] = useState()
+    const [report, setreport] = useState()
 
     const { token } = currentUser;
 
@@ -64,7 +64,7 @@ const [report, setreport] = useState()
         value: prod.productGroupName
     }));
     const formattedOrderType = orderType?.map(type => ({
-        label: type.orderTypeName, 
+        label: type.orderTypeName,
         value: type.orderTypeName
     }));
     const formattedCustomer = Customer?.map(cust => ({
@@ -74,54 +74,54 @@ const [report, setreport] = useState()
 
     const orderStatus = [
         {
-        label: "Pending",
-        value: "Pending"
-    },
-    {
-        label: "Closed",
-        value: "Closed"
-    },
-    {
-        label: "Partially_Pending",
-        value: "Partially_Pending"
-    },
-    {
-        label: "Partially_Closed",
-        value: "Partially_Closed"
-    },
-    {
-        label: "Forced_Closure",
-        value: "Forced_Closure"
-    },
-    {
-        label: "approved",
-        value: "approved"
-    },
-    {
-        label: "Partially_Approved",
-        value: "Partially_Approved"
-    },
-    {
-        label: "created",
-        value: "created"
-    },
-    {
-        label: "accepted",
-        value: "accepted"
-    },
-    {
-        label: "Partially_Accepted",
-        value: "Partially_Accepted"
-    },
-    {
-        label: "rejected",
-        value: "rejected"
-    },
-  
+            label: "Pending",
+            value: "Pending"
+        },
+        {
+            label: "Closed",
+            value: "Closed"
+        },
+        {
+            label: "Partially_Pending",
+            value: "Partially_Pending"
+        },
+        {
+            label: "Partially_Closed",
+            value: "Partially_Closed"
+        },
+        {
+            label: "Forced_Closure",
+            value: "Forced_Closure"
+        },
+        {
+            label: "approved",
+            value: "approved"
+        },
+        {
+            label: "Partially_Approved",
+            value: "Partially_Approved"
+        },
+        {
+            label: "created",
+            value: "created"
+        },
+        {
+            label: "accepted",
+            value: "accepted"
+        },
+        {
+            label: "Partially_Accepted",
+            value: "Partially_Accepted"
+        },
+        {
+            label: "rejected",
+            value: "rejected"
+        },
 
 
 
-];
+
+    ];
 
 
 
@@ -131,7 +131,7 @@ const [report, setreport] = useState()
         value: sup.id
     }));
 
-    console.log(Supplier,"jhjhjh");
+    console.log(Supplier, "jhjhjh");
 
     // console.log(Customer,"kjkjkjkj");
     // console.log(supplier, customer, productIdd, "orderNo");
@@ -257,7 +257,7 @@ const [report, setreport] = useState()
     //     getOrder()
     // }, [])
 
- 
+
 
     console.log(order, "heyorder");
 
@@ -277,7 +277,7 @@ const [report, setreport] = useState()
 
     const renderTableRows = () => {
         console.log(report);
-        if (!report || !report.length) { 
+        if (!report || !report.length) {
             return (
                 <tr className='bg-white dark:bg-slate-700 dark:text-white'>
                     <td colSpan="6" className="px-5 py-5 border-b border-gray-200 text-sm">
@@ -344,10 +344,10 @@ const [report, setreport] = useState()
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item.receivedQuantity}</p>
                 </td>
-              
-                
 
-               
+
+
+
                 {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     {item.products &&
                         item.products.map((prodId, index) => (
@@ -356,13 +356,13 @@ const [report, setreport] = useState()
                             </p>
                         ))}
                 </td> */}
-                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.orderQuantity||0}</p>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item?.orderQuantity || 0}</p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.productStatus}</p>
                 </td>
-              
+
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     {item.productSuppliers &&
@@ -381,7 +381,7 @@ const [report, setreport] = useState()
 
 
 
-           
+
             </tr>
         ));
 
@@ -398,7 +398,7 @@ const [report, setreport] = useState()
         console.log("Fetching orders for page", page); // Log the page number being requested
 
         try {
-        const response = await fetch(`${VIEW_REPORT}?page=${page || 1}`, {
+            const response = await fetch(`${VIEW_REPORT}?page=${page || 1}`, {
                 method: "POST", // GET method
                 headers: {
                     "Content-Type": "application/json",
@@ -409,7 +409,7 @@ const [report, setreport] = useState()
 
             const textResponse = await response.text();
 
-          
+
 
             // Get the raw text response
             // Log raw response before parsing   
@@ -459,27 +459,27 @@ const [report, setreport] = useState()
 
     const handleSubmit = (values) => {
 
-    
+
         const filters = {
 
 
 
             orderType: values.orderTypeName,
             group: values.productGroup,
-            orderNo: values.orderNo ,
-            customerName: values.customerName ,
-            supplierId: values.supplierName ,
-            productId: values.ProductId ,
+            orderNo: values.orderNo,
+            customerName: values.customerName,
+            supplierId: values.supplierName,
+            productId: values.ProductId,
 
 
             fromDate: values.fromDate,
-            orderStatus:values.orderStatus,
+            orderStatus: values.orderStatus,
             toDate: values.toDate,
 
 
         };
-     
-getReport(pagination.currentPage, filters)
+
+        getReport(pagination.currentPage, filters)
         // getOrder(pagination.currentPage, filters);
         // ViewInventory(pagination.currentPage, filters);
     };
@@ -546,7 +546,7 @@ getReport(pagination.currentPage, filters)
     //         console.error(error);
     //         toast.error("An error occurred");
     //     } finally {
-            
+
     //     }
     // }
 
@@ -559,40 +559,40 @@ getReport(pagination.currentPage, filters)
             supplierId: values.supplierName,
             productId: values?.ProductId,
             fromDate: values.fromDate,
-            orderStatus:values.orderStatus,
+            orderStatus: values.orderStatus,
             toDate: values.toDate,
         };
-    
+
         console.log(filters, "lala");
-    
+
         try {
-            const response = await fetch(`${DOWNLOAD_REPORT}`, { 
+            const response = await fetch(`${DOWNLOAD_REPORT}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body:JSON.stringify(filters), // Convert body to JSON string
+                body: JSON.stringify(filters), // Convert body to JSON string
             });
-    
+
             if (!response.ok) {
                 const errorText = await response.text(); // Get error response as text
                 throw new Error(errorText || "Failed to download report");
             }
-    
+
             const blob = await response.blob(); // Get the binary PDF file
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
             // link.setAttribute("download", "report.pdf"); // Ensure correct filename
-    
+
             document.body.appendChild(link);
             link.click();
-    
+
             // Cleanup
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
-    
+
             toast.success("Report downloaded successfully");
         } catch (error) {
             console.error(error);
@@ -608,14 +608,14 @@ getReport(pagination.currentPage, filters)
             supplierId: values.supplierName,
             productId: values?.ProductId,
             fromDate: values.fromDate,
-            orderStatus:values.orderStatus,
+            orderStatus: values.orderStatus,
             toDate: values.toDate,
         };
-    
-   
-    
+
+
+
         try {
-            const response = await fetch(`${DOWNLOADCSV_REPORT}`, { 
+            const response = await fetch(`${DOWNLOADCSV_REPORT}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -623,14 +623,14 @@ getReport(pagination.currentPage, filters)
                 },
                 body: JSON.stringify(filters), // Convert body to JSON string
             });
-    
+
             if (!response.ok) {
                 const errorText = await response.text(); // Get error response as text
                 throw new Error(errorText || "Failed to download report");
             }
-    
+
             const blob = await response.blob(); // Get the binary CSV file
-            
+
             // Extract the filename from the Content-Disposition header
             const disposition = response.headers.get("Content-Disposition");
             let filename = "report.csv"; // Default filename
@@ -640,27 +640,27 @@ getReport(pagination.currentPage, filters)
                     filename = match[1];
                 }
             }
-    
+
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
             link.setAttribute("download", filename); // Use the filename from the header
-    
+
             document.body.appendChild(link);
             link.click();
-    
+
             // Cleanup
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
-    
+
             toast.success("Report downloaded successfully");
         } catch (error) {
             console.error(error);
             toast.error("An error occurred while downloading the report");
         }
     };
-    
-    
+
+
 
 
 
@@ -682,11 +682,13 @@ getReport(pagination.currentPage, filters)
             <Breadcrumb pageName="Order/ View Order" />
             <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
                 <div className="pt-5">
-                    <div className='flex justify-between'>
-                        <h2 className="text-xl font-semibold leading-tight">Order Report</h2>
-                        {/* <p className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium bg-success text-success dark:bg-white dark:text-slate-800`}>
-                            TOTAL PRODUCTS: {pagination.totalItems}
-                        </p> */}
+                    <div className='flex flex-row items-center justify-between w-full'>
+                        <h2 className="text-xl text-slate-500 font-semibold w-full flex items-center justify-between">
+                            <span>Order Reports</span>
+                            <span className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-blue-900/20 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-800/30 text-sm font-semibold text-blue-700 dark:text-blue-300 ml-4">
+                                COUNT: {pagination.totalItems}
+                            </span>
+                        </h2>
                     </div>
 
 
@@ -700,7 +702,7 @@ getReport(pagination.currentPage, filters)
                                 supplierName: "",
                                 customerName: "",
                                 fromDate: '',
-                                orderStatus:"",
+                                orderStatus: "",
                                 toDate: ''
 
 
@@ -710,7 +712,7 @@ getReport(pagination.currentPage, filters)
                         >
                             {({ setFieldValue, values, handleBlur }) => (
                                 <Form>
-                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
+                                    <div className=" flex flex-wrap gap-6 mt-12">
 
                                         <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Order Type</label>
@@ -736,10 +738,7 @@ getReport(pagination.currentPage, filters)
 
 
                                         <div className="flex-1 min-w-[300px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">
-                                                Product Group
-                                                <span className="text-red-700 text-xl mt-[40px] justify-center items-center"> *</span>
-                                            </label>
+                                            <label className="mb-2.5 block text-black dark:text-white">Product Group</label>
                                             <div className="z-20 bg-transparent dark:bg-form-Field">
                                                 <ReactSelect
                                                     name="productGroup"
@@ -752,13 +751,10 @@ getReport(pagination.currentPage, filters)
                                                     styles={customStyles} // Pass custom styles here
                                                     className="bg-white dark:bg-form-Field"
                                                     classNamePrefix="react-select"
-                                                    placeholder="Select supplier Name"
+                                                    placeholder="Select productGroup"
                                                 />
                                             </div>
                                         </div>
-                                    </div>
-                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-
                                         <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Order No</label>
                                             <ReactSelect
@@ -780,13 +776,24 @@ getReport(pagination.currentPage, filters)
                                             />
 
                                         </div>
+                                    </div>
 
 
-                                        <div className="flex-1 min-w-[300px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">
-                                                Supplier
-                                                <span className="text-red-700 text-xl mt-[40px] justify-center items-center"> *</span>
-                                            </label>
+                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
+
+
+
+
+                                     
+                                    </div>
+
+
+
+
+                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
+
+                                           <div className="flex-1 min-w-[300px]">
+                                         <label className="mb-2.5 block text-black dark:text-white">Supplier</label>
                                             <div className="z-20 bg-transparent dark:bg-form-Field">
                                                 <ReactSelect
                                                     name="supplierName"
@@ -803,12 +810,6 @@ getReport(pagination.currentPage, filters)
                                                 />
                                             </div>
                                         </div>
-                                    </div>
-
-
-
-
-                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
                                         <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
                                             <ReactSelect
@@ -875,12 +876,10 @@ getReport(pagination.currentPage, filters)
                                                 className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                             />
                                         </div>
-                                    </div>
 
-                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-                                        <div className="flex-1 min-w-[300px]">
+                                          <div className="flex-1 min-w-[300px]">
                                             <label className="mb-2.5 block text-black dark:text-white">
-                                               Order Status
+                                                Order Status
                                             </label>
                                             <ReactSelect
                                                 name="orderStatus"
@@ -888,7 +887,7 @@ getReport(pagination.currentPage, filters)
                                                 onChange={(option) => {
                                                     setFieldValue('orderStatus', option.value);
 
-                                                }} 
+                                                }}
                                                 // onBlur={handleBlur}
                                                 // // options={formattedCustomer}
                                                 options={[{ label: 'Select', value: null }, ...orderStatus]}
@@ -898,9 +897,13 @@ getReport(pagination.currentPage, filters)
                                                 placeholder="Select"
                                             />
                                         </div>
+                                    </div>
+
+                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
+                                      
 
 
-                                     
+
                                     </div>
 
                                     <div className="flex justify-center">
@@ -918,7 +921,7 @@ getReport(pagination.currentPage, filters)
                                             <button
                                                 type="button"
                                                 onClick={() => handlegenerateReport(values)}
-                                                className="flex md:w-[150px] mr-4 w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
+                                                className="flex md:w-[230px] mr-4 w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                             >
                                                 Generate Report
                                             </button>
@@ -928,7 +931,7 @@ getReport(pagination.currentPage, filters)
                                             <button
                                                 type="button"
                                                 onClick={() => handlegenerateCsv(values)}
-                                                className="flex md:w-[180px] w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
+                                                className="flex md:w-[230px] w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                             >
                                                 Generate Report (csv)
                                             </button>
@@ -955,7 +958,7 @@ getReport(pagination.currentPage, filters)
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Ordered Quantity</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Recieved Quantity</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
-                                        
+
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Supplier</th>
                                         {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 
