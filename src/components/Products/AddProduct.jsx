@@ -2619,9 +2619,16 @@ const AddProduct = () => {
 
 
 
-                                            <button className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4">
+                                         
+
+
+
+                                            <div className='flex justify-center m-5'>
+                                               <button  className="flex md:w-[180px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90" >
                                                 Add Product
                                             </button>
+                                    
+                                            </div>
                                         </div>
 
 

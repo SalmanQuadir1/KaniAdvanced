@@ -1261,7 +1261,7 @@ const ViewLedger = () => {
                                         </div>
                                         <div className="flex-1 min-w-[300px]">
                                             <label className="mb-2.5 block text-black dark:text-white">
-                                                Ledger NAME
+                                                Ledger Name
                                                 <span className="text-red-700 text-xl mt-[40px] justify-center items-center"> *</span>
                                             </label>
 

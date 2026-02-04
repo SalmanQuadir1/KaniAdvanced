@@ -387,7 +387,7 @@ const ViewVoucher = () => {
 
 
 
-
+{/* 
                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
                         <FiEdit
@@ -404,7 +404,7 @@ const ViewVoucher = () => {
                             title="Delete Product"
                         />
                     </p>
-                </td>
+                </td> */}
 
             </tr>
         ));
@@ -441,9 +441,13 @@ const ViewVoucher = () => {
             <Breadcrumb pageName="Voucher/ View Voucher" />
             <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800 mb-4">
                 <div className="pt-5 pb-4">
-                    <div className='flex flex-col justify-center items-center mb-6'>
-                        <h2 className="text-xl font-semibold leading-tight mb-3">View Voucher</h2>
-                        <div className='w-full border-b-2 border-gray-300 dark:border-gray-600'></div>
+                   <div className='flex flex-row items-center justify-between w-full'>
+                        <h2 className="text-xl text-slate-500 font-semibold w-full flex items-center justify-between">
+                            <span> Voucher View</span>
+                            <span className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-blue-900/20 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-800/30 text-sm font-semibold text-blue-700 dark:text-blue-300 ml-4">
+                                Count: {pagination.totalItems}
+                            </span>
+                        </h2>
                     </div>
 
 
@@ -544,7 +548,7 @@ const ViewVoucher = () => {
 
                                         {/* <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 
-                                        <th className="px-5 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+                                        {/* <th className="px-5 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th> */}
                                     </tr>
                                 </thead>
                                 <tbody>

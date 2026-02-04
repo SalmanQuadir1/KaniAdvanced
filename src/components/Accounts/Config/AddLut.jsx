@@ -117,7 +117,7 @@ const AddLut = () => {
                                         <div className="mb-4.5 flex flex-col gap-6">
                                             <div className='flex flex-row gap-4'>
                                                 <div className="flex-1 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">LUT No</label>
+                                                    <label className="mb-2.5 block text-black dark:text-white">LUT No <span className='text-red-600 ml-1'>*</span></label>
                                                     <Field
                                                         type="text"
                                                         name="lutNumber"
@@ -128,7 +128,7 @@ const AddLut = () => {
                                                 </div>
 
                                                 <div className="flex-1 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">From Date</label>
+                                                    <label className="mb-2.5 block text-black dark:text-white">From Date <span className='text-red-600 ml-1'>*</span></label>
                                                     <Field
                                                         type="date"
                                                         name="fromDate"
@@ -146,7 +146,7 @@ const AddLut = () => {
                                                 </div>
 
                                                 <div className="flex-1 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">To Date</label>
+                                                    <label className="mb-2.5 block text-black dark:text-white">To Date <span className='text-red-600 ml-1'>*</span></label>
                                                     <Field
                                                         type="date"
                                                         name="toDate"
@@ -182,7 +182,7 @@ const AddLut = () => {
                                             <button
                                                 type="submit"
                                                 disabled={isSubmitting}
-                                                className="flex md:w-[120px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90 disabled:opacity-50"
+                                                className="flex md:w-[150px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90 disabled:opacity-50"
                                             >
                                                 {isSubmitting ? 'Saving...' : (edit ? "Update LUT" : "Create LUT")}
                                             </button>

@@ -12,34 +12,34 @@ const useGroups = (gstDetails) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-       
+
         dispatch(fetchHsnCode(token))
-       
+
     }, []);
     const [currentGroups, setCurrentGroups] = useState({
-       groupName:"",
-       subGroup:[],
-       natureOfGroup:"",
-       under:"",
-       allocatePurchaseInvoice:"",
-       calculation:"",
-       balanceReporting:"",
-       subLedgerGroup:"",
-       affectGrossProfit:"",
-       gstDetails: "",
-       productStatus: "",
-       gstratedetails:"",
+        groupName: "",
+        subGroup: [],
+        natureOfGroup: "",
+        under: "",
+        allocatePurchaseInvoice: "",
+        calculation: "",
+        balanceReporting: "",
+        subLedgerGroup: "",
+        affectGrossProfit: "",
+        gstDetails: "",
+        productStatus: "",
+        gstratedetails: "",
 
-       hsnCodes: "",
-       hsnCode:{},
+        hsnCodes: "",
+        hsnCode: {},
 
-       hsn_Sac: "",
+        hsn_Sac: "",
 
-       gstDescription: "",
+        gstDescription: "",
 
-       taxationType: "",
+        taxationType: "",
 
-       gstRate: "",
+        gstRate: "",
 
     });
 
@@ -49,7 +49,7 @@ const useGroups = (gstDetails) => {
         { value: 'Liabilities', label: 'Liabilities' },
         { value: 'Assets', label: 'Assets' },
         { value: 'Expenses', label: 'Expenses' },
- 
+
     ]
     const under = [
         { value: '', label: 'Select' },
@@ -92,15 +92,15 @@ const useGroups = (gstDetails) => {
         { value: 'NotApplicable', label: 'NotApplicable' },
         { value: 'AppropriatebyQTY', label: 'AppropriatebyQTY' },
         { value: 'AppropriatebyValue', label: 'AppropriatebyValue' },
-      ];
-      
+    ];
+
 
     const [pagination, setPagination] = useState({
         totalItems: 0,
         data: [],
         totalPages: 0,
         currentPage: 1,
-        itemsPerPage:0
+        itemsPerPage: 0
     });
 
     useEffect(() => {
@@ -117,14 +117,19 @@ const useGroups = (gstDetails) => {
                 }
             });
             const data = await response.json();
-            console.log(data,"asd");
-            setGroups(data.content);
+            console.log(data, "asd");
+            const filteredGroups = data.content.map(group => {
+                const {  allocatePurchaseInvoice, ...rest } = group;
+                return rest;
+            });
+
+            setGroups(filteredGroups);
             setPagination({
                 totalItems: data.totalElements,
                 pagUnitList: data.content,
                 totalPages: data.totalPages,
                 currentPage: data.number + 1,
-                itemsPerPage:data.size
+                itemsPerPage: data.size
             });
         } catch (error) {
             console.error(error);
@@ -133,7 +138,7 @@ const useGroups = (gstDetails) => {
     };
 
     const handleDelete = async (e, id) => {
-        console.log(id,"del");
+        console.log(id, "del");
         e.preventDefault();
         try {
             const response = await fetch(`${DELETE_Groups_URL}/${id}`, {
@@ -173,8 +178,8 @@ const useGroups = (gstDetails) => {
     };
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-        console.log(values,"kk");
-        const product={}
+        console.log(values, "kk");
+        const product = {}
         if (gstDetails && gstDetails.length > 0) {
             product.slabBasedRates = gstDetails.map(({ id, ...rest }) => rest);// Add gstDetails to the product
         }
@@ -198,18 +203,18 @@ const useGroups = (gstDetails) => {
             // Remove slab-based rates if they exist
             delete product.slabBasedRates;
         }
-console.log(product,"jamshedpur+++++++++++++");
+        console.log(product, "jamshedpur+++++++++++++");
 
-const finalresult = {
-    ...values,  // Spread all form values
-    ...(product?.slabBasedRates && { slabBasedRates: product.slabBasedRates }) // Conditionally add slabBasedRates
-  };
+        const finalresult = {
+            ...values,  // Spread all form values
+            ...(product?.slabBasedRates && { slabBasedRates: product.slabBasedRates }) // Conditionally add slabBasedRates
+        };
 
-  // Remove the product object if it exists
-  delete finalresult.product; 
+        // Remove the product object if it exists
+        delete finalresult.product;
 
-  console.log(finalresult);
-console.log(finalresult,"jahahaha++++++++");
+        console.log(finalresult);
+        console.log(finalresult, "jahahaha++++++++");
 
 
         try {
@@ -232,9 +237,9 @@ console.log(finalresult,"jahahaha++++++++");
                 setEdit(false);
                 setCurrentGroups({
                     groupName: "",
-                    subGroup:[],
-                    natureOfGroup:""
-                   
+                    subGroup: [],
+                    natureOfGroup: ""
+
                 });
                 getGroups(pagination.currentPage); // Fetch updated Groups
             } else {

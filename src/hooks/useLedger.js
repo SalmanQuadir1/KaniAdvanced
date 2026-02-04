@@ -269,18 +269,19 @@ const useLedger = () => {
             if (response.ok) {
                 toast.success(`Ledger'added successfully`);
                 navigate("/ledger/view")
-                resetForm();
-                setEdit(false);
+                // resetForm();
+                // setEdit(false);
              
                  // Fetch updated Ledger
             } else {
                 toast.error(`${data.errorMessage}`);
             }
         } catch (error) {
-            console.error(error, response);
-            toast.error("An error occurred");
+            console.error(error);
+            // toast.error("An error occurred");
         } finally {
-            setSubmitting(false);
+            //   toast.error("An error occurred");
+           
         }
     };
 

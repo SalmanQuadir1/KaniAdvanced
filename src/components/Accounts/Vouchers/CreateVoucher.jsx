@@ -1391,7 +1391,7 @@ const CreateVoucher = () => {
                                                     Vouchers?.typeOfVoucher == "Payment" && (
                                                         <>
                                                             <div className="flex-2 min-w-[250px]">
-                                                                <label className="mb-2.5 block text-black dark:text-white">Select Account</label>
+                                                                <label className="mb-2.5 block text-black dark:text-white">Select Account <span className='text-red-600 ml-1'>*</span></label>
                                                                 <ReactSelect
                                                                     name='ledgerId'
                                                                     value={LedgerData.find(opt => opt.value === values.ledgerId)}
@@ -3258,9 +3258,9 @@ const CreateVoucher = () => {
                                         <Modalll
                                             isOpen={isCustModelOpen}
                                             onRequestClose={() => setisCustModelOpen(false)}
-                                            className="modal mr-[200px] mt-[30px] mb-[50px]"
+                                            className="modal mr-[200px] mt-[30px] mb-[50px] z-99999"
                                             overlayClassName="modal-overlay"
-                                            width="900px" // Increased width to accommodate more fields
+                                            width="800px" // Increased width to accommodate more fields
                                         >
                                             <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                                                 <h3 className="font-medium text-slate-500 text-center text-xl dark:text-black">
@@ -3314,7 +3314,7 @@ const CreateVoucher = () => {
                                                             styles={customStyles}
                                                             className="bg-white dark:bg-form-input"
                                                             classNamePrefix="react-select"
-                                                            placeholder="Select Shipping State"
+                                                            placeholder="Shipping State"
                                                         />
                                                     </div>
                                                 </div>
@@ -3390,7 +3390,7 @@ const CreateVoucher = () => {
                                                             previousOpType: openingBalanceType,
                                                             previousOpBalance: openingBalance
                                                         })}
-                                                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                                                        className="px-4 py-2 bg-primary text-white rounded hover:bg-blue-600 transition-colors"
                                                         disabled={!newCustomerName.trim() || !shippingAddress.trim() || !shippingState}
                                                     >
                                                         Add Customer

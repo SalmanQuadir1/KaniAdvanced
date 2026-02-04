@@ -6,12 +6,114 @@ import { useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
 import { customStyles as createCustomStyles } from '../../Constants/utils';
 import useLedger from '../../hooks/useLedger';
+import * as Yup from 'yup';
 
 const CreateLedger = () => {
 
     const { getGroup, Group, handleSubmit } = useLedger()
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
+
+
+
+
+
+    const validationSchema = Yup.object().shape({
+        name: Yup.string()
+            .required('Name is required')
+            .min(2, 'Name must be at least 2 characters'),
+
+        ledgerType: Yup.string()
+            .required('Ledger Category is required'),
+
+
+
+
+
+        //   mobileNo: Yup.string()
+        //     .required('Mobile No is required')
+        //     .matches(/^[0-9]{10}$/, 'Mobile No must be 10 digits'),
+
+        //   email: Yup.string()
+        //     .email('Invalid email address')
+        //     .required('Email is required'),
+
+        //   city: Yup.string()
+        //     .required('City is required'),
+
+        //   country: Yup.string()
+        //     .required('Country is required'),
+
+        //   category: Yup.string()
+        //     .required('Category is required'),
+
+        //   maximumDiscountApplicable: Yup.number()
+        //     .min(0, 'Discount cannot be negative')
+        //     .max(100, 'Discount cannot exceed 100%')
+        //     .nullable(),
+
+        //   setAlterDealingProducts: Yup.string()
+        //     .required('Please select an option'),
+
+        //   accountGroup: Yup.object()
+        //     .shape({
+        //       id: Yup.string().required('Account Group is required')
+        //     })
+        //     .nullable()
+        //     .required('Account Group is required'),
+
+        //   // Mailing Details
+        //   mailingName: Yup.string()
+        //     .required('Mailing Name is required'),
+
+        //   mailingAddress: Yup.string()
+        //     .required('Mailing Address is required'),
+
+        //   state: Yup.string()
+        //     .required('State is required'),
+
+        //   mailingCountry: Yup.string()
+        //     .required('Country is required'),
+
+        //   pincode: Yup.string()
+        //     .required('Pincode is required')
+        //     .matches(/^[0-9]{6}$/, 'Pincode must be 6 digits'),
+
+        // Tax Registration Details
+        //   panNo: Yup.string()
+        //     .required('PAN/TAN No is required')
+        //     .matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/, 'Invalid PAN format'),
+
+        registrationType: Yup.string()
+            .required('Registration Type is required'),
+
+
+        //   gstin: Yup.string()
+        //     .nullable()
+        //     .matches(/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/, 'Invalid GSTIN format'),
+
+        //   setAfterDealingProduct: Yup.string()
+        //     .required('Please select an option'),
+
+
+
+        typeOfOpeningBalance: Yup.string()
+            .required('Opening Balance Type is required')
+            .oneOf(['DEBIT', 'CREDIT'], 'Invalid balance type'),
+
+        openingBalances: Yup.number()
+            .required('Opening Balance is required')
+            .min(0, 'Balance cannot be negative'),
+
+        // Conditional validation for bank details
+        provideBankDetails: Yup.string()
+            .required('Please specify if bank details are provided'),
+
+        // Bank details validation when provideBankDetails is "true"
+
+
+
+    });
 
     // Mock data for select options
     const gstRegistrationTypes = [
@@ -26,7 +128,7 @@ const CreateLedger = () => {
         { value: 'CASH', label: 'CASH' },
         { value: 'SUPPLIER', label: 'SUPPLIER' },
         { value: 'CUSTOMER', label: 'CUSTOMER' },
-         { value: 'PAYMENT', label: 'PAYMENT' },
+        { value: 'PAYMENT', label: 'PAYMENT' },
         { value: 'SALES', label: 'SALES' },
         { value: 'PURCHASE', label: 'PURCHASE' },
         { value: 'GIFTVOUCHER', label: 'GIFT VOUCHER' },
@@ -112,12 +214,13 @@ const CreateLedger = () => {
                         typeOfopeningBalance: "",
                         previousOpType: ""
                     }}
-                    onSubmit={(values) => {
-                        handleSubmit(values)
-                        // Handle form submission here
+                    validationSchema={validationSchema}
+                    onSubmit={(values, { setSubmitting }) => {
+                        handleSubmit(values);
+                        setSubmitting(false);
                     }}
                 >
-                    {({ values, setFieldValue }) => (
+                    {({ values, errors, touched, setFieldValue, isSubmitting }) => (
                         <Form>
                             <div className="flex flex-col gap-9">
                                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -132,15 +235,21 @@ const CreateLedger = () => {
                                         <div className="mb-4.5 flex flex-col gap-6">
                                             <div className='flex flex-row gap-4'>
                                                 <div className="flex-1 min-w-[200px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Name</label>
+                                                    <label className="mb-2.5 block text-black dark:text-white">Name <span className='text-red-600 ml-1'>*</span></label>
                                                     <Field
                                                         type="text"
                                                         name="name"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                        className={`w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary ${errors.name && touched.name ? 'border-red-500' : ''
+                                                            }`}
+                                                    />
+                                                    <ErrorMessage
+                                                        name="name"
+                                                        component="div"
+                                                        className="text-red-600 text-sm mt-1"
                                                     />
                                                 </div>
                                                 <div className="flex-1 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Ledger Category</label>
+                                                    <label className="mb-2.5 block text-black dark:text-white">Ledger Category <span className='text-red-600 ml-1'>*</span></label>
                                                     <ReactSelect
                                                         name="ledgerType"
                                                         value={ledgerType.find(option => option.value === values.ledgerType)}
@@ -149,6 +258,11 @@ const CreateLedger = () => {
                                                         styles={customStyles}
                                                         className="bg-white dark:bg-form-Field w-full"
                                                         classNamePrefix="react-select"
+                                                    />
+                                                    <ErrorMessage
+                                                        name="ledgerType"
+                                                        component="div"
+                                                        className="text-red-600 text-sm mt-1"
                                                     />
                                                 </div>
 
@@ -242,7 +356,7 @@ const CreateLedger = () => {
 
                                         {/* Under Section */}
                                         <div className="mb-4.5 border-t border-stroke pt-4 dark:border-strokedark">
-                                            <h4 className="mb-2.5 font-medium text-black dark:text-white">Under</h4>
+                                            <h4 className="mb-2.5 font-medium text-black dark:text-white">Under <span className='text-red-600 ml-1'>*</span></h4>
                                             <div className="flex-1 min-w-[250px] z-20 bg-transparent dark:bg-form-Field">
                                                 <ReactSelect
                                                     name="accountGroup"
@@ -252,6 +366,12 @@ const CreateLedger = () => {
                                                     styles={customStyles}
                                                     className="bg-white dark:bg-form-Field w-full"
                                                     classNamePrefix="react-select"
+                                                />
+
+                                                <ErrorMessage
+                                                    name="accountGroup"
+                                                    component="div"
+                                                    className="text-red-600 text-sm mt-1"
                                                 />
                                             </div>
                                         </div>
@@ -312,12 +432,12 @@ const CreateLedger = () => {
 
                                         {/* Tax Registration Details */}
                                         <div className="mb-4.5 border-t border-stroke pt-4 dark:border-strokedark">
-                                            <h4 className="mb-2.5 font-semibold text-2xl text-center text-black dark:text-white">Banking Details</h4>
+                                            <h4 className="mb-2.5 font-semibold text-2xl text-center text-black dark:text-white">Banking Details <span className='text-red-600 ml-1'>*</span></h4>
                                             <div className='flex flex-col gap-4'>
                                                 <div className="mb-4.5">
                                                     {/* Yes/No Select for Bank Details */}
                                                     <div className="flex-1 min-w-[250px] z-20 bg-transparent dark:bg-form-Field mb-4">
-                                                        <label className="mb-2.5 block text-black dark:text-white">Provide bank details</label>
+                                                        <label className="mb-2.5 block text-black dark:text-white">Provide bank details <span className='text-red-600 ml-1'>*</span></label>
                                                         <ReactSelect
                                                             name="provideBankDetails"
                                                             value={[
@@ -334,6 +454,12 @@ const CreateLedger = () => {
                                                             classNamePrefix="react-select"
                                                             placeholder="Select"
                                                         />
+
+                                                        <ErrorMessage
+                                                            name="provideBankDetails"
+                                                            component="div"
+                                                            className="text-red-600 text-sm mt-1"
+                                                        />
                                                     </div>
 
                                                     {/* Bank Details Fields (shown only when Yes is selected) */}
@@ -345,6 +471,8 @@ const CreateLedger = () => {
                                                                     name="bankName"
                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                                 />
+
+
                                                             </div>
 
                                                             <div>
@@ -399,7 +527,7 @@ const CreateLedger = () => {
                                                         />
                                                     </div>
                                                     <div className="flex-1 min-w-[250px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">Registration type</label>
+                                                        <label className="mb-2.5 block text-black dark:text-white">Registration type <span className='text-red-600 ml-1'>*</span></label>
                                                         <ReactSelect
                                                             name="registrationType"
                                                             value={gstRegistrationTypes.find(option => option.value === values.registrationType)}
@@ -408,6 +536,11 @@ const CreateLedger = () => {
                                                             styles={customStyles}
                                                             className="bg-white dark:bg-form-Field w-full"
                                                             classNamePrefix="react-select"
+                                                        />
+                                                        <ErrorMessage
+                                                            name="registrationType"
+                                                            component="div"
+                                                            className="text-red-600 text-sm mt-1"
                                                         />
                                                     </div>
                                                     <div className="flex-1 min-w-[250px]">
@@ -451,7 +584,7 @@ const CreateLedger = () => {
                                         <div className="mb-4.5 border-t border-stroke pt-4 dark:border-strokedark">
                                             {/* Radio Buttons for Opening Balance Type */}
                                             <div className="mb-2.5 flex items-center gap-4">
-                                                <h4 className="font-medium text-black dark:text-white">Opening Balance Type:</h4>
+                                                <h4 className="font-medium text-black dark:text-white">Opening Balance Type: <span className='text-red-600 ml-1'>*</span></h4>
                                                 <label className="flex items-center gap-2">
                                                     <Field
                                                         type="radio"
@@ -484,13 +617,18 @@ const CreateLedger = () => {
                                                         }}
                                                         className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
                                                     />
+                                                    <ErrorMessage
+                                                        name="typeOfOpeningBalance"
+                                                        component="div"
+                                                        className="text-red-600 text-sm mt-1"
+                                                    />
                                                     <span className="text-black dark:text-white">Credit (CR)</span>
                                                 </label>
                                             </div>
 
                                             {/* Opening Balance Input */}
                                             <h4 className="mb-2.5 font-medium text-black dark:text-white">
-                                                Opening Balance (on {openingBalancesDate})
+                                                Opening Balance (on {openingBalancesDate}) <span className='text-red-600 ml-1'>*</span>
                                             </h4>
                                             <div className="flex items-center gap-2">
                                                 <div className="flex-1 min-w-[250px]">
@@ -506,6 +644,12 @@ const CreateLedger = () => {
                                                         }}
 
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                    />
+
+                                                    <ErrorMessage
+                                                        name="openingBalances"
+                                                        component="div"
+                                                        className="text-red-600 text-sm mt-1"
                                                     />
                                                 </div>
                                                 {/* Display "CR" if Credit is selected */}
@@ -523,7 +667,7 @@ const CreateLedger = () => {
                                         <div className="flex justify-center mt-6">
                                             <button
                                                 type="submit"
-                                                className="flex w-[120px] h-[37px] pt-2 rounded-lg justify-center bg-primary p-2.5 font-medium text-sm text-gray hover:bg-opacity-90"
+                                                className="flex md:w-[180px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                             >
                                                 Create Ledger
                                             </button>

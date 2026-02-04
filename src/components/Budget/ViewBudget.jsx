@@ -160,7 +160,7 @@ const ViewBudget = () => {
                 </td>
                 <td className="px-5 py-5 bBudget-b bBudget-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
-                    <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={()=>navigate(`/Budget/updateBudget/${item?.id}`)} title='Edit Budget' />   |
+                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Budget/updateBudget/${item?.id}`)} title='Edit Budget' />   |
                         <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Unit' />
                     </p>
                 </td>
@@ -182,14 +182,14 @@ const ViewBudget = () => {
             <Breadcrumb pageName="Budget/ View Budget" />
             <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
                 <div className="pt-5">
-                  <div className='flex flex-row items-center justify-between w-full'>
-  <h2 className="text-xl text-slate-500 font-semibold w-full flex items-center justify-between">
-    <span>View Budget</span>
-    <span className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-blue-900/20 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-800/30 text-sm font-semibold text-blue-700 dark:text-blue-300 ml-4">
-      TOTAL ITEMS: {pagination.totalItems}
-    </span>
-  </h2>
-</div>
+                    <div className='flex flex-row items-center justify-between w-full'>
+                        <h2 className="text-xl text-slate-500 font-semibold w-full flex items-center justify-between">
+                            <span> Budget View</span>
+                            <span className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-blue-900/20 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-800/30 text-sm font-semibold text-blue-700 dark:text-blue-300 ml-4">
+                                TOTAL ITEMS: {pagination.totalItems}
+                            </span>
+                        </h2>
+                    </div>
                     <Formik
                         initialValues={{
                             productGroup: "",
@@ -260,16 +260,16 @@ const ViewBudget = () => {
                                         </div>
 
                                         {/* Centering the button */}
-                                      
+
                                     </div>
                                     <div className="flex justify-center mt-6">
-                                            <button
-                                                type="submit"
-                                                className="flex w-[240px] h-[40px] rounded-lg justify-center bg-primary p-2.5 font-medium text-sm text-gray hover:bg-opacity-90"
-                                            >
-                                                Search
-                                            </button>
-                                        </div>
+                                        <button
+                                            type="submit"
+                                            className="flex w-[240px] h-[40px] rounded-lg justify-center bg-primary p-2.5 font-medium text-sm text-gray hover:bg-opacity-90"
+                                        >
+                                            Search
+                                        </button>
+                                    </div>
 
 
                                 </Form>
