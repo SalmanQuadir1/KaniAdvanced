@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
-import { DELETE_ORDER_URL, VIEW_ALL_ORDERS, VIEW_APPROVED_ORDERS, VIEW_CREATED_ORDERS, VIEW_PARTIALLYAPPROVED_ORDERS, VIEW_PROFORMA } from "../../Constants/utils";
+import { DELETE_ORDER_URL, VIEW_ALL_ORDERS,  VIEW_PARTIALLYAPPROVED_ORDERS, VIEW_PROFORMA } from "../../Constants/utils";
 import ReactSelect from 'react-select';
 import useorder from '../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
