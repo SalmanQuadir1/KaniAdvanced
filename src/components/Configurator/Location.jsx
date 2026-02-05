@@ -71,12 +71,7 @@ const Location = () => {
                         if (values.pinCode === " ") {
                             errors.pinCode = "pinCode Should not Be Empty"
                         }
-                        if (!values.locationId) {
-                            errors.locationId = 'locationId is Required';
-                        }
-                        if (values.locationId === " ") {
-                            errors.locationId = "locationId Should not Be Empty"
-                        }
+                    
                         if (!values.locationName) {
                             errors.locationName = 'locationName is Required';
                         }

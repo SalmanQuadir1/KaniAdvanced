@@ -118,6 +118,8 @@ const useLocation = () => {
     };
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+        console.log("heysdcsdc");
+        
         try {
             const url = edit ? `${UPDATE_LOCATION_URL}/${currentLocation.id}` : ADD_LOCATION_URL;
             const method = edit ? "PUT" : "POST";
@@ -132,6 +134,8 @@ const useLocation = () => {
             });
 
             const data = await response.json();
+            console.log(data,"lklk");
+            
             if (response.ok) {
                 toast.success(`Location ${edit ? 'updated' : 'added'} successfully`);
                 resetForm();
