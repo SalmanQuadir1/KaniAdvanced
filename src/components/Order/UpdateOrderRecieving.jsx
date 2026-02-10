@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 import useorder from '../../hooks/useOrder';
 import ReactDatePicker from "react-datepicker";
 import useProduct from '../../hooks/useProduct';
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, VIEW_ORDER_PRODUCT, UPDATE_ORDERPRODUCT_ALL, UPDATE_ISSUECHALLAN, UPDATE_ORDERRECIEVED } from '../../Constants/utils';
+import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, VIEW_ORDER_PRODUCT, UPDATE_ORDERPRODUCT_ALL, UPDATE_ISSUECHALLAN, UPDATE_ORDERRECIEVED, VIEW_SUPPLIERHISTORY } from '../../Constants/utils';
 import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
@@ -19,6 +19,8 @@ import { useNavigate, useNavigation, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import SupplierModall from './SupplierModall';
+import { Table } from 'react-bootstrap';
+
 const UpdateOrderRecieving = () => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const [orderType, setOrderType] = useState('');
@@ -32,7 +34,7 @@ const UpdateOrderRecieving = () => {
   const [isLoading, setIsLoading] = useState(true); // Loader state
   const [customerOptions, setcustomerOptions] = useState([])
   const { token } = currentUser;
-
+  const [supplier, setsupplier] = useState([])
 
 
   const [orderProduct, setorderProduct] = useState([])
@@ -99,16 +101,10 @@ const UpdateOrderRecieving = () => {
 
 
 
-  console.log(selectedSuppliers, "selecteddddddddd Suppliersss");
+  console.log(supplier, "2020");
 
 
-
-
-  console.log(isSupplierModalOpen, "ll");
-
-  console.log(isModalOpen, "jj");
-
-
+  const [showModal, setshowModal] = useState(false)
 
 
 
@@ -141,6 +137,29 @@ const UpdateOrderRecieving = () => {
 
 
 
+  const getSupplierHistory = async () => {
+    try {
+      const response = await fetch(`${VIEW_SUPPLIERHISTORY}/${id}/supplier-qty`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch product');
+      }
+
+      const data = await response.json();
+      console.log(data, "jhanvi")
+      setsupplier(data); // Store fetched product
+    } catch (error) {
+      console.error('Error fetching product:', error);
+    } finally {
+      setIsLoading(false); // Stop loader
+    }
+  };
+
   const getOrderById = async () => {
     try {
       const response = await fetch(`${VIEW_ORDER_PRODUCT}/${id}`, {
@@ -168,6 +187,7 @@ const UpdateOrderRecieving = () => {
   // Fetch data when component mounts
   useEffect(() => {
     getOrderById();
+    getSupplierHistory()
   }, [id]);
 
   const [prodIdModal, setprodIdModal] = useState([])
@@ -386,11 +406,13 @@ const UpdateOrderRecieving = () => {
 
 
 
+  const nowReceivable = order?.quantityToManufacture - supplier?.suppliers?.reduce((total, supplier) => total + (supplier.receivedQuantity || 0), 0)
 
 
+  console.log(nowReceivable, "22222222222222220");
 
 
-
+  console.log(order, "5454545");
 
 
 
@@ -414,7 +436,7 @@ const UpdateOrderRecieving = () => {
             },
             productsId: order?.products?.id,
 
-            clientOrderQuantity: order?.clientOrderQuantity,
+            // quantityToManufacture: order?.quantityToManufacture,
             units: order?.units,
             expectedSupplierDate: order?.expectedSupplierDate,
             updatedBy: order?.updatedBy,
@@ -524,14 +546,38 @@ const UpdateOrderRecieving = () => {
                     <div className="flex flex-wrap gap-3 mt-5">
 
                       <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Client Order Quantity</label>
+                        <label className="mb-2.5 block text-black dark:text-white">Supplier Order Quantity</label>
                         <Field
-                          name="clientOrderQuantity"
+                          name="quantityToManufacture"
                           className="w-[200px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           readOnly // Read-only field
                         />
-                        <ErrorMessage name="clientOrderQuantity" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage name="quantityToManufacture" component="div" className="text-red-600 text-sm" />
+                        {
+                          supplier && supplier?.suppliers?.length > 0 && (
+                            <div>
+                              <button type="button"
+                                className="mt-3 px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark"
+                                onClick={() => {
+                                  setshowModal(true)
+
+
+                                }}
+                              >
+                                View Supplier History
+                              </button>
+
+                            </div>
+                          )
+                        }
+                        <span className='text-red-600 text-2xl text-nowrap'>Note:Now Receivable For Every Supplier: {nowReceivable} <button type='button' className='text-sm text-red-400'          onClick={() => {
+                                  setshowModal(true)
+
+
+                                }}>Check History Above</button></span>
                       </div>
+
+
                       {/* Order No */}
                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Unit</label>
@@ -588,12 +634,26 @@ const UpdateOrderRecieving = () => {
                           name="receivedQuantity"
                           className="w-[200px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           onChange={(e) => {
+                            console.log("hey");
+
                             const receivedQuantity = parseInt(e.target.value) || 0;
-                            const clientOrderQuantity = parseInt(values.clientOrderQuantity) || 0;
+                            const quantityToManufacture = parseInt(values.quantityToManufacture) || 0;
+                           
+
+                            // Determine which quantity to use as the base
+                            const baseQuantity = nowReceivable > 0 ? nowReceivable : quantityToManufacture;
+                            const baseFieldName = nowReceivable > 0 ? "nowReceivable" : "quantityToManufacture";
+                            console.log("Received quantity exceeds now receivable quantity:", receivedQuantity, nowReceivable);
+
+                            // if (nowReceivable > 0 && receivedQuantity > nowReceivable) {
+
+                            //   toast.error(`Received quantity cannot exceed ${baseFieldName} quantity of ${baseQuantity}`);
+                            //   return;
+                            // }
 
                             setFieldValue("receivedQuantity", receivedQuantity);
-                            setFieldValue("pendingQuantity", Math.max(0, clientOrderQuantity - receivedQuantity));
-                            setFieldValue("extraQuantity", Math.max(0, receivedQuantity - clientOrderQuantity));
+                            setFieldValue("pendingQuantity", Math.max(0, baseQuantity - receivedQuantity));
+                            setFieldValue("extraQuantity", Math.max(0, receivedQuantity - baseQuantity));
                           }}
                         />
 
@@ -616,7 +676,7 @@ const UpdateOrderRecieving = () => {
                         <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
                       </div>
                       <div className="z-20 bg-transparent dark:bg-form-Field">
-                      <label className="mb-2.5 block text-black dark:text-white">Select Supplier</label>
+                        <label className="mb-2.5 block text-black dark:text-white">Select Supplier</label>
                         <ReactSelect
                           name="supplierName"
 
@@ -884,6 +944,41 @@ const UpdateOrderRecieving = () => {
           height="80%"
           style={{ marginLeft: '70px', marginRight: '0' }}  // Add this line
         />
+        {
+          showModal && (
+            <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+              <div className="bg-white p-6 rounded shadow-lg w-1/2">
+                <h2 className="text-xl font-bold mb-4">Supplier History</h2>
+                <table className="min-w-full leading-normal">
+                  <thead>
+                    <tr>
+                      <th>Supplier Name</th>
+                      <th>Supplier Quantity</th>
+                      <th>Received Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {supplier?.suppliers?.map((supplierData, index) => (
+                      <tr key={index}>
+                        <td>{supplierData.supplierName}</td>
+                        <td>{supplierData.receivedQuantity}</td>
+                        <td>{supplierData.receivedDate}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <div className="flex justify-end mt-4">
+                  <button
+                    className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark"
+                    onClick={() => setshowModal(false)}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )
+        }
 
 
       </div>

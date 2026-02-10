@@ -268,33 +268,31 @@ const AddOrder = () => {
   ];
   const theme = useSelector(state => state?.persisted?.theme);
   const customStyles = createCustomStyles(theme?.mode);
- const validationSchema = Yup.object().shape({
-  orderType: Yup.object()
-    .shape({
-      id: Yup.string().required('Order Type is required')
-    })
-    .nullable()
-    .required('Order Type is required'),
-  
-  orderDate: Yup.string()
-    .required('Order Date is required'),
-  
-  shippingDate: Yup.string()
-    .required('Shipping Date is required'),
-  
-  tagsAndLabels: Yup.string()
-    .required('Tags are required'),
-  
-  logoNo: Yup.string()
-    .oneOf(['Yes', 'No'], 'Please select Yes or No')
-    .required('Logo No is required'),
-  
-  clientInstruction: Yup.string()
-    .required('Client Instruction is required')
-    .min(10, 'Client instruction should be at least 10 characters'),
+  const validationSchema = Yup.object().shape({
+    orderType: Yup.object()
+      .shape({
+        id: Yup.string().required('Order Type is required')
+      })
+      .nullable()
+      .required('Order Type is required'),
+
+    orderDate: Yup.string()
+      .required('Order Date is required'),
+
+    shippingDate: Yup.string()
+      .required('Shipping Date is required'),
+
+    tagsAndLabels: Yup.string()
+      .required('Tags are required'),
+
+    logoNo: Yup.string()
+      .oneOf(['Yes', 'No'], 'Please select Yes or No')
+      .required('Logo No is required'),
+
   
 
-});
+
+  });
 
   const handleProductIdChange = (option, setFieldValue) => {
 
@@ -471,6 +469,9 @@ const AddOrder = () => {
     }
   }, [orderTypee, productId, customers, customer]);
 
+  console.log(prodIdModal, "88888888888888888888888888");
+
+
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Order/Create Order" />
@@ -511,7 +512,7 @@ const AddOrder = () => {
             }]
 
           }}
-         validationSchema={validationSchema}
+          validationSchema={validationSchema}
           // onSubmit={(values) => {
 
           //   console.log("Formik Values: ", values); // Log the entire form values
@@ -570,7 +571,9 @@ const AddOrder = () => {
               values.orderProducts.forEach((product, index) => {
                 if (product.clientOrderQuantity && product.inStockQuantity !== undefined) {
                   const quantityToManufacture = product.clientOrderQuantity - product.inStockQuantity;
+                  const cost = prodIdModal[index]?.cost || 0;
                   setFieldValue(`orderProducts[${index}].quantityToManufacture`, quantityToManufacture);
+                  setFieldValue(`orderProducts[${index}].value`, quantityToManufacture * cost);
                 }
               });
             }, [values.orderProducts, setFieldValue]);
@@ -1104,11 +1107,30 @@ const AddOrder = () => {
 
                                       <Field
                                         name={`orderProducts[${index}].inStockQuantity`}
-                                        // value={item?.productId}
                                         type="number"
+                                        onChange={(e) => {
+                                          const value = e.target.value;
+                                          const inStockQuantity = value ? parseFloat(value) : 0;
 
+                                          // Calculate total cost
+                                          const cost = item.cost || 0;
+                                          const quantity = values.orderProducts?.[index]?.clientOrderQuantity || 0;
+                                          const totalCost = cost * quantity * inStockQuantity; // Adjust calculation as needed
+
+                                          // Set the calculated value in form state
+                                          // Assuming you have form context or setFieldValue available
+                                          // Example using Formik:
+                                          setFieldValue(`orderProducts[${index}].inStockQuantity`, inStockQuantity);
+
+                                          // Also set the calculated total cost to another field if needed
+                                          // For example, if you have a totalCost field:
+                                          setFieldValue(`orderProducts[${index}].value`, totalCost);
+
+                                          // If you need to update another field with the calculation result
+                                          // setFieldValue(`orderProducts[${index}].calculatedValue`, totalCost);
+                                        }}
                                         placeholder="Enter In Stock Qty"
-                                        className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                       />
                                       <ErrorMessage name="InStockQty" component="div" className="text-red-600 text-sm" />
                                     </div>
@@ -1147,10 +1169,18 @@ const AddOrder = () => {
 
                                       <Field
                                         name={`orderProducts[${index}].value`}
-                                        // value={item?.productId}
+                                        readOnly
                                         type="number"
-                                        placeholder="Enter Value"
-                                        className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                        placeholder="Calculated Value"
+                                        className="w-[130px] bg-gray-100 dark:bg-gray-700 rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                        // value={(() => {
+                                        //   const cost = item.cost || 0;
+                                        //   const quantity = values.orderProducts?.[index]?.clientOrderQuantity || 0;
+                                        //   return cost * quantity;
+                                        // })()}
+                                        onChange={(e) => {
+                                          e.preventDefault();
+                                        }}
                                       />
                                       <ErrorMessage name="Value" component="div" className="text-red-600 text-sm" />
                                     </div>
@@ -1161,7 +1191,7 @@ const AddOrder = () => {
                                     <div >
 
 
-                                      <div  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus-within:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus-within:border-primary">
+                                      <div className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus-within:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus-within:border-primary">
                                         <ReactDatePicker
                                           selected={values.orderProducts[index]?.clientShippingDate || null}
                                           onChange={(date) => setFieldValue(`orderProducts[${index}].clientShippingDate`, date ? format(date, "yyyy-MM-dd") : "")}
@@ -1343,7 +1373,7 @@ const AddOrder = () => {
 
 
                       <div className="flex-1 min-w-[200px] mt-11">
-                        <label className="mb-2.5 block text-black dark:text-white">Client Instruction <span className="text-red-500 ml-1">*</span></label>
+                        <label className="mb-2.5 block text-black dark:text-white">Client Instruction </label>
                         <Field
                           as="textarea"
                           name="clientInstruction"
@@ -1382,12 +1412,12 @@ const AddOrder = () => {
 
 
                       <button
-      type="submit"
-      className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
-      disabled={isSubmitting || !values.orderType?.id}
-    >
-      {isSubmitting ? 'Adding Order...' : 'Add Order'}
-    </button>
+                        type="submit"
+                        className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={isSubmitting || !values.orderType?.id}
+                      >
+                        {isSubmitting ? 'Adding Order...' : 'Add Order'}
+                      </button>
                     </div>
                   </div>
                 </div>

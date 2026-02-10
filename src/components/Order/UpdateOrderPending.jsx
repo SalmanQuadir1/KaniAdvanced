@@ -642,14 +642,14 @@ const UpdateOrderPending = () => {
 
 
                       <div className="flex justify-center mt-4"> {/* Centering the button */}
-                        <button
+                        {/* <button
                           type="submit"
 
 
                           className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none" // Increased width
                         >
                           Accept All
-                        </button>
+                        </button> */}
                       </div>
                     </div>
                   </div>

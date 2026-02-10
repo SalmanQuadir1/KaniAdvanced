@@ -442,6 +442,9 @@ const UpdateClosedOrder = () => {
                               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Client Order Qty
                               </th>
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                Qty To Manufacture
+                              </th>
                               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Units
                               </th>
@@ -540,6 +543,17 @@ const UpdateClosedOrder = () => {
                                     className="text-red-600 text-sm"
                                   />
                                 </td>
+                                  <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    name={`orderProducts[${index}].quantityToManufacture`}
+                                    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                  />
+                                  <ErrorMessage
+                                    name={`orderProducts[${index}].quantityToManufacture`}
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
+                                </td>
 
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <Field
@@ -594,7 +608,7 @@ const UpdateClosedOrder = () => {
                                     ) : product.productStatus === "Closed" ? (
                                       <div className="flex items-center gap-2">
                                         <span
-                                          onClick={() => handleUpdateBom(item?.bom?.id)}
+                                          onClick={() => navigate(`/order/modifyorderproduct/${product?.id}`)}
                                           className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
                                         >
                                           VIEW PRODUCT DETAILS
@@ -652,14 +666,7 @@ const UpdateClosedOrder = () => {
 
 
                       <div className="flex justify-center mt-4"> {/* Centering the button */}
-                        <button
-                          type="submit"
-
-
-                          className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none" // Increased width
-                        >
-                          Accept All
-                        </button>
+                      
                       </div>
                     </div>
                   </div>
