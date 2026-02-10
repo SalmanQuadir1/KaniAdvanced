@@ -6,7 +6,7 @@ import { Field, Formik, Form } from 'formik'
 import { DELETE_ORDER_URL, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS } from "../../Constants/utils";
 import ReactSelect from 'react-select';
 import useorder from '../../hooks/useOrder';
-import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FiEdit, FiEdit3, FiTrash2 } from 'react-icons/fi';
 import Pagination from '../Pagination/Pagination';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -294,7 +294,7 @@ const ViewOrderCreated = () => {
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
-                        <FiEdit
+                        <FiEdit3
                             color='blue'
                             size={17}
                             className="text-blue-500 hover:text-blue-700 mx-2"

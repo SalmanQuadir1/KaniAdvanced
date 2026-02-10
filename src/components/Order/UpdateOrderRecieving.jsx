@@ -555,26 +555,28 @@ const UpdateOrderRecieving = () => {
                         <ErrorMessage name="quantityToManufacture" component="div" className="text-red-600 text-sm" />
                         {
                           supplier && supplier?.suppliers?.length > 0 && (
-                            <div>
-                              <button type="button"
-                                className="mt-3 px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark"
-                                onClick={() => {
-                                  setshowModal(true)
+                            <>
+                              <div>
+                                <button type="button"
+                                  className="mt-3 px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark"
+                                  onClick={() => {
+                                    setshowModal(true)
 
 
-                                }}
-                              >
-                                View Supplier History
-                              </button>
+                                  }}
+                                >
+                                  View Supplier History
+                                </button>
 
-                            </div>
+                              </div>
+                              <span className='text-red-600 text-2xl text-nowrap'>Note:Now Receivable For Every Supplier: {nowReceivable} <button type='button' className='text-sm text-red-400' onClick={() => {
+                                setshowModal(true)
+
+
+                              }}>Check History Above</button></span>
+                            </>
                           )
                         }
-                        <span className='text-red-600 text-2xl text-nowrap'>Note:Now Receivable For Every Supplier: {nowReceivable} <button type='button' className='text-sm text-red-400'          onClick={() => {
-                                  setshowModal(true)
-
-
-                                }}>Check History Above</button></span>
                       </div>
 
 
@@ -638,7 +640,7 @@ const UpdateOrderRecieving = () => {
 
                             const receivedQuantity = parseInt(e.target.value) || 0;
                             const quantityToManufacture = parseInt(values.quantityToManufacture) || 0;
-                           
+
 
                             // Determine which quantity to use as the base
                             const baseQuantity = nowReceivable > 0 ? nowReceivable : quantityToManufacture;
