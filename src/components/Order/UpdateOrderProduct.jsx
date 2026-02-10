@@ -164,7 +164,7 @@ const UpdateOrderProduct = () => {
         console.log(data, "coming ");
         toast.success(`Order Updated successfully`);
         navigate("/order/created")
-        
+
       } else {
         toast.error(`${data.errorMessage}`);
       }
@@ -490,7 +490,7 @@ const UpdateOrderProduct = () => {
 
     // You can now send `finalData` to the backend or do any other operation with it
   };
-  console.log(order?.productStatus, "gigigigig");
+  console.log(order, "gigigigig");
 
   return (
     <DefaultLayout>
@@ -535,7 +535,7 @@ const UpdateOrderProduct = () => {
                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                   <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                     <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                      Update Order
+                     {order?.productStatus?.toLowerCase() === "closed" ? "Closed Order" : "Update Order"}
                     </h3>
                   </div>
                   <div className="p-6.5">
@@ -778,17 +778,21 @@ const UpdateOrderProduct = () => {
 
 
 
+                    {
+                      order?.productStatus.toLowerCase() === "closed" ? null : (
+                        <div className="flex justify-center mt-4"> {/* Centering the button */}
+                          <button
+                            // type="button" // Ensures the button does not trigger the form submission
+                            // onClick={(e) => handleUpdateSubmit(values, e)}
+                            className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none" // Increased width
+                          >
+                            Update
+                          </button>
+                        </div>
 
+                      )
+                    }
 
-                    <div className="flex justify-center mt-4"> {/* Centering the button */}
-                      <button
-                        // type="button" // Ensures the button does not trigger the form submission
-                        // onClick={(e) => handleUpdateSubmit(values, e)}
-                        className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none" // Increased width
-                      >
-                        Update
-                      </button>
-                    </div>
                   </div>
                 </div>
               </div>

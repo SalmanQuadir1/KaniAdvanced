@@ -367,7 +367,7 @@ export const VIEW_ALL_PRODID = `${BASE_URL}/order/viewCreatedProductId`;
 export const VIEW_ALL_ORDERSCREATED = `${BASE_URL}/order/search`;
 
 export const VIEW_ORDER_PRODUCT = `${BASE_URL}/order/orderProduct`;
-
+export const VIEW_SUPPLIERHISTORY = `${BASE_URL}/order/orderProduct`;
 
 
 export const DELETE_ORDER_URL = `${BASE_URL}/order/delete`;
