@@ -13,8 +13,6 @@ import { UPDATE_CUSTOMER_URL } from "../../Constants/utils";
 import { toast } from 'react-toastify';
 
 const UpdateCustomer = () => {
-
-
   const customerGroup = useSelector(
     (state) => state?.nonPersisted?.customerGroup,
   );
@@ -27,21 +25,41 @@ const UpdateCustomer = () => {
   const [CustomerType, setCustomerType] = useState();
   const theme = useSelector((state) => state?.persisted?.theme);
   const customStyles = createCustomStyles(theme?.mode);
+  
+  // Options for dropdowns
+  const clientCategoryOptions = [
+    { value: 'PREMIUM', label: 'Premium' },
+    { value: 'STANDARD', label: 'Standard' },
+    { value: 'BASIC', label: 'Basic' },
+    { value: 'VIP', label: 'VIP' },
+  ];
+
+ const customerOriginOptions=[
+    { value: 'International', label: 'International' },
+    { value: 'Domestic', label: 'Domestic' },
+  ,
+  ]
+
+  const registrationTypeOptions = [
+    { value: 'INDIVIDUAL', label: 'Individual' },
+    { value: 'BUSINESS', label: 'Business' },
+    { value: 'GOVERNMENT', label: 'Government' },
+    { value: 'NON_PROFIT', label: 'Non-Profit' },
+  ];
+
   const workerSelectStyles = {
     ...customStyles,
     control: (provided) => ({
       ...provided,
       ...customStyles.control,
       backgroundColor: customStyles.control.backgroundColor,
-
       maxHeight: '90px',
-
       overflow: 'auto',
       marginLeft: '10px',
     }),
     menu: (provided) => ({
       ...provided,
-      zIndex: 9999, // Ensure dropdown is above other elements
+      zIndex: 9999,
     }),
   };
 
@@ -64,8 +82,6 @@ const UpdateCustomer = () => {
     const fetchData = async () => {
       const CustomerData = await GetCustomerById(id);
 
-
-
       if (CustomerData) {
         setInitialValues({
           customerName: CustomerData.customerName,
@@ -87,18 +103,19 @@ const UpdateCustomer = () => {
           social: CustomerData.social,
           event: CustomerData.event,
           eventType: CustomerData.eventType,
-
+          shippingState: CustomerData.shippingState,
+          // New fields
+          customerId: CustomerData.customerId || CustomerData.contactNumber,
+          clientCategory: CustomerData.clientCategory || '',
+          referalId: CustomerData.referalId || '',
+          customerOrigin: CustomerData.customerOrigin || '',
+          registrationType: CustomerData.registrationType || '',
         });
-
-        // Initialize the rows state with readonly property for fetched data
-
       }
     };
 
     fetchData();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [id]);
 
   const addRow = () => {
     const newRow = {
@@ -110,6 +127,7 @@ const UpdateCustomer = () => {
     };
     setRows([...rows, newRow]);
   };
+
   const deleteRow = (index) => {
     setRows(rows.filter((_, rowIndex) => rowIndex !== index));
   };
@@ -118,19 +136,11 @@ const UpdateCustomer = () => {
     console.log(values, "athandlesubmit");
     const formData = {
       ...values,
-      // CustomerType: values.CustomerType?.value,
-      // groupTypes: rows?.map((row) => ({
-      //   groupTypeName: row?.selectedOption1?.value,
-      //   noOfLooms: row?.numOfLooms,
-      //   workers: row?.selectedOption3?.map((worker) => ({
-      //     workerCode: worker.value,
-      //   })),
-      // })),
     };
 
     try {
-      const url = `${UPDATE_CUSTOMER_URL}/${id}`; // Adjust the URL if needed
-      const method = 'PUT'; // Use PUT method for updating
+      const url = `${UPDATE_CUSTOMER_URL}/${id}`;
+      const method = 'PUT';
 
       const response = await fetch(url, {
         method: method,
@@ -152,101 +162,53 @@ const UpdateCustomer = () => {
     } catch (error) {
       console.error(error);
       toast.error('An error occurred');
-    } finally {
-      setSubmitting(false);
     }
   };
-
-  // const generateWorkerOptions = (groupName, CustomerCode, numOfLooms = 1) => {
-  //   const workerOptions = [];
-  //   for (let i = 1; i <= numOfLooms; i++) {
-  //     const label = `${groupName
-  //       .slice(0, 3)
-  //       .toUpperCase()}-${CustomerCode.slice(0, 5)}-${String(i).padStart(
-  //         3,
-  //         '0',
-  //       )}`;
-  //     workerOptions.push({ value: label, label });
-  //   }
-  //   return workerOptions;
-  // };
-  const formik = useFormik({
-
-    initialValues: {
-      customerName: '',
-      customerGroup: '',
-      countryName: '',
-      city: '',
-      contactNumber: '',
-      billTo: '',
-      email: '',
-      reference: '',
-      billingAddress: '',
-      shippingAddress: '',
-      gstin_vatno: '',
-      iecNumber: '',
-      instaId: '',
-      discount: '',
-      retailLocation: '',
-      website: '',
-      social: '',
-      event: '',
-      eventType: '',
-    },
-
-    validationSchema: Yup.object({
-      customerName: Yup.string().required('Required'),
-      customerGroup: Yup.object({
-        id: Yup.string().required('Group ID is required'),
-        customerGroupName: Yup.string().required('Group Name is required'),
-      }).required('Customer Group is required'),
-      //   customerGroup: Yup.string().required('Required'),
-      countryName: Yup.string().required('Required'),
-      city: Yup.string().required('Required'),
-      contactNumber: Yup.string().required('Required'),
-      billTo: Yup.string().optional(),
-      email: Yup.string().required('Required'),
-      reference: Yup.string().optional(),
-      billingAddress: Yup.string().required('Required'),
-      shippingAddress: Yup.string().required('Required'),
-      gstin_vatno: Yup.string().optional(),
-      iecNumber: Yup.string().optional(),
-      instaId: Yup.string().optional(),
-      discount: Yup.string().optional(),
-    }),
-    onSubmit: (values) => {
-      if (values) {
-        console.log(values, "juju");
-        handleSubmit(values);
-      }
-    },
-  });
-
-console.log(initialValues,"ghsons");
 
   if (!initialValues) {
     return <div>Loading...</div>;
   }
-  const handleRadioChange = (event) => {
-    formik.setFieldValue('retailLocation', event.target.value);
-  };
-  const handleRadioChangeWebsite = (event) => {
-    formik.setFieldValue('website', event.target.value);
-  };
-  const handleRadioChangeSocial = (event) => {
-    formik.setFieldValue('social', event.target.value);
-  };
-  const handleRadioChangeEvent = (event) => {
-    formik.setFieldValue('event', event.target.value);
-  };
-  const handleRadioChangeEventType = (event) => {
-    formik.setFieldValue('eventType', event.target.value);
-  };
 
-  const handleChange = (e) => {
-    console.log("Field changed", e.target.name, e.target.value);
-    formik.handleChange(e);
-  };
+    const stateOption = [
+    { value: '01', label: 'Jammu & Kashmir' },
+    { value: '02', label: 'Himachal Pradesh' },
+    { value: '03', label: 'Punjab' },
+    { value: '04', label: 'Chandigarh' },
+    { value: '05', label: 'Uttarakhand' },
+    { value: '06', label: 'Haryana' },
+    { value: '07', label: 'Delhi' },
+    { value: '08', label: 'Rajasthan' },
+    { value: '09', label: 'Uttar Pradesh' },
+    { value: '10', label: 'Bihar' },
+    { value: '11', label: 'Sikkim' },
+    { value: '12', label: 'Arunachal Pradesh' },
+    { value: '13', label: 'Nagaland' },
+    { value: '14', label: 'Manipur' },
+    { value: '15', label: 'Mizoram' },
+    { value: '16', label: 'Tripura' },
+    { value: '17', label: 'Meghalaya' },
+    { value: '18', label: 'Assam' },
+    { value: '19', label: 'West Bengal' },
+    { value: '20', label: 'Jharkhand' },
+    { value: '21', label: 'Odisha' },
+    { value: '22', label: 'Chhattisgarh' },
+    { value: '23', label: 'Madhya Pradesh' },
+    { value: '24', label: 'Gujarat' },
+    { value: '25', label: 'Daman & Diu' },
+    { value: '26', label: 'Dadra & Nagar Haveli' },
+    { value: '27', label: 'Maharashtra' },
+    { value: '28', label: 'Andhra Pradesh' },
+    { value: '29', label: 'Karnataka' },
+    { value: '30', label: 'Goa' },
+    { value: '31', label: 'Lakshadweep' },
+    { value: '32', label: 'Kerala' },
+    { value: '33', label: 'Tamil Nadu' },
+    { value: '34', label: 'Puducherry' },
+    { value: '35', label: 'Andaman & Nicobar Islands' },
+    { value: '36', label: 'Telangana' },
+    { value: '37', label: 'Andhra Pradesh (New)' },
+    { value: '38', label: 'Ladakh' }
+  ];
 
   return (
     <DefaultLayout>
@@ -261,28 +223,8 @@ console.log(initialValues,"ghsons");
             </div>
 
             <Formik
-              enableReinitialize={true}  // Enable reinitialization of form values when initialValues change
-              initialValues={initialValues || {
-                customerName: '',
-                customerGroup: '',
-                countryName: '',
-                city: '',
-                contactNumber: '',
-                billTo: '',
-                email: '',
-                reference: '',
-                billingAddress: '',
-                shippingAddress: '',
-                gstin_vatno: '',
-                iecNumber: '',
-                instaId: '',
-                discount: '',
-                retailLocation: '',
-                website: '',
-                social: '',
-                event: '',
-                eventType: '',
-              }}
+              enableReinitialize={true}
+              initialValues={initialValues}
               validationSchema={Yup.object({
                 customerName: Yup.string().required('Required'),
                 customerGroup: Yup.object({
@@ -292,15 +234,14 @@ console.log(initialValues,"ghsons");
                 countryName: Yup.string().required('Required'),
                 city: Yup.string().required('Required'),
                 contactNumber: Yup.string().required('Required'),
-                billTo: Yup.string().optional(),
-                email: Yup.string().required('Required'),
-                reference: Yup.string().optional(),
+                email: Yup.string().email('Invalid email').required('Required'),
                 billingAddress: Yup.string().required('Required'),
                 shippingAddress: Yup.string().required('Required'),
-                gstin_vatno: Yup.string().optional(),
-                iecNumber: Yup.string().optional(),
-                instaId: Yup.string().optional(),
-                discount: Yup.string().optional(),
+                // New fields validation
+                clientCategory: Yup.string().optional(),
+                referalId: Yup.string().optional(),
+                customerOrigin: Yup.string().optional(),
+                registrationType: Yup.string().optional(),
               })}
               onSubmit={(values) => {
                 if (values) {
@@ -312,6 +253,7 @@ console.log(initialValues,"ghsons");
               {(formik) => (
                 <form onSubmit={formik.handleSubmit} className="space-y-4">
                   <div className="p-6.5">
+                    {/* Existing Fields */}
                     <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
@@ -320,19 +262,37 @@ console.log(initialValues,"ghsons");
                         <input
                           type="text"
                           name="customerName"
-                          placeholder="customerName"
+                          placeholder="Customer Name"
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
                           value={formik.values.customerName}
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
-                        {formik.touched.customerName &&
-                          formik.errors.customerName ? (
+                        {formik.touched.customerName && formik.errors.customerName && (
                           <div className="text-red-600 text-sm">
                             {formik.errors.customerName}
                           </div>
-                        ) : null}
+                        )}
                       </div>
+                      
+                      <div className="flex-1 min-w-[300px]">
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Customer ID
+                        </label>
+                        <input
+                          type="text"
+                          name="customerId"
+                          placeholder="Customer ID"
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          value={formik.values.customerId}
+                          disabled
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-not-allowed disabled:bg-gray-100 dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary dark:disabled:bg-gray-800"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
                           Customer Group <span className="text-red-600">*</span>
@@ -350,20 +310,41 @@ console.log(initialValues,"ghsons");
                               'customerGroup',
                               option ? option.customerObject : null,
                             )
-                          } // Keep the whole object here
+                          }
                           options={customerGroupList}
                           onBlur={formik.handleBlur}
                           styles={customStyles}
                           className="bg-white dark:bg-form-input"
                           classNamePrefix="react-select"
-                          placeholder="select"
+                          placeholder="Select Customer Group"
                         />
-                        {formik.touched.customerGroup &&
-                          formik.errors.customerGroup ? (
+                        {formik.touched.customerGroup && formik.errors.customerGroup && (
                           <div className="text-red-600 text-sm">
                             {formik.errors.customerGroup}
                           </div>
-                        ) : null}
+                        )}
+                      </div>
+
+                      <div className="flex-1 min-w-[300px]">
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Client Category
+                        </label>
+                        <ReactSelect
+                          name="clientCategory"
+                          value={clientCategoryOptions.find(
+                            option => option.value === formik.values.clientCategory
+                          )}
+                          onChange={(option) =>
+                            formik.setFieldValue('clientCategory', option?.value || '')
+                          }
+                          options={clientCategoryOptions}
+                          onBlur={formik.handleBlur}
+                          styles={customStyles}
+                          className="bg-white dark:bg-form-input"
+                          classNamePrefix="react-select"
+                          placeholder="Select Client Category"
+                          isClearable
+                        />
                       </div>
                     </div>
 
@@ -375,24 +356,18 @@ console.log(initialValues,"ghsons");
                         <input
                           type="text"
                           name="countryName"
-                          placeholder="countryName Name"
+                          placeholder="Country Name"
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
-
                           value={formik.values.countryName}
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
-                        {formik.touched.countryName && formik.errors.countryName ? (
+                        {formik.touched.countryName && formik.errors.countryName && (
                           <div className="text-red-600 text-sm">
                             {formik.errors.countryName}
                           </div>
-                        ) : null}
+                        )}
                       </div>
-
-
-
-
-
 
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
@@ -407,13 +382,40 @@ console.log(initialValues,"ghsons");
                           value={formik.values.city}
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
-                        {formik.touched.city && formik.errors.city ? (
+                        {formik.touched.city && formik.errors.city && (
                           <div className="text-red-600 text-sm">
                             {formik.errors.city}
                           </div>
-                        ) : null}
+                        )}
                       </div>
+
+                        <div className="flex-1 min-w-[300px]">
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Shipping State <span className="text-red-600">*</span>
+                    </label>
+                    <ReactSelect
+                      name="shippingState"
+                      styles={customStyles}
+                      value={stateOption.find(option => option.value === formik.values.shippingState) || null}
+
+                      onChange={(option) =>
+                        formik.setFieldValue(
+                          'shippingState',
+                          option ? option.value : null,
+                        )
+                      }
+                      onBlur={() => formik.setFieldTouched('shippingState', true)}
+                      options={stateOption}
+                      className="bg-white dark:bg-form-input"
+                      classNamePrefix="react-select"
+                      placeholder="Select Shipping State"
+                    />
+                    {formik.touched.shippingState && formik.errors.shippingState && (
+                      renderError(formik.errors.shippingState)
+                    )}
+                  </div>
                     </div>
+
                     <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
@@ -428,13 +430,13 @@ console.log(initialValues,"ghsons");
                           value={formik.values.contactNumber}
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
-                        {formik.touched.contactNumber &&
-                          formik.errors.contactNumber ? (
+                        {formik.touched.contactNumber && formik.errors.contactNumber && (
                           <div className="text-red-600 text-sm">
                             {formik.errors.contactNumber}
                           </div>
-                        ) : null}
+                        )}
                       </div>
+
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
                           Bill To
@@ -448,20 +450,16 @@ console.log(initialValues,"ghsons");
                           value={formik.values.billTo}
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
-                        {formik.touched.billTo && formik.errors.billTo ? (
-                          <div className="text-red-600 text-sm">
-                            {formik.errors.billTo}
-                          </div>
-                        ) : null}
                       </div>
                     </div>
+
                     <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
                           Email id <span className="text-red-600">*</span>
                         </label>
                         <input
-                          type="text"
+                          type="email"
                           name="email"
                           placeholder="Email id"
                           onChange={formik.handleChange}
@@ -469,12 +467,13 @@ console.log(initialValues,"ghsons");
                           value={formik.values.email}
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
-                        {formik.touched.email && formik.errors.email ? (
+                        {formik.touched.email && formik.errors.email && (
                           <div className="text-red-600 text-sm">
                             {formik.errors.email}
                           </div>
-                        ) : null}
+                        )}
                       </div>
+
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
                           Reference
@@ -488,61 +487,90 @@ console.log(initialValues,"ghsons");
                           value={formik.values.reference}
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
-                        {formik.touched.reference && formik.errors.reference ? (
-                          <div className="text-red-600 text-sm">
-                            {formik.errors.reference}
-                          </div>
-                        ) : null}
                       </div>
                     </div>
 
+                    <div className="mb-4.5 flex flex-wrap gap-6">
+                      <div className="flex-1 min-w-[300px]">
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Referral ID
+                        </label>
+                        <input
+                          type="text"
+                          name="referalId"
+                          placeholder="Referral ID"
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          value={formik.values.referalId}
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+                      </div>
 
-
-
-
+                      <div className="flex-1 min-w-[300px]">
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Customer Origin
+                        </label>
+                        <ReactSelect
+                          name="customerOrigin"
+                          value={customerOriginOptions.find(
+                            option => option?.value === formik?.values.customerOrigin
+                          )}
+                          onChange={(option) =>
+                            formik.setFieldValue('customerOrigin', option?.value || '')
+                          }
+                          options={customerOriginOptions}
+                          onBlur={formik.handleBlur}
+                          styles={customStyles}
+                          className="bg-white dark:bg-form-input"
+                          classNamePrefix="react-select"
+                          placeholder="Select Customer Origin"
+                          isClearable
+                        />
+                      </div>
+                    </div>
 
                     <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
                           Billing Address <span className="text-red-600">*</span>
                         </label>
-                        <input
-                          type="text"
+                        <textarea
                           name="billingAddress"
                           placeholder="Billing Address"
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
                           value={formik.values.billingAddress}
+                          rows="3"
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
-                        {formik.touched.billingAddress &&
-                          formik.errors.billingAddress ? (
+                        {formik.touched.billingAddress && formik.errors.billingAddress && (
                           <div className="text-red-600 text-sm">
                             {formik.errors.billingAddress}
                           </div>
-                        ) : null}
+                        )}
                       </div>
+
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
                           Shipping Address <span className="text-red-600">*</span>
                         </label>
-                        <input
-                          type="text"
+                        <textarea
                           name="shippingAddress"
-                          placeholder="ShippingAddress"
+                          placeholder="Shipping Address"
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
                           value={formik.values.shippingAddress}
+                          rows="3"
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
-                        {formik.touched.shippingAddress &&
-                          formik.errors.shippingAddress ? (
+                        {formik.touched.shippingAddress && formik.errors.shippingAddress && (
                           <div className="text-red-600 text-sm">
                             {formik.errors.shippingAddress}
                           </div>
-                        ) : null}
+                        )}
                       </div>
                     </div>
+
                     <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
@@ -551,18 +579,14 @@ console.log(initialValues,"ghsons");
                         <input
                           type="text"
                           name="gstin_vatno"
-                          placeholder="GstIN/VAT No"
+                          placeholder="GSTIN/VAT No"
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
                           value={formik.values.gstin_vatno}
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
-                        {formik.touched.gstin_vatno && formik.errors.gstin_vatno ? (
-                          <div className="text-red-600 text-sm">
-                            {formik.errors.gstin_vatno}
-                          </div>
-                        ) : null}
                       </div>
+
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
                           IEC No
@@ -576,13 +600,9 @@ console.log(initialValues,"ghsons");
                           value={formik.values.iecNumber}
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
-                        {formik.touched.iecNo && formik.errors.iecNumber ? (
-                          <div className="text-red-600 text-sm">
-                            {formik.errors.iecNumber}
-                          </div>
-                        ) : null}
                       </div>
                     </div>
+
                     <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
@@ -597,38 +617,47 @@ console.log(initialValues,"ghsons");
                           value={formik.values.instaId}
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
-                        {formik.touched.instaId && formik.errors.instaId ? (
-                          <div className="text-red-600 text-sm">
-                            {formik.errors.instaId}
-                          </div>
-                        ) : null}
                       </div>
+
+                         <div className="flex-1 min-w-[300px]">
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Registration Type <span className="text-red-600"></span>
+                    </label>
+                    <input
+                      type="text"
+                      name="registrationType"
+                      placeholder="Registration Type"
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      value={formik.values.registrationType}
+                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    />
+                    {formik.touched.registrationType && formik.errors.registrationType && (
+                      renderError(formik.errors.registrationType)
+                    )}
+                  </div>
                     </div>
 
-                     <div className="mb-4.5 flex flex-wrap gap-6">
+                    <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
-                          Discount Offered(%){' '}
+                          Discount Offered(%)
                         </label>
                         <input
-                          type="text"
+                          type="number"
                           name="discount"
                           placeholder="Discount Offered(%)"
                           onChange={formik.handleChange}
                           onBlur={formik.handleBlur}
                           value={formik.values.discount}
+                          min="0"
+                          max="100"
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
-                        {formik.touched.discount &&
-                          formik.errors.discount ? (
-                          <div className="text-red-600 text-sm">
-                            {formik.errors.discount}
-                          </div>
-                        ) : null}
                       </div>
                     </div>
 
-
+                    {/* Customer Interaction Section */}
                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                       <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
                         CUSTOMER INTERACTION
@@ -636,171 +665,162 @@ console.log(initialValues,"ghsons");
                     </div>
 
                     <div className="p-4 grid grid-cols-1 md:grid-cols-5 gap-6">
+                      {/* Retail Location */}
+                      <div className="space-y-2">
+                        <p className="font-medium">Retail Location</p>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="retailLocation"
+                            value="SRX"
+                            checked={formik.values.retailLocation === 'SRX'}
+                            onChange={formik.handleChange}
+                            className="mr-2"
+                          />
+                          <span>SRX</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="retailLocation"
+                            value="Delhi"
+                            checked={formik.values.retailLocation === 'Delhi'}
+                            onChange={formik.handleChange}
+                            className="mr-2"
+                          />
+                          <span>Delhi</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="retailLocation"
+                            value="SXR and Delhi"
+                            checked={formik.values.retailLocation === 'SXR and Delhi'}
+                            onChange={formik.handleChange}
+                            className="mr-2"
+                          />
+                          <span>SXR and Delhi</span>
+                        </label>
+                      </div>
 
-  {/* Retail Location */}
-  <div className="space-y-2">
-    <p>Retail Location</p>
-    <label className="flex items-center">
-      <input
-        type="radio"
-        name="retailLocation"
-        value="SRX"
-        checked={formik.values.retailLocation === 'SRX'}
-        onChange={formik.handleChange}
-      />
-      <span className="ml-1">SRX</span>
-    </label>
-    <label className="flex items-center">
-      <input
-        type="radio"
-        name="retailLocation"
-        value="Delhi"
-        checked={formik.values.retailLocation === 'Delhi'}
-        onChange={formik.handleChange}
-      />
-      <span className="ml-1">Delhi</span>
-    </label>
-    <label className="flex items-center">
-      <input
-        type="radio"
-        name="retailLocation"
-        value="SXR and Delhi"
-        checked={formik.values.retailLocation === 'SXR and Delhi'}
-        onChange={formik.handleChange}
-      />
-      <span className="ml-1">SXR and Delhi</span>
-    </label>
-  </div>
+                      {/* Website */}
+                      <div className="space-y-2">
+                        <p className="font-medium">Website</p>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="website"
+                            value="Subscribed"
+                            checked={formik.values.website === 'Subscribed'}
+                            onChange={formik.handleChange}
+                            className="mr-2"
+                          />
+                          <span>Subscribed</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="website"
+                            value="Subscribed/Purchased"
+                            checked={formik.values.website === 'Subscribed/Purchased'}
+                            onChange={formik.handleChange}
+                            className="mr-2"
+                          />
+                          <span>Subscribed/Purchased</span>
+                        </label>
+                      </div>
 
-  {/* Website */}
-  <div className="space-y-2">
-    <p>Website</p>
-    <label className="flex items-center">
-      <input
-        type="radio"
-        name="website"
-        value="Subscribed"
-        checked={formik.values.website === 'Subscribed'}
-        onChange={formik.handleChange}
-      />
-      <span className="ml-1">Subscribed</span>
-    </label>
-    <label className="flex items-center">
-      <input
-        type="radio"
-        name="website"
-        value="Subscribed/Purchased"
-        checked={formik.values.website === 'Subscribed/Purchased'}
-        onChange={formik.handleChange}
-      />
-      <span className="ml-1">Subscribed/Purchased</span>
-    </label>
-  </div>
+                      {/* Social */}
+                      <div className="space-y-2">
+                        <p className="font-medium">Social</p>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="social"
+                            value="Interaction"
+                            checked={formik.values.social === 'Interaction'}
+                            onChange={formik.handleChange}
+                            className="mr-2"
+                          />
+                          <span>Interaction</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="social"
+                            value="Purchased"
+                            checked={formik.values.social === 'Purchased'}
+                            onChange={formik.handleChange}
+                            className="mr-2"
+                          />
+                          <span>Purchased</span>
+                        </label>
+                      </div>
 
-  {/* Social */}
-  <div className="space-y-2">
-    <p>Social</p>
-    <label className="flex items-center">
-      <input
-        type="radio"
-        name="social"
-        value="Interaction"
-        checked={formik.values.social === 'Interaction'}
-        onChange={formik.handleChange}
-      />
-      <span className="ml-1">Interaction</span>
-    </label>
-    <label className="flex items-center">
-      <input
-        type="radio"
-        name="social"
-        value="Purchased"
-        checked={formik.values.social === 'Purchased'}
-        onChange={formik.handleChange}
-      />
-      <span className="ml-1">Purchased</span>
-    </label>
-  </div>
+                      {/* Event */}
+                      <div className="space-y-2">
+                        <p className="font-medium">Event</p>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="event"
+                            value="Domestic"
+                            checked={formik.values.event === 'Domestic'}
+                            onChange={formik.handleChange}
+                            className="mr-2"
+                          />
+                          <span>Domestic</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="event"
+                            value="International"
+                            checked={formik.values.event === 'International'}
+                            onChange={formik.handleChange}
+                            className="mr-2"
+                          />
+                          <span>International</span>
+                        </label>
+                      </div>
 
-  {/* Event */}
-  <div className="space-y-2">
-    <p>Event</p>
-    <label className="flex items-center">
-      <input
-        type="radio"
-        name="event"
-        value="Domestic"
-        checked={formik.values.event === 'Domestic'}
-        onChange={formik.handleChange}
-      />
-      <span className="ml-1">Domestic</span>
-    </label>
-    <label className="flex items-center">
-      <input
-        type="radio"
-        name="event"
-        value="International"
-        checked={formik.values.event === 'International'}
-        onChange={formik.handleChange}
-      />
-      <span className="ml-1">International</span>
-    </label>
-  </div>
+                      {/* Event Type */}
+                      <div className="space-y-2">
+                        <p className="font-medium">Event Type</p>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="eventType"
+                            value="Interaction"
+                            checked={formik.values.eventType === 'Interaction'}
+                            onChange={formik.handleChange}
+                            className="mr-2"
+                          />
+                          <span>Interaction</span>
+                        </label>
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            name="eventType"
+                            value="Purchased"
+                            checked={formik.values.eventType === 'Purchased'}
+                            onChange={formik.handleChange}
+                            className="mr-2"
+                          />
+                          <span>Purchased</span>
+                        </label>
+                      </div>
+                    </div>
 
-  {/* Event Type */}
-  <div className="space-y-2">
-    <p>Event Type</p>
-    <label className="flex items-center">
-      <input
-        type="radio"
-        name="eventType"
-        value="Interaction"
-        checked={formik.values.eventType === 'Interaction'}
-        onChange={formik.handleChange}
-      />
-      <span className="ml-1">Interaction</span>
-    </label>
-    <label className="flex items-center">
-      <input
-        type="radio"
-        name="eventType"
-        value="Purchased"
-        checked={formik.values.eventType === 'Purchased'}
-        onChange={formik.handleChange}
-      />
-      <span className="ml-1">Purchased</span>
-    </label>
-  </div>
-
-</div>
-
-                   
-
-
-
-
-
-
-
-
-
-
-                    {/* <button
-                      type="submit"
-                      className="flex  float-end mb-4 justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4"
-                    >
-                      Update Customer
-                    </button> */}
-
-                    <div className="flex justify-center mt-4 mb-4 pt-6 border-t border-gray-300 ">
-  <button
-    type="submit"
-    className="flex justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90"
-  >
-    Update Customer
-  </button>
-</div>
-
+                    {/* Submit Button */}
+                    <div className="flex justify-center mt-4 mb-4 pt-6 border-t border-gray-300">
+                      <button
+                        type="submit"
+                        className="flex justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 min-w-[200px]"
+                      >
+                        Update Customer
+                      </button>
+                    </div>
                   </div>
                 </form>
               )}

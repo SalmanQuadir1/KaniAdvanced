@@ -157,6 +157,15 @@ const useCustomer = () => {
 
     const handleSubmit = async (values) => {
       console.log(values, 'i am here');
+
+      const payload = {
+    ...values,
+    // At first creation, set customerId to contactNumber
+    customerId: values.contactNumber, // 👈 This sends customerId as contactNumber
+  };
+
+  console.log(payload,"222222222222");
+  
       try {
         
 
@@ -171,7 +180,7 @@ const useCustomer = () => {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(values),
+          body: JSON.stringify(payload),
         });
 
         const data = await response.json();
