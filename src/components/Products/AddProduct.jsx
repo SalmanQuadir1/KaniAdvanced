@@ -298,7 +298,7 @@ const AddProduct = () => {
 
     const gstdetails = [
 
-        { value: 'Specify Slab Based Rates', label: 'Specify Slab Based Rates' },
+        // { value: 'Specify Slab Based Rates', label: 'Specify Slab Based Rates' },
         { value: 'Use GST Classification', label: 'Use GST Classification' },
 
     ]
@@ -551,7 +551,7 @@ const AddProduct = () => {
 
                                             <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Product Category <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Supplier/ Weaver Name <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
                                                             name="productCategory"
@@ -849,23 +849,23 @@ const AddProduct = () => {
                                                     <div className="mb-4.5 flex flex-wrap gap-6">
                                                         <div className="flex-1 min-w-[300px]">
                                                             <label className="mb-2.5 block text-black dark:text-white">
-                                                                Warp Colors
+                                                                Warp / Base Color
                                                             </label>
                                                             <Field
                                                                 name="warpColors"
                                                                 type="text"
-                                                                placeholder="Enter Warp Colors"
+                                                                placeholder="Enter Warp / Base Color"
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                             />
                                                         </div>
                                                         <div className="flex-1 min-w-[300px]">
                                                             <label className="mb-2.5 block text-black dark:text-white">
-                                                                Weft Colors
+                                                                Weft / Emb / Kani Color
                                                             </label>
                                                             <Field
                                                                 name="weftColors"
                                                                 type="text"
-                                                                placeholder="Enter Weft Colors"
+                                                                placeholder="Enter Weft / Emb / Kani Color"
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                             />
                                                         </div>
@@ -1490,20 +1490,20 @@ const AddProduct = () => {
                                                 <>
                                                     <div className="mb-4.5 flex flex-wrap gap-6">
                                                         <div className="flex-1 min-w-[300px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white"> Warp Colors </label>
+                                                            <label className="mb-2.5 block text-black dark:text-white"> Warp / Base Color </label>
                                                             <Field
                                                                 name='warpColors'
                                                                 type="text"
-                                                                placeholder="Enter Warp Colors"
+                                                                placeholder="Enter Warp / Base Color"
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                             />
                                                         </div>
                                                         <div className="flex-1 min-w-[300px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white"> Weft Colors</label>
+                                                            <label className="mb-2.5 block text-black dark:text-white"> Weft / Emb / Kani Color</label>
                                                             <Field
                                                                 name='weftColors'
                                                                 type="text"
-                                                                placeholder="Enter Weft Colors"
+                                                                placeholder="Enter Weft / Emb / Kani Color"
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                             />
                                                         </div>
@@ -1528,12 +1528,30 @@ const AddProduct = () => {
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                             />
                                                         </div>
+                                                           <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white"> Warp Yarn Count</label>
+                                                            <Field
+                                                                name='warpYarnCount'
+                                                                type="text"
+                                                                placeholder="Enter Warp Yarn Count"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
                                                         <div className="flex-1 min-w-[300px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> Weft Yarn</label>
                                                             <Field
                                                                 name='weftYarn'
                                                                 type="text"
                                                                 placeholder="Enter Weft Yarn"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+                                                         <div className="flex-1 min-w-[300px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white"> Weft Yarn Count</label>
+                                                            <Field
+                                                                name='weftYarnCount'
+                                                                type="text"
+                                                                placeholder="Enter Weft Yarn Count"
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                             />
                                                         </div>

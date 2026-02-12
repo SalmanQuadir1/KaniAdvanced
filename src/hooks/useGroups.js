@@ -4,12 +4,13 @@ import { toast } from 'react-toastify';
 // import { GET_Groups_URL, DELETE_Groups_URL, UPDATE_Groups_URL, ADD_Groups_URL } from "../Constants/utils";
 import { ADD_Groups_URL, DELETE_Groups_URL, GET_Groups_URL, UPDATE_Groups_URL } from "../Constants/utils";
 import { fetchHsnCode } from '../redux/Slice/HsnCodeSlice';
-const useGroups = (gstDetails) => {
+const useGroups = (gstDetails,setgstDetails) => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const [Groups, setGroups] = useState([]);
     const [edit, setEdit] = useState(false);
     const dispatch = useDispatch();
+    const [accountGroups, setaccountGroups] = useState([])
 
     useEffect(() => {
 
@@ -20,7 +21,7 @@ const useGroups = (gstDetails) => {
         groupName: "",
         subGroup: [],
         natureOfGroup: "",
-        under: "",
+        under: {},
         allocatePurchaseInvoice: "",
         calculation: "",
         balanceReporting: "",
@@ -137,6 +138,8 @@ const useGroups = (gstDetails) => {
         }
     };
 
+   
+
     const handleDelete = async (e, id) => {
         console.log(id, "del");
         e.preventDefault();
@@ -177,81 +180,105 @@ const useGroups = (gstDetails) => {
         setCurrentGroups(item);
     };
 
-    const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-        console.log(values, "kk");
-        const product = {}
-        if (gstDetails && gstDetails.length > 0) {
-            product.slabBasedRates = gstDetails.map(({ id, ...rest }) => rest);// Add gstDetails to the product
-        }
-        if (values.gstratedetails === "Specify Slab Based Rates") {
-            product.slabBasedRates = gstDetails.map(({ id, ...rest }) => rest); // Include slab-based rates
-            delete values.hsnCode; // Remove HSN-related fields if they exist
-            delete product.igst;
-            delete product.cgst;
-            delete product.sgst;
-            delete product.gstDescription;
-            delete product.hsn_Sac;
-        } else if (values.gstratedetails === "useGstClassification") {
-            // Include HSN classification details
-            product.hsnCode = values.hsnCode;
-            // product.igst = values.hsnCode?.igst;
-            // product.cgst = values.hsnCode?.cgst;
-            // product.sgst = values.hsnCode?.sgst;
-            product.gstDescription = values.hsnCode?.productDescription;
-            product.hsn_Sac = values.hsn_Sac;
-
-            // Remove slab-based rates if they exist
-            delete product.slabBasedRates;
-        }
-        console.log(product, "jamshedpur+++++++++++++");
-
-        const finalresult = {
-            ...values,  // Spread all form values
-            ...(product?.slabBasedRates && { slabBasedRates: product.slabBasedRates }) // Conditionally add slabBasedRates
-        };
-
-        // Remove the product object if it exists
-        delete finalresult.product;
-
-        console.log(finalresult);
-        console.log(finalresult, "jahahaha++++++++");
 
 
-        try {
-            const url = edit ? `${UPDATE_Groups_URL}/${currentGroups.id}` : ADD_Groups_URL;
-            const method = edit ? "PUT" : "POST";
 
-            const response = await fetch(url, {
-                method: method,
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify(finalresult)
-            });
 
-            const data = await response.json();
-            if (response.ok) {
-                toast.success(`Groups ${edit ? 'updated' : 'added'} successfully`);
-                resetForm();
-                setEdit(false);
-                setCurrentGroups({
-                    groupName: "",
-                    subGroup: [],
-                    natureOfGroup: ""
 
-                });
-                getGroups(pagination.currentPage); // Fetch updated Groups
-            } else {
-                toast.error(`${data.errorMessage}`);
-            }
-        } catch (error) {
-            console.error(error, response);
-            toast.error("An error occurred");
-        } finally {
-            setSubmitting(false);
-        }
+   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    console.log(values, "form values");
+    
+    // Prepare the payload
+    let payload = {
+        groupName: values.groupName,
+        natureOfGroup: values.natureOfGroup,
+        allocatePurchaseInvoice: values.allocatePurchaseInvoice,
+        gstDetails: values.gstDetails,
+        gstratedetails: values.gstratedetails,
     };
+
+    // Handle Under group - extract ID properly
+    if (values.under && typeof values.under === 'object') {
+        payload.under = { id: values.under.id }; // Send only the ID, not the whole object
+    }
+
+    // Handle GST slab based rates
+    if (values.gstratedetails === "Specify Slab Based Rates" && gstDetails && gstDetails.length > 0) {
+        payload.slabBasedRates = gstDetails.map(({ id, ...rest }) => ({
+            ...rest
+        }));
+    }
+    
+    // Handle HSN classification
+    else if (values.gstratedetails === "Use GST Classification " && values.gstDetails === "Applicable") {
+        if (values.hsnCode) {
+            payload.hsnCodeId = values.hsnCode.id; // Send only the ID
+            payload.hsn_Sac = values.hsn_Sac;
+            payload.gstDescription = values.gstDescription || values.hsnCode?.productDescription;
+        }
+    }
+
+    // For update, include the ID
+    if (edit && currentGroups?.id) {
+        payload.id = currentGroups.id;
+    }
+
+    console.log(payload, "final payload");
+
+    try {
+        const url = edit ? `${UPDATE_Groups_URL}/${currentGroups.id}` : ADD_Groups_URL;
+        const method = edit ? "PUT" : "POST";
+
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+            toast.success(`Groups ${edit ? 'updated' : 'added'} successfully`);
+            
+            // Reset form to initial state
+            resetForm();
+            
+            // Clear GST details state
+            setgstDetails([]);
+            
+            // Reset currentGroups to empty state
+            setCurrentGroups({
+                groupName: "",
+                under: null,
+                natureOfGroup: "",
+                allocatePurchaseInvoice: "",
+                gstDetails: "",
+                gstratedetails: "",
+                hsnCode: null,
+                hsn_Sac: "",
+                gstDescription: "",
+                slabBasedRates: []
+            });
+            
+            // Turn off edit mode
+            setEdit(false);
+            
+            // Refresh the groups list
+            getGroups(pagination.currentPage);
+            
+        } else {
+            toast.error(data.errorMessage || `Failed to ${edit ? 'update' : 'add'} group`);
+        }
+    } catch (error) {
+        console.error("Submission error:", error);
+        toast.error("An error occurred while processing your request");
+    } finally {
+        setSubmitting(false);
+    }
+};
 
     const handlePageChange = (newPage) => {
 
@@ -270,7 +297,9 @@ const useGroups = (gstDetails) => {
         handlePageChange,
         nature,
         invoice,
-        under
+        under,
+        setCurrentGroups,
+        setEdit
     };
 };
 

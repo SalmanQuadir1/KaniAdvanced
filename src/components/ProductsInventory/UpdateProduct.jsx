@@ -360,7 +360,7 @@ const UpdateProduct = () => {
 
     const gstdetails = [
 
-        { value: 'specifySlabBasedRates', label: 'Specify Slab Based Rates' },
+        // { value: 'specifySlabBasedRates', label: 'Specify Slab Based Rates' },
         { value: 'useGstClassification', label: 'Use Gst Classification' },
 
     ]

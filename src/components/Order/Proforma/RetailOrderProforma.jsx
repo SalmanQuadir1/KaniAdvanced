@@ -103,23 +103,6 @@ const RetailOrderProforma = () => {
     const [selectedSuppliers, setSelectedSuppliers] = useState([]);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     useEffect(() => {
         getorderType();
         getprodId();
@@ -132,7 +115,7 @@ const RetailOrderProforma = () => {
 
     }, [])
 
-    console.log(productId, "looool");
+
     const { id } = useParams();
 
 
@@ -191,7 +174,7 @@ const RetailOrderProforma = () => {
             setIsLoading(false); // Stop loader
         }
     };
-    console.log(order, 'hloooooo')
+
 
     // Fetch data when component mounts
     useEffect(() => {
@@ -258,12 +241,6 @@ const RetailOrderProforma = () => {
             fontSize: '16px',
         }),
     };
-
-
-
-
-
-
 
 
 
@@ -376,7 +353,7 @@ const RetailOrderProforma = () => {
     }));
 
     const formattedGstLocation = Locations?.map(loc => ({
-        label: `Registration ${loc.state}`,
+        label: loc.state,
         value: loc.id
     }));
 
@@ -471,89 +448,191 @@ const RetailOrderProforma = () => {
                     {({ values, setFieldValue }) => {
 
                         useEffect(() => {
-                            // Check if currentrate is available and the currency is INR
-                            if (values.currency) {
-                                console.log(values.currentrate, "hh");
-                                // Loop through the orderProducts and update the rate based on currentrate
-                                order?.orderProducts?.forEach((product, index) => {
-                                    // Calculate the new rate: rate / currentrate
-                                    const newRate = product?.products?.retailMrp / values.currentrate || 0;
-                                    console.log(newRate, "umershah");
-                                    // Update the rate for the product
-                                    setFieldValue(`orderProducts[${index}].rate`, newRate);
-                                });
-                            }
-                        }, [values.currency, values.currentrate, order?.orderProducts, setFieldValue]);
+    // Check if currency and currentrate are available
+    if (values.currency && values.currentrate && values.defGstRegist) {
+        console.log(values.currentrate, "current rate");
+        console.log(values.defGstRegist, "GST registration state");
+        
+        // Get GST registration state
+        const gstRegistState = getGstRegistrationState();
+        const shippingStateCode = order?.customer?.shippingState || null;
+        const isInterstate = isInterstateTransaction(gstRegistState, shippingStateCode);
+        
+        console.log("Transaction type:", isInterstate ? "Interstate" : "Intrastate");
+        
+        // Loop through the orderProducts
+        order?.orderProducts?.forEach((product, index) => {
+            let newRate = 0;
+            
+            // Calculate rate based on currency
+            if (values.currency === 'INR') {
+                newRate = product?.products?.retailMrp || 0;
+            } else {
+                newRate = (product?.products?.retailMrp || 0) / values.currentrate;
+            }
+            
+            // Get the discount percentage
+            const discountPercentage = values.orderProducts[index]?.discount || 0;
+            
+            // Calculate discounted price
+            let discountedPrice = newRate;
+            if (discountPercentage > 0) {
+                discountedPrice = newRate - (newRate * (discountPercentage / 100));
+            }
+            
+            // Set the rate and discounted price
+            setFieldValue(`orderProducts[${index}].rate`, newRate);
+            setFieldValue(`orderProducts[${index}].discountedPrice`, discountedPrice);
+            
+            // Calculate GST and taxable value
+            const orderQty = values.orderProducts[index]?.orderQty || 0;
+            
+            // Get HSN code for the product
+            const hsnCode = order.orderProducts[index]?.products?.hsnCode;
+            
+            let taxableValue = 0;
+            let gstRate = 0;
+            
+            // Calculate based on transaction type
+            if (hsnCode && hsnCode.igst !== undefined && hsnCode.cgst !== undefined && hsnCode.sgst !== undefined) {
+                if (isInterstate) {
+                    // Interstate transaction - use IGST
+                    gstRate = hsnCode.igst || 0;
+                    taxableValue = discountedPrice / (1 + (gstRate / 100));
+                } else {
+                    // Intrastate transaction - use CGST + SGST
+                    const cgstRate = hsnCode.cgst || 0;
+                    const sgstRate = hsnCode.sgst || 0;
+                    gstRate = cgstRate + sgstRate;
+                    taxableValue = discountedPrice / (1 + (gstRate / 100));
+                }
+            } else {
+                // Fallback for no HSN code
+                gstRate = 18; // Default 18% GST
+                taxableValue = discountedPrice / 1.18;
+            }
+            
+            // Round to 2 decimal places
+            taxableValue = Math.round(taxableValue * 100) / 100;
+            const totalValue = Math.round((taxableValue * orderQty) * 100) / 100;
+            const gstAmount = Math.round(((discountedPrice * orderQty) - totalValue) * 100) / 100;
+            
+            // Update form values
+            setFieldValue(`orderProducts[${index}].taxibleValue`, taxableValue);
+            setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
+            
+            console.log(`Product ${index} (${isInterstate ? 'Interstate' : 'Intrastate'}):`, {
+                rate: newRate,
+                discountedPrice: discountedPrice,
+                taxableValue: taxableValue,
+                totalValue: totalValue,
+                gstAmount: gstAmount,
+                gstRate: gstRate
+            });
+        });
+        
+        // Calculate total GST for all products
+        const totalGst = order?.orderProducts?.reduce((sum, product, index) => {
+            const orderQty = values.orderProducts[index]?.orderQty || 0;
+            const discountedPrice = values.orderProducts[index]?.discountedPrice || 0;
+            const totalValue = values.orderProducts[index]?.totalValue || 0;
+            return sum + ((discountedPrice * orderQty) - totalValue);
+        }, 0);
+        
+        setFieldValue('gst', totalGst || 0);
+        setgst(totalGst || 0);
+    }
+}, [values.currency, values.currentrate, values.orderProducts, values.defGstRegist, order?.orderProducts, setFieldValue]);
 
 
                         const getGstRegistrationState = () => {
                             if (!values.defGstRegist) return null;
+                            console.log(values.defGstRegist, "44444444444444444444");
                             const selectedLocation = formattedGstLocation?.find(
                                 loc => loc.value === values.defGstRegist?.id
                             );
-                            return selectedLocation?.state || null;
+                            console.log(selectedLocation, "333333333333333333333333333umi");
+
+                            return selectedLocation?.label || null;
                         };
 
-                        // Get shipping state code from order
+
                         const shippingStateCode = order?.customer?.shippingState || null;
 
 
-                        const calculateValues = (index, rate, orderQty, discount, currentRate) => {
-                            console.log("current rate:", rate);
-                            console.log("discount:", discount);
-                            console.log("quantity=======", orderQty);
+                        const calculateValues = (index, rate, orderQty, discountPercentage) => {
+                            console.log("Calculating values for index:", index);
+                            console.log("Rate:", rate);
+                            console.log("Order Qty:", orderQty);
+                            console.log("Discount %:", discountPercentage);
 
-                            let discountedPricee = (discount * rate) / 100;
-                            console.log("discountedPrice (calculated):", discountedPricee);
-
-                            discountedPricee = rate - discountedPricee;
-                            console.log("final discountedPrice:", discountedPricee);
-                            setFieldValue(`orderProducts[${index}].discountedPrice`, discountedPricee);
-
-                            const discountedValue = discountedPricee * orderQty
-                            console.log("discountedprice&&&&quantity&&&&", discountedPricee, orderQty);
-
-                            setFieldValue('total', discountedValue);
-                            setFieldValue('outstandingBalance', discountedValue);
-                            setTotal(discountedValue);
-                            console.log("discountedValue=========", discountedValue);
-
-                            // Get GST registration state
-                            const gstRegistState = getGstRegistrationState();
-
-                            // Check if transaction is interstate
-                            const isInterstate = isInterstateTransaction(gstRegistState, shippingStateCode);
-                            console.log(order.orderProducts[index].products.hsnCode, "9898989898");
-
-                            // Get HSN code for the product
-                            const hsnCode = order.orderProducts[index].products.hsnCode;
-
-                            let taxableValue = 0;
-
-                            console.log(discountedPricee, hsnCode, isInterstate, "55555555555555555555555555556");
-
-
-
-                            if (hsnCode) {
-                                taxableValue = calculateTaxableValue(discountedPricee, hsnCode, isInterstate);
-                            } else {
-                                // Fallback for price < 1000
-                                taxableValue = Math.floor((discountedPricee / 105) * 100);
+                            // Calculate discounted price
+                            let discountedPrice = rate;
+                            if (discountPercentage > 0) {
+                                discountedPrice = rate - (rate * (discountPercentage / 100));
                             }
 
+                            // Update discounted price in form
+                            setFieldValue(`orderProducts[${index}].discountedPrice`, discountedPrice);
 
-                            const totalValue = Math.floor(taxableValue * orderQty);
+                            // Get GST information
+                            const gstRegistState = getGstRegistrationState();
+                            const shippingStateCode = order?.customer?.shippingState || null;
+                            const isInterstate = isInterstateTransaction(gstRegistState, shippingStateCode);
+                            const hsnCode = order?.orderProducts[index]?.products?.hsnCode;
 
+                            // Calculate taxable value
+                            let taxableValue = 0;
+                            if (hsnCode && hsnCode.igst !== undefined && hsnCode.cgst !== undefined && hsnCode.sgst !== undefined) {
+                                if (isInterstate) {
+                                    const igstRate = hsnCode.igst || 0;
+                                    taxableValue = discountedPrice / (1 + (igstRate / 100));
+                                } else {
+                                    const cgstRate = hsnCode.cgst || 0;
+                                    const sgstRate = hsnCode.sgst || 0;
+                                    const totalGstRate = cgstRate + sgstRate;
+                                    taxableValue = discountedPrice / (1 + (totalGstRate / 100));
+                                }
+                            } else {
+                                // Fallback 18% GST
+                                taxableValue = discountedPrice / 1.18;
+                            }
+
+                            // Round values
+                            taxableValue = Math.round(taxableValue * 100) / 100;
+                            const totalValue = Math.round((taxableValue * orderQty) * 100) / 100;
+
+                            // Update form values
                             setFieldValue(`orderProducts[${index}].taxibleValue`, taxableValue);
                             setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
 
-                            const gst = discountedValue - totalValue;
-                            setFieldValue('gst', gst);
-                            setgst(gst);
+                            // Recalculate total for all products
+                            const newTotal = values.orderProducts.reduce((sum, product, idx) => {
+                                return sum + (product.totalValue || 0);
+                            }, 0);
 
-                            console.log(`Transaction Type: ${isInterstate ? 'Interstate' : 'Intrastate'}`);
-                            console.log("Taxable Value (Calculated):", taxableValue);
-                            console.log("Total Value (Calculated):", totalValue);
+                            setFieldValue('total', newTotal);
+                            setFieldValue('outstandingBalance', newTotal);
+                            setTotal(newTotal);
+
+                            // Recalculate total GST
+                            const totalGst = values.orderProducts.reduce((sum, product, idx) => {
+                                const qty = values.orderProducts[idx]?.orderQty || 0;
+                                const discPrice = values.orderProducts[idx]?.discountedPrice || 0;
+                                const tValue = values.orderProducts[idx]?.totalValue || 0;
+                                return sum + ((discPrice * qty) - tValue);
+                            }, 0);
+
+                            setFieldValue('gst', totalGst);
+                            setgst(totalGst);
+
+                            console.log("Updated values:", {
+                                discountedPrice,
+                                taxableValue,
+                                totalValue,
+                                newTotal,
+                                totalGst
+                            });
                         };
 
 
@@ -592,28 +671,38 @@ const RetailOrderProforma = () => {
                         // for mode of shipment gst and total
                         useEffect(() => {
                             if (values.modeOfShipment) {
-                                console.log(values.modeOfShipment, "kkllkkll");
-                                if (values.modeOfShipment === 'Courier' || values.modeOfShipment === '') {
-                                    console.log(values?.gst, "gsttststst");
-                                    setFieldValue("gst", gst)
-                                    setFieldValue("total", Total)
-                                    setFieldValue('outstandingBalance', Total)
-                                    // If mode of shipment is Courier, sum all GST values
+                                if (values.modeOfShipment === 'Courier') {
+                                    // For Courier, include GST in total
+                                    const totalWithGst = values.orderProducts.reduce((sum, product, index) => {
+                                        const orderQty = values.orderProducts[index]?.orderQty || 0;
+                                        const discountedPrice = values.orderProducts[index]?.discountedPrice || 0;
+                                        return sum + (discountedPrice * orderQty);
+                                    }, 0);
 
+                                    setFieldValue('total', totalWithGst);
+                                    setFieldValue('outstandingBalance', totalWithGst);
 
+                                    // Keep GST as calculated
+                                    const totalGst = values.orderProducts.reduce((sum, product, index) => {
+                                        const orderQty = values.orderProducts[index]?.orderQty || 0;
+                                        const discountedPrice = values.orderProducts[index]?.discountedPrice || 0;
+                                        const totalValue = values.orderProducts[index]?.totalValue || 0;
+                                        return sum + ((discountedPrice * orderQty) - totalValue);
+                                    }, 0);
 
-
+                                    setFieldValue('gst', totalGst);
+                                    setgst(totalGst);
 
                                 } else if (values.modeOfShipment === 'Commercial') {
-                                    // If mode of shipment is Commercial, set GST to 0 and recalculate total
-                                    setFieldValue('gst', 0);
+                                    // For Commercial, exclude GST from total
                                     const totalWithoutGst = values.orderProducts.reduce((sum, product) => {
                                         return sum + (product.totalValue || 0);
                                     }, 0);
 
                                     setFieldValue('total', totalWithoutGst);
-                                    setFieldValue('outstandingBalance', totalWithoutGst)
-                                        ; // No GST, only totalValue sum
+                                    setFieldValue('outstandingBalance', totalWithoutGst);
+                                    setFieldValue('gst', 0);
+                                    setgst(0);
                                 }
                             }
                         }, [values.modeOfShipment, values.orderProducts, setFieldValue]);
@@ -645,11 +734,13 @@ const RetailOrderProforma = () => {
                         useEffect(() => {
                             // Step 1: Get the current total from the form state (starting fresh)
                             let currentTotal = values.total || 0;
+                            console.log("Current Total:", currentTotal);
+                            
 
                             // Step 2: Check if shippingAccount is 'KLC' and courierCharges > 0
                             if (values.shippingAccount === 'KLC' && values.courierCharges >= 0) {
                                 // Add courier charges to the total if shippingAccount is 'KLC'
-                                currentTotal = parseFloat(values.courierCharges) + Total;
+                                currentTotal = parseFloat(values.courierCharges) + currentTotal;
                             } else if (values.shippingAccount !== 'KLC' || values.courierCharges <= 0) {
                                 setFieldValue('courierCharges', 0);
                                 // If courierCharges is 0 or shippingAccount is not 'KLC', don't add any courier charges
@@ -682,6 +773,7 @@ const RetailOrderProforma = () => {
                         const isInterstateTransaction = (defGstRegistState, shippingStateCode) => {
                             // Get state code from state name mapping
                             const defGstRegistCode = stateCodeMapping[defGstRegistState];
+                            console.log(defGstRegistState, shippingStateCode, defGstRegistCode, "0000000000000000000.");
 
                             // Compare state codes
                             return defGstRegistCode !== shippingStateCode;
@@ -690,7 +782,7 @@ const RetailOrderProforma = () => {
                         // Function to calculate taxable value based on HSN code and transaction type
                         const calculateTaxableValue = (discountedPrice, hsnCode, isInterstate) => {
 
-                            console.log(hsnCode, isInterstate, "9888888888888888888888889");
+                            console.log(hsnCode, isInterstate, discountedPrice, "9888888888888888888888889");
 
                             if (!hsnCode) return discountedPrice; // Default if no HSN code
 
@@ -791,7 +883,7 @@ const RetailOrderProforma = () => {
                                                     <ReactSelect
                                                         name="defGstRegist"
                                                         value={formattedGstLocation.find(opt => opt.value === values.defGstRegist)}
-                                                        onChange={(opt) => setFieldValue('defGstRegist', { id: opt?.value, state: opt?.state })}
+                                                        onChange={(opt) => setFieldValue('defGstRegist', { id: opt?.value, state: opt?.label })}
                                                         options={formattedGstLocation}
                                                         styles={customStyles}
                                                         placeholder="Select registration"

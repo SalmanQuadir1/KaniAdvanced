@@ -81,6 +81,8 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
         warpYarn: "",
         batch: "",
         weftYarn: "",
+        weftYarnCount: "",
+        warpYarnCount: "",
         weave: "",
         finishedWeight: "",
         materialWeight: "",

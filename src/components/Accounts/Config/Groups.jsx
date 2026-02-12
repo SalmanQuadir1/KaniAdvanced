@@ -10,12 +10,17 @@ import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import useGroups from '../../../hooks/useGroups';
 import ViewTable from './ViewTable';
 import Pagination from '../../Pagination/Pagination';
-import { customStyles as createCustomStyles } from '../../../Constants/utils';
+import { customStyles as createCustomStyles, DELETE_Groups_URL } from '../../../Constants/utils';
 import { useSelector } from 'react-redux';
 import Modall from '../../Products/Modall';
+import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import { toast } from 'react-toastify';
 const Groups = () => {
     const [gstDetails, setgstDetails] = useState([])
     const [hsnOptions, sethsnOptions] = useState([])
+
+     const { currentUser } = useSelector((state) => state?.persisted?.user);
+    const { token } = currentUser;
     const {
         Groups,
         edit,
@@ -28,8 +33,10 @@ const Groups = () => {
         nature,
         invoice,
         under,
+        setCurrentGroups,
+        setEdit
 
-    } = useGroups(gstDetails);
+    } = useGroups(gstDetails,setgstDetails);
     const theme = useSelector(state => state?.persisted?.theme);
     const [vaaluee, setvaaluee] = useState({})
     const customStyles = createCustomStyles(theme?.mode);
@@ -55,7 +62,7 @@ const Groups = () => {
     ]
     const gstdetails = [
 
-        { value: 'Specify Slab Based Rates', label: 'Specify Slab Based Rates' },
+        // { value: 'Specify Slab Based Rates', label: 'Specify Slab Based Rates' },
         { value: 'Use GST Classification ', label: 'Use GST Classification' },
 
     ]
@@ -85,6 +92,60 @@ const Groups = () => {
         setgstDetails(values)
 
     }
+
+    console.log(Groups, "5555555");
+
+    const GroupsDropdown = Groups.map(group => ({
+        value: group.id,
+        label: group.groupName
+    }))
+const handleEdit = (groupId) => {
+    const groupToEdit = Groups.find(g => g.id === groupId);
+    if (groupToEdit) {
+        setCurrentGroups({
+            ...groupToEdit,
+            under: groupToEdit.under ? { id: groupToEdit.under.id } : null,
+            hsnCode: groupToEdit.hsnCode || null,
+            gstDetails: groupToEdit.gstDetails || "",
+            gstratedetails: groupToEdit.gstratedetails || "",
+            allocatePurchaseInvoice: groupToEdit.allocatePurchaseInvoice || "",
+            hsn_Sac: groupToEdit.hsn_Sac || "",
+            gstDescription: groupToEdit.gstDescription || "",
+        });
+        
+        // If there are slab based rates, populate gstDetails
+        if (groupToEdit.slabBasedRates && groupToEdit.slabBasedRates.length > 0) {
+            setgstDetails(groupToEdit.slabBasedRates);
+        }
+        
+        setEdit(true);
+    }
+};
+
+const handleDeleteGroup = async (groupId) => {
+  
+        try {
+            const response = await fetch(`${DELETE_Groups_URL}/${groupId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                toast.success('Group deleted successfully');
+                window.location.reload()// Refresh the list
+            } else {
+                const data = await response.json();
+                toast.error(data.errorMessage || 'Failed to delete group');
+            }
+        } catch (error) {
+            console.error('Delete error:', error);
+            toast.error('An error occurred while deleting');
+        }
+   
+};
 
 
 
@@ -145,13 +206,17 @@ const Groups = () => {
                                                     <label className="mb-2.5 block text-black dark:text-white">Under <span className='text-red-600 ml-1'>*</span></label>
                                                     <ReactSelect
                                                         name="under"
-                                                        value={under.find(option => option.value === values.under) || null}
-                                                        onChange={(option) => setFieldValue('under', option ? option.value : null)}
-                                                        options={under}
-                                                        styles={customStyles}
-                                                        className="bg-white dark:bg-form-Field w-full"
+                                                        value={GroupsDropdown.find(option => option.value === values.under?.id) || null}
+                                                        onChange={(option) => setFieldValue('under', option ? { id: option.value } : null)}
+                                                        options={GroupsDropdown}
+
+                                                        className="bg-white dark:bg-form-Field w-full z-99"
                                                         classNamePrefix="react-select"
                                                         placeholder="Under"
+                                                        styles={{
+                                                            ...customStyles,
+                                                            menuPortal: (base) => ({ ...base, zIndex: 999 })
+                                                        }}
                                                     />
 
                                                     <ErrorMessage
@@ -181,7 +246,7 @@ const Groups = () => {
                                                     />
                                                 </div>
                                             </div>
-                                            <div className="flex flex-col gap-4 mt-6">
+                                            {/* <div className="flex flex-col gap-4 mt-6">
                                                 {[
                                                     { name: 'affectGrossProfit', label: 'Does It Affect Gross Profit?' },
                                                     { name: 'subLedgerGroup', label: 'Group Behaves Like a Sub Ledger' },
@@ -216,26 +281,9 @@ const Groups = () => {
                                                         </div>
                                                     </div>
                                                 ))}
-                                            </div>
+                                            </div> */}
 
 
-                                            <div className="flex gap-4 items-center mb-4.5">
-                                                <label className="text-black dark:text-white w-[280px]">
-                                                    Method To Allocate When Used in Purchase Invoice
-                                                </label>
-                                                <div className="flex-1 min-w-[300px] z-50 relative">
-                                                    <ReactSelect
-                                                        name="allocatePurchaseInvoice"
-                                                        value={invoice.find(option => option.value === values?.allocatePurchaseInvoice) || null}
-                                                        onChange={(option) => setFieldValue('allocatePurchaseInvoice', option ? option?.value : '')}
-                                                        options={invoice}
-                                                        styles={customStyles}
-                                                        className="bg-white dark:bg-form-Field"
-                                                        classNamePrefix="react-select"
-                                                        placeholder="Select Method"
-                                                    />
-                                                </div>
-                                            </div>
 
 
 
@@ -246,7 +294,7 @@ const Groups = () => {
                                         </div>
 
                                         {/* --- subGroup FieldArray --- */}
-                                        <div className="mb-6">
+                                        {/* <div className="mb-6">
                                             <label className=" flex mb-2.5  text-black dark:text-white">Sub Group</label>
                                             <FieldArray name="subGroup">
                                                 {({ push, remove, form }) => (
@@ -277,12 +325,27 @@ const Groups = () => {
                                                     </div>
                                                 )}
                                             </FieldArray>
-                                        </div>
+                                        </div> */}
                                         {/* gst */}
 
 
 
                                         <div className="flex flex-wrap gap-4">
+                                            <div className="flex-1 min-w-[250px]">
+                                                <label className="mb-2.5 block text-black dark:text-white"> Method To Allocate When Used in Purchase Invoice</label>
+                                                <div className="z-20 bg-transparent dark:bg-form-Field">
+                                                    <ReactSelect
+                                                        name="allocatePurchaseInvoice"
+                                                        value={invoice.find(option => option.value === values?.allocatePurchaseInvoice) || null}
+                                                        onChange={(option) => setFieldValue('allocatePurchaseInvoice', option ? option?.value : '')}
+                                                        options={invoice}
+                                                        styles={customStyles}
+                                                        className="bg-white dark:bg-form-Field"
+                                                        classNamePrefix="react-select"
+                                                        placeholder="Select Method"
+                                                    />
+                                                </div>
+                                            </div>
                                             {/* GST DETAILS Section */}
                                             <div className="flex-1 min-w-[250px]">
                                                 <label className="mb-2.5 block text-black dark:text-white">GST DETAILS</label>
@@ -489,24 +552,75 @@ const Groups = () => {
 
                                 {/* View Table */}
                                 {!edit && (
-                                    <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                                        <div className="border-b border-stroke py-4 px-2 dark:border-strokedark">
-                                            <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                                                <ViewTable
-                                                    units={Groups}
-                                                    pagination={pagination}
-                                                    totalItems={pagination.totalItems}
-                                                    title={'Groups'}
-                                                    handleDelete={handleDelete}
-                                                    handleUpdate={handleUpdate}
-                                                />
-                                                <Pagination
-                                                    totalPages={pagination.totalPages}
-                                                    currentPage={pagination.currentPage}
-                                                    handlePageChange={handlePageChange}
-                                                />
-                                            </h3>
+                                    <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+                                        <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
+                                            <table className="min-w-full leading-normal">
+                                                <thead>
+                                                    <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
+                                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">SNO</th>
+                                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Group Name</th>
+                                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Under Group</th>
+                                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Nature Of Group</th>
+
+                                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {
+                                                        Groups && Groups.length > 0 ? (
+                                                            Groups.map((group, index) => (
+                                                                <tr key={group.id} className='bg-white dark:bg-slate-700 dark:text-white'>
+                                                                    <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                                        {index + 1}
+                                                                    </td>
+                                                                    <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                                        {group.groupName}
+                                                                    </td>
+                                                                    <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                                        {group.under ? group.under.groupName : '-'}
+                                                                    </td>
+                                                                    <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                                        {group.natureOfGroup}
+                                                                    </td>
+                                                                    <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                                        <div className="flex">
+                                                                            <FiEdit
+                                                                                size={17}
+                                                                                className="text-teal-500 hover:text-teal-700 mx-2 cursor-pointer"
+                                                                                onClick={() => handleEdit(group.id)}
+                                                                                title="Edit Group"
+                                                                            />
+                                                                            <FiTrash2
+                                                                                size={17}
+                                                                                className="text-red-500 hover:text-red-700 mx-2 cursor-pointer"
+                                                                                onClick={() => handleDeleteGroup(group.id)}
+                                                                                title="Delete Group"
+                                                                            />
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            ))
+                                                        ) : (
+                                                            <tr>
+                                                                <td colSpan="5" className="text-center py-4 text-gray-500">
+                                                                    No groups found.
+                                                                </td>
+                                                            </tr>
+                                                        )
+
+                                                    }
+                                              
+                                                </tbody>
+                                            </table>
                                         </div>
+
+                                        {pagination.totalPages > 1 && (
+                                            <Pagination
+                                                totalPages={pagination.totalPages}
+                                                currentPage={pagination.currentPage}
+                                                handlePageChange={handlePageChange}
+                                            />
+                                        )}
                                     </div>
                                 )}
                             </div>
