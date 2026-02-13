@@ -672,7 +672,7 @@ const AddOrder = () => {
 
                 getInStock();
               });
-            }, [values.locationId, values.orderProducts, token, setFieldValue, prodIdModal]);
+            }, [values.locationId, values.orderProducts, prodIdModal]);
 
 
             useEffect(() => {
@@ -1043,15 +1043,20 @@ const AddOrder = () => {
                       {isInProgressModalOpen && (
                         <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50">
                           <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px]  w-[870px] h-[400px] mt-[60px] overflow-auto">
-                            <div className="text-right">
-                              <button onClick={CloseInProgressModal} className="text-red-500 text-xl  font-bold">&times;</button>
+                            <div className="sticky top-0 z-10 flex justify-end bg-slate-100 pb-2">
+                              <button
+                                onClick={CloseInProgressModal}
+                                className="text-red-500 text-xl font-bold hover:text-red-700"
+                              >
+                                &times;
+                              </button>
                             </div>
                             <h2 className="text-2xl text-center mb-4 font-extrabold">In Progress Orders Tracking.</h2>
                             <div className="inline-block min-w-full shadow-md rounded-lg overflow-auto">
                               <table className="min-w-full leading-normal">
                                 <thead>
                                   <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Allocated Date</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Allocated Date</th>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Fulfilled Date</th>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >order No</th>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Id</th>
@@ -1071,7 +1076,7 @@ const AddOrder = () => {
                                   {inProgressDataData?.length > 0 ? (
                                     inProgressDataData.map((row, index) => (
                                       <tr key={row.id}>
-                                          <td className="px-2 py-2 border-b">
+                                        <td className="px-2 py-2 border-b">
                                           {row.allocatedDate}
                                         </td>
                                         <td className="px-2 py-2 border-b">
@@ -1101,7 +1106,7 @@ const AddOrder = () => {
                                         <td className="px-2 py-2 border-b">
                                           {row.status}
                                         </td>
-                                      
+
                                       </tr>
                                     ))
                                   ) : (
