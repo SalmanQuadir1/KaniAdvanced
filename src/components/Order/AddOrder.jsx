@@ -13,7 +13,7 @@ import * as Yup from 'yup';
 import { MdDelete } from "react-icons/md";
 import useorder from '../../hooks/useOrder';
 import useProduct from '../../hooks/useProduct';
-import { ADD_CUSTOMER_URL, GET_INVENTORYBalance, GET_INVENTORYLOCATION, GET_PRODUCTBYID_URL } from '../../Constants/utils';
+import { ADD_CUSTOMER_URL, GET_INPROGRESSTRACK, GET_INVENTORYBalance, GET_INVENTORYLOCATION, GET_PRODUCTBYID_URL } from '../../Constants/utils';
 import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import Modall from './Modal';
 import SupplierModal from './SupplierModal';
@@ -67,6 +67,11 @@ const AddOrder = () => {
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
   const [isINVENTORYModalOpen, setIsINVENTORYModalOpen] = useState(false);
   const [selectedINVENTORYData, setSelectedINVENTORYData] = useState(null);
+
+  const [isInProgressModalOpen, setIsInProgressModalOpen] = useState(false);
+  const [inProgressDataData, setInProgressData] = useState(null);
+
+
   const [suppId, setsuppId] = useState()
   const [isLoading, setisLoading] = useState(false)
   const [suppliers, setSuppliers] = useState([
@@ -399,6 +404,49 @@ const AddOrder = () => {
 
 
 
+  const openInProgressModal = (id, locId) => {
+
+
+    const getInventory = async () => {
+
+      try {
+        const response = await fetch(`${GET_INPROGRESSTRACK}${id}/location/${locId}`, {
+          method: "GET",
+          headers: {
+            // "Content-Type": "multipart/form-data",
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+
+
+        // setLocation(data);
+        setInProgressData(data);
+
+
+      } catch (error) {
+        console.error(error);
+        toast.error("Failed to fetch Product");
+      }
+    };
+
+    getInventory()
+      // useEffect(() => {
+      //     getInventory()
+      // }, [])
+
+
+
+
+      ;
+    setIsInProgressModalOpen(true);
+  };
+
+
+  const CloseInProgressModal = () => {
+    setIsInProgressModalOpen(false);
+    setInProgressData(null);
+  };
 
 
   const handleDeleteSupplier = (rowIndex, supplierIndex) => {
@@ -555,76 +603,76 @@ const AddOrder = () => {
 
 
 
-           useEffect(() => {
-  // Check if locationId exists and orderProducts has items with valid product IDs
-  if (!values.locationId || !values.orderProducts || values.orderProducts.length === 0) {
-    return;
-  }
+            useEffect(() => {
+              // Check if locationId exists and orderProducts has items with valid product IDs
+              if (!values.locationId || !values.orderProducts || values.orderProducts.length === 0) {
+                return;
+              }
 
-  // Check if at least one product has a valid ID
-  const hasValidProduct = values.orderProducts.some(
-    product => product?.products?.id
-  );
-  
-  if (!hasValidProduct) {
-    return;
-  }
+              // Check if at least one product has a valid ID
+              const hasValidProduct = values.orderProducts.some(
+                product => product?.products?.id
+              );
 
-  values.orderProducts.forEach((product, index) => {
-    // Only call API if product ID exists
-    if (!product?.products?.id) {
-      return;
-    }
+              if (!hasValidProduct) {
+                return;
+              }
 
-    const getInStock = async () => {
-      try {
-        const response = await fetch(
-          `${GET_INVENTORYBalance}/${product?.products?.id}/${values.locationId}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        
-        if (!response.ok) {
-          throw new Error('Failed to fetch inventory');
-        }
-        
-        const data = await response.json();
-        console.log(data, "Inventory data for product", product?.products?.id);
+              values.orderProducts.forEach((product, index) => {
+                // Only call API if product ID exists
+                if (!product?.products?.id) {
+                  return;
+                }
 
-        // Set the inStockQuantity field with the calculated value
-        if (data && data.closingBalance !== undefined && data.inProgressOrders !== undefined) {
-          const inStockValue = data.closingBalance - data.inProgressOrders;
-          
-          // Update Formik field with the calculated in-stock quantity
-          setFieldValue(`orderProducts[${index}].inStockQuantity`, inStockValue);
-          
-          // You can also update other fields based on this calculation
-          if (product.clientOrderQuantity) {
-            const quantityToManufacture = product.clientOrderQuantity - inStockValue;
-            setFieldValue(`orderProducts[${index}].quantityToManufacture`, 
-              quantityToManufacture > 0 ? quantityToManufacture : 0
-            );
-            
-            // Update value field
-            const cost = prodIdModal[index]?.cost || 0;
-            setFieldValue(`orderProducts[${index}].value`, 
-              quantityToManufacture > 0 ? quantityToManufacture * cost : 0
-            );
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching inventory:", error);
-        toast.error(`Failed to fetch inventory for product ${product?.products?.id}`);
-      }
-    };
+                const getInStock = async () => {
+                  try {
+                    const response = await fetch(
+                      `${GET_INVENTORYBalance}/${product?.products?.id}/${values.locationId}`,
+                      {
+                        method: "GET",
+                        headers: {
+                          Authorization: `Bearer ${token}`,
+                        },
+                      }
+                    );
 
-    getInStock();
-  });
-}, [values.locationId, values.orderProducts, token, setFieldValue, prodIdModal]);
+                    if (!response.ok) {
+                      throw new Error('Failed to fetch inventory');
+                    }
+
+                    const data = await response.json();
+                    console.log(data, "Inventory data for product", product?.products?.id);
+
+                    // Set the inStockQuantity field with the calculated value
+                    if (data && data.closingBalance !== undefined && data.inProgressOrders !== undefined) {
+                      const inStockValue = data.closingBalance - data.inProgressOrders;
+
+                      // Update Formik field with the calculated in-stock quantity
+                      setFieldValue(`orderProducts[${index}].inStockQuantity`, inStockValue);
+
+                      // You can also update other fields based on this calculation
+                      if (product.clientOrderQuantity) {
+                        const quantityToManufacture = product.clientOrderQuantity - inStockValue;
+                        setFieldValue(`orderProducts[${index}].quantityToManufacture`,
+                          quantityToManufacture > 0 ? quantityToManufacture : 0
+                        );
+
+                        // Update value field
+                        const cost = prodIdModal[index]?.cost || 0;
+                        setFieldValue(`orderProducts[${index}].value`,
+                          quantityToManufacture > 0 ? quantityToManufacture * cost : 0
+                        );
+                      }
+                    }
+                  } catch (error) {
+                    console.error("Error fetching inventory:", error);
+                    toast.error(`Failed to fetch inventory for product ${product?.products?.id}`);
+                  }
+                };
+
+                getInStock();
+              });
+            }, [values.locationId, values.orderProducts, token, setFieldValue, prodIdModal]);
 
 
             useEffect(() => {
@@ -992,6 +1040,88 @@ const AddOrder = () => {
                         </div>
                       )}
 
+                      {isInProgressModalOpen && (
+                        <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50">
+                          <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px]  w-[870px] h-[400px] mt-[60px] overflow-auto">
+                            <div className="text-right">
+                              <button onClick={CloseInProgressModal} className="text-red-500 text-xl  font-bold">&times;</button>
+                            </div>
+                            <h2 className="text-2xl text-center mb-4 font-extrabold">In Progress Orders Tracking.</h2>
+                            <div className="inline-block min-w-full shadow-md rounded-lg overflow-auto">
+                              <table className="min-w-full leading-normal">
+                                <thead>
+                                  <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
+                                                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Allocated Date</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Fulfilled Date</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >order No</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Id</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Description</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">location Name</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Allocated Quantity</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Received Quantity</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Remaining Quantity</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+
+
+                                  </tr>
+                                </thead>
+                                <tbody>
+
+
+                                  {inProgressDataData?.length > 0 ? (
+                                    inProgressDataData.map((row, index) => (
+                                      <tr key={row.id}>
+                                          <td className="px-2 py-2 border-b">
+                                          {row.allocatedDate}
+                                        </td>
+                                        <td className="px-2 py-2 border-b">
+                                          {row.fulfilledDate}
+                                        </td>
+                                        <td className="px-2 py-2 border-b">
+                                          <p>{row?.orderNo}</p>
+                                        </td>
+                                        <td className="px-2 py-2 border-b">
+                                          <p>{row?.productId}</p>
+                                        </td>
+                                        <td className="px-2 py-2 border-b">
+                                          {row.productDescription}
+                                        </td>
+                                        <td className="px-2 py-2 border-b">
+                                          {row.locationName}
+                                        </td>
+                                        <td className="px-2 py-2 border-b">
+                                          {row.allocatedQuantity}
+                                        </td>
+                                        <td className="px-2 py-2 border-b">
+                                          {row.receivedQuantity}
+                                        </td>
+                                        <td className="px-2 py-2 border-b">
+                                          {row.remainingQuantity}
+                                        </td>
+                                        <td className="px-2 py-2 border-b">
+                                          {row.status}
+                                        </td>
+                                      
+                                      </tr>
+                                    ))
+                                  ) : (
+                                    <tr>
+                                      <td colSpan="10" className="px-2 py-4 text-center">
+                                        <span>No Data Found</span>
+                                      </td>
+                                    </tr>
+                                  )}
+
+
+                                </tbody>
+                              </table>
+                            </div>
+
+                            {/* <pre>{JSON.stringify(selectedBOMData, null, 2)}</pre> */}
+                          </div>
+                        </div>
+                      )}
+
 
 
                       {orderType && (
@@ -1238,12 +1368,18 @@ const AddOrder = () => {
                                   </td>
 
 
-                                  <td className="px-2 py-5 border-b border-gray-200  text-sm ">
+                                  <td className="px-2 py-5 border-b border-gray-200  text-sm gap-2">
 
 
                                     <div >
 
-                                      <span onClick={() => openINVENTORYModal(item?.id)} className="bg-green-100 view-badge text-green-800 text-[10px] font-medium me-2 text-center py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[220px]"> VIEW INVENTORY</span>
+                                      <span onClick={() => openINVENTORYModal(item?.id)} className=" mb-1 bg-green-100 view-badge text-green-800 text-[10px] font-medium me-2 text-center py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[220px]"> VIEW INVENTORY</span>
+
+
+                                    </div>
+                                    <div >
+
+                                      <span onClick={() => openInProgressModal(item?.id, values.locationId)} className="bg-green-100 view-badge text-green-800 text-[10px] font-medium me-2 text-center py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[220px]"> In Progress Tracking</span>
 
 
                                     </div>

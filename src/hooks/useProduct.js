@@ -42,6 +42,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
     const [productmrp, setproductmrp] = useState([])
     const [currentProduct, setCurrentProduct] = useState({
         productGroup: {},
+        supplierWord:'',
 
         subGroup:{},
 
