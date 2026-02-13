@@ -310,7 +310,7 @@ const AddOrder = () => {
     shippingDate: Yup.string()
       .required('Shipping Date is required'),
 
-    location: Yup.string()
+    locationId: Yup.string()
       .required('Location is required'),
 
     tagsAndLabels: Yup.string()
@@ -801,11 +801,11 @@ const AddOrder = () => {
                       <div className="flex flex-wrap gap-4">
                         <div className="flex-1 min-w-[300px] mt-4">
                           <label className="mb-2.5 block text-black dark:text-white">Shipping Date <span className="text-red-500 ml-1">*</span></label>
-                          <Field
-                            name="shippingDate"
-                            type="date"
-                            className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
-                          />
+                           <Field
+                                            name="shippingDate"
+                                            type="date"
+                                            className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                        />
                           <ErrorMessage name="shippingDate" component="div" className="text-red-600 text-sm" />
                         </div>
 
