@@ -28,6 +28,8 @@ export const GET_QUANTITY = `${BASE_URL}/productInventory/closingBalance`;
 export const ADD_LOCATIONINVENTORY_URL = `${BASE_URL}/productInventory`;
 
 export const GET_INVENTORYLOCATION = `${BASE_URL}/productInventory/getByProduct`;
+
+export const GET_INVENTORYBalance = `${BASE_URL}/productInventory/getBy`;
 export const DELETEINVENTORY_PRODUCT_URL = `${BASE_URL}/productInventory/delete/`;
 export const GETPRODUCTS = `${BASE_URL}/products`;
 export const GETDESCRIPTIONS = `${BASE_URL}/products/all-products`;

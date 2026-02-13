@@ -13,7 +13,7 @@ import * as Yup from 'yup';
 import { MdDelete } from "react-icons/md";
 import useorder from '../../hooks/useOrder';
 import useProduct from '../../hooks/useProduct';
-import { ADD_CUSTOMER_URL, GET_INVENTORYLOCATION, GET_PRODUCTBYID_URL } from '../../Constants/utils';
+import { ADD_CUSTOMER_URL, GET_INVENTORYBalance, GET_INVENTORYLOCATION, GET_PRODUCTBYID_URL } from '../../Constants/utils';
 import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import Modall from './Modal';
 import SupplierModal from './SupplierModal';
@@ -553,6 +553,80 @@ const AddOrder = () => {
         >
           {({ values, setFieldValue, handleBlur, isSubmitting }) => {
 
+
+
+           useEffect(() => {
+  // Check if locationId exists and orderProducts has items with valid product IDs
+  if (!values.locationId || !values.orderProducts || values.orderProducts.length === 0) {
+    return;
+  }
+
+  // Check if at least one product has a valid ID
+  const hasValidProduct = values.orderProducts.some(
+    product => product?.products?.id
+  );
+  
+  if (!hasValidProduct) {
+    return;
+  }
+
+  values.orderProducts.forEach((product, index) => {
+    // Only call API if product ID exists
+    if (!product?.products?.id) {
+      return;
+    }
+
+    const getInStock = async () => {
+      try {
+        const response = await fetch(
+          `${GET_INVENTORYBalance}/${product?.products?.id}/${values.locationId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch inventory');
+        }
+        
+        const data = await response.json();
+        console.log(data, "Inventory data for product", product?.products?.id);
+
+        // Set the inStockQuantity field with the calculated value
+        if (data && data.closingBalance !== undefined && data.inProgressOrders !== undefined) {
+          const inStockValue = data.closingBalance - data.inProgressOrders;
+          
+          // Update Formik field with the calculated in-stock quantity
+          setFieldValue(`orderProducts[${index}].inStockQuantity`, inStockValue);
+          
+          // You can also update other fields based on this calculation
+          if (product.clientOrderQuantity) {
+            const quantityToManufacture = product.clientOrderQuantity - inStockValue;
+            setFieldValue(`orderProducts[${index}].quantityToManufacture`, 
+              quantityToManufacture > 0 ? quantityToManufacture : 0
+            );
+            
+            // Update value field
+            const cost = prodIdModal[index]?.cost || 0;
+            setFieldValue(`orderProducts[${index}].value`, 
+              quantityToManufacture > 0 ? quantityToManufacture * cost : 0
+            );
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching inventory:", error);
+        toast.error(`Failed to fetch inventory for product ${product?.products?.id}`);
+      }
+    };
+
+    getInStock();
+  });
+}, [values.locationId, values.orderProducts, token, setFieldValue, prodIdModal]);
+
+
             useEffect(() => {
               if (prodIdModal.length > 0) {
                 console.log("ProdIdModal updated:", prodIdModal);
@@ -605,7 +679,7 @@ const AddOrder = () => {
                   const quantityToManufacture = product.clientOrderQuantity - product.inStockQuantity;
                   const cost = prodIdModal[index]?.cost || 0;
                   setFieldValue(`orderProducts[${index}].quantityToManufacture`, quantityToManufacture);
-                  setFieldValue(`orderProducts[${index}].value`, quantityToManufacture * cost);
+                  // setFieldValue(`orderProducts[${index}].value`, quantityToManufacture * cost);
                 }
               });
             }, [values.orderProducts, setFieldValue]);
@@ -801,11 +875,11 @@ const AddOrder = () => {
                       <div className="flex flex-wrap gap-4">
                         <div className="flex-1 min-w-[300px] mt-4">
                           <label className="mb-2.5 block text-black dark:text-white">Shipping Date <span className="text-red-500 ml-1">*</span></label>
-                           <Field
-                                            name="shippingDate"
-                                            type="date"
-                                            className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
-                                        />
+                          <Field
+                            name="shippingDate"
+                            type="date"
+                            className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                          />
                           <ErrorMessage name="shippingDate" component="div" className="text-red-600 text-sm" />
                         </div>
 
@@ -1142,7 +1216,7 @@ const AddOrder = () => {
                                           // Calculate total cost
                                           const cost = item.cost || 0;
                                           const quantity = values.orderProducts?.[index]?.clientOrderQuantity || 0;
-                                          const totalCost = cost * quantity * inStockQuantity; // Adjust calculation as needed
+                                          const totalCost = cost * quantity; // Adjust calculation as needed
 
                                           // Set the calculated value in form state
                                           // Assuming you have form context or setFieldValue available
