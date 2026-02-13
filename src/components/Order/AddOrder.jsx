@@ -410,7 +410,7 @@ const AddOrder = () => {
     const getInventory = async () => {
 
       try {
-        const response = await fetch(`${GET_INPROGRESSTRACK}${id}/location/${locId}`, {
+        const response = await fetch(`${GET_INPROGRESSTRACK}${id}/location/${locId}/active`, {
           method: "GET",
           headers: {
             // "Content-Type": "multipart/form-data",
