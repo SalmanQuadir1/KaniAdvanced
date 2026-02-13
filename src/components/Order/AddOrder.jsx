@@ -430,10 +430,10 @@ const AddOrder = () => {
       }
     };
 
-    getInventory()
-      // useEffect(() => {
-      //     getInventory()
-      // }, [])
+    
+      useEffect(() => {
+          getInventory()
+      }, [locId])
 
 
 
@@ -672,7 +672,7 @@ const AddOrder = () => {
 
                 getInStock();
               });
-            }, [values?.locationId]);
+            }, [values?.locationId, values.orderProducts,]);
 
 
             useEffect(() => {
