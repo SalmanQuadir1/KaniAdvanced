@@ -54,6 +54,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
         design: {
 
         },
+
         hsnCode: {},
 
         colorName: "",
@@ -77,6 +78,11 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
         supplier: [],
         supplierCode: {},
         warpColors: "",
+        sizeCode: "",
+        designCode: "",
+        colorCode: "",
+        weftYarnCount: "",
+        warpYarnCount: "",
         weftColors: "",
         warpYarn: "",
         batch: "",

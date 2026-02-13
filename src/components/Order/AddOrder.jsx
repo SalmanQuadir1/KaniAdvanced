@@ -110,6 +110,34 @@ const AddOrder = () => {
     fetchData();
   }, []);
 
+  const [SelectedLocation, setSelectedLocation] = useState([])
+  const {
+
+    getLocation, Location
+
+  } = useorder();
+
+
+
+  useEffect(() => {
+    if (Location) {
+      const formattedOptions = Location.map(location => ({
+        value: location?.id,
+        label: location.address,
+        LocationObject: location,
+        LocationId: { id: location.id },
+      }));
+      setSelectedLocation(formattedOptions);
+    }
+  }, [Location]);
+
+  useEffect(() => {
+    getLocation();
+  }, []);
+
+
+  console.log(SelectedLocation, "54545454545");
+
 
 
 
@@ -282,6 +310,9 @@ const AddOrder = () => {
     shippingDate: Yup.string()
       .required('Shipping Date is required'),
 
+    location: Yup.string()
+      .required('Location is required'),
+
     tagsAndLabels: Yup.string()
       .required('Tags are required'),
 
@@ -289,7 +320,7 @@ const AddOrder = () => {
       .oneOf(['Yes', 'No'], 'Please select Yes or No')
       .required('Logo No is required'),
 
-  
+
 
 
   });
@@ -490,6 +521,7 @@ const AddOrder = () => {
             customer: '',
             purchaseOrderNo: "",
             customisationDetails: "",
+            location: null,
 
             orderProducts: [{
               products: { id: '' },
@@ -641,7 +673,7 @@ const AddOrder = () => {
                                   }
                                   dateFormat="yyyy-MM-dd" // Display format
                                   placeholderText="Select Order Date"
-                                  className="form-datepicker w-[430px] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                  className=" w-[430px] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                 />
                               )}
                             </Field>
@@ -715,6 +747,7 @@ const AddOrder = () => {
                                             date ? format(date, "yyyy-MM-dd") : ""  // Format to yyyy-MM-dd
                                           )
                                         }
+                                        showPreviousDates={false}
                                         dateFormat="yyyy-MM-dd" // Display format in the picker
                                         placeholderText="Select Purchase Order Date"
                                         className="form-datepicker w-[430px] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
@@ -776,9 +809,10 @@ const AddOrder = () => {
                                     date ? format(date, "yyyy-MM-dd") : ""  // Format to yyyy-MM-dd
                                   )
                                 }
+                                showPreviousDates={false}
                                 dateFormat="yyyy-MM-dd" // Display format in the picker
                                 placeholderText="Select Shipping Date"
-                                className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                className=" w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                               />
                             )}
                           </Field>
@@ -801,7 +835,7 @@ const AddOrder = () => {
                           <ErrorMessage name="tagsAndLabels" component="div" className="text-red-600 text-sm" />
                         </div>
                       </div>
-
+<div className='flex '>
                       <div className="flex-1 min-w-[300px] mt-4">
                         <label className="mb-2.5 block text-black dark:text-white">Logo No <span className="text-red-500 ml-1">*</span></label>
                         <div>
@@ -815,6 +849,22 @@ const AddOrder = () => {
                           </label>
                         </div>
                         <ErrorMessage name="logoNo" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[300px]">
+                        <label className="mb-2.5 block text-black dark:text-white">Order Location</label>
+                        <ReactSelect
+                          name="location"
+                          options={SelectedLocation}
+                          value={SelectedLocation.find(option => option.value === values.location) || null}
+                          onChange={(option) => setFieldValue('location', option.value)}
+                          styles={customStyles}
+                          className="bg-white dark:bg-form-input"
+                          classNamePrefix="react-select"
+                          placeholder="Select Source Location"
+                        />
+                        <ErrorMessage name="location" component="div" className="text-red-600 text-sm" />
+                      </div>
+
                       </div>
 
                       {isINVENTORYModalOpen && (

@@ -303,6 +303,7 @@ const AddProduct = () => {
 
     ]
 
+const [BarcodeField, setBarcodeField] = useState('')
 
 
 
@@ -398,6 +399,104 @@ const AddProduct = () => {
 
     console.log(subGroupOptions, "[[[[[[[[[[[[[");
 
+       const formatCostPriceToLTTH = (costPrice) => {
+        if (!costPrice) return '0000';
+        
+        // Convert to number and remove decimal
+        const num = Math.floor(Number(costPrice));
+        if (isNaN(num)) return '0000';
+        
+        // Convert to string and pad with leading zeros to 4 digits
+        const numStr = num.toString();
+        
+        if (numStr.length === 1) return `000${numStr}`;  // 1 -> 0001
+        if (numStr.length === 2) return `00${numStr}`;  // 12 -> 0012
+        if (numStr.length === 3) return `0${numStr}`;   // 123 -> 0123
+        if (numStr.length >= 4) return numStr.slice(-4); // 12345 -> 2345
+        
+        return '0000';
+    };
+
+    // Function to generate barcode
+    const generateBarcode = (values) => {
+        // 1. Supplier Code - Get first 2 digits or '00' if not available
+        let supplierCode = '00';
+        if (values.supplier && values.supplier.length > 0) {
+            const firstSupplier = values.supplier[0];
+            // Try to get supplier code from various possible locations
+            const code = firstSupplier?.supplierCode || 
+                        firstSupplier?.code || 
+                        firstSupplier?.id?.toString().slice(-2) || 
+                        '00';
+            supplierCode = code.toString().slice(-2).padStart(2, '0');
+        } else if (values.supplierCode) {
+            const code = values.supplierCode?.supplierCode || 
+                        values.supplierCode?.code || 
+                        values.supplierCode?.id?.toString() || 
+                        '00';
+            supplierCode = code.toString().slice(-2).padStart(2, '0');
+        }
+
+        // 2. Design Code - Get first 4 chars of design name or 'XXXX'
+        let designCode = 'XXXX';
+        if (values.design?.designName) {
+            designCode = values.design.designName.slice(0, 4).toUpperCase().padEnd(4, 'X');
+        } else if (values.designCode) {
+            designCode = values.designCode.slice(0, 4).toUpperCase().padEnd(4, 'X');
+        }
+
+        // 3. Size Code - Get first 2 chars or '00'
+        let sizeCode = '00';
+        if (values.sizes?.sizeName) {
+            sizeCode = values.sizes.sizeName.slice(0, 2).toUpperCase();
+        } else if (values.sizeCode) {
+            sizeCode = values.sizeCode.slice(0, 2).toUpperCase();
+        }
+
+        // 4. Colour Code - Get first 4 chars or 'XXXX'
+        let colourCode = 'XXXX';
+        if (values.colorName) {
+            colourCode = values.colorName.slice(0, 4).toUpperCase().padEnd(4, 'X');
+        } else if (values.colors?.colorName) {
+            colourCode = values.colors.colorName.slice(0, 4).toUpperCase().padEnd(4, 'X');
+        } else if (values.colorCode) {
+            colourCode = values.colorCode.slice(0, 4).toUpperCase().padEnd(4, 'X');
+        }
+
+        // 5. Cost Price in LTTH format
+        let costPriceFormatted = '0000';
+        if (values.cost) {
+            costPriceFormatted = formatCostPriceToLTTH(values.cost);
+        } else if (values.wholesalePrice) {
+            costPriceFormatted = formatCostPriceToLTTH(values.wholesalePrice);
+        } else if (values.retailMrp) {
+            costPriceFormatted = formatCostPriceToLTTH(values.retailMrp);
+        }
+
+        // Combine all parts with hyphens
+        return `${supplierCode}-${designCode}-${sizeCode}-${colourCode}-${costPriceFormatted}`;
+    };
+
+      useEffect(() => {
+        if (vaaluee) {
+            const barcode = generateBarcode(vaaluee);
+            setBarcodeField(barcode);
+        }
+    }, [
+        vaaluee.supplier,
+        vaaluee.supplierCode,
+        vaaluee.design,
+        vaaluee.designCode,
+        vaaluee.sizes,
+        vaaluee.sizeCode,
+        vaaluee.colorName,
+        vaaluee.colors,
+        vaaluee.colorCode,
+        vaaluee.cost,
+        vaaluee.wholesalePrice,
+        vaaluee.retailMrp
+    ]);
+
 
     return (
         <DefaultLayout>
@@ -475,6 +574,27 @@ const AddProduct = () => {
 
                         }, [values.productGroup])
 
+                         useEffect(() => {
+                            if (values) {
+                                const barcode = generateBarcode(values);
+                                setFieldValue('barcode', barcode);
+                            }
+                        }, [
+                            values.supplier,
+                            values.supplierCode,
+                            values.design,
+                            values.designCode,
+                            values.sizes,
+                            values.sizeCode,
+                            values.colorName,
+                            values.colors,
+                            values.colorCode,
+                            values.cost,
+                            values.wholesalePrice,
+                           
+                        ]);
+                     
+
 
                         return (
                             <Form>
@@ -544,6 +664,95 @@ const AddProduct = () => {
                                                     </div>
                                                 </div>
                                             </div>
+
+
+                                            <div className="mb-4.5 flex flex-wrap gap-6">
+                               
+
+                                                <div className="flex-1 min-w-[300px]">
+                                                    <label className="mb-2 block text-black dark:text-white"> Design Code</label>
+                                                    <Field
+                                                        name='designCode'
+                                                        type="text"
+                                                        placeholder="Enter Design Code"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 mt-[6px] px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                    />
+                                                    <ErrorMessage name="designCode" component="div" className="text-red-500" />
+
+                                                </div>
+                                                            <div className="flex-1 min-w-[300px]">
+                                                    <label className="mb-2 block text-black dark:text-white"> Color Code</label>
+                                                    <Field
+                                                        name='colorCode'
+                                                        type="text"
+                                                        placeholder="Enter Color Code"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 mt-[6px] px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                    />
+                                                    <ErrorMessage name="colorCode" component="div" className="text-red-500" />
+
+                                                </div>
+                                                            <div className="flex-1 min-w-[300px]">
+                                                    <label className="mb-2 block text-black dark:text-white"> Size Code</label>
+                                                    <Field
+                                                        name='sizeCode'
+                                                        type="text"
+                                                        placeholder="Enter Size Code"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 mt-[6px] px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                    />
+                                                    <ErrorMessage name="sizeCode" component="div" className="text-red-500" />
+
+                                                </div>
+
+                                            </div>
+
+                                              <div className="mb-4.5 flex flex-wrap gap-6">
+                               
+
+                                                                               <div className="flex-1 min-w-[300px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Barcode</label>
+                                                    <Field
+                                                        name='barcode'
+                                                        type="text"
+                                                        placeholder="Enter Barcode"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                    />
+                                                    <ErrorMessage name="barcode" component="div" className="text-red-500" />
+
+                                                </div>
+                                                  <div className="flex-1 min-w-[300px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Supplier/ Weaver Name <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                    <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                        <ReactSelect
+                                                            name="productCategory"
+                                                            value={productCategoryOptions?.find(option => option.value === values.productCategory?.id) || null}
+                                                            onChange={(option) => setFieldValue('productCategory', option ? option.productCategoryObject : null)}
+                                                            options={productCategoryOptions}
+                                                            styles={customStyles} // Pass custom styles here
+                                                            className="bg-white dark:bg-form-Field"
+                                                            classNamePrefix="react-select"
+                                                            placeholder="Select Product Category"
+                                                        />
+
+
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex-1 min-w-[300px]">
+                                                    <label className="mb-2 block text-black dark:text-white"> Product Status</label>
+                                                    <Field
+                                                        name='productStatus'
+                                                        type="text"
+                                                        placeholder="Enter Product Status"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 mt-[6px] px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                    />
+                                                    <ErrorMessage name="productStatus" component="div" className="text-red-500" />
+
+                                                </div>
+                                                   
+
+                                            </div>
+
+                                            
 
 
 
@@ -699,17 +908,7 @@ const AddProduct = () => {
                                                     {/* <input type='hidden ' value={productIdField} name='productId'  /> */}
                                                 </div>
 
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Barcode</label>
-                                                    <Field
-                                                        name='barcode'
-                                                        type="text"
-                                                        placeholder="Enter Barcode"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                    <ErrorMessage name="barcode" component="div" className="text-red-500" />
-
-                                                </div>
+               
                                             </div>
 
 
