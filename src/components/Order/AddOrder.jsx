@@ -404,43 +404,23 @@ const AddOrder = () => {
 
 
 
-  const openInProgressModal = (id, locId) => {
-
-
-    const getInventory = async () => {
-
-      try {
+const openInProgressModal = async (id, locId) => {
+    setIsInProgressModalOpen(true);
+    
+    try {
         const response = await fetch(`${GET_INPROGRESSTRACK}${id}/location/${locId}/active`, {
-          method: "GET",
-          headers: {
-            // "Content-Type": "multipart/form-data",
-            "Authorization": `Bearer ${token}`
-          }
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
         });
         const data = await response.json();
-
-
-        // setLocation(data);
         setInProgressData(data);
-
-
-      } catch (error) {
+    } catch (error) {
         console.error(error);
         toast.error("Failed to fetch Product");
-      }
-    };
-
-    
-      useEffect(() => {
-          getInventory()
-      }, [locId])
-
-
-
-
-      ;
-    setIsInProgressModalOpen(true);
-  };
+    }
+};
 
 
   const CloseInProgressModal = () => {
