@@ -656,29 +656,32 @@ const AddOrder = () => {
 
                         <div className="flex-1 min-w-[200px]">
 
-                          <div className="flex-1 min-w-[200px]">
-                            <label className="mb-2.5 block text-black dark:text-white">
-                              Order Date <span className="text-red-500 ml-1">*</span>
-                            </label>
-                            <Field name="orderDate">
-                              {({ field, form }) => (
-                                <ReactDatePicker
-                                  {...field}
-                                  selected={(field.value && new Date(field.value)) || null}
-                                  onChange={(date) =>
-                                    form.setFieldValue(
-                                      "orderDate",
-                                      date ? format(date, "yyyy-MM-dd") : "" // Format without timezone shift
-                                    )
-                                  }
-                                  dateFormat="yyyy-MM-dd" // Display format
-                                  placeholderText="Select Order Date"
-                                  className=" w-[430px] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                />
-                              )}
-                            </Field>
-                          </div>
+
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Order Date <span className="text-red-500 ml-1">*</span>
+                          </label>
+                          <Field
+                            name="orderDate"
+                            type="date"
+                            className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                          />
+
                           <ErrorMessage name="orderDate" component="div" className="text-red-600 text-sm" />
+                        </div>
+
+                        <div className="flex-1 min-w-[200px]">
+                          <label className="mb-2.5 block text-black dark:text-white">Order Location</label>
+                          <ReactSelect
+                            name="location"
+                            options={SelectedLocation}
+                            value={SelectedLocation.find(option => option.value === values.location) || null}
+                            onChange={(option) => setFieldValue('location', option.value)}
+                            styles={customStyles}
+                            className="bg-white dark:bg-form-input"
+                            classNamePrefix="react-select"
+                            placeholder="Select Source Location"
+                          />
+                          <ErrorMessage name="location" component="div" className="text-red-600 text-sm" />
                         </div>
                       </div>
 
@@ -798,24 +801,11 @@ const AddOrder = () => {
                       <div className="flex flex-wrap gap-4">
                         <div className="flex-1 min-w-[300px] mt-4">
                           <label className="mb-2.5 block text-black dark:text-white">Shipping Date <span className="text-red-500 ml-1">*</span></label>
-                          <Field name="shippingDate">
-                            {({ field, form }) => (
-                              <ReactDatePicker
-                                {...field}
-                                selected={(field.value && new Date(field.value)) || null}
-                                onChange={(date) =>
-                                  form.setFieldValue(
-                                    "shippingDate",
-                                    date ? format(date, "yyyy-MM-dd") : ""  // Format to yyyy-MM-dd
-                                  )
-                                }
-                                showPreviousDates={false}
-                                dateFormat="yyyy-MM-dd" // Display format in the picker
-                                placeholderText="Select Shipping Date"
-                                className=" w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                              />
-                            )}
-                          </Field>
+                          <Field
+                            name="shippingDate"
+                            type="date"
+                            className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                          />
                           <ErrorMessage name="shippingDate" component="div" className="text-red-600 text-sm" />
                         </div>
 
@@ -835,35 +825,22 @@ const AddOrder = () => {
                           <ErrorMessage name="tagsAndLabels" component="div" className="text-red-600 text-sm" />
                         </div>
                       </div>
-<div className='flex '>
-                      <div className="flex-1 min-w-[300px] mt-4">
-                        <label className="mb-2.5 block text-black dark:text-white">Logo No <span className="text-red-500 ml-1">*</span></label>
-                        <div>
-                          <label className="flex items-center">
-                            <Field type="radio" name="logoNo" value="Yes" />
-                            <span className="ml-1">Yes</span>
-                          </label>
-                          <label className="flex items-center">
-                            <Field type="radio" name="logoNo" value="No" />
-                            <span className="ml-1">No</span>
-                          </label>
+                      <div className='flex '>
+                        <div className="flex-1 min-w-[300px] mt-4">
+                          <label className="mb-2.5 block text-black dark:text-white">Logo No <span className="text-red-500 ml-1">*</span></label>
+                          <div>
+                            <label className="flex items-center">
+                              <Field type="radio" name="logoNo" value="Yes" />
+                              <span className="ml-1">Yes</span>
+                            </label>
+                            <label className="flex items-center">
+                              <Field type="radio" name="logoNo" value="No" />
+                              <span className="ml-1">No</span>
+                            </label>
+                          </div>
+                          <ErrorMessage name="logoNo" component="div" className="text-red-600 text-sm" />
                         </div>
-                        <ErrorMessage name="logoNo" component="div" className="text-red-600 text-sm" />
-                      </div>
-                      <div className="flex-1 min-w-[300px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Order Location</label>
-                        <ReactSelect
-                          name="location"
-                          options={SelectedLocation}
-                          value={SelectedLocation.find(option => option.value === values.location) || null}
-                          onChange={(option) => setFieldValue('location', option.value)}
-                          styles={customStyles}
-                          className="bg-white dark:bg-form-input"
-                          classNamePrefix="react-select"
-                          placeholder="Select Source Location"
-                        />
-                        <ErrorMessage name="location" component="div" className="text-red-600 text-sm" />
-                      </div>
+
 
                       </div>
 
@@ -1250,6 +1227,7 @@ const AddOrder = () => {
                                           className="w-full bg-transparent outline-none"
                                           wrapperClassName="w-full"
                                           withPortal
+                                          showPreviousDates={false}
                                           portalId={`datepicker-portal-${index}`}
                                         />
                                       </div>
