@@ -521,7 +521,7 @@ const AddOrder = () => {
             customer: '',
             purchaseOrderNo: "",
             customisationDetails: "",
-            location: null,
+            locationId: null,
 
             orderProducts: [{
               products: { id: '' },
@@ -672,16 +672,16 @@ const AddOrder = () => {
                         <div className="flex-1 min-w-[200px]">
                           <label className="mb-2.5 block text-black dark:text-white">Order Location</label>
                           <ReactSelect
-                            name="location"
+                            name="locationId"
                             options={SelectedLocation}
-                            value={SelectedLocation.find(option => option.value === values.location) || null}
-                            onChange={(option) => setFieldValue('location', option.value)}
+                            value={SelectedLocation.find(option => option.value === values.locationId) || null}
+                            onChange={(option) => setFieldValue('locationId', option.value)}
                             styles={customStyles}
                             className="bg-white dark:bg-form-input"
                             classNamePrefix="react-select"
                             placeholder="Select Source Location"
                           />
-                          <ErrorMessage name="location" component="div" className="text-red-600 text-sm" />
+                          <ErrorMessage name="locationId" component="div" className="text-red-600 text-sm" />
                         </div>
                       </div>
 
