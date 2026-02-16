@@ -36,7 +36,7 @@ const UpdateLedgerr = () => {
     useEffect(() => {
         const GetSupplierById = async () => {
             try {
-                const response = await fetch(`${GET_SUPPLIERLedger_ID_URL}/${supplierId}`, {
+                const response = await fetch(`${GET_LEDGER_ID_URL}/${id}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -123,10 +123,11 @@ const UpdateLedgerr = () => {
                 <Formik
                     initialValues={{
                         name: Supplier?.name || Ledger.name,
-                        mobileNo: Supplier?.phoneNumber || Ledger.phoneNumber,
-                        email: Supplier?.emailId || Ledger?.emailId,
+                        mobileNo: Supplier?.phoneNumber || Ledger.mobileNo
+,
+                        email: Supplier?.emailId || Ledger?.email,
                         country: Ledger.country || "",
-                        city: Supplier?.address,
+                        city: Ledger?.city,
                         maximumDiscountApplicable: Ledger.maximumDiscountApplicable || 0,
                         setAlterDealingProducts: Ledger.setAlterDealingProducts || false,
                         accountGroup: Ledger?.accountGroup || { id: null },
@@ -208,6 +209,7 @@ const UpdateLedgerr = () => {
                                                     <Field
                                                         type="text"
                                                         name="city"
+                                                        readonly="true"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -222,6 +224,7 @@ const UpdateLedgerr = () => {
                                                     <Field
                                                         type="text"
                                                         name="country"
+                                                         readonly="true"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -231,6 +234,7 @@ const UpdateLedgerr = () => {
                                                     <Field
                                                         type="text"
                                                         name="category"
+                                                         readonly="true"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -239,6 +243,7 @@ const UpdateLedgerr = () => {
                                                     <Field
                                                         type="text"
                                                         name="maximumDiscountApplicable"
+                                                         readonly="true"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -256,6 +261,7 @@ const UpdateLedgerr = () => {
                                                         type="radio"
                                                         name="setAlterDealingProducts"
                                                         value="true"
+                                                         readonly="true"
                                                         className="mr-2"
                                                     />
                                                     Yes
@@ -265,6 +271,7 @@ const UpdateLedgerr = () => {
                                                         type="radio"
                                                         name="setAlterDealingProducts"
                                                         value="false"
+                                                         readonly="true"
                                                         className="mr-2"
                                                     />
                                                     No
@@ -286,8 +293,11 @@ const UpdateLedgerr = () => {
                                                     onChange={(option) => setFieldValue('accountGroup', option.value)}
                                                     options={formattedGroup}
                                                     styles={customStyles}
-                                                    className="bg-white dark:bg-form-Field w-full"
+                                                    isDisabled="true"
+
+                                                    className="bg-white dark:bg-form-Field w-full readonly"
                                                     classNamePrefix="react-select"
+                                                     readonly="true"
                                                     getOptionLabel={option => option.label}
                                                     getOptionValue={option => option.value.id}
                                                 />
@@ -303,6 +313,7 @@ const UpdateLedgerr = () => {
                                                     <Field
                                                         type="text"
                                                         name="mailingName"
+                                                         readonly="true"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -311,6 +322,7 @@ const UpdateLedgerr = () => {
                                                     <Field
                                                         type="text"
                                                         name="mailingAddress"
+                                                         readonly="true"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -318,6 +330,7 @@ const UpdateLedgerr = () => {
                                                     <label className="mb-2.5 block text-black dark:text-white">State</label>
                                                     <Field
                                                         type="text"
+                                                         readonly="true"
                                                         name="state"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                     />
@@ -334,6 +347,7 @@ const UpdateLedgerr = () => {
                                                     <Field
                                                         type="text"
                                                         name="mailingCountry"
+                                                         readonly="true"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -341,6 +355,7 @@ const UpdateLedgerr = () => {
                                                     <label className="mb-2.5 block text-black dark:text-white">Pincode</label>
                                                     <Field
                                                         type="text"
+                                                         readonly="true"
                                                         name="pincode"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                     />
@@ -368,6 +383,7 @@ const UpdateLedgerr = () => {
                                                                 { value: 'false', label: 'No' }
                                                             ]}
                                                             styles={customStyles}
+                                                            isDisabled="true"
                                                             className="bg-white dark:bg-form-Field w-full"
                                                             classNamePrefix="react-select"
                                                             placeholder="Select"
@@ -381,6 +397,7 @@ const UpdateLedgerr = () => {
                                                                 <label className="mb-2.5 block text-black dark:text-white">Bank Name</label>
                                                                 <Field
                                                                     name="bankName"
+
                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                                 />
                                                             </div>
@@ -397,6 +414,7 @@ const UpdateLedgerr = () => {
                                                                 <label className="mb-2.5 block text-black dark:text-white">IFSC Code</label>
                                                                 <Field
                                                                     name="ifscCode"
+                                                                     readonly="true"
                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                                 />
                                                             </div>
@@ -405,6 +423,7 @@ const UpdateLedgerr = () => {
                                                                 <label className="mb-2.5 block text-black dark:text-white">Branch</label>
                                                                 <Field
                                                                     name="branch"
+                                                                     readonly="true"
                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                                 />
                                                             </div>
@@ -414,6 +433,7 @@ const UpdateLedgerr = () => {
                                                                 <Field
                                                                     as="select"
                                                                     name="accountType"
+                                                                     readonly="true"
                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                                 >
                                                                     <option value="">Select Account Type</option>
@@ -433,6 +453,7 @@ const UpdateLedgerr = () => {
                                                         <Field
                                                             type="text"
                                                             name="panOrTanNo"
+                                                             readonly="true"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -445,6 +466,7 @@ const UpdateLedgerr = () => {
                                                             options={gstRegistrationTypes}
                                                             styles={customStyles}
                                                             className="bg-white dark:bg-form-Field w-full"
+                                                            isDisabled="true"
                                                             classNamePrefix="react-select"
                                                         />
                                                     </div>
@@ -453,6 +475,7 @@ const UpdateLedgerr = () => {
                                                         <Field
                                                             type="text"
                                                             name="gstinOrUin"
+                                                             readonly="true"
                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
@@ -493,6 +516,7 @@ const UpdateLedgerr = () => {
                                                 <label className="flex items-center gap-2">
                                                     <Field
                                                         type="radio"
+                                                         readonly="true"
                                                         name="typeOfOpeningBalance"
                                                         value="DEBIT" // Saves as "DR" if selected
                                                         className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
@@ -503,6 +527,7 @@ const UpdateLedgerr = () => {
                                                     <Field
                                                         type="radio"
                                                         name="typeOfOpeningBalance"
+                                                         readonly="true"
                                                         value="CREDIT" // Saves as "CR" if selected
                                                         className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
                                                     />
@@ -519,6 +544,7 @@ const UpdateLedgerr = () => {
                                                     <Field
                                                         type="text"
                                                         name="openingBalances"
+                                                         readonly="true"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
@@ -537,7 +563,7 @@ const UpdateLedgerr = () => {
                                         <div className="flex justify-center mt-6">
                                             <button
                                                 type="submit"
-                                                className="flex w-[120px] h-[37px] pt-2 rounded-lg justify-center bg-primary p-2.5 font-medium text-sm text-gray hover:bg-opacity-90"
+                                                className="flex w-[180px] h-[37px] pt-2 rounded-lg justify-center bg-primary p-2.5 font-medium text-sm text-gray hover:bg-opacity-90 tracking-wider"
                                             >
                                                 Update Ledger
                                             </button>

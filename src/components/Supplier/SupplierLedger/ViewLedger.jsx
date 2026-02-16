@@ -3,7 +3,7 @@ import DefaultLayout from '../../../layout/DefaultLayout'
 import Breadcrumb from '../../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { VIEW_LEDGERBYDATE, VIEW_SUPPLIER_LEDGER, VIEW_SUPPLIER_LEDGERBYID, } from "../../../Constants/utils";
+import { DELETE_Ledger_URL, VIEW_LEDGERBYDATE, VIEW_SUPPLIER_LEDGER, VIEW_SUPPLIER_LEDGERBYID, } from "../../../Constants/utils";
 import ReactSelect from 'react-select';
 import useOrder from '../../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -47,12 +47,12 @@ const ViewLedger = () => {
         setledgerNameOptions(formattedLedgerName);
     }, [])
 
-    console.log(ledgerName,"llllllllllllllllllllllllllllllllllllllllllllll");
-    
- const formattedLedgerName = ledgerName?.map(ledg => ({
-            label: ledg?.name,
-            value: ledg?.name
-        }));
+    console.log(ledgerName, "llllllllllllllllllllllllllllllllllllllllllllll");
+
+    const formattedLedgerName = ledgerName?.map(ledg => ({
+        label: ledg?.name,
+        value: ledg?.name
+    }));
 
 
     const { token } = currentUser;
@@ -75,7 +75,7 @@ const ViewLedger = () => {
 
 
 
-    
+
     const LedgerType = [
         { value: 'supplier', label: 'supplier' },
         { value: 'customer', label: 'customer' },
@@ -222,16 +222,14 @@ const ViewLedger = () => {
                 const data = await response.json();
                 if (response.ok) {
                     toast.success(`Ledger Deleted Successfully !!`);
+                    // window.location.reload()
 
                     // Check if the current page becomes empty
-                    const isCurrentPageEmpty = Ledger.length === 1;
+                    // const isCurrentPageEmpty = Ledger.length === 1;
 
-                    if (isCurrentPageEmpty && pagination.currentPage > 1) {
-                        const previousPage = pagination.currentPage - 1;
-                        handlePageChange(previousPage); // Go to the previous page if current page becomes empty
-                    } else {
-                        getLedger(pagination.currentPage); // Refresh Ledgers on the current page
-                    }
+                 
+                        getLedger(pagination.currentPage-1); // Refresh Ledgers on the current page
+                 
                 } else {
                     toast.error(`${data.errorMessage}`);
                 }
@@ -329,37 +327,21 @@ const ViewLedger = () => {
                     </div>
                 </td> */}
 
-              <td className='whitespace-nowrap px-5 py-5 bLedger-b bLedger-gray-200 text-sm'>
-  <span 
-    onClick={() => openLEDGERModal(item)} 
-    className="view-badge bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer inline-block w-[10%] min-w-[60px]"
-     style={{ 
-     
-      width: "2% !important",
-      minWidth: "10px !important"
-    }}
-  
-  >
-    VIEW
-  </span>
-</td>
-                {/* <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
-                    {item.products &&
-                        item.products.map((prodId, index) => (
-                            <p key={index} className="text-gray-900 whitespace-nowrap">
-                                {prodId?.productId}
-                            </p>
-                        ))}
-                </td> */}
+                <td className='whitespace-nowrap px-5 py-5 bLedger-b bLedger-gray-200 text-sm'>
+                    <span
+                        onClick={() => openLEDGERModal(item)}
+                        className="view-badge bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer inline-block w-[10%] min-w-[60px]"
+                        style={{
 
-                {/* <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
-                    {item.products &&
-                        item.products.map((prodId, index) => (
-                            <p key={index} className="text-gray-900 whitespace-nowrap">
-                                {prodId.productStatus}
-                            </p>
-                        ))}
-                </td> */}
+                            width: "2% !important",
+                            minWidth: "10px !important"
+                        }}
+
+                    >
+                        VIEW
+                    </span>
+                </td>
+            
 
 
 
@@ -370,7 +352,7 @@ const ViewLedger = () => {
 
 
 
-                {/* <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
+                 <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
                         <FiEdit
                             size={17}
@@ -383,7 +365,7 @@ const ViewLedger = () => {
                                     queryParam = `customer=${item?.customerId}`;
                                 }
 
-                                navigate(`/Ledger/updateLedger/${item?.ledgerId}${queryParam ? `?${queryParam}` : ''}`);
+                                navigate(`/Ledger/updateLedger/${item?.ledgerId}`);
                             }}
 
 
@@ -394,11 +376,11 @@ const ViewLedger = () => {
                         <FiTrash2
                             size={17}
                             className="text-red-500 hover:text-red-700 mx-2"
-                            onClick={(e) => handleDelete(e, item?.id)}
+                            onClick={(e) => handleDelete(e, item?.ledgerId)}
                             title="Delete Product"
                         />
                     </p>
-                </td> */}
+                </td> 
 
             </tr>
         ));
@@ -1192,7 +1174,7 @@ const ViewLedger = () => {
                                         </div>
                                     </div>
                                     <div className="flex space-x-3">
-                                        <button
+                                        {/* <button
                                             onClick={() => {
                                                 // Export functionality
                                                 console.log('Export filtered data');
@@ -1203,7 +1185,7 @@ const ViewLedger = () => {
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                             </svg>
                                             Export
-                                        </button>
+                                        </button> */}
                                         <button
                                             onClick={closeLEDGERModal}
                                             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
@@ -1224,7 +1206,7 @@ const ViewLedger = () => {
                                 // supplierName: "",
                                 // ProductId: "",
                                 type: "",
-                                ledgerName:"",
+                                ledgerName: "",
 
 
 
@@ -1274,7 +1256,7 @@ const ViewLedger = () => {
                                                     // options={formattedSupplier}
 
                                                     options={[{ label: 'View All Ledgers', value: null }, ...formattedLedgerName]}
-                                                    styles={customStyles} 
+                                                    styles={customStyles}
                                                     className="bg-white dark:bg-form-Field"
                                                     classNamePrefix="react-select"
                                                     placeholder="Select Ledger Name"
@@ -1318,7 +1300,7 @@ const ViewLedger = () => {
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Ledger Transactions</th>
                                         {/* <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 
-                                        {/* <th className="px-5 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th> */}
+                                        <th className="px-5 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>

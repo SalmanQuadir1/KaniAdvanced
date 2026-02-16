@@ -292,48 +292,55 @@ const ViewOrderCreated = () => {
 
 
 
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="flex text-gray-900 whitespace-no-wrap">
-                        <FiEdit3
-                            color='blue'
-                            size={17}
-                            className="text-blue-500 hover:text-blue-700 mx-2"
-                            onClick={() => navigate(`/Order/updateorder/${item?.id}`)}
-                            title="Edit Order"
-                        />
-                        |
-                        <FiEdit
-                            size={17}
-                            className="text-teal-500 hover:text-teal-700 mx-2"
-                            onClick={() => navigate(`/Order/updateorderCreated/${item?.id}`)}
-                            title="Edit Order Status"
-                        />
-                        |
-                        {
-                            item.orderTypeName === "WSClients" ? (
-                                <MdCreateNewFolder
-                                    size={17}
-                                    className="text-teal-500 hover:text-teal-700 mx-2"
-                                    onClick={() => navigate(`/Order/generateProforma/${item?.id}`)}
-                                    title="Create proforma"
-                                />
-                            ) : item.orderTypeName === "RetailClients" ? (
-                                <MdCreateNewFolder
-                                    size={17}
-                                    className="text-teal-500 hover:text-teal-700 mx-2"
-                                    onClick={() => navigate(`/Order/generateRetailProforma/${item?.id}`)} // Navigate to a different page for RetailClients
-                                    title="Create proforma"
-                                />
-                            ) : null
-                        }
-                        <FiTrash2
-                            size={17}
-                            className="text-red-500 hover:text-red-700 mx-2"
-                            onClick={(e) => handleDelete(e, item?.id)}
-                            title="Delete Product"
-                        />
-                    </p>
-                </td>
+            <td className="px-5 py-5 border-b border-gray-200 text-sm">
+  <div className="flex items-center gap-2 flex-wrap">
+    <FiEdit3
+      color='blue'
+      size={17}
+      className="text-blue-500 hover:text-blue-700 cursor-pointer"
+      onClick={() => navigate(`/Order/updateorder/${item?.id}`)}
+      title="Edit Order"
+    />
+    
+    <span className="text-gray-300">|</span>
+    
+    <button
+      onClick={() => navigate(`/Order/updateorderCreated/${item?.id}`)}
+      className="inline-flex items-center px-3 py-1.5 text-xs font-medium text-teal-700 bg-teal-100 rounded-md hover:bg-teal-200 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+      title="Edit Order Status"
+    >
+      <FiEdit size={14} className="mr-1" />
+      Edit Status
+    </button>
+    
+    <span className="text-gray-300">|</span>
+    
+    {item.orderTypeName === "WSClients" ? (
+      <MdCreateNewFolder
+        size={20}
+        className="text-teal-500 hover:text-teal-700 cursor-pointer"
+        onClick={() => navigate(`/Order/generateProforma/${item?.id}`)}
+        title="Create proforma"
+      />
+    ) : item.orderTypeName === "RetailClients" ? (
+      <MdCreateNewFolder
+        size={20}
+        className="text-teal-500 hover:text-teal-700 cursor-pointer"
+        onClick={() => navigate(`/Order/generateRetailProforma/${item?.id}`)}
+        title="Create proforma"
+      />
+    ) : null}
+    
+    <span className="text-gray-300">|</span>
+    
+    <FiTrash2
+      size={17}
+      className="text-red-500 hover:text-red-700 cursor-pointer"
+      onClick={(e) => handleDelete(e, item?.id)}
+      title="Delete Product"
+    />
+  </div>
+</td>
 
             </tr>
         ));
