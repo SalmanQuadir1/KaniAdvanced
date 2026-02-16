@@ -7,7 +7,7 @@ import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import useSupplier from '../../hooks/useSupplier';
 import { customStyles as createCustomStyles } from '../../Constants/utils';
 import { useSelector } from 'react-redux';
-import {  ADD_SUPPLIER_URL } from "../../Constants/utils"
+import { ADD_SUPPLIER_URL } from "../../Constants/utils"
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 const AddSupplier = () => {
@@ -28,9 +28,9 @@ const AddSupplier = () => {
             backgroundColor: customStyles.control.backgroundColor, // Ensure background color consistency
             border: "1px light gray", // Set border properties
             maxHeight: "80px", // Set the maximum height
-            overflow: "auto", 
-            marginLeft:"10px"
-             // Enable overflow scrolling
+            overflow: "auto",
+            marginLeft: "10px"
+            // Enable overflow scrolling
         }),
     };
     const { currentUser } = useSelector((state) => state?.persisted?.user);
@@ -48,20 +48,20 @@ const AddSupplier = () => {
             ...values,
             supplierType: values.supplierType?.value,
             groupTypes: rows.map(row => ({
-                groupTypeName: row.selectedOption1?.value||row.selectedOption2?.value,
+                groupTypeName: row.selectedOption1?.value || row.selectedOption2?.value,
                 noOfLooms: row.numOfLooms,
                 workers: row.selectedOption3.map(worker => ({ workerCode: worker.value }))
             }))
         };
-    
+
         console.log((formData)); // Log the formData for debugging
-    
+
         try {
             console.log("Submitting form...");
             const url = ADD_SUPPLIER_URL;
             const method = "POST";
             // Ensure token is fetched correctly
-    
+
             const response = await fetch(url, {
                 method: method,
                 headers: {
@@ -70,10 +70,10 @@ const AddSupplier = () => {
                 },
                 body: JSON.stringify(formData) // Stringify the formData
             });
-    
+
             const data = await response.json();
             console.log(data, "Response data"); // Log the response data for debugging
-    
+
             if (response.ok) {
 
                 toast.success(`Supplier added successfully`);
@@ -81,7 +81,7 @@ const AddSupplier = () => {
                 // Call resetForm and setCurrentSupplier with proper state updates
             } else {
                 console.log("error here");
-                console.log(data.accountNo,"+++++++");
+                console.log(data.accountNo, "+++++++");
                 toast.error(data.errorMessage ? `${data.errorMessage}` : `${data?.accountNo}`);
             }
         } catch (error) {
@@ -122,51 +122,55 @@ const AddSupplier = () => {
                         bankName: '',
                         accountNo: '',
                         ifscCode: '',
+                        typeOfopeningBalance: "",
+                        previousOpType: "",
+                        openingBalances: '',
+                        previousOpBalance: '',
                         emailId: '',
                         supplierType: null
                     }}
                     validate={values => {
                         const errors = {};
-                    
+
                         // Validate name
                         if (!values.name) {
                             errors.name = 'Required';
                         }
-                    
+
                         // Validate phone number
                         if (!values.phoneNumber) {
                             errors.phoneNumber = 'Required';
                         } else if (values.phoneNumber.length < 10) {
                             errors.phoneNumber = 'Phone Number must be at least 10 digits';
                         }
-                    
+
                         // Validate supplier code
                         if (!values.supplierCode) {
                             errors.supplierCode = 'Required';
                         }
-                    
+
                         // Validate address
                         if (!values.address) {
                             errors.address = 'Required';
                         }
-                    
+
                         // Validate bank name
                         if (!values.bankName) {
                             errors.bankName = 'Required';
                         }
-                    
+
                         // Validate account number
                         if (!values.accountNo) {
                             errors.accountNo = 'Required';
                         } else if (values.accountNo.length < 16) {
                             errors.accountNo = 'Account Number must be at least 16 digits';
                         }
-                    
+
                         // Validate IFSC code
                         if (!values.ifscCode) {
                             errors.ifscCode = 'Required';
                         }
-                    
+
                         return errors;
                     }}
                     onSubmit={handleSubmit}
@@ -276,45 +280,110 @@ const AddSupplier = () => {
                                                 />
                                                 <ErrorMessage name="ifscCode" component="div" className="text-red-500" />
                                             </div>
+                                            <div className="mb-4.5 flex flex-wrap gap-6">
+                                                <div className="mb-4.5 border-t border-stroke pt-4 dark:border-strokedark w-full">
+                                                    {/* Radio Buttons for Opening Balance Type */}
+                                                    <div className="mb-2.5 flex items-center gap-4">
+                                                        <h4 className="font-medium text-black dark:text-white">Opening Balance Type:</h4>
+                                                        <label className="flex items-center gap-2">
+                                                            <input
+                                                                type="radio"
+                                                                name="typeOfopeningBalance"
+                                                                value="DEBIT"
+                                                                checked={values.typeOfopeningBalance === "DEBIT"}
+                                                                onChange={(e) => {
+                                                                    setFieldValue('typeOfopeningBalance', e.target.value);
+                                                                    setFieldValue('previousOpType', e.target.value);
+                                                                }}
+                                                                className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
+                                                            />
+                                                            <span className="text-black dark:text-white">Debit (DR)</span>
+                                                        </label>
+                                                        <label className="flex items-center gap-2">
+                                                            <input
+                                                                type="radio"
+                                                                name="typeOfopeningBalance"
+                                                                value="CREDIT"
+                                                                checked={values.typeOfopeningBalance === "CREDIT"}
+                                                                onChange={(e) => {
+                                                                    setFieldValue('typeOfopeningBalance', e.target.value);
+                                                                    setFieldValue('previousOpType', e.target.value);
+                                                                }}
+                                                                className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
+                                                            />
+                                                            <span className="text-black dark:text-white">Credit (CR)</span>
+                                                        </label>
+                                                    </div>
 
+                                                    {/* Opening Balance Input */}
+                                                    <div className="flex items-center gap-2 mt-2">
+                                                        <div className="flex-1 min-w-[250px]">
+                                                            <input
+                                                                type="number"
+                                                                name="openingBalances"
+                                                                placeholder="Opening Balance"
+                                                                onChange={(e) => {
+
+                                                                    setFieldValue('previousOpBalance', e.target.value);
+                                                                     setFieldValue('openingBalances', e.target.value);
+                                                                }}
+                                                                //   onBlur={formik.handleBlur}
+                                                                value={values.openingBalances}
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+                                                        {/* Display "CR" if Credit is selected */}
+                                                        {values.typeOfopeningBalance === "CREDIT" ? (
+                                                            <span className="text-lg font-medium text-gray-600 dark:text-gray-300">
+                                                                Cr.
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-lg font-medium text-gray-600 dark:text-gray-300">
+                                                                Dr.
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
 
-                                            {values.supplierType?.value === "PRODUCT" && (
-                                                <>
+                                        </div>
 
-                                                
-                                                    <div className='text-center flex justify-between'>
-                                                        <h2 className='text-2xl'>Groups</h2>
+                                        {values.supplierType?.value === "PRODUCT" && (
+                                            <>
+
+
+                                                <div className='text-center flex justify-between'>
+                                                    <h2 className='text-2xl'>Groups</h2>
 
                                                     <div className='text-end'>
-                                                    <button
-                                            type="button"
-                                            onClick={addRow}
-                                            className="flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
-                                        >
-                                            <IoMdAdd className="mr-2" size={20} />
-                                            Add Row
-                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={addRow}
+                                                            className="flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+                                                        >
+                                                            <IoMdAdd className="mr-2" size={20} />
+                                                            Add Row
+                                                        </button>
 
                                                     </div>
-                                                    </div>
-                                                    <div className="overflow-x-scroll md:overflow-x-visible  md:overflow-y-visible -mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
-                                        <div className="min-w-full shadow-md rounded-lg">
+                                                </div>
+                                                <div className="overflow-x-scroll md:overflow-x-visible  md:overflow-y-visible -mx-4 sm:-mx-8 px-4 sm:px-8 py-4">
+                                                    <div className="min-w-full shadow-md rounded-lg">
                                                         <table className="table-fixed w-full">
                                                             <thead>
-                                                            <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" style={{ minWidth: '250px' }}>Group</th>
-                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">No of Looms</th>
-                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Workers</th>
-                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Action</th>
+                                                                <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
+                                                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" style={{ minWidth: '250px' }}>Group</th>
+                                                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">No of Looms</th>
+                                                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Workers</th>
+                                                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Action</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
                                                                 {rows.map((row, index) => (
                                                                     <tr key={row.id}>
-                                                                     <td className="px-2 py-2 border-b">
+                                                                        <td className="px-2 py-2 border-b">
                                                                             <ReactSelect
-                                                                            name='group'
+                                                                                name='group'
                                                                                 value={row.selectedOption1}
                                                                                 onChange={(option) => {
                                                                                     const newRows = [...rows];
@@ -326,7 +395,7 @@ const AddSupplier = () => {
                                                                                 placeholder="Group Name"
                                                                                 styles={customStyles}
                                                                             />
-                                                                              <ErrorMessage name="group" component="div" className="text-red-500" />
+                                                                            <ErrorMessage name="group" component="div" className="text-red-500" />
                                                                         </td>
                                                                         <td className="px-2 py-2 border-b">
                                                                             <Field
@@ -349,7 +418,7 @@ const AddSupplier = () => {
                                                                         </td>
                                                                         <td className="px-2 py-2 border-b">
                                                                             <ReactSelect
-                                                                            name='workers'
+                                                                                name='workers'
                                                                                 value={row.selectedOption3}
                                                                                 onChange={(option) => {
                                                                                     const newRows = [...rows];
@@ -363,7 +432,7 @@ const AddSupplier = () => {
                                                                                 isMulti
                                                                                 components={{ DropdownIndicator: () => null, ClearIndicator: () => null }}
                                                                             />
-                                                                              <ErrorMessage name="workers" component="div" className="text-red-500" />
+                                                                            <ErrorMessage name="workers" component="div" className="text-red-500" />
                                                                         </td>
                                                                         <td className="px-2 py-2 border-b">
                                                                             {rows.length > 1 && (
@@ -376,14 +445,14 @@ const AddSupplier = () => {
                                                                 ))}
                                                             </tbody>
                                                         </table>
-                                                        </div>
                                                     </div>
-                                                </>
-                                            )}
-                                         <div className="flex justify-center mt-4 items-center">
-                                        <button type="submit" className="flex md:w-[230px] w-[190px] md:h-[37px] h-[47px] justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4">
-                                            Add Supplier
-                                        </button>
+                                                </div>
+                                            </>
+                                        )}
+                                        <div className="flex justify-center mt-4 items-center">
+                                            <button type="submit" className="flex md:w-[230px] w-[190px] md:h-[37px] h-[47px] justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4">
+                                                Add Supplier
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
