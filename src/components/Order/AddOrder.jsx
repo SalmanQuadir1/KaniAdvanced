@@ -652,7 +652,7 @@ const openInProgressModal = async (id, locId) => {
 
                 getInStock();
               });
-            }, [values?.locationId, values.orderProducts,]);
+            }, [values?.locationId, values?.orderProducts]);
 
 
             useEffect(() => {

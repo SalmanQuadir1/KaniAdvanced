@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 // import { GET_Groups_URL, DELETE_Groups_URL, UPDATE_Groups_URL, ADD_Groups_URL } from "../Constants/utils";
-import { ADD_Groups_URL, DELETE_Groups_URL, GET_Groups_URL, UPDATE_Groups_URL } from "../Constants/utils";
+import { ADD_Groups_URL, DELETE_Groups_URL, GET_Groups_URL, GET_Groupss_URL, UPDATE_Groups_URL } from "../Constants/utils";
 import { fetchHsnCode } from '../redux/Slice/HsnCodeSlice';
-const useGroups = (gstDetails,setgstDetails) => {
+const useGroups = (gstDetails, setgstDetails) => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const [Groups, setGroups] = useState([]);
+    const [Groupss, setGroupss] = useState([]);
+
     const [edit, setEdit] = useState(false);
     const dispatch = useDispatch();
     const [accountGroups, setaccountGroups] = useState([])
@@ -120,7 +122,7 @@ const useGroups = (gstDetails,setgstDetails) => {
             const data = await response.json();
             console.log(data, "asd");
             const filteredGroups = data.content.map(group => {
-                const {  allocatePurchaseInvoice, ...rest } = group;
+                const { allocatePurchaseInvoice, ...rest } = group;
                 return rest;
             });
 
@@ -138,7 +140,28 @@ const useGroups = (gstDetails,setgstDetails) => {
         }
     };
 
-   
+    const getGroupss = async () => {
+        try {
+            const response = await fetch(`${GET_Groupss_URL}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data, "asd");
+
+
+            setGroupss(data);
+
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to fetch Groups");
+        }
+    };
+
+
 
     const handleDelete = async (e, id) => {
         console.log(id, "del");
@@ -185,100 +208,101 @@ const useGroups = (gstDetails,setgstDetails) => {
 
 
 
-   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-    console.log(values, "form values");
-    
-    // Prepare the payload
-    let payload = {
-        groupName: values.groupName,
-        natureOfGroup: values.natureOfGroup,
-        allocatePurchaseInvoice: values.allocatePurchaseInvoice,
-        gstDetails: values.gstDetails,
-        gstratedetails: values.gstratedetails,
-    };
+    const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+        console.log(values, "form values");
 
-    // Handle Under group - extract ID properly
-    if (values.under && typeof values.under === 'object') {
-        payload.under = { id: values.under.id }; // Send only the ID, not the whole object
-    }
+        // Prepare the payload
+        let payload = {
+            groupName: values.groupName,
+            natureOfGroup: values.natureOfGroup,
+            allocatePurchaseInvoice: values.allocatePurchaseInvoice,
+            gstDetails: values.gstDetails,
+            gstratedetails: values.gstratedetails,
+        };
 
-    // Handle GST slab based rates
-    if (values.gstratedetails === "Specify Slab Based Rates" && gstDetails && gstDetails.length > 0) {
-        payload.slabBasedRates = gstDetails.map(({ id, ...rest }) => ({
-            ...rest
-        }));
-    }
-    
-    // Handle HSN classification
-    else if (values.gstratedetails === "Use GST Classification " && values.gstDetails === "Applicable") {
-        if (values.hsnCode) {
-            payload.hsnCodeId = values.hsnCode.id; // Send only the ID
-            payload.hsn_Sac = values.hsn_Sac;
-            payload.gstDescription = values.gstDescription || values.hsnCode?.productDescription;
+        // Handle Under group - extract ID properly
+        if (values.under && typeof values.under === 'object') {
+            payload.under = { id: values.under.id }; // Send only the ID, not the whole object
         }
-    }
 
-    // For update, include the ID
-    if (edit && currentGroups?.id) {
-        payload.id = currentGroups.id;
-    }
+        // Handle GST slab based rates
+        if (values.gstratedetails === "Specify Slab Based Rates" && gstDetails && gstDetails.length > 0) {
+            payload.slabBasedRates = gstDetails.map(({ id, ...rest }) => ({
+                ...rest
+            }));
+        }
 
-    console.log(payload, "final payload");
+        // Handle HSN classification
+        else if (values.gstratedetails === "Use GST Classification" && values.gstDetails === "Applicable") {
+            if (values.hsnCode) {
+                payload.hsnCode = { id: values.hsnCode.id }; // Send only the ID
+                payload.hsn_Sac = values.hsn_Sac;
+                payload.gstDescription = values.gstDescription || values.hsnCode?.productDescription;
+            }
+        }
 
-    try {
-        const url = edit ? `${UPDATE_Groups_URL}/${currentGroups.id}` : ADD_Groups_URL;
-        const method = edit ? "PUT" : "POST";
+        // For update, include the ID
+        if (edit && currentGroups?.id) {
+            payload.id = currentGroups.id;
+        }
 
-        const response = await fetch(url, {
-            method: method,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-            body: JSON.stringify(payload)
-        });
+        console.log(payload, "final payload");
 
-        const data = await response.json();
-        
-        if (response.ok) {
-            toast.success(`Groups ${edit ? 'updated' : 'added'} successfully`);
-            
-            // Reset form to initial state
-            resetForm();
-            
-            // Clear GST details state
-            setgstDetails([]);
-            
-            // Reset currentGroups to empty state
-            setCurrentGroups({
-                groupName: "",
-                under: null,
-                natureOfGroup: "",
-                allocatePurchaseInvoice: "",
-                gstDetails: "",
-                gstratedetails: "",
-                hsnCode: null,
-                hsn_Sac: "",
-                gstDescription: "",
-                slabBasedRates: []
+        try {
+            const url = edit ? `${UPDATE_Groups_URL}/${currentGroups.id}` : ADD_Groups_URL;
+            const method = edit ? "PUT" : "POST";
+
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
             });
-            
-            // Turn off edit mode
-            setEdit(false);
-            
-            // Refresh the groups list
-            getGroups(pagination.currentPage);
-            
-        } else {
-            toast.error(data.errorMessage || `Failed to ${edit ? 'update' : 'add'} group`);
+
+            const data = await response.json();
+
+            if (response.ok) {
+                toast.success(`Groups ${edit ? 'updated' : 'added'} successfully`);
+
+                // Reset form to initial state
+                resetForm();
+
+                // Clear GST details state
+                setgstDetails([]);
+                getGroupss()
+
+                // Reset currentGroups to empty state
+                setCurrentGroups({
+                    groupName: "",
+                    under: null,
+                    natureOfGroup: "",
+                    allocatePurchaseInvoice: "",
+                    gstDetails: "",
+                    gstratedetails: "",
+                    hsnCode: null,
+                    hsn_Sac: "",
+                    gstDescription: "",
+                    slabBasedRates: []
+                });
+
+                // Turn off edit mode
+                setEdit(false);
+
+                // Refresh the groups list
+                getGroups(pagination.currentPage);
+
+            } else {
+                toast.error(data.errorMessage || `Failed to ${edit ? 'update' : 'add'} group`);
+            }
+        } catch (error) {
+            console.error("Submission error:", error);
+            toast.error("An error occurred while processing your request");
+        } finally {
+            setSubmitting(false);
         }
-    } catch (error) {
-        console.error("Submission error:", error);
-        toast.error("An error occurred while processing your request");
-    } finally {
-        setSubmitting(false);
-    }
-};
+    };
 
     const handlePageChange = (newPage) => {
 
@@ -299,7 +323,10 @@ const useGroups = (gstDetails,setgstDetails) => {
         invoice,
         under,
         setCurrentGroups,
-        setEdit
+        setEdit,
+        getGroupss,
+        Groupss
+
     };
 };
 

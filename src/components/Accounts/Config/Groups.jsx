@@ -34,7 +34,9 @@ const Groups = () => {
         invoice,
         under,
         setCurrentGroups,
-        setEdit
+        setEdit,
+        Groupss,
+        getGroupss
 
     } = useGroups(gstDetails,setgstDetails);
     const theme = useSelector(state => state?.persisted?.theme);
@@ -63,7 +65,7 @@ const Groups = () => {
     const gstdetails = [
 
         // { value: 'Specify Slab Based Rates', label: 'Specify Slab Based Rates' },
-        { value: 'Use GST Classification ', label: 'Use GST Classification' },
+        { value: 'Use GST Classification', label: 'Use GST Classification' },
 
     ]
 
@@ -92,10 +94,16 @@ const Groups = () => {
         setgstDetails(values)
 
     }
+    useEffect(() => {
+    getGroupss()
+    }, [])
+    console.log(Groupss,"hhhhhhh665");
+    
+    
 
-    console.log(Groups, "5555555");
+    
 
-    const GroupsDropdown = Groups.map(group => ({
+    const GroupsDropdown = Groupss.map(group => ({
         value: group.id,
         label: group.groupName
     }))
@@ -441,7 +449,7 @@ const handleDeleteGroup = async (groupId) => {
                                                                 </div>
                                                             ))}
                                                         </div>
-                                                    ) : values.gstratedetails === "Use GST Classification " && values.gstDetails === "Applicable" ? (
+                                                    ) : values.gstratedetails === "Use GST Classification" && values.gstDetails === "Applicable" ? (
                                                         // Render HSN Code and Related Fields Section
                                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                                             <div className="flex-2 min-w-[250px]">
