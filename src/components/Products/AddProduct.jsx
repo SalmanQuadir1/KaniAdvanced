@@ -44,6 +44,91 @@ const AddProduct = () => {
 
 
 
+    // State for looms options
+    const [loomsOptions, setLoomsOptions] = useState([]);
+
+    // Function to update looms options based on selected suppliers
+    const updateLoomsOptions = (selectedSuppliers) => {
+        if (!selectedSuppliers || selectedSuppliers.length === 0) {
+            setLoomsOptions([]);
+            setFieldValue('looms', []); // Clear selected looms
+            return;
+        }
+
+        // Collect all worker codes from all selected suppliers
+        const allWorkerOptions = [];
+
+        selectedSuppliers.forEach(supplier => {
+            console.log(supplier, "............................");
+
+            // Access the supplier's groupTypes array
+            const groupTypes = supplier.supplierNameObject?.groupTypes || [];
+            console.log(groupTypes, "333333333333333333333333");
+
+            // Loop through each groupType
+            groupTypes.forEach(groupType => {
+                console.log(groupType, "groupType-------------");
+
+                // Access the workers array inside each groupType
+                const workers = groupType.workers || [];
+                console.log(workers, "workers inside groupType");
+
+                // Loop through each worker in the workers array
+                workers.forEach(worker => {
+                    console.log(worker, "individual worker");
+
+                    // Now we can access worker.workerCode
+                    allWorkerOptions.push({
+                        value: worker.workerCode,
+                        label: `${worker.workerCode} - ${worker.workerName || ''} (${supplier.label} - ${groupType.groupTypeName})`,
+                        supplierId: supplier.value,
+                        groupTypeId: groupType.id,
+                        workerData: worker
+                    });
+                });
+            });
+        });
+
+        console.log(allWorkerOptions, "999999999999999999999999");
+
+        // Remove duplicates if same worker code appears in multiple suppliers/groupTypes
+        const uniqueOptions = Array.from(
+            new Map(allWorkerOptions.map(item => [item.value, item])).values()
+        );
+
+        setLoomsOptions(uniqueOptions);
+
+        // Optionally clear previously selected looms if they're no longer available
+        if (values.looms) {
+            const validLooms = values.looms.filter(loomValue =>
+                uniqueOptions.some(opt => opt.value === loomValue)
+            );
+            if (validLooms.length !== values.looms.length) {
+                setFieldValue('looms', validLooms);
+            }
+        }
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     const [subGroupOptions, setsubGroupOptions] = useState([])
 
 
@@ -176,7 +261,7 @@ const AddProduct = () => {
     }, [])
 
 
-console.log(productCategory,"9696969");
+    console.log(productCategory, "9696969");
 
 
     console.log(vaaluee, "huhu");
@@ -435,10 +520,10 @@ console.log(productCategory,"9696969");
     const generateBarcode = (values) => {
         // 1. Supplier Code - Get first 2 digits or '00' if not available
         let supplierCode = '00';
-        if (values.supplierWord) {
-            console.log(values.supplierWord, "66666666666663");
+        if (values.supplierCode) {
+            console.log(values.supplierCode, "66666666666663");
 
-            const code = values.supplierWord ||
+            const code = values.supplierCode ||
 
                 '00';
             supplierCode = code.toString().slice(-2).padStart(2, '0');
@@ -481,7 +566,7 @@ console.log(productCategory,"9696969");
         }
 
         // Combine all parts with hyphens
-        return `${supplierCode}-${designCode}-${sizeCode}-${colourCode}-${costPriceFormatted}`;
+        return `${supplierCode}${designCode}${sizeCode}${colourCode}${costPriceFormatted}`;
     };
 
     useEffect(() => {
@@ -490,7 +575,7 @@ console.log(productCategory,"9696969");
             setBarcodeField(barcode);
         }
     }, [
-        vaaluee.supplier,
+        vaaluee.supplierCode,
         vaaluee.supplierCode,
         vaaluee.design,
         vaaluee.designCode,
@@ -725,8 +810,10 @@ console.log(productCategory,"9696969");
                                                     />
                                                     <ErrorMessage name="barcode" component="div" className="text-red-500" />
 
+
+
                                                 </div>
-                                                <div className="flex-1 min-w-[300px]">
+                                                {/* <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white"> Supplier/ Weaver Name <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
@@ -753,7 +840,49 @@ console.log(productCategory,"9696969");
                                                     />
                                                     <ErrorMessage name="SupplierCodee" component="div" className="text-red-500" />
 
+                                                </div> */}
+
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">
+                                                            Supplier <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span>
+                                                        </label>
+                                                        <div className="z-20 bg-transparent dark:bg-form-Field">
+                                                            <ReactSelect
+                                                                name="supplierr"
+                                                                value={supplierNameOptions?.find(option => option.value === values.supplierr) || null}
+                                                                onChange={(option) => {
+                                                                    // setFieldValue('supplierr', option ? option.value : null);
+                                                                    // Set the supplier code value directly (not as an object)
+                                                                    setFieldValue('supplierCode', option ? option.supplierNameObject?.supplierCode : '');
+                                                                }}
+                                                                options={supplierNameOptions}
+                                                                styles={customStyles}
+                                                                className="bg-white dark:bg-form-Field"
+                                                                classNamePrefix="react-select"
+                                                                placeholder="Select Supplier Name"
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">
+                                                            Supplier Code <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span>
+                                                        </label>
+                                                        <div className="bg-transparent dark:bg-form-Field">
+                                                            <input
+                                                                type="text"
+                                                                name="supplierCode"
+                                                                value={values.supplierCode || ''}
+                                                                onChange={(e) => setFieldValue('supplierCode', e.target.value)}
+                                                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                                                                placeholder="Supplier Code"
+                                                                readOnly // Makes it read-only since it's auto-populated
+                                                            />
+                                                        </div>
+                                                    </div>
                                                 </div>
+
 
 
 
@@ -826,83 +955,100 @@ console.log(productCategory,"9696969");
 
                                             <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Style <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
-                                                    <div className="relative z-20 bg-transparent dark:bg-form-Field">
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Supplier/ Weaver Name <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                    <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
-                                                            name="styles"
-                                                            value={styleOptions?.find(option => option.value === values.styles?.id) || null}
-                                                            onChange={(option) => {
-                                                                setFieldValue('styles', option ? option.styleObject : null)
-                                                                updateProductId();
-                                                            }}
-                                                            options={styleOptions}
-                                                            styles={{
-                                                                ...customStyles,
-                                                                menuPortal: (base) => ({
-                                                                    ...base,
-                                                                    zIndex: 9999,  // Set high z-index to make sure the dropdown appears above other components
-                                                                }),
-                                                            }} // Pass custom styles here
+                                                            name="productCategory"
+                                                            value={productCategoryOptions?.find(option => option.value === values.productCategory?.id) || null}
+                                                            onChange={(option) => setFieldValue('productCategory', option ? option.productCategoryObject : null)}
+                                                            options={productCategoryOptions}
+                                                            styles={customStyles} // Pass custom styles here
                                                             className="bg-white dark:bg-form-Field"
                                                             classNamePrefix="react-select"
-                                                            placeholder="Select Style"
+                                                            placeholder="Select Product Category"
                                                         />
+                                                        </div>
+
 
                                                     </div>
-                                                </div>
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Size (in cm) <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
-                                                    <div className="relative z-20 bg-transparent dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            name="sizes"
-                                                            value={sizeOptions?.find(option => option.value === values.sizes?.id) || null}
-                                                            onChange={(option) => {
-                                                                setFieldValue('sizes', option ? option.sizeObject : null)
-                                                                updateProductId();
-                                                            }}
-                                                            options={sizeOptions}
-                                                            styles={{
-                                                                ...customStyles,
-                                                                menuPortal: (base) => ({
-                                                                    ...base,
-                                                                    zIndex: 9999,  // Set high z-index to make sure the dropdown appears above other components
-                                                                }),
-                                                            }}
-                                                            // styles={customStyles} // Pass custom styles here
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Size"
-                                                        />
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Style <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                        <div className="relative z-20 bg-transparent dark:bg-form-Field">
+                                                            <ReactSelect
+                                                                name="styles"
+                                                                value={styleOptions?.find(option => option.value === values.styles?.id) || null}
+                                                                onChange={(option) => {
+                                                                    setFieldValue('styles', option ? option.styleObject : null)
+                                                                    updateProductId();
+                                                                }}
+                                                                options={styleOptions}
+                                                                styles={{
+                                                                    ...customStyles,
+                                                                    menuPortal: (base) => ({
+                                                                        ...base,
+                                                                        zIndex: 9999,  // Set high z-index to make sure the dropdown appears above other components
+                                                                    }),
+                                                                }} // Pass custom styles here
+                                                                className="bg-white dark:bg-form-Field"
+                                                                classNamePrefix="react-select"
+                                                                placeholder="Select Style"
+                                                            />
 
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Size (in cm) <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                        <div className="relative z-20 bg-transparent dark:bg-form-Field">
+                                                            <ReactSelect
+                                                                name="sizes"
+                                                                value={sizeOptions?.find(option => option.value === values.sizes?.id) || null}
+                                                                onChange={(option) => {
+                                                                    setFieldValue('sizes', option ? option.sizeObject : null)
+                                                                    updateProductId();
+                                                                }}
+                                                                options={sizeOptions}
+                                                                styles={{
+                                                                    ...customStyles,
+                                                                    menuPortal: (base) => ({
+                                                                        ...base,
+                                                                        zIndex: 9999,  // Set high z-index to make sure the dropdown appears above other components
+                                                                    }),
+                                                                }}
+                                                                // styles={customStyles} // Pass custom styles here
+                                                                className="bg-white dark:bg-form-Field"
+                                                                classNamePrefix="react-select"
+                                                                placeholder="Select Size"
+                                                            />
+
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
 
 
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Product Id </label>
-                                                    <Field
-                                                        name='productId'
-                                                        type="text"
-                                                        // value={values.productId || ''}
-                                                        // onChange={setFieldValue('productId', productIdField)}
-                                                        value={productIdField}
-                                                        readonly
-                                                        placeholder="Enter Product Id"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                    {/* <input type='hidden ' value={productIdField} name='productId'  /> */}
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Product Id </label>
+                                                        <Field
+                                                            name='productId'
+                                                            type="text"
+                                                            // value={values.productId || ''}
+                                                            // onChange={setFieldValue('productId', productIdField)}
+                                                            value={productIdField}
+                                                            readonly
+                                                            placeholder="Enter Product Id"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                        {/* <input type='hidden ' value={productIdField} name='productId'  /> */}
+                                                    </div>
+
+
                                                 </div>
 
 
-                                            </div>
 
 
-
-
-                                            {/* 
+                                                {/* 
                                             <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white"> Batch</label>
@@ -917,157 +1063,157 @@ console.log(productCategory,"9696969");
                                             </div> */}
 
 
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Finished Weight </label>
-                                                    <Field
-                                                        name='finishedWeight'
-                                                        type="number"
-                                                        placeholder="Enter Finished Weight"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Finished Weight </label>
+                                                        <Field
+                                                            name='finishedWeight'
+                                                            type="number"
+                                                            placeholder="Enter Finished Weight"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Material Weight</label>
+                                                        <Field
+                                                            name='materialWeight'
+                                                            type="number"
+                                                            placeholder="Enter material Weight"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
                                                 </div>
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Material Weight</label>
-                                                    <Field
-                                                        name='materialWeight'
-                                                        type="number"
-                                                        placeholder="Enter material Weight"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Gross Weight </label>
-                                                    <Field
-                                                        name='grossWeight'
-                                                        type="number"
-                                                        placeholder="Enter Gross Weight"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Net Weight</label>
-                                                    <Field
-                                                        name='netWeight'
-                                                        type="number"
-                                                        placeholder="Enter Net Weight"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                            </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        Warp / Base Color
-                                                    </label>
-                                                    <Field
-                                                        name="warpColors"
-                                                        type="text"
-                                                        placeholder="Enter Warp / Base Color"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        Weft / Emb / Kani Color
-                                                    </label>
-                                                    <Field
-                                                        name="weftColors"
-                                                        type="text"
-                                                        placeholder="Enter Weft / Emb / Kani Color"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                            </div>
-
-
-
-
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Wave </label>
-                                                    <Field
-                                                        name='weave'
-                                                        type="text"
-                                                        placeholder="Enter Wave"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Warp Yarn</label>
-                                                    <Field
-                                                        name='warpYarn'
-                                                        type="text"
-                                                        placeholder="Enter Warp Yarn"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Weft Yarn</label>
-                                                    <Field
-                                                        name='weftYarn'
-                                                        type="text"
-                                                        placeholder="Enter Weft Yarn"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                            </div>
-
-
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Pic & Read</label>
-                                                    <Field
-                                                        name='pixAndReed'
-                                                        type="text"
-                                                        placeholder="Enter Pic & Read"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Gross Weight </label>
+                                                        <Field
+                                                            name='grossWeight'
+                                                            type="number"
+                                                            placeholder="Enter Gross Weight"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Net Weight</label>
+                                                        <Field
+                                                            name='netWeight'
+                                                            type="number"
+                                                            placeholder="Enter Net Weight"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
                                                 </div>
 
-                                                {/* <div className="flex-1 min-w-[300px]">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">
+                                                            Warp / Base Color
+                                                        </label>
+                                                        <Field
+                                                            name="warpColors"
+                                                            type="text"
+                                                            placeholder="Enter Warp / Base Color"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">
+                                                            Weft / Emb / Kani Color
+                                                        </label>
+                                                        <Field
+                                                            name="weftColors"
+                                                            type="text"
+                                                            placeholder="Enter Weft / Emb / Kani Color"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
+
+
+
+
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Wave </label>
+                                                        <Field
+                                                            name='weave'
+                                                            type="text"
+                                                            placeholder="Enter Wave"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Warp Yarn</label>
+                                                        <Field
+                                                            name='warpYarn'
+                                                            type="text"
+                                                            placeholder="Enter Warp Yarn"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Weft Yarn</label>
+                                                        <Field
+                                                            name='weftYarn'
+                                                            type="text"
+                                                            placeholder="Enter Weft Yarn"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                </div>
+
+
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Pic & Read</label>
+                                                        <Field
+                                                            name='pixAndReed'
+                                                            type="text"
+                                                            placeholder="Enter Pic & Read"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+
+                                                    {/* <div className="flex-1 min-w-[300px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> Units </label>
                                                             <Field
                                                                 name='units'
@@ -1076,40 +1222,40 @@ console.log(productCategory,"9696969");
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                             />
                                                         </div> */}
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
-                                                    <div className=" z-20 bg-transparent dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            name="unit"
-                                                            value={unitOptions?.find(option => option.value === values.unit?.id) || null}
-                                                            onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
-                                                            options={unitOptions}
-                                                            styles={customStyles} // Pass custom styles here
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Color Group"
-                                                        />
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Units <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                        <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                            <ReactSelect
+                                                                name="unit"
+                                                                value={unitOptions?.find(option => option.value === values.unit?.id) || null}
+                                                                onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
+                                                                options={unitOptions}
+                                                                styles={customStyles} // Pass custom styles here
+                                                                className="bg-white dark:bg-form-Field"
+                                                                classNamePrefix="react-select"
+                                                                placeholder="Select Color Group"
+                                                            />
 
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
 
 
-                                            <h1 className='text-center text-xl mt-[50px] mb-[50px]'>Costing</h1>
+                                                <h1 className='text-center text-xl mt-[50px] mb-[50px]'>Costing</h1>
 
 
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Cost Price </label>
-                                                    <Field
-                                                        name='cost'
-                                                        type="text"
-                                                        placeholder="Enter Cost Price "
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                {/* <div className="flex-2 min-w-[250px]">
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-2 min-w-[250px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Cost Price </label>
+                                                        <Field
+                                                            name='cost'
+                                                            type="text"
+                                                            placeholder="Enter Cost Price "
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    {/* <div className="flex-2 min-w-[250px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> MRP</label>
                                                             <Field
                                                                 name='mrp'
@@ -1118,21 +1264,21 @@ console.log(productCategory,"9696969");
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                             />
                                                         </div> */}
-                                                <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Dyeing Cost </label>
-                                                    <Field
-                                                        name='dyeingCost'
-                                                        type="text"
-                                                        placeholder="Enter Dyeing Cost"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
+                                                    <div className="flex-2 min-w-[250px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Dyeing Cost </label>
+                                                        <Field
+                                                            name='dyeingCost'
+                                                            type="text"
+                                                            placeholder="Enter Dyeing Cost"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
                                                 </div>
-                                            </div>
 
 
-                                            <h1 className='text-center text-xl mt-[50px] mb-[50px]'>Pricing</h1>
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                {/* <div className="flex-2 min-w-[250px]">
+                                                <h1 className='text-center text-xl mt-[50px] mb-[50px]'>Pricing</h1>
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    {/* <div className="flex-2 min-w-[250px]">
                                                             <label className="mb-2.5 block text-black dark:text-white"> Retail Mrp</label>
                                                             <Field
                                                                 name='retailMrp'
@@ -1141,603 +1287,637 @@ console.log(productCategory,"9696969");
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                             />
                                                         </div> */}
-                                                <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Retail Mrp</label>
-                                                    <Field
-                                                        name='retailMrp'
-                                                        type="text"
-                                                        placeholder="Enter Retail Mrp"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
+                                                    <div className="flex-2 min-w-[250px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> Retail Mrp</label>
+                                                        <Field
+                                                            name='retailMrp'
+                                                            type="text"
+                                                            placeholder="Enter Retail Mrp"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-2 min-w-[250px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white"> WS INR</label>
+                                                        <Field
+                                                            name='wholesalePrice'
+                                                            type="text"
+                                                            placeholder="Enter Wholesale Price"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-2 min-w-[250px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">WS USD </label>
+                                                        <Field
+                                                            name='usdPrice'
+                                                            type="text"
+                                                            placeholder="Enter USD Price"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+
                                                 </div>
-                                                <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> WS INR</label>
-                                                    <Field
-                                                        name='wholesalePrice'
-                                                        type="text"
-                                                        placeholder="Enter Wholesale Price"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">WS USD </label>
-                                                    <Field
-                                                        name='usdPrice'
-                                                        type="text"
-                                                        placeholder="Enter USD Price"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
+
+
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
                                                 </div>
 
-                                            </div>
 
-
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                            </div>
-
-
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">WS EURO</label>
-                                                    <Field
-                                                        name='euroPrice'
-                                                        type="text"
-                                                        placeholder="Enter EURO Price"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">WS GBP </label>
-                                                    <Field
-                                                        name='gbpPrice'
-                                                        type="text"
-                                                        placeholder="Enter GBP Price"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">WS RMB </label>
-                                                    <Field
-                                                        name='rmbPrice'
-                                                        type="text"
-                                                        placeholder="Enter RMB Price"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                            </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                            <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>Statutory Details</h1>
-
-
-                                            <div className="flex flex-wrap gap-4">
-                                                {/* GST DETAILS Section */}
-                                                <div className="flex-1 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">GST DETAILS</label>
-                                                    <div className="z-20 bg-transparent dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            name="gstDetails"
-                                                            options={gstOptions}
-                                                            value={gstOptions.find((option) => option.value === values.gstDetails)}
-                                                            onChange={(option) => setFieldValue("gstDetails", option?.value)}
-                                                            styles={customStyles}
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select GST details"
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-2 min-w-[250px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">WS EURO</label>
+                                                        <Field
+                                                            name='euroPrice'
+                                                            type="text"
+                                                            placeholder="Enter EURO Price"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-2 min-w-[250px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">WS GBP </label>
+                                                        <Field
+                                                            name='gbpPrice'
+                                                            type="text"
+                                                            placeholder="Enter GBP Price"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                    </div>
+                                                    <div className="flex-2 min-w-[250px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">WS RMB </label>
+                                                        <Field
+                                                            name='rmbPrice'
+                                                            type="text"
+                                                            placeholder="Enter RMB Price"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
                                                     </div>
                                                 </div>
 
-                                                {/* GST RATE DETAILS Section (Conditional) */}
-                                                {values.gstDetails === "Applicable" && (
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>Statutory Details</h1>
+
+
+                                                <div className="flex flex-wrap gap-4">
+                                                    {/* GST DETAILS Section */}
                                                     <div className="flex-1 min-w-[250px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">GST RATE DETAILS</label>
-                                                        <ReactSelect
-                                                            name="gstratedetails"
-                                                            options={gstdetails}
-                                                            value={gstdetails.find((option) => option.value === values.gstratedetails)}
-                                                            onChange={(option) => handlerateDetails(option, setFieldValue)}
-                                                            styles={customStyles}
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Enter GST Rate Details"
-                                                        />
-                                                    </div>
-                                                )}
-                                            </div>
-
-
-                                            <div className="mb-4.5  gap-6">
-                                                {/* GST DETAILS Select */}
-
-                                                {/* Conditional Fields based on gstDetails */}
-
-
-                                                <>
-
-                                                    <div className="mb-4.5 mt-6">
-                                                        {/* Conditional Rendering: GST Details or HSN Code Section */}
-                                                        {/* {gstDetails && gstDetails.length > 0 ? ( */}
-                                                        {values.gstratedetails === "Specify Slab Based Rates" ? (
-
-                                                            // Render GST Details Section
-                                                            <div className="flex flex-wrap gap-6">
-                                                                {gstDetails.map((gst, index) => (
-                                                                    <div key={index} className="mb-4.5 flex flex-wrap gap-6">
-                                                                        <div className="flex-2 min-w-[100px]">
-                                                                            <label className="mb-2.5 block text-black dark:text-white">Greater Than</label>
-                                                                            <Field
-                                                                                name={`gstDetails[${index}].greaterThan`}
-                                                                                type="text"
-                                                                                value={gst.greaterThan}
-                                                                                placeholder="Enter GBP Price"
-                                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                            />
-                                                                        </div>
-                                                                        <div className="flex-2 min-w-[100px]">
-                                                                            <label className="mb-2.5 block text-black dark:text-white">Upto</label>
-                                                                            <Field
-                                                                                name={`gstDetails[${index}].upTo`}
-                                                                                type="text"
-                                                                                value={gst.upTo}
-                                                                                placeholder="Upto"
-                                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                            />
-                                                                        </div>
-                                                                        <div className="flex-2 min-w-[100px]">
-                                                                            <label className="mb-2.5 block text-black dark:text-white">Type</label>
-                                                                            <Field
-                                                                                name={`gstDetails[${index}].type`}
-                                                                                type="text"
-                                                                                value={gst.type}
-                                                                                placeholder="Type"
-                                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                            />
-                                                                        </div>
-                                                                        <div className="flex-2 min-w-[100px]">
-                                                                            <label className="mb-2.5 block text-black dark:text-white">Rate</label>
-                                                                            <Field
-                                                                                name={`gstDetails[${index}].gstRate`}
-                                                                                type="text"
-                                                                                value={gst.gstRate}
-                                                                                placeholder="Rate"
-                                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        ) : values.gstratedetails === "Use GST Classification" ? (
-                                                            // Render HSN Code and Related Fields Section
-                                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                                <div className="flex-2 min-w-[250px]">
-                                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                                        HSN Code <span className="text-red-700 text-xl">*</span>
-                                                                    </label>
-                                                                    <ReactSelect
-                                                                        name="hsnCode"
-                                                                        value={hsnOptions?.find((option) => option.value === values.hsnCode?.id) || null}
-                                                                        onChange={(option) => setFieldValue("hsnCode", option ? option.hsnObject : null)}
-                                                                        options={hsnOptions}
-                                                                        styles={customStyles}
-                                                                        className="bg-white dark:bg-form-Field"
-                                                                        classNamePrefix="react-select"
-                                                                        placeholder="Select HSN Code"
-                                                                    />
-                                                                </div>
-                                                                <div className="flex-2 min-w-[250px]">
-                                                                    <label className="mb-2.5 block text-black dark:text-white">IGST (%)</label>
-                                                                    <Field
-                                                                        type="number"
-                                                                        value={vaaluee?.hsnCode?.igst}
-                                                                        disabled
-                                                                        placeholder="Enter IGST Name"
-                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
-                                                                    />
-                                                                    <ErrorMessage name="igst" component="div" className="text-red-500" />
-                                                                </div>
-                                                                <div className="flex-2 min-w-[250px]">
-                                                                    <label className="mb-2.5 block text-black dark:text-white">CGST (%)</label>
-                                                                    <Field
-                                                                        type="number"
-                                                                        value={vaaluee?.hsnCode?.cgst}
-                                                                        disabled
-                                                                        placeholder="Enter CGST Name"
-                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
-                                                                    />
-                                                                    <ErrorMessage name="cgst" component="div" className="text-red-500" />
-                                                                </div>
-                                                                <div className="flex-2 min-w-[250px]">
-                                                                    <label className="mb-2.5 block text-black dark:text-white">SGST (%)</label>
-                                                                    <Field
-                                                                        type="number"
-                                                                        value={vaaluee?.hsnCode?.sgst}
-                                                                        disabled
-                                                                        placeholder="Enter SGST Name"
-                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
-                                                                    />
-                                                                    <ErrorMessage name="sgst" component="div" className="text-red-500" />
-                                                                </div>
-                                                                <div className="flex-2 min-w-[250px]">
-                                                                    <label className="mb-2.5 block text-black dark:text-white">GST Description</label>
-                                                                    <Field
-                                                                        name="gstDescription"
-                                                                        value={vaaluee?.hsnCode?.productDescription}
-                                                                        type="text"
-                                                                        placeholder="Enter GST Description"
-                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                    />
-                                                                </div>
-                                                                <div className="flex-2 min-w-[250px]">
-                                                                    <label className="mb-2.5 block text-black dark:text-white">HSN/SAC</label>
-                                                                    <Field
-                                                                        name="hsn_Sac"
-                                                                        type="text"
-                                                                        placeholder="Enter HSN/SAC"
-                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        ) : null}
-                                                    </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                                    <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold '>GST Rate & Related Details </h1>
-                                                    <div className="mb-4.5 flex flex-wrap gap-6">
-
-
-
-
-
-
-                                                        {/* Taxation Type Field */}
-                                                        <div className="flex-2 min-w-[250px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white">Taxation Type</label>
-                                                            <Field
-                                                                name="taxationType"
-                                                                type="text"
-                                                                placeholder="Enter Taxation Type"
-                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                            />
-                                                        </div>
-
-                                                        {/* GST Rate Field */}
-
-
-                                                        {/* Type of Supply Field */}
-                                                        <div className="flex-2 min-w-[250px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white">Type of Supply</label>
-
-
+                                                        <label className="mb-2.5 block text-black dark:text-white">GST DETAILS</label>
+                                                        <div className="z-20 bg-transparent dark:bg-form-Field">
                                                             <ReactSelect
-
-                                                                name="typeOfSupply"
-                                                                options={supplyType}
-                                                                value={supplyType.find(option => option.value === values.typeOfSupply)}
-                                                                onChange={(option) => setFieldValue("typeOfSupply", option?.value)}
+                                                                name="gstDetails"
+                                                                options={gstOptions}
+                                                                value={gstOptions.find((option) => option.value === values.gstDetails)}
+                                                                onChange={(option) => setFieldValue("gstDetails", option?.value)}
                                                                 styles={customStyles}
-
-                                                                placeholder="Enter Type of Supply"
-
+                                                                className="bg-white dark:bg-form-Field"
+                                                                classNamePrefix="react-select"
+                                                                placeholder="Select GST details"
                                                             />
-
-                                                        </div>
-                                                    </div>
-                                                </>
-
-                                            </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                            <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>Images</h1>
-
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex flex-col space-y-4">
-                                                    {/* Upload Field */}
-                                                    <div className="flex-1 max-w-[370px] md:min-w-[400px] md:max-w-[600px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">
-                                                            Reference Image <span className="text-meta-1">*</span>
-                                                        </label>
-                                                        <div className="relative w-full">
-                                                            <Field
-                                                                name="refrenceImage"
-                                                                type="file"
-                                                                //multiple={false}
-                                                                multiple // Allow multiple files
-                                                                accept="image/*"
-                                                                onChange={handleFileChange}
-                                                                className="absolute inset-0 z-50 w-full h-full opacity-0 cursor-pointer"
-                                                            />
-                                                            <div className="flex flex-col items-center justify-center space-y-3 border-[1.5px] border-stroke bg-transparent py-3 px-5 rounded text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary">
-                                                                <span className="flex h-10 w-10 items-center justify-center rounded-full border p-3 border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
-                                                                    <svg
-                                                                        width="16"
-                                                                        height="16"
-                                                                        viewBox="0 0 16 16"
-                                                                        fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                    >
-                                                                        <path
-                                                                            fillRule="evenodd"
-                                                                            clipRule="evenodd"
-                                                                            d="M1.99967 9.33337C2.36786 9.33337 2.66634 9.63185 2.66634 10V12.6667C2.66634 12.8435 2.73658 13.0131 2.8616 13.1381C2.98663 13.2631 3.1562 13.3334 3.33301 13.3334H12.6663C12.8431 13.3334 13.0127 13.2631 13.1377 13.1381C13.2628 13.0131 13.333 12.8435 13.333 12.6667V10C13.333 9.63185 13.6315 9.33337 13.9997 9.33337C14.3679 9.33337 14.6663 9.63185 14.6663 10V12.6667C14.6663 13.1971 14.4556 13.7058 14.0806 14.0809C13.7055 14.456 13.1968 14.6667 12.6663 14.6667H3.33301C2.80257 14.6667 2.29387 14.456 1.91879 14.0809C1.54372 13.7058 1.33301 13.1971 1.33301 12.6667V10C1.33301 9.63185 1.63148 9.33337 1.99967 9.33337Z"
-                                                                            fill="#3C50E0"
-                                                                        />
-                                                                        <path
-                                                                            fillRule="evenodd"
-                                                                            clipRule="evenodd"
-                                                                            d="M7.5286 1.52864C7.78894 1.26829 8.21106 1.26829 8.4714 1.52864L11.8047 4.86197C12.0651 5.12232 12.0651 5.54443 11.8047 5.80478C11.5444 6.06513 11.1223 6.06513 10.8619 5.80478L8 2.94285L5.13807 5.80478C4.87772 6.06513 4.45561 6.06513 4.19526 5.80478C3.93491 5.54443 3.93491 5.12232 4.19526 4.86197L7.5286 1.52864Z"
-                                                                            fill="#3C50E0"
-                                                                        />
-                                                                        <path
-                                                                            fillRule="evenodd"
-                                                                            clipRule="evenodd"
-                                                                            d="M7.99967 1.33337C8.36786 1.33337 8.66634 1.63185 8.66634 2.00004V10C8.66634 10.3682 8.36786 10.6667 7.99967 10.6667C7.63148 10.6667 7.33301 10.3682 7.33301 10V2.00004C7.33301 1.63185 7.63148 1.33337 7.99967 1.33337Z"
-                                                                            fill="#3C50E0"
-                                                                        />
-                                                                    </svg>
-                                                                </span>
-                                                                <p>
-                                                                    <span className="text-primary">Click to upload</span> or drag and drop
-                                                                </p>
-                                                                <p className="mt-1.5">PNG, JPG or GIF(Less Than 5 mb)</p>
-                                                                <p>(max, 800 X 800px)</p>
-                                                            </div>
                                                         </div>
                                                     </div>
 
+                                                    {/* GST RATE DETAILS Section (Conditional) */}
+                                                    {values.gstDetails === "Applicable" && (
+                                                        <div className="flex-1 min-w-[250px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">GST RATE DETAILS</label>
+                                                            <ReactSelect
+                                                                name="gstratedetails"
+                                                                options={gstdetails}
+                                                                value={gstdetails.find((option) => option.value === values.gstratedetails)}
+                                                                onChange={(option) => handlerateDetails(option, setFieldValue)}
+                                                                styles={customStyles}
+                                                                classNamePrefix="react-select"
+                                                                placeholder="Enter GST Rate Details"
+                                                            />
+                                                        </div>
+                                                    )}
+                                                </div>
 
-                                                    {previews.length > 0 && (
-                                                        <div className="mt-4">
-                                                            <label className="mb-2.5 block text-black dark:text-white">
-                                                                Image Previews
-                                                            </label>
-                                                            {/* Box Wrapper */}
-                                                            <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
-                                                                {/* Grid Layout */}
-                                                                <div className="grid grid-cols-3 gap-4">
-                                                                    {previews.map((preview, index) => (
-                                                                        <div key={index} className="relative group">
-                                                                            {/* Image Preview */}
-                                                                            <img
-                                                                                src={preview.url}
-                                                                                alt={`Preview ${index + 1}`}
-                                                                                className="h-20 border rounded object-cover min-w-[100px] max-w-[100px] transition-transform duration-200 hover:scale-110"
-                                                                            />
-                                                                            {/* Cancel Button */}
-                                                                            <button
-                                                                                type="button" // ← THIS IS THE CRUCIAL FIX
-                                                                                onClick={(e) => {
-                                                                                    e.preventDefault(); // Additional safety
-                                                                                    handleRemoveImage(index);
-                                                                                }}
-                                                                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                                            >
-                                                                                &times;
-                                                                            </button>
+
+                                                <div className="mb-4.5  gap-6">
+                                                    {/* GST DETAILS Select */}
+
+                                                    {/* Conditional Fields based on gstDetails */}
+
+
+                                                    <>
+
+                                                        <div className="mb-4.5 mt-6">
+                                                            {/* Conditional Rendering: GST Details or HSN Code Section */}
+                                                            {/* {gstDetails && gstDetails.length > 0 ? ( */}
+                                                            {values.gstratedetails === "Specify Slab Based Rates" ? (
+
+                                                                // Render GST Details Section
+                                                                <div className="flex flex-wrap gap-6">
+                                                                    {gstDetails.map((gst, index) => (
+                                                                        <div key={index} className="mb-4.5 flex flex-wrap gap-6">
+                                                                            <div className="flex-2 min-w-[100px]">
+                                                                                <label className="mb-2.5 block text-black dark:text-white">Greater Than</label>
+                                                                                <Field
+                                                                                    name={`gstDetails[${index}].greaterThan`}
+                                                                                    type="text"
+                                                                                    value={gst.greaterThan}
+                                                                                    placeholder="Enter GBP Price"
+                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                />
+                                                                            </div>
+                                                                            <div className="flex-2 min-w-[100px]">
+                                                                                <label className="mb-2.5 block text-black dark:text-white">Upto</label>
+                                                                                <Field
+                                                                                    name={`gstDetails[${index}].upTo`}
+                                                                                    type="text"
+                                                                                    value={gst.upTo}
+                                                                                    placeholder="Upto"
+                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                />
+                                                                            </div>
+                                                                            <div className="flex-2 min-w-[100px]">
+                                                                                <label className="mb-2.5 block text-black dark:text-white">Type</label>
+                                                                                <Field
+                                                                                    name={`gstDetails[${index}].type`}
+                                                                                    type="text"
+                                                                                    value={gst.type}
+                                                                                    placeholder="Type"
+                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                />
+                                                                            </div>
+                                                                            <div className="flex-2 min-w-[100px]">
+                                                                                <label className="mb-2.5 block text-black dark:text-white">Rate</label>
+                                                                                <Field
+                                                                                    name={`gstDetails[${index}].gstRate`}
+                                                                                    type="text"
+                                                                                    value={gst.gstRate}
+                                                                                    placeholder="Rate"
+                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-2 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                />
+                                                                            </div>
                                                                         </div>
                                                                     ))}
                                                                 </div>
+                                                            ) : values.gstratedetails === "Use GST Classification" ? (
+                                                                // Render HSN Code and Related Fields Section
+                                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                                    <div className="flex-2 min-w-[250px]">
+                                                                        <label className="mb-2.5 block text-black dark:text-white">
+                                                                            HSN Code <span className="text-red-700 text-xl">*</span>
+                                                                        </label>
+                                                                        <ReactSelect
+                                                                            name="hsnCode"
+                                                                            value={hsnOptions?.find((option) => option.value === values.hsnCode?.id) || null}
+                                                                            onChange={(option) => setFieldValue("hsnCode", option ? option.hsnObject : null)}
+                                                                            options={hsnOptions}
+                                                                            styles={customStyles}
+                                                                            className="bg-white dark:bg-form-Field"
+                                                                            classNamePrefix="react-select"
+                                                                            placeholder="Select HSN Code"
+                                                                        />
+                                                                    </div>
+                                                                    <div className="flex-2 min-w-[250px]">
+                                                                        <label className="mb-2.5 block text-black dark:text-white">IGST (%)</label>
+                                                                        <Field
+                                                                            type="number"
+                                                                            value={vaaluee?.hsnCode?.igst}
+                                                                            disabled
+                                                                            placeholder="Enter IGST Name"
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
+                                                                        />
+                                                                        <ErrorMessage name="igst" component="div" className="text-red-500" />
+                                                                    </div>
+                                                                    <div className="flex-2 min-w-[250px]">
+                                                                        <label className="mb-2.5 block text-black dark:text-white">CGST (%)</label>
+                                                                        <Field
+                                                                            type="number"
+                                                                            value={vaaluee?.hsnCode?.cgst}
+                                                                            disabled
+                                                                            placeholder="Enter CGST Name"
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
+                                                                        />
+                                                                        <ErrorMessage name="cgst" component="div" className="text-red-500" />
+                                                                    </div>
+                                                                    <div className="flex-2 min-w-[250px]">
+                                                                        <label className="mb-2.5 block text-black dark:text-white">SGST (%)</label>
+                                                                        <Field
+                                                                            type="number"
+                                                                            value={vaaluee?.hsnCode?.sgst}
+                                                                            disabled
+                                                                            placeholder="Enter SGST Name"
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
+                                                                        />
+                                                                        <ErrorMessage name="sgst" component="div" className="text-red-500" />
+                                                                    </div>
+                                                                    <div className="flex-2 min-w-[250px]">
+                                                                        <label className="mb-2.5 block text-black dark:text-white">GST Description</label>
+                                                                        <Field
+                                                                            name="gstDescription"
+                                                                            value={vaaluee?.hsnCode?.productDescription}
+                                                                            type="text"
+                                                                            placeholder="Enter GST Description"
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                        />
+                                                                    </div>
+                                                                    <div className="flex-2 min-w-[250px]">
+                                                                        <label className="mb-2.5 block text-black dark:text-white">HSN/SAC</label>
+                                                                        <Field
+                                                                            name="hsn_Sac"
+                                                                            type="text"
+                                                                            placeholder="Enter HSN/SAC"
+                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            ) : null}
+                                                        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                        <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold '>GST Rate & Related Details </h1>
+                                                        <div className="mb-4.5 flex flex-wrap gap-6">
+
+
+
+
+
+
+                                                            {/* Taxation Type Field */}
+                                                            <div className="flex-2 min-w-[250px]">
+                                                                <label className="mb-2.5 block text-black dark:text-white">Taxation Type</label>
+                                                                <Field
+                                                                    name="taxationType"
+                                                                    type="text"
+                                                                    placeholder="Enter Taxation Type"
+                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                />
+                                                            </div>
+
+                                                            {/* GST Rate Field */}
+
+
+                                                            {/* Type of Supply Field */}
+                                                            <div className="flex-2 min-w-[250px]">
+                                                                <label className="mb-2.5 block text-black dark:text-white">Type of Supply</label>
+
+
+                                                                <ReactSelect
+
+                                                                    name="typeOfSupply"
+                                                                    options={supplyType}
+                                                                    value={supplyType.find(option => option.value === values.typeOfSupply)}
+                                                                    onChange={(option) => setFieldValue("typeOfSupply", option?.value)}
+                                                                    styles={customStyles}
+
+                                                                    placeholder="Enter Type of Supply"
+
+                                                                />
+
                                                             </div>
                                                         </div>
-                                                    )}
+                                                    </>
+
+                                                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                                <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>Images</h1>
+
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex flex-col space-y-4">
+                                                        {/* Upload Field */}
+                                                        <div className="flex-1 max-w-[370px] md:min-w-[400px] md:max-w-[600px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                                Reference Image <span className="text-meta-1">*</span>
+                                                            </label>
+                                                            <div className="relative w-full">
+                                                                <Field
+                                                                    name="refrenceImage"
+                                                                    type="file"
+                                                                    //multiple={false}
+                                                                    multiple // Allow multiple files
+                                                                    accept="image/*"
+                                                                    onChange={handleFileChange}
+                                                                    className="absolute inset-0 z-50 w-full h-full opacity-0 cursor-pointer"
+                                                                />
+                                                                <div className="flex flex-col items-center justify-center space-y-3 border-[1.5px] border-stroke bg-transparent py-3 px-5 rounded text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary">
+                                                                    <span className="flex h-10 w-10 items-center justify-center rounded-full border p-3 border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
+                                                                        <svg
+                                                                            width="16"
+                                                                            height="16"
+                                                                            viewBox="0 0 16 16"
+                                                                            fill="none"
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                        >
+                                                                            <path
+                                                                                fillRule="evenodd"
+                                                                                clipRule="evenodd"
+                                                                                d="M1.99967 9.33337C2.36786 9.33337 2.66634 9.63185 2.66634 10V12.6667C2.66634 12.8435 2.73658 13.0131 2.8616 13.1381C2.98663 13.2631 3.1562 13.3334 3.33301 13.3334H12.6663C12.8431 13.3334 13.0127 13.2631 13.1377 13.1381C13.2628 13.0131 13.333 12.8435 13.333 12.6667V10C13.333 9.63185 13.6315 9.33337 13.9997 9.33337C14.3679 9.33337 14.6663 9.63185 14.6663 10V12.6667C14.6663 13.1971 14.4556 13.7058 14.0806 14.0809C13.7055 14.456 13.1968 14.6667 12.6663 14.6667H3.33301C2.80257 14.6667 2.29387 14.456 1.91879 14.0809C1.54372 13.7058 1.33301 13.1971 1.33301 12.6667V10C1.33301 9.63185 1.63148 9.33337 1.99967 9.33337Z"
+                                                                                fill="#3C50E0"
+                                                                            />
+                                                                            <path
+                                                                                fillRule="evenodd"
+                                                                                clipRule="evenodd"
+                                                                                d="M7.5286 1.52864C7.78894 1.26829 8.21106 1.26829 8.4714 1.52864L11.8047 4.86197C12.0651 5.12232 12.0651 5.54443 11.8047 5.80478C11.5444 6.06513 11.1223 6.06513 10.8619 5.80478L8 2.94285L5.13807 5.80478C4.87772 6.06513 4.45561 6.06513 4.19526 5.80478C3.93491 5.54443 3.93491 5.12232 4.19526 4.86197L7.5286 1.52864Z"
+                                                                                fill="#3C50E0"
+                                                                            />
+                                                                            <path
+                                                                                fillRule="evenodd"
+                                                                                clipRule="evenodd"
+                                                                                d="M7.99967 1.33337C8.36786 1.33337 8.66634 1.63185 8.66634 2.00004V10C8.66634 10.3682 8.36786 10.6667 7.99967 10.6667C7.63148 10.6667 7.33301 10.3682 7.33301 10V2.00004C7.33301 1.63185 7.63148 1.33337 7.99967 1.33337Z"
+                                                                                fill="#3C50E0"
+                                                                            />
+                                                                        </svg>
+                                                                    </span>
+                                                                    <p>
+                                                                        <span className="text-primary">Click to upload</span> or drag and drop
+                                                                    </p>
+                                                                    <p className="mt-1.5">PNG, JPG or GIF(Less Than 5 mb)</p>
+                                                                    <p>(max, 800 X 800px)</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                        {previews.length > 0 && (
+                                                            <div className="mt-4">
+                                                                <label className="mb-2.5 block text-black dark:text-white">
+                                                                    Image Previews
+                                                                </label>
+                                                                {/* Box Wrapper */}
+                                                                <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
+                                                                    {/* Grid Layout */}
+                                                                    <div className="grid grid-cols-3 gap-4">
+                                                                        {previews.map((preview, index) => (
+                                                                            <div key={index} className="relative group">
+                                                                                {/* Image Preview */}
+                                                                                <img
+                                                                                    src={preview.url}
+                                                                                    alt={`Preview ${index + 1}`}
+                                                                                    className="h-20 border rounded object-cover min-w-[100px] max-w-[100px] transition-transform duration-200 hover:scale-110"
+                                                                                />
+                                                                                {/* Cancel Button */}
+                                                                                <button
+                                                                                    type="button" // ← THIS IS THE CRUCIAL FIX
+                                                                                    onClick={(e) => {
+                                                                                        e.preventDefault(); // Additional safety
+                                                                                        handleRemoveImage(index);
+                                                                                    }}
+                                                                                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                                >
+                                                                                    &times;
+                                                                                </button>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+
+
+                                                    </div>
+
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        {/* Upload Field */}
+                                                        <div className="max-w-[370px] md:min-w-[400px] md:max-w-[600px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                                Actual Image <span className="text-meta-1">*</span>
+                                                            </label>
+                                                            <div className="relative w-full">
+                                                                <Field
+                                                                    name="actualImage"
+                                                                    type="file"
+                                                                    //multiple={false}
+                                                                    multiple // Allow multiple files
+                                                                    accept="image/*"
+                                                                    onChange={handleFileChangeActual}
+                                                                    className="absolute inset-0 z-50 w-full h-full opacity-0 cursor-pointer"
+                                                                />
+                                                                <div className="flex flex-col items-center justify-center space-y-3 border-[1.5px] border-stroke bg-transparent py-3 px-5 rounded text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary">
+                                                                    <span className="flex h-10 w-10 items-center justify-center rounded-full border p-3 border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
+                                                                        <svg
+                                                                            width="16"
+                                                                            height="16"
+                                                                            viewBox="0 0 16 16"
+                                                                            fill="none"
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                        >
+                                                                            <path
+                                                                                fillRule="evenodd"
+                                                                                clipRule="evenodd"
+                                                                                d="M1.99967 9.33337C2.36786 9.33337 2.66634 9.63185 2.66634 10V12.6667C2.66634 12.8435 2.73658 13.0131 2.8616 13.1381C2.98663 13.2631 3.1562 13.3334 3.33301 13.3334H12.6663C12.8431 13.3334 13.0127 13.2631 13.1377 13.1381C13.2628 13.0131 13.333 12.8435 13.333 12.6667V10C13.333 9.63185 13.6315 9.33337 13.9997 9.33337C14.3679 9.33337 14.6663 9.63185 14.6663 10V12.6667C14.6663 13.1971 14.4556 13.7058 14.0806 14.0809C13.7055 14.456 13.1968 14.6667 12.6663 14.6667H3.33301C2.80257 14.6667 2.29387 14.456 1.91879 14.0809C1.54372 13.7058 1.33301 13.1971 1.33301 12.6667V10C1.33301 9.63185 1.63148 9.33337 1.99967 9.33337Z"
+                                                                                fill="#3C50E0"
+                                                                            />
+                                                                            <path
+                                                                                fillRule="evenodd"
+                                                                                clipRule="evenodd"
+                                                                                d="M7.5286 1.52864C7.78894 1.26829 8.21106 1.26829 8.4714 1.52864L11.8047 4.86197C12.0651 5.12232 12.0651 5.54443 11.8047 5.80478C11.5444 6.06513 11.1223 6.06513 10.8619 5.80478L8 2.94285L5.13807 5.80478C4.87772 6.06513 4.45561 6.06513 4.19526 5.80478C3.93491 5.54443 3.93491 5.12232 4.19526 4.86197L7.5286 1.52864Z"
+                                                                                fill="#3C50E0"
+                                                                            />
+                                                                            <path
+                                                                                fillRule="evenodd"
+                                                                                clipRule="evenodd"
+                                                                                d="M7.99967 1.33337C8.36786 1.33337 8.66634 1.63185 8.66634 2.00004V10C8.66634 10.3682 8.36786 10.6667 7.99967 10.6667C7.63148 10.6667 7.33301 10.3682 7.33301 10V2.00004C7.33301 1.63185 7.63148 1.33337 7.99967 1.33337Z"
+                                                                                fill="#3C50E0"
+                                                                            />
+                                                                        </svg>
+                                                                    </span>
+                                                                    <p>
+                                                                        <span className="text-primary">Click to upload</span> or drag and drop
+                                                                    </p>
+                                                                    <p className="mt-1.5"> PNG, JPG or GIF(Less Than 5 mb)</p>
+                                                                    <p>(max, 800 X 800px)</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+
+                                                        {previewsActual.length > 0 && (
+                                                            <div className="mt-4">
+                                                                <label className="mb-2.5 block text-black dark:text-white">
+                                                                    Image Previews
+                                                                </label>
+                                                                {/* Box Wrapper */}
+                                                                <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
+                                                                    {/* Grid Layout */}
+                                                                    <div className="grid grid-cols-3 gap-4">
+                                                                        {previewsActual.map((previewActual, index) => (
+                                                                            <div key={index} className="relative group">
+                                                                                {/* Image Preview */}
+                                                                                <img
+                                                                                    src={previewActual.url}
+                                                                                    alt={`Preview ${index + 1}`}
+                                                                                    className="h-20 border rounded object-cover min-w-[100px] max-w-[100px] transition-transform duration-200 hover:scale-110"
+                                                                                />
+                                                                                {/* Cancel Button */}
+                                                                                <button
+                                                                                    onClick={(e) => {
+                                                                                        e.preventDefault()
+                                                                                        handleRemoveActual(index)
+                                                                                    }
+                                                                                    }
+                                                                                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                                >
+
+                                                                                    &times;
+                                                                                </button>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+
+
+                                                    </div>
+
+
+
+
+
 
 
 
                                                 </div>
-
-                                                <div className="flex-1 min-w-[300px]">
-                                                    {/* Upload Field */}
-                                                    <div className="max-w-[370px] md:min-w-[400px] md:max-w-[600px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">
-                                                            Actual Image <span className="text-meta-1">*</span>
-                                                        </label>
-                                                        <div className="relative w-full">
-                                                            <Field
-                                                                name="actualImage"
-                                                                type="file"
-                                                                //multiple={false}
-                                                                multiple // Allow multiple files
-                                                                accept="image/*"
-                                                                onChange={handleFileChangeActual}
-                                                                className="absolute inset-0 z-50 w-full h-full opacity-0 cursor-pointer"
-                                                            />
-                                                            <div className="flex flex-col items-center justify-center space-y-3 border-[1.5px] border-stroke bg-transparent py-3 px-5 rounded text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary">
-                                                                <span className="flex h-10 w-10 items-center justify-center rounded-full border p-3 border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
-                                                                    <svg
-                                                                        width="16"
-                                                                        height="16"
-                                                                        viewBox="0 0 16 16"
-                                                                        fill="none"
-                                                                        xmlns="http://www.w3.org/2000/svg"
-                                                                    >
-                                                                        <path
-                                                                            fillRule="evenodd"
-                                                                            clipRule="evenodd"
-                                                                            d="M1.99967 9.33337C2.36786 9.33337 2.66634 9.63185 2.66634 10V12.6667C2.66634 12.8435 2.73658 13.0131 2.8616 13.1381C2.98663 13.2631 3.1562 13.3334 3.33301 13.3334H12.6663C12.8431 13.3334 13.0127 13.2631 13.1377 13.1381C13.2628 13.0131 13.333 12.8435 13.333 12.6667V10C13.333 9.63185 13.6315 9.33337 13.9997 9.33337C14.3679 9.33337 14.6663 9.63185 14.6663 10V12.6667C14.6663 13.1971 14.4556 13.7058 14.0806 14.0809C13.7055 14.456 13.1968 14.6667 12.6663 14.6667H3.33301C2.80257 14.6667 2.29387 14.456 1.91879 14.0809C1.54372 13.7058 1.33301 13.1971 1.33301 12.6667V10C1.33301 9.63185 1.63148 9.33337 1.99967 9.33337Z"
-                                                                            fill="#3C50E0"
-                                                                        />
-                                                                        <path
-                                                                            fillRule="evenodd"
-                                                                            clipRule="evenodd"
-                                                                            d="M7.5286 1.52864C7.78894 1.26829 8.21106 1.26829 8.4714 1.52864L11.8047 4.86197C12.0651 5.12232 12.0651 5.54443 11.8047 5.80478C11.5444 6.06513 11.1223 6.06513 10.8619 5.80478L8 2.94285L5.13807 5.80478C4.87772 6.06513 4.45561 6.06513 4.19526 5.80478C3.93491 5.54443 3.93491 5.12232 4.19526 4.86197L7.5286 1.52864Z"
-                                                                            fill="#3C50E0"
-                                                                        />
-                                                                        <path
-                                                                            fillRule="evenodd"
-                                                                            clipRule="evenodd"
-                                                                            d="M7.99967 1.33337C8.36786 1.33337 8.66634 1.63185 8.66634 2.00004V10C8.66634 10.3682 8.36786 10.6667 7.99967 10.6667C7.63148 10.6667 7.33301 10.3682 7.33301 10V2.00004C7.33301 1.63185 7.63148 1.33337 7.99967 1.33337Z"
-                                                                            fill="#3C50E0"
-                                                                        />
-                                                                    </svg>
-                                                                </span>
-                                                                <p>
-                                                                    <span className="text-primary">Click to upload</span> or drag and drop
-                                                                </p>
-                                                                <p className="mt-1.5"> PNG, JPG or GIF(Less Than 5 mb)</p>
-                                                                <p>(max, 800 X 800px)</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-
-                                                    {previewsActual.length > 0 && (
-                                                        <div className="mt-4">
-                                                            <label className="mb-2.5 block text-black dark:text-white">
-                                                                Image Previews
-                                                            </label>
-                                                            {/* Box Wrapper */}
-                                                            <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
-                                                                {/* Grid Layout */}
-                                                                <div className="grid grid-cols-3 gap-4">
-                                                                    {previewsActual.map((previewActual, index) => (
-                                                                        <div key={index} className="relative group">
-                                                                            {/* Image Preview */}
-                                                                            <img
-                                                                                src={previewActual.url}
-                                                                                alt={`Preview ${index + 1}`}
-                                                                                className="h-20 border rounded object-cover min-w-[100px] max-w-[100px] transition-transform duration-200 hover:scale-110"
-                                                                            />
-                                                                            {/* Cancel Button */}
-                                                                            <button
-                                                                                onClick={(e) => {
-                                                                                    e.preventDefault()
-                                                                                    handleRemoveActual(index)
-                                                                                }
-                                                                                }
-                                                                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                                            >
-
-                                                                                &times;
-                                                                            </button>
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
-
-
-
+                                                <div className="mb-6">
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Product Description </label>
+                                                    <Field
+                                                        name='productDescription'
+                                                        component="textarea"
+                                                        rows={6}
+                                                        placeholder="Type your message"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                    />
                                                 </div>
 
 
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">
+                                                            Supplier <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span>
+                                                        </label>
+                                                        <div className="z-20 bg-transparent dark:bg-form-Field">
+                                                            <ReactSelect
+                                                                isMulti
+                                                                name="supplier"
+                                                                value={
+                                                                    supplierNameOptions?.filter(option =>
+                                                                        values.supplier?.some(selected => selected.id === option.value)
+                                                                    ) || []
+                                                                }
+                                                                onChange={(selectedOptions) => {
+                                                                    // Update selected suppliers
+                                                                    setFieldValue(
+                                                                        'supplier',
+                                                                        selectedOptions?.map(option => ({
+                                                                            id: option.value,
+                                                                            name: option.label,
+                                                                            // Store the full supplier object to access workers later
 
+                                                                        })) || []
+                                                                    );
 
+                                                                    // Automatically update looms options when suppliers change
+                                                                    updateLoomsOptions(selectedOptions);
+                                                                }}
+                                                                options={supplierNameOptions}
+                                                                styles={customStyles}
+                                                                className="bg-white dark:bg-form-Field"
+                                                                classNamePrefix="react-select"
+                                                                placeholder="Select Supplier Name"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-
-
-
-                                            </div>
-                                            <div className="mb-6">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Product Description </label>
-                                                <Field
-                                                    name='productDescription'
-                                                    component="textarea"
-                                                    rows={6}
-                                                    placeholder="Type your message"
-                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                />
-                                            </div>
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Supplier <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
-                                                    <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                    <label className="mb-2.5 block text-black dark:text-white">
+                                                        No Of Looms <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span>
+                                                    </label>
+                                                    <div className="bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
-                                                            isMulti // Enable multi-selection
-                                                            name="supplier"
-                                                            value={
-                                                                supplierNameOptions?.filter(option =>
-                                                                    values.supplier?.some(selected => selected.id === option.value)
-                                                                ) || [] // Map selected suppliers to ReactSelect's value
-                                                            }
+                                                            name="looms"
+                                                            isMulti // If you want to select multiple looms/workers
+                                                            value={loomsOptions?.filter(option =>
+                                                                values.looms?.includes(option.value)
+                                                            ) || []}
                                                             onChange={(selectedOptions) => {
                                                                 setFieldValue(
-                                                                    'supplier',
-                                                                    selectedOptions?.map(option => ({
-                                                                        id: option.value,
-                                                                        // Include name or other relevant fields
-                                                                    })) || [] // Handle empty selection
+                                                                    'looms',
+                                                                    selectedOptions?.map(option => option.value) || []
                                                                 );
                                                             }}
-                                                            options={supplierNameOptions}
-                                                            styles={customStyles} // Pass custom styles here
+                                                            options={loomsOptions} // This will be dynamically updated
+                                                            styles={customStyles}
                                                             className="bg-white dark:bg-form-Field"
                                                             classNamePrefix="react-select"
-                                                            placeholder="Select Supplier Name"
+                                                            placeholder="Select Workers/Looms"
                                                         />
-
-
                                                     </div>
                                                 </div>
 
-                                            </div>
 
 
 
@@ -1746,61 +1926,26 @@ console.log(productCategory,"9696969");
 
 
 
-                                            <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Supplier Code <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
-                                                <div className=" bg-transparent dark:bg-form-Field">
-
-
-                                                    <ReactSelect
-                                                        name="supplierCode"
-                                                        value={supplierCodeOptions?.find(option => option.value === values.supplierCode?.id) || null}
-                                                        onChange={(option) => {
-
-                                                            setFieldValue('supplierCode', option ? option?.suplieridd : null),
-                                                                setFieldValue('supplierWord', option ? option?.label : null)
-                                                        }
-
-                                                        }
-                                                        options={supplierCodeOptions}
-                                                        styles={customStyles} // Pass custom styles here
-                                                        className="bg-white dark:bg-form-Field"
-                                                        classNamePrefix="react-select"
-                                                        placeholder="Select supplier Code"
-                                                    />
 
 
 
+
+
+
+
+
+
+                                                <div className='flex justify-center m-5'>
+                                                    <button className="flex md:w-[180px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90" >
+                                                        Add Product
+                                                    </button>
 
                                                 </div>
-
                                             </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                            <div className='flex justify-center m-5'>
-                                                <button className="flex md:w-[180px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90" >
-                                                    Add Product
-                                                </button>
-
-                                            </div>
                                         </div>
-
-
                                     </div>
-                                </div>
                             </Form>
                         )
                     }}

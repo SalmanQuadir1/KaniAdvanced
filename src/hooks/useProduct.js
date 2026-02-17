@@ -42,7 +42,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
     const [productmrp, setproductmrp] = useState([])
     const [currentProduct, setCurrentProduct] = useState({
         productGroup: {},
-        supplierWord:'',
+  
 
         subGroup:{},
 
@@ -77,7 +77,9 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
         // ],      
      
         supplier: [],
-        supplierCode: {},
+        looms:[],
+        supplierCode: '',
+        // supplierr:[],
         warpColors: "",
         sizeCode: "",
         designCode: "",
@@ -463,6 +465,8 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
 
             // Append the updated product to formData
             formData.append("product", JSON.stringify(product));
+            console.log(product,"666666666666666660000");
+            
             console.log(referenceImages,"reffferrreffefefefefefefefffffffffffff=================");
 
             Array.from(referenceImages).forEach((file) => formData.append('referenceImages', file)); // Add files
@@ -477,11 +481,11 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
                     console.log(pair[0], pair[1]);
                 }
             }
+            console.log(formData, "formmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
             for (let [key, value] of formData.entries()) {
                 console.log(`${key}:`, value, "heyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
             }
 
-            console.log(formData, "formmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
 
             // Submit the form data
             const url = edit ? `${UPDATE_PRODUCT_URL}/${currentProduct.id}` : ADD_PRODUCT_URL;
