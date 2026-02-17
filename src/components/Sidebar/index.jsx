@@ -496,7 +496,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       >
 
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                          <li>
+                          {/* <li>
                             <NavLink
                               to="/inventory/addProductInventory"
                               className={({ isActive }) =>
@@ -506,7 +506,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             >
                               Add Inventory
                             </NavLink>
-                          </li>
+                          </li> */}
                              <li>
                              <NavLink
                               to="/configurator/vouchers"
