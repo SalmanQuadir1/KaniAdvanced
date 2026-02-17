@@ -250,7 +250,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               Vouchers
                             </NavLink>
                           </li>
-                          <li>
+                          {/* <li>
                             <NavLink
                               to="/configurator/dayBook"
                               className={({ isActive }) =>
@@ -261,7 +261,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               <MdBook/>
                               Day Book
                             </NavLink>
-                          </li>
+                          </li> */}
 
                              <li>
                             <NavLink
