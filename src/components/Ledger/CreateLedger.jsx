@@ -132,6 +132,14 @@ const CreateLedger = () => {
         { value: 'SALES', label: 'SALES' },
         { value: 'PURCHASE', label: 'PURCHASE' },
         { value: 'GIFTVOUCHER', label: 'GIFT VOUCHER' },
+
+
+        { value: 'PRIMARY', label: 'PRIMARY' },
+        { value: 'DUTIES&TAXES', label: 'DUTIES & TAXES' },
+        { value: 'DIRECTEXPENSES', label: 'DIRECT EXPENSES' },
+        { value: 'DIRECTINCOME', label: 'DIRECT INCOME' },
+        { value: 'INDIRECTEXPENSES', label: 'INDIRECT EXPENSES' },
+        { value: 'INDIRECTINCOME', label: 'INDIRECT INCOME' },
     ];
     useEffect(() => {
         getGroup()
