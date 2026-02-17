@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react'; // Add useCallback
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import {
@@ -25,13 +25,14 @@ const useproductGroup = () => {
     itemsPerPage: 0,
   });
 
+  // Fix 1: Change the useEffect dependency
   useEffect(() => {
     getproductGroup(pagination.currentPage);
-  }, [currentproductGroup]);
+  }, [pagination.currentPage]); // Changed from currentproductGroup to pagination.currentPage
 
   const getproductGroup = async (page) => {
     try {
-      const response = await fetch(`${GET_PRODUCT_GROUP_URL}?page=${page}`, {
+      const response = await fetch(`${GET_PRODUCT_GROUP_URL}?page=${page }`, { // Fix: subtract 1 for zero-indexed API
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -39,10 +40,12 @@ const useproductGroup = () => {
         },
       });
       const data = await response.json();
+      console.log(data, "55555555555555555");
+      
       setproductGroup(data?.content);
       setPagination({
         totalItems: data.totalElements,
-        pagUnitList: data.content,
+        data: data.content,
         totalPages: data.totalPages,
         currentPage: data.number + 1,
         itemsPerPage: data.size,
@@ -89,7 +92,6 @@ const useproductGroup = () => {
   const handleUpdate = (e, item) => {
     e.preventDefault();
     setEdit(true);
-
     setCurrentproductGroup(item);
   };
 
@@ -120,12 +122,13 @@ const useproductGroup = () => {
         setCurrentproductGroup({
           productGroupName: '',
         });
-        // getproductGroup(pagination.currentPage); // Fetch updated productGroup
+        // Fetch the current page after successful operation
+        getproductGroup(pagination.currentPage);
       } else {
         toast.error(`${data.errorMessage}`);
       }
     } catch (error) {
-      console.error(error, response);
+      console.error(error);
       toast.error('An error occurred');
     } finally {
       setSubmitting(false);
@@ -133,8 +136,11 @@ const useproductGroup = () => {
   };
 
   const handlePageChange = (newPage) => {
-    setPagination((prev) => ({ ...prev, currentPage: newPage }));
-    getproductGroup(newPage); // API is 0-indexed for pages
+    // Fix 2: Ensure newPage is a number and valid
+    if (newPage && newPage !== pagination.currentPage) {
+      setPagination((prev) => ({ ...prev, currentPage: newPage }));
+      // The useEffect will automatically call getproductGroup due to pagination.currentPage dependency
+    }
   };
 
   return {

@@ -1362,6 +1362,137 @@ const CreateVoucher = () => {
                             return null;
                         };
 
+                        const calculateGST = (mrp, hsnCode, gstRegistration, customerAddress, discount = 0, customerState) => {
+                            console.log(gstRegistration, "545499889999999999999999999999999");
+
+                            // If discount is applied, no GST will be applied
+                            if (discount > 0) {
+                                return {
+                                    type: 'No GST (Discount Applied)',
+                                    cgstRate: 0,
+                                    sgstRate: 0,
+                                    igstRate: 0,
+                                    cgstAmount: 0,
+                                    sgstAmount: 0,
+                                    gstAmount: 0,
+                                    totalGstAmount: 0,
+                                    inclusivePrice: mrp,
+                                    isSameState: false,
+                                    discountApplied: true
+                                };
+                            }
+
+                            const igstRate = hsnCode?.igst || 0;
+                            const cgstRate = hsnCode?.cgst || 0;
+                            const sgstRate = hsnCode?.sgst || 0;
+
+                            // Normalize state codes - ensure they are strings and handle undefined/null
+                            const registrationCode = String(gstRegistration || '').trim();
+                            const customerStateCode = String(customerState || '').trim();
+                            const newShippingStateCode = newShippingState ? String(newShippingState).trim() : null;
+                            console.log(newShippingStateCode, "3333333333333333333333333333333336");
+
+
+                            // Function to convert state name to state code if needed
+                            const getStateCode = (state) => {
+                                const stateStr = String(state || '').toLowerCase().trim();
+
+                                // Check for Jammu & Kashmir variations
+                                if (stateStr === '01' ||
+                                    stateStr.includes('jammu') ||
+                                    stateStr.includes('kashmir') ||
+                                    stateStr.includes('srinagar')) {
+                                    return '01';
+                                }
+
+                                // Check for Delhi variations
+                                if (stateStr === '07' || stateStr.includes('delhi')) {
+                                    return '07';
+                                }
+
+                                // Return the original if it's already a code (01-35, 97, 98)
+                                return stateStr;
+                            };
+
+                            // Get standardized state codes
+                            const registrationStateCode = getStateCode(registrationCode);
+
+                            // Determine which customer state to use based on newShippingState availability
+                            let customerStateToCompare = newShippingStateCode;
+
+                            // If newShippingState is not provided or is empty, fall back to original customerState
+                            if (!customerStateToCompare || customerStateToCompare === '') {
+                                customerStateToCompare = getStateCode(customerStateCode);
+                            } else {
+                                customerStateToCompare = getStateCode(newShippingStateCode);
+                            }
+
+                            // Determine if same state transaction
+                            const isSameState = registrationStateCode === customerStateToCompare &&
+                                (registrationStateCode === '01' || registrationStateCode === '07');
+
+                            if (isSameState) {
+                                // Same state - apply CGST + SGST
+                                const cgstAmount = mrp * (cgstRate / 100);
+                                const sgstAmount = mrp * (sgstRate / 100);
+                                const totalGstAmount = cgstAmount + sgstAmount;
+                                const inclusivePrice = mrp + totalGstAmount;
+                                // Note: setgsttype should be defined outside this function scope
+                                if (typeof setgsttype === 'function') {
+                                    setgsttype("SGST+CGST");
+                                }
+
+                                return {
+                                    type: 'CGST+SGST',
+                                    cgstRate,
+                                    sgstRate,
+                                    igstRate: 0,
+                                    cgstAmount,
+                                    sgstAmount,
+                                    gstAmount: 0,
+                                    totalGstAmount,
+                                    inclusivePrice,
+                                    isSameState: true,
+                                    registrationStateCode,
+                                    customerStateCode: customerStateToCompare,
+                                    stateName: registrationStateCode === '01' ? 'Jammu And Kashmir' : 'Delhi',
+                                    discountApplied: false,
+                                    usedShippingState: newShippingStateCode ? 'newShippingState' : 'customerState'
+                                };
+                            } else {
+                                // Different state or mixed - apply IGST
+                                const gstAmount = mrp * (igstRate / 100);
+                                const inclusivePrice = mrp + gstAmount;
+                                // Note: setgsttype should be defined outside this function scope
+                                if (typeof setgsttype === 'function') {
+                                    setgsttype("IGST");
+                                }
+
+                                return {
+                                    type: 'IGST',
+                                    igstRate,
+                                    cgstRate: 0,
+                                    sgstRate: 0,
+                                    gstAmount,
+                                    cgstAmount: 0,
+                                    sgstAmount: 0,
+                                    totalGstAmount: gstAmount,
+                                    inclusivePrice,
+                                    isSameState: false,
+                                    registrationStateCode,
+                                    customerStateCode: customerStateToCompare,
+                                    stateName: 'Inter-State',
+                                    discountApplied: false,
+                                    usedShippingState: newShippingStateCode ? 'newShippingState' : 'customerState'
+                                };
+                            }
+                        };
+
+
+                        useEffect(() => {
+                            calculateGST()
+                        }, [values?.ledgerId])
+
 
                         return (
                             <Form>
