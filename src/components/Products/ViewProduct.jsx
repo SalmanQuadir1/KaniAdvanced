@@ -627,8 +627,8 @@ const ViewProduct = () => {
 
                     {/* Inventory Modal */}
                     {isINVENTORYModalOpen && (
-                        <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50 overflow-scroll">
-                            <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[300px]  w-[70px] h-[400px] mt-[60px] dark:bg-slate-600 overflow-scroll">
+                        <div className="min-w-[500px] fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50 overflow-scroll">
+                            <div className="min-w-[800px] bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[100px]  w-[70px] h-[400px] mt-[60px] dark:bg-slate-600 overflow-scroll">
                                 <div className="text-right">
                                     <button onClick={closeINVENTORYModal} className="text-red-500 text-xl  font-bold">&times;</button>
                                 </div>

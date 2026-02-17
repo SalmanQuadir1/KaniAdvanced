@@ -318,7 +318,7 @@ const CreateVoucher = () => {
 
     useEffect(() => {
         calculateGST()
-    }, [newShippingState])
+    }, [newShippingState,custaddress])
 
 
 
@@ -328,9 +328,7 @@ const CreateVoucher = () => {
 
         setselectedOrder(option);
         setAvailableProducts([]);
-        console.log(option, "lklk");
-
-        console.log(selectedOrder, "kikidoyopu");
+   
 
 
 
@@ -346,7 +344,6 @@ const CreateVoucher = () => {
 
             const data = await response.json();
 
-            console.log(data, "iuiu");
 
 
 
@@ -441,7 +438,7 @@ const CreateVoucher = () => {
                 });
 
                 const data = await response.json();
-                console.log(data, "Products data");
+            
                 if (response.ok && Array.isArray(data)) {
                     const orderOptions = data.map(ord => ({
                         value: ord.orderId,
@@ -468,7 +465,7 @@ const CreateVoucher = () => {
                 setLoadingProducts(false);
             }
         } else if (Vouchers?.typeOfVoucher === "Sales" && option) {
-            console.log(option, "0000000000000000000000000000000");
+       
 
             // For Sales - fetch customer products
             setloadingOrders(true);
@@ -483,7 +480,7 @@ const CreateVoucher = () => {
                 });
 
                 const data = await response.json();
-                console.log(data, "order data");
+              
 
                 if (response.ok && Array.isArray(data)) {
                     const orderOptions = data.map(ord => ({
@@ -526,7 +523,7 @@ const CreateVoucher = () => {
     };
 
     const calculateLineTotalForPur = (entry) => {
-        console.log(entry, "jamshedpurrr");
+ 
 
         const basePrice = entry.discount >= 0 && entry.mrp;
         const quantity = entry.quantity || 1;
@@ -582,7 +579,7 @@ const CreateVoucher = () => {
         });
 
         grandTotal = subtotal + totalGST;
-        console.log(subtotal, grandTotal, "jazimmmm");
+
 
 
         return {
@@ -676,7 +673,7 @@ const CreateVoucher = () => {
         }
     };
 
-    console.log(Vouchers, "-------------------------------");
+ 
 
 
 
@@ -781,7 +778,7 @@ const CreateVoucher = () => {
             });
 
             const data = await response.json();
-            console.log(data, "All products data");
+           
 
             if (response.ok && Array.isArray(data.content)) {
                 const productOptions = data?.content?.map(product => ({
@@ -839,7 +836,7 @@ const CreateVoucher = () => {
         ];
     };
 
-    console.log(newShippingState, "buchhhhhhhhhhhhhhhhhhhh");
+  
 
     const [SelectedINVENTORYData, setSelectedINVENTORYData] = useState([])
     const [isINVENTORYModalOpen, setIsINVENTORYModalOpen] = useState(false);
@@ -1103,7 +1100,6 @@ const CreateVoucher = () => {
                             const typeOfVoucher = Vouchers?.typeOfVoucher?.toLowerCase() || '';
                             const defGstRegist = Vouchers?.defGstRegist || '';
 
-                            console.log(isExport, "exxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
                             // Determine registration location from GST registration
                             const getRegistrationLocation = (gstReg) => {
@@ -1244,7 +1240,7 @@ const CreateVoucher = () => {
                                 // The amountReceived should already be set by the user
                             }
                         }, [isPaymentInParts]);
-                        console.log(totals, "masjidddddddddddddddd");
+                 
 
 
 
@@ -1363,7 +1359,7 @@ const CreateVoucher = () => {
                         };
 
                         const calculateGST = (mrp, hsnCode, gstRegistration, customerAddress, discount = 0, customerState) => {
-                            console.log(gstRegistration, "545499889999999999999999999999999");
+                           
 
                             // If discount is applied, no GST will be applied
                             if (discount > 0) {
@@ -1674,7 +1670,7 @@ const CreateVoucher = () => {
                                                                 onChange={(selectedOptions) => {
                                                                     const selectedValues = selectedOptions?.map(option => option.value) || [];
                                                                     setFieldValue('orderIds', selectedValues);
-                                                                    console.log(selectedValues, "jojojazim");
+                                                                   
 
                                                                     // Call handleOrderSelect with selected values (even if empty)
                                                                     handleOrderSelect(selectedValues);
@@ -1920,7 +1916,7 @@ const CreateVoucher = () => {
                                                                         {values.paymentDetails.map((entry, index) => {
                                                                             const rowProducts = getAvailableProductsForRow(values, index);
 
-                                                                            console.log(rowProducts, entry, "javaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaidddddddddddddddddddddddddddddddddddddddddddddddddddd");
+                                                                           
 
                                                                             return (
                                                                                 <tr key={entry.id || index} className="hover:bg-gray-50 dark:hover:bg-gray-800">
@@ -1932,7 +1928,7 @@ const CreateVoucher = () => {
                                                                                                 value={getSelectedProductValue(entry.productsId, rowProducts, values, index)}
                                                                                                 onChange={(option) => {
 
-                                                                                                    console.log(option, "umermukhtar");
+                                                                                                    
 
                                                                                                     const mrp = option?.price || 0;
                                                                                                     const hsnCode = option?.hsnCode || {};
