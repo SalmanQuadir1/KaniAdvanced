@@ -43,9 +43,9 @@ const UpdateOrder = () => {
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [selectedRowIdProduct, setSelectedRowIdProduct] = useState(null);
   const [suppliers, setSuppliers] = useState([
-    { id: 1, name: "Supplier A" },
-    { id: 2, name: "Supplier B" },
-    { id: 3, name: "Supplier C" },
+    // { id: 1, name: "Supplier A" },
+    // { id: 2, name: "Supplier B" },
+    // { id: 3, name: "Supplier C" },
   ])
   const {
     getorderType,
@@ -66,20 +66,16 @@ const UpdateOrder = () => {
     return index >= (order?.orderProducts?.length || 0);
   };
 
-  // FIXED: handleCheckboxChange with proper data extraction
   const handleCheckboxChange = (selectedRowId, supplierId, supplierName) => {
     console.log('Adding supplier - RAW DATA:', { selectedRowId, supplierId, supplierName });
     
-    // Check if supplierId is an object (from your console log)
     let actualSupplierId;
     let actualSupplierName;
     
     if (supplierId && typeof supplierId === 'object') {
-      // If supplierId is an object like {productId: '...', supplierName: 'WAJID ALI GANIE', id: 48}
-      actualSupplierId = supplierId.id; // Extract the id (48)
-      actualSupplierName = supplierId.supplierName || supplierName || ''; // Extract the name
+      actualSupplierId = supplierId.id;
+      actualSupplierName = supplierId.supplierName || supplierName || '';
     } else {
-      // If supplierId is already a number/string
       actualSupplierId = supplierId;
       actualSupplierName = supplierName || '';
     }
@@ -107,8 +103,8 @@ const UpdateOrder = () => {
           );
         } else {
           updated[rowIndex].supplierIds.push({
-            supplierId: actualSupplierId, // Should be number like 48
-            supplierName: actualSupplierName, // Should be "WAJID ALI GANIE"
+            supplierId: actualSupplierId,
+            supplierName: actualSupplierName,
             supplierOrderQty: 0,
           });
         }
@@ -116,8 +112,8 @@ const UpdateOrder = () => {
         updated.push({
           selectedRowId,
           supplierIds: [{ 
-            supplierId: actualSupplierId, // Should be number like 48
-            supplierName: actualSupplierName, // Should be "WAJID ALI GANIE"
+            supplierId: actualSupplierId,
+            supplierName: actualSupplierName,
             supplierOrderQty: 0
           }],
         });
@@ -128,20 +124,46 @@ const UpdateOrder = () => {
     toast.success(`Supplier ${actualSupplierName} added`);
   };
 
-  // FIXED: handleCheckboxChangeProduct with proper data extraction
+  // FIXED: handleCheckboxChangeProduct - Correctly extracts supplier data
   const handleCheckboxChangeProduct = (selectedRowId, supplier) => {
-    console.log("Adding supplier to product - RAW:", selectedRowId, supplier);
+    console.log("=== DEBUG: Adding supplier to product ===");
+    console.log("selectedRowId:", selectedRowId);
+    console.log("supplier object:", supplier);
     
-    // Extract supplier ID and name correctly
-    const supplierId = supplier.id || (supplier.supplierId && typeof supplier.supplierId === 'object' ? supplier.supplierId.id : supplier.supplierId);
-    const supplierName = supplier.supplierName || supplier.name || 
-                        (supplier.supplierId && typeof supplier.supplierId === 'object' ? supplier.supplierId.supplierName : '');
+    // SIMPLE AND DIRECT EXTRACTION
+    let supplierId;
+    let supplierName;
     
-    console.log("Adding supplier to product - EXTRACTED:", { 
-      selectedRowId, 
-      supplierId, 
-      supplierName 
-    });
+    // Check what kind of object we received
+    if (supplier && typeof supplier === 'object') {
+      // Direct supplier object with id and name
+      if (supplier.id !== undefined) {
+        supplierId = supplier.id;
+        supplierName = supplier.supplierName || supplier.name || `Supplier ${supplier.id}`;
+      }
+      // Supplier wrapped in supplierId object
+      else if (supplier.supplierId && typeof supplier.supplierId === 'object') {
+        supplierId = supplier.supplierId.id;
+        supplierName = supplier.supplierId.supplierName || supplier.supplierId.name || `Supplier ${supplierId}`;
+      }
+      // Supplier has supplierId as primitive
+      else if (supplier.supplierId) {
+        supplierId = supplier.supplierId;
+        supplierName = supplier.supplierName || supplier.name || `Supplier ${supplierId}`;
+      }
+    } else {
+      // Supplier is just an ID
+      supplierId = supplier;
+      supplierName = `Supplier ${supplierId}`;
+    }
+    
+    console.log("EXTRACTED VALUES:", { supplierId, supplierName });
+    
+    if (!supplierId) {
+      console.error("No supplier ID found!");
+      toast.error("Invalid supplier data");
+      return;
+    }
     
     setSelectedSuppliersProduct((prev) => {
       const updated = [...prev];
@@ -150,31 +172,34 @@ const UpdateOrder = () => {
       );
 
       if (rowIndex !== -1) {
+        // Check if supplier already exists
         const supplierExists = updated[rowIndex].supplierIds.some(
           (s) => s.supplierId === supplierId
         );
 
         if (!supplierExists) {
           updated[rowIndex].supplierIds.push({
-            supplierId: supplierId, // Should be number
-            supplierName: supplierName, // Should be string
+            supplierId: supplierId,
+            supplierName: supplierName,
             supplierOrderQty: 0,
           });
+          toast.success(`Supplier ${supplierName} added`);
+        } else {
+          toast.info(`Supplier ${supplierName} already added`);
         }
       } else {
         updated.push({
           selectedRowId,
           supplierIds: [{
-            supplierId: supplierId, // Should be number
-            supplierName: supplierName, // Should be string
+            supplierId: supplierId,
+            supplierName: supplierName,
             supplierOrderQty: 0,
           }],
         });
+        toast.success(`Supplier ${supplierName} added`);
       }
       return updated;
     });
-    
-    toast.success(`Supplier ${supplierName} added`);
   };
 
   const openSupplierModal = (id, rowIndex) => {
@@ -200,7 +225,6 @@ const UpdateOrder = () => {
   const handleSupplierModalSubmit = () => {
     console.log("Selected Suppliers:", selectedSuppliers);
     
-    // Check what's actually in the state
     selectedSuppliers.forEach((item, idx) => {
       console.log(`Supplier group ${idx}:`, item);
       item.supplierIds.forEach((supplier, sIdx) => {
@@ -216,32 +240,19 @@ const UpdateOrder = () => {
       item => item.selectedRowId === selectedRowId
     );
     
-    // if (suppliersForCurrentProduct.length > 0) {
-    //   const suppliersCount = suppliersForCurrentProduct[0].supplierIds.length;
-    //   toast.success(`${suppliersCount} supplier(s) added successfully`);
-    // }
-    
     closeSupplierModal();
   };
 
   const handleSupplierModalSubmitProduct = () => {
     console.log("Selected Suppliers Product:", selectedSuppliersProduct);
-    
-    const suppliersForCurrentProduct = selectedSuppliersProduct.filter(
-      item => item.selectedRowId === selectedRowIdProduct
-    );
-    
-    // if (suppliersForCurrentProduct.length > 0) {
-    //   toast.success(`${suppliersForCurrentProduct[0].supplierIds.length} supplier(s) added successfully`);
-    // }
-    
     closeSupplierModalProduct();
   };
 
-  // Updates both state and Formik for NEW products (from prodIdModal)
+  // FIXED: For new products - Prevents duplicate suppliers when updating quantity
   const handleSupplierQuantityUpdate = (productIndex, supplierIndex, quantity, setFieldValue, values) => {
     const qty = parseInt(quantity) || 0;
     
+    // First update the local state
     setSelectedSuppliersProduct(prev => {
       const updated = [...prev];
       const productSuppliers = updated.find(
@@ -255,6 +266,7 @@ const UpdateOrder = () => {
       return updated;
     });
     
+    // Then update Formik values
     const startingIndex = order?.orderProducts?.length || 0;
     const actualIndex = startingIndex + productIndex;
     
@@ -267,19 +279,22 @@ const UpdateOrder = () => {
       
       const currentSuppliers = values.orderProducts[actualIndex]?.productSuppliers || [];
       
-      let updatedSuppliers;
+      // Check if supplier already exists in Formik state
       const existingIndex = currentSuppliers.findIndex(
         s => s.supplier?.id === supplier.supplierId
       );
       
       if (existingIndex !== -1) {
-        updatedSuppliers = [...currentSuppliers];
+        // UPDATE existing supplier - DON'T create new entry
+        const updatedSuppliers = [...currentSuppliers];
         updatedSuppliers[existingIndex] = {
           ...updatedSuppliers[existingIndex],
           supplierOrderQty: qty
         };
+        setFieldValue(`orderProducts[${actualIndex}].productSuppliers`, updatedSuppliers);
       } else {
-        updatedSuppliers = [
+        // ADD new supplier
+        setFieldValue(`orderProducts[${actualIndex}].productSuppliers`, [
           ...currentSuppliers,
           {
             supplier: { 
@@ -287,17 +302,16 @@ const UpdateOrder = () => {
             },
             supplierOrderQty: qty
           }
-        ];
+        ]);
       }
-      
-      setFieldValue(`orderProducts[${actualIndex}].productSuppliers`, updatedSuppliers);
     }
   };
 
-  // Handle quantity updates for EXISTING products
+  // FIXED: For existing products - Prevents duplicate suppliers when updating quantity
   const handleSupplierQuantityUpdateExisting = (productIndex, supplierIndex, quantity, setFieldValue, values) => {
     const qty = parseInt(quantity) || 0;
     
+    // First update the local state
     setSelectedSuppliers(prev => {
       const updated = [...prev];
       const productSuppliers = updated.find(
@@ -311,6 +325,7 @@ const UpdateOrder = () => {
       return updated;
     });
     
+    // Then update Formik values
     const productSuppliers = selectedSuppliers.find(
       item => item.selectedRowId === productIndex
     );
@@ -320,19 +335,22 @@ const UpdateOrder = () => {
       
       const currentSuppliers = values.orderProducts[productIndex]?.productSuppliers || [];
       
-      let updatedSuppliers;
+      // Check if supplier already exists in Formik state
       const existingIndex = currentSuppliers.findIndex(
         s => s.supplier?.id === supplier.supplierId
       );
       
       if (existingIndex !== -1) {
-        updatedSuppliers = [...currentSuppliers];
+        // UPDATE existing supplier - DON'T create new entry
+        const updatedSuppliers = [...currentSuppliers];
         updatedSuppliers[existingIndex] = {
           ...updatedSuppliers[existingIndex],
           supplierOrderQty: qty
         };
+        setFieldValue(`orderProducts[${productIndex}].productSuppliers`, updatedSuppliers);
       } else {
-        updatedSuppliers = [
+        // ADD new supplier
+        setFieldValue(`orderProducts[${productIndex}].productSuppliers`, [
           ...currentSuppliers,
           {
             supplier: { 
@@ -340,14 +358,11 @@ const UpdateOrder = () => {
             },
             supplierOrderQty: qty
           }
-        ];
+        ]);
       }
-      
-      setFieldValue(`orderProducts[${productIndex}].productSuppliers`, updatedSuppliers);
     }
   };
 
-  // Deletes from both state and Formik for NEW products
   const handleDeleteSupplierProduct = (productIndex, supplierIndex, setFieldValue, values) => {
     const productSuppliers = selectedSuppliersProduct.find(
       item => item.selectedRowId === productIndex
@@ -391,7 +406,6 @@ const UpdateOrder = () => {
     toast.success('Supplier removed successfully');
   };
 
-  // Delete supplier from existing product
   const handleDeleteSupplierExisting = (productIndex, supplierIndex, setFieldValue, values) => {
     const productSuppliers = selectedSuppliers.find(
       item => item.selectedRowId === productIndex
@@ -445,13 +459,8 @@ const UpdateOrder = () => {
     values.orderProducts.forEach((product, index) => {
       console.log(`Product ${index} (isNew: ${isNewProduct(index)}):`, {
         productId: product.products?.productId,
+        hasIdField: !!product.id,
         suppliersCount: product.productSuppliers?.length || 0,
-        suppliers: product.productSuppliers?.map((s, i) => ({
-          index: i,
-          supplierId: s.supplier?.id,
-          supplierData: s.supplier,
-          quantity: s.supplierOrderQty
-        })) || []
       });
     });
 
@@ -474,85 +483,46 @@ const UpdateOrder = () => {
       orderProducts: values.orderProducts.map((product, index) => {
         const isNew = isNewProduct(index);
         
-        const allSuppliers = product.productSuppliers?.map(supplier => {
-          let supplierId;
+        const productSuppliers = (product.productSuppliers || []).map(supplier => {
+          const supplierId = supplier.supplier?.id;
           
-          const extractSupplierId = (obj) => {
-            if (!obj) return null;
-            
-            if (typeof obj === 'number' || typeof obj === 'string') {
-              return obj;
-            }
-            
-            if (obj && typeof obj === 'object') {
-              if (obj.id !== undefined && obj.id !== null) {
-                if (typeof obj.id === 'object') {
-                  return extractSupplierId(obj.id);
-                }
-                return obj.id;
-              }
-              
-              if (obj.supplier !== undefined && obj.supplier !== null) {
-                return extractSupplierId(obj.supplier);
-              }
-              
-              const idKeys = Object.keys(obj).filter(key => 
-                key.toLowerCase().includes('id')
-              );
-              
-              for (const key of idKeys) {
-                const result = extractSupplierId(obj[key]);
-                if (result) return result;
-              }
-            }
-            
-            return null;
-          };
-          
-          supplierId = extractSupplierId(supplier.supplier || supplier);
+          if (!supplierId) return null;
           
           return {
-            ...(supplier.id && { id: supplier.id }),
-            supplier: {
-              id: supplierId
+            supplier: { 
+              id: Number(supplierId) 
             },
             supplierOrderQty: Number(supplier.supplierOrderQty) || 0
           };
-        }) || [];
-        
-        const validSuppliers = allSuppliers.filter(supplier => {
-          const id = supplier.supplier?.id;
-          return id !== null && id !== undefined && id !== '' && !isNaN(Number(id));
-        });
-        
-        const uniqueSuppliers = [];
-        const seenSupplierIds = new Set();
-        
-        validSuppliers.forEach(supplier => {
-          const supplierId = supplier.supplier.id;
-          if (!seenSupplierIds.has(supplierId)) {
-            seenSupplierIds.add(supplierId);
-            uniqueSuppliers.push(supplier);
-          }
-        });
+        }).filter(Boolean);
         
         return {
-          ...(!isNew && product.id && { id: product.id }),
           products: {
             id: product.products?.id || product.products?.productId || product.id || ''
           },
           orderCategory: product.orderCategory || '',
           inStockQuantity: Number(product.inStockQuantity) || 0,
-          clientOrderQuantity: Number(product.clientOrderQuantity) || 0,
+          clientOrderQuantity: String(product.clientOrderQuantity || ''),
           quantityToManufacture: Number(product.quantityToManufacture) || 0,
           units: product.units || 'Pcs',
           value: Number(product.value) || 0,
           clientShippingDate: product.clientShippingDate || null,
           expectedDate: product.expectedDate || null,
-          productSuppliers: uniqueSuppliers
+          productSuppliers: productSuppliers
         };
       })
     };
+
+    console.log("=== PAYLOAD BEING SENT TO BACKEND ===");
+    console.log("Total products:", formattedData.orderProducts.length);
+    formattedData.orderProducts.forEach((product, index) => {
+      console.log(`Product ${index}:`, {
+        hasIdField: !!product.id,
+        productId: product.products?.id,
+        supplierCount: product.productSuppliers?.length || 0,
+      });
+    });
+    console.log("Full JSON payload:", JSON.stringify(formattedData, null, 2));
 
     try {
       const url = `${UPDATE_ORDER_URL}/${id}`;
@@ -577,8 +547,12 @@ const UpdateOrder = () => {
       }
       
       const data = await response.json();
-      const totalSuppliers = formattedData.orderProducts.reduce((acc, product) => acc + product.productSuppliers.length, 0);
-      toast.success(`Order Updated Successfully `);
+      console.log("=== BACKEND RESPONSE ===", data);
+      
+      await getOrderById();
+      
+      const totalSuppliers = formattedData.orderProducts.reduce((acc, product) => acc + (product.productSuppliers?.length || 0), 0);
+      toast.success(`Order Updated Successfully`);
       
     } catch (error) {
       console.error("Update error:", error);
@@ -715,13 +689,45 @@ const UpdateOrder = () => {
   };
 
   const handleDeleteSupplierr = (rowIndex, supplierIndex, setFieldValue, values) => {
-    const updatedProductSuppliers = values.orderProducts[rowIndex].productSuppliers?.filter(
+    console.log('=== DELETING SUPPLIER ===');
+    console.log('Product Index (rowIndex):', rowIndex);
+    console.log('Supplier Index to delete:', supplierIndex);
+    console.log('Product data:', values.orderProducts[rowIndex]);
+    console.log('Suppliers before deletion:', values.orderProducts[rowIndex]?.productSuppliers);
+    
+    const currentSuppliers = values.orderProducts[rowIndex]?.productSuppliers || [];
+    
+    if (supplierIndex < 0 || supplierIndex >= currentSuppliers.length) {
+      console.error('Invalid supplier index:', supplierIndex);
+      toast.error('Cannot delete supplier: Invalid index');
+      return;
+    }
+    
+    const supplierToDelete = currentSuppliers[supplierIndex];
+    const supplierName = supplierToDelete?.supplier?.name || supplierToDelete?.supplierId || 'Unknown Supplier';
+    
+    const updatedProductSuppliers = currentSuppliers.filter(
       (_, idx) => idx !== supplierIndex
-    ) || [];
-
+    );
+    
+    console.log('Suppliers after deletion:', updatedProductSuppliers);
+    
+    setOrder(prevOrder => {
+      if (!prevOrder || !prevOrder.orderProducts) return prevOrder;
+      
+      const updatedOrder = { ...prevOrder };
+      updatedOrder.orderProducts = [...updatedOrder.orderProducts];
+      updatedOrder.orderProducts[rowIndex] = {
+        ...updatedOrder.orderProducts[rowIndex],
+        productSuppliers: updatedProductSuppliers
+      };
+      
+      return updatedOrder;
+    });
+    
     setFieldValue(`orderProducts[${rowIndex}].productSuppliers`, updatedProductSuppliers);
     
-    toast.success('Supplier removed successfully');
+    toast.success(`Supplier "${supplierName}" removed successfully`);
   };
 
   const handleDeleteRow = (index) => {
@@ -731,6 +737,25 @@ const UpdateOrder = () => {
     setSelectedSuppliersProduct(prev => 
       prev.filter(item => item.selectedRowId !== index)
     );
+  };
+
+  const getSupplierName = (supplierId) => {
+    if (!supplierId) return '';
+    
+    const supplierFromList = suppliers.find(s => s.id === supplierId);
+    if (supplierFromList) return supplierFromList.name;
+    
+    for (const supplierGroup of selectedSuppliers) {
+      const supplier = supplierGroup.supplierIds.find(s => s.supplierId === supplierId);
+      if (supplier) return supplier.supplierName;
+    }
+    
+    for (const supplierGroup of selectedSuppliersProduct) {
+      const supplier = supplierGroup.supplierIds.find(s => s.supplierId === supplierId);
+      if (supplier) return supplier.supplierName;
+    }
+    
+    return 'Unknown Supplier';
   };
 
   return (
@@ -756,22 +781,23 @@ const UpdateOrder = () => {
             clientInstruction: order?.clientInstruction || '',
             orderProducts: [
               ...(order?.orderProducts?.map(product => ({
-                id: product.id,
                 products: {
                   id: product.products.id,
                   productId: product.products.productId,
                 },
                 orderCategory: product.orderCategory || '',
-                inStockQuantity: product.inStockQuantity || '',
-                clientOrderQuantity: product.clientOrderQuantity || '',
-                quantityToManufacture: product.quantityToManufacture || '',
-                units: product.units || '',
-                value: product.value || '',
+                inStockQuantity: product.inStockQuantity || 0,
+                clientOrderQuantity: String(product.clientOrderQuantity || ''),
+                quantityToManufacture: product.quantityToManufacture || 0,
+                units: product.units || 'Pcs',
+                value: product.value || 0,
                 clientShippingDate: product.clientShippingDate || '',
                 expectedDate: product.expectedDate || '',
                 productSuppliers: product.productSuppliers?.map(supplier => ({
-                  ...(supplier.id && { id: supplier.id }),
-                  supplier: { id: supplier?.supplier?.id || '' },
+                  supplier: { 
+                    id: supplier?.supplier?.id || '',
+                    name: supplier?.supplier?.name || ''
+                  },
                   supplierOrderQty: supplier.supplierOrderQty || 0
                 })) || []
               })) || []),
@@ -783,7 +809,7 @@ const UpdateOrder = () => {
                 },
                 orderCategory: item.orderCatagory || '',
                 inStockQuantity: 0,
-                clientOrderQuantity: 0,
+                clientOrderQuantity: '',
                 quantityToManufacture: 0,
                 units: item.units || 'Pcs',
                 value: 0,
@@ -796,7 +822,7 @@ const UpdateOrder = () => {
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({ values, setFieldValue, handleBlur, isSubmitting }) => (
+          {({ values, setFieldValue, handleBlur }) => (
             <Form>
               <div className="flex flex-col gap-9">
                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -1030,199 +1056,219 @@ const UpdateOrder = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {order?.orderProducts?.map((product, index) => (
-                            <tr key={product.id}>
-                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <Field
-                                  name={`orderProducts[${index}].products.productId`}
-                                  value={values.orderProducts?.[index]?.products?.productId || ""}
-                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                  placeholder="Enter Product ID"
-                                  readOnly
-                                />
-                              </td>
+                          {values.orderProducts?.map((product, index) => {
+                            if (isNewProduct(index)) return null;
+                            
+                            return (
+                              <tr key={index}>
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    name={`orderProducts[${index}].products.productId`}
+                                    value={values.orderProducts?.[index]?.products?.productId || ""}
+                                    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                    placeholder="Enter Product ID"
+                                    readOnly
+                                  />
+                                </td>
 
-                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <Field
-                                  name={`orderProducts[${index}].orderCategory`}
-                                  value={values.orderProducts[index]?.orderCategory || ''}
-                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                  readOnly
-                                />
-                              </td>
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    name={`orderProducts[${index}].orderCategory`}
+                                    value={values.orderProducts[index]?.orderCategory || ''}
+                                    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                    readOnly
+                                  />
+                                </td>
 
-                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <Field
-                                  name={`orderProducts[${index}].clientOrderQuantity`}
-                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                  onChange={(e) => {
-                                    const value = Number(e.target.value);
-                                    setFieldValue(`orderProducts[${index}].clientOrderQuantity`, value);
-                                    setFieldValue(`orderProducts[${index}].quantityToManufacture`, value);
-                                  }}
-                                />
-                              </td>
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    name={`orderProducts[${index}].clientOrderQuantity`}
+                                    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                    onChange={(e) => {
+                                      const value = e.target.value;
+                                      const numValue = Number(value) || 0;
+                                      setFieldValue(`orderProducts[${index}].clientOrderQuantity`, value);
+                                      setFieldValue(`orderProducts[${index}].quantityToManufacture`, numValue);
+                                    }}
+                                  />
+                                </td>
 
-                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <Field
-                                  name={`orderProducts[${index}].units`}
-                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                />
-                              </td>
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    name={`orderProducts[${index}].units`}
+                                    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                  />
+                                </td>
 
-                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <Field
-                                  name={`orderProducts[${index}].inStockQuantity`}
-                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                  onChange={(e) => {
-                                    const value = Number(e.target.value) || 0;
-                                    const initialQuantityToManufacture = values.orderProducts[index]?.clientOrderQuantity || 0;
-                                    const newQuantityToManufacture = Math.max(0, initialQuantityToManufacture - value);
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    name={`orderProducts[${index}].inStockQuantity`}
+                                    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                    onChange={(e) => {
+                                      const value = Number(e.target.value) || 0;
+                                      const clientOrderValue = Number(values.orderProducts[index]?.clientOrderQuantity) || 0;
+                                      const newQuantityToManufacture = Math.max(0, clientOrderValue - value);
 
-                                    setFieldValue(`orderProducts[${index}].inStockQuantity`, value);
-                                    setFieldValue(`orderProducts[${index}].quantityToManufacture`, newQuantityToManufacture);
-                                  }}
-                                />
-                              </td>
+                                      setFieldValue(`orderProducts[${index}].inStockQuantity`, value);
+                                      setFieldValue(`orderProducts[${index}].quantityToManufacture`, newQuantityToManufacture);
+                                    }}
+                                  />
+                                </td>
 
-                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <Field
-                                  name={`orderProducts[${index}].quantityToManufacture`}
-                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                />
-                              </td>
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    name={`orderProducts[${index}].quantityToManufacture`}
+                                    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                  />
+                                </td>
 
-                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <Field
-                                  name={`orderProducts[${index}].value`}
-                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                />
-                              </td>
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    name={`orderProducts[${index}].value`}
+                                    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                  />
+                                </td>
 
-                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <Field
-                                  type="date"
-                                  name={`orderProducts[${index}].clientShippingDate`}
-                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                />
-                              </td>
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    type="date"
+                                    name={`orderProducts[${index}].clientShippingDate`}
+                                    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                  />
+                                </td>
 
-                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <Field
-                                  type="date"
-                                  name={`orderProducts[${index}].expectedDate`}
-                                  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                />
-                              </td>
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    type="date"
+                                    name={`orderProducts[${index}].expectedDate`}
+                                    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                  />
+                                </td>
 
-                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <IoIosAdd size={30} onClick={() => openSupplierModal(product?.products?.id, index)} />
-                              </td>
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <IoIosAdd size={30} onClick={() => openSupplierModal(product?.products?.id, index)} />
+                                </td>
 
-                              <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-                                  <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
-                                    <table className="min-w-full leading-normal">
-                                      <thead>
-                                        <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                          <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                            Supplier Name
-                                          </th>
-                                          <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                            Supplier Quantity
-                                          </th>
-                                          <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                            Action
-                                          </th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        {product.productSuppliers?.map((supplierData, supplierIndex) => (
-                                          <tr key={supplierData.supplier?.id}>
-                                            <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                              <Field
-                                                name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.name`}
-                                                value={supplierData.supplier?.name || ""}
-                                                className="w-[130px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                              />
-                                            </td>
-
-                                            <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                              <Field
-                                                name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
-                                                placeholder="Supplier Quantity"
-                                                type="number"
-                                                className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                              />
-                                            </td>
-
-                                            <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                              <MdDelete
-                                                size={20}
-                                                className="text-red-500"
-                                                onClick={() => handleDeleteSupplierr(index, supplierIndex, setFieldValue, values)}
-                                              />
-                                            </td>
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+                                    <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
+                                      <table className="min-w-full leading-normal">
+                                        <thead>
+                                          <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
+                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                              Supplier Name
+                                            </th>
+                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                              Supplier Quantity
+                                            </th>
+                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                              Action
+                                            </th>
                                           </tr>
-                                        ))}
-
-                                        {selectedSuppliers
-                                          .find((supplierRow) => supplierRow.selectedRowId === index)
-                                          ?.supplierIds.map((supplier, supplierIndex) => {
-                                            const startingIndex = product.productSuppliers?.length || 0;
-                                            const adjustedIndex = startingIndex + supplierIndex;
-
+                                        </thead>
+                                        <tbody>
+                                          {values.orderProducts[index]?.productSuppliers?.map((supplierData, supplierIndex) => {
+                                            const supplierId = supplierData.supplier?.id;
+                                            const supplierName = supplierData.supplier?.name || getSupplierName(supplierId);
+                                            
                                             return (
-                                              <tr
-                                                key={`supplier-row-${index}-${adjustedIndex}`}
-                                                className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3"
-                                              >
+                                              <tr key={supplierIndex}>
                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                  <input
-                                                    type="text"
-                                                    value={supplier.supplierName || ""}
-                                                    readOnly
-                                                    className="w-[130px] bg-gray-100 dark:bg-gray-700 rounded border py-2 px-3"
-                                                  />
+                                                  <div className="w-[130px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black">
+                                                    {supplierName}
+                                                    <Field
+                                                      type="hidden"
+                                                      name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.name`}
+                                                      value={supplierName}
+                                                    />
+                                                  </div>
                                                 </td>
 
                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                  <input
+                                                  <Field
+                                                    name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
+                                                    placeholder="Supplier Quantity"
                                                     type="number"
-                                                    value={supplier.supplierOrderQty || 0}
-                                                    onChange={(e) => {
-                                                      const newQuantity = Number(e.target.value) || 0;
-                                                      handleSupplierQuantityUpdateExisting(
-                                                        index, 
-                                                        supplierIndex, 
-                                                        newQuantity,
-                                                        setFieldValue,
-                                                        values
-                                                      );
-                                                    }}
-                                                    className="w-[130px] bg-white dark:bg-form-input rounded border py-2 px-3"
-                                                    placeholder="Enter quantity"
-                                                    min="0"
+                                                    className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                   />
                                                 </td>
 
                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                   <MdDelete
                                                     size={20}
-                                                    className="text-red-500"
-                                                    onClick={() => handleDeleteSupplier(index, supplierIndex, setFieldValue, values)}
+                                                    className="text-red-500 cursor-pointer hover:text-red-700"
+                                                    onClick={() => handleDeleteSupplierr(index, supplierIndex, setFieldValue, values)}
                                                   />
                                                 </td>
                                               </tr>
                                             );
                                           })}
-                                      </tbody>
-                                    </table>
+{selectedSuppliers
+  .find((supplierRow) => supplierRow.selectedRowId === index)
+  ?.supplierIds
+  .map((supplier, supplierIndex) => {
+    // ✅ CHECK IF THIS SUPPLIER ALREADY EXISTS IN FORMIK
+    const existsInFormik = values.orderProducts[index]?.productSuppliers?.some(
+      s => s.supplier?.id === supplier.supplierId
+    );
+    
+    const startingIndex = values.orderProducts[index]?.productSuppliers?.length || 0;
+    const adjustedIndex = startingIndex + supplierIndex;
+
+    return (
+      <tr
+        key={`supplier-row-${index}-${supplier.supplierId}`}
+        className={`bg-white dark:bg-slate-700 dark:text-white px-5 py-3 ${existsInFormik ? 'hidden' : ''}`}
+        // ✅ ADD 'hidden' CLASS IF DUPLICATE - THIS HIDES IT COMPLETELY
+        style={existsInFormik ? { display: 'none' } : {}}
+      >
+        <td className="px-5 py-5 border-b border-gray-200 text-sm">
+          <input
+            type="text"
+            value={supplier.supplierName || ""}
+            readOnly
+            className="w-[130px] bg-gray-100 dark:bg-gray-700 rounded border py-2 px-3"
+          />
+        </td>
+
+        <td className="px-5 py-5 border-b border-gray-200 text-sm">
+          <input
+            type="number"
+            value={supplier.supplierOrderQty || 0}
+            onChange={(e) => {
+              const newQuantity = Number(e.target.value) || 0;
+              handleSupplierQuantityUpdateExisting(
+                index, 
+                supplierIndex, 
+                newQuantity,
+                setFieldValue,
+                values
+              );
+            }}
+            className="w-[130px] bg-white dark:bg-form-input rounded border py-2 px-3"
+            placeholder="Enter quantity"
+            min="0"
+          />
+        </td>
+
+        <td className="px-5 py-5 border-b border-gray-200 text-sm">
+          <MdDelete
+            size={20}
+            className="text-red-500 cursor-pointer hover:text-red-700"
+            onClick={() => handleDeleteSupplier(index, supplierIndex, setFieldValue, values)}
+          />
+        </td>
+      </tr>
+    );
+  })}
+                                        </tbody>
+                                      </table>
+                                    </div>
                                   </div>
-                                </div>
-                              </td>
-                            </tr>
-                          ))}
+                                </td>
+                              </tr>
+                            );
+                          })}
 
                           {prodIdModal?.map((item, index) => {
                             const startingIndex = order?.orderProducts?.length || 0;
@@ -1233,7 +1279,7 @@ const UpdateOrder = () => {
                             );
 
                             return (
-                              <tr key={adjustedIndex} className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3">
+                              <tr key={`new-${index}`} className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3">
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <div>
                                     <Field
@@ -1264,13 +1310,14 @@ const UpdateOrder = () => {
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <div>
                                     <Field
-                                      type="number"
+                                      type="text"
                                       name={`orderProducts[${adjustedIndex}].clientOrderQuantity`}
                                       placeholder="Enter Client Order Qty"
                                       onChange={(e) => {
-                                        const value = Number(e.target.value);
+                                        const value = e.target.value;
+                                        const numValue = Number(value) || 0;
                                         setFieldValue(`orderProducts[${adjustedIndex}].clientOrderQuantity`, value);
-                                        setFieldValue(`orderProducts[${adjustedIndex}].quantityToManufacture`, value);
+                                        setFieldValue(`orderProducts[${adjustedIndex}].quantityToManufacture`, numValue);
                                       }}
                                       className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                     />
@@ -1295,7 +1342,7 @@ const UpdateOrder = () => {
                                       placeholder="Enter In Stock Qty"
                                       onChange={(e) => {
                                         const inStockValue = Number(e.target.value);
-                                        const clientOrderValue = Number(values.orderProducts[adjustedIndex]?.clientOrderQuantity || 0);
+                                        const clientOrderValue = Number(values.orderProducts[adjustedIndex]?.clientOrderQuantity) || 0;
                                         const newQuantityToManufacture = Math.max(clientOrderValue - inStockValue, 0);
 
                                         setFieldValue(`orderProducts[${adjustedIndex}].inStockQuantity`, inStockValue);
