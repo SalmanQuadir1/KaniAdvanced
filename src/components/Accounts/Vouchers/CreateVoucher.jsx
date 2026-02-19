@@ -189,137 +189,137 @@ const CreateVoucher = () => {
 
 
     // GST Calculation Logic
-    const calculateGST = (mrp, hsnCode, gstRegistration, customerAddress, discount = 0, customerState) => {
-        console.log("i am here");
+    // const calculateGST = (mrp, hsnCode, gstRegistration, customerAddress, discount = 0, customerState) => {
+    //     console.log("i am here");
 
 
 
-        // If discount is applied, no GST will be applied
-        if (discount > 0) {
-            return {
-                type: 'No GST (Discount Applied)',
-                cgstRate: 0,
-                sgstRate: 0,
-                igstRate: 0,
-                cgstAmount: 0,
-                sgstAmount: 0,
-                gstAmount: 0,
-                totalGstAmount: 0,
-                inclusivePrice: mrp,
-                isSameState: false,
-                discountApplied: true
-            };
-        }
+    //     // If discount is applied, no GST will be applied
+    //     if (discount > 0) {
+    //         return {
+    //             type: 'No GST (Discount Applied)',
+    //             cgstRate: 0,
+    //             sgstRate: 0,
+    //             igstRate: 0,
+    //             cgstAmount: 0,
+    //             sgstAmount: 0,
+    //             gstAmount: 0,
+    //             totalGstAmount: 0,
+    //             inclusivePrice: mrp,
+    //             isSameState: false,
+    //             discountApplied: true
+    //         };
+    //     }
 
-        const igstRate = hsnCode?.igst || 0;
-        const cgstRate = hsnCode?.cgst || 0;
-        const sgstRate = hsnCode?.sgst || 0;
+    //     const igstRate = hsnCode?.igst || 0;
+    //     const cgstRate = hsnCode?.cgst || 0;
+    //     const sgstRate = hsnCode?.sgst || 0;
 
-        // Normalize state codes - ensure they are strings and handle undefined/null
-        const registrationCode = String(gstRegistration || '').trim();
-        const customerStateCode = String(customerState || '').trim();
-        const newShippingStateCode = newShippingState ? String(newShippingState).trim() : null;
-
-
-        // Function to convert state name to state code if needed
-        const getStateCode = (state) => {
-            const stateStr = String(state || '').toLowerCase().trim();
-
-            // Check for Jammu & Kashmir variations
-            if (stateStr === '01' ||
-                stateStr.includes('jammu') ||
-                stateStr.includes('kashmir') ||
-                stateStr.includes('srinagar')) {
-                return '01';
-            }
-
-            // Check for Delhi variations
-            if (stateStr === '07' || stateStr.includes('delhi')) {
-                return '07';
-            }
-
-            // Return the original if it's already a code (01-35, 97, 98)
-            return stateStr;
-        };
-
-        // Get standardized state codes
-        const registrationStateCode = getStateCode(registrationCode);
-
-        // Determine which customer state to use based on newShippingState availability
-        let customerStateToCompare = newShippingStateCode;
-
-        // If newShippingState is not provided or is empty, fall back to original customerState
-        if (!customerStateToCompare || customerStateToCompare === '') {
-            customerStateToCompare = getStateCode(customerStateCode);
-        } else {
-            customerStateToCompare = getStateCode(newShippingStateCode);
-        }
-
-        // Determine if same state transaction
-        const isSameState = registrationStateCode === customerStateToCompare &&
-            (registrationStateCode === '01' || registrationStateCode === '07');
-
-        if (isSameState) {
-            // Same state - apply CGST + SGST
-            const cgstAmount = mrp * (cgstRate / 100);
-            const sgstAmount = mrp * (sgstRate / 100);
-            const totalGstAmount = cgstAmount + sgstAmount;
-            const inclusivePrice = mrp + totalGstAmount;
-            // Note: setgsttype should be defined outside this function scope
-            if (typeof setgsttype === 'function') {
-                setgsttype("SGST+CGST");
-            }
-
-            return {
-                type: 'CGST+SGST',
-                cgstRate,
-                sgstRate,
-                igstRate: 0,
-                cgstAmount,
-                sgstAmount,
-                gstAmount: 0,
-                totalGstAmount,
-                inclusivePrice,
-                isSameState: true,
-                registrationStateCode,
-                customerStateCode: customerStateToCompare,
-                stateName: registrationStateCode === '01' ? 'Jammu And Kashmir' : 'Delhi',
-                discountApplied: false,
-                usedShippingState: newShippingStateCode ? 'newShippingState' : 'customerState'
-            };
-        } else {
-            // Different state or mixed - apply IGST
-            const gstAmount = mrp * (igstRate / 100);
-            const inclusivePrice = mrp + gstAmount;
-            // Note: setgsttype should be defined outside this function scope
-            if (typeof setgsttype === 'function') {
-                setgsttype("IGST");
-            }
-
-            return {
-                type: 'IGST',
-                igstRate,
-                cgstRate: 0,
-                sgstRate: 0,
-                gstAmount,
-                cgstAmount: 0,
-                sgstAmount: 0,
-                totalGstAmount: gstAmount,
-                inclusivePrice,
-                isSameState: false,
-                registrationStateCode,
-                customerStateCode: customerStateToCompare,
-                stateName: 'Inter-State',
-                discountApplied: false,
-                usedShippingState: newShippingStateCode ? 'newShippingState' : 'customerState'
-            };
-        }
-    };
+    //     // Normalize state codes - ensure they are strings and handle undefined/null
+    //     const registrationCode = String(gstRegistration || '').trim();
+    //     const customerStateCode = String(customerState || '').trim();
+    //     const newShippingStateCode = newShippingState ? String(newShippingState).trim() : null;
 
 
-    useEffect(() => {
-        calculateGST()
-    }, [newShippingState, custaddress])
+    //     // Function to convert state name to state code if needed
+    //     const getStateCode = (state) => {
+    //         const stateStr = String(state || '').toLowerCase().trim();
+
+    //         // Check for Jammu & Kashmir variations
+    //         if (stateStr === '01' ||
+    //             stateStr.includes('jammu') ||
+    //             stateStr.includes('kashmir') ||
+    //             stateStr.includes('srinagar')) {
+    //             return '01';
+    //         }
+
+    //         // Check for Delhi variations
+    //         if (stateStr === '07' || stateStr.includes('delhi')) {
+    //             return '07';
+    //         }
+
+    //         // Return the original if it's already a code (01-35, 97, 98)
+    //         return stateStr;
+    //     };
+
+    //     // Get standardized state codes
+    //     const registrationStateCode = getStateCode(registrationCode);
+
+    //     // Determine which customer state to use based on newShippingState availability
+    //     let customerStateToCompare = newShippingStateCode;
+
+    //     // If newShippingState is not provided or is empty, fall back to original customerState
+    //     if (!customerStateToCompare || customerStateToCompare === '') {
+    //         customerStateToCompare = getStateCode(customerStateCode);
+    //     } else {
+    //         customerStateToCompare = getStateCode(newShippingStateCode);
+    //     }
+
+    //     // Determine if same state transaction
+    //     const isSameState = registrationStateCode === customerStateToCompare &&
+    //         (registrationStateCode === '01' || registrationStateCode === '07');
+
+    //     if (isSameState) {
+    //         // Same state - apply CGST + SGST
+    //         const cgstAmount = mrp * (cgstRate / 100);
+    //         const sgstAmount = mrp * (sgstRate / 100);
+    //         const totalGstAmount = cgstAmount + sgstAmount;
+    //         const inclusivePrice = mrp + totalGstAmount;
+    //         // Note: setgsttype should be defined outside this function scope
+    //         if (typeof setgsttype === 'function') {
+    //             setgsttype("SGST+CGST");
+    //         }
+
+    //         return {
+    //             type: 'CGST+SGST',
+    //             cgstRate,
+    //             sgstRate,
+    //             igstRate: 0,
+    //             cgstAmount,
+    //             sgstAmount,
+    //             gstAmount: 0,
+    //             totalGstAmount,
+    //             inclusivePrice,
+    //             isSameState: true,
+    //             registrationStateCode,
+    //             customerStateCode: customerStateToCompare,
+    //             stateName: registrationStateCode === '01' ? 'Jammu And Kashmir' : 'Delhi',
+    //             discountApplied: false,
+    //             usedShippingState: newShippingStateCode ? 'newShippingState' : 'customerState'
+    //         };
+    //     } else {
+    //         // Different state or mixed - apply IGST
+    //         const gstAmount = mrp * (igstRate / 100);
+    //         const inclusivePrice = mrp + gstAmount;
+    //         // Note: setgsttype should be defined outside this function scope
+    //         if (typeof setgsttype === 'function') {
+    //             setgsttype("IGST");
+    //         }
+
+    //         return {
+    //             type: 'IGST',
+    //             igstRate,
+    //             cgstRate: 0,
+    //             sgstRate: 0,
+    //             gstAmount,
+    //             cgstAmount: 0,
+    //             sgstAmount: 0,
+    //             totalGstAmount: gstAmount,
+    //             inclusivePrice,
+    //             isSameState: false,
+    //             registrationStateCode,
+    //             customerStateCode: customerStateToCompare,
+    //             stateName: 'Inter-State',
+    //             discountApplied: false,
+    //             usedShippingState: newShippingStateCode ? 'newShippingState' : 'customerState'
+    //         };
+    //     }
+    // };
+
+
+    // useEffect(() => {
+    //     calculateGST()
+    // }, [newShippingState, custaddress])
 
 
 
@@ -517,11 +517,13 @@ const CreateVoucher = () => {
         );
     };
 
-    const calculateLineTotal = (entry) => {
-        const basePrice = entry.discount > 0 ? entry.rate : entry.exclusiveGst;
-        const quantity = entry.quantity || 1;
-        return (basePrice * quantity).toFixed(2);
-    };
+   const calculateLineTotal = (entry) => {
+    // If discount is applied, use the discounted rate (which already includes GST on discounted amount)
+    // If no discount, use the exclusiveGst (price including GST)
+    const basePrice = entry.rate || entry.exclusiveGst || 0;
+    const quantity = entry.quantity || 1;
+    return (basePrice * quantity).toFixed(2);
+};
 
     const calculateLineTotalForPur = (entry) => {
 
@@ -1363,23 +1365,10 @@ const CreateVoucher = () => {
 
 
                         // Replace your existing calculateGST function with this single version
+                        // Replace your existing calculateGST function with this
                         const calculateGST = (mrp, hsnCode, gstRegistration, customerAddress, discount = 0, customerState) => {
-                            // If discount is applied, no GST will be applied
-                            if (discount > 0) {
-                                return {
-                                    type: 'No GST (Discount Applied)',
-                                    cgstRate: 0,
-                                    sgstRate: 0,
-                                    igstRate: 0,
-                                    cgstAmount: 0,
-                                    sgstAmount: 0,
-                                    gstAmount: 0,
-                                    totalGstAmount: 0,
-                                    inclusivePrice: mrp,
-                                    isSameState: false,
-                                    discountApplied: true
-                                };
-                            }
+                            // Calculate discounted price
+                            const discountedPrice = discount > 0 ? mrp * (1 - discount / 100) : mrp;
 
                             const igstRate = hsnCode?.igst || 0;
                             const cgstRate = hsnCode?.cgst || 0;
@@ -1407,7 +1396,7 @@ const CreateVoucher = () => {
                                     return '07';
                                 }
 
-                                // Return the original if it's already a code (01-35, 97, 98)
+                                // Return the original if it's already a code
                                 return stateStr;
                             };
 
@@ -1429,11 +1418,11 @@ const CreateVoucher = () => {
                                 (registrationStateCode === '01' || registrationStateCode === '07');
 
                             if (isSameState) {
-                                // Same state - apply CGST + SGST
-                                const cgstAmount = mrp * (cgstRate / 100);
-                                const sgstAmount = mrp * (sgstRate / 100);
+                                // Same state - apply CGST + SGST on discounted price
+                                const cgstAmount = discountedPrice * (cgstRate / 100);
+                                const sgstAmount = discountedPrice * (sgstRate / 100);
                                 const totalGstAmount = cgstAmount + sgstAmount;
-                                const inclusivePrice = mrp + totalGstAmount;
+                                const inclusivePrice = discountedPrice + totalGstAmount;
 
                                 if (typeof setgsttype === 'function') {
                                     setgsttype("SGST+CGST");
@@ -1449,17 +1438,20 @@ const CreateVoucher = () => {
                                     gstAmount: 0,
                                     totalGstAmount,
                                     inclusivePrice,
+                                    originalMrp: mrp,
+                                    discountedPrice,
+                                    discountApplied: discount > 0,
+                                    discountPercentage: discount,
                                     isSameState: true,
                                     registrationStateCode,
                                     customerStateCode: customerStateToCompare,
                                     stateName: registrationStateCode === '01' ? 'Jammu And Kashmir' : 'Delhi',
-                                    discountApplied: false,
                                     usedShippingState: newShippingStateCode ? 'newShippingState' : 'customerState'
                                 };
                             } else {
-                                // Different state or mixed - apply IGST
-                                const gstAmount = mrp * (igstRate / 100);
-                                const inclusivePrice = mrp + gstAmount;
+                                // Different state or mixed - apply IGST on discounted price
+                                const gstAmount = discountedPrice * (igstRate / 100);
+                                const inclusivePrice = discountedPrice + gstAmount;
 
                                 if (typeof setgsttype === 'function') {
                                     setgsttype("IGST");
@@ -1475,11 +1467,14 @@ const CreateVoucher = () => {
                                     sgstAmount: 0,
                                     totalGstAmount: gstAmount,
                                     inclusivePrice,
+                                    originalMrp: mrp,
+                                    discountedPrice,
+                                    discountApplied: discount > 0,
+                                    discountPercentage: discount,
                                     isSameState: false,
                                     registrationStateCode,
                                     customerStateCode: customerStateToCompare,
                                     stateName: 'Inter-State',
-                                    discountApplied: false,
                                     usedShippingState: newShippingStateCode ? 'newShippingState' : 'customerState'
                                 };
                             }
@@ -2155,58 +2150,61 @@ const CreateVoucher = () => {
                                                                                         Vouchers.typeOfVoucher === "Sales" && (
 
                                                                                             <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
+                                                                                                
                                                                                                 <Field
                                                                                                     type="number"
                                                                                                     name={`paymentDetails.${index}.discount`}
                                                                                                     placeholder="0"
                                                                                                     min="0"
+                                                                                                    max="100"
                                                                                                     step="1"
                                                                                                     className="w-full py-2 px-3 text-sm rounded border focus:border-primary"
                                                                                                     onChange={(e) => {
                                                                                                         const discount = parseFloat(e.target.value) || 0;
-                                                                                                        setFieldValue(`paymentDetails.${index}.discount`, discount);
+
+                                                                                                        // Validate discount doesn't exceed 100%
+                                                                                                        if (discount > 100) {
+                                                                                                            toast.warning("Discount cannot exceed 100%");
+                                                                                                            setFieldValue(`paymentDetails.${index}.discount`, 100);
+                                                                                                           
+                                                                                                        } else {
+                                                                                                            setFieldValue(`paymentDetails.${index}.discount`, discount);
+                                                                                                        }
 
                                                                                                         // Recalculate GST when discount changes
                                                                                                         if (entry.productsId) {
                                                                                                             const mrp = entry.mrp || 0;
-                                                                                                            const hsnCode = availableProducts.find(p => p.value === entry.productsId)?.hsnCode || {};
+                                                                                                            const hsnCode = (availableProducts.find(p => p.value === entry.productsId) ||
+                                                                                                                allProducts.find(p => p.value === entry.productsId))?.hsnCode || {};
                                                                                                             const customerAddress = selectedLedger?.obj?.shippingAddress || '';
-                                                                                                            const gstRegistration = values.gstRegistration || '';
+                                                                                                            const customerState = selectedLedger?.obj?.shippingState || '';
+                                                                                                            const gstRegistration = Vouchers?.defGstRegist?.state || '';
 
                                                                                                             // Recalculate GST with new discount
-                                                                                                            const gstCalculation = calculateGST(mrp, hsnCode, gstRegistration, customerAddress, discount);
+                                                                                                            const gstCalculation = calculateGST(
+                                                                                                                mrp,
+                                                                                                                hsnCode,
+                                                                                                                gstRegistration,
+                                                                                                                customerAddress,
+                                                                                                                discount > 100 ? 100 : discount,
+                                                                                                                customerState
+                                                                                                            );
 
                                                                                                             setFieldValue(`paymentDetails.${index}.gstCalculation`, gstCalculation);
                                                                                                             setFieldValue(`paymentDetails.${index}.gstAmount`, gstCalculation.totalGstAmount);
                                                                                                             setFieldValue(`paymentDetails.${index}.exclusiveGst`, gstCalculation.inclusivePrice);
+                                                                                                            setFieldValue(`paymentDetails.${index}.rate`, gstCalculation.inclusivePrice);
 
-                                                                                                            // Recalculate rate and value
-                                                                                                            if (discount > 0) {
-                                                                                                                const discountedRate = gstCalculation.inclusivePrice * (1 - discount / 100);
-                                                                                                                setFieldValue(`paymentDetails.${index}.rate`, discountedRate);
-                                                                                                                setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
-                                                                                                                    ...entry,
-                                                                                                                    rate: discountedRate,
-                                                                                                                    discount: discount
-                                                                                                                }));
-                                                                                                                setFieldValue(`paymentDetails.${index}.voucherAmount`, calculateLineTotal({
-                                                                                                                    ...entry,
-                                                                                                                    rate: discountedRate,
-                                                                                                                    discount: discount
-                                                                                                                }));
-                                                                                                            } else {
-                                                                                                                setFieldValue(`paymentDetails.${index}.rate`, gstCalculation.inclusivePrice);
-                                                                                                                setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
-                                                                                                                    ...entry,
-                                                                                                                    rate: gstCalculation.inclusivePrice,
-                                                                                                                    discount: 0
-                                                                                                                }));
-                                                                                                                setFieldValue(`paymentDetails.${index}.voucherAmount`, calculateLineTotal({
-                                                                                                                    ...entry,
-                                                                                                                    rate: gstCalculation.inclusivePrice,
-                                                                                                                    discount: 0
-                                                                                                                }));
-                                                                                                            }
+                                                                                                            // Update value with new calculation
+                                                                                                            const lineTotal = calculateLineTotal({
+                                                                                                                ...entry,
+                                                                                                                exclusiveGst: gstCalculation.inclusivePrice,
+                                                                                                                rate: gstCalculation.inclusivePrice,
+                                                                                                                quantity: entry.quantity || 1
+                                                                                                            });
+
+                                                                                                            setFieldValue(`paymentDetails.${index}.value`, lineTotal);
+                                                                                                            setFieldValue(`paymentDetails.${index}.voucherAmount`, lineTotal);
                                                                                                         }
                                                                                                     }}
                                                                                                 />
@@ -2277,15 +2275,25 @@ const CreateVoucher = () => {
                                                                                     {
                                                                                         Vouchers?.typeOfVoucher === "Sales" && (
 
-                                                                                            <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
-                                                                                                <span className={`text-xs font-medium px-2 py-1 rounded ${entry.gstCalculation?.type === 'CGST+SGST' ? 'bg-blue-100 text-blue-800' :
-                                                                                                    entry.gstCalculation?.type === 'IGST' ? 'bg-green-100 text-green-800' :
-                                                                                                        entry.gstCalculation?.type === 'No GST (Discount Applied)' ? 'bg-yellow-100 text-yellow-800' :
-                                                                                                            'bg-gray-100 text-gray-800'
-                                                                                                    }`}>
-                                                                                                    {entry.gstCalculation?.type || 'No GST'}
-                                                                                                </span>
-                                                                                            </td>
+                                                                                          // GST Type column - update the display
+<td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
+    {entry.gstCalculation && (
+        <div className="flex flex-col">
+            <span className={`text-xs font-medium px-2 py-1 rounded ${
+                entry.gstCalculation.type === 'CGST+SGST' ? 'bg-blue-100 text-blue-800' :
+                entry.gstCalculation.type === 'IGST' ? 'bg-green-100 text-green-800' :
+                'bg-gray-100 text-gray-800'
+            }`}>
+                {entry.gstCalculation.type}
+            </span>
+            {entry.gstCalculation.discountApplied && (
+                <span className="text-xs text-orange-600 mt-1">
+                    {entry.gstCalculation.discountPercentage}% Discount Applied
+                </span>
+            )}
+        </div>
+    )}
+</td>
 
                                                                                         )
                                                                                     }
@@ -2432,7 +2440,7 @@ const CreateVoucher = () => {
                                                                                     <p className="font-medium text-red-600">-₹{totals.totalDiscount}</p>
                                                                                 </div>
                                                                             )}
-                                                                            {totals.totalCGST > 0 && (
+                                                                            {totals.totalDiscount > 0 ||totals.totalCGST > 0 && (
                                                                                 // <div>
                                                                                 //     <p className="text-gray-600 dark:text-gray-400">CGST</p>
                                                                                 //     <p className="font-medium text-black dark:text-white">₹{totals.totalCGST}</p>
@@ -2450,7 +2458,7 @@ const CreateVoucher = () => {
                                                                                     />
                                                                                 </div>
                                                                             )}
-                                                                            {totals.totalSGST > 0 && (
+                                                                            {totals.totalDiscount > 0 || totals.totalSGST > 0 && (
                                                                                 // <div>
                                                                                 //     <p className="text-gray-600 dark:text-gray-400">SGST</p>
                                                                                 //     <p className="font-medium text-black dark:text-white">₹{totals.totalSGST}</p>
@@ -2468,7 +2476,7 @@ const CreateVoucher = () => {
                                                                                     />
                                                                                 </div>
                                                                             )}
-                                                                            {totals.totalIGST > 0 && (
+                                                                            {totals.totalDiscount > 0 || totals.totalIGST > 0 && (
                                                                                 // <div>
                                                                                 //     <p className="text-gray-600 dark:text-gray-400">IGST</p>
                                                                                 //     <p className="font-medium text-black dark:text-white">₹{totals.totalIGST}</p>

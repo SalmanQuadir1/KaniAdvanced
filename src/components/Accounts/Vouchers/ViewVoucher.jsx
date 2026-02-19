@@ -3,7 +3,7 @@ import DefaultLayout from '../../../layout/DefaultLayout'
 import Breadcrumb from '../../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { DELETE_Voucher_URL, GET_VoucherName_URL, GET_Vouchersearch_URL, UPDATETOGGLE_Voucher_URL } from "../../../Constants/utils";
+import { DELETE_Voucher_URL, GET_VoucherName_URL, GET_VoucherNameFromType_URL, GET_Vouchersearch_URL, UPDATETOGGLE_Voucher_URL } from "../../../Constants/utils";
 import ReactSelect from 'react-select';
 import useOrder from '../../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -20,11 +20,7 @@ import { IoIosAdd } from 'react-icons/io';
 
 
 
-const productgrp = [
-    { value: 'BrandA', label: 'Brand A' },
-    { value: 'BrandB', label: 'Brand B' },
-    { value: 'BrandC', label: 'Brand C' },
-];
+
 
 
 const ViewVoucher = () => {
@@ -41,12 +37,13 @@ const ViewVoucher = () => {
 
     const { token } = currentUser;
     const [voucherrr, setvoucherrr] = useState([])
+    const [voucherTypee, setvoucherTypee] = useState([])
 
 
     const [Voucher, setVoucher] = useState()
 
 
-
+    const [voucherTypeee, setvoucherTypeee] = useState()
 
     // const supplier = useSelector(state => state?.nonPersisted?.supplier);
     const Order = useSelector(state => state?.nonPersisted?.Voucher);
@@ -65,10 +62,13 @@ const ViewVoucher = () => {
     // }));
 
 
-    const voucherName = voucherrr && voucherrr.map((vouch) => ({
+    const voucherName = voucherTypee && voucherTypee.map((vouch) => ({
         label: vouch.name,
         value: vouch.name
     }));
+
+    
+    
     const voucherType = voucherrr && voucherrr.map((vouch) => ({
         label: vouch.typeOfVoucher,
         value: vouch.typeOfVoucher
@@ -118,6 +118,33 @@ const ViewVoucher = () => {
             logger.error("Error fetching voucher names and types:", error);
         }
     }
+
+
+    const getVoucherType = async () => {
+        try {
+            const response = await fetch(`${GET_VoucherNameFromType_URL}${voucherTypeee}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+            const data = await response.json();
+            setvoucherTypee(data);
+            console.log("Voucher names and types:", data);
+
+
+        } catch (error) {
+            logger.error("Error fetching voucher names and types:", error);
+        }
+    }
+
+    useEffect(() => {
+        getVoucherType()
+
+    }, [voucherTypeee])
+
+    console.log(voucherTypee, "44444444444");
 
 
 
@@ -193,7 +220,7 @@ const ViewVoucher = () => {
         console.log("Page change requested:", newPage);
 
         setPagination((prev) => ({ ...prev, currentPage: newPage }));
-        getVoucher(newPage - 1); // Correct function name and 1-indexed for user interaction
+        getVoucher(newPage); // Correct function name and 1-indexed for user interaction
     };
 
     console.log(Voucher, "heyVoucher");
@@ -213,7 +240,7 @@ const ViewVoucher = () => {
             );
         }
 
-        const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
+        const startingSerialNumber = (pagination.currentPage ) * pagination.itemsPerPage + 1;
 
         const handleDelete = async (e, id) => {
             e.preventDefault();
@@ -387,7 +414,7 @@ const ViewVoucher = () => {
 
 
 
-{/* 
+                {/* 
                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
                         <FiEdit
@@ -426,7 +453,7 @@ const ViewVoucher = () => {
 
 
         };
-        getVoucher(pagination.currentPage , filters);
+        getVoucher(pagination.currentPage, filters);
         // ViewInventory(pagination.currentPage, filters);
     };
 
@@ -436,12 +463,16 @@ const ViewVoucher = () => {
         setSelectedVoucherData(null);
     };
 
+    console.log(voucherTypeee,"33333333333333333333333333333333.");
+    
+
+
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Voucher/ View Voucher" />
             <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800 mb-4">
                 <div className="pt-5 pb-4">
-                   <div className='flex flex-row items-center justify-between w-full'>
+                    <div className='flex flex-row items-center justify-between w-full'>
                         <h2 className="text-xl text-slate-500 font-semibold w-full flex items-center justify-between">
                             <span> Voucher View</span>
                             <span className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-blue-900/20 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-800/30 text-sm font-semibold text-blue-700 dark:text-blue-300 ml-4">
@@ -466,62 +497,77 @@ const ViewVoucher = () => {
                             }}
                             onSubmit={handleSubmit}
                         >
-                            {({ setFieldValue, values, handleBlur }) => (
-                                <Form>
-                                    <div className="mb-6 flex justify-center items-center gap-6 mt-8">
-                                        {/* Voucher Name Field */}
-                                        <div className="min-w-[300px]">
-                                            <label className="mb-2.5 block font-bold text-black dark:text-white">
-                                                Voucher Name
-                                            </label>
-                                            <ReactSelect
-                                                name="name"
-                                                value={voucherName.find(option => option.value === values.name)}
-                                                onChange={(option) => setFieldValue('name', option ? option.value : null)}
-                                                options={[{ label: 'View All', value: null }, ...voucherName]}
-                                                styles={customStyles}
-                                                className="bg-white dark:bg-form-Field"
-                                                classNamePrefix="react-select"
-                                                placeholder="Select Voucher Name"
-                                                isClearable
-                                            />
+                            {({ setFieldValue, values, handleBlur }) => {
+
+
+
+
+                                return (
+                                    <Form>
+                                        <div className="mb-6 flex justify-center items-center gap-6 mt-8">
+                                            {/* Voucher Name Field */}
+
+
+                                            {/* Voucher Type Field */}
+                                            <div className="min-w-[300px]">
+                                                <label className="mb-2.5 block font-bold text-black dark:text-white">
+                                                    Voucher Type
+                                                </label>
+                                                <ReactSelect
+                                                    name="typeOfVoucher"
+                                                    value={voucherType.find(option => option.value === values.typeOfVoucher)}
+                                                    onChange={(option) => {
+                                                        setFieldValue('typeOfVoucher', option ? option.value : null);
+                                                        setvoucherTypeee(option.value);
+
+                                                    }}
+
+                                                    options={[{ label: 'View All', value: null }, ...voucherType]}
+                                                    styles={customStyles}
+                                                    className="bg-white dark:bg-form-Field"
+                                                    classNamePrefix="react-select"
+                                                    placeholder="Select Voucher Type"
+                                                    isClearable
+                                                />
+                                            </div>
+
+                                            <div className="min-w-[300px]">
+                                                <label className="mb-2.5 block font-bold text-black dark:text-white">
+                                                    Voucher Name
+                                                </label>
+                                                <ReactSelect
+                                                    name="name"
+                                                    value={voucherName.find(option => option.value === values.name)}
+                                                    onChange={(option) => setFieldValue('name', option ? option.value : null)}
+                                                    options={[{ label: 'View All', value: null }, ...voucherName]}
+                                                    styles={customStyles}
+                                                    className="bg-white dark:bg-form-Field"
+                                                    classNamePrefix="react-select"
+                                                    placeholder="Select Voucher Name"
+                                                    isClearable
+                                                />
+                                            </div>
                                         </div>
 
-                                        {/* Voucher Type Field */}
-                                        <div className="min-w-[300px]">
-                                            <label className="mb-2.5 block font-bold text-black dark:text-white">
-                                                Voucher Type
-                                            </label>
-                                            <ReactSelect
-                                                name="typeOfVoucher"
-                                                value={voucherType.find(option => option.value === values.typeOfVoucher)}
-                                                onChange={(option) => setFieldValue('typeOfVoucher', option ? option.value : null)}
-                                                options={[{ label: 'View All', value: null }, ...voucherType]}
-                                                styles={customStyles}
-                                                className="bg-white dark:bg-form-Field"
-                                                classNamePrefix="react-select"
-                                                placeholder="Select Voucher Type"
-                                                isClearable
-                                            />
+                                        {/* Search Button */}
+                                        <div className="flex justify-center mt-4">
+                                            <button
+                                                type="submit"
+                                                className="flex w-[240px] h-[44px] rounded-lg justify-center items-center bg-primary font-medium text-white hover:bg-opacity-90 transition duration-300 shadow-md hover:shadow-lg"
+                                            >
+                                                <span className="flex items-center gap-2">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                                    </svg>
+                                                    Search
+                                                </span>
+                                            </button>
                                         </div>
-                                    </div>
+                                    </Form>
+                                )
 
-                                    {/* Search Button */}
-                                    <div className="flex justify-center mt-4">
-                                        <button
-                                            type="submit"
-                                            className="flex w-[240px] h-[44px] rounded-lg justify-center items-center bg-primary font-medium text-white hover:bg-opacity-90 transition duration-300 shadow-md hover:shadow-lg"
-                                        >
-                                            <span className="flex items-center gap-2">
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                                </svg>
-                                                Search
-                                            </span>
-                                        </button>
-                                    </div>
-                                </Form>
-                            )}
+
+                            }}
                         </Formik>
                     </div>
 

@@ -443,6 +443,8 @@ export const ADD_VoucherPaymentEntry_URL = `${BASE_URL}/api/voucher/payment-vouc
 export const GET_Voucher_URL = `${BASE_URL}/voucher/getAll`;
 export const GET_Vouchersearch_URL = `${BASE_URL}/voucher/search`;
 export const GET_VoucherName_URL = `${BASE_URL}/voucher/dropdown`;
+
+export const GET_VoucherNameFromType_URL = `${BASE_URL}/voucher/names/by-type/`;
 export const GET_VoucherEntriessearch_URL = `${BASE_URL}/entryPayment/voucher`;
 export const GET_VoucherEntriessearchPayment_URL = `${BASE_URL}/api/voucher/payment-voucher`;
 
