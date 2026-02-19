@@ -1000,7 +1000,7 @@ const AddProduct = () => {
 
                                                     </div>
 
-                                                    <div className="flex-1 min-w-[300px]">
+                                                    {/* <div className="flex-1 min-w-[300px]">
                                                         <label className="mb-2 block text-black dark:text-white"> Product Status</label>
                                                         <Field
                                                             name='productStatus'
@@ -1010,7 +1010,7 @@ const AddProduct = () => {
                                                         />
                                                         <ErrorMessage name="productStatus" component="div" className="text-red-500" />
 
-                                                    </div>
+                                                    </div> */}
                                                 </div>
 
 
@@ -1069,7 +1069,7 @@ const AddProduct = () => {
 
                                             <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Supplier/ Weaver Name <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Product Status <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
                                                             name="productCategory"
@@ -1079,7 +1079,7 @@ const AddProduct = () => {
                                                             styles={customStyles} // Pass custom styles here
                                                             className="bg-white dark:bg-form-Field"
                                                             classNamePrefix="react-select"
-                                                            placeholder="Select Product Category"
+                                                            placeholder="Select Product Status"
                                                         />
                                                     </div>
 

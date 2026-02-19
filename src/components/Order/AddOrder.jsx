@@ -404,23 +404,23 @@ const AddOrder = () => {
 
 
 
-const openInProgressModal = async (id, locId) => {
+  const openInProgressModal = async (id, locId) => {
     setIsInProgressModalOpen(true);
-    
+
     try {
-        const response = await fetch(`${GET_INPROGRESSTRACK}${id}/location/${locId}/active`, {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        });
-        const data = await response.json();
-        setInProgressData(data);
+      const response = await fetch(`${GET_INPROGRESSTRACK}${id}/location/${locId}/active`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      setInProgressData(data);
     } catch (error) {
-        console.error(error);
-        toast.error("Failed to fetch Product");
+      console.error(error);
+      toast.error("Failed to fetch Product");
     }
-};
+  };
 
 
   const CloseInProgressModal = () => {
@@ -634,7 +634,7 @@ const openInProgressModal = async (id, locId) => {
                       if (product.clientOrderQuantity) {
                         const quantityToManufacture = product.clientOrderQuantity - inStockValue;
                         setFieldValue(`orderProducts[${index}].quantityToManufacture`,
-                          quantityToManufacture > 0 ? quantityToManufacture : 0
+                          Math.abs(quantityToManufacture)
                         );
 
                         // Update value field
@@ -652,7 +652,7 @@ const openInProgressModal = async (id, locId) => {
 
                 getInStock();
               });
-            }, [values?.locationId, values?.orderProducts]);
+            }, [values?.locationId, values.orderProducts[0].orderCategory]);
 
 
             useEffect(() => {
@@ -703,11 +703,22 @@ const openInProgressModal = async (id, locId) => {
 
             useEffect(() => {
               values.orderProducts.forEach((product, index) => {
+
+                const quantityToManufacture = product.inStockQuantity - product.clientOrderQuantity;
+                const cost = prodIdModal[index]?.cost || 0;
                 if (product.clientOrderQuantity && product.inStockQuantity !== undefined) {
-                  const quantityToManufacture = product.clientOrderQuantity - product.inStockQuantity;
-                  const cost = prodIdModal[index]?.cost || 0;
-                  setFieldValue(`orderProducts[${index}].quantityToManufacture`, quantityToManufacture);
-                  // setFieldValue(`orderProducts[${index}].value`, quantityToManufacture * cost);
+                  if (product.clientOrderQuantity <= product.inStockQuantity) {
+                    setFieldValue(`orderProducts[${index}].quantityToManufacture`, 0);
+                    setFieldValue(`orderProducts[${index}].value`, Math.abs(quantityToManufacture * cost));
+                  }
+                  else {
+
+
+
+                    setFieldValue(`orderProducts[${index}].quantityToManufacture`, Math.abs(quantityToManufacture));
+                    setFieldValue(`orderProducts[${index}].value`, Math.abs(quantityToManufacture * cost));
+
+                  }
                 }
               });
             }, [values.orderProducts, setFieldValue]);
@@ -1021,64 +1032,64 @@ const openInProgressModal = async (id, locId) => {
                       )}
 
                       {isInProgressModalOpen && (
-                       <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center z-50">
-  <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px] w-[870px] h-[400px] mt-[60px] overflow-auto relative">
-    {/* Close button inside scrollable container but positioned sticky */}
-    <div className="sticky top-0 z-10 flex justify-end bg-slate-100 pb-2">
-      <button 
-        onClick={CloseInProgressModal} 
-        className="text-red-500 text-xl font-bold hover:text-red-700"
-      >
-        &times;
-      </button>
-    </div>
-    
-    <h2 className="text-2xl text-center mb-4 font-extrabold">In Progress Orders Tracking.</h2>
-    
-    <div className="inline-block min-w-full shadow-md rounded-lg overflow-auto">
-      <table className="min-w-full leading-normal">
-        <thead>
-          <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Allocated Date</th>
-            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Fulfilled Date</th>
-            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">order No</th>
-            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Id</th>
-            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Description</th>
-            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">location Name</th>
-            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Allocated Quantity</th>
-            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Received Quantity</th>
-            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Remaining Quantity</th>
-            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {inProgressDataData?.length > 0 ? (
-            inProgressDataData.map((row, index) => (
-              <tr key={row.id}>
-                <td className="px-2 py-2 border-b">{row.allocatedDate}</td>
-                <td className="px-2 py-2 border-b">{row.fulfilledDate}</td>
-                <td className="px-2 py-2 border-b">{row?.orderNo}</td>
-                <td className="px-2 py-2 border-b">{row?.productId}</td>
-                <td className="px-2 py-2 border-b">{row.productDescription}</td>
-                <td className="px-2 py-2 border-b">{row.locationName}</td>
-                <td className="px-2 py-2 border-b">{row.allocatedQuantity}</td>
-                <td className="px-2 py-2 border-b">{row.receivedQuantity}</td>
-                <td className="px-2 py-2 border-b">{row.remainingQuantity}</td>
-                <td className="px-2 py-2 border-b">{row.status}</td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="10" className="px-2 py-4 text-center">
-                <span>No Data Found</span>
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
+                        <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center z-50">
+                          <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px] w-[870px] h-[400px] mt-[60px] overflow-auto relative">
+                            {/* Close button inside scrollable container but positioned sticky */}
+                            <div className="sticky top-0 z-10 flex justify-end bg-slate-100 pb-2">
+                              <button
+                                onClick={CloseInProgressModal}
+                                className="text-red-500 text-xl font-bold hover:text-red-700"
+                              >
+                                &times;
+                              </button>
+                            </div>
+
+                            <h2 className="text-2xl text-center mb-4 font-extrabold">In Progress Orders Tracking.</h2>
+
+                            <div className="inline-block min-w-full shadow-md rounded-lg overflow-auto">
+                              <table className="min-w-full leading-normal">
+                                <thead>
+                                  <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Allocated Date</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Fulfilled Date</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">order No</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Id</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Description</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">location Name</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Allocated Quantity</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Received Quantity</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Remaining Quantity</th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {inProgressDataData?.length > 0 ? (
+                                    inProgressDataData.map((row, index) => (
+                                      <tr key={row.id}>
+                                        <td className="px-2 py-2 border-b">{row.allocatedDate}</td>
+                                        <td className="px-2 py-2 border-b">{row.fulfilledDate}</td>
+                                        <td className="px-2 py-2 border-b">{row?.orderNo}</td>
+                                        <td className="px-2 py-2 border-b">{row?.productId}</td>
+                                        <td className="px-2 py-2 border-b">{row.productDescription}</td>
+                                        <td className="px-2 py-2 border-b">{row.locationName}</td>
+                                        <td className="px-2 py-2 border-b">{row.allocatedQuantity}</td>
+                                        <td className="px-2 py-2 border-b">{row.receivedQuantity}</td>
+                                        <td className="px-2 py-2 border-b">{row.remainingQuantity}</td>
+                                        <td className="px-2 py-2 border-b">{row.status}</td>
+                                      </tr>
+                                    ))
+                                  ) : (
+                                    <tr>
+                                      <td colSpan="10" className="px-2 py-4 text-center">
+                                        <span>No Data Found</span>
+                                      </td>
+                                    </tr>
+                                  )}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
                       )}
 
 

@@ -27,25 +27,25 @@ const HsnCode = () => {
                     validate={values => {
                         const errors = {};
 
-                        if (!values.hsnCodeName || values.hsnCodeName === " ") {
-                            errors.hsnCodeName = 'Hsn Code Cannot Be Null';
-                        }
-                        
-                        if (!values.igst || values.igst === " ") {
-                            errors.igst = 'IGST Cannot Be Null';
-                        }
-                        
-                        // if (!values.gst || values.gst === " ") {
-                        //     errors.gst = 'GST Cannot Be Null';
-                        // }
-                        
-                        if (!values.cgst || values.cgst === " ") {
-                            errors.cgst = 'CGST Cannot Be Null';
-                        }
-                        
-                        if (!values.sgst || values.sgst === " ") {
-                            errors.sgst = 'SGST Cannot Be Null';
-                        }
+                     if (!values.hsnCodeName && values.hsnCodeName !== 0) {
+    errors.hsnCodeName = 'Hsn Code Cannot Be Null';
+}
+
+if (!values.igst && values.igst !== 0) {
+    errors.igst = 'IGST Cannot Be Null';
+}
+
+// if (!values.gst || values.gst === " ") {
+//     errors.gst = 'GST Cannot Be Null';
+// }
+
+if (!values.cgst && values.cgst !== 0) {
+    errors.cgst = 'CGST Cannot Be Null';
+}
+
+if (!values.sgst && values.sgst !== 0) {
+    errors.sgst = 'SGST Cannot Be Null';
+}
 
                         return errors;
                     }}

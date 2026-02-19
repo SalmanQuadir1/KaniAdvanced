@@ -1577,7 +1577,7 @@ function App() {
             }
           />
           <Route
-            path="/configurator/addproductcategory"
+            path="/configurator/addproductstatus"
             element={
               <>
                 <PageTitle title="Add Product Category" />
