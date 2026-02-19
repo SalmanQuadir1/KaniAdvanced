@@ -31,10 +31,11 @@ const Voucher = () => {
     const [operationType, setOperationType] = useState('create'); // 'create', 'create-sub', 'update'
     const [parentVoucherId, setParentVoucherId] = useState(null);
     const [generatedVoucherNo, setGeneratedVoucherNo] = useState(''); // Store generated voucher number
+    const [numberingConfig, setNumberingConfig] = useState(null); // Store numbering config for auto mode
 
     const { Locations, getAllLocation } = useLocation();
 
-    // Function to generate voucher number based on modal data
+    // Function to generate voucher number based on modal data (for Additional Numbering mode)
     const generateVoucherNumber = (numberingData) => {
         const {
             startingNum = '1',
@@ -154,14 +155,13 @@ const Voucher = () => {
         { value: 'RetainOriginalVoucherNo', label: 'Retain Original Voucher No' },
     ];
 
-    const methodOfvoucher = [
+    const methodVouchNumbering = [
         { value: 'Automatic', label: 'Automatic' },
         { value: 'AutomaticManualOverride', label: 'Automatic (Manual Override)' },
         { value: 'Manual', label: 'Manual' },
         { value: 'MultiUserAuto', label: 'Multi-User Auto' },
         { value: 'None', label: 'None' },
     ];
-    console.log(generatedVoucherNo);
 
     // Initial values
     const defaultInitialValues = {
@@ -169,16 +169,16 @@ const Voucher = () => {
         typeOfVoucher: '',
         abbreviation: '',
         actVoucher: 'true',
-        methodOfvoucher: '',
+        // methodVouchNumbering: '',
         numbInsertDelete: '',
-        setAdditionalNumb: true,
+        setAdditionalNumb: false,
         unusedVchNos: false,
         dateForVchs: false,
         effectiveDate: '',
         zeroTransactionAllowed: false,
         optionalVchType: false,
         narrationVchs: false,
-        autoReceiptNumber: generatedVoucherNo,
+        autoReceiptNumber: '',
         narratLedgerVch: false,
         defAccounting: false,
         costPurchase: false,
@@ -195,12 +195,12 @@ const Voucher = () => {
         defJurisdiction: '',
         printFormal: false,
         defGstRegist: { id: '' },
-        methodVouchNumbering: false,
+        methodVouchNumbering: '',
+        vchNumbGstRegistration:'',
         gstratedetails: '',
-        // hsnCode: null,
         gstDescription: '',
         hsn_Sac: '',
-        generatedVoucherNo: '', // Add field for generated voucher number
+        generatedVoucherNo: '',
         parentVoucherId: null,
     };
 
@@ -218,6 +218,8 @@ const Voucher = () => {
                 ...defaultInitialValues,
                 parentVoucherId: parentVoucherId
             });
+            // Set default generated voucher number for Auto mode
+            setGeneratedVoucherNo('1');
         }
     };
 
@@ -236,6 +238,7 @@ const Voucher = () => {
                 const voucherData = await response.json();
                 const formattedData = formatVoucherData(voucherData);
                 setInitialFormValues(formattedData);
+                setGeneratedVoucherNo(voucherData.generatedVoucherNo || '');
             } else {
                 toast.error('Failed to fetch voucher data');
                 setInitialFormValues(defaultInitialValues);
@@ -268,8 +271,7 @@ const Voucher = () => {
                     parentVoucherId: parentId,
                     typeOfVoucher: parentData.typeOfVoucher || '',
                     abbreviation: parentData.abbreviation ? `${parentData.abbreviation}_SUB` : '',
-                    generatedVoucherNo: parentData.generatedVoucherNo || '', // Inherit voucher number
-                    // Add other fields you want to inherit from parent
+                    generatedVoucherNo: '', // Don't inherit voucher number for sub-voucher
                 };
                 setInitialFormValues(subVoucherData);
             } else {
@@ -291,15 +293,14 @@ const Voucher = () => {
     };
 
     const formatVoucherData = (voucherData) => {
-        console.log(voucherData, "sed godown");
         return {
             name: voucherData.name || '',
             typeOfVoucher: voucherData.typeOfVoucher || '',
             abbreviation: voucherData.abbreviation || '',
             actVoucher: voucherData.actVoucher?.toString() || 'true',
-            methodOfvoucher: voucherData.methodOfvoucher || '',
+           
             numbInsertDelete: voucherData.numbInsertDelete || '',
-            setAdditionalNumb: voucherData.setAdditionalNumb || true,
+            setAdditionalNumb: voucherData.setAdditionalNumb || false,
             autoReceiptNumber: voucherData.autoReceiptNumber || '',
             unusedVchNos: voucherData.unusedVchNos || false,
             dateForVchs: voucherData.dateForVchs || false,
@@ -323,21 +324,32 @@ const Voucher = () => {
             defJurisdiction: voucherData.defJurisdiction || '',
             printFormal: voucherData.printFormal || false,
             defGstRegist: { id: voucherData.defGstRegist || '' },
-            methodVouchNumbering: voucherData.methodVouchNumbering || false,
+            methodVouchNumbering: voucherData.methodVouchNumbering ||'',
             gstratedetails: voucherData.gstratedetails || '',
-            // hsnCode: voucherData.hsnCode || null,
             gstDescription: voucherData.gstDescription || '',
             hsn_Sac: voucherData.hsn_Sac || '',
             generatedVoucherNo: voucherData.generatedVoucherNo || '',
-            // parentVoucherId: voucherData.parentVoucherId || null,
         };
     };
 
     // Handle form submission
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-        console.log(values, "handle submittttt");
         setLoading(true);
 
+        // Validate based on numbering method
+        if (values.methodVouchNumbering === 'Manual' && !generatedVoucherNo) {
+            toast.error('Please enter a manual voucher number');
+            setLoading(false);
+            setSubmitting(false);
+            return;
+        }
+
+        if (values.setAdditionalNumb && !generatedVoucherNo) {
+            toast.error('Please configure additional numbering details');
+            setLoading(false);
+            setSubmitting(false);
+            return;
+        }
 
         try {
             let url, method, successMessage;
@@ -362,7 +374,7 @@ const Voucher = () => {
             // Prepare the data
             const formData = {
                 ...values,
-                autoReceiptNumber: generatedVoucherNo.toUpperCase(), // Include generated voucher number
+                autoReceiptNumber: generatedVoucherNo,
                 ...(gstDetails.length > 0 ? { gstDetails } : {})
             };
 
@@ -370,7 +382,6 @@ const Voucher = () => {
             if (values.defaultGodown && typeof values.defaultGodown === 'object') {
                 formData.defaultGodown = values.defaultGodown.value;
             }
-            console.log(formData, "form dataaa");
 
             const response = await fetch(url, {
                 method: method,
@@ -410,6 +421,32 @@ const Voucher = () => {
         }
     };
 
+    // Handle manual voucher number change
+    const handleManualVoucherChange = (e, setFieldValue) => {
+        const value = e.target.value;
+        setGeneratedVoucherNo(value);
+        setFieldValue('generatedVoucherNo', value);
+    };
+
+    // Reset generated voucher number when numbering method changes
+    const handleNumberingMethodChange = (opt, setFieldValue) => {
+        console.log(opt.value,"kkk");
+        
+        setFieldValue('methodVouchNumbering', opt?.value);
+        
+        // Reset generated voucher number based on method
+        if (opt?.value === 'Automatic') {
+            setGeneratedVoucherNo('1');
+            setNumberingConfig(null);
+        } else if (opt?.value === 'Manual') {
+            setGeneratedVoucherNo('');
+            setNumberingConfig(null);
+        } else {
+            setGeneratedVoucherNo('');
+            setNumberingConfig(null);
+        }
+    };
+
     useEffect(() => {
         fetchData();
     }, [operationType, id, parentVoucherId]);
@@ -423,9 +460,6 @@ const Voucher = () => {
         label: `Registration ${loc.state}`,
         value: loc.id
     }));
-
-    console.log(formattedGstLocation, "heyyyyyyyyyyyyyyyyyyyyyyyy");
-
 
     // Helper function for yes/no radio buttons
     const renderYesNoRadio = (name, label, values, setFieldValue) => (
@@ -456,25 +490,78 @@ const Voucher = () => {
         </div>
     );
 
-    // Show generated voucher number in the form
-    const renderGeneratedVoucherNumber = () => {
-        if (generatedVoucherNo) {
+    // Render voucher number input based on numbering method
+    const renderVoucherNumberInput = (values, setFieldValue) => {
+        if (values.methodVouchNumbering === 'Automatic') {
+            return (
+                <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <h5 className="text-lg font-semibold text-blue-700 dark:text-blue-300 mb-2">
+                        Auto-Generated Voucher Number
+                    </h5>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-blue-600 dark:text-blue-400 font-bold text-2xl">
+                                {generatedVoucherNo || '1'}
+                            </p>
+                            <p className="text-sm text-blue-500 dark:text-blue-300 mt-1">
+                                System will automatically start from 1
+                            </p>
+                        </div>
+                        <Field 
+                            type="hidden" 
+                            name="generatedVoucherNo" 
+                            value={generatedVoucherNo || '1'} 
+                        />
+                    </div>
+                </div>
+            );
+        } else if (values.methodVouchNumbering === 'Manual') {
+            return (
+                <div className="mb-6 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                    <h5 className="text-lg font-semibold text-purple-700 dark:text-purple-300 mb-4">
+                        Manual Voucher Number
+                    </h5>
+                    <div>
+                        <label className="mb-2.5 block text-black dark:text-white">
+                            Enter Voucher Number *
+                        </label>
+                        <input
+                            type="text"
+                            value={generatedVoucherNo}
+                            onChange={(e) => handleManualVoucherChange(e, setFieldValue)}
+                            placeholder="e.g., VCH-001, INV-2024-001"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
+                        />
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                            Enter your custom voucher number manually
+                        </p>
+                    </div>
+                </div>
+            );
+        } else if (values.setAdditionalNumb) {
             return (
                 <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
                     <h5 className="text-lg font-semibold text-green-700 dark:text-green-300 mb-2">
-                        Generated Voucher Number
+                        Generated Voucher Number (with Additional Settings)
                     </h5>
                     <div className="flex items-center justify-between">
                         <div>
                             <p className="text-green-600 dark:text-green-400 font-bold text-2xl">
-                                {generatedVoucherNo}
+                                {generatedVoucherNo || 'Not configured'}
                             </p>
                             <p className="text-sm text-green-500 dark:text-green-300 mt-1">
-                                This voucher number will be used for entries
+                                Voucher number with prefix/suffix and padding
                             </p>
                         </div>
-                        <Field type="hidden" name="generatedVoucherNo" value={generatedVoucherNo} />
+                        <Field 
+                            type="hidden" 
+                            name="generatedVoucherNo" 
+                            value={generatedVoucherNo} 
+                        />
                     </div>
+                    {!generatedVoucherNo && (
+                       setShowNumberingModal(true)
+                    )}
                 </div>
             );
         }
@@ -531,9 +618,6 @@ const Voucher = () => {
                     {({ isSubmitting, setFieldValue, values }) => (
                         <Form>
                             <div className="p-6.5">
-                                {/* Show generated voucher number */}
-                                {renderGeneratedVoucherNumber()}
-
                                 {/* Basic Information */}
                                 <div className="mb-8">
                                     <h4 className="text-lg font-semibold mb-4 text-black dark:text-white">Basic Information</h4>
@@ -558,7 +642,7 @@ const Voucher = () => {
                                                 options={typeOfVoucher}
                                                 styles={customStyles}
                                                 placeholder="Select voucher type"
-                                                isDisabled={operationType === 'create-sub'} // Disable for sub-vouchers
+                                                isDisabled={operationType === 'create-sub'}
                                             />
                                         </div>
 
@@ -593,10 +677,10 @@ const Voucher = () => {
                                         <div>
                                             <label className="mb-2.5 block text-black dark:text-white">Voucher Numbering Method</label>
                                             <ReactSelect
-                                                name="methodOfvoucher"
-                                                value={methodOfvoucher.find(opt => opt.value === values.methodOfvoucher)}
-                                                onChange={(opt) => setFieldValue('methodOfvoucher', opt?.value)}
-                                                options={methodOfvoucher}
+                                                name="methodVouchNumbering"
+                                                value={methodVouchNumbering.find(opt => opt.value === values.methodVouchNumbering)}
+                                                onChange={(opt) => handleNumberingMethodChange(opt, setFieldValue)}
+                                                options={methodVouchNumbering}
                                                 styles={customStyles}
                                                 placeholder="Select method"
                                             />
@@ -615,28 +699,32 @@ const Voucher = () => {
                                         </div>
                                     </div>
 
-                                    <div className="space-y-4">
-                                        {renderYesNoRadio('setAdditionalNumb', 'Set Additional Numbering Details', values, setFieldValue)}
-                                        {renderYesNoRadio('unusedVchNos', 'Show Unused Voucher Numbers', values, setFieldValue)}
+                                    {/* Render voucher number input based on selected method */}
+                                    {renderVoucherNumberInput(values, setFieldValue)}
 
-                                        {/* Show button to open numbering modal if setAdditionalNumb is true */}
-                                        {values.setAdditionalNumb === true && !generatedVoucherNo && (
+                                    <div className="space-y-4">
+                                        {/* Show Additional Numbering option only if not Auto or Manual */}
+                                        {values.methodVouchNumbering !== 'Automatic' && 
+                                         values.methodVouchNumbering !== 'Manual' && (
                                             <>
-                                                 <p className="text-sm text-red-600 dark:text-blue-300 mt-2">
-                                                    Click to set starting number, prefix, suffix, and other numbering details Eg : 001/SAL/24-25
-                                                </p>
-                                            <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setShowNumberingModal(true)}
-                                                    className="px-4 py-2 bg-primary text-white rounded hover:bg-blue-700"
-                                                >
-                                                    Configure Voucher Numbering Details (Mandatory For Voucher Creation)
-                                                </button>
-                                               
-                                            </div>
+                                                {renderYesNoRadio('setAdditionalNumb', 'Set Additional Numbering Details', values, setFieldValue)}
+                                                
+                                                {/* Show configure button for Additional Numbering */}
+                                                {/* {values.setAdditionalNumb === true && !generatedVoucherNo && (
+                                                    <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setShowNumberingModal(true)}
+                                                            className="px-4 py-2 bg-primary text-white rounded hover:bg-blue-700"
+                                                        >
+                                                            Configure Voucher Numbering Details (Mandatory For Voucher Creation)
+                                                        </button>
+                                                    </div>
+                                                )} */}
                                             </>
                                         )}
+
+                                        {renderYesNoRadio('unusedVchNos', 'Show Unused Voucher Numbers', values, setFieldValue)}
 
                                         <div className="flex items-center justify-between mb-4">
                                             <label className="text-black dark:text-white">Use Effective Date for Vouchers</label>
@@ -805,14 +893,16 @@ const Voucher = () => {
                                         </div>
                                     </div>
 
-                                    {renderYesNoRadio('methodVouchNumbering', 'Use Common Voucher Numbering for All GST Registrations', values, setFieldValue)}
+                                    {renderYesNoRadio('vchNumbGstRegistration', 'Use Common Voucher Numbering for All GST Registrations', values, setFieldValue)}
                                 </div>
 
                                 {/* Submit Button */}
                                 <div className="flex justify-center mt-8">
                                     <button
                                         type="submit"
-                                        disabled={isSubmitting || loading ||!generatedVoucherNo|| (values.setAdditionalNumb && !generatedVoucherNo)}
+                                        disabled={isSubmitting || loading || 
+                                            (values.methodVouchNumbering === 'Manual' && !generatedVoucherNo) ||
+                                            (values.generateVoucherNumber && !generatedVoucherNo)}
                                         className="flex items-center justify-center md:w-[150px] w-full md:h-[44px] h-[44px] rounded-lg bg-primary font-medium text-white hover:bg-primary/90 disabled:opacity-50"
                                     >
                                         {loading ? (
@@ -850,6 +940,7 @@ const Voucher = () => {
                     // Generate voucher number from modal data
                     const voucherNumber = generateVoucherNumber(data);
                     setGeneratedVoucherNo(voucherNumber);
+                    setNumberingConfig(data);
 
                     // Store the gst details
                     setGstDetails(data);
@@ -859,8 +950,6 @@ const Voucher = () => {
 
                     // Show success message
                     toast.success(`Voucher number generated: ${voucherNumber}`);
-
-                    console.log("Generated Voucher No:", voucherNumber);
                 }}
             />
         </DefaultLayout>
