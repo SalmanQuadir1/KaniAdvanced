@@ -4,24 +4,21 @@ import { toast } from 'react-toastify';
 import {
   UPDATE_PRODUCT_SUBGROUP_URL,
   ADD_PRODUCT_SUBGROUP_URL,
-  ADD_PRODUCT_SUBGROUPS_BULK_URL,
+  ADD_PRODUCT_SUBGROUPS_BULK_URL, // NEW: Bulk endpoint
   DELETE_PRODUCT_SUBGROUP_URL,
   GET_PRODUCT_SUBGROUP_URL,
-  GET_GROUPS_URL,
-  UPDATE_PRODUCT_GROUP_URL, // You'll need this constant
+  GET_GROUPS_URL, // NEW: Add this constant
 } from '../Constants/utils';
 
 const useproductSubGroup = () => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const { token } = currentUser;
   const [productSubGroup, setProductSubGroup] = useState([]);
-  const [groups, setGroups] = useState([]);
+  const [groups, setGroups] = useState([]); // NEW: Groups state
   const [edit, setEdit] = useState(false);
-  const [editingGroup, setEditingGroup] = useState(null); // Track which group is being edited
-  const [editingSubgroups, setEditingSubgroups] = useState({}); // Track subgroup edits {subgroupId: {name, isEditing}}
   const [currentproductSubGroup, setCurrentproductSubGroup] = useState({
     productSubGroupName: '',
-    groupId: null,
+    groupId: null, // NEW: Add groupId
   });
 
   const [pagination, setPagination] = useState({
@@ -34,9 +31,10 @@ const useproductSubGroup = () => {
 
   useEffect(() => {
     getproductSubGroup(pagination.currentPage);
-    getGroups();
+    getGroups(); // NEW: Fetch groups
   }, []);
 
+  // NEW: Function to fetch groups
   const getGroups = async () => {
     try {
       const response = await fetch(GET_GROUPS_URL, {
@@ -102,93 +100,21 @@ const useproductSubGroup = () => {
     }
   };
 
-  // Start editing a group name
-  const handleEditGroup = (group) => {
-    setEditingGroup({
-      id: group.id,
-      name: group.productGroupName,
+  const handleUpdate = (item) => {
+    console.log(item, "Updating subgroup");
+
+    setEdit(true);
+    setCurrentproductSubGroup({
+      id: item.id, // Store the subgroup ID
+      productSubGroupName: item.productSubGroupName, // Use correct field name
+      groupId: item.group?.id || item.groupId,
     });
   };
 
-  // Update group name
-  const handleUpdateGroup = async (groupId, newName) => {
-    try {
-      const response = await fetch(`${UPDATE_PRODUCT_GROUP_URL}/${groupId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ productGroupName: newName }),
-      });
-
-      if (response.ok) {
-        toast.success('Group updated successfully');
-        setEditingGroup(null);
-        getproductSubGroup(pagination.currentPage);
-        getGroups();
-      } else {
-        const data = await response.json();
-        toast.error(data.errorMessage || 'Failed to update group');
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error('An error occurred');
-    }
-  };
-
-  // Start editing a subgroup
-  const handleEditSubgroup = (subgroupId, currentName) => {
-    setEditingSubgroups({
-      ...editingSubgroups,
-      [subgroupId]: {
-        name: currentName,
-        isEditing: true
-      }
-    });
-  };
-
-  // Update subgroup
-  const handleUpdateSubgroup = async (subgroupId) => {
-    const newName = editingSubgroups[subgroupId]?.name;
-    
-    try {
-      const response = await fetch(`${UPDATE_PRODUCT_SUBGROUP_URL}/${subgroupId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ 
-          productSubGroupName: newName 
-        }),
-      });
-
-      if (response.ok) {
-        toast.success('Subgroup updated successfully');
-        // Remove from editing state
-        const newEditing = { ...editingSubgroups };
-        delete newEditing[subgroupId];
-        setEditingSubgroups(newEditing);
-        getproductSubGroup(pagination.currentPage);
-      } else {
-        const data = await response.json();
-        toast.error(data.errorMessage || 'Failed to update subgroup');
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error('An error occurred');
-    }
-  };
-
-  // Cancel editing
-  const cancelEdit = (subgroupId) => {
-    const newEditing = { ...editingSubgroups };
-    delete newEditing[subgroupId];
-    setEditingSubgroups(newEditing);
-  };
-
+  // NEW: Bulk create function
   const handleBulkCreate = async (groupId, subgroups) => {
+
+
     try {
       const response = await fetch(ADD_PRODUCT_SUBGROUPS_BULK_URL, {
         method: 'POST',
@@ -218,6 +144,48 @@ const useproductSubGroup = () => {
     }
   };
 
+  // Existing single create/update function
+ const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+  console.log(values, "Submitting form");
+
+  try {
+    const url = edit
+      ? `${UPDATE_PRODUCT_SUBGROUP_URL}/${currentproductSubGroup.id}`
+      : ADD_PRODUCT_SUBGROUP_URL;
+    const method = edit ? 'PUT' : 'POST';
+
+    const response = await fetch(url, {
+      method: method,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(values),
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      toast.success(
+        `SubGroup ${edit ? 'updated' : 'added'} successfully`,
+      );
+      resetForm();
+      setEdit(false);
+      setCurrentproductSubGroup({
+        productSubGroupName: '',
+        groupId: '',
+      });
+      getproductSubGroup(pagination.currentPage);
+    } else {
+      toast.error(`${data.errorMessage || 'Operation failed'}`);
+    }
+  } catch (error) {
+    console.error(error);
+    toast.error('An error occurred');
+  } finally {
+    setSubmitting(false);
+  }
+};
+
   const handlePageChange = (newPage) => {
     setPagination((prev) => ({ ...prev, currentPage: newPage }));
     getproductSubGroup(newPage);
@@ -226,18 +194,13 @@ const useproductSubGroup = () => {
   return {
     productSubGroup,
     edit,
-    editingGroup,
-    editingSubgroups,
     currentproductSubGroup,
-    groups,
+    groups, // NEW: Return groups
     pagination,
     handleDelete,
-    handleEditGroup,
-    handleUpdateGroup,
-    handleEditSubgroup,
-    handleUpdateSubgroup,
-    cancelEdit,
-    handleBulkCreate,
+    handleUpdate,
+    handleSubmit,
+    handleBulkCreate, // NEW: Return bulk create function
     handlePageChange,
   };
 };
