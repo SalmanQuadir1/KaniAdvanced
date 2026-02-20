@@ -249,16 +249,16 @@ const ViewOrder = () => {
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item.customerName}</p>
                 </td>
-               <td className="px-5 py-5 border-b border-gray-200 text-sm tracking-wider">
-    {
-        item?.products?.map((prodId, index) => (
-            <div key={index} className="mb-1">
-                <span className="text-gray-900 whitespace-no-wrap tracking-wider">{prodId.productId}</span>
-                <span className="text-gray-900 whitespace-no-wrap ml-1">({prodId.productStatus})</span>
-            </div>
-        ))
-    }
-</td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm tracking-wider">
+                    {
+                        item?.products?.map((prodId, index) => (
+                            <div key={index} className="mb-1">
+                                <span className="text-gray-900 whitespace-no-wrap tracking-wider">{prodId.productId}</span>
+                                <span className="text-gray-900 whitespace-no-wrap ml-1">({prodId.productStatus})</span>
+                            </div>
+                        ))
+                    }
+                </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item.name}</p>
                 </td>
@@ -273,16 +273,33 @@ const ViewOrder = () => {
 
 
 
+                {
+                    item.orderStatus && item.orderStatus.toLowerCase() === "created" ? (
+                        <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                            <p className="flex text-gray-900 whitespace-no-wrap">
+                                <FiEdit
+                                    size={17}
+                                    className='text-teal-500 hover:text-teal-700 mx-2 cursor-pointer'
+                                    onClick={() => navigate(`/Order/updateorder/${item?.id}`)}
+                                    title='Edit Order'
+                                />
+                                <span className="text-gray-300 mx-1">|</span>
+                                <FiTrash2
+                                    size={17}
+                                    className='text-red-500 hover:text-red-700 mx-2 cursor-pointer'
+                                    onClick={(e) => handleDelete(e, item?.id)}
+                                    title='Delete Order'
+                                />
+                            </p>
+                        </td>
+                    ) : (
+                        <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                            <p className="text-gray-400 whitespace-no-wrap text-center">-</p>
+                        </td>
+                    )
+                }
 
-
-
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="flex text-gray-900 whitespace-no-wrap">
-                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Order/updateorder/${item?.id}`)} title='Edit Product' />  |
-                        <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' />
-                    </p>
-                </td>
-            </tr>
+            </tr >
         ));
     };
 

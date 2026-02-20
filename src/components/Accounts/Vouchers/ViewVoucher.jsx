@@ -139,18 +139,18 @@ const ViewVoucher = () => {
     };
 
     // Prepare dropdown options (with safe checks)
-    const voucherTypeOptions = voucherrr && voucherrr.length > 0 
+    const voucherTypeOptions = voucherrr && voucherrr.length > 0
         ? [...new Map(voucherrr.map(item => [item.typeOfVoucher, item])).values()].map(vouch => ({
             label: vouch.typeOfVoucher,
             value: vouch.typeOfVoucher
-          }))
+        }))
         : [];
 
     const voucherNameOptions = voucherTypee && voucherTypee.length > 0
         ? voucherTypee.map(vouch => ({
             label: vouch?.name,
             value: vouch?.name
-          }))
+        }))
         : [];
 
     const handleSubmit = (values) => {
@@ -230,6 +230,9 @@ const ViewVoucher = () => {
             }
         };
 
+        console.log(Voucher, "665");
+
+
         return Voucher.map((item, index) => (
             <tr key={item.id || index} className='bg-white dark:bg-slate-700 dark:text-white'>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
@@ -242,19 +245,33 @@ const ViewVoucher = () => {
                     <p className="text-gray-900 whitespace-no-wrap">{item?.typeOfVoucher}</p>
                 </td>
                 <td>
-                    <span onClick={() => navigate(`/voucher/create/${item.id}`)} 
-                          className="view-badge bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer">
+                    <span onClick={() => navigate(`/voucher/create/${item.id}`)}
+                        className="view-badge bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer">
                         Add Entry
                     </span>
                 </td>
-                <td>
-                    <span onClick={() => navigate(item.typeOfVoucher === "Payment" 
-                        ? `/voucherEntriesPayment/${item.id}` 
-                        : `/voucherEntries/${item.id}`)} 
-                          className="view-badge bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer">
-                        View Entries
-                    </span>
-                </td>
+
+                {
+                    item.entryPayments && item.entryPayments.length > 0 ? (
+                        <td>
+                            <span
+                                onClick={() => navigate(item.typeOfVoucher === "Payment"
+                                    ? `/voucherEntriesPayment/${item.id}`
+                                    : `/voucherEntries/${item.id}`)}
+                                className="view-badge bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer"
+                            >
+                                View Entries
+                            </span>
+                        </td>
+                    ) : (
+                        <td>
+                            <span className="text-gray-400 text-[10px] font-medium me-2 text-center py-2 px-4">
+                                No Entries
+                            </span>
+                        </td>
+                    )
+                }
+
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <IoIosAdd size={30} onClick={() => navigate(`/configurator/vouchers/${item.id}`)} className="cursor-pointer" />
                 </td>
@@ -276,6 +293,13 @@ const ViewVoucher = () => {
                             {item?.actVoucher ? 'Active' : 'Inactive'}
                         </span>
                     </label>
+                </td>
+
+                <td className="px-5 py-5 bBudget-b bBudget-gray-200 text-sm">
+                    <p className="flex text-gray-900 whitespace-no-wrap">
+                        {/* <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={() => navigate(`/Budget/updateBudget/${item?.id}`)} title='Edit Budget' />   | */}
+                        <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Voucher' />
+                    </p>
                 </td>
             </tr>
         ));
@@ -369,7 +393,7 @@ const ViewVoucher = () => {
                 </div>
             </div>
 
-            <div>
+            <div className='pr-9'>
                 <div className='mt-9 bg-white'>
                     <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 overflow-x-auto">
                         <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
@@ -384,6 +408,7 @@ const ViewVoucher = () => {
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">ADD SUB VOUCHER</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">GST REGISTRATION</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Activation Status</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
