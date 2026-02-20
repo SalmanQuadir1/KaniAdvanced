@@ -249,20 +249,25 @@ const ViewOrder = () => {
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item.customerName}</p>
                 </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    {
-                        item.productIds.map((prodId) => (
-                            <p className="text-gray-900 whitespace-no-wrap">{prodId}</p>
-                        ))
-                    }
-                    {/* <p className="text-gray-900 whitespace-no-wrap">{item.productId}</p> */}
-                </td>
+               <td className="px-5 py-5 border-b border-gray-200 text-sm tracking-wider">
+    {
+        item.products.map((prodId, index) => (
+            <div key={index} className="mb-1">
+                <span className="text-gray-900 whitespace-no-wrap tracking-wider">{prodId.productId}</span>
+                <span className="text-gray-900 whitespace-no-wrap ml-1">({prodId.productStatus})</span>
+            </div>
+        ))
+    }
+</td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item.name}</p>
                 </td>
 
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item.orderDate}</p>
+                </td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <p className="text-gray-900 whitespace-no-wrap">{item.orderStatus}</p>
                 </td>
 
 
@@ -464,10 +469,11 @@ const ViewOrder = () => {
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[10px]" >SNO</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[150px]">Order No</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Customer</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Id</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider whitespace-nowrap w-[110px]">Product Id</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[170px]">Supplier</th>
                                         {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[140px] ">Order Date </th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[140px] ">Order Status </th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>

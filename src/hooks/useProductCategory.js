@@ -9,7 +9,7 @@ const useproductCategory = () => {
     const [productCategory, setproductCategory] = useState([]);
     const [edit, setEdit] = useState(false);
     const [currentproductCategory, setCurrentproductCategory] = useState({
-        productCategoryName:"",
+        productCategoryName: "",
     });
 
     const [pagination, setPagination] = useState({
@@ -48,8 +48,8 @@ const useproductCategory = () => {
         }
     };
 
-    const handleDelete = async (e, id) => {
-        e.preventDefault();
+    const handleDelete = async (id) => {
+      
         try {
             const response = await fetch(`${DELETE_PRODUCTCATEGORY_URL}${id}`, {
                 method: 'DELETE',
@@ -81,10 +81,10 @@ const useproductCategory = () => {
         }
     };
 
-    const handleUpdate = (e, item) => {
-        e.preventDefault();
+    const handleUpdate = (item) => {
+      
         setEdit(true);
-console.log(item,"hey");
+        console.log(item, "hey");
         setCurrentproductCategory(item);
     };
 

@@ -37,14 +37,14 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
     const [units, setunits] = useState([])
     const [Location, setLocation] = useState([])
 
-   
+
 
     const [productmrp, setproductmrp] = useState([])
     const [currentProduct, setCurrentProduct] = useState({
         productGroup: {},
-  
 
-        subGroup:{},
+
+        subGroup: {},
 
         colors: {
             // Default value
@@ -75,9 +75,9 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
         //         product: "" 
         //     }
         // ],      
-     
+
         supplier: [],
-        looms:[],
+        looms: [],
         supplierCode: '',
         // supplierr:[],
         warpColors: "",
@@ -95,7 +95,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
         weave: "",
         finishedWeight: "",
         materialWeight: "",
-        grossWeight:"",
+        grossWeight: "",
         netWeight: "",
 
 
@@ -214,7 +214,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
     };
 
 
-   
+
 
 
 
@@ -429,11 +429,18 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
         const formData = new FormData();
 
         try {
-            // Prepare the product object without images
+
+            const { supplierCode, ...valuesWithoutSupplierCode } = values;
+
             const product = {
-                ...values,
-                productId: productIdField // Add productId directly while spreading
+                ...valuesWithoutSupplierCode,
+                productId: productIdField
             };
+            // Prepare the product object without images
+            // const product = {
+            //     ...values,
+            //     productId: productIdField // Add productId directly while spreading
+            // };
             delete product.images; // Remove images from the product object
 
             // product.productId = productIdField;
@@ -458,16 +465,16 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
                 // product.sgst = values.hsnCode?.sgst;
                 product.gstDescription = values.hsnCode?.productDescription;
                 product.hsn_Sac = values.hsn_Sac;
-    
+
                 // Remove slab-based rates if they exist
                 delete product.slabBasedRates;
             }
 
             // Append the updated product to formData
             formData.append("product", JSON.stringify(product));
-            console.log(product,"666666666666666660000");
-            
-            console.log(referenceImages,"reffferrreffefefefefefefefffffffffffff=================");
+            console.log(product, "666666666666666660000");
+
+            console.log(referenceImages, "reffferrreffefefefefefefefffffffffffff=================");
 
             Array.from(referenceImages).forEach((file) => formData.append('referenceImages', file)); // Add files
             Array.from(actualImages).forEach((file) => formData.append('actualImages', file));
@@ -513,7 +520,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
 
                 // Reset the form and states
                 resetForm();
-           
+
                 navigate("/product/viewProducts") // Refresh product list
                 window.location.reload();  // Reset form fields
                 setEdit(false); // Reset edit state
