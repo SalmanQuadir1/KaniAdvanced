@@ -903,7 +903,7 @@ const Voucher = () => {
                                         disabled={isSubmitting || loading || 
                                             (values.methodVouchNumbering === 'Manual' && !generatedVoucherNo) ||
                                             (values.generateVoucherNumber && !generatedVoucherNo)}
-                                        className="flex items-center justify-center md:w-[150px] w-full md:h-[44px] h-[44px] rounded-lg bg-primary font-medium text-white hover:bg-primary/90 disabled:opacity-50"
+                                        className="flex items-center justify-center md:w-[250px] w-full md:h-[44px] h-[44px] rounded-lg bg-primary font-medium text-white hover:bg-primary/90 disabled:opacity-50"
                                     >
                                         {loading ? (
                                             <div className="flex items-center gap-2">
