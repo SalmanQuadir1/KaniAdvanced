@@ -251,7 +251,7 @@ const ViewOrder = () => {
                 </td>
                <td className="px-5 py-5 border-b border-gray-200 text-sm tracking-wider">
     {
-        item.products.map((prodId, index) => (
+        item?.products?.map((prodId, index) => (
             <div key={index} className="mb-1">
                 <span className="text-gray-900 whitespace-no-wrap tracking-wider">{prodId.productId}</span>
                 <span className="text-gray-900 whitespace-no-wrap ml-1">({prodId.productStatus})</span>
