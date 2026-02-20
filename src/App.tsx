@@ -34,6 +34,7 @@ import PrintPaymentVoucher from './components/Accounts/Vouchers/PrintPaymentVouc
 import PrintPosEntryPayment from './components/Accounts/Vouchers/PrintPosEntryPayment.jsx';
 import ViewVoucher from './components/Accounts/Vouchers/ViewVoucher.jsx';
 
+import KaniProducts from './components/Kani/KaniProducts.jsx';
 import KaniOrders from './components/Kani/KaniOrders.jsx';
 import FilterSupplier from './components/Kani/FilterSupplier.jsx';
 import SupplierOrder from './components/Kani/SupplierOrder.jsx';
@@ -1043,6 +1044,18 @@ function App() {
               </>
             }
           />
+
+
+           <Route
+            path="/kaniProducts"
+            element={
+              <>
+                <PageTitle title=" Kani Products " />
+                <KaniProducts />
+              </>
+            }
+          />
+
 
           <Route
             path="/Order/updatependingforbill/:id"
