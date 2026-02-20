@@ -18,6 +18,7 @@ const AddSupplier = () => {
     } = useSupplier();
 
     const theme = useSelector(state => state?.persisted?.theme);
+
     const customStyles = createCustomStyles(theme?.mode);
 
     const workerSelectStyles = {
@@ -145,9 +146,9 @@ const AddSupplier = () => {
                         }
 
                         // Validate supplier code
-                        if (!values.supplierCode) {
-                            errors.supplierCode = 'Required';
-                        }
+                        // if (!values.supplierCode) {
+                        //     errors.supplierCode = 'Required';
+                        // }
 
                         // Validate address
                         if (!values.address) {
@@ -194,7 +195,7 @@ const AddSupplier = () => {
                                                     placeholder="Enter Supplier Code"
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                 />
-                                                <ErrorMessage name="supplierCode" component="div" className="text-red-500" />
+                                                {/* <ErrorMessage name="supplierCode" component="div" className="text-red-500" /> */}
                                             </div>
                                             <div className="flex-1 min-w-[300px]">
                                                 <label className="mb-2.5 block text-black dark:text-white">Name<span className="text-red-500">*</span></label>

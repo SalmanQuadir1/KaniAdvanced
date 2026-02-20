@@ -62,20 +62,8 @@ const ViewVoucher = () => {
     // }));
 
 
-    const voucherName = voucherTypee && voucherTypee.map((vouch) => ({
-        label: vouch.name,
-        value: vouch.name
-    }));
 
-    
-    
-    const voucherType = voucherrr && voucherrr.map((vouch) => ({
-        label: vouch.typeOfVoucher,
-        value: vouch.typeOfVoucher
-    }));
-
-
-    console.log(voucherType, "type");
+   
 
 
     const [IsVoucherModalOpen, setIsVoucherModalOpen] = useState(false)
@@ -140,9 +128,16 @@ const ViewVoucher = () => {
     }
 
     useEffect(() => {
-        getVoucherType()
+     
 
     }, [voucherTypeee])
+
+       getVoucherType()
+
+            const voucherName = voucherTypee && voucherTypee?.map((vouch) => ({
+        label: vouch?.name,
+        value: vouch?.name
+    }));
 
     console.log(voucherTypee, "44444444444");
 
@@ -226,7 +221,17 @@ const ViewVoucher = () => {
     console.log(Voucher, "heyVoucher");
 
 
+console.log(voucherTypee,"222222222222222222222222222");
 
+
+
+
+    
+    
+    const voucherType = voucherrr && voucherrr?.map((vouch) => ({
+        label: vouch.typeOfVoucher,
+        value: vouch.typeOfVoucher
+    }));
 
     const renderTableRows = () => {
 
