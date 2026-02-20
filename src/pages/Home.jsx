@@ -131,6 +131,7 @@ const Home = () => {
             { title: "Verifiy Product Transfer", link: "/stockJournal/verify", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
             { title: "Pending for Bill", link: "/Recieved/pendingForBill", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
             { title: "Stock Journal Accept", link: "/StockJournal/get", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
+            // { title: "Kani Products", link: "/kaniProducts", countKey: "ordersWithApprovedOrForcedClosure", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelUp: true },
         ],
         ROLE_EXECUTOR: [
             { title: "Reports", link: "/Reports",  icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
