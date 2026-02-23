@@ -1581,7 +1581,7 @@ function App() {
           />
 
           <Route
-            path="/configurator/addcolorgroup"
+            path="/configurator/addDesigngroup"
             element={
               <>
                 <PageTitle title="Add Color Group" />

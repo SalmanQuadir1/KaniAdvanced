@@ -624,8 +624,8 @@ const AddOrder = () => {
                     console.log(data, "Inventory data for product", product?.products?.id);
 
                     // Set the inStockQuantity field with the calculated value
-                    if (data && data.closingBalance !== undefined && data.inProgressOrders !== undefined) {
-                      const inStockValue = data.closingBalance - data.inProgressOrders;
+                    if (data && data.closingBalance !== undefined && data.instockRecieve !== undefined) {
+                      const inStockValue = data.closingBalance - data.instockRecieve;
 
                       // Update Formik field with the calculated in-stock quantity
                       setFieldValue(`orderProducts[${index}].inStockQuantity`, inStockValue);

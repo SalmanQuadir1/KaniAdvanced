@@ -1394,13 +1394,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
                           <li>
                             <NavLink
-                              to="/configurator/addcolorgroup"
+                              to="/configurator/addDesigngroup"
                               className={({ isActive }) =>
                                 'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
                                 (isActive && '!text-white')
                               }
                             >
-                              Color Group
+                              Design Group
                             </NavLink>
                           </li>
                           <li>
