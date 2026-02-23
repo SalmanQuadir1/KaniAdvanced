@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import useproductSubGroup from '../../hooks/useproductSubGroup';
 import Pagination from '../Pagination/Pagination';
-import ViewTable from './ViewTable';
 import { toast } from 'react-toastify';
 
 const ProductSubGroup = () => {
@@ -16,27 +15,91 @@ const ProductSubGroup = () => {
     groups,
     handleDelete,
     handleUpdate,
-    handleSubmit,
     handleBulkCreate,
+    handleBulkUpdate,
     handlePageChange,
   } = useproductSubGroup();
 
-  // State for dynamic subgroup fields
   const [subgroupFields, setSubgroupFields] = useState(['']);
-  const [isBulkMode, setIsBulkMode] = useState(true); // Toggle between single and bulk mode
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [selectedGroupForEdit, setSelectedGroupForEdit] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Functions for dynamic fields
+  const handleUpdateClick = (group) => {
+    console.log('Original group data:', group);
+    
+    // Store the entire group object including its ID
+    setSelectedGroupForEdit({
+      ...group,
+      id: group.id || group.productGroupId // Ensure we have an ID
+    });
+    
+    // Extract subgroup names
+    if (group?.subgroups) {
+      const names = group.subgroups.map(sg => sg.productSubGroupName || '');
+      console.log('Setting subgroup fields:', names);
+      setSubgroupFields(names.length ? names : ['']);
+      setIsEditMode(true);
+    }
+    
+    // Call the original handleUpdate if needed
+    if (handleUpdate) {
+      handleUpdate(group);
+    }
+  };
+
+  const handleCancelUpdate = () => {
+    setSelectedGroupForEdit(null);
+    setSubgroupFields(['']);
+    setIsEditMode(false);
+  };
+
+  useEffect(() => {
+    if (currentproductSubGroup && !selectedGroupForEdit) {
+      console.log('Current product subgroup from hook:', currentproductSubGroup);
+      
+      if (currentproductSubGroup?.subgroups) {
+        const names = currentproductSubGroup.subgroups.map(
+          (sg) => sg.productSubGroupName || ''
+        );
+        setSubgroupFields(names.length ? names : ['']);
+        setIsEditMode(true);
+        setSelectedGroupForEdit({
+          ...currentproductSubGroup,
+          id: currentproductSubGroup.id || currentproductSubGroup.productGroupId
+        });
+      }
+    }
+  }, [currentproductSubGroup]);
+
   const addSubgroupField = () => {
     setSubgroupFields([...subgroupFields, '']);
   };
 
-  const removeSubgroupField = (index) => {
-    if (subgroupFields.length > 1) {
-      const newFields = [...subgroupFields];
-      newFields.splice(index, 1);
-      setSubgroupFields(newFields);
+ const removeSubgroupField = (index) => {
+  if (subgroupFields.length > 1) {
+    // Remove from subgroupFields (UI input fields)
+    const newFields = [...subgroupFields];
+    newFields.splice(index, 1);
+    setSubgroupFields(newFields);
+    
+    // CRITICAL: Also remove from selectedGroupForEdit.subgroups
+    // This ensures the ID is not sent in the update
+    if (selectedGroupForEdit && selectedGroupForEdit.subgroups) {
+      const updatedSubgroups = [...selectedGroupForEdit.subgroups];
+      updatedSubgroups.splice(index, 1); // Remove the subgroup at this index
+      
+      setSelectedGroupForEdit({
+        ...selectedGroupForEdit,
+        subgroups: updatedSubgroups // This now has only IDs 4 and 7
+      });
+      
+      console.log('Removed subgroup at index', index);
+      console.log('Remaining subgroups:', updatedSubgroups);
+      console.log('Remaining IDs:', updatedSubgroups.map(sg => sg.id)); // Should show [4, 7]
     }
-  };
+  }
+};
 
   const updateSubgroupField = (index, value) => {
     const newFields = [...subgroupFields];
@@ -46,317 +109,309 @@ const ProductSubGroup = () => {
 
   const resetSubgroupFields = () => {
     setSubgroupFields(['']);
+    setIsEditMode(false);
+    setSelectedGroupForEdit(null);
   };
 
-  // Handle bulk creation
-  const handleBulkSubmit = async (values, { setSubmitting, resetForm }) => {
-    // Filter out empty fields
-    const validSubgroups = subgroupFields
-      .map(field => field.trim())
-      .filter(name => name !== '');
+const handleBulkSubmit = async (values, { setSubmitting, resetForm }) => {
+  const validSubgroups = subgroupFields
+    .map((field) => field.trim())
+    .filter((name) => name !== '');
 
-    if (validSubgroups.length === 0) {
-      toast.error('Please enter at least one subgroup name');
-      setSubmitting(false);
-      return;
+  if (validSubgroups.length === 0) {
+    toast.error('Please enter at least one subgroup name');
+    setSubmitting(false);
+    return;
+  }
+
+  if (!values.groupId) {
+    toast.error('Please select a group');
+    setSubmitting(false);
+    return;
+  }
+
+  setIsSubmitting(true);
+  
+  try {
+    let result;
+    
+    if (isEditMode && selectedGroupForEdit) {
+      // Get original IDs from when we started editing
+      const originalIds = selectedGroupForEdit.subgroups?.map(sg => sg.id) || [];
+      
+      // Get current IDs from the UI (after removals)
+      const currentIds = subgroupFields
+        .map((_, index) => originalIds[index])
+        .filter(id => id !== undefined);
+      
+      console.log('Original IDs:', originalIds); // [4, 7, 8]
+      console.log('Current IDs:', currentIds);   // [4, 7]
+      
+      // Find which IDs were removed
+      const removedIds = originalIds.filter(id => !currentIds.includes(id));
+      console.log('Removed IDs to delete:', removedIds); // [8]
+      
+      // STEP 1: Delete the removed subgroups first
+      if (removedIds.length > 0) {
+        for (const id of removedIds) {
+          console.log(`Deleting removed subgroup ID: ${id}`);
+          await fetch(`${DELETE_PRODUCT_SUBGROUP_URL}${id}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+        }
+      }
+      
+      // STEP 2: Now update the remaining subgroups
+      const updateData = {
+        groupId: values.groupId,
+        subgroups: validSubgroups,
+        subgroupIds: currentIds // Only [4, 7]
+      };
+      
+      console.log('Updating with data:', updateData);
+      
+      const groupIdToUpdate = selectedGroupForEdit.id || selectedGroupForEdit.productGroupId;
+      
+      result = await handleBulkUpdate(groupIdToUpdate, updateData);
+    } else {
+      // CREATE MODE
+      result = await handleBulkCreate(values.groupId, validSubgroups);
     }
 
-    if (!values.groupId) {
-      toast.error('Please select a group');
-      setSubmitting(false);
-      return;
-    }
-
-    const result = await handleBulkCreate(values.groupId, validSubgroups);
-
-    if (result.success) {
+    if (result && result.success) {
       resetForm();
       resetSubgroupFields();
+      toast.success(isEditMode ? 'Updated successfully!' : 'Created successfully!');
+      
+      if (handlePageChange) {
+        await handlePageChange(pagination?.currentPage || 1);
+      }
     }
-
+  } catch (error) {
+    console.error('Submit error:', error);
+    toast.error('An error occurred. Please try again.');
+  } finally {
+    setIsSubmitting(false);
     setSubmitting(false);
-  };
-  console.log(productSubGroup, "6565");
-
+  }
+};
 
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Configurator/Product SubGroups" />
 
+      <Formik
+        enableReinitialize
+        initialValues={{
+          groupId: selectedGroupForEdit?.productGroupId || 
+                   currentproductSubGroup?.productGroupId || '',
+        }}
+        onSubmit={handleBulkSubmit}
+      >
+        {({ values, isSubmitting: formikSubmitting, resetForm }) => (
+          <Form>
 
-
-      <div>
-
-
-        <Formik
-          initialValues={{ groupId: '' }}
-          onSubmit={handleBulkSubmit}
-        >
-          {({ values, isSubmitting, resetForm }) => (
-            <Form>
-              <div className="flex flex-col gap-9">
-                <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                  <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                    <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                      Add Multiple SubGroups
-                    </h3>
+            
+            <div className="rounded-sm border border-stroke bg-white shadow-default p-6.5">
+              {/* EDIT MODE INDICATOR */}
+              {isEditMode && selectedGroupForEdit && (
+                <div className="mb-4 p-3 bg-blue-100 text-blue-700 rounded flex justify-between items-center">
+                  <div>
+                    <span className="font-semibold">Edit Mode:</span> Updating subgroups for{' '}
+                    <span className="font-bold">{selectedGroupForEdit.productGroupName}</span>
+                    {selectedGroupForEdit.subgroups && (
+                      <span className="ml-2 text-sm">
+                        ({selectedGroupForEdit.subgroups.length} existing subgroups)
+                      </span>
+                    )}
+                    <span className="ml-2 text-sm text-blue-600">
+                      (You can change the group if needed)
+                    </span>
                   </div>
-
-                  <div className="p-6.5">
-                    {/* Group Selection */}
-                    <div className="mb-6">
-                      <label className="mb-2.5 block text-black dark:text-white">
-                        Select Group <span className="text-danger">*</span>
-                      </label>
-                      <Field
-                        as="select"
-                        name="groupId"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                      >
-                        <option value="">Select a Group</option>
-                        {groups?.map((group) => (
-                          <option key={group.id} value={group.id}>
-                            {group.productGroupName || group.name}
-                          </option>
-                        ))}
-                      </Field>
-                      <ErrorMessage
-                        name="groupId"
-                        component="div"
-                        className="text-red-500 mt-1"
-                      />
-                    </div>
-
-                    {/* Dynamic Subgroup Fields */}
-                    <div className="mb-6">
-                      <div className="flex justify-between items-center mb-4">
-                        <label className="block text-black dark:text-white">
-                          SubGroup Names <span className="text-danger">*</span>
-                          <span className="text-sm text-gray-500 ml-2">
-                            ({subgroupFields.filter(f => f.trim() !== '').length} entered)
-                          </span>
-                        </label>
-                        <button
-                          type="button"
-                          onClick={addSubgroupField}
-                          className="flex items-center gap-1 px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 rounded"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                          </svg>
-                          Add Field
-                        </button>
-                      </div>
-
-                      <div className="space-y-3">
-                        {subgroupFields.map((field, index) => (
-                          <div key={index} className="flex items-center gap-3">
-                            <div className="flex-1">
-                              <input
-                                type="text"
-                                value={field}
-                                onChange={(e) => updateSubgroupField(index, e.target.value)}
-                                placeholder={`SubGroup Name ${index + 1}`}
-                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-800 dark:text-white dark:focus:border-primary"
-                              />
-                              {field.trim() === '' && (
-                                <div className="text-red-500 text-sm mt-1">
-                                  This field is empty
-                                </div>
-                              )}
-                            </div>
-                            {subgroupFields.length > 1 && (
-                              <button
-                                type="button"
-                                onClick={() => removeSubgroupField(index)}
-                                className="px-3 py-2 bg-danger text-white rounded hover:bg-red-700 transition-colors"
-                                title="Remove this field"
-                              >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                              </button>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-                        <p>Tips:</p>
-                        <ul className="list-disc pl-5 mt-1 space-y-1">
-                          <li>Click "Add Field" to add more subgroups</li>
-                          <li>Empty fields will be ignored</li>
-                          <li>All subgroups will be assigned to the selected group</li>
-                        </ul>
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex justify-center gap-4 mt-6">
-                      <button
-                        type="submit"
-                        disabled={isSubmitting}
-                       className="flex md:w-[230px] w-[190px] md:h-[37px] h-[47px] justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4">
-                        {isSubmitting ? (
-                          <>
-                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                            </svg>
-                            Creating...
-                          </>
-                        ) : (
-                          `Create ${subgroupFields.filter(f => f.trim() !== '').length} SubGroup(s)`
-                        )}
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => {
-                          resetForm();
-                          resetSubgroupFields();
-                        }}
-                        className="px-6 py-2.5 border border-stroke rounded-lg hover:bg-gray-50 dark:border-strokedark dark:hover:bg-gray-800 transition-colors"
-                      >
-                        Clear All
-                      </button>
-                    </div>
-                  </div>
+                  <button 
+                    type="button"
+                    onClick={handleCancelUpdate}
+                    className="text-sm underline hover:text-blue-900"
+                  >
+                    Cancel Update
+                  </button>
                 </div>
-              </div>
-            </Form>
-          )}
-        </Formik>
+              )}
 
+              {/* GROUP DROPDOWN */}
+              <div className="mb-6">
+                <label className="mb-2.5 block text-black">
+                  Select Group <span className="text-danger">*</span>
+                </label>
 
-        {/* SUBGROUPS TABLE */}
-        {!edit && (
-          <div className="p-6 bg-white dark:bg-slate-800 rounded-sm border border-stroke dark:border-strokedark shadow-default mt-10">
-            {/* Hierarchical Groups Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 w-20">#</th>
-                    <th scope="col" className="px-6 py-3">Group Name</th>
-                    <th scope="col" className="px-6 py-3">SubGroups</th>
-                    <th scope="col" className="px-6 py-3 w-32">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {/* If no data */}
-                  {(!productSubGroup || productSubGroup.length === 0) ? (
-                    <tr>
-                      <td colSpan="4" className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
-                        <div className="flex flex-col items-center justify-center py-8">
-                          <svg className="w-16 h-16 text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                          </svg>
-                          <p className="text-lg font-medium text-gray-600 dark:text-gray-400">No subgroups found</p>
-                          <p className="text-gray-500 dark:text-gray-500 mt-1">Start by creating subgroups above</p>
-                        </div>
-                      </td>
-                    </tr>
-                  ) : (
-                    // Group and display data
-                    (() => {
-                
+                <Field
+                  as="select"
+                  name="groupId"
+                  className="w-full rounded border-[1.5px] border-stroke py-3 px-5 focus:border-primary"
+                >
+                  <option value="">Select a Group</option>
 
+                  {groups?.map((group) => (
+                    <option 
+                      key={group.id} 
+                      value={group.id}
+                    >
+                      {group.productGroupName || group.name}
+                    </option>
+                  ))}
+                </Field>
 
-                      return productSubGroup.map((group, groupIndex) => (
-                        <React.Fragment key={group.id}>
-                          {/* Group Row */}
-                          <tr className="bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-                            <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
-                              {groupIndex + 1}
-                            </td>
-                            <td className="px-6 py-4 font-medium text-gray-900 dark:text-white">
-                              <div className="flex items-center">
-                                <svg className="w-5 h-5 mr-2 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                                  <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                                </svg>
-                                {group?.productGroupName}
-                              </div>
-                            </td>
-                            <td className="px-6 py-4">
-                              <div className="flex flex-wrap gap-1 max-w-xs">
-                                {group?.subgroups.map((subgroup, index) => (
-                                  <span
-                                    key={subgroup.id}
-                                    className="inline-flex items-center px-2 py-1 mb-1 text-xs font-medium bg-primary/10 text-primary rounded"
-                                  >
-                                    {subgroup.productSubGroupName}
-                                  </span>
-                                ))}
-                              </div>
-                            </td>
-
-                            <td className="px-6 py-4">
-                              <div className=" space-x-3">
-                                {/* Edit Button */}
-
-                               
-                                  <button
-                                    onClick={(e) => handleUpdate(group)}
-                                    className="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300"
-                                    title="Edit subgroup"
-                                  >
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
-                                  </button>
-                             
-
-
-                                {/* Delete Button */}
-                                <button
-                                  onClick={(e) => handleDelete(e, subgroup.id)}
-                                  className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                                  title="Delete subgroup"
-                                >
-
-                                </button>
-                              </div>
-                            </td>
-
-
-
-                          </tr>
-
-
-
-                          {/* Empty state for group with no subgroups */}
-                          {group.subgroups.length === 0 && (
-                            <tr className="border-b border-gray-200 dark:border-gray-700">
-                              <td colSpan="4" className="px-6 py-4 pl-12 text-gray-500 dark:text-gray-400 italic">
-                                No subgroups added yet
-                              </td>
-                            </tr>
-                          )}
-                        </React.Fragment>
-                      ));
-                    })()
-                  )}
-                </tbody>
-              </table>
-            </div>
-
-
-
-            {/* Pagination */}
-            {pagination.totalPages > 1 && (
-              <div className="mt-6">
-                <Pagination
-                  totalPages={pagination.totalPages}
-                  currentPage={pagination.currentPage}
-                  handlePageChange={handlePageChange}
+                <ErrorMessage
+                  name="groupId"
+                  component="div"
+                  className="text-red-500 mt-1"
                 />
               </div>
-            )}
-          </div>
-        )}
 
-        
+              {/* SUBGROUP INPUTS */}
+              <div className="mb-6">
+                <div className="flex justify-between mb-3">
+                  <label className="block text-black">
+                    SubGroup Names <span className="text-danger">*</span>
+                    <span className="text-sm text-gray-500 ml-2">
+                      ({subgroupFields.filter(f => f.trim() !== '').length} entered)
+                    </span>
+                  </label>
+
+                  <button 
+                    type="button" 
+                    onClick={addSubgroupField}
+                    className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
+                  >
+                    + Add Field
+                  </button>
+                </div>
+
+                {subgroupFields.map((field, index) => (
+                  <div key={index} className="flex gap-3 mb-2">
+                    <input
+                      type="text"
+                      value={field}
+                      onChange={(e) =>
+                        updateSubgroupField(index, e.target.value)
+                      }
+                      placeholder={`SubGroup Name ${index + 1}`}
+                      className="w-full rounded border-[1.5px] border-stroke py-3 px-5 focus:border-primary"
+                    />
+
+                    {/* {subgroupFields.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeSubgroupField(index)}
+                        className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                      >
+                        Remove
+                      </button>
+                    )} */}
+                  </div>
+                ))}
+              </div>
+
+              {/* BUTTONS */}
+              <div className="flex gap-4">
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting || formikSubmitting}
+                  className={`px-6 py-2 rounded text-white font-medium transition-colors ${
+                    isEditMode 
+                      ? 'bg-green-600 hover:bg-green-700' 
+                      : 'bg-blue-600 hover:bg-blue-700'
+                  } disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  {isSubmitting || formikSubmitting 
+                    ? 'Saving...' 
+                    : isEditMode 
+                      ? 'Update SubGroups' 
+                      : 'Save SubGroups'
+                  }
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetForm();
+                    handleCancelUpdate();
+                  }}
+                  className="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+          </Form>
+        )}
+      </Formik>
+
+      {/* TABLE */}
+      <div className="p-6 bg-white rounded-sm border shadow-default mt-10">
+        <table className="w-full text-sm text-left">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="p-3 font-semibold">#</th>
+              <th className="p-3 font-semibold">Group Name</th>
+              <th className="p-3 font-semibold">SubGroups</th>
+              <th className="p-3 font-semibold">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {productSubGroup?.map((group, index) => (
+              <tr key={group.id || index} className="border-b hover:bg-gray-50">
+                <td className="p-3">{index + 1}</td>
+
+                <td className="p-3 font-medium">{group.productGroupName}</td>
+
+                <td className="p-3">
+                  <div className="flex flex-wrap gap-2">
+                    {group.subgroups?.map((sg) => (
+                      <span 
+                        key={sg.id} 
+                        className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs"
+                      >
+                        {sg.productSubGroupName}
+                      </span>
+                    ))}
+                    {(!group.subgroups || group.subgroups.length === 0) && (
+                      <span className="text-gray-400 italic">No subgroups</span>
+                    )}
+                  </div>
+                </td>
+
+                <td className="p-3">
+                  <button 
+                    onClick={() => handleUpdateClick(group)}
+                    className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors mr-2"
+                  >
+                    Update
+                  </button>
+                  {/* <button 
+                    onClick={(e) => handleDelete(e, group.id)}
+                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                  >
+                    Delete
+                  </button> */}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {pagination?.totalPages > 1 && (
+          <Pagination
+            totalPages={pagination.totalPages}
+            currentPage={pagination.currentPage}
+            handlePageChange={handlePageChange}
+          />
+        )}
       </div>
     </DefaultLayout>
   );
