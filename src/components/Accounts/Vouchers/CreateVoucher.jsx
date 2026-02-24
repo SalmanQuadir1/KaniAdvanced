@@ -1320,92 +1320,145 @@ const CreateVoucher = () => {
                             return matchedOption?.value || null;
                         }
 
-                        const determineGSTLedgers = (Vouchers, custAddress, isExport, newShippingState, values) => {
-                            const defGstRegist = Vouchers?.defGstRegist || '';
-                            const typeOfVoucher = Vouchers?.typeOfVoucher || '';
+                       const determineGSTLedgers = (Vouchers, custAddress, isExport, newShippingState, values) => {
+    const defGstRegist = Vouchers?.defGstRegist || '';
+    const typeOfVoucher = Vouchers?.typeOfVoucher || '';
 
-                            // Determine registration location from GST registration
-                            const getRegistrationLocation = (gstReg) => {
-                                if (!gstReg) return null;
-                                const regLower = gstReg?.state?.toLowerCase();
+    // Determine registration location from GST registration
+    const getRegistrationLocation = (gstReg) => {
+        if (!gstReg) return null;
+        const regLower = gstReg?.state?.toLowerCase();
 
-                                if (regLower.includes('jammu') || regLower.includes('kashmir') || regLower.includes('j&k') || regLower.includes('jk')) {
-                                    return 'J&K';
-                                } else if (regLower.includes('delhi') || regLower.includes('ncr') || regLower.includes('nct')) {
-                                    return 'Delhi';
-                                }
-                                return null;
-                            };
+        if (regLower.includes('jammu') || regLower.includes('kashmir') || regLower.includes('j&k') || regLower.includes('jk') || regLower.includes('sxr')) {
+            return 'sxr'; // Return 'sxr' for J&K/SXR location
+        } else if (regLower.includes('delhi') || regLower.includes('ncr') || regLower.includes('nct')) {
+            return 'delhi';
+        }
+        return null;
+    };
 
-                            // Get customer state from selected ledger or new shipping state
-                            const getCustomerState = () => {
-                                // First check if new shipping state is provided
-                                if (newShippingState) {
-                                    if (newShippingState === '01') return 'J&K';
-                                    if (newShippingState === '07') return 'Delhi';
-                                }
+    // Get customer state from selected ledger or new shipping state
+    const getCustomerState = () => {
+        // First check if new shipping state is provided
+        if (newShippingState) {
+            if (newShippingState === '01') return 'sxr'; // State code 01 is J&K/SXR
+            if (newShippingState === '07') return 'delhi';
+        }
 
-                                // Otherwise get from selected ledger
-                                const selectedLedgerOption = LedgerData.find(opt => opt.value === values.ledgerId);
-                                if (selectedLedgerOption?.obj?.shippingState) {
-                                    const state = selectedLedgerOption.obj.shippingState;
-                                    if (state === '01') return 'J&K';
-                                    if (state === '07') return 'Delhi';
-                                }
+        // Otherwise get from selected ledger
+        const selectedLedgerOption = LedgerData.find(opt => opt.value === values.ledgerId);
+        if (selectedLedgerOption?.obj?.shippingState) {
+            const state = selectedLedgerOption.obj.shippingState;
+            if (state === '01') return 'sxr';
+            if (state === '07') return 'delhi';
+        }
 
-                                return null;
-                            };
+        return null;
+    };
 
-                            const registrationLocation = getRegistrationLocation(defGstRegist);
-                            const customerLocation = getCustomerState();
+    const registrationLocation = getRegistrationLocation(defGstRegist);
+    const customerLocation = getCustomerState();
 
-                            // Default values
-                            let igstLedgerId = null;
-                            let cgstLedgerId = null;
-                            let sgstLedgerId = null;
+    console.log('Registration Location:', registrationLocation);
+    console.log('Customer Location:', customerLocation);
 
-                            // If export, no GST
-                            if (isExport) {
-                                return { igstLedgerId, cgstLedgerId, sgstLedgerId };
-                            }
+    // Default values
+    let igstLedgerId = null;
+    let cgstLedgerId = null;
+    let sgstLedgerId = null;
 
-                            // If no registration location, default to Delhi IGST
-                            if (!registrationLocation) {
-                                // Find IGST Delhi ledger
-                                const igstDelhi = igstOptions.find(opt =>
-                                    opt.label.toLowerCase().includes('igst') &&
-                                    opt.label.toLowerCase().includes('delhi')
-                                );
-                                igstLedgerId = igstDelhi?.value || null;
-                                return { igstLedgerId, cgstLedgerId, sgstLedgerId };
-                            }
+    // If export, no GST
+    if (isExport) {
+        return { igstLedgerId, cgstLedgerId, sgstLedgerId };
+    }
 
-                            // Check if same state or different state
-                            if (registrationLocation === customerLocation && customerLocation) {
-                                // Same state - need CGST and SGST ledgers for that state
-                                const cgstState = cgstOptions.find(opt =>
-                                    opt.label.toLowerCase().includes('cgst') &&
-                                    opt.label.toLowerCase().includes(registrationLocation.toLowerCase())
-                                );
+    // If no registration location, default logic
+    if (!registrationLocation) {
+        // Try to find any IGST ledger as fallback
+        const anyIgst = igstOptions.find(opt =>
+            opt.label.toLowerCase().includes('igst')
+        );
+        igstLedgerId = anyIgst?.value || null;
+        return { igstLedgerId, cgstLedgerId, sgstLedgerId };
+    }
 
-                                const sgstState = sgstOptions.find(opt =>
-                                    opt.label.toLowerCase().includes('sgst') &&
-                                    opt.label.toLowerCase().includes(registrationLocation.toLowerCase())
-                                );
+    // Check if same state or different state
+    if (registrationLocation === customerLocation && customerLocation) {
+        // Same state - need CGST and SGST ledgers for that state
+        console.log('Same state transaction - looking for CGST/SGST ledgers for:', registrationLocation);
+        
+        // For SXR location, look for ledgers with 'sxr' or 'j&k' in the name
+        let cgstState = null;
+        let sgstState = null;
+        
+        if (registrationLocation === 'sxr') {
+            cgstState = cgstOptions.find(opt =>
+                opt.label.toLowerCase().includes('cgst') &&
+                (opt.label.toLowerCase().includes('sxr') || 
+                 opt.label.toLowerCase().includes('j&k') || 
+                 opt.label.toLowerCase().includes('jammu') ||
+                 opt.label.toLowerCase().includes('kashmir'))
+            );
+            
+            sgstState = sgstOptions.find(opt =>
+                opt.label.toLowerCase().includes('sgst') &&
+                (opt.label.toLowerCase().includes('sxr') || 
+                 opt.label.toLowerCase().includes('j&k') || 
+                 opt.label.toLowerCase().includes('jammu') ||
+                 opt.label.toLowerCase().includes('kashmir'))
+            );
+        } else {
+            cgstState = cgstOptions.find(opt =>
+                opt.label.toLowerCase().includes('cgst') &&
+                opt.label.toLowerCase().includes(registrationLocation.toLowerCase())
+            );
+            
+            sgstState = sgstOptions.find(opt =>
+                opt.label.toLowerCase().includes('sgst') &&
+                opt.label.toLowerCase().includes(registrationLocation.toLowerCase())
+            );
+        }
 
-                                cgstLedgerId = cgstState?.value || null;
-                                sgstLedgerId = sgstState?.value || null;
-                            } else {
-                                // Different state - need IGST ledger for registration state
-                                const igstState = igstOptions.find(opt =>
-                                    opt.label.toLowerCase().includes('igst') &&
-                                    opt.label.toLowerCase().includes(registrationLocation.toLowerCase())
-                                );
-                                igstLedgerId = igstState?.value || null;
-                            }
+        cgstLedgerId = cgstState?.value || null;
+        sgstLedgerId = sgstState?.value || null;
+        
+        console.log('Found CGST:', cgstState);
+        console.log('Found SGST:', sgstState);
+    } else {
+        // Different state - need IGST ledger for registration state
+        console.log('Different state transaction - looking for IGST ledger for:', registrationLocation);
+        
+        // For SXR location, look for IGST ledgers with 'sxr' or 'j&k' in the name
+        let igstState = null;
+        
+        if (registrationLocation === 'sxr') {
+            igstState = igstOptions.find(opt =>
+                opt.label.toLowerCase().includes('igst') &&
+                (opt.label.toLowerCase().includes('sxr') || 
+                 opt.label.toLowerCase().includes('j&k') || 
+                 opt.label.toLowerCase().includes('jammu') ||
+                 opt.label.toLowerCase().includes('kashmir'))
+            );
+        } else {
+            igstState = igstOptions.find(opt =>
+                opt.label.toLowerCase().includes('igst') &&
+                opt.label.toLowerCase().includes(registrationLocation.toLowerCase())
+            );
+        }
+        
+        // If specific location not found, try to find any IGST ledger
+        if (!igstState) {
+            igstState = igstOptions.find(opt =>
+                opt.label.toLowerCase().includes('igst')
+            );
+        }
+        
+        igstLedgerId = igstState?.value || null;
+        console.log('Found IGST:', igstState);
+    }
 
-                            return { igstLedgerId, cgstLedgerId, sgstLedgerId };
-                        };
+    return { igstLedgerId, cgstLedgerId, sgstLedgerId };
+};
 
 
                         useEffect(() => {
