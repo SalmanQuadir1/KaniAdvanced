@@ -98,11 +98,11 @@ const KaniSection = () => {
             <h3 className="mb-2 text-xl font-bold text-white">{card.title}</h3>
 
             {/* Count */}
-            {counts[card.countKey] !== undefined && (
+            {/* {counts[card.countKey] !== undefined && (
               <p className="text-sm text-white/80">
                 {counts[card.countKey]} items
               </p>
-            )}
+            )} */}
 
             {/* View Link */}
             <div className="mt-6 flex items-center text-sm font-medium text-white/90">
