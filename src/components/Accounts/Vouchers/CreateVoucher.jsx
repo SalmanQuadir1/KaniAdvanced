@@ -157,11 +157,11 @@ const CreateVoucher = () => {
         label: ledg?.name,
     }));
 
-    const courrierLedgers = Ledger.filter(ledg =>
+    const courrierLedgerIds = Ledger.filter(ledg =>
         ledg?.name && (ledg.name.toLowerCase().includes('cour'))
     )
 
-    const courrierData = courrierLedgers?.map(ledg => ({
+    const courrierData = courrierLedgerIds?.map(ledg => ({
         value: ledg?.id,
         label: ledg?.name,
     }));
@@ -220,7 +220,7 @@ const CreateVoucher = () => {
     // for gst 
     // GST Ledgers filtering
     const igstLedgers = Ledger.filter(ledg =>
-         ledg?.name && ledg.name.toLowerCase().startsWith('igst')
+        ledg?.name && ledg.name.toLowerCase().startsWith('igst')
     );
 
     const cgstLedgers = Ledger.filter(ledg =>
@@ -1052,11 +1052,11 @@ const CreateVoucher = () => {
 
 
 
-                        discountLedger: null,
+                        discountLedgerId: null,
                         discountAmount: 0,
-                        roundOff: null,
+                        roundOffLedgerId: null,
                         roundOffAmount: 0,
-                        courrierLedger: null,
+                        courrierLedgerId: null,
                         courrierAmount: 0,
 
 
@@ -1320,145 +1320,145 @@ const CreateVoucher = () => {
                             return matchedOption?.value || null;
                         }
 
-                       const determineGSTLedgers = (Vouchers, custAddress, isExport, newShippingState, values) => {
-    const defGstRegist = Vouchers?.defGstRegist || '';
-    const typeOfVoucher = Vouchers?.typeOfVoucher || '';
+                        const determineGSTLedgers = (Vouchers, custAddress, isExport, newShippingState, values) => {
+                            const defGstRegist = Vouchers?.defGstRegist || '';
+                            const typeOfVoucher = Vouchers?.typeOfVoucher || '';
 
-    // Determine registration location from GST registration
-    const getRegistrationLocation = (gstReg) => {
-        if (!gstReg) return null;
-        const regLower = gstReg?.state?.toLowerCase();
+                            // Determine registration location from GST registration
+                            const getRegistrationLocation = (gstReg) => {
+                                if (!gstReg) return null;
+                                const regLower = gstReg?.state?.toLowerCase();
 
-        if (regLower.includes('jammu') || regLower.includes('kashmir') || regLower.includes('j&k') || regLower.includes('jk') || regLower.includes('sxr')) {
-            return 'sxr'; // Return 'sxr' for J&K/SXR location
-        } else if (regLower.includes('delhi') || regLower.includes('ncr') || regLower.includes('nct')) {
-            return 'delhi';
-        }
-        return null;
-    };
+                                if (regLower.includes('jammu') || regLower.includes('kashmir') || regLower.includes('j&k') || regLower.includes('jk') || regLower.includes('sxr')) {
+                                    return 'sxr'; // Return 'sxr' for J&K/SXR location
+                                } else if (regLower.includes('delhi') || regLower.includes('ncr') || regLower.includes('nct')) {
+                                    return 'delhi';
+                                }
+                                return null;
+                            };
 
-    // Get customer state from selected ledger or new shipping state
-    const getCustomerState = () => {
-        // First check if new shipping state is provided
-        if (newShippingState) {
-            if (newShippingState === '01') return 'sxr'; // State code 01 is J&K/SXR
-            if (newShippingState === '07') return 'delhi';
-        }
+                            // Get customer state from selected ledger or new shipping state
+                            const getCustomerState = () => {
+                                // First check if new shipping state is provided
+                                if (newShippingState) {
+                                    if (newShippingState === '01') return 'sxr'; // State code 01 is J&K/SXR
+                                    if (newShippingState === '07') return 'delhi';
+                                }
 
-        // Otherwise get from selected ledger
-        const selectedLedgerOption = LedgerData.find(opt => opt.value === values.ledgerId);
-        if (selectedLedgerOption?.obj?.shippingState) {
-            const state = selectedLedgerOption.obj.shippingState;
-            if (state === '01') return 'sxr';
-            if (state === '07') return 'delhi';
-        }
+                                // Otherwise get from selected ledger
+                                const selectedLedgerOption = LedgerData.find(opt => opt.value === values.ledgerId);
+                                if (selectedLedgerOption?.obj?.shippingState) {
+                                    const state = selectedLedgerOption.obj.shippingState;
+                                    if (state === '01') return 'sxr';
+                                    if (state === '07') return 'delhi';
+                                }
 
-        return null;
-    };
+                                return null;
+                            };
 
-    const registrationLocation = getRegistrationLocation(defGstRegist);
-    const customerLocation = getCustomerState();
+                            const registrationLocation = getRegistrationLocation(defGstRegist);
+                            const customerLocation = getCustomerState();
 
-    console.log('Registration Location:', registrationLocation);
-    console.log('Customer Location:', customerLocation);
+                            console.log('Registration Location:', registrationLocation);
+                            console.log('Customer Location:', customerLocation);
 
-    // Default values
-    let igstLedgerId = null;
-    let cgstLedgerId = null;
-    let sgstLedgerId = null;
+                            // Default values
+                            let igstLedgerId = null;
+                            let cgstLedgerId = null;
+                            let sgstLedgerId = null;
 
-    // If export, no GST
-    if (isExport) {
-        return { igstLedgerId, cgstLedgerId, sgstLedgerId };
-    }
+                            // If export, no GST
+                            if (isExport) {
+                                return { igstLedgerId, cgstLedgerId, sgstLedgerId };
+                            }
 
-    // If no registration location, default logic
-    if (!registrationLocation) {
-        // Try to find any IGST ledger as fallback
-        const anyIgst = igstOptions.find(opt =>
-            opt.label.toLowerCase().includes('igst')
-        );
-        igstLedgerId = anyIgst?.value || null;
-        return { igstLedgerId, cgstLedgerId, sgstLedgerId };
-    }
+                            // If no registration location, default logic
+                            if (!registrationLocation) {
+                                // Try to find any IGST ledger as fallback
+                                const anyIgst = igstOptions.find(opt =>
+                                    opt.label.toLowerCase().includes('igst')
+                                );
+                                igstLedgerId = anyIgst?.value || null;
+                                return { igstLedgerId, cgstLedgerId, sgstLedgerId };
+                            }
 
-    // Check if same state or different state
-    if (registrationLocation === customerLocation && customerLocation) {
-        // Same state - need CGST and SGST ledgers for that state
-        console.log('Same state transaction - looking for CGST/SGST ledgers for:', registrationLocation);
-        
-        // For SXR location, look for ledgers with 'sxr' or 'j&k' in the name
-        let cgstState = null;
-        let sgstState = null;
-        
-        if (registrationLocation === 'sxr') {
-            cgstState = cgstOptions.find(opt =>
-                opt.label.toLowerCase().includes('cgst') &&
-                (opt.label.toLowerCase().includes('sxr') || 
-                 opt.label.toLowerCase().includes('j&k') || 
-                 opt.label.toLowerCase().includes('jammu') ||
-                 opt.label.toLowerCase().includes('kashmir'))
-            );
-            
-            sgstState = sgstOptions.find(opt =>
-                opt.label.toLowerCase().includes('sgst') &&
-                (opt.label.toLowerCase().includes('sxr') || 
-                 opt.label.toLowerCase().includes('j&k') || 
-                 opt.label.toLowerCase().includes('jammu') ||
-                 opt.label.toLowerCase().includes('kashmir'))
-            );
-        } else {
-            cgstState = cgstOptions.find(opt =>
-                opt.label.toLowerCase().includes('cgst') &&
-                opt.label.toLowerCase().includes(registrationLocation.toLowerCase())
-            );
-            
-            sgstState = sgstOptions.find(opt =>
-                opt.label.toLowerCase().includes('sgst') &&
-                opt.label.toLowerCase().includes(registrationLocation.toLowerCase())
-            );
-        }
+                            // Check if same state or different state
+                            if (registrationLocation === customerLocation && customerLocation) {
+                                // Same state - need CGST and SGST ledgers for that state
+                                console.log('Same state transaction - looking for CGST/SGST ledgers for:', registrationLocation);
 
-        cgstLedgerId = cgstState?.value || null;
-        sgstLedgerId = sgstState?.value || null;
-        
-        console.log('Found CGST:', cgstState);
-        console.log('Found SGST:', sgstState);
-    } else {
-        // Different state - need IGST ledger for registration state
-        console.log('Different state transaction - looking for IGST ledger for:', registrationLocation);
-        
-        // For SXR location, look for IGST ledgers with 'sxr' or 'j&k' in the name
-        let igstState = null;
-        
-        if (registrationLocation === 'sxr') {
-            igstState = igstOptions.find(opt =>
-                opt.label.toLowerCase().includes('igst') &&
-                (opt.label.toLowerCase().includes('sxr') || 
-                 opt.label.toLowerCase().includes('j&k') || 
-                 opt.label.toLowerCase().includes('jammu') ||
-                 opt.label.toLowerCase().includes('kashmir'))
-            );
-        } else {
-            igstState = igstOptions.find(opt =>
-                opt.label.toLowerCase().includes('igst') &&
-                opt.label.toLowerCase().includes(registrationLocation.toLowerCase())
-            );
-        }
-        
-        // If specific location not found, try to find any IGST ledger
-        if (!igstState) {
-            igstState = igstOptions.find(opt =>
-                opt.label.toLowerCase().includes('igst')
-            );
-        }
-        
-        igstLedgerId = igstState?.value || null;
-        console.log('Found IGST:', igstState);
-    }
+                                // For SXR location, look for ledgers with 'sxr' or 'j&k' in the name
+                                let cgstState = null;
+                                let sgstState = null;
 
-    return { igstLedgerId, cgstLedgerId, sgstLedgerId };
-};
+                                if (registrationLocation === 'sxr') {
+                                    cgstState = cgstOptions.find(opt =>
+                                        opt.label.toLowerCase().includes('cgst') &&
+                                        (opt.label.toLowerCase().includes('sxr') ||
+                                            opt.label.toLowerCase().includes('j&k') ||
+                                            opt.label.toLowerCase().includes('jammu') ||
+                                            opt.label.toLowerCase().includes('kashmir'))
+                                    );
+
+                                    sgstState = sgstOptions.find(opt =>
+                                        opt.label.toLowerCase().includes('sgst') &&
+                                        (opt.label.toLowerCase().includes('sxr') ||
+                                            opt.label.toLowerCase().includes('j&k') ||
+                                            opt.label.toLowerCase().includes('jammu') ||
+                                            opt.label.toLowerCase().includes('kashmir'))
+                                    );
+                                } else {
+                                    cgstState = cgstOptions.find(opt =>
+                                        opt.label.toLowerCase().includes('cgst') &&
+                                        opt.label.toLowerCase().includes(registrationLocation.toLowerCase())
+                                    );
+
+                                    sgstState = sgstOptions.find(opt =>
+                                        opt.label.toLowerCase().includes('sgst') &&
+                                        opt.label.toLowerCase().includes(registrationLocation.toLowerCase())
+                                    );
+                                }
+
+                                cgstLedgerId = cgstState?.value || null;
+                                sgstLedgerId = sgstState?.value || null;
+
+                                console.log('Found CGST:', cgstState);
+                                console.log('Found SGST:', sgstState);
+                            } else {
+                                // Different state - need IGST ledger for registration state
+                                console.log('Different state transaction - looking for IGST ledger for:', registrationLocation);
+
+                                // For SXR location, look for IGST ledgers with 'sxr' or 'j&k' in the name
+                                let igstState = null;
+
+                                if (registrationLocation === 'sxr') {
+                                    igstState = igstOptions.find(opt =>
+                                        opt.label.toLowerCase().includes('igst') &&
+                                        (opt.label.toLowerCase().includes('sxr') ||
+                                            opt.label.toLowerCase().includes('j&k') ||
+                                            opt.label.toLowerCase().includes('jammu') ||
+                                            opt.label.toLowerCase().includes('kashmir'))
+                                    );
+                                } else {
+                                    igstState = igstOptions.find(opt =>
+                                        opt.label.toLowerCase().includes('igst') &&
+                                        opt.label.toLowerCase().includes(registrationLocation.toLowerCase())
+                                    );
+                                }
+
+                                // If specific location not found, try to find any IGST ledger
+                                if (!igstState) {
+                                    igstState = igstOptions.find(opt =>
+                                        opt.label.toLowerCase().includes('igst')
+                                    );
+                                }
+
+                                igstLedgerId = igstState?.value || null;
+                                console.log('Found IGST:', igstState);
+                            }
+
+                            return { igstLedgerId, cgstLedgerId, sgstLedgerId };
+                        };
 
 
                         useEffect(() => {
@@ -2184,12 +2184,12 @@ const CreateVoucher = () => {
                                             }
 
 
-                                               <div>
+                                            <div>
                                                 {
 
                                                     (Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && (
                                                         <>
-                                                    
+
                                                             {/* GST Ledgers Section */}
                                                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 mb-4">
                                                                 {/* IGST Ledger */}
@@ -2349,7 +2349,7 @@ const CreateVoucher = () => {
 
 
                                             </div>
-                                         
+
 
                                             {/* Products Table - Only for Sales and Purchase */}
                                             {(Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && (
@@ -2879,10 +2879,12 @@ const CreateVoucher = () => {
                                                                             <div className="flex-1 min-w-[250px]">
                                                                                 <label className="mb-2.5 block text-black dark:text-white">Discount</label>
                                                                                 <ReactSelect
-                                                                                    name='discountLedger'
-                                                                                    value={discountData.find(opt => opt.value === values.discountLedger)}
+                                                                                    name='discountLedgerId'
+                                                                                    value={discountData.find(opt => opt.value === values.discountLedgerId)}
                                                                                     // onChange={handleDestinationLedgerChange}
-
+                                                                                    onChange={(option) => {
+                                                                                        setFieldValue('discountLedgerId', option?.value);
+                                                                                    }}
 
 
                                                                                     options={discountData}
@@ -2924,10 +2926,10 @@ const CreateVoucher = () => {
                                                                                 <div className="flex-1 min-w-[250px]">
                                                                                     <label className="mb-2.5 block text-black dark:text-white">Round Off</label>
                                                                                     <ReactSelect
-                                                                                        name='roundOff'
-                                                                                        value={roundOffData.find(opt => opt.value === values.roundOff)}
+                                                                                        name='roundOffLedgerId'
+                                                                                        value={roundOffData.find(opt => opt.value === values.roundOffLedgerId)}
                                                                                         onChange={(option) => {
-                                                                                            setFieldValue('roundOff', option?.value);
+                                                                                            setFieldValue('roundOffLedgerId', option?.value);
                                                                                         }}
                                                                                         options={roundOffData}
                                                                                         className="react-select-container bg-white dark:bg-form-Field w-full"
@@ -2939,7 +2941,7 @@ const CreateVoucher = () => {
                                                                                             menuPortal: (base) => ({ ...base, zIndex: 100000 })
                                                                                         }}
                                                                                     />
-                                                                                    <ErrorMessage name="roundOff" component="div" className="text-red-500 text-xs mt-1" />
+                                                                                    <ErrorMessage name="roundOffLedgerId" component="div" className="text-red-500 text-xs mt-1" />
                                                                                 </div>
 
                                                                                 <div className="flex-1 min-w-[250px]">
@@ -2975,10 +2977,10 @@ const CreateVoucher = () => {
                                                                             <div className="flex-1 min-w-[250px]">
                                                                                 <label className="mb-2.5 block text-black dark:text-white">Courrier Ledger</label>
                                                                                 <ReactSelect
-                                                                                    name='courrierLedger'
-                                                                                    value={courrierData.find(opt => opt.value === values.courrierLedger)}
+                                                                                    name='courrierLedgerId'
+                                                                                    value={courrierData.find(opt => opt.value === values.courrierLedgerId)}
                                                                                     onChange={(option) => {
-                                                                                        setFieldValue('courrierLedger', option?.value);
+                                                                                        setFieldValue('courrierLedgerId', option?.value);
                                                                                     }}
                                                                                     options={courrierData}
                                                                                     className="react-select-container bg-white dark:bg-form-Field w-full"
@@ -2990,7 +2992,7 @@ const CreateVoucher = () => {
                                                                                         menuPortal: (base) => ({ ...base, zIndex: 100000 })
                                                                                     }}
                                                                                 />
-                                                                                <ErrorMessage name="courrierLedger" component="div" className="text-red-500 text-xs mt-1" />
+                                                                                <ErrorMessage name="courrierLedgerId" component="div" className="text-red-500 text-xs mt-1" />
                                                                             </div>
 
                                                                             <div className="flex-1 min-w-[250px]">
