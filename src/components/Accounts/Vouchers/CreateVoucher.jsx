@@ -139,6 +139,33 @@ const CreateVoucher = () => {
         label: ledg?.name,
     }));
 
+    const discountLedgers = Ledger.filter(ledg =>
+        ledg?.name && (ledg.name.toLowerCase().includes('dis'))
+    )
+
+    const discountData = discountLedgers?.map(ledg => ({
+        value: ledg?.id,
+        label: ledg?.name,
+    }));
+
+    const roundOffLedgers = Ledger.filter(ledg =>
+        ledg?.name && (ledg.name.toLowerCase().includes('round'))
+    )
+
+    const roundOffData = roundOffLedgers?.map(ledg => ({
+        value: ledg?.id,
+        label: ledg?.name,
+    }));
+
+    const courrierLedgers = Ledger.filter(ledg =>
+        ledg?.name && (ledg.name.toLowerCase().includes('cour'))
+    )
+
+    const courrierData = courrierLedgers?.map(ledg => ({
+        value: ledg?.id,
+        label: ledg?.name,
+    }));
+
     useEffect(() => {
         GetVoucherById(id);
         getLedger();
@@ -186,6 +213,39 @@ const CreateVoucher = () => {
         { value: '38', label: 'Ladakh' }
     ];
 
+
+
+
+
+    // for gst 
+    // GST Ledgers filtering
+    const igstLedgers = Ledger.filter(ledg =>
+         ledg?.name && ledg.name.toLowerCase().startsWith('igst')
+    );
+
+    const cgstLedgers = Ledger.filter(ledg =>
+        ledg?.name && ledg.name.toLowerCase().includes('cgst')
+    );
+
+    const sgstLedgers = Ledger.filter(ledg =>
+        ledg?.name && ledg.name.toLowerCase().includes('sgst')
+    );
+
+    // Create options for ReactSelect
+    const igstOptions = igstLedgers?.map(ledg => ({
+        value: ledg?.id,
+        label: ledg?.name,
+    }));
+
+    const cgstOptions = cgstLedgers?.map(ledg => ({
+        value: ledg?.id,
+        label: ledg?.name,
+    }));
+
+    const sgstOptions = sgstLedgers?.map(ledg => ({
+        value: ledg?.id,
+        label: ledg?.name,
+    }));
 
 
     // GST Calculation Logic
@@ -517,13 +577,12 @@ const CreateVoucher = () => {
         );
     };
 
-   const calculateLineTotal = (entry) => {
-    // If discount is applied, use the discounted rate (which already includes GST on discounted amount)
-    // If no discount, use the exclusiveGst (price including GST)
-    const basePrice = entry.rate || entry.exclusiveGst || 0;
-    const quantity = entry.quantity || 1;
-    return (basePrice * quantity).toFixed(2);
-};
+    const calculateLineTotal = (entry) => {
+        // Use exclusiveGst (price including GST after discount) as the rate
+        const basePrice = entry.exclusiveGst || entry.rate || 0;
+        const quantity = entry.quantity || 1;
+        return (basePrice * quantity).toFixed(2);
+    };
 
     const calculateLineTotalForPur = (entry) => {
 
@@ -546,44 +605,48 @@ const CreateVoucher = () => {
         let totalQuantity = 0;
 
         values.paymentDetails.forEach(entry => {
-
-
             const lineTotal = parseFloat(calculateLineTotal(entry)) || 0;
             subtotal += lineTotal;
 
-
-
-            // Calculate MRP total
+            // Calculate MRP total (before discount)
             const mrpTotal = (entry.mrp || 0) * (entry.quantity || 1);
             totalMRP += mrpTotal;
 
             // Calculate total quantity
             totalQuantity += (entry.quantity || 1);
 
-
-
-            // Only calculate GST if no discount is applied
-            if (!entry.gstCalculation?.discountApplied) {
-                if (entry.gstCalculation?.type === 'CGST+SGST') {
-                    totalCGST += (entry.gstCalculation.cgstAmount || 0) * (entry.quantity || 1);
-                    totalSGST += (entry.gstCalculation.sgstAmount || 0) * (entry.quantity || 1);
-                } else if (entry.gstCalculation?.type === 'IGST') {
-                    totalIGST += (entry.gstCalculation.gstAmount || 0) * (entry.quantity || 1);
-                }
-
-                totalGST += (entry.gstCalculation?.totalGstAmount || 0) * (entry.quantity || 1);
-            }
-
             // Calculate discount amount
             if (entry.discount > 0) {
                 const discountAmount = (entry.mrp * (entry.discount / 100)) * (entry.quantity || 1);
                 totalDiscount += discountAmount;
             }
+
+            // ALWAYS calculate GST regardless of discount
+            // GST is calculated on the discounted price, so it should never be zero
+            if (entry.gstCalculation) {
+                if (entry.gstCalculation.type === 'CGST+SGST') {
+                    totalCGST += (entry.gstCalculation.cgstAmount || 0) * (entry.quantity || 1);
+                    totalSGST += (entry.gstCalculation.sgstAmount || 0) * (entry.quantity || 1);
+                } else if (entry.gstCalculation.type === 'IGST') {
+                    totalIGST += (entry.gstCalculation.gstAmount || 0) * (entry.quantity || 1);
+                }
+
+                totalGST += (entry.gstCalculation.totalGstAmount || 0) * (entry.quantity || 1);
+            } else {
+                // Fallback calculation if gstCalculation is not available
+                const mrp = entry.mrp || 0;
+                const quantity = entry.quantity || 1;
+                const discountedPrice = entry.discount > 0 ? mrp * (1 - entry.discount / 100) : mrp;
+
+                // You might want to add logic here to determine GST type based on states
+                // For now, using a default calculation
+                const defaultGstRate = 0.18; // 18% as example
+                const gstAmount = discountedPrice * defaultGstRate * quantity;
+                totalGST += gstAmount;
+            }
         });
 
-        grandTotal = subtotal + totalGST;
-
-
+        grandTotal = subtotal;
 
         return {
             subtotal: subtotal.toFixed(2),
@@ -912,6 +975,24 @@ const CreateVoucher = () => {
 
 
 
+    const calculateGrandTotalWithAdjustments = (values, totals) => {
+        const discountAmount = parseFloat(values.discountAmount) || 0;
+        const roundOffAmount = parseFloat(values.roundOffAmount) || 0;
+        const courrierAmount = parseFloat(values.courrierAmount) || 0;
+        const giftVoucherAmount = parseFloat(values.giftVoucherAmount) || 0;
+
+        // Start with subtotal from products
+        let grandTotal = parseFloat(totals.subtotal) || 0;
+
+        // Apply adjustments
+        grandTotal = grandTotal - discountAmount; // Subtract discount
+        grandTotal = grandTotal - roundOffAmount; // Add round off (could be negative)
+        grandTotal = grandTotal + courrierAmount; // Add courrier charges
+        grandTotal = grandTotal - giftVoucherAmount; // Subtract gift voucher
+
+        return grandTotal >= 0 ? grandTotal : 0;
+    };
+
 
 
     return (
@@ -943,6 +1024,7 @@ const CreateVoucher = () => {
                         modeOfPayment: "",
                         chequeNumber: "",
                         cardNumber: "",
+                        totalWithoutgst: 0,
                         transactionId: "",
                         salesChannel: "",
                         giftVoucherAmount: 0,
@@ -964,7 +1046,18 @@ const CreateVoucher = () => {
                         chequeAmount: null,
                         chequeLedgerId: null,
 
+                        igstLedgerId: null,
+                        cgstLedgerId: null,
+                        sgstLedgerId: null,
 
+
+
+                        discountLedger: null,
+                        discountAmount: 0,
+                        roundOff: null,
+                        roundOffAmount: 0,
+                        courrierLedger: null,
+                        courrierAmount: 0,
 
 
 
@@ -1227,6 +1320,129 @@ const CreateVoucher = () => {
                             return matchedOption?.value || null;
                         }
 
+                        const determineGSTLedgers = (Vouchers, custAddress, isExport, newShippingState, values) => {
+                            const defGstRegist = Vouchers?.defGstRegist || '';
+                            const typeOfVoucher = Vouchers?.typeOfVoucher || '';
+
+                            // Determine registration location from GST registration
+                            const getRegistrationLocation = (gstReg) => {
+                                if (!gstReg) return null;
+                                const regLower = gstReg?.state?.toLowerCase();
+
+                                if (regLower.includes('jammu') || regLower.includes('kashmir') || regLower.includes('j&k') || regLower.includes('jk')) {
+                                    return 'J&K';
+                                } else if (regLower.includes('delhi') || regLower.includes('ncr') || regLower.includes('nct')) {
+                                    return 'Delhi';
+                                }
+                                return null;
+                            };
+
+                            // Get customer state from selected ledger or new shipping state
+                            const getCustomerState = () => {
+                                // First check if new shipping state is provided
+                                if (newShippingState) {
+                                    if (newShippingState === '01') return 'J&K';
+                                    if (newShippingState === '07') return 'Delhi';
+                                }
+
+                                // Otherwise get from selected ledger
+                                const selectedLedgerOption = LedgerData.find(opt => opt.value === values.ledgerId);
+                                if (selectedLedgerOption?.obj?.shippingState) {
+                                    const state = selectedLedgerOption.obj.shippingState;
+                                    if (state === '01') return 'J&K';
+                                    if (state === '07') return 'Delhi';
+                                }
+
+                                return null;
+                            };
+
+                            const registrationLocation = getRegistrationLocation(defGstRegist);
+                            const customerLocation = getCustomerState();
+
+                            // Default values
+                            let igstLedgerId = null;
+                            let cgstLedgerId = null;
+                            let sgstLedgerId = null;
+
+                            // If export, no GST
+                            if (isExport) {
+                                return { igstLedgerId, cgstLedgerId, sgstLedgerId };
+                            }
+
+                            // If no registration location, default to Delhi IGST
+                            if (!registrationLocation) {
+                                // Find IGST Delhi ledger
+                                const igstDelhi = igstOptions.find(opt =>
+                                    opt.label.toLowerCase().includes('igst') &&
+                                    opt.label.toLowerCase().includes('delhi')
+                                );
+                                igstLedgerId = igstDelhi?.value || null;
+                                return { igstLedgerId, cgstLedgerId, sgstLedgerId };
+                            }
+
+                            // Check if same state or different state
+                            if (registrationLocation === customerLocation && customerLocation) {
+                                // Same state - need CGST and SGST ledgers for that state
+                                const cgstState = cgstOptions.find(opt =>
+                                    opt.label.toLowerCase().includes('cgst') &&
+                                    opt.label.toLowerCase().includes(registrationLocation.toLowerCase())
+                                );
+
+                                const sgstState = sgstOptions.find(opt =>
+                                    opt.label.toLowerCase().includes('sgst') &&
+                                    opt.label.toLowerCase().includes(registrationLocation.toLowerCase())
+                                );
+
+                                cgstLedgerId = cgstState?.value || null;
+                                sgstLedgerId = sgstState?.value || null;
+                            } else {
+                                // Different state - need IGST ledger for registration state
+                                const igstState = igstOptions.find(opt =>
+                                    opt.label.toLowerCase().includes('igst') &&
+                                    opt.label.toLowerCase().includes(registrationLocation.toLowerCase())
+                                );
+                                igstLedgerId = igstState?.value || null;
+                            }
+
+                            return { igstLedgerId, cgstLedgerId, sgstLedgerId };
+                        };
+
+
+                        useEffect(() => {
+                            // Auto-select GST ledgers when conditions change
+                            if (Vouchers?.typeOfVoucher === "Sales" && Vouchers?.defGstRegist) {
+                                const { igstLedgerId, cgstLedgerId, sgstLedgerId } = determineGSTLedgers(
+                                    Vouchers,
+                                    custaddress,
+                                    values.isExport,
+                                    newShippingState,
+                                    values
+                                );
+
+                                // Only update if values are different to avoid infinite loops
+                                if (igstLedgerId && igstLedgerId !== values.igstLedgerId) {
+                                    setFieldValue('igstLedgerId', igstLedgerId);
+                                }
+                                if (cgstLedgerId && cgstLedgerId !== values.cgstLedgerId) {
+                                    setFieldValue('cgstLedgerId', cgstLedgerId);
+                                }
+                                if (sgstLedgerId && sgstLedgerId !== values.sgstLedgerId) {
+                                    setFieldValue('sgstLedgerId', sgstLedgerId);
+                                }
+                            }
+                        }, [Vouchers?.typeOfVoucher, Vouchers?.defGstRegist, values.isExport, custaddress, newShippingState, values.ledgerId]);
+
+                        const handleIgstLedgerChange = (option) => {
+                            setFieldValue('igstLedgerId', option?.value || '');
+                        };
+
+                        const handleCgstLedgerChange = (option) => {
+                            setFieldValue('cgstLedgerId', option?.value || '');
+                        };
+
+                        const handleSgstLedgerChange = (option) => {
+                            setFieldValue('sgstLedgerId', option?.value || '');
+                        };
 
                         useEffect(() => {
                             if (isPaymentInParts && paymentMethods.length > 0) {
@@ -1278,6 +1494,9 @@ const CreateVoucher = () => {
                                     destinationledger,
                                     newShippingState
                                 );
+
+                                console.log(selectedValue, "heyyyy");
+
 
                                 if (selectedValue && selectedValue !== values.destinationLedgerId) {
                                     setFieldValue('destinationLedgerId', selectedValue);
@@ -1367,7 +1586,7 @@ const CreateVoucher = () => {
                         // Replace your existing calculateGST function with this single version
                         // Replace your existing calculateGST function with this
                         const calculateGST = (mrp, hsnCode, gstRegistration, customerAddress, discount = 0, customerState) => {
-                            // Calculate discounted price
+                            // Calculate discounted price (this is the taxable value after discount)
                             const discountedPrice = discount > 0 ? mrp * (1 - discount / 100) : mrp;
 
                             const igstRate = hsnCode?.igst || 0;
@@ -1593,6 +1812,20 @@ const CreateVoucher = () => {
                             setFieldValue(`paymentDetails.${index}.value`, lineTotal);
                             setFieldValue(`paymentDetails.${index}.voucherAmount`, lineTotal);
                         };
+
+
+
+
+
+                        // Add this useEffect inside your Formik render props, after the totals calculation
+                        useEffect(() => {
+                            // Calculate totalWithoutGst = totalMRP - totalDiscount
+                            const mrpTotal = parseFloat(totals.totalMRP) || 0;
+                            const discountTotal = parseFloat(totals.totalDiscount) || 0;
+                            const totalWithoutGst = (mrpTotal - discountTotal).toFixed(2);
+
+                            setFieldValue('totalWithoutgst', totalWithoutGst);
+                        }, [totals.totalMRP, totals.totalDiscount, setFieldValue]);
 
 
                         return (
@@ -1898,6 +2131,79 @@ const CreateVoucher = () => {
                                             }
 
 
+                                               <div>
+                                                {
+
+                                                    (Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && (
+                                                        <>
+                                                    
+                                                            {/* GST Ledgers Section */}
+                                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 mb-4">
+                                                                {/* IGST Ledger */}
+                                                                <div className="flex-1 min-w-[250px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">IGST Ledger</label>
+                                                                    <ReactSelect
+                                                                        name='igstLedgerId'
+                                                                        value={igstOptions.find(opt => opt.value === values.igstLedgerId)}
+                                                                        onChange={handleIgstLedgerChange}
+                                                                        options={igstOptions}
+                                                                        className="react-select-container bg-white dark:bg-form-Field w-full"
+                                                                        classNamePrefix="react-select"
+                                                                        placeholder="Select IGST Ledger"
+                                                                        menuPortalTarget={document.body}
+                                                                        styles={{
+                                                                            ...customStyles,
+                                                                            menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                        }}
+                                                                    />
+                                                                </div>
+
+                                                                {/* CGST Ledger */}
+                                                                <div className="flex-1 min-w-[250px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">CGST Ledger</label>
+                                                                    <ReactSelect
+                                                                        name='cgstLedgerId'
+                                                                        value={cgstOptions.find(opt => opt.value === values.cgstLedgerId)}
+                                                                        onChange={handleCgstLedgerChange}
+                                                                        options={cgstOptions}
+                                                                        className="react-select-container bg-white dark:bg-form-Field w-full"
+                                                                        classNamePrefix="react-select"
+                                                                        placeholder="Select CGST Ledger"
+                                                                        menuPortalTarget={document.body}
+                                                                        styles={{
+                                                                            ...customStyles,
+                                                                            menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                        }}
+                                                                    />
+                                                                </div>
+
+                                                                {/* SGST Ledger */}
+                                                                <div className="flex-1 min-w-[250px]">
+                                                                    <label className="mb-2.5 block text-black dark:text-white">SGST Ledger</label>
+                                                                    <ReactSelect
+                                                                        name='sgstLedgerId'
+                                                                        value={sgstOptions.find(opt => opt.value === values.sgstLedgerId)}
+                                                                        onChange={handleSgstLedgerChange}
+                                                                        options={sgstOptions}
+                                                                        className="react-select-container bg-white dark:bg-form-Field w-full"
+                                                                        classNamePrefix="react-select"
+                                                                        placeholder="Select SGST Ledger"
+                                                                        menuPortalTarget={document.body}
+                                                                        styles={{
+                                                                            ...customStyles,
+                                                                            menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                        }}
+                                                                    />
+                                                                </div>
+                                                            </div>
+
+
+
+                                                        </>
+                                                    )}
+                                            </div>
+
+
 
 
                                             <div className='flex flex-row gap-4 mb-6'>
@@ -1983,9 +2289,14 @@ const CreateVoucher = () => {
                                                                 <ErrorMessage name="isExport" component="div" className="text-red-500 text-sm mt-1" />
                                                             </div>
 
+
+
                                                         </>
                                                     )}
+
+
                                             </div>
+                                         
 
                                             {/* Products Table - Only for Sales and Purchase */}
                                             {(Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && (
@@ -2066,6 +2377,7 @@ const CreateVoucher = () => {
                                                                                                         exclusiveGst: gstCalculation.inclusivePrice,
                                                                                                         rate: gstCalculation.inclusivePrice
                                                                                                     }));
+
                                                                                                 }}
                                                                                                 options={
                                                                                                     // Show all products for rows marked as new product, otherwise show order products
@@ -2150,7 +2462,7 @@ const CreateVoucher = () => {
                                                                                         Vouchers.typeOfVoucher === "Sales" && (
 
                                                                                             <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
-                                                                                                
+
                                                                                                 <Field
                                                                                                     type="number"
                                                                                                     name={`paymentDetails.${index}.discount`}
@@ -2166,9 +2478,13 @@ const CreateVoucher = () => {
                                                                                                         if (discount > 100) {
                                                                                                             toast.warning("Discount cannot exceed 100%");
                                                                                                             setFieldValue(`paymentDetails.${index}.discount`, 100);
-                                                                                                           
+
+                                                                                                            // setFieldValue("totalWithoutgst",totals.totalMRP-totals.discountAmount)
+
                                                                                                         } else {
                                                                                                             setFieldValue(`paymentDetails.${index}.discount`, discount);
+                                                                                                            // setFieldValue("totalWithoutgst",totals.totalMRP-totals.discountAmount)
+
                                                                                                         }
 
                                                                                                         // Recalculate GST when discount changes
@@ -2275,25 +2591,24 @@ const CreateVoucher = () => {
                                                                                     {
                                                                                         Vouchers?.typeOfVoucher === "Sales" && (
 
-                                                                                          // GST Type column - update the display
-<td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
-    {entry.gstCalculation && (
-        <div className="flex flex-col">
-            <span className={`text-xs font-medium px-2 py-1 rounded ${
-                entry.gstCalculation.type === 'CGST+SGST' ? 'bg-blue-100 text-blue-800' :
-                entry.gstCalculation.type === 'IGST' ? 'bg-green-100 text-green-800' :
-                'bg-gray-100 text-gray-800'
-            }`}>
-                {entry.gstCalculation.type}
-            </span>
-            {entry.gstCalculation.discountApplied && (
-                <span className="text-xs text-orange-600 mt-1">
-                    {entry.gstCalculation.discountPercentage}% Discount Applied
-                </span>
-            )}
-        </div>
-    )}
-</td>
+                                                                                            // GST Type column - update the display
+                                                                                            <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
+                                                                                                {entry.gstCalculation && (
+                                                                                                    <div className="flex flex-col">
+                                                                                                        <span className={`text-xs font-medium px-2 py-1 rounded ${entry.gstCalculation.type === 'CGST+SGST' ? 'bg-blue-100 text-blue-800' :
+                                                                                                            entry.gstCalculation.type === 'IGST' ? 'bg-green-100 text-green-800' :
+                                                                                                                'bg-gray-100 text-gray-800'
+                                                                                                            }`}>
+                                                                                                            {entry.gstCalculation.type}
+                                                                                                        </span>
+                                                                                                        {entry.gstCalculation.discountApplied && (
+                                                                                                            <span className="text-xs text-orange-600 mt-1">
+                                                                                                                {entry.gstCalculation.discountPercentage}% Discount Applied
+                                                                                                            </span>
+                                                                                                        )}
+                                                                                                    </div>
+                                                                                                )}
+                                                                                            </td>
 
                                                                                         )
                                                                                     }
@@ -2430,6 +2745,8 @@ const CreateVoucher = () => {
                                                                                 <p className="font-medium text-black dark:text-white">₹{totals.totalMRP}</p>
                                                                             </div>
 
+
+
                                                                             <div>
                                                                                 <p className="text-gray-600 dark:text-gray-400">Total Quantity</p>
                                                                                 <p className="font-medium text-black dark:text-white">{totals.totalQuantity}</p>
@@ -2440,7 +2757,7 @@ const CreateVoucher = () => {
                                                                                     <p className="font-medium text-red-600">-₹{totals.totalDiscount}</p>
                                                                                 </div>
                                                                             )}
-                                                                            {totals.totalDiscount > 0 ||totals.totalCGST > 0 && (
+                                                                            {totals.totalCGST > 0 && (
                                                                                 // <div>
                                                                                 //     <p className="text-gray-600 dark:text-gray-400">CGST</p>
                                                                                 //     <p className="font-medium text-black dark:text-white">₹{totals.totalCGST}</p>
@@ -2458,7 +2775,7 @@ const CreateVoucher = () => {
                                                                                     />
                                                                                 </div>
                                                                             )}
-                                                                            {totals.totalDiscount > 0 || totals.totalSGST > 0 && (
+                                                                            {totals.totalSGST > 0 && (
                                                                                 // <div>
                                                                                 //     <p className="text-gray-600 dark:text-gray-400">SGST</p>
                                                                                 //     <p className="font-medium text-black dark:text-white">₹{totals.totalSGST}</p>
@@ -2476,7 +2793,7 @@ const CreateVoucher = () => {
                                                                                     />
                                                                                 </div>
                                                                             )}
-                                                                            {totals.totalDiscount > 0 || totals.totalIGST > 0 && (
+                                                                            {totals.totalIGST > 0 && (
                                                                                 // <div>
                                                                                 //     <p className="text-gray-600 dark:text-gray-400">IGST</p>
                                                                                 //     <p className="font-medium text-black dark:text-white">₹{totals.totalIGST}</p>
@@ -2502,12 +2819,163 @@ const CreateVoucher = () => {
                                                                             <p className="text-gray-600 dark:text-gray-400">Grand Total</p>
                                                                             <p className="font-medium text-lg text-primary">₹{totals?.subtotal}</p>
                                                                         </div> */}
+
+
+                                                                        </div>
+                                                                        <div className='flex gap-2 mt-4'>
+                                                                            <div className="flex-1 min-w-[250px]">
+                                                                                <label className="mb-2.5 block text-black dark:text-white">Discount</label>
+                                                                                <ReactSelect
+                                                                                    name='discountLedger'
+                                                                                    value={discountData.find(opt => opt.value === values.discountLedger)}
+                                                                                    // onChange={handleDestinationLedgerChange}
+
+
+
+                                                                                    options={discountData}
+                                                                                    className="react-select-container bg-white dark:bg-form-Field w-full"
+                                                                                    classNamePrefix="react-select"
+                                                                                    placeholder="Select Discount"
+                                                                                    menuPortalTarget={document.body}
+                                                                                    styles={{
+                                                                                        ...customStyles,
+                                                                                        menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                                    }}
+
+                                                                                />
+                                                                                <ErrorMessage name="destinationledgerId" component="div" className="text-red-500 text-xs mt-1" />
+
+                                                                            </div>
+                                                                            <div className="flex-1 min-w-[250px]">
+                                                                                <p className="text-gray-600 dark:text-gray-400">Discount Amount</p>
+                                                                                <Field
+                                                                                    type="number"
+                                                                                    name="discountAmount"
+
+                                                                                    onChange={(e) => {
+                                                                                        const discountAmount = parseFloat(e.target.value) || 0;
+                                                                                        setFieldValue('discountAmount', discountAmount);
+
+                                                                                        // Calculate new grand total (subtotal - discount)
+                                                                                        const newGrandTotal = totals.subtotal - discountAmount;
+                                                                                        setFieldValue('totalAmount', newGrandTotal >= 0 ? newGrandTotal : 0);
+                                                                                    }}
+                                                                                    // value={totals?.subtotal}
+                                                                                    placeholder="0.00"
+
+                                                                                    className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
+                                                                                />
+                                                                            </div>
+
+                                                                            <div className='flex gap-2 mt-4'>
+                                                                                <div className="flex-1 min-w-[250px]">
+                                                                                    <label className="mb-2.5 block text-black dark:text-white">Round Off</label>
+                                                                                    <ReactSelect
+                                                                                        name='roundOff'
+                                                                                        value={roundOffData.find(opt => opt.value === values.roundOff)}
+                                                                                        onChange={(option) => {
+                                                                                            setFieldValue('roundOff', option?.value);
+                                                                                        }}
+                                                                                        options={roundOffData}
+                                                                                        className="react-select-container bg-white dark:bg-form-Field w-full"
+                                                                                        classNamePrefix="react-select"
+                                                                                        placeholder="Select roundOff"
+                                                                                        menuPortalTarget={document.body}
+                                                                                        styles={{
+                                                                                            ...customStyles,
+                                                                                            menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                                        }}
+                                                                                    />
+                                                                                    <ErrorMessage name="roundOff" component="div" className="text-red-500 text-xs mt-1" />
+                                                                                </div>
+
+                                                                                <div className="flex-1 min-w-[250px]">
+                                                                                    <p className="text-gray-600 dark:text-gray-400">Round Off</p>
+                                                                                    <Field
+                                                                                        type="number"
+                                                                                        name="roundOffAmount"
+                                                                                        onChange={(e) => {
+                                                                                            const roundOffAmount = parseFloat(e.target.value) || 0;
+                                                                                            setFieldValue('roundOffAmount', roundOffAmount);
+
+                                                                                            // Recalculate grand total with discount and round off
+                                                                                            const discountAmount = parseFloat(values.discountAmount) || 0;
+                                                                                            const newGrandTotal = totals.subtotal - roundOffAmount;
+                                                                                            console.log(totals.subtotal, newGrandTotal, "5656");
+
+                                                                                            setFieldValue('totalAmount', newGrandTotal >= 0 ? newGrandTotal : 0);
+                                                                                        }}
+                                                                                        placeholder="0.00"
+                                                                                        className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
+                                                                                    />
+                                                                                </div>
+                                                                            </div>
+
+
+
+
+
+                                                                        </div>
+
+                                                                        <div className='flex'>
+
+                                                                            <div className="flex-1 min-w-[250px]">
+                                                                                <label className="mb-2.5 block text-black dark:text-white">Courrier Ledger</label>
+                                                                                <ReactSelect
+                                                                                    name='courrierLedger'
+                                                                                    value={courrierData.find(opt => opt.value === values.courrierLedger)}
+                                                                                    onChange={(option) => {
+                                                                                        setFieldValue('courrierLedger', option?.value);
+                                                                                    }}
+                                                                                    options={courrierData}
+                                                                                    className="react-select-container bg-white dark:bg-form-Field w-full"
+                                                                                    classNamePrefix="react-select"
+                                                                                    placeholder="Select Courrier"
+                                                                                    menuPortalTarget={document.body}
+                                                                                    styles={{
+                                                                                        ...customStyles,
+                                                                                        menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                                    }}
+                                                                                />
+                                                                                <ErrorMessage name="courrierLedger" component="div" className="text-red-500 text-xs mt-1" />
+                                                                            </div>
+
+                                                                            <div className="flex-1 min-w-[250px]">
+                                                                                <p className="text-gray-600 dark:text-gray-400">Courrier Amount</p>
+                                                                                <Field
+                                                                                    type="number"
+                                                                                    name="courrierAmount"
+                                                                                    onChange={(e) => {
+                                                                                        const courrierAmount = parseFloat(e.target.value) || 0;
+                                                                                        setFieldValue('courrierAmount', courrierAmount);
+
+                                                                                        // Recalculate grand total with all adjustments
+                                                                                        const discountAmount = parseFloat(values.discountAmount) || 0;
+                                                                                        const roundOffAmount = parseFloat(values.roundOffAmount) || 0;
+                                                                                        const newGrandTotal = totals.subtotal - discountAmount + roundOffAmount + courrierAmount;
+                                                                                        setFieldValue('totalAmount', newGrandTotal >= 0 ? newGrandTotal : 0);
+                                                                                    }}
+                                                                                    placeholder="0.00"
+                                                                                    className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+
+
+
+
+
+
+
+
+                                                                        <div className='flex flex-end justify-end'>
+
                                                                             <div className='flex flex-col'>
                                                                                 <p className="text-gray-600 dark:text-gray-400">Grand Total</p>
                                                                                 <Field
                                                                                     type="number"
                                                                                     name="totalAmount"
-                                                                                    value={totals?.subtotal}
+                                                                                    value={calculateGrandTotalWithAdjustments(values, totals)}
                                                                                     placeholder="0.00"
                                                                                     readOnly
                                                                                     className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
@@ -2582,18 +3050,18 @@ const CreateVoucher = () => {
                                                                                     const paymentType = selectedOption ? selectedOption.value : '';
                                                                                     setFieldValue('paymentReceivedType', paymentType);
 
+                                                                                    const adjustedGrandTotal = calculateGrandTotalWithAdjustments(values, totals);
+
                                                                                     // Automatically set amount based on payment type
                                                                                     if (paymentType === 'Fully') {
-                                                                                        setFieldValue('amountReceived', totals.subtotal);
+                                                                                        setFieldValue('amountReceived', adjustedGrandTotal);
                                                                                         setFieldValue('remainingBalance', 0);
                                                                                     } else if (paymentType === 'Partially') {
-                                                                                        // Reset to 0 for partial payment
                                                                                         setFieldValue('amountReceived', 0);
-                                                                                        setFieldValue('remainingBalance', totals.subtotal);
+                                                                                        setFieldValue('remainingBalance', adjustedGrandTotal);
                                                                                     } else {
-                                                                                        // For 'Not Received' or other types
                                                                                         setFieldValue('amountReceived', 0);
-                                                                                        setFieldValue('remainingBalance', totals.subtotal);
+                                                                                        setFieldValue('remainingBalance', adjustedGrandTotal);
                                                                                     }
                                                                                 }}
                                                                                 placeholder="Payment Received Type"
