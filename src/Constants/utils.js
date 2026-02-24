@@ -424,6 +424,7 @@ export const GET_RETAIL_CLIENTORDERS_URL = `${BASE_URL}/order/kani/retail-client
 export const GET_WHOLESALE_CLIENTORDERS_URL = `${BASE_URL}/order/kani/ws-client-orders`;
 export const GET_KLCORDERS_URL = `${BASE_URL}/order/klcc`;
 export const GET_PASHMINA_URL = `${BASE_URL}/order/pashmina-embroidery`;
+export const GET_RETAIL_EMBROIDERY_URL = `${BASE_URL}/order/pashminaEmbroidery/retail-client-orders`;
 
 
 //dahsboard

@@ -20,7 +20,7 @@ const pashminaModeCards = [
   },
   {
     title: "Retail Embroidery",
-    link: "/RetailEmbroidery",
+    link: "/pashminaEmbroidery/retail-client-orders",
     countKey: "RetailEmbroidery",
     icon: <AiOutlinePartition className="w-10 h-10" />,
     levelUp: true,
