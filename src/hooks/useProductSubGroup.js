@@ -4,21 +4,21 @@ import { toast } from 'react-toastify';
 import {
   UPDATE_PRODUCT_SUBGROUP_URL,
   ADD_PRODUCT_SUBGROUP_URL,
-  ADD_PRODUCT_SUBGROUPS_BULK_URL, // NEW: Bulk endpoint
+  ADD_PRODUCT_SUBGROUPS_BULK_URL,
   DELETE_PRODUCT_SUBGROUP_URL,
   GET_PRODUCT_SUBGROUP_URL,
-  GET_GROUPS_URL, // NEW: Add this constant
+  GET_GROUPS_URL,
 } from '../Constants/utils';
 
 const useproductSubGroup = () => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const { token } = currentUser;
   const [productSubGroup, setProductSubGroup] = useState([]);
-  const [groups, setGroups] = useState([]); // NEW: Groups state
+  const [groups, setGroups] = useState([]);
   const [edit, setEdit] = useState(false);
   const [currentproductSubGroup, setCurrentproductSubGroup] = useState({
     productSubGroupName: '',
-    groupId: null, // NEW: Add groupId
+    groupId: null,
   });
 
   const [pagination, setPagination] = useState({
@@ -31,10 +31,9 @@ const useproductSubGroup = () => {
 
   useEffect(() => {
     getproductSubGroup(pagination.currentPage);
-    getGroups(); // NEW: Fetch groups
+    getGroups();
   }, []);
 
-  // NEW: Function to fetch groups
   const getGroups = async () => {
     try {
       const response = await fetch(GET_GROUPS_URL, {
@@ -100,21 +99,128 @@ const useproductSubGroup = () => {
     }
   };
 
-  const handleUpdate = (item) => {
-    console.log(item, "Updating subgroup");
-
+  // FIXED: This now sets the group for editing (not a single subgroup)
+  const handleUpdate = (group) => {
+    console.log(group, "Setting group for editing");
     setEdit(true);
-    setCurrentproductSubGroup({
-      id: item.id, // Store the subgroup ID
-      productSubGroupName: item.productSubGroupName, // Use correct field name
-      groupId: item.group?.id || item.groupId,
-    });
+    setCurrentproductSubGroup(group);
   };
 
-  // NEW: Bulk create function
+  // NEW: Bulk update function
+ const handleBulkUpdate = async (groupId, data) => {
+  console.log('Bulk updating with data:', data);
+  
+  try {
+    const updatePromises = [];
+    const existingSubgroups = data.subgroupIds || [];
+    
+    // Update each existing subgroup individually
+    existingSubgroups.forEach((id, index) => {
+      if (index < data.subgroups.length) {
+        console.log(`Updating subgroup ID ${id} with name: ${data.subgroups[index]}`);
+        
+        const updateUrl = `${UPDATE_PRODUCT_SUBGROUP_URL}/${id}`;
+        console.log('Update URL:', updateUrl);
+        
+        // The backend expects the full DTO with ID inside the subgroups array
+        const payload = {
+          productGroupId: Number(data.groupId),
+          subgroups: [
+            {
+              id: id,  // ID inside the subgroups array, not at top level
+              productSubGroupName: data.subgroups[index]
+            }
+          ]
+        };
+        
+        console.log('Update payload:', payload);
+        
+        const updatePromise = fetch(updateUrl, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        }).then(async response => {
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`Update failed for ID ${id}:`, response.status, errorText);
+            throw new Error(errorText || `Failed to update subgroup ${id}`);
+          }
+          return response.json();
+        });
+        
+        updatePromises.push(updatePromise);
+      }
+    });
+    
+    // Create new subgroups if there are more fields than existing subgroups
+    if (data.subgroups.length > existingSubgroups.length) {
+      const newSubgroups = data.subgroups.slice(existingSubgroups.length);
+      
+      if (newSubgroups.length > 0) {
+        console.log('Creating new subgroups:', newSubgroups);
+        
+        const createPromise = fetch(ADD_PRODUCT_SUBGROUPS_BULK_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            productGroupId: Number(data.groupId),
+            subgroups: newSubgroups.map(name => ({ 
+              productSubGroupName: name 
+            }))
+          }),
+        }).then(async response => {
+          if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Bulk create failed:', response.status, errorText);
+            throw new Error(errorText || 'Failed to create new subgroups');
+          }
+          return response.json();
+        });
+        
+        updatePromises.push(createPromise);
+      }
+    }
+    
+    // Wait for all operations to complete
+    if (updatePromises.length > 0) {
+      const results = await Promise.allSettled(updatePromises);
+      
+      // Check results
+      const failed = results.filter(r => r.status === 'rejected');
+      if (failed.length > 0) {
+        console.error('Some operations failed:', failed);
+        toast.warning(`${failed.length} operation(s) failed.`);
+        return { success: false, failedCount: failed.length };
+      }
+    }
+    
+    toast.success('Subgroups updated successfully!');
+    
+    // Refresh the data
+    await getproductSubGroup(pagination.currentPage);
+    
+    setEdit(false);
+    setCurrentproductSubGroup({
+      productSubGroupName: '',
+      groupId: null,
+    });
+    
+    return { success: true };
+    
+  } catch (error) {
+    console.error('Bulk update error:', error);
+    toast.error('An error occurred during update');
+    return { success: false, message: error.message };
+  }
+};
+
   const handleBulkCreate = async (groupId, subgroups) => {
-
-
     try {
       const response = await fetch(ADD_PRODUCT_SUBGROUPS_BULK_URL, {
         method: 'POST',
@@ -131,60 +237,62 @@ const useproductSubGroup = () => {
       const data = await response.json();
       if (response.ok) {
         toast.success(`${subgroups.length} SubGroup(s) created successfully!`);
-        getproductSubGroup(1);
+        await getproductSubGroup(1);
         return { success: true };
       } else {
-        toast.error(`${data.errorMessage || 'Failed to create subgroups'}`);
-        return { success: false, error: data.errorMessage };
+        toast.error(data.errorMessage || 'Failed to create subgroups');
+        return { success: false, message: data.errorMessage };
       }
     } catch (error) {
       console.error(error);
       toast.error('An error occurred');
-      return { success: false, error: error.message };
+      return { success: false, message: error.message };
     }
   };
 
-  // Existing single create/update function
- const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-  console.log(values, "Submitting form");
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    console.log(values, "Submitting form");
 
-  try {
-    const url = edit
-      ? `${UPDATE_PRODUCT_SUBGROUP_URL}/${currentproductSubGroup.id}`
-      : ADD_PRODUCT_SUBGROUP_URL;
-    const method = edit ? 'PUT' : 'POST';
+    try {
+      const url = edit
+        ? `${UPDATE_PRODUCT_SUBGROUP_URL}/${currentproductSubGroup.id}`
+        : ADD_PRODUCT_SUBGROUP_URL;
+      const method = edit ? 'PUT' : 'POST';
 
-    const response = await fetch(url, {
-      method: method,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(values),
-    });
-
-    const data = await response.json();
-    if (response.ok) {
-      toast.success(
-        `SubGroup ${edit ? 'updated' : 'added'} successfully`,
-      );
-      resetForm();
-      setEdit(false);
-      setCurrentproductSubGroup({
-        productSubGroupName: '',
-        groupId: '',
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(values),
       });
-      getproductSubGroup(pagination.currentPage);
-    } else {
-      toast.error(`${data.errorMessage || 'Operation failed'}`);
+
+      const data = await response.json();
+      if (response.ok) {
+        toast.success(
+          `SubGroup ${edit ? 'updated' : 'added'} successfully`,
+        );
+        resetForm();
+        setEdit(false);
+        setCurrentproductSubGroup({
+          productSubGroupName: '',
+          groupId: '',
+        });
+        await getproductSubGroup(pagination.currentPage);
+        return { success: true };
+      } else {
+        toast.error(data.errorMessage || 'Operation failed');
+        return { success: false, message: data.errorMessage };
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('An error occurred');
+      return { success: false, message: error.message };
+    } finally {
+      setSubmitting(false);
     }
-  } catch (error) {
-    console.error(error);
-    toast.error('An error occurred');
-  } finally {
-    setSubmitting(false);
-  }
-};
+  };
 
   const handlePageChange = (newPage) => {
     setPagination((prev) => ({ ...prev, currentPage: newPage }));
@@ -195,12 +303,13 @@ const useproductSubGroup = () => {
     productSubGroup,
     edit,
     currentproductSubGroup,
-    groups, // NEW: Return groups
+    groups,
     pagination,
     handleDelete,
     handleUpdate,
     handleSubmit,
-    handleBulkCreate, // NEW: Return bulk create function
+    handleBulkCreate,
+    handleBulkUpdate, // Add this
     handlePageChange,
   };
 };

@@ -147,7 +147,7 @@ export const GET_PRODUCT_SUBGROUP_URL = `${BASE_URL}/subGroup/getAll`;
 export const GET_PRODUCT_GROUP_SUBGROUP_URL = `${BASE_URL}/subGroup`;
 
 
-export const UPDATE_PRODUCT_SUBGROUP_URL = `${BASE_URL}/productgroup`;
+export const UPDATE_PRODUCT_SUBGROUP_URL = `${BASE_URL}/subGroup/update`;
 export const VIEW_ALL_PRODUCT_SUBGROUP_URL = `${BASE_URL}/productgroup/viewAll`;
 export const DELETE_PRODUCT_SUBGROUP_URL = `${BASE_URL}/productgroup/`;
 
