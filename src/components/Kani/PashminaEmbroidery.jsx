@@ -35,9 +35,9 @@ const pashminaModeCards = [
     color: "from-orange-500 to-orange-600",
   },
   {
-    title: "Pashmina Orders",
-    link: "/PashminaOrders",
-    countKey: "PashminaOrders",
+    title: "Klc Orders",
+    link: "/KlcEmbroidery",
+    countKey: "KlcEmbroidery",
     icon: <TbReorder className="w-10 h-10" />,
     levelUp: true,
     color: "from-red-500 to-red-600",

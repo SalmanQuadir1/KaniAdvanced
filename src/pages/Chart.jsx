@@ -83,27 +83,27 @@ const kaniModeCards = [
   //   icon: <RiUserReceived2Fill className="w-10 h-10" />,
   //   levelUp: true,
   // },
-  // {
-  //   title: "Retail Client Orders",
-  //   link: "/RetailClientOrders",
-  //   countKey: "RetailClientOrders",
-  //   icon:  <AiOutlinePartition className="w-10 h-10" />,
-  //   levelUp: true,
-  // },
-  //  {
-  //   title: "Wholesale Client Orders",
-  //   link: "/WholesaleClientOrders",
-  //   countKey: "WholesaleClientOrders",
-  //   icon:  <RiAlignItemBottomFill className="w-10 h-10" />,
-  //   levelUp: true,
-  // },
-  // {
-  //   title: "Klc Orders",
-  //   link: "/KlcOrders",
-  //   countKey: "KlcOrders",
-  //   icon:  <TbReorder className="w-10 h-10" />,
-  //   levelUp: true,
-  // },
+  {
+    title: "Retail Client Orders",
+    link: "/RetailClientOrders",
+    countKey: "RetailClientOrders",
+    icon:  <AiOutlinePartition className="w-10 h-10" />,
+    levelUp: true,
+  },
+   {
+    title: "Wholesale Client Orders",
+    link: "/WholesaleClientOrders",
+    countKey: "WholesaleClientOrders",
+    icon:  <RiAlignItemBottomFill className="w-10 h-10" />,
+    levelUp: true,
+  },
+  {
+    title: "Klc Orders",
+    link: "/KlcOrders",
+    countKey: "KlcOrders",
+    icon:  <TbReorder className="w-10 h-10" />,
+    levelUp: true,
+  },
   
  
 ];
