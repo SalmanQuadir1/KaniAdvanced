@@ -56,6 +56,9 @@ import ExcelUploadProduct from './components/Products/ExcelUploadProduct.jsx';
 import ExcelUploadBulkInventory from './components/Products/ExcelUploadBulkInventory.jsx';
 
 import UpdateKani from './components/Kani/UpdateKani.jsx';
+import KaniSection from './components/Kani/KaniSection.jsx';
+import PashminaEmbroidery from './components/Kani/PashminaEmbroidery.jsx';
+import EmbroideryOrders from './components/Kani/EmbroideryOrders.jsx';
 
 
 
@@ -966,6 +969,10 @@ function App() {
           />
           <Route path="/ClientOrders" element={<KaniClientOrders />} />
           <Route path="/RetailClientOrders" element={<RetailClientOrders />} />
+           <Route path="/kaniSection" element={<KaniSection />} />
+           <Route path="/pashminaEmbroidery" element={<PashminaEmbroidery />} />
+           <Route path="/embroideryOrders" element={<EmbroideryOrders />} />
+
 
 
 

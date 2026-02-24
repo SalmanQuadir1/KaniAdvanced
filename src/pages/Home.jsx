@@ -187,12 +187,22 @@ const Home = () => {
 
      // Kani-based card mapping
 const kaniModeCards = [
-  {
-    title: "Kani Orders",
-    link: "/kaniOrders",
+    {
+    title: "Kani Section",
+    link: "/kaniSection",
     countKey: "kaniOrders",
     icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
     levelUp: true,
+    isGradient: true,
+  },
+  {
+    title: "Pashmina Embroidery",
+    link: "/pashminaEmbroidery",
+    countKey: "pashminaEmbroidery",
+    icon: <AiOutlinePartition className="w-10 h-10" />,
+    levelUp: true,
+    isGradient: true,
+    gradientColor: "from-purple-500 to-purple-600", // Add this line for purple
   },
 //  {
 //     title: "Client Orders",
@@ -254,29 +264,113 @@ const kaniModeCards = [
   })();
 
     return (
+        // <DefaultLayout>
+        //     <Breadcrumb pageName="Home" />
+        //     <div className="grid grid-cols-1 gap-3 my-1 md:grid-cols-4 md:gap-3 xl:grid-cols-4 2xl:gap-7.5 ">
+        //         {cardsToShow.map((card, index) => (
+        //             <Link to={card.link} key={index}>
+        //                 <div
+        //                     key={index}
+        //                     onClick={card.isDownload ? handleDownloadReport : null} // Apply download function only to "Customer Report"
+        //                     className="cursor-pointer  flex-col mt-4 " // Make it clear it's clickable
+        //                 >
+        //                     <CardDataStats
+        //                         title={card.title}
+                              
+        //                         levelUp={card.levelUp}
+        //                         levelDown={card.levelDown}
+        //                     >
+        //                         {card.icon}
+        //                     </CardDataStats>
+        //                 </div>
+        //             </Link>
+        //         ))}
+        //     </div>
+        // </DefaultLayout>
         <DefaultLayout>
-            <Breadcrumb pageName="Home" />
-            <div className="grid grid-cols-1 gap-3 my-1 md:grid-cols-4 md:gap-3 xl:grid-cols-4 2xl:gap-7.5 ">
-                {cardsToShow.map((card, index) => (
-                    <Link to={card.link} key={index}>
-                        <div
-                            key={index}
-                            onClick={card.isDownload ? handleDownloadReport : null} // Apply download function only to "Customer Report"
-                            className="cursor-pointer  flex-col mt-4 " // Make it clear it's clickable
-                        >
+        <Breadcrumb pageName="Home" />
+        <div className="grid grid-cols-1 gap-3 my-1 md:grid-cols-4 md:gap-3 xl:grid-cols-4 2xl:gap-7.5">
+            {cardsToShow.map((card, index) => (
+                card.isDownload ? (
+                    <div
+                        key={index}
+                        onClick={handleDownloadReport}
+                        className="cursor-pointer flex-col mt-4"
+                    >
+                        {card.isGradient ? (
+                            // Gradient styled card for Kani Section
+                            <div className="group relative overflow-hidden rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer">
+                                <div className="absolute right-0 top-0 -mt-4 -mr-4 h-20 w-20 rounded-full bg-white/10 blur-2xl"></div>
+                                {card.levelUp && (
+                                    <span className="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                                        Level Up
+                                    </span>
+                                )}
+                                <div className="mb-4 text-white/90">{card.icon}</div>
+                                <h3 className="mb-2 text-xl font-bold text-white">{card.title}</h3>
+                                {card.countKey && countMapping[card.countKey] !== undefined && (
+                                    <p className="text-sm text-white/80">{countMapping[card.countKey]} items</p>
+                                )}
+                                <div className="mt-6 flex items-center text-sm font-medium text-white/90">
+                                    Download
+                                    <svg className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                                    </svg>
+                                </div>
+                            </div>
+                        ) : (
+                            // Regular CardDataStats for other cards
                             <CardDataStats
                                 title={card.title}
-                              
+                                total={card.countKey ? countMapping[card.countKey] : undefined}
                                 levelUp={card.levelUp}
                                 levelDown={card.levelDown}
                             >
                                 {card.icon}
                             </CardDataStats>
+                        )}
+                    </div>
+                ) : (
+                    <Link to={card.link} key={index}>
+                        <div className="cursor-pointer flex-col mt-4">
+                            {card.isGradient ? (
+                                // Gradient styled card for Kani Section
+                               <div className={`group relative overflow-hidden rounded-xl bg-gradient-to-br ${card.gradientColor || 'from-blue-500 to-blue-600'} p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer`}>
+                                    <div className="absolute right-0 top-0 -mt-4 -mr-4 h-20 w-20 rounded-full bg-white/10 blur-2xl"></div>
+                                    {card.levelUp && (
+                                        <span className="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                                            Level Up
+                                        </span>
+                                    )}
+                                    <div className="mb-4 text-white/90">{card.icon}</div>
+                                    <h3 className="mb-2 text-xl font-bold text-white">{card.title}</h3>
+                                    {card.countKey && countMapping[card.countKey] !== undefined && (
+                                        <p className="text-sm text-white/80">{countMapping[card.countKey]} items</p>
+                                    )}
+                                    <div className="mt-6 flex items-center text-sm font-medium text-white/90">
+                                        View
+                                        <svg className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            ) : (
+                                // Regular CardDataStats for other cards
+                                <CardDataStats
+                                    title={card.title}
+                                    total={card.countKey ? countMapping[card.countKey] : undefined}
+                                    levelUp={card.levelUp}
+                                    levelDown={card.levelDown}
+                                >
+                                    {card.icon}
+                                </CardDataStats>
+                            )}
                         </div>
                     </Link>
-                ))}
-            </div>
-        </DefaultLayout>
+                )
+            ))}
+        </div>
+    </DefaultLayout>
     );
 };
 
