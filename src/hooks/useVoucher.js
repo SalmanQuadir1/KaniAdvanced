@@ -380,7 +380,7 @@ const useVoucher = (numberingDetails) => {
             console.log("i am in Finally ");
             setSubmitting(false);
         }
-    };
+    }; 
 
     const handlePageChange = (newPage) => {
 
