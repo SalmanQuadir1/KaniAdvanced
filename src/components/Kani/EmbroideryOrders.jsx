@@ -699,7 +699,7 @@ const EmbroideryOrders = () => {
           <div>
             <button
               type="button"
-              onClick={() => navigate("/filter-suppliers")}
+              onClick={() => navigate("/pashminaSuppliers")}
               className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90 transition view-badge"
             >
               Filter Suppliers

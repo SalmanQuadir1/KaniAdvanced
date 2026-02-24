@@ -59,6 +59,8 @@ import UpdateKani from './components/Kani/UpdateKani.jsx';
 import KaniSection from './components/Kani/KaniSection.jsx';
 import PashminaEmbroidery from './components/Kani/PashminaEmbroidery.jsx';
 import EmbroideryOrders from './components/Kani/EmbroideryOrders.jsx';
+import PashminaSuppliers from './components/Kani/PashminaSuppliers.jsx';
+import PashminaInProgress from './components/Kani/PashminaInProgress.jsx';
 
 
 
@@ -972,6 +974,8 @@ function App() {
            <Route path="/kaniSection" element={<KaniSection />} />
            <Route path="/pashminaEmbroidery" element={<PashminaEmbroidery />} />
            <Route path="/embroideryOrders" element={<EmbroideryOrders />} />
+           <Route path="/pashminaSuppliers" element={<PashminaSuppliers />} />
+           <Route path="/inProgress-pashminaEmbroidery" element={<PashminaInProgress />} />
 
 
 

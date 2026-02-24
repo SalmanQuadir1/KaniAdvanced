@@ -289,6 +289,8 @@ export const VIEW_PARTIALLYAPPROVED_ORDERS = `${BASE_URL}/order/searchApprovedAn
 
 export const VIEW_APPROVED_ORDERS = `${BASE_URL}/order/searchApproved`;
 export const VIEW_APPROVED_KANI_ORDERS = `${BASE_URL}/order/inProgress-kani`;
+export const VIEW_APPROVED_PASHMINAEMBROIDERY_ORDERS = `${BASE_URL}/order/inProgress-pashminaEmbroidery`;
+
 
 //pending for bill
 
