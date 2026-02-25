@@ -30,7 +30,7 @@ const PashminaSuppliers = () => {
   };
 
   const handleAddProduct = (id) => {
-    navigate(`/UpdateKaniProducts/${id}`);
+    navigate(`/UpdatePashminaProducts/${id}`);
   };
 
   const handleChallanInputChange = (e) => {
@@ -157,7 +157,7 @@ const PashminaSuppliers = () => {
   // Add new handler for supplier navigation
   const handleViewSupplier = (supplierId) => {
     if (supplierId) {
-      navigate(`/supplier-order/${supplierId}`);
+      navigate(`/pashmina_supplier-order/${supplierId}`);
     } else {
       toast.error("Supplier ID not found");
     }
