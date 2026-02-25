@@ -38,6 +38,7 @@ const CreateVoucher = () => {
 
     const [selectedOrder, setselectedOrder] = useState(null)
 
+    const [regType, setregType] = useState('')
     const [isPaymentInParts, setIsPaymentInParts] = useState(false);
 
     const [availableProducts, setAvailableProducts] = useState([]);
@@ -89,6 +90,9 @@ const CreateVoucher = () => {
         type: ledg.typeOfOpeningBalance,
         isSupplier: ledg?.supplier !== null
     }));
+
+    console.log(LedgerData, "5454544444444444444444444444444444444444");
+
 
 
     const giftvoucherledgers = Ledger.filter(ledg =>
@@ -220,7 +224,7 @@ const CreateVoucher = () => {
     // for gst 
     // GST Ledgers filtering
     const igstLedgers = Ledger.filter(ledg =>
-        ledg?.name && ledg.name.toLowerCase().startsWith('igst')
+        ledg?.name && ledg.name.toLowerCase().includes('igst')
     );
 
     const cgstLedgers = Ledger.filter(ledg =>
@@ -381,6 +385,7 @@ const CreateVoucher = () => {
     //     calculateGST()
     // }, [newShippingState, custaddress])
 
+    console.log(regType, "33333");
 
 
 
@@ -578,34 +583,39 @@ const CreateVoucher = () => {
     };
 
     const calculateLineTotal = (entry) => {
-        // Use exclusiveGst (price including GST after discount) as the rate
-        const basePrice = entry.exclusiveGst || entry.rate || 0;
+        // Use exclusiveGst (price including GST) as the rate
+        const basePrice = entry.exclusiveGst || entry.rate || entry.mrp || 0;
         const quantity = entry.quantity || 1;
         return (basePrice * quantity).toFixed(2);
     };
 
     const calculateLineTotalForPur = (entry) => {
-
-
-        const basePrice = entry.discount >= 0 && entry.mrp;
+        // Use exclusiveGst (price including GST) as the rate for Purchase too
+        const basePrice = entry.exclusiveGst || entry.rate || entry.mrp || 0;
         const quantity = entry.quantity || 1;
         return (basePrice * quantity).toFixed(2);
     };
 
     // Calculate totals for the summary
-    const calculateTotals = (values) => {
-        let subtotal = 0;
-        let totalCGST = 0;
-        let totalSGST = 0;
-        let totalIGST = 0;
-        let totalGST = 0;
-        let grandTotal = 0;
-        let totalDiscount = 0;
-        let totalMRP = 0;
-        let totalQuantity = 0;
+    // Calculate totals for the summary
+    // Calculate totals for the summary
+const calculateTotals = (values) => {
+    let subtotal = 0;
+    let totalCGST = 0;
+    let totalSGST = 0;
+    let totalIGST = 0;
+    let totalGST = 0;
+    let grandTotal = 0;
+    let totalDiscount = 0;
+    let totalMRP = 0;
+    let totalQuantity = 0;
 
-        values.paymentDetails.forEach(entry => {
-            const lineTotal = parseFloat(calculateLineTotal(entry)) || 0;
+    values.paymentDetails.forEach(entry => {
+        // Check if entry has GST calculation and either Sales/Purchase
+        if ((Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && entry.gstCalculation) {
+            
+            // Calculate line total based on exclusiveGst (price including GST)
+            const lineTotal = parseFloat(entry.exclusiveGst || 0) * (entry.quantity || 1);
             subtotal += lineTotal;
 
             // Calculate MRP total (before discount)
@@ -615,14 +625,13 @@ const CreateVoucher = () => {
             // Calculate total quantity
             totalQuantity += (entry.quantity || 1);
 
-            // Calculate discount amount
-            if (entry.discount > 0) {
+            // Calculate discount amount (only for Sales)
+            if (Vouchers?.typeOfVoucher === "Sales" && entry.discount > 0) {
                 const discountAmount = (entry.mrp * (entry.discount / 100)) * (entry.quantity || 1);
                 totalDiscount += discountAmount;
             }
 
-            // ALWAYS calculate GST regardless of discount
-            // GST is calculated on the discounted price, so it should never be zero
+            // Add GST amounts
             if (entry.gstCalculation) {
                 if (entry.gstCalculation.type === 'CGST+SGST') {
                     totalCGST += (entry.gstCalculation.cgstAmount || 0) * (entry.quantity || 1);
@@ -630,36 +639,25 @@ const CreateVoucher = () => {
                 } else if (entry.gstCalculation.type === 'IGST') {
                     totalIGST += (entry.gstCalculation.gstAmount || 0) * (entry.quantity || 1);
                 }
-
                 totalGST += (entry.gstCalculation.totalGstAmount || 0) * (entry.quantity || 1);
-            } else {
-                // Fallback calculation if gstCalculation is not available
-                const mrp = entry.mrp || 0;
-                const quantity = entry.quantity || 1;
-                const discountedPrice = entry.discount > 0 ? mrp * (1 - entry.discount / 100) : mrp;
-
-                // You might want to add logic here to determine GST type based on states
-                // For now, using a default calculation
-                const defaultGstRate = 0.18; // 18% as example
-                const gstAmount = discountedPrice * defaultGstRate * quantity;
-                totalGST += gstAmount;
             }
-        });
+        }
+    });
 
-        grandTotal = subtotal;
+    grandTotal = subtotal;
 
-        return {
-            subtotal: subtotal.toFixed(2),
-            totalCGST: totalCGST.toFixed(2),
-            totalSGST: totalSGST.toFixed(2),
-            totalIGST: totalIGST.toFixed(2),
-            totalGST: totalGST.toFixed(2),
-            totalDiscount: totalDiscount.toFixed(2),
-            grandTotal: grandTotal.toFixed(2),
-            totalMRP: totalMRP.toFixed(2),
-            totalQuantity: totalQuantity
-        };
+    return {
+        subtotal: subtotal.toFixed(2),
+        totalCGST: totalCGST.toFixed(2),
+        totalSGST: totalSGST.toFixed(2),
+        totalIGST: totalIGST.toFixed(2),
+        totalGST: totalGST.toFixed(2),
+        totalDiscount: totalDiscount.toFixed(2),
+        grandTotal: grandTotal.toFixed(2),
+        totalMRP: totalMRP.toFixed(2),
+        totalQuantity: totalQuantity
     };
+};
 
     const validationSchema = Yup.object().shape({
         recieptNumber: Yup.string().required('Voucher number is required'),
@@ -1193,9 +1191,12 @@ const CreateVoucher = () => {
                         };
 
                         function determineDestinationLedger(Vouchers, custAddress, isExport, destinationledgerOptions, newShippingState) {
+                            console.log(custAddress, "333333333333333333333");
+
                             const typeOfVoucher = Vouchers?.typeOfVoucher?.toLowerCase() || '';
                             const defGstRegist = Vouchers?.defGstRegist || '';
 
+                            console.log(typeOfVoucher, defGstRegist, "3322");
 
                             // Determine registration location from GST registration
                             const getRegistrationLocation = (gstReg) => {
@@ -1229,83 +1230,83 @@ const CreateVoucher = () => {
 
 
                             const determineLedgerType = () => {
-                                const regLocation = getRegistrationLocation(defGstRegist);
+                                // First, get the raw registration location
+                                const rawRegLocation = getRegistrationLocation(defGstRegist);
+
+                                // Convert at the very beginning - map jammu_and_kashmir to sxr, keep delhi as delhi
+                                // Also handle case - if it's delhi, keep as Delhi with capital D, if sxr keep as SXR with capital
+                                let regLocation = rawRegLocation === 'jammu_and_kashmir' ? 'SXR' :
+                                    rawRegLocation === 'delhi' ? 'Delhi' : rawRegLocation;
+
+                                // Ensure proper capitalization for return
+                                if (regLocation?.toLowerCase() === 'sxr') regLocation = 'SXR';
+                                if (regLocation?.toLowerCase() === 'delhi') regLocation = 'Delhi';
+
                                 const custGstCode = getCustGstCode(custAddress);
 
-                                // Base ledger type from voucher type
-                                const baseType = Vouchers.typeOfVoucher === 'Purchase' ? 'Purchase' : 'Sales';
+                                // Base ledger type from voucher type - ensure it's "Sale" not "Sales"
+                                const baseType = Vouchers.typeOfVoucher === 'Purchase' ? 'Purchase' : 'Sale';
 
-
-
-
+                                // Handle export case first
                                 if (regLocation) {
                                     if (isExport === true) {
                                         console.log(`${baseType} Export`, "hereeeeeeeeeeeeeeeeeeeeeee");
-
-                                        return `${baseType} Export`; // Export case    }`;
+                                        return `${baseType} Export`; // Export case
                                     }
-
                                 }
-
-
                                 else if (!regLocation) {
-                                    return `${baseType} igst delhi`; // Default
+                                    return `${baseType} IGST-Delhi`; // Default with hyphen format
                                 }
 
-                                // Map GST codes to locations
+                                // Map GST codes to locations - with proper capitalization for return
                                 const gstCodeMapping = {
-                                    '01': 'jammu_and_kashmir',
-                                    '07': 'delhi'
+                                    '01': 'SXR', // Capital SXR for J&K
+                                    '07': 'Delhi' // Capital Delhi
                                 };
 
+                                // Convert customer location using the same mapping
                                 const custLocation = custGstCode ? gstCodeMapping[custGstCode] : null;
+                                console.log('Customer Location (converted):', custLocation, ".............");
 
+                                // Convert new shipping state using the same mapping
                                 const newShippingStateLocation = newShippingState ? gstCodeMapping[newShippingState] : null;
+                                console.log('New Shipping Location (converted):', newShippingStateLocation, "hhhh");
 
-
-
-
-
+                                // Handle new shipping state first if it exists
                                 if (newShippingStateLocation) {
                                     if (regLocation === newShippingStateLocation) {
-                                        return `${baseType} local ${regLocation}`;
+                                        // Same state - return with hyphen format: "Sale Local-Delhi" or "Sale Local-SXR"
+                                        return `${baseType} Local-${regLocation}`;
                                     } else {
-                                        return `${baseType} igst ${regLocation}`;
+                                        // Different state - return with hyphen format: "Sale IGST-Delhi" or "Sale IGST-SXR"
+                                        return `${baseType} IGST-${regLocation}`;
                                     }
                                 }
-
+                                // Handle case when no customer location
                                 else if (!custLocation) {
                                     if (Vouchers?.typeOfVoucher === "Purchase") {
-
-                                        if (regLocation === 'delhi') {
-
-
-                                            return `${baseType} ${regLocation}`;
-
-                                        }
-                                        else {
-
-                                            return `${baseType} ${regLocation}`;
-                                        }
-
-
+                                        // For purchase, return with hyphen format if needed
+                                        return `${baseType} ${regLocation}`;
                                     }
                                     else if (Vouchers?.typeOfVoucher === "Payment") {
-
                                         // For ALL payment types (Visa, Amex, etc.), return "PAYMENT"
                                         return `${(Vouchers?.typeOfVoucher).toUpperCase()}`;
                                     }
-                                    // Can't determine customer location, use IGST
-                                    return `${baseType} igst ${regLocation}`;
+                                    // Can't determine customer location, use IGST with hyphen format
+                                    return `${baseType} IGST-${regLocation}`;
                                 }
 
-
+                                console.log(regLocation, custLocation, "33333333333333333330");
 
                                 // Check if same state (local) or different state (IGST)
                                 if (regLocation === custLocation) {
-                                    return `${baseType} local ${regLocation}`;
+                                    // SAME STATE - Return "Sale Local-Delhi" or "Sale Local-SXR"
+                                    console.log(`Same state transaction - returning ${baseType} Local-${regLocation}`);
+                                    return `${baseType} Local-${regLocation}`;
                                 } else {
-                                    return `${baseType} igst ${regLocation}`;
+                                    // DIFFERENT STATE - Return "Sale IGST-Delhi" or "Sale IGST-SXR"
+                                    console.log(`Different state transaction - returning ${baseType} IGST-${regLocation}`);
+                                    return `${baseType} IGST-${regLocation}`;
                                 }
                             };
 
@@ -1320,6 +1321,7 @@ const CreateVoucher = () => {
                             return matchedOption?.value || null;
                         }
 
+
                         const determineGSTLedgers = (Vouchers, custAddress, isExport, newShippingState, values) => {
                             const defGstRegist = Vouchers?.defGstRegist || '';
                             const typeOfVoucher = Vouchers?.typeOfVoucher || '';
@@ -1330,18 +1332,18 @@ const CreateVoucher = () => {
                                 const regLower = gstReg?.state?.toLowerCase();
 
                                 if (regLower.includes('jammu') || regLower.includes('kashmir') || regLower.includes('j&k') || regLower.includes('jk') || regLower.includes('sxr')) {
-                                    return 'sxr'; // Return 'sxr' for J&K/SXR location
+                                    return 'sxr';
                                 } else if (regLower.includes('delhi') || regLower.includes('ncr') || regLower.includes('nct')) {
                                     return 'delhi';
                                 }
                                 return null;
                             };
 
-                            // Get customer state from selected ledger or new shipping state
-                            const getCustomerState = () => {
+                            // Get supplier/customer state from selected ledger or new shipping state
+                            const getPartyState = () => {
                                 // First check if new shipping state is provided
                                 if (newShippingState) {
-                                    if (newShippingState === '01') return 'sxr'; // State code 01 is J&K/SXR
+                                    if (newShippingState === '01') return 'sxr';
                                     if (newShippingState === '07') return 'delhi';
                                 }
 
@@ -1357,10 +1359,11 @@ const CreateVoucher = () => {
                             };
 
                             const registrationLocation = getRegistrationLocation(defGstRegist);
-                            const customerLocation = getCustomerState();
+                            const partyLocation = getPartyState();
 
                             console.log('Registration Location:', registrationLocation);
-                            console.log('Customer Location:', customerLocation);
+                            console.log('Party Location:', partyLocation);
+                            console.log('Voucher Type:', typeOfVoucher);
 
                             // Default values
                             let igstLedgerId = null;
@@ -1374,87 +1377,209 @@ const CreateVoucher = () => {
 
                             // If no registration location, default logic
                             if (!registrationLocation) {
-                                // Try to find any IGST ledger as fallback
-                                const anyIgst = igstOptions.find(opt =>
-                                    opt.label.toLowerCase().includes('igst')
-                                );
-                                igstLedgerId = anyIgst?.value || null;
+                                if (typeOfVoucher === "Purchase") {
+                                    // For Purchase, try to find any Input IGST ledger as fallback
+                                    const anyIgst = igstOptions.find(opt =>
+                                        opt.label.toLowerCase().includes('input') && opt.label.toLowerCase().includes('igst')
+                                    );
+                                    igstLedgerId = anyIgst?.value || null;
+                                } else {
+                                    // For Sales, try to find any IGST ledger
+                                    const anyIgst = igstOptions.find(opt =>
+                                        opt.label.toLowerCase().includes('igst')
+                                    );
+                                    igstLedgerId = anyIgst?.value || null;
+                                }
                                 return { igstLedgerId, cgstLedgerId, sgstLedgerId };
                             }
 
                             // Check if same state or different state
-                            if (registrationLocation === customerLocation && customerLocation) {
-                                // Same state - need CGST and SGST ledgers for that state
-                                console.log('Same state transaction - looking for CGST/SGST ledgers for:', registrationLocation);
+                            if (registrationLocation === partyLocation && partyLocation) {
+                                // Same state transaction
+                                if (typeOfVoucher === "Purchase") {
+                                    // PURCHASE - Same state: Input CGST + Input SGST
+                                    console.log('PURCHASE - Same state - looking for Input CGST/SGST ledgers for:', registrationLocation);
 
-                                // For SXR location, look for ledgers with 'sxr' or 'j&k' in the name
-                                let cgstState = null;
-                                let sgstState = null;
+                                    let cgstState = null;
+                                    let sgstState = null;
 
-                                if (registrationLocation === 'sxr') {
-                                    cgstState = cgstOptions.find(opt =>
-                                        opt.label.toLowerCase().includes('cgst') &&
-                                        (opt.label.toLowerCase().includes('sxr') ||
-                                            opt.label.toLowerCase().includes('j&k') ||
-                                            opt.label.toLowerCase().includes('jammu') ||
-                                            opt.label.toLowerCase().includes('kashmir'))
-                                    );
+                                    if (registrationLocation === 'sxr') {
+                                        // For SXR location
+                                        cgstState = cgstOptions.find(opt =>
+                                            opt.label.toLowerCase().includes('input') &&
+                                            opt.label.toLowerCase().includes('cgst') &&
+                                            (opt.label.toLowerCase().includes('sxr') ||
+                                                opt.label.toLowerCase().includes('j&k') ||
+                                                opt.label.toLowerCase().includes('jammu') ||
+                                                opt.label.toLowerCase().includes('kashmir'))
+                                        );
 
-                                    sgstState = sgstOptions.find(opt =>
-                                        opt.label.toLowerCase().includes('sgst') &&
-                                        (opt.label.toLowerCase().includes('sxr') ||
-                                            opt.label.toLowerCase().includes('j&k') ||
-                                            opt.label.toLowerCase().includes('jammu') ||
-                                            opt.label.toLowerCase().includes('kashmir'))
-                                    );
+                                        sgstState = sgstOptions.find(opt =>
+                                            opt.label.toLowerCase().includes('input') &&
+                                            opt.label.toLowerCase().includes('sgst') &&
+                                            (opt.label.toLowerCase().includes('sxr') ||
+                                                opt.label.toLowerCase().includes('j&k') ||
+                                                opt.label.toLowerCase().includes('jammu') ||
+                                                opt.label.toLowerCase().includes('kashmir'))
+                                        );
+                                    } else {
+                                        // For Delhi
+                                        cgstState = cgstOptions.find(opt =>
+                                            opt.label.toLowerCase().includes('input') &&
+                                            opt.label.toLowerCase().includes('cgst') &&
+                                            opt.label.toLowerCase().includes('delhi')
+                                        );
+
+                                        sgstState = sgstOptions.find(opt =>
+                                            opt.label.toLowerCase().includes('input') &&
+                                            opt.label.toLowerCase().includes('sgst') &&
+                                            opt.label.toLowerCase().includes('delhi')
+                                        );
+                                    }
+
+                                    // Fallback to any Input CGST/SGST if specific location not found
+                                    if (!cgstState) {
+                                        cgstState = cgstOptions.find(opt =>
+                                            opt.label.toLowerCase().includes('input') && opt.label.toLowerCase().includes('cgst')
+                                        );
+                                    }
+                                    if (!sgstState) {
+                                        sgstState = sgstOptions.find(opt =>
+                                            opt.label.toLowerCase().includes('input') && opt.label.toLowerCase().includes('sgst')
+                                        );
+                                    }
+
+                                    cgstLedgerId = cgstState?.value || null;
+                                    sgstLedgerId = sgstState?.value || null;
+
+                                    console.log('Found Input CGST:', cgstState);
+                                    console.log('Found Input SGST:', sgstState);
+
                                 } else {
-                                    cgstState = cgstOptions.find(opt =>
-                                        opt.label.toLowerCase().includes('cgst') &&
-                                        opt.label.toLowerCase().includes(registrationLocation.toLowerCase())
-                                    );
+                                    // SALES - Same state: CGST + SGST (Output)
+                                    console.log('SALES - Same state - looking for CGST/SGST ledgers for:', registrationLocation);
 
-                                    sgstState = sgstOptions.find(opt =>
-                                        opt.label.toLowerCase().includes('sgst') &&
-                                        opt.label.toLowerCase().includes(registrationLocation.toLowerCase())
-                                    );
+                                    let cgstState = null;
+                                    let sgstState = null;
+
+                                    if (registrationLocation === 'sxr') {
+                                        cgstState = cgstOptions.find(opt =>
+                                            opt.label.toLowerCase().includes('cgst') &&
+                                            !opt.label.toLowerCase().includes('input') &&
+                                            (opt.label.toLowerCase().includes('sxr') ||
+                                                opt.label.toLowerCase().includes('j&k') ||
+                                                opt.label.toLowerCase().includes('jammu') ||
+                                                opt.label.toLowerCase().includes('kashmir'))
+                                        );
+
+                                        sgstState = sgstOptions.find(opt =>
+                                            opt.label.toLowerCase().includes('sgst') &&
+                                            !opt.label.toLowerCase().includes('input') &&
+                                            (opt.label.toLowerCase().includes('sxr') ||
+                                                opt.label.toLowerCase().includes('j&k') ||
+                                                opt.label.toLowerCase().includes('jammu') ||
+                                                opt.label.toLowerCase().includes('kashmir'))
+                                        );
+                                    } else {
+                                        cgstState = cgstOptions.find(opt =>
+                                            opt.label.toLowerCase().includes('cgst') &&
+                                            !opt.label.toLowerCase().includes('input') &&
+                                            opt.label.toLowerCase().includes('delhi')
+                                        );
+
+                                        sgstState = sgstOptions.find(opt =>
+                                            opt.label.toLowerCase().includes('sgst') &&
+                                            !opt.label.toLowerCase().includes('input') &&
+                                            opt.label.toLowerCase().includes('delhi')
+                                        );
+                                    }
+
+                                    // Fallback to any CGST/SGST if specific location not found
+                                    if (!cgstState) {
+                                        cgstState = cgstOptions.find(opt =>
+                                            opt.label.toLowerCase().includes('cgst') && !opt.label.toLowerCase().includes('input')
+                                        );
+                                    }
+                                    if (!sgstState) {
+                                        sgstState = sgstOptions.find(opt =>
+                                            opt.label.toLowerCase().includes('sgst') && !opt.label.toLowerCase().includes('input')
+                                        );
+                                    }
+
+                                    cgstLedgerId = cgstState?.value || null;
+                                    sgstLedgerId = sgstState?.value || null;
+
+                                    console.log('Found CGST:', cgstState);
+                                    console.log('Found SGST:', sgstState);
                                 }
-
-                                cgstLedgerId = cgstState?.value || null;
-                                sgstLedgerId = sgstState?.value || null;
-
-                                console.log('Found CGST:', cgstState);
-                                console.log('Found SGST:', sgstState);
                             } else {
-                                // Different state - need IGST ledger for registration state
-                                console.log('Different state transaction - looking for IGST ledger for:', registrationLocation);
+                                // Different state transaction
+                                if (typeOfVoucher === "Purchase") {
+                                    // PURCHASE - Different state: Input IGST
+                                    console.log('PURCHASE - Different state - looking for Input IGST ledger for:', registrationLocation);
 
-                                // For SXR location, look for IGST ledgers with 'sxr' or 'j&k' in the name
-                                let igstState = null;
+                                    let igstState = null;
 
-                                if (registrationLocation === 'sxr') {
-                                    igstState = igstOptions.find(opt =>
-                                        opt.label.toLowerCase().includes('igst') &&
-                                        (opt.label.toLowerCase().includes('sxr') ||
-                                            opt.label.toLowerCase().includes('j&k') ||
-                                            opt.label.toLowerCase().includes('jammu') ||
-                                            opt.label.toLowerCase().includes('kashmir'))
-                                    );
+                                    if (registrationLocation === 'sxr') {
+                                        igstState = igstOptions.find(opt =>
+                                            opt.label.toLowerCase().includes('input') &&
+                                            opt.label.toLowerCase().includes('igst') &&
+                                            (opt.label.toLowerCase().includes('sxr') ||
+                                                opt.label.toLowerCase().includes('j&k') ||
+                                                opt.label.toLowerCase().includes('jammu') ||
+                                                opt.label.toLowerCase().includes('kashmir'))
+                                        );
+                                    } else {
+                                        igstState = igstOptions.find(opt =>
+                                            opt.label.toLowerCase().includes('input') &&
+                                            opt.label.toLowerCase().includes('igst') &&
+                                            opt.label.toLowerCase().includes('delhi')
+                                        );
+                                    }
+
+                                    // Fallback to any Input IGST if specific location not found
+                                    if (!igstState) {
+                                        igstState = igstOptions.find(opt =>
+                                            opt.label.toLowerCase().includes('input') && opt.label.toLowerCase().includes('igst')
+                                        );
+                                    }
+
+                                    igstLedgerId = igstState?.value || null;
+                                    console.log('Found Input IGST:', igstState);
+
                                 } else {
-                                    igstState = igstOptions.find(opt =>
-                                        opt.label.toLowerCase().includes('igst') &&
-                                        opt.label.toLowerCase().includes(registrationLocation.toLowerCase())
-                                    );
-                                }
+                                    // SALES - Different state: IGST (Output)
+                                    console.log('SALES - Different state - looking for IGST ledger for:', registrationLocation);
 
-                                // If specific location not found, try to find any IGST ledger
-                                if (!igstState) {
-                                    igstState = igstOptions.find(opt =>
-                                        opt.label.toLowerCase().includes('igst')
-                                    );
-                                }
+                                    let igstState = null;
 
-                                igstLedgerId = igstState?.value || null;
-                                console.log('Found IGST:', igstState);
+                                    if (registrationLocation === 'sxr') {
+                                        igstState = igstOptions.find(opt =>
+                                            opt.label.toLowerCase().includes('igst') &&
+                                            !opt.label.toLowerCase().includes('input') &&
+                                            (opt.label.toLowerCase().includes('sxr') ||
+                                                opt.label.toLowerCase().includes('j&k') ||
+                                                opt.label.toLowerCase().includes('jammu') ||
+                                                opt.label.toLowerCase().includes('kashmir'))
+                                        );
+                                    } else {
+                                        igstState = igstOptions.find(opt =>
+                                            opt.label.toLowerCase().includes('igst') &&
+                                            !opt.label.toLowerCase().includes('input') &&
+                                            opt.label.toLowerCase().includes('delhi')
+                                        );
+                                    }
+
+                                    // Fallback to any IGST if specific location not found
+                                    if (!igstState) {
+                                        igstState = igstOptions.find(opt =>
+                                            opt.label.toLowerCase().includes('igst') && !opt.label.toLowerCase().includes('input')
+                                        );
+                                    }
+
+                                    igstLedgerId = igstState?.value || null;
+                                    console.log('Found IGST:', igstState);
+                                }
                             }
 
                             return { igstLedgerId, cgstLedgerId, sgstLedgerId };
@@ -1484,6 +1609,34 @@ const CreateVoucher = () => {
                                 }
                             }
                         }, [Vouchers?.typeOfVoucher, Vouchers?.defGstRegist, values.isExport, custaddress, newShippingState, values.ledgerId]);
+
+
+
+                        useEffect(() => {
+                            // Auto-select GST ledgers for Purchase when conditions change
+                            if (Vouchers?.typeOfVoucher === "Purchase" && Vouchers?.defGstRegist && regType === "regular") {
+                                const { igstLedgerId, cgstLedgerId, sgstLedgerId } = determineGSTLedgers(
+                                    Vouchers,
+                                    custaddress,
+                                    values.isExport,
+                                    newShippingState,
+                                    values
+                                );
+
+                                // Only update if values are different to avoid infinite loops
+                                if (igstLedgerId && igstLedgerId !== values.igstLedgerId) {
+                                    setFieldValue('igstLedgerId', igstLedgerId);
+                                }
+                                if (cgstLedgerId && cgstLedgerId !== values.cgstLedgerId) {
+                                    setFieldValue('cgstLedgerId', cgstLedgerId);
+                                }
+                                if (sgstLedgerId && sgstLedgerId !== values.sgstLedgerId) {
+                                    setFieldValue('sgstLedgerId', sgstLedgerId);
+                                }
+                            }
+                        }, [Vouchers?.typeOfVoucher, Vouchers?.defGstRegist, regType, custaddress, newShippingState, values.ledgerId, values.isExport]);
+
+
 
                         const handleIgstLedgerChange = (option) => {
                             setFieldValue('igstLedgerId', option?.value || '');
@@ -1516,24 +1669,23 @@ const CreateVoucher = () => {
 
 
 
-                        useEffect(() => {
-
-                            if (Vouchers?.typeOfVoucher === "Purchase") {
-
-                                setFieldValue('totalAmount', totals.totalMRP);
-                            } else {
-                                // For other voucher types like Sales
-
-                                setFieldValue('totalAmount', totals.subtotal);
-                                setFieldValue('totalAmount', totals.subtotal);
-                                setFieldValue('totalGst', totals.totalGST);
-                                setFieldValue('totalCgst', totals.totalCGST);
-                                setFieldValue('totalIgst', totals.totalIGST);
-                                setFieldValue('totalSgst', totals.totalSGST);
-                            }
-
-                        }, [totals.subtotal, totals.totalGST, totals.totalCGST, totals.totalIGST, totals.totalSGST, setFieldValue]);
-
+                       useEffect(() => {
+    if (Vouchers?.typeOfVoucher === "Purchase") {
+        // For Purchase, totalAmount should be subtotal (which includes GST)
+        setFieldValue('totalAmount', totals.subtotal);
+        setFieldValue('totalGst', totals.totalGST);
+        setFieldValue('totalCgst', totals.totalCGST);
+        setFieldValue('totalIgst', totals.totalIGST);
+        setFieldValue('totalSgst', totals.totalSGST);
+    } else if (Vouchers?.typeOfVoucher === "Sales") {
+        // For Sales, totalAmount should be subtotal (which includes GST)
+        setFieldValue('totalAmount', totals.subtotal);
+        setFieldValue('totalGst', totals.totalGST);
+        setFieldValue('totalCgst', totals.totalCGST);
+        setFieldValue('totalIgst', totals.totalIGST);
+        setFieldValue('totalSgst', totals.totalSGST);
+    }
+}, [totals.subtotal, totals.totalGST, totals.totalCGST, totals.totalIGST, totals.totalSGST, setFieldValue, Vouchers?.typeOfVoucher]);
 
 
 
@@ -1753,6 +1905,7 @@ const CreateVoucher = () => {
                         };
 
                         // Replace your useEffect for GST calculation with this:
+                        // Replace your useEffect for GST calculation with this:
                         useEffect(() => {
                             // This will run whenever ledgerId or newShippingState changes
                             if (values?.paymentDetails?.length > 0 && values?.ledgerId) {
@@ -1774,7 +1927,7 @@ const CreateVoucher = () => {
                                             if (product) {
                                                 const mrp = entry.mrp || product.price || 0;
                                                 const hsnCode = product.hsnCode || {};
-                                                const currentDiscount = entry.discount || 0;
+                                                const currentDiscount = Vouchers?.typeOfVoucher === "Sales" ? (entry.discount || 0) : 0; // Only apply discount for Sales
 
                                                 // Calculate GST with current values
                                                 const gstCalculation = calculateGST(
@@ -1791,31 +1944,31 @@ const CreateVoucher = () => {
                                                 setFieldValue(`paymentDetails.${index}.gstAmount`, gstCalculation.totalGstAmount);
                                                 setFieldValue(`paymentDetails.${index}.exclusiveGst`, gstCalculation.inclusivePrice);
 
-                                                // Update rate based on discount
-                                                if (currentDiscount > 0) {
-                                                    const discountedRate = gstCalculation.inclusivePrice * (1 - currentDiscount / 100);
-                                                    setFieldValue(`paymentDetails.${index}.rate`, discountedRate);
-                                                    setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
-                                                        ...entry,
-                                                        rate: discountedRate,
-                                                        exclusiveGst: gstCalculation.inclusivePrice,
-                                                        quantity: entry.quantity || 1
-                                                    }));
-                                                } else {
+                                                // Update rate based on voucher type
+                                                if (Vouchers?.typeOfVoucher === "Sales") {
+                                                    // For Sales, rate is the inclusive price (with GST)
                                                     setFieldValue(`paymentDetails.${index}.rate`, gstCalculation.inclusivePrice);
-                                                    setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
-                                                        ...entry,
-                                                        rate: gstCalculation.inclusivePrice,
-                                                        exclusiveGst: gstCalculation.inclusivePrice,
-                                                        quantity: entry.quantity || 1
-                                                    }));
+                                                } else {
+                                                    // For Purchase, rate is also the inclusive price (with GST)
+                                                    setFieldValue(`paymentDetails.${index}.rate`, gstCalculation.inclusivePrice);
                                                 }
+
+                                                // Calculate line total
+                                                const lineTotal = calculateLineTotal({
+                                                    ...entry,
+                                                    exclusiveGst: gstCalculation.inclusivePrice,
+                                                    rate: gstCalculation.inclusivePrice,
+                                                    quantity: entry.quantity || 1
+                                                });
+
+                                                setFieldValue(`paymentDetails.${index}.value`, lineTotal);
+                                                setFieldValue(`paymentDetails.${index}.voucherAmount`, lineTotal);
                                             }
                                         }
                                     });
                                 }
                             }
-                        }, [values?.ledgerId, newShippingState, values?.paymentDetails?.length, allProducts, availableProducts]);
+                        }, [values?.ledgerId, newShippingState, values?.paymentDetails?.length, allProducts, availableProducts, Vouchers?.typeOfVoucher]);
 
                         // Also add this useEffect for when newShippingState changes from the delivery address field
                         useEffect(() => {
@@ -1826,6 +1979,7 @@ const CreateVoucher = () => {
                         }, [values?.customerNewDeliveryShippingState, values?.isDeliveryDifferent]);
 
                         // Add this function to handle product selection with proper GST calculation
+                        // Add this function to handle product selection with proper GST calculation
                         const handleProductSelect = (index, option, setFieldValue, entry, selectedLedger, Vouchers, newShippingState) => {
                             const mrp = option?.price || 0;
                             const hsnCode = option?.hsnCode || {};
@@ -1834,7 +1988,7 @@ const CreateVoucher = () => {
                             const customerAddress = selectedLedger?.obj?.shippingAddress || '';
                             const customerState = selectedLedger?.obj?.shippingState || '';
                             const gstRegistration = Vouchers?.defGstRegist?.state || '';
-                            const currentDiscount = entry.discount || 0;
+                            const currentDiscount = Vouchers?.typeOfVoucher === "Sales" ? (entry.discount || 0) : 0; // Only apply discount for Sales
 
                             // Calculate GST based on location and discount
                             const gstCalculation = calculateGST(
@@ -2025,6 +2179,9 @@ const CreateVoucher = () => {
                                                                     setFieldValue('currentBalance', option?.balance || 0);
                                                                     handleLedgerSelect(option);
                                                                     setcustaddress(option?.obj?.shippingState || '')
+
+                                                                    setregType(option?.obj.registrationType)
+
                                                                 }}
                                                                 options={LedgerData}
                                                                 className="react-select-container bg-white dark:bg-form-Field w-full"
@@ -2368,7 +2525,7 @@ const CreateVoucher = () => {
                                                                                 ...(Vouchers?.typeOfVoucher === "Sales" ? ["Discount Applied"] : []),
                                                                                 "quantity",
                                                                                 "Value",
-                                                                                ...(Vouchers?.typeOfVoucher === "Sales" ? ["GST Type"] : []),
+                                                                                ...(Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase" ? ["GST Type"] : []),
                                                                                 "Action"
                                                                             ].map((header, i) => (
                                                                                 <th
@@ -2396,9 +2553,6 @@ const CreateVoucher = () => {
                                                                                                 name={`paymentDetails.${index}.productsId`}
                                                                                                 value={getSelectedProductValue(entry.productsId, rowProducts, values, index)}
                                                                                                 onChange={(option) => {
-
-
-
                                                                                                     const mrp = option?.price || 0;
                                                                                                     const hsnCode = option?.hsnCode || {};
                                                                                                     const igstRate = hsnCode?.igst || 0;
@@ -2407,10 +2561,17 @@ const CreateVoucher = () => {
                                                                                                     const customerAddress = selectedLedger?.obj?.shippingAddress || '';
                                                                                                     const customerState = selectedLedger?.obj?.shippingState || '';
                                                                                                     const gstRegistration = Vouchers?.defGstRegist?.state || '';
-                                                                                                    const currentDiscount = entry.discount || 0;
+                                                                                                    const currentDiscount = Vouchers?.typeOfVoucher === "Sales" ? (entry.discount || 0) : 0;
 
                                                                                                     // Calculate GST based on location and discount
-                                                                                                    const gstCalculation = calculateGST(mrp, hsnCode, gstRegistration, customerAddress, currentDiscount, customerState);
+                                                                                                    const gstCalculation = calculateGST(
+                                                                                                        mrp,
+                                                                                                        hsnCode,
+                                                                                                        gstRegistration,
+                                                                                                        customerAddress,
+                                                                                                        currentDiscount,
+                                                                                                        customerState
+                                                                                                    );
 
                                                                                                     setFieldValue(`paymentDetails.${index}.productsId`, option?.obj?.product?.id || option?.obj.id || null);
                                                                                                     setFieldValue(`paymentDetails.${index}.orderProductId`, option?.orderProdId || null);
@@ -2420,18 +2581,18 @@ const CreateVoucher = () => {
                                                                                                     setFieldValue(`paymentDetails.${index}.exclusiveGst`, gstCalculation.inclusivePrice);
                                                                                                     setFieldValue(`paymentDetails.${index}.rate`, gstCalculation.inclusivePrice);
                                                                                                     setFieldValue(`paymentDetails.${index}.gstCalculation`, gstCalculation);
-                                                                                                    setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
-                                                                                                        ...entry,
-                                                                                                        exclusiveGst: gstCalculation.inclusivePrice,
-                                                                                                        rate: gstCalculation.inclusivePrice
-                                                                                                    }));
-                                                                                                    setFieldValue(`paymentDetails.${index}.voucherAmount`, calculateLineTotal({
-                                                                                                        ...entry,
-                                                                                                        exclusiveGst: gstCalculation.inclusivePrice,
-                                                                                                        rate: gstCalculation.inclusivePrice
-                                                                                                    }));
 
+                                                                                                    const lineTotal = calculateLineTotal({
+                                                                                                        ...entry,
+                                                                                                        exclusiveGst: gstCalculation.inclusivePrice,
+                                                                                                        rate: gstCalculation.inclusivePrice
+                                                                                                    });
+
+                                                                                                    setFieldValue(`paymentDetails.${index}.value`, lineTotal);
+                                                                                                    setFieldValue(`paymentDetails.${index}.voucherAmount`, lineTotal);
                                                                                                 }}
+
+
                                                                                                 options={
                                                                                                     // Show all products for rows marked as new product, otherwise show order products
                                                                                                     entry.isNewProduct || newProductRowIndex === index
@@ -2642,7 +2803,7 @@ const CreateVoucher = () => {
                                                                                     {/* GST Type */}
 
                                                                                     {
-                                                                                        Vouchers?.typeOfVoucher === "Sales" && (
+                                                                                        (Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && (
 
                                                                                             // GST Type column - update the display
                                                                                             <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
@@ -2757,34 +2918,74 @@ const CreateVoucher = () => {
                                                                                 <p className="font-medium text-black dark:text-white">{totals.totalQuantity}</p>
                                                                             </div>
 
-                                                                            {/* <div>
-                                                                            <p className="text-gray-600 dark:text-gray-400">Grand Total</p>
-                                                                            <p className="font-medium text-lg text-primary">₹{totals?.subtotal}</p>
-                                                                        </div> */}
+                                                                            {totals.totalDiscount > 0 && (
+                                                                                <div>
+                                                                                    <p className="text-gray-600 dark:text-gray-400">Total Discount</p>
+                                                                                    <p className="font-medium text-red-600">-₹{totals.totalDiscount}</p>
+                                                                                </div>
+                                                                            )}
+
+                                                                            {totals.totalCGST > 0 && (
+                                                                                <div className='flex flex-col'>
+                                                                                    <p className="text-gray-600 dark:text-gray-400">CGST</p>
+                                                                                    <Field
+                                                                                        type="number"
+                                                                                        name="totalCgst"
+                                                                                        value={totals.totalCGST}
+                                                                                        placeholder="0.00"
+                                                                                        readOnly
+                                                                                        className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
+                                                                                    />
+                                                                                </div>
+                                                                            )}
+
+                                                                            {totals.totalSGST > 0 && (
+                                                                                <div className='flex flex-col'>
+                                                                                    <p className="text-gray-600 dark:text-gray-400">SGST</p>
+                                                                                    <Field
+                                                                                        type="number"
+                                                                                        name="totalSgst"
+                                                                                        value={totals.totalSGST}
+                                                                                        placeholder="0.00"
+                                                                                        readOnly
+                                                                                        className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
+                                                                                    />
+                                                                                </div>
+                                                                            )}
+
+                                                                            {totals.totalIGST > 0 && (
+                                                                                <div className='flex flex-col'>
+                                                                                    <p className="text-gray-600 dark:text-gray-400">IGST</p>
+                                                                                    <Field
+                                                                                        type="number"
+                                                                                        name="totalIgst"
+                                                                                        value={totals.totalIGST}
+                                                                                        placeholder="0.00"
+                                                                                        readOnly
+                                                                                        className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
+                                                                                    />
+                                                                                </div>
+                                                                            )}
+
+                                                                            <div>
+                                                                                <p className="text-gray-600 dark:text-gray-400">Total GST</p>
+                                                                                <p className="font-medium text-black dark:text-white">₹{totals.totalGST}</p>
+                                                                            </div>
+
                                                                             <div className='flex flex-col'>
                                                                                 <p className="text-gray-600 dark:text-gray-400">Grand Total</p>
                                                                                 <Field
                                                                                     type="number"
                                                                                     name="totalAmount"
-                                                                                    value={totals?.totalMRP}
+                                                                                    value={totals?.subtotal}
                                                                                     placeholder="0.00"
                                                                                     readOnly
-                                                                                    className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
+                                                                                    className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
                                                                                 />
                                                                             </div>
-
-
-
                                                                         </div>
                                                                     </div>
-
-
-
-
-
                                                                 </>
-
-
                                                             )}
 
                                                             {/* GST Summary */}
