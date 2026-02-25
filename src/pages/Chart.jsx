@@ -76,6 +76,15 @@ const kaniModeCards = [
     isGradient: true,
     gradientColor: "from-purple-500 to-purple-600", // Add this line for purple
   },
+  {
+    title: "Contemporary Pashmina",
+    link: "/contemporaryPashmina",
+    countKey: "contemporaryPashmina",
+    icon: <AiOutlinePartition className="w-10 h-10" />,
+    levelUp: true,
+    isGradient: true,
+    gradientColor: "from-green-500 to-green-600", 
+  },
   // {
   //   title: "Client Orders",
   //   link: "/ClientOrders",
