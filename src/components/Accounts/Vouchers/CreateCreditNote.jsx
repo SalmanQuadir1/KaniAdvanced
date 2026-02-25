@@ -285,7 +285,7 @@ const CreateCreditNote = () => {
                             setFieldValue('totalCgst', totals.totalCGST);
                             setFieldValue('totalIgst', totals.totalIGST);
                             setFieldValue('totalSgst', totals.totalSGST);
-                        }, [totals]);
+                        }, []);
 
                         return (
                             <Form>
