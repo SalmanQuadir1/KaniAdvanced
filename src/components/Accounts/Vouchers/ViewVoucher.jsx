@@ -245,8 +245,26 @@ const ViewVoucher = () => {
                     <p className="text-gray-900 whitespace-no-wrap">{item?.typeOfVoucher}</p>
                 </td>
                 <td>
-                    <span onClick={() => navigate(`/voucher/create/${item.id}`)}
-                        className="view-badge bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer">
+                    <span
+                        onClick={() => {
+                            let path = `/voucher/create/${item.id}`;
+
+                            if (item.name?.toLowerCase() === "debit note") {
+                                path = `/voucher/createdebitNote/${item.id}`;
+                            } else if (item.name?.toLowerCase() === "credit note") {
+                                path = `/voucher/createcreditNote/${item.id}`;
+                            } else if (item.name?.toLowerCase() === "contra") {
+                                path = `/voucher/createcontra/${item.id}`;
+                            } else if (item.name?.toLowerCase() === "journal") {
+                                path = `/voucher/createjournal/${item.id}`;
+                            } else if (item.name?.toLowerCase() === "receipt") {
+                                path = `/voucher/createreceipt/${item.id}`;
+                            }
+
+                            navigate(path);
+                        }}
+                        className="view-badge bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer"
+                    >
                         Add Entry
                     </span>
                 </td>

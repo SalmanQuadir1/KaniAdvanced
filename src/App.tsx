@@ -21,7 +21,11 @@ import PaymentSummary from './components/Accounts/Config/PaymentSummary.jsx';
 
 import Voucher from './components/Accounts/Vouchers/Voucher.jsx';
 import CreateVoucher from './components/Accounts/Vouchers/CreateVoucher.jsx';
-
+import CreateDebitNote from './components/Accounts/Vouchers/CreateDebitNote.jsx';
+import CreateCreditNote from './components/Accounts/Vouchers/CreateCreditNote.jsx';
+import CreateContra from './components/Accounts/Vouchers/CreateContra.jsx';
+import CreateJournal from './components/Accounts/Vouchers/CreateJournal.jsx';
+import CreateReceipt from './components/Accounts/Vouchers/CreateReceipt.jsx';
 
 import CreateVoucherPurchase from './components/Accounts/Vouchers/CreateVoucherPurchase.jsx';
 import VoucherEntriesView from './components/Accounts/Vouchers/VoucherEntriesView.jsx';
@@ -466,6 +470,59 @@ function App() {
                 <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
                 <PageTitle title="Voucher" />
                 <CreateVoucher />
+              </>
+            }
+          />
+
+          {/* debit note */}
+
+           <Route
+            path="/voucher/createdebitNote/:id"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="debit note" />
+                <CreateDebitNote />
+              </>
+            }
+          />
+             <Route
+            path="/voucher/createcreditNote/:id"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="credit note" />
+                <CreateCreditNote />
+              </>
+            }
+          />
+             <Route
+            path="/voucher/createcontra/:id"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="contra" />
+                <CreateContra />
+              </>
+            }
+          />
+             <Route
+            path="/voucher/createjournal/:id"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Journal" />
+                <CreateJournal />
+              </>
+            }
+          />
+             <Route
+            path="/voucher/createreceipt/:id"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="receipt" />
+                <CreateReceipt />
               </>
             }
           />
