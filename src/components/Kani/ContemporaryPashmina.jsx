@@ -39,16 +39,9 @@ const contemporaryModeCards = [
     countKey: "KlcContemporary",
     icon: <TbReorder className="w-10 h-10" />,
     levelUp: true,
-    color: "from-rose-500 to-rose-600",
-  },
-  {
-    title: "Boutique Orders",
-    link: "/boutiqueContemporary",
-    countKey: "BoutiqueContemporary",
-    icon: <RiUserReceived2Fill className="w-10 h-10" />,
-    levelUp: false,
     color: "from-cyan-500 to-cyan-600",
   },
+ 
 ];
 
 const ContemporaryPashmina = () => {
