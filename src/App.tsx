@@ -56,7 +56,15 @@ import ExcelUploadProduct from './components/Products/ExcelUploadProduct.jsx';
 import ExcelUploadBulkInventory from './components/Products/ExcelUploadBulkInventory.jsx';
 
 import UpdateKani from './components/Kani/UpdateKani.jsx';
-
+import KaniSection from './components/Kani/KaniSection.jsx';
+import PashminaEmbroidery from './components/Kani/PashminaEmbroidery.jsx';
+import EmbroideryOrders from './components/Kani/EmbroideryOrders.jsx';
+import PashminaSuppliers from './components/Kani/PashminaSuppliers.jsx';
+import PashminaInProgress from './components/Kani/PashminaInProgress.jsx';
+import RetailEmbroidery from './components/Kani/RetailEmbroidery.jsx';
+import WholesaleEmbroidery from './components/Kani/WholesaleEmbroidery.jsx';
+import KlcEmbroidery from './components/Kani/KlcEmbroidery.jsx';
+import PashminaSupplier from './components/Kani/PashminaSupplier.jsx';
 
 
 import AddBom from './components/Products/AddBom.jsx';
@@ -270,6 +278,7 @@ import ViewKaniProducts from './components/Kani/ViewKaniProducts.jsx';
 import ViewSupplierProduct from './components/Kani/ViewSupplierProduct.jsx';
 import KaniInProgress from './components/Kani/KaniInProgress.jsx';
 import UpdateKaniProducts from './components/Kani/UpdateKaniProducts.jsx';
+import UpdatePashminaProducts from './components/Kani/UpdatePashminaProducts.jsx';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -954,6 +963,10 @@ function App() {
               path="/UpdateKaniProducts/:id"
               element={<UpdateKaniProducts />}
             />
+            <Route
+              path="/UpdatePashminaProducts/:id"
+              element={<UpdatePashminaProducts />}
+            />
              <Route path="/ClientOrders" element={<KaniClientOrders />} />
              <Route path="/RetailClientOrders" element={<RetailClientOrders />} />
              <Route path="/WholesaleClientOrders" element={<WholesaleClientOrders />} />
@@ -966,6 +979,17 @@ function App() {
           />
           <Route path="/ClientOrders" element={<KaniClientOrders />} />
           <Route path="/RetailClientOrders" element={<RetailClientOrders />} />
+           <Route path="/kaniSection" element={<KaniSection />} />
+           <Route path="/pashminaEmbroidery" element={<PashminaEmbroidery />} />
+           <Route path="/embroideryOrders" element={<EmbroideryOrders />} />
+           <Route path="/pashminaSuppliers" element={<PashminaSuppliers />} />
+           <Route path="/inProgress-pashminaEmbroidery" element={<PashminaInProgress />} />
+            <Route path="/pashminaEmbroidery/retail-client-orders" element={<RetailEmbroidery />} />
+             <Route path="/WholesaleEmbroidery" element={<WholesaleEmbroidery />} />
+             <Route path="/KlcEmbroidery" element={<KlcEmbroidery />} />
+              <Route path="/pashmina_supplier-order/:id" element={<PashminaSupplier />} />
+            
+
 
 
 

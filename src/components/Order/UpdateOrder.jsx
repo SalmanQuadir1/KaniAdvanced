@@ -47,6 +47,36 @@ const UpdateOrder = () => {
     // { id: 2, name: "Supplier B" },
     // { id: 3, name: "Supplier C" },
   ])
+
+const [SelectedLocation, setSelectedLocation] = useState([])
+const {
+
+    getLocation, Location
+
+  } = useorder();
+
+
+
+  useEffect(() => {
+    if (Location) {
+      const formattedOptions = Location.map(location => ({
+        value: location?.id,
+        label: location.address,
+        LocationObject: location,
+        LocationId: { id: location.id },
+      }));
+      setSelectedLocation(formattedOptions);
+    }
+  }, [Location]);
+
+  useEffect(() => {
+    getLocation();
+  }, []);
+
+
+  console.log(SelectedLocation, "54545454545");
+
+
   const {
     getorderType,
     orderTypee,
@@ -454,111 +484,113 @@ const UpdateOrder = () => {
 
   const { id } = useParams();
 
-  const handleUpdateSubmit = async (values) => {
-    console.log("=== DEBUG: Checking Formik values BEFORE submission ===");
-    values.orderProducts.forEach((product, index) => {
-      console.log(`Product ${index} (isNew: ${isNewProduct(index)}):`, {
-        productId: product.products?.productId,
-        hasIdField: !!product.id,
-        suppliersCount: product.productSuppliers?.length || 0,
-      });
+ const handleUpdateSubmit = async (values) => {
+  console.log("=== DEBUG: Checking Formik values BEFORE submission ===");
+  values.orderProducts.forEach((product, index) => {
+    console.log(`Product ${index} (isNew: ${isNewProduct(index)}):`, {
+      productId: product.products?.productId,
+      hasIdField: !!product.id,
+      suppliersCount: product.productSuppliers?.length || 0,
     });
+  });
 
-    const formattedData = {
-      orderNo: values.orderNo,
-      orderType: values.orderType ? { id: values.orderType.id } : null,
-      customer: values.customer ? { id: values.customer.id } : null,
-      purchaseOrderNo: values.purchaseOrderNo,
-      poDate: values.poDate,
-      salesChannel: values.salesChannel,
-      employeeName: values.employeeName,
-      customisationDetails: values.customisationDetails,
-      orderDate: values.orderDate,
-      expectingDate: values.expectingDate,
-      shippingDate: values.shippingDate,
-      tagsAndLabels: values.tagsAndLabels,
-      logoNo: values.logoNo,
-      clientInstruction: values.clientInstruction,
+  const formattedData = {
+    orderNo: values.orderNo,
+    orderType: values.orderType ? { id: values.orderType.id } : null,
+    location: values.locationId ? { id: values.locationId } : null, // ADD THIS LINE
+    customer: values.customer ? { id: values.customer.id } : null,
+    purchaseOrderNo: values.purchaseOrderNo,
+    poDate: values.poDate,
+    salesChannel: values.salesChannel,
+    employeeName: values.employeeName,
+    customisationDetails: values.customisationDetails,
+    orderDate: values.orderDate,
+    expectingDate: values.expectingDate,
+    shippingDate: values.shippingDate,
+    tagsAndLabels: values.tagsAndLabels,
+    logoNo: values.logoNo,
+    clientInstruction: values.clientInstruction,
+    
+    orderProducts: values.orderProducts.map((product, index) => {
+      const isNew = isNewProduct(index);
       
-      orderProducts: values.orderProducts.map((product, index) => {
-        const isNew = isNewProduct(index);
+      const productSuppliers = (product.productSuppliers || []).map(supplier => {
+        const supplierId = supplier.supplier?.id;
         
-        const productSuppliers = (product.productSuppliers || []).map(supplier => {
-          const supplierId = supplier.supplier?.id;
-          
-          if (!supplierId) return null;
-          
-          return {
-            supplier: { 
-              id: Number(supplierId) 
-            },
-            supplierOrderQty: Number(supplier.supplierOrderQty) || 0
-          };
-        }).filter(Boolean);
+        if (!supplierId) return null;
         
         return {
-          products: {
-            id: product.products?.id || product.products?.productId || product.id || ''
+          supplier: { 
+            id: Number(supplierId) 
           },
-          orderCategory: product.orderCategory || '',
-          inStockQuantity: Number(product.inStockQuantity) || 0,
-          clientOrderQuantity: String(product.clientOrderQuantity || ''),
-          quantityToManufacture: Number(product.quantityToManufacture) || 0,
-          units: product.units || 'Pcs',
-          value: Number(product.value) || 0,
-          clientShippingDate: product.clientShippingDate || null,
-          expectedDate: product.expectedDate || null,
-          productSuppliers: productSuppliers
+          supplierOrderQty: Number(supplier.supplierOrderQty) || 0
         };
-      })
-    };
-
-    console.log("=== PAYLOAD BEING SENT TO BACKEND ===");
-    console.log("Total products:", formattedData.orderProducts.length);
-    formattedData.orderProducts.forEach((product, index) => {
-      console.log(`Product ${index}:`, {
-        hasIdField: !!product.id,
-        productId: product.products?.id,
-        supplierCount: product.productSuppliers?.length || 0,
-      });
-    });
-    console.log("Full JSON payload:", JSON.stringify(formattedData, null, 2));
-
-    try {
-      const url = `${UPDATE_ORDER_URL}/${id}`;
-      const response = await fetch(url, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+      }).filter(Boolean);
+      
+      return {
+        products: {
+          id: product.products?.id || product.products?.productId || product.id || ''
         },
-        body: JSON.stringify(formattedData)
-      });
-
-      if (!response.ok) {
-        let errorMessage = "Failed to update order";
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.message || errorData.errorMessage || errorMessage;
-        } catch (e) {
-          console.error("Could not parse error response:", e);
-        }
-        throw new Error(errorMessage);
-      }
-      
-      const data = await response.json();
-      console.log("=== BACKEND RESPONSE ===", data);
-      
-      await getOrderById();
-      
-      const totalSuppliers = formattedData.orderProducts.reduce((acc, product) => acc + (product.productSuppliers?.length || 0), 0);
-      toast.success(`Order Updated Successfully`);
-      
-    } catch (error) {
-      console.error("Update error:", error);
-      toast.error(error.message || "An error occurred while updating the order");
-    }
+        orderCategory: product.orderCategory || '',
+        inStockQuantity: Number(product.inStockQuantity) || 0,
+        clientOrderQuantity: String(product.clientOrderQuantity || ''),
+        quantityToManufacture: Number(product.quantityToManufacture) || 0,
+        units: product.units || 'Pcs',
+        value: Number(product.value) || 0,
+        clientShippingDate: product.clientShippingDate || null,
+        expectedDate: product.expectedDate || null,
+        productSuppliers: productSuppliers
+      };
+    })
   };
+
+  console.log("=== PAYLOAD BEING SENT TO BACKEND ===");
+  console.log("Location being sent:", formattedData.location);
+  console.log("Total products:", formattedData.orderProducts.length);
+  formattedData.orderProducts.forEach((product, index) => {
+    console.log(`Product ${index}:`, {
+      hasIdField: !!product.id,
+      productId: product.products?.id,
+      supplierCount: product.productSuppliers?.length || 0,
+    });
+  });
+  console.log("Full JSON payload:", JSON.stringify(formattedData, null, 2));
+
+  try {
+    const url = `${UPDATE_ORDER_URL}/${id}`;
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(formattedData)
+    });
+
+    if (!response.ok) {
+      let errorMessage = "Failed to update order";
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorData.errorMessage || errorMessage;
+      } catch (e) {
+        console.error("Could not parse error response:", e);
+      }
+      throw new Error(errorMessage);
+    }
+    
+    const data = await response.json();
+    console.log("=== BACKEND RESPONSE ===", data);
+    
+    await getOrderById();
+    
+    const totalSuppliers = formattedData.orderProducts.reduce((acc, product) => acc + (product.productSuppliers?.length || 0), 0);
+    toast.success(`Order Updated Successfully`);
+    
+  } catch (error) {
+    console.error("Update error:", error);
+    toast.error(error.message || "An error occurred while updating the order");
+  }
+};
 
   const getOrderById = async () => {
     try {
@@ -767,6 +799,7 @@ const UpdateOrder = () => {
           initialValues={{
             orderNo: order?.orderNo || '',
             orderType: order?.orderType || '',
+            locationId: order?.location?.id || '', // ADD THIS LINE
             customer: order?.customer || null,
             purchaseOrderNo: order?.purchaseOrderNo || '',
             poDate: order?.poDate || '',
@@ -832,22 +865,11 @@ const UpdateOrder = () => {
                     </h3>
                   </div>
                   <div className="p-6.5">
-                    <div className="flex flex-wrap gap-4">
-                      <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Order No</label>
-                        <ReactSelect
-                          name="orderNo"
-                          value={order?.orderNo ? { label: order.orderNo, value: order.orderNo } : null}
-                          styles={customStyles}
-                          className="bg-white dark:bg-form-Field"
-                          classNamePrefix="react-select"
-                          placeholder="Select Order Type"
-                          isDisabled={true}
-                        />
-                        <ErrorMessage name="orderType" component="div" className="text-red-600 text-sm" />
-                      </div>
 
-                      <div className="flex-1 min-w-[200px]">
+                    
+                    <div className="flex flex-wrap gap-4">
+
+                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Order Type</label>
                         <ReactSelect
                           name="orderType"
@@ -862,6 +884,35 @@ const UpdateOrder = () => {
                         />
                         <ErrorMessage name="orderType" component="div" className="text-red-600 text-sm" />
                       </div>
+                       <div className="flex-1 min-w-[200px]">
+                        <div className="flex-1 min-w-[200px]">
+                          <label className="mb-2.5 block text-black dark:text-white">Order Date</label>
+                          <Field
+                            name='orderDate'
+                            type="date"
+                            placeholder="Enter Order Date"
+                            className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
+                        <ErrorMessage name="orderDate" component="div" className="text-red-600 text-sm" />
+                      </div>
+                      <div className="flex-1 min-w-[200px]">
+  <label className="mb-2.5 block text-black dark:text-white">Order Location</label>
+  <ReactSelect
+    name="locationId"
+    options={SelectedLocation}
+    value={SelectedLocation.find(option => option.value === values.locationId) || null}
+    onChange={(option) => setFieldValue('locationId', option ? option.value : null)}
+    styles={customStyles}
+    className="bg-white dark:bg-form-input"
+    classNamePrefix="react-select"
+    placeholder="Select Source Location"
+  />
+  <ErrorMessage name="locationId" component="div" className="text-red-600 text-sm" />
+</div>
+                     
+
+                     
                     </div>
 
                     {(values.orderType?.orderTypeName === "RetailClients" || values.orderType?.orderTypeName === "WSClients") && (
@@ -942,17 +993,18 @@ const UpdateOrder = () => {
                     )}
 
                     <div className="flex flex-wrap gap-4">
-                      <div className="flex-1 min-w-[200px]">
-                        <div className="flex-1 min-w-[300px] mt-4">
-                          <label className="mb-2.5 block text-black dark:text-white">Order Date</label>
-                          <Field
-                            name='orderDate'
-                            type="date"
-                            placeholder="Enter Order Date"
-                            className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                          />
-                        </div>
-                        <ErrorMessage name="orderDate" component="div" className="text-red-600 text-sm" />
+                     <div className="flex-1 min-w-[200px] mt-4">
+                        <label className="mb-2.5 block text-black dark:text-white">Order No</label>
+                        <ReactSelect
+                          name="orderNo"
+                          value={order?.orderNo ? { label: order.orderNo, value: order.orderNo } : null}
+                          styles={customStyles}
+                          className="bg-white dark:bg-form-Field"
+                          classNamePrefix="react-select"
+                          placeholder="Select Order Type"
+                          isDisabled={true}
+                        />
+                        <ErrorMessage name="orderType" component="div" className="text-red-600 text-sm" />
                       </div>
 
                       <div className="flex-1 min-w-[300px] mt-4">
