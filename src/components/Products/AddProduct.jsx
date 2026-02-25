@@ -19,6 +19,8 @@ const AddProduct = () => {
     const [productGroupOption, setproductGroupOption] = useState([])
     const [colorGroupOptions, setcolorGroupOptions] = useState([])
     const [unitOptions, setunitOptions] = useState([])
+
+    const [weaveOptions, setweaveOptions] = useState([])
     const [productCategoryOptions, setproductCategoryOptions] = useState([])
     const [designOptions, setdesignOptions] = useState([])
     const [styleOptions, setstyleOptions] = useState([])
@@ -147,7 +149,7 @@ const AddProduct = () => {
 
 
 
-const [suppCode, setsuppCode] = useState()
+    const [suppCode, setsuppCode] = useState()
 
 
     const [previews, setPreviews] = useState([]);
@@ -412,6 +414,8 @@ const [suppCode, setsuppCode] = useState()
         units,
 
         handleSubmit,
+        getWeave,
+        weave
 
     } = useProduct({ referenceImages, actualImages, productIdField, gstDetails });
 
@@ -426,6 +430,9 @@ const [suppCode, setsuppCode] = useState()
 
 
     }, [vaaluee])
+    useEffect(() => {
+        getWeave()
+    }, [])
 
 
 
@@ -443,6 +450,17 @@ const [suppCode, setsuppCode] = useState()
             setunitOptions(formattedunitOptions); // Update the state only when `units` changes
         }
     }, [units]); // Runs whenever `units` is updated
+
+    useEffect(() => {
+        if (weave) {
+            const formattedweaveOptions = weave.map(unitGroup => ({
+                value: unitGroup?.id,
+                label: unitGroup?.weaveName,
+                weaveGroupObject: unitGroup,
+            }));
+            setweaveOptions(formattedweaveOptions); // Update the state only when `units` changes
+        }
+    }, [weave]);
 
     const updateProductId = () => {
 
@@ -969,7 +987,7 @@ const [suppCode, setsuppCode] = useState()
                                                 <div className="mb-4.5 flex flex-wrap gap-6">
 
 
-                                                    <div className="flex-1 min-w-[300px]">
+                                                    <div className="flex-1 min-w-[300px] mt-[-10px]">
                                                         <label className="mb-2.5 block text-black dark:text-white">
                                                             Supplier Code <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span>
                                                         </label>
@@ -978,7 +996,7 @@ const [suppCode, setsuppCode] = useState()
                                                                 type="text"
                                                                 name="supplierCode"
                                                                 value={values.supplierCode || ''}
-                                                                onChange={(e) => setsuppCode( e.target.value)}
+                                                                onChange={(e) => setsuppCode(e.target.value)}
                                                                 className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                                                                 placeholder="Supplier Code"
                                                                 disabled="true"
@@ -1068,8 +1086,8 @@ const [suppCode, setsuppCode] = useState()
                                             </div> */}
 
 
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-1 min-w-[300px]">
+                                            <div className="mb-4.5 flex flex-wrap gap-6 ">
+                                                <div className="flex-1 min-w-[300px] mt-[-10px]">
                                                     <label className="mb-2.5 block text-black dark:text-white"> Product Status <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
@@ -1194,13 +1212,21 @@ const [suppCode, setsuppCode] = useState()
 
                                             <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Wave </label>
-                                                    <Field
-                                                        name='weave'
-                                                        type="text"
-                                                        placeholder="Enter Wave"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Weave <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                    <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                        <ReactSelect
+                                                            name="weave"
+                                                            value={weaveOptions?.find(option => option.value === values.weave?.id) || null}
+                                                            onChange={(option) => setFieldValue('weave', option ? { id: option.value } : null)}
+                                                            options={weaveOptions}
+                                                            styles={customStyles} // Pass custom styles here
+                                                            className="bg-white dark:bg-form-Field"
+                                                            classNamePrefix="react-select"
+                                                            placeholder="Select Weave"
+                                                        />
+                                                    </div>
+
+
                                                 </div>
                                                 <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white"> Warp Yarn</label>
