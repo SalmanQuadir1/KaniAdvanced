@@ -76,6 +76,7 @@ import ContemporarySuppOrder from './components/Kani/ContemporarySuppOrder.jsx';
 import ContemporaryInProgress from './components/Kani/ContemporaryInProgress.jsx';
 import RetailContemporary from './components/Kani/RetailContemporary.jsx';
 import WholesaleContemporary from './components/Kani/WholesaleContemporary.jsx';
+import KlcContemporary from './components/Kani/KlcContemporary.jsx';
 
 import AddBom from './components/Products/AddBom.jsx';
 import AddLocationInventory from './components/Products/AddLoctionInventory.jsx';
@@ -1060,6 +1061,7 @@ function App() {
                 <Route path="/contemporary-in-progress" element={<ContemporaryInProgress />} />
                 <Route path="/contemporary/retail-client-orders" element={<RetailContemporary />} />
                  <Route path="/contemporary/wholesale-client-orders" element={<WholesaleContemporary />} />
+                  <Route path="/klcContemporary" element={<KlcContemporary />} />
             
 
 

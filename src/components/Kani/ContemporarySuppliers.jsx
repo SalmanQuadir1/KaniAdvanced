@@ -30,7 +30,7 @@ const ContemporarySuppliers = () => {
   };
 
   const handleAddProduct = (id) => {
-    navigate(`/UpdateContemporaryProducts/${id}`);
+    navigate(`/UpdateKaniProducts/${id}`);
   };
 
   const handleChallanInputChange = (e) => {
