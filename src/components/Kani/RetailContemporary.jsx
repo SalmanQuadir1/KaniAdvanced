@@ -4,11 +4,11 @@ import { toast } from "react-hot-toast";
 import DefaultLayout from "../../layout/DefaultLayout";
 import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 import Pagination from "../../components/Pagination/Pagination";
-import { GET_CONTEMPORARY_URL, GET_IMAGE } from "../../Constants/utils";
+import { GET_RETAIL_CONTEMPORARY_URL, GET_IMAGE } from "../../Constants/utils";
 import { FiEdit } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
 
-const ContemporaryOrders = () => {
+const RetailContemporary = () => {
   const [displayedOrders, setDisplayedOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -29,7 +29,7 @@ const ContemporaryOrders = () => {
 
   // Fetch orders when page changes
   useEffect(() => {
-    fetchContemporaryOrders();
+    fetchKaniOrders();
   }, [pagination.currentPage, pagination.itemsPerPage]);
 
   // Function to group orders by order number and flatten their products
@@ -92,14 +92,12 @@ const ContemporaryOrders = () => {
       return;
     }
 
-      navigate(`/UpdateKani/${orderProductId}`);
+    navigate(`/UpdateKani/${orderProductId}`);
   };
-  
-  
 
-  // Fetch Contemporary orders with proper pagination
-  const fetchContemporaryOrders = async () => {
-    console.log("Fetching Contemporary orders for page:", pagination.currentPage, "size:", pagination.itemsPerPage);
+  // Fetch Kani orders with proper pagination
+  const fetchKaniOrders = async () => {
+    console.log("Fetching Kani orders for page:", pagination.currentPage, "size:", pagination.itemsPerPage);
 
     if (!token) {
       toast.error("No access token found. Please login.");
@@ -114,7 +112,7 @@ const ContemporaryOrders = () => {
       let apiUrl;
       
       // Approach 1: Try with page parameter (0-based)
-      apiUrl = `${GET_CONTEMPORARY_URL}?page=${pagination.currentPage}&size=${pagination.itemsPerPage}`;
+      apiUrl = `${GET_RETAIL_CONTEMPORARY_URL}?page=${pagination.currentPage}&size=${pagination.itemsPerPage}`;
       console.log("Trying API URL:", apiUrl);
       
       const response = await fetch(apiUrl, {
@@ -133,11 +131,11 @@ const ContemporaryOrders = () => {
         // If 500 error with page parameter, try without page parameter
         if (response.status === 500) {
           console.log("Trying without page parameter...");
-          await fetchContemporaryOrdersAlternative();
+          await fetchKaniOrdersAlternative();
           return;
         }
         
-        throw new Error(`Failed to fetch Contemporary Orders: ${response.status} - ${responseText}`);
+        throw new Error(`Failed to fetch Kani Orders: ${response.status} - ${responseText}`);
       }
 
       const data = await response.json();
@@ -145,23 +143,23 @@ const ContemporaryOrders = () => {
       handleApiResponse(data);
       
     } catch (err) {
-      console.error("Error fetching Contemporary orders:", err);
+      console.error("Error fetching Kani orders:", err);
       setError(err.message);
-      toast.error(err.message || "Failed to load Contemporary orders");
+      toast.error(err.message || "Failed to load Kani orders");
     } finally {
       setLoading(false);
     }
   };
 
   // Alternative fetch - try without page parameter or with different parameters
-  const fetchContemporaryOrdersAlternative = async () => {
+  const fetchKaniOrdersAlternative = async () => {
     try {
       // Try different parameter combinations
       let apiUrl;
       let response;
       
       // Try 1: Without any parameters
-      apiUrl = `${GET_CONTEMPORARY_URL}`;
+      apiUrl = `${GET_RETAIL_CONTEMPORARY_URL}`;
       console.log("Trying without parameters:", apiUrl);
       
       response = await fetch(apiUrl, {
@@ -180,7 +178,7 @@ const ContemporaryOrders = () => {
       }
       
       // Try 2: With size only
-      apiUrl = `${GET_CONTEMPORARY_URL}?size=${pagination.itemsPerPage}`;
+      apiUrl = `${GET_RETAIL_CONTEMPORARY_URL}?size=${pagination.itemsPerPage}`;
       console.log("Trying with size only:", apiUrl);
       
       response = await fetch(apiUrl, {
@@ -200,7 +198,7 @@ const ContemporaryOrders = () => {
       
       // Try 3: With 1-based indexing (page + 1)
       const pageOneBased = pagination.currentPage + 1;
-      apiUrl = `${GET_CONTEMPORARY_URL}?page=${pageOneBased}&size=${pagination.itemsPerPage}`;
+      apiUrl = `${GET_RETAIL_CONTEMPORARY_URL}?page=${pageOneBased}&size=${pagination.itemsPerPage}`;
       console.log("Trying with 1-based indexing:", apiUrl);
       
       response = await fetch(apiUrl, {
@@ -598,10 +596,9 @@ const ContemporaryOrders = () => {
                           e.target.src = getPlaceholder("Ref");
                         }}
                       />
-                     <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] px-1 py-[1px] rounded-sm">
-  Ref {index + 1}
-</div>
-
+                      <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] px-1 py-[1px] rounded-sm">
+                        Ref {index + 1}
+                      </div>
                     </div>
                   );
                 }
@@ -671,7 +668,7 @@ const ContemporaryOrders = () => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Contemporary Orders" />
+      <Breadcrumb pageName="Retail Client Orders" />
 
       {/* Images Modal */}
       {renderImagesModal()}
@@ -680,7 +677,7 @@ const ContemporaryOrders = () => {
         <div className="flex justify-between items-center border-b border-stroke dark:border-strokedark py-4 px-6">
           <div>
             <h3 className="text-xl font-medium text-slate-500 dark:text-white">
-              Contemporary Orders
+              Retail Client Orders
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               {pagination.totalItems > 0 ? (
@@ -698,15 +695,15 @@ const ContemporaryOrders = () => {
               )}
             </p>
           </div>
-          <div>
+          {/* <div>
             <button
               type="button"
-              onClick={() => navigate("/contemporarySuppliers")}
-              className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90 transition view-badge"
+              onClick={() => navigate("/filter-suppliers")}
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90 transition"
             >
               Filter Suppliers
             </button>
-          </div>
+          </div> */}
         </div>
 
         <div className="my-6 px-6 sm:px-10 py-4 overflow-x-auto">
@@ -745,4 +742,4 @@ const ContemporaryOrders = () => {
   );
 };
 
-export default ContemporaryOrders;
+export default RetailContemporary;

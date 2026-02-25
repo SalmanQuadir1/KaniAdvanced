@@ -429,6 +429,12 @@ export const GET_WHOLESALE_EMBROIDERY_URL = `${BASE_URL}/order/pashminaEmbroider
 export const GET_KLC_EMBROIDERY_URL = `${BASE_URL}/order/klc-pashmEmbroidery`;
 export const GET_PASHMINA_ORDERS_URL = `${BASE_URL}/order/pashminaEmbroidery`;
 export const GET_CONTEMPORARY_URL = `${BASE_URL}/order/contemporary-pashmina`;
+export const GET_CONTEMPORARY_ORDERS_URL = `${BASE_URL}/order/contemporaryPashmina`;
+export const GET_INPROGRESS_CONTEMPORARY_ORDERS_URL = `${BASE_URL}/order/inProgress-contemporaryPashmina`;
+export const GET_RETAIL_CONTEMPORARY_URL = `${BASE_URL}/order/contempPashmina/retail-client-orders`;
+export const GET_WHOLESALE_CONTEMPORARY_URL = `${BASE_URL}/order/contempPashmina/ws-client-orders`;
+
+
 
 //dahsboard
 

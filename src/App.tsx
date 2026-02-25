@@ -71,7 +71,11 @@ import KlcEmbroidery from './components/Kani/KlcEmbroidery.jsx';
 import PashminaSupplier from './components/Kani/PashminaSupplier.jsx';
 import ContemporaryPashmina from './components/Kani/ContemporaryPashmina.jsx';
 import ContemporaryOrders from './components/Kani/ContemporaryOrders.jsx';
-
+import ContemporarySuppliers from './components/Kani/ContemporarySuppliers.jsx';
+import ContemporarySuppOrder from './components/Kani/ContemporarySuppOrder.jsx';
+import ContemporaryInProgress from './components/Kani/ContemporaryInProgress.jsx';
+import RetailContemporary from './components/Kani/RetailContemporary.jsx';
+import WholesaleContemporary from './components/Kani/WholesaleContemporary.jsx';
 
 import AddBom from './components/Products/AddBom.jsx';
 import AddLocationInventory from './components/Products/AddLoctionInventory.jsx';
@@ -1049,6 +1053,11 @@ function App() {
               <Route path="/pashmina_supplier-order/:id" element={<PashminaSupplier />} />
               <Route path="/contemporaryPashmina" element={<ContemporaryPashmina />} />
                <Route path="/contemporaryOrders" element={<ContemporaryOrders />} />
+               <Route path="/contemporarySuppliers" element={<ContemporarySuppliers />} />
+                <Route path="/contemporarySuppOrd/:id" element={<ContemporarySuppOrder />} />
+                <Route path="/contemporary-in-progress" element={<ContemporaryInProgress />} />
+                <Route path="/contemporary/retail-client-orders" element={<RetailContemporary />} />
+                 <Route path="/contemporary/wholesale-client-orders" element={<WholesaleContemporary />} />
             
 
 

@@ -4,21 +4,24 @@ import { toast } from "react-hot-toast";
 import DefaultLayout from "../../layout/DefaultLayout";
 import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 import Pagination from "../../components/Pagination/Pagination";
-import { GET_CONTEMPORARY_URL, GET_IMAGE } from "../../Constants/utils";
+import { GET_CONTEMPORARY_ORDERS_URL, GET_IMAGE } from "../../Constants/utils";
 import { FiEdit } from "react-icons/fi";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const ContemporaryOrders = () => {
-  const [displayedOrders, setDisplayedOrders] = useState([]);
+const ContemporarySuppOrder = () => {
+  const { id: supplierId } = useParams();
+  const navigate = useNavigate();
+  
+  const [allOrders, setAllOrders] = useState([]); // Store all fetched orders
+  const [filteredOrders, setFilteredOrders] = useState([]); // Orders filtered by supplier
+  const [displayedOrders, setDisplayedOrders] = useState([]); // Paginated and grouped orders
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isImagesModalOpen, setIsImagesModalOpen] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
-  const navigate = useNavigate();
   
-  // Change to 0-based indexing for backend
   const [pagination, setPagination] = useState({
-    currentPage: 0, // 0-based indexing for backend
+    currentPage: 0,
     itemsPerPage: 10,
     totalPages: 0,
     totalItems: 0
@@ -27,21 +30,91 @@ const ContemporaryOrders = () => {
   const { currentUser } = useSelector((state) => state?.persisted?.user || {});
   const token = currentUser?.token;
 
-  // Fetch orders when page changes
+  // Fetch orders when page changes OR when supplierId changes
   useEffect(() => {
-    fetchContemporaryOrders();
-  }, [pagination.currentPage, pagination.itemsPerPage]);
+    if (supplierId) {
+      fetchContemporaryOrders();
+    }
+  }, [pagination.currentPage, pagination.itemsPerPage, supplierId]);
 
-  // Function to group orders by order number and flatten their products
+  // Filter orders by supplierId whenever allOrders or supplierId changes
+  useEffect(() => {
+    if (allOrders.length > 0 && supplierId) {
+      filterOrdersBySupplier();
+    }
+  }, [allOrders, supplierId]);
+
+  // Filter and paginate whenever filteredOrders or pagination changes
+  useEffect(() => {
+    if (filteredOrders.length > 0) {
+      paginateAndGroupOrders();
+    } else {
+      setDisplayedOrders([]);
+      setPagination(prev => ({ ...prev, totalPages: 0, totalItems: 0 }));
+    }
+  }, [filteredOrders, pagination.currentPage, pagination.itemsPerPage]);
+
+  // Function to filter orders by supplier ID
+  const filterOrdersBySupplier = () => {
+    if (!supplierId || !allOrders.length) {
+      setFilteredOrders([]);
+      return;
+    }
+
+    const numericSupplierId = Number(supplierId);
+    
+    const filtered = allOrders.filter(order => {
+      // Check if any orderProduct has this supplier
+      return order.orderProducts?.some(orderProduct => {
+        // Check product's supplierCode
+        if (orderProduct.products?.supplierCode?.id === numericSupplierId) {
+          return true;
+        }
+        
+        // Check productSuppliers array
+        if (orderProduct.productSuppliers?.some(ps => ps.supplier?.id === numericSupplierId)) {
+          return true;
+        }
+        
+        return false;
+      });
+    });
+
+    console.log(`Filtered ${allOrders.length} orders to ${filtered.length} orders for supplier ${supplierId}`);
+    setFilteredOrders(filtered);
+    
+    // Update total items count
+    setPagination(prev => ({
+      ...prev,
+      totalItems: filtered.length,
+      totalPages: Math.ceil(filtered.length / prev.itemsPerPage)
+    }));
+  };
+
+  // Function to group and paginate filtered orders
+  const paginateAndGroupOrders = () => {
+    // Calculate pagination indices
+    const startIndex = pagination.currentPage * pagination.itemsPerPage;
+    const endIndex = startIndex + pagination.itemsPerPage;
+    
+    // Get current page data
+    const currentPageData = filteredOrders.slice(startIndex, endIndex);
+    
+    // Group orders by orderNo
+    const groupedOrders = groupOrdersByOrderNo(currentPageData);
+    
+    setDisplayedOrders(groupedOrders);
+    console.log(`Displaying ${groupedOrders.length} grouped orders on page ${pagination.currentPage + 1}`);
+  };
+
+  // Function to group orders by order number
   const groupOrdersByOrderNo = (ordersData) => {
     const groupedOrders = {};
     
     if (!Array.isArray(ordersData)) {
-      console.warn("ordersData is not an array:", ordersData);
       return [];
     }
     
-    // Group orders by orderNo
     ordersData.forEach(order => {
       const orderNo = order.orderNo;
       
@@ -54,33 +127,43 @@ const ContemporaryOrders = () => {
           orderType: order.orderType,
           customer: order.customer,
           status: order.status,
-          products: [] // This will contain all orderProducts
+          products: []
         };
       }
       
-      // Add all orderProducts from this order
+      // Filter order products to only include those related to the selected supplier
       if (order.orderProducts && Array.isArray(order.orderProducts)) {
+        const numericSupplierId = Number(supplierId);
+        
         order.orderProducts.forEach(orderProduct => {
-          groupedOrders[orderNo].products.push({
-            ...orderProduct,
-            orderInfo: {
-              orderNo: order.orderNo,
-              orderDate: order.orderDate,
-              shippingDate: order.shippingDate,
-              orderType: order.orderType,
-              customer: order.customer,
-              status: order.status
-            }
-          });
+          // Check if this orderProduct belongs to the selected supplier
+          const belongsToSupplier = 
+            orderProduct.products?.supplierCode?.id === numericSupplierId ||
+            orderProduct.productSuppliers?.some(ps => ps.supplier?.id === numericSupplierId);
+          
+          if (belongsToSupplier) {
+            groupedOrders[orderNo].products.push({
+              ...orderProduct,
+              orderInfo: {
+                orderNo: order.orderNo,
+                orderDate: order.orderDate,
+                shippingDate: order.shippingDate,
+                orderType: order.orderType,
+                customer: order.customer,
+                status: order.status
+              }
+            });
+          }
         });
       }
     });
     
-    // Convert to array format for easier mapping
-    const groupedArray = Object.values(groupedOrders);
-    console.log(`Grouped ${ordersData.length} orders into ${groupedArray.length} unique order numbers`);
+    // Remove orders that have no products after filtering
+    const filteredGroupedOrders = Object.values(groupedOrders).filter(
+      order => order.products && order.products.length > 0
+    );
     
-    return groupedArray;
+    return filteredGroupedOrders;
   };
 
   const handleUpdate = (e, orderProduct, orderNo) => {
@@ -92,17 +175,20 @@ const ContemporaryOrders = () => {
       return;
     }
 
-      navigate(`/UpdateKani/${orderProductId}`);
+    navigate(`/UpdateContemporary/${orderProductId}`);
   };
-  
-  
 
-  // Fetch Contemporary orders with proper pagination
+  // FIXED: Fetch orders WITH supplierId in URL
   const fetchContemporaryOrders = async () => {
-    console.log("Fetching Contemporary orders for page:", pagination.currentPage, "size:", pagination.itemsPerPage);
+    console.log("Fetching orders for supplier:", supplierId);
 
     if (!token) {
       toast.error("No access token found. Please login.");
+      return;
+    }
+
+    if (!supplierId) {
+      toast.error("No supplier ID found in URL.");
       return;
     }
 
@@ -110,12 +196,9 @@ const ContemporaryOrders = () => {
     setError(null);
 
     try {
-      // Try different approaches
-      let apiUrl;
-      
-      // Approach 1: Try with page parameter (0-based)
-      apiUrl = `${GET_CONTEMPORARY_URL}?page=${pagination.currentPage}&size=${pagination.itemsPerPage}`;
-      console.log("Trying API URL:", apiUrl);
+      // FIXED: Include supplierId in the URL
+      const apiUrl = `${GET_CONTEMPORARY_ORDERS_URL}/${supplierId}?page=${pagination.currentPage}&size=${pagination.itemsPerPage}`;
+      console.log("Fetching from correct URL:", apiUrl);
       
       const response = await fetch(apiUrl, {
         method: "GET",
@@ -126,129 +209,58 @@ const ContemporaryOrders = () => {
       });
 
       if (!response.ok) {
-        console.error("Response status:", response.status);
-        const responseText = await response.text();
-        console.error("Response text:", responseText);
-        
-        // If 500 error with page parameter, try without page parameter
-        if (response.status === 500) {
-          console.log("Trying without page parameter...");
-          await fetchContemporaryOrdersAlternative();
-          return;
+        // If 404, try without pagination first
+        if (response.status === 404) {
+          console.log("Trying without pagination...");
+          const apiUrlWithoutPagination = `${GET_CONTEMPORARY_ORDERS_URL}/${supplierId}`;
+          const response2 = await fetch(apiUrlWithoutPagination, {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+          
+          if (response2.ok) {
+            const data = await response2.json();
+            handleApiResponse(data);
+            return;
+          }
         }
-        
-        throw new Error(`Failed to fetch Contemporary Orders: ${response.status} - ${responseText}`);
+        throw new Error(`Failed to fetch orders: ${response.status} - ${response.statusText}`);
       }
 
       const data = await response.json();
-      console.log("API Response data:", data);
+      console.log("API Response received");
+      
+      // Handle the API response
       handleApiResponse(data);
       
     } catch (err) {
-      console.error("Error fetching Contemporary orders:", err);
+      console.error("Error fetching orders:", err);
       setError(err.message);
-      toast.error(err.message || "Failed to load Contemporary orders");
+      toast.error(err.message || "Failed to load orders");
     } finally {
       setLoading(false);
     }
   };
 
-  // Alternative fetch - try without page parameter or with different parameters
-  const fetchContemporaryOrdersAlternative = async () => {
-    try {
-      // Try different parameter combinations
-      let apiUrl;
-      let response;
-      
-      // Try 1: Without any parameters
-      apiUrl = `${GET_CONTEMPORARY_URL}`;
-      console.log("Trying without parameters:", apiUrl);
-      
-      response = await fetch(apiUrl, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Success without parameters");
-        handleApiResponse(data);
-        return;
-      }
-      
-      // Try 2: With size only
-      apiUrl = `${GET_CONTEMPORARY_URL}?size=${pagination.itemsPerPage}`;
-      console.log("Trying with size only:", apiUrl);
-      
-      response = await fetch(apiUrl, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Success with size only");
-        handleApiResponse(data);
-        return;
-      }
-      
-      // Try 3: With 1-based indexing (page + 1)
-      const pageOneBased = pagination.currentPage + 1;
-      apiUrl = `${GET_CONTEMPORARY_URL}?page=${pageOneBased}&size=${pagination.itemsPerPage}`;
-      console.log("Trying with 1-based indexing:", apiUrl);
-      
-      response = await fetch(apiUrl, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Success with 1-based indexing");
-        handleApiResponse(data);
-        return;
-      }
-      
-      throw new Error("All fetch attempts failed");
-      
-    } catch (err) {
-      console.error("Error with alternative fetch:", err);
-      setError("Unable to load orders. Please check API configuration.");
-      toast.error("Unable to load orders. Please contact administrator.");
-    }
-  };
-
-  // Handle API response data - specifically for Spring Data pagination format
+  // New function to handle API response
   const handleApiResponse = (data) => {
     console.log("Handling API response:", data);
     
     let ordersArray = [];
-    let groupedOrders = [];
     
     // Check if this is a Spring Data paginated response
     if (data.content && Array.isArray(data.content)) {
       console.log("Detected Spring Data paginated response");
       ordersArray = data.content;
-      groupedOrders = groupOrdersByOrderNo(data.content);
-      
-      // Set the grouped orders for display
-      setDisplayedOrders(groupedOrders);
       
       // Extract pagination info from Spring Data response
       const totalItems = data.totalElements || 0;
       const totalPages = data.totalPages || 0;
       
       console.log(`Pagination info: totalElements=${totalItems}, totalPages=${totalPages}`);
-      console.log(`Displaying ${groupedOrders.length} grouped orders`);
       
       setPagination(prev => ({
         ...prev,
@@ -258,18 +270,11 @@ const ContemporaryOrders = () => {
       
     } else if (Array.isArray(data)) {
       // Direct array response (no pagination from backend)
-      console.log("Detected direct array response (no pagination)");
+      console.log("Detected direct array response");
       ordersArray = data;
-      groupedOrders = groupOrdersByOrderNo(data);
       
-      // Client-side pagination for this format
-      const startIndex = pagination.currentPage * pagination.itemsPerPage;
-      const endIndex = startIndex + pagination.itemsPerPage;
-      const currentPageData = groupedOrders.slice(startIndex, endIndex);
-      
-      setDisplayedOrders(currentPageData);
-      
-      const totalItems = groupedOrders.length;
+      // Update total items count
+      const totalItems = ordersArray.length;
       const totalPages = Math.ceil(totalItems / pagination.itemsPerPage);
       
       setPagination(prev => ({
@@ -282,17 +287,10 @@ const ContemporaryOrders = () => {
       // Another common API response format
       console.log("Detected data.data array response");
       ordersArray = data.data;
-      groupedOrders = groupOrdersByOrderNo(data.data);
       
-      const totalItems = data.total || groupedOrders.length;
+      const totalItems = data.total || ordersArray.length;
       const totalPages = data.totalPages || Math.ceil(totalItems / pagination.itemsPerPage);
       
-      // Client-side pagination for this format
-      const startIndex = pagination.currentPage * pagination.itemsPerPage;
-      const endIndex = startIndex + pagination.itemsPerPage;
-      const currentPageData = groupedOrders.slice(startIndex, endIndex);
-      
-      setDisplayedOrders(currentPageData);
       setPagination(prev => ({
         ...prev,
         totalPages: totalPages,
@@ -301,20 +299,21 @@ const ContemporaryOrders = () => {
       
     } else {
       console.warn("Unexpected data format:", data);
-      setDisplayedOrders([]);
+      ordersArray = [];
       setPagination(prev => ({
         ...prev,
         totalPages: 0,
         totalItems: 0
       }));
-      toast.error("Unexpected data format received from server");
     }
+    
+    // Store all orders (API already filtered by supplier)
+    setAllOrders(ordersArray);
   };
 
-  // Page change handler - converts from 1-based (UI) to 0-based (backend)
+  // Page change handler
   const handlePageChange = (page) => {
     console.log(`Changing page from ${pagination.currentPage + 1} to ${page}`);
-    // Convert from 1-based (Pagination component) to 0-based (backend)
     setPagination(prev => ({ ...prev, currentPage: page - 1 }));
   };
 
@@ -521,7 +520,7 @@ const ContemporaryOrders = () => {
   };
 
   const renderTableRows = () => {
-    if (loading) {
+    if (loading && allOrders.length === 0) {
       return (
         <tr>
           <td colSpan="9" className="text-center py-6">
@@ -548,7 +547,7 @@ const ContemporaryOrders = () => {
       return (
         <tr>
           <td colSpan="9" className="text-center py-6">
-            No orders found
+            No orders found for this supplier
           </td>
         </tr>
       );
@@ -598,10 +597,9 @@ const ContemporaryOrders = () => {
                           e.target.src = getPlaceholder("Ref");
                         }}
                       />
-                     <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] px-1 py-[1px] rounded-sm">
-  Ref {index + 1}
-</div>
-
+                      <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] px-1 py-[1px] rounded-sm">
+                        Ref {index + 1}
+                      </div>
                     </div>
                   );
                 }
@@ -662,16 +660,35 @@ const ContemporaryOrders = () => {
     );
   };
 
-  // Calculate total products across all displayed orders
-  const calculateTotalProducts = () => {
-    return displayedOrders.reduce((total, order) => {
-      return total + (order.products?.length || 0);
-    }, 0);
-  };
+  // If no supplier is selected
+  if (!supplierId) {
+    return (
+      <DefaultLayout>
+        <Breadcrumb pageName="Supplier Orders" />
+        <div className="rounded-sm border border-stroke bg-white shadow-default dark:bg-boxdark p-6">
+          <div className="text-center py-8">
+            <h3 className="text-lg font-medium text-gray-700 dark:text-gray-300 mb-4">
+              Invalid Supplier URL
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 mb-6">
+              No supplier ID found in the URL.
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate("/filter-suppliers")}
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90 transition"
+            >
+              Select Supplier
+            </button>
+          </div>
+        </div>
+      </DefaultLayout>
+    );
+  }
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Contemporary Orders" />
+      <Breadcrumb pageName="Supplier Orders" />
 
       {/* Images Modal */}
       {renderImagesModal()}
@@ -680,32 +697,44 @@ const ContemporaryOrders = () => {
         <div className="flex justify-between items-center border-b border-stroke dark:border-strokedark py-4 px-6">
           <div>
             <h3 className="text-xl font-medium text-slate-500 dark:text-white">
-              Contemporary Orders
+              Orders for Supplier 
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              {pagination.totalItems > 0 ? (
+              {loading && allOrders.length === 0 ? (
+                "Loading orders..."
+              ) : pagination.totalItems > 0 ? (
                 <>
                   Showing {getStartingSerialNumber()}-
                   {getEndingSerialNumber()} 
                   of {pagination.totalItems} orders
                   {/* <span className="ml-2 text-blue-600 dark:text-blue-400">
-                    ({calculateTotalProducts()} products)
+                    (from supplier #{supplierId})
                   </span> */}
-                  {loading && " (loading...)"}
                 </>
               ) : (
-                "No orders found"
+                "No orders found for this supplier"
               )}
             </p>
           </div>
-          <div>
+          <div className="flex gap-2">
             <button
               type="button"
-              onClick={() => navigate("/contemporarySuppliers")}
-              className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90 transition view-badge"
+              onClick={() => navigate("/filter-suppliers")}
+              className="inline-flex items-center gap-2 rounded-md bg-gray-200 dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
             >
-              Filter Suppliers
+              Back to Suppliers
             </button>
+            {/* <button
+              type="button"
+              onClick={() => {
+                setAllOrders([]);
+                setFilteredOrders([]);
+                fetchContemporaryOrders();
+              }}
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90 transition"
+            >
+              Refresh
+            </button> */}
           </div>
         </div>
 
@@ -745,4 +774,4 @@ const ContemporaryOrders = () => {
   );
 };
 
-export default ContemporaryOrders;
+export default ContemporarySuppOrder;
