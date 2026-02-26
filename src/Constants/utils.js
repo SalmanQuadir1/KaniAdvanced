@@ -179,6 +179,15 @@ export const UPDATE_PRODUCTCATEGORY_URL = `${BASE_URL}/product-category`;
 export const VIEW_ALL_PRODUCTCATEGORY = `${BASE_URL}/product-category/viewAll`;
 export const DELETE_PRODUCTCATEGORY_URL = `${BASE_URL}/product-category/`;
 
+
+//Weave
+export const ADD_WEAVE_URL = `${BASE_URL}/weave/create`;
+export const GET_WEAVE_URL = `${BASE_URL}/weave`;
+export const UPDATE_WEAVE_URL = `${BASE_URL}/weave/update`;
+export const VIEW_ALL_WEAVE = `${BASE_URL}/weave/viewAll`;
+export const VIEW_ALL_WEAVEPAGINATION = `${BASE_URL}/weave/allWeaves`;
+export const DELETE_WEAVE_URL = `${BASE_URL}/weave/`;
+
 //CUSTOMER GROUP
 export const ADD_CUSTOMERGROUP_URL = `${BASE_URL}/customer-group`;
 export const GET_CUSTOMERGROUP_URL = `${BASE_URL}/customer-group`;

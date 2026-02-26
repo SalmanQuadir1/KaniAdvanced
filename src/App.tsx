@@ -103,6 +103,8 @@ import Buttons from './pages/UiElements/Buttons.js';
 import PrivateRoute from './PrivateRoute/PrivateRoute.jsx';
 import RoleBasedRoute from './PrivateRoute/RoleBasedRoute.jsx';
 import Budget from './components/Budget/Budget.jsx';
+
+
 import ViewBudget from './components/Budget/ViewBudget.jsx';
 import BudgetReport from './components/Budget/BudgetReport.jsx';
 
@@ -110,7 +112,7 @@ import BudgetReportView from './components/Budget/BudgetReportView.jsx';
 
 import UpdateBudget from './components/Budget/UpdateBudget.jsx';
 
-
+import AddWeave from './components/Configurator/AddWeave.jsx';
 import Size from './components/Configurator/Size.jsx';
 import Design from './components/Configurator/Design.jsx';
 import Style from './components/Configurator/Style.jsx';
@@ -1496,6 +1498,16 @@ function App() {
               <>
                 <PageTitle title="Budget" />
                 <Budget />
+              </>
+            }
+          />
+
+           <Route
+            path="/configurator/weave"
+            element={
+              <>
+                <PageTitle title="Weave" />
+                <AddWeave />
               </>
             }
           />
