@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import DefaultLayout from "../../layout/DefaultLayout";
 import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 import Pagination from "../../components/Pagination/Pagination";
-import { GET_Kani_URL, GET_IMAGE } from "../../Constants/utils";
+import { GET_PAPERMACHE_ORDERS_URL, GET_IMAGE } from "../../Constants/utils";
 import { FiEdit } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
 
@@ -29,7 +29,7 @@ const PapierMacheOrders = () => {
 
   // Fetch orders when page changes
   useEffect(() => {
-    fetchKaniOrders();
+    fetchPapierMacheOrders();
   }, [pagination.currentPage, pagination.itemsPerPage]);
 
   // Function to group orders by order number and flatten their products
@@ -95,9 +95,9 @@ const PapierMacheOrders = () => {
     navigate(`/UpdateKani/${orderProductId}`);
   };
 
-  // Fetch Kani orders with proper pagination
-  const fetchKaniOrders = async () => {
-    console.log("Fetching Kani orders for page:", pagination.currentPage, "size:", pagination.itemsPerPage);
+  // Fetch Papier Mache orders with proper pagination
+  const fetchPapierMacheOrders = async () => {
+    console.log("Fetching Papier Mache orders for page:", pagination.currentPage, "size:", pagination.itemsPerPage);
 
     if (!token) {
       toast.error("No access token found. Please login.");
@@ -112,7 +112,7 @@ const PapierMacheOrders = () => {
       let apiUrl;
       
       // Approach 1: Try with page parameter (0-based)
-      apiUrl = `${GET_Kani_URL}?page=${pagination.currentPage}&size=${pagination.itemsPerPage}`;
+      apiUrl = `${GET_PAPERMACHE_ORDERS_URL}?page=${pagination.currentPage}&size=${pagination.itemsPerPage}`;
       console.log("Trying API URL:", apiUrl);
       
       const response = await fetch(apiUrl, {
@@ -131,11 +131,11 @@ const PapierMacheOrders = () => {
         // If 500 error with page parameter, try without page parameter
         if (response.status === 500) {
           console.log("Trying without page parameter...");
-          await fetchKaniOrdersAlternative();
+          await fetchPapierMacheOrdersAlternative();
           return;
         }
         
-        throw new Error(`Failed to fetch Kani Orders: ${response.status} - ${responseText}`);
+        throw new Error(`Failed to fetch Papier Mache Orders: ${response.status} - ${responseText}`);
       }
 
       const data = await response.json();
@@ -143,23 +143,23 @@ const PapierMacheOrders = () => {
       handleApiResponse(data);
       
     } catch (err) {
-      console.error("Error fetching Kani orders:", err);
+      console.error("Error fetching Papier Mache orders:", err);
       setError(err.message);
-      toast.error(err.message || "Failed to load Kani orders");
+      toast.error(err.message || "Failed to load Papier Mache orders");
     } finally {
       setLoading(false);
     }
   };
 
   // Alternative fetch - try without page parameter or with different parameters
-  const fetchKaniOrdersAlternative = async () => {
+  const fetchPapierMacheOrdersAlternative = async () => {
     try {
       // Try different parameter combinations
       let apiUrl;
       let response;
       
       // Try 1: Without any parameters
-      apiUrl = `${GET_Kani_URL}`;
+      apiUrl = `${GET_PAPERMACHE_ORDERS_URL}`;
       console.log("Trying without parameters:", apiUrl);
       
       response = await fetch(apiUrl, {
@@ -178,7 +178,7 @@ const PapierMacheOrders = () => {
       }
       
       // Try 2: With size only
-      apiUrl = `${GET_Kani_URL}?size=${pagination.itemsPerPage}`;
+      apiUrl = `${GET_PAPERMACHE_ORDERS_URL}?size=${pagination.itemsPerPage}`;
       console.log("Trying with size only:", apiUrl);
       
       response = await fetch(apiUrl, {
@@ -198,7 +198,7 @@ const PapierMacheOrders = () => {
       
       // Try 3: With 1-based indexing (page + 1)
       const pageOneBased = pagination.currentPage + 1;
-      apiUrl = `${GET_Kani_URL}?page=${pageOneBased}&size=${pagination.itemsPerPage}`;
+      apiUrl = `${GET_PAPERMACHE_ORDERS_URL}?page=${pageOneBased}&size=${pagination.itemsPerPage}`;
       console.log("Trying with 1-based indexing:", apiUrl);
       
       response = await fetch(apiUrl, {
@@ -669,7 +669,7 @@ const PapierMacheOrders = () => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Kani Orders" />
+      <Breadcrumb pageName="Papier Mache Orders" />
 
       {/* Images Modal */}
       {renderImagesModal()}
@@ -678,7 +678,7 @@ const PapierMacheOrders = () => {
         <div className="flex justify-between items-center border-b border-stroke dark:border-strokedark py-4 px-6">
           <div>
             <h3 className="text-xl font-medium text-slate-500 dark:text-white">
-              Kani Orders
+              Papier Mache Orders
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               {pagination.totalItems > 0 ? (
@@ -686,9 +686,6 @@ const PapierMacheOrders = () => {
                   Showing {getStartingSerialNumber()}-
                   {getEndingSerialNumber()} 
                   of {pagination.totalItems} orders
-                  {/* <span className="ml-2 text-blue-600 dark:text-blue-400">
-                    ({calculateTotalProducts()} products)
-                  </span> */}
                   {loading && " (loading...)"}
                 </>
               ) : (

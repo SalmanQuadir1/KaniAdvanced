@@ -444,7 +444,7 @@ export const GET_RETAIL_CONTEMPORARY_URL = `${BASE_URL}/order/contempPashmina/re
 export const GET_WHOLESALE_CONTEMPORARY_URL = `${BASE_URL}/order/contempPashmina/ws-client-orders`;
 export const GET_KLC_CONTEMPORARY_URL = `${BASE_URL}/order/klc-contempPashmina`;
 export const GET_PAPERMACHE_ORDERS_URL = `${BASE_URL}/order/papier-machie`;
-
+export const GET_RETAIL_PAPIERMACGE_URL = `${BASE_URL}/order/papierMachie/retail-client-orders`;
 
 
 //dahsboard
