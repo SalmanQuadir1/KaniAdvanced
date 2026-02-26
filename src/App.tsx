@@ -77,6 +77,11 @@ import ContemporaryInProgress from './components/Kani/ContemporaryInProgress.jsx
 import RetailContemporary from './components/Kani/RetailContemporary.jsx';
 import WholesaleContemporary from './components/Kani/WholesaleContemporary.jsx';
 import KlcContemporary from './components/Kani/KlcContemporary.jsx';
+import PapierMache from './components/Kani/PapierMache.jsx';
+import PapierMacheOrders from './components/Kani/PapierMacheOrders.jsx';
+import RetailPapierMache from './components/Kani/RetailPapierMache.jsx';
+import WholeSalePapierMache from './components/Kani/WholeSalePapierMache.jsx';
+import KlcPapierMache from './components/Kani/KlcPapierMache.jsx';
 
 import AddBom from './components/Products/AddBom.jsx';
 import AddLocationInventory from './components/Products/AddLoctionInventory.jsx';
@@ -1060,6 +1065,12 @@ function App() {
                 <Route path="/contemporary/retail-client-orders" element={<RetailContemporary />} />
                  <Route path="/contemporary/wholesale-client-orders" element={<WholesaleContemporary />} />
                   <Route path="/klcContemporary" element={<KlcContemporary />} />
+                  <Route path="/papierMache" element={<PapierMache />} />
+                  <Route path="/papierMacheOrders" element={<PapierMacheOrders />} />
+                  <Route path="/papierMache/retail-client-orders" element={<RetailPapierMache />} />
+                  <Route path="/papierMache/wholesale-client-orders" element={<WholeSalePapierMache />} />
+                  <Route path="/klcPapierMache" element={<KlcPapierMache />} />
+            
             
 
 

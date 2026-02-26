@@ -434,6 +434,7 @@ export const GET_INPROGRESS_CONTEMPORARY_ORDERS_URL = `${BASE_URL}/order/inProgr
 export const GET_RETAIL_CONTEMPORARY_URL = `${BASE_URL}/order/contempPashmina/retail-client-orders`;
 export const GET_WHOLESALE_CONTEMPORARY_URL = `${BASE_URL}/order/contempPashmina/ws-client-orders`;
 export const GET_KLC_CONTEMPORARY_URL = `${BASE_URL}/order/klc-contempPashmina`;
+export const GET_PAPERMACHE_ORDERS_URL = `${BASE_URL}/order/papier-machie`;
 
 
 
