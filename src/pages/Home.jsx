@@ -346,6 +346,7 @@ const kaniModeCards = [
                             >
                                 {card.icon}
                             </CardDataStats>
+                            
                         )}
                     </div>
                 ) : (
