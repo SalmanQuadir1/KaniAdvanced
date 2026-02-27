@@ -82,6 +82,8 @@ import PapierMacheOrders from './components/Kani/PapierMacheOrders.jsx';
 import RetailPapierMache from './components/Kani/RetailPapierMache.jsx';
 import WholeSalePapierMache from './components/Kani/WholeSalePapierMache.jsx';
 import KlcPapierMache from './components/Kani/KlcPapierMache.jsx';
+import PapierMacheSuppliers from './components/Kani/PapierMacheSuppliers.jsx';
+import PapierMacheInProgress from './components/Kani/PapierMacheInProgress.jsx';
 
 import AddBom from './components/Products/AddBom.jsx';
 import AddLocationInventory from './components/Products/AddLoctionInventory.jsx';
@@ -1072,6 +1074,8 @@ function App() {
                   <Route path="/papierMache/retail-client-orders" element={<RetailPapierMache />} />
                   <Route path="/papierMache/wholesale-client-orders" element={<WholeSalePapierMache />} />
                   <Route path="/klcPapierMache" element={<KlcPapierMache />} />
+                  <Route path="/paperMache_filter-suppliers" element={<PapierMacheSuppliers />} />
+                  <Route path="/paper-mache-in-progress" element={<PapierMacheInProgress />} />
             
             
 
