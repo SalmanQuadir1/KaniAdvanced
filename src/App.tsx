@@ -84,6 +84,11 @@ import WholeSalePapierMache from './components/Kani/WholeSalePapierMache.jsx';
 import KlcPapierMache from './components/Kani/KlcPapierMache.jsx';
 import PapierMacheSuppliers from './components/Kani/PapierMacheSuppliers.jsx';
 import PapierMacheInProgress from './components/Kani/PapierMacheInProgress.jsx';
+import WoolEmbroidery from './components/Kani/WoolEmbroidery.jsx';
+import WoolEmbroideryOrders from './components/Kani/WoolEmbroideryOrders.jsx';
+import WoolSuppliers from './components/Kani/WoolSuppliers.jsx';
+import WoolSupplierOrders from './components/Kani/WoolSupplierOrders.jsx';
+
 
 import AddBom from './components/Products/AddBom.jsx';
 import AddLocationInventory from './components/Products/AddLoctionInventory.jsx';
@@ -1076,6 +1081,10 @@ function App() {
                   <Route path="/klcPapierMache" element={<KlcPapierMache />} />
                   <Route path="/paperMache_filter-suppliers" element={<PapierMacheSuppliers />} />
                   <Route path="/paper-mache-in-progress" element={<PapierMacheInProgress />} />
+                  <Route path="/woolEmbroidery" element={<WoolEmbroidery />} />
+                  <Route path="/woolEmbroideryOrders" element={<WoolEmbroideryOrders />} />
+                  <Route path="/wool_filter-suppliers" element={<WoolSuppliers />} />
+                  <Route path="/woolSuppOrd/:id" element={<WoolSupplierOrders />} />
             
             
 

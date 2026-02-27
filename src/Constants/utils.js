@@ -448,6 +448,8 @@ export const GET_RETAIL_PAPIERMACGE_URL = `${BASE_URL}/order/papierMachie/retail
 export const GET_WHOLESALE_PAPIERMACGE_URL = `${BASE_URL}/order/papierMachie/ws-client-orders`;
 export const GET_KLC_PAPIERMACHE_URL = `${BASE_URL}/order/klc-papierMachie`;
 export const GET_INPROGRESS_PAPERMACHE_ORDERS_URL = `${BASE_URL}/order/inProgress-papierMachie`;
+export const GET_WOOL_ORDERS_URL = `${BASE_URL}/order/wool-embroidery`;
+export const GET_WOOL_SUPPORDERS_URL = `${BASE_URL}/order/woolEmbroidery`;
 
 
 

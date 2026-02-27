@@ -94,6 +94,15 @@ const kaniModeCards = [
     isGradient: true,
     gradientColor: "from-red-500 to-red-600", 
   },
+   {
+    title: "Wool Embroidery",
+    link: "/woolEmbroidery",
+    countKey: "woolEmbroidery",
+    icon: <TbReorder className="w-10 h-10" />,
+    levelUp: true,
+    isGradient: true,
+    gradientColor: "from-amber-700 to-amber-800", 
+  },
   // {
   //   title: "Client Orders",
   //   link: "/ClientOrders",

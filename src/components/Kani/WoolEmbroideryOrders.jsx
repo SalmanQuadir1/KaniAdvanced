@@ -4,11 +4,11 @@ import { toast } from "react-hot-toast";
 import DefaultLayout from "../../layout/DefaultLayout";
 import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 import Pagination from "../../components/Pagination/Pagination";
-import { GET_PAPERMACHE_ORDERS_URL, GET_IMAGE } from "../../Constants/utils";
+import { GET_WOOL_ORDERS_URL, GET_IMAGE } from "../../Constants/utils";
 import { FiEdit } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
 
-const PapierMacheOrders = () => {
+const WoolEmbroideryOrders = () => {
   const [displayedOrders, setDisplayedOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -29,7 +29,7 @@ const PapierMacheOrders = () => {
 
   // Fetch orders when page changes
   useEffect(() => {
-    fetchPapierMacheOrders();
+    fetchWoolOrders();
   }, [pagination.currentPage, pagination.itemsPerPage]);
 
   // Function to group orders by order number and flatten their products
@@ -95,9 +95,9 @@ const PapierMacheOrders = () => {
     navigate(`/UpdateKani/${orderProductId}`);
   };
 
-  // Fetch Papier Mache orders with proper pagination
-  const fetchPapierMacheOrders = async () => {
-    console.log("Fetching Papier Mache orders for page:", pagination.currentPage, "size:", pagination.itemsPerPage);
+  // Fetch Wool orders with proper pagination
+  const fetchWoolOrders = async () => {
+    console.log("Fetching Wool orders for page:", pagination.currentPage, "size:", pagination.itemsPerPage);
 
     if (!token) {
       toast.error("No access token found. Please login.");
@@ -112,7 +112,7 @@ const PapierMacheOrders = () => {
       let apiUrl;
       
       // Approach 1: Try with page parameter (0-based)
-      apiUrl = `${GET_PAPERMACHE_ORDERS_URL}?page=${pagination.currentPage}&size=${pagination.itemsPerPage}`;
+      apiUrl = `${GET_WOOL_ORDERS_URL}?page=${pagination.currentPage}&size=${pagination.itemsPerPage}`;
       console.log("Trying API URL:", apiUrl);
       
       const response = await fetch(apiUrl, {
@@ -131,11 +131,11 @@ const PapierMacheOrders = () => {
         // If 500 error with page parameter, try without page parameter
         if (response.status === 500) {
           console.log("Trying without page parameter...");
-          await fetchPapierMacheOrdersAlternative();
+          await fetchWoolOrdersAlternative();
           return;
         }
         
-        throw new Error(`Failed to fetch Papier Mache Orders: ${response.status} - ${responseText}`);
+        throw new Error(`Failed to fetch Wool Orders: ${response.status} - ${responseText}`);
       }
 
       const data = await response.json();
@@ -143,23 +143,23 @@ const PapierMacheOrders = () => {
       handleApiResponse(data);
       
     } catch (err) {
-      console.error("Error fetching Papier Mache orders:", err);
+      console.error("Error fetching Wool orders:", err);
       setError(err.message);
-      toast.error(err.message || "Failed to load Papier Mache orders");
+      toast.error(err.message || "Failed to load Wool orders");
     } finally {
       setLoading(false);
     }
   };
 
   // Alternative fetch - try without page parameter or with different parameters
-  const fetchPapierMacheOrdersAlternative = async () => {
+  const fetchWoolOrdersAlternative = async () => {
     try {
       // Try different parameter combinations
       let apiUrl;
       let response;
       
       // Try 1: Without any parameters
-      apiUrl = `${GET_PAPERMACHE_ORDERS_URL}`;
+      apiUrl = `${GET_WOOL_ORDERS_URL}`;
       console.log("Trying without parameters:", apiUrl);
       
       response = await fetch(apiUrl, {
@@ -178,7 +178,7 @@ const PapierMacheOrders = () => {
       }
       
       // Try 2: With size only
-      apiUrl = `${GET_PAPERMACHE_ORDERS_URL}?size=${pagination.itemsPerPage}`;
+      apiUrl = `${GET_WOOL_ORDERS_URL}?size=${pagination.itemsPerPage}`;
       console.log("Trying with size only:", apiUrl);
       
       response = await fetch(apiUrl, {
@@ -198,7 +198,7 @@ const PapierMacheOrders = () => {
       
       // Try 3: With 1-based indexing (page + 1)
       const pageOneBased = pagination.currentPage + 1;
-      apiUrl = `${GET_PAPERMACHE_ORDERS_URL}?page=${pageOneBased}&size=${pagination.itemsPerPage}`;
+      apiUrl = `${GET_WOOL_ORDERS_URL}?page=${pageOneBased}&size=${pagination.itemsPerPage}`;
       console.log("Trying with 1-based indexing:", apiUrl);
       
       response = await fetch(apiUrl, {
@@ -388,7 +388,7 @@ const PapierMacheOrders = () => {
   // Render product details for each order product in the same row
   const renderOrderProducts = (order, orderIndex) => {
     if (!order.products || order.products.length === 0) {
-      return [
+      return (
         <tr key={`${order.orderNo}-empty`} className="bg-white dark:bg-boxdark">
           <td className="px-4 py-3 border-b text-center">{getStartingSerialNumber() + orderIndex}</td>
           <td className="px-4 py-3 border-b text-center font-medium">{order.orderNo}</td>
@@ -396,10 +396,10 @@ const PapierMacheOrders = () => {
             No products found for this order
           </td>
         </tr>
-      ];
+      );
     }
 
-    const productRows = order.products.map((orderProduct, productIndex) => {
+    return order.products.map((orderProduct, productIndex) => {
       const product = orderProduct.products;
       
       if (!product) {
@@ -516,8 +516,6 @@ const PapierMacheOrders = () => {
         </tr>
       );
     }).filter(Boolean); // Filter out any null entries
-
-    return productRows;
   };
 
   const renderTableRows = () => {
@@ -557,13 +555,7 @@ const PapierMacheOrders = () => {
     const rows = [];
     displayedOrders.forEach((order, orderIndex) => {
       const productRows = renderOrderProducts(order, orderIndex);
-      
-      // FIX: Check if productRows is an array before spreading
-      if (Array.isArray(productRows)) {
-        rows.push(...productRows);
-      } else {
-        console.warn("productRows is not an array:", productRows);
-      }
+      rows.push(...productRows);
     });
 
     return rows;
@@ -605,8 +597,9 @@ const PapierMacheOrders = () => {
                         }}
                       />
                      <div className="absolute bottom-1 right-1 bg-black/60 text-white text-[9px] px-1 py-[1px] rounded-sm">
-                        Ref {index + 1}
-                      </div>
+  Ref {index + 1}
+</div>
+
                     </div>
                   );
                 }
@@ -676,7 +669,7 @@ const PapierMacheOrders = () => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Papier Mache Orders" />
+      <Breadcrumb pageName="Wool Embroidery Orders" />
 
       {/* Images Modal */}
       {renderImagesModal()}
@@ -685,7 +678,7 @@ const PapierMacheOrders = () => {
         <div className="flex justify-between items-center border-b border-stroke dark:border-strokedark py-4 px-6">
           <div>
             <h3 className="text-xl font-medium text-slate-500 dark:text-white">
-              Papier Mache Orders
+              Wool Embroidery Orders
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               {pagination.totalItems > 0 ? (
@@ -693,6 +686,9 @@ const PapierMacheOrders = () => {
                   Showing {getStartingSerialNumber()}-
                   {getEndingSerialNumber()} 
                   of {pagination.totalItems} orders
+                  {/* <span className="ml-2 text-blue-600 dark:text-blue-400">
+                    ({calculateTotalProducts()} products)
+                  </span> */}
                   {loading && " (loading...)"}
                 </>
               ) : (
@@ -703,7 +699,7 @@ const PapierMacheOrders = () => {
           <div>
             <button
               type="button"
-              onClick={() => navigate("/paperMache_filter-suppliers")}
+              onClick={() => navigate("/wool_filter-suppliers")}
               className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90 transition view-badge"
             >
               Filter Suppliers
@@ -747,4 +743,4 @@ const PapierMacheOrders = () => {
   );
 };
 
-export default PapierMacheOrders;
+export default WoolEmbroideryOrders;
