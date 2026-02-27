@@ -80,7 +80,7 @@ const kaniModeCards = [
     title: "Contemporary Pashmina",
     link: "/contemporaryPashmina",
     countKey: "contemporaryPashmina",
-    icon: <RiAlignItemBottomFill className="w-10 h-10" />,
+    icon: <RiAlignItemBottomFill className="w-10 h-11" />,
     levelUp: true,
     isGradient: true,
     gradientColor: "from-green-500 to-green-600", 
