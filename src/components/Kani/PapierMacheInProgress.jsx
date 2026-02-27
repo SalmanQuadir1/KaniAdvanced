@@ -66,7 +66,7 @@ const PapierMacheInProgress = () => {
     }));
 
    const getOrder = async (page, filters = {}) => {
-    console.log("Fetching Kani orders with filters:", filters);
+    console.log("Fetching Paper Maché in-progress orders with filters:", filters);
     
     try {
         // Spring Boot uses 0-indexed pages, so subtract 1
@@ -99,12 +99,12 @@ const PapierMacheInProgress = () => {
         }
 
         const data = await response.json();
-        console.log("Parsed Kani orders data:", data);
+        console.log("Parsed Paper Maché orders data:", data);
 
         if (data?.content && data.content.length > 0) {
             setOrder(data.content);
         } else {
-            console.log("No Kani orders found on this page");
+            console.log("No Paper Maché in-progress orders found on this page");
             setOrder([]);
         }
 
@@ -117,8 +117,8 @@ const PapierMacheInProgress = () => {
         });
 
     } catch (error) {
-        console.error("Error fetching Kani orders:", error);
-        toast.error("Failed to fetch Kani orders. Please try again.");
+        console.error("Error fetching Paper Maché in-progress orders:", error);
+        toast.error("Failed to fetch Paper Maché in-progress orders. Please try again.");
         setOrder([]);
     }
 };
@@ -168,7 +168,7 @@ const PapierMacheInProgress = () => {
             return (
                 <tr className='bg-white dark:bg-slate-700 dark:text-white'>
                     <td colSpan="6" className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap text-center">No Kani Order Found</p>
+                        <p className="text-gray-900 whitespace-no-wrap text-center">No Paper Maché In-Progress Orders Found</p>
                     </td>
                 </tr>
             );
@@ -241,11 +241,11 @@ const PapierMacheInProgress = () => {
 
     return (
         <DefaultLayout>
-            <Breadcrumb pageName="Kani In Progress Orders" />
+            <Breadcrumb pageName="Paper Maché In Progress Orders" />
             <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
                 <div className="pt-5">
                     <div className='flex justify-between'>
-                        <h2 className="text-xl font-semibold leading-tight">KANI IN PROGRESS ORDERS</h2>
+                        <h2 className="text-xl font-semibold leading-tight">PAPER MACHÉ IN PROGRESS ORDERS</h2>
                     </div>
 
                     <div className='items-center justify-center'>
