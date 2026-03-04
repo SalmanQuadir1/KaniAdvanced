@@ -88,7 +88,10 @@ import WoolEmbroidery from './components/Kani/WoolEmbroidery.jsx';
 import WoolEmbroideryOrders from './components/Kani/WoolEmbroideryOrders.jsx';
 import WoolSuppliers from './components/Kani/WoolSuppliers.jsx';
 import WoolSupplierOrders from './components/Kani/WoolSupplierOrders.jsx';
-
+import WoolInProgress from './components/Kani/WoolInProgress.jsx';
+import WoolWholesaleOrders from './components/Kani/WoolWholesaleOrders.jsx';
+import WoolKlcOrders from './components/Kani/WoolKlcOrders.jsx';
+import WoolRetailOrders from './components/Kani/WoolRetailOrders.jsx';
 
 import AddBom from './components/Products/AddBom.jsx';
 import AddLocationInventory from './components/Products/AddLoctionInventory.jsx';
@@ -1085,6 +1088,10 @@ function App() {
                   <Route path="/woolEmbroideryOrders" element={<WoolEmbroideryOrders />} />
                   <Route path="/wool_filter-suppliers" element={<WoolSuppliers />} />
                   <Route path="/woolSuppOrd/:id" element={<WoolSupplierOrders />} />
+                  <Route path="/wool-in-progress" element={<WoolInProgress />} />
+                  <Route path="/wool-wholesale-orders" element={<WoolWholesaleOrders />} />
+                  <Route path="/wool-klc-orders" element={<WoolKlcOrders />} />
+                   <Route path="/wool-retail-orders" element={<WoolRetailOrders />} />
             
             
 

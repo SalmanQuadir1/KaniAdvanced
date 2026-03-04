@@ -15,19 +15,19 @@ const woolEmbroideryCards = [
     countKey: "woolEmbroideryOrders",
     icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
     levelUp: true,
-    color: "from-green-500 to-green-600",
+    color: "from-purple-600 to-purple-700",
   },
   {
     title: "Retail Client Orders",
-    link: "/RetailClientOrders",
+    link: "/wool-retail-orders",
     countKey: "RetailClientOrders",
     icon: <AiOutlinePartition className="w-10 h-10" />,
     levelUp: true,
-    color: "from-purple-500 to-purple-600",
+    color: "from-amber-700 to-amber-800",
   },
   {
     title: "Wholesale Client Orders",
-    link: "/WholesaleClientOrders",
+    link: "/wool-wholesale-orders",
     countKey: "WholesaleClientOrders",
     icon: <RiAlignItemBottomFill className="w-10 h-10" />,
     levelUp: true,
@@ -35,20 +35,13 @@ const woolEmbroideryCards = [
   },
   {
     title: "Klc Orders",
-    link: "/KlcOrders",
+    link: "/wool-klc-orders",
     countKey: "KlcOrders",
     icon: <TbReorder className="w-10 h-10" />,
     levelUp: true,
     color: "from-red-500 to-red-600",
   },
-  {
-    title: "Pashmina Embroidery",
-    link: "/pashminaEmbroidery",
-    countKey: "pashminaEmbroidery",
-    icon: <RiUserReceived2Fill className="w-10 h-10" />,
-    levelUp: true,
-    color: "from-blue-500 to-blue-600",
-  },
+ 
 ];
 
 const WoolEmbroidery = () => {

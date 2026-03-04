@@ -687,7 +687,7 @@ const WoolSuppliers = () => {
           <div>
             <button
               type="button"
-              onClick={() => navigate("/kani-in-progress")}
+              onClick={() => navigate("/wool-in-progress")}
               className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-white hover:bg-opacity-90 transition view-badge"
             >
               In Progress Orders

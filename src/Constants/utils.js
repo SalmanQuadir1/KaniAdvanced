@@ -450,6 +450,13 @@ export const GET_KLC_PAPIERMACHE_URL = `${BASE_URL}/order/klc-papierMachie`;
 export const GET_INPROGRESS_PAPERMACHE_ORDERS_URL = `${BASE_URL}/order/inProgress-papierMachie`;
 export const GET_WOOL_ORDERS_URL = `${BASE_URL}/order/wool-embroidery`;
 export const GET_WOOL_SUPPORDERS_URL = `${BASE_URL}/order/woolEmbroidery`;
+export const GET_WOOL_INPROGRESS_ORDERS_URL = `${BASE_URL}/order/inProgress-woolEmbroidery`;
+export const GET_WOOL_WHOLESALE_ORDERS_URL = `${BASE_URL}/order/woolEmbroidery/ws-client-orders`;
+export const GET_WOOL_KLC_ORDERS_URL = `${BASE_URL}/order/klc-woolEmbroidery`;
+export const GET_WOOL_RETAIL_ORDERS_URL = `${BASE_URL}/order/woolEmbroidery/retail-client-orders`;
+
+
+
 
 
 
