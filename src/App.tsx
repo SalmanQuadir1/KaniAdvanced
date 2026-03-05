@@ -77,6 +77,21 @@ import ContemporaryInProgress from './components/Kani/ContemporaryInProgress.jsx
 import RetailContemporary from './components/Kani/RetailContemporary.jsx';
 import WholesaleContemporary from './components/Kani/WholesaleContemporary.jsx';
 import KlcContemporary from './components/Kani/KlcContemporary.jsx';
+import PapierMache from './components/Kani/PapierMache.jsx';
+import PapierMacheOrders from './components/Kani/PapierMacheOrders.jsx';
+import RetailPapierMache from './components/Kani/RetailPapierMache.jsx';
+import WholeSalePapierMache from './components/Kani/WholeSalePapierMache.jsx';
+import KlcPapierMache from './components/Kani/KlcPapierMache.jsx';
+import PapierMacheSuppliers from './components/Kani/PapierMacheSuppliers.jsx';
+import PapierMacheInProgress from './components/Kani/PapierMacheInProgress.jsx';
+import WoolEmbroidery from './components/Kani/WoolEmbroidery.jsx';
+import WoolEmbroideryOrders from './components/Kani/WoolEmbroideryOrders.jsx';
+import WoolSuppliers from './components/Kani/WoolSuppliers.jsx';
+import WoolSupplierOrders from './components/Kani/WoolSupplierOrders.jsx';
+import WoolInProgress from './components/Kani/WoolInProgress.jsx';
+import WoolWholesaleOrders from './components/Kani/WoolWholesaleOrders.jsx';
+import WoolKlcOrders from './components/Kani/WoolKlcOrders.jsx';
+import WoolRetailOrders from './components/Kani/WoolRetailOrders.jsx';
 
 import AddBom from './components/Products/AddBom.jsx';
 import AddLocationInventory from './components/Products/AddLoctionInventory.jsx';
@@ -1066,6 +1081,22 @@ function App() {
                 <Route path="/contemporary/retail-client-orders" element={<RetailContemporary />} />
                  <Route path="/contemporary/wholesale-client-orders" element={<WholesaleContemporary />} />
                   <Route path="/klcContemporary" element={<KlcContemporary />} />
+                  <Route path="/papierMache" element={<PapierMache />} />
+                  <Route path="/papierMacheOrders" element={<PapierMacheOrders />} />
+                  <Route path="/papierMache/retail-client-orders" element={<RetailPapierMache />} />
+                  <Route path="/papierMache/wholesale-client-orders" element={<WholeSalePapierMache />} />
+                  <Route path="/klcPapierMache" element={<KlcPapierMache />} />
+                  <Route path="/paperMache_filter-suppliers" element={<PapierMacheSuppliers />} />
+                  <Route path="/paper-mache-in-progress" element={<PapierMacheInProgress />} />
+                  <Route path="/woolEmbroidery" element={<WoolEmbroidery />} />
+                  <Route path="/woolEmbroideryOrders" element={<WoolEmbroideryOrders />} />
+                  <Route path="/wool_filter-suppliers" element={<WoolSuppliers />} />
+                  <Route path="/woolSuppOrd/:id" element={<WoolSupplierOrders />} />
+                  <Route path="/wool-in-progress" element={<WoolInProgress />} />
+                  <Route path="/wool-wholesale-orders" element={<WoolWholesaleOrders />} />
+                  <Route path="/wool-klc-orders" element={<WoolKlcOrders />} />
+                   <Route path="/wool-retail-orders" element={<WoolRetailOrders />} />
+            
             
 
 
