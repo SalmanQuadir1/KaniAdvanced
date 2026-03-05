@@ -157,21 +157,21 @@ const AddStockJournels = () => {
 
   const validationSchema = Yup.object({
     voucherNo: Yup.string().required('Voucher Number is required'),
-    sourceProduct: Yup.object().required('Source Product is required'),
-    sourceLocation: Yup.object().required('Source Location is required'),
-    sourceQuantity: Yup.number()
-      .required('Quantity used is required')
-      .min(1, 'Quantity used must be at least 1')
-      .max(Yup.ref('availableQuantity'), 'Quantity used cannot exceed available quantity'),
-    destinationRows: Yup.array().of(
-      Yup.object().shape({
-        destProductId: Yup.object().required('Destination Product is required'),
-        destinationLocation: Yup.object().required('Destination Location is required'),
-        transferQuantity: Yup.number()
-          .required('Transfer quantity is required')
-          .min(1, 'Transfer quantity must be at least 1')
-      })
-    )
+    // sourceProduct: Yup.object().required('Source Product is required'),
+    // sourceLocation: Yup.object().required('Source Location is required'),
+    // sourceQuantity: Yup.number()
+    //   .required('Quantity used is required')
+    //   .min(1, 'Quantity used must be at least 1')
+    //   .max(Yup.ref('availableQuantity'), 'Quantity used cannot exceed available quantity'),
+    // destinationRows: Yup.array().of(
+    //   Yup.object().shape({
+    //     destProductId: Yup.object().required('Destination Product is required'),
+    //     destinationLocation: Yup.object().required('Destination Location is required'),
+    //     transferQuantity: Yup.number()
+    //       .required('Transfer quantity is required')
+    //       .min(1, 'Transfer quantity must be at least 1')
+    //   })
+    // )
   });
 
   const fetchQuantityForSource = async (productId, locationId) => {
@@ -230,6 +230,8 @@ const AddStockJournels = () => {
   };
 
   const onSubmit = async (values, { setSubmitting, resetForm }) => {
+    console.log("immmm");
+    
     // Validate total transfer quantity doesn't exceed source quantity
     if (totalTransferredQty > Number(values.sourceQuantity)) {
       toast.error(`Total transfer quantity (${totalTransferredQty}) exceeds source quantity (${values.sourceQuantity})`);
