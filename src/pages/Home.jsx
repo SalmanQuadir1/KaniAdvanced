@@ -23,6 +23,7 @@ import { GiWool } from "react-icons/gi";
 import { GiRolledCloth } from "react-icons/gi";
 import { GiCottonFlower } from "react-icons/gi";
 import { GiBandageRoll } from "react-icons/gi";
+import { GiScrollUnfurled } from "react-icons/gi";
 
 const Home = () => {
     const [unitCount, setUnitCount] = useState([]);
@@ -203,7 +204,7 @@ const kaniModeCards = [
     title: "Pashmina Embroidery",
     link: "/pashminaEmbroidery",
     countKey: "pashminaEmbroidery",
-    icon: <AiOutlinePartition className="w-10 h-10" />,
+    icon: <GiScrollUnfurled className="w-10 h-10" />,
     levelUp: true,
     isGradient: true,
     gradientColor: "from-purple-500 to-purple-600", // Add this line for purple
