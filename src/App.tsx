@@ -96,6 +96,22 @@ import WoolInProgress from './components/Kani/WoolInProgress.jsx';
 import WoolWholesaleOrders from './components/Kani/WoolWholesaleOrders.jsx';
 import WoolKlcOrders from './components/Kani/WoolKlcOrders.jsx';
 import WoolRetailOrders from './components/Kani/WoolRetailOrders.jsx';
+import ContemporaryWool from './components/Kani/ContemporaryWool.jsx';
+import ContemporaryWoolOrders from './components/Kani/ContemporaryWoolOrders.jsx';
+import RetailContWool from './components/Kani/RetailContWool.jsx';
+import ContWoolWholesale from './components/Kani/ContWoolWholesale.jsx';
+import ContWoolKlc from './components/Kani/ContWoolKlc.jsx';
+import ContWoolSuppliers from './components/Kani/ContWoolSuppliers.jsx';
+import ContWoolInProgress from './components/Kani/ContWoolInProgress.jsx';
+import ContWoolSuppOrders from './components/Kani/ContWoolSuppOrders.jsx';
+import Cotton from './components/Kani/Cotton.jsx';
+import CottonOrders from './components/Kani/CottonOrders.jsx';
+import CottonSuppliers from './components/Kani/CottonSuppliers.jsx';
+import CottonSuppOrder from './components/Kani/CottonSuppOrder.jsx';
+import CottonInProgress from './components/Kani/CottonInProgress.jsx';
+import CottonRetail from './components/Kani/CottonRetail.jsx';
+import CottonWholesale from './components/Kani/CottonWholesale.jsx';
+import CottonKlc from './components/Kani/CottonKlc.jsx';
 
 import AddBom from './components/Products/AddBom.jsx';
 import AddLocationInventory from './components/Products/AddLoctionInventory.jsx';
@@ -1121,7 +1137,23 @@ function App() {
                   <Route path="/wool-in-progress" element={<WoolInProgress />} />
                   <Route path="/wool-wholesale-orders" element={<WoolWholesaleOrders />} />
                   <Route path="/wool-klc-orders" element={<WoolKlcOrders />} />
-                   <Route path="/wool-retail-orders" element={<WoolRetailOrders />} />
+                  <Route path="/wool-retail-orders" element={<WoolRetailOrders />} />
+                  <Route path="/contemporaryWool" element={<ContemporaryWool />} />
+                  <Route path="/contemporaryWoolOrders" element={<ContemporaryWoolOrders />} />
+                  <Route path="/RetailContWoolOrders" element={<RetailContWool />} />
+                  <Route path="/ContWoolWholesaleOrders" element={<ContWoolWholesale />} />
+                  <Route path="/ContWoolKlcOrders" element={<ContWoolKlc />} />
+                  <Route path="/contWoolSuppliers" element={<ContWoolSuppliers />} />
+                  <Route path="/contWool-in-progress" element={<ContWoolInProgress />} />
+                  <Route path="/Cont_supplier-order/:id" element={<ContWoolSuppOrders />} />
+                  <Route path="/cotton" element={<Cotton />} />
+                  <Route path="/cottonOrders" element={<CottonOrders />} />
+                  <Route path="/Cotton_filter-suppliers" element={<CottonSuppliers />} />
+                  <Route path="/cottonSuppOrd/:id" element={<CottonSuppOrder />} />
+                  <Route path="/cotton-in-progress" element={<CottonInProgress />} />
+                  <Route path="/cotton/retail-client-orders" element={<CottonRetail />} />
+                  <Route path="/cotton/wholesale-client-orders" element={<CottonWholesale />} />
+                   <Route path="/cotton-klc-orders" element={<CottonKlc />} />
             
             
 

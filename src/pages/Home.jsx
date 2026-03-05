@@ -19,6 +19,10 @@ import { CiCalendarDate } from "react-icons/ci";
 import { VscDiffModified } from "react-icons/vsc";
 import { toast } from 'react-toastify';
 import { TbReorder } from 'react-icons/tb';
+import { GiWool } from "react-icons/gi";
+import { GiRolledCloth } from "react-icons/gi";
+import { GiCottonFlower } from "react-icons/gi";
+import { GiBandageRoll } from "react-icons/gi";
 
 const Home = () => {
     const [unitCount, setUnitCount] = useState([]);
@@ -208,7 +212,7 @@ const kaniModeCards = [
     title: "Contemporary Pashmina",
     link: "/contemporaryPashmina",
     countKey: "contemporaryPashmina",
-    icon: <RiAlignItemBottomFill className="w-10 h-11" />,
+    icon: <GiBandageRoll  className="w-10 h-11" />,
     levelUp: true,
     isGradient: true,
     gradientColor: "from-green-500 to-green-600", 
@@ -226,10 +230,28 @@ const kaniModeCards = [
     title: "Wool Embroidery",
     link: "/woolEmbroidery",
     countKey: "woolEmbroidery",
-    icon: <TbReorder className="w-10 h-10" />,
+    icon: <GiWool  className="w-10 h-10" />,
     levelUp: true,
     isGradient: true,
     gradientColor: "from-amber-700 to-amber-800", 
+  },
+  {
+    title: "Contemporary Wool",
+    link: "/contemporaryWool",
+    countKey: "contemporaryWool",
+    icon: <GiRolledCloth  className="w-10 h-10" />,
+    levelUp: true,
+    isGradient: true,
+    gradientColor: "from-orange-600 to-orange-700", 
+  },
+  {
+    title: "Cotton",
+    link: "/cotton",
+    countKey: "cotton",
+    icon: <GiCottonFlower  className="w-10 h-10" />,
+    levelUp: true,
+    isGradient: true,
+    gradientColor: "from-yellow-600 to-yellow-700", 
   },
 //  {
 //     title: "Client Orders",
@@ -238,27 +260,27 @@ const kaniModeCards = [
 //     icon: <RiUserReceived2Fill className="w-10 h-10" />,
 //     levelUp: true,
 //   },
-   {
-    title: "Retail Client Orders",
-    link: "/RetailClientOrders",
-    countKey: "RetailClientOrders",
-    icon:  <AiOutlinePartition className="w-10 h-10" />,
-    levelUp: true,
-  },
-   { 
-    title: "Wholesale Client Orders",
-    link: "/WholesaleClientOrders",
-    countKey: "WholesaleClientOrders",
-    icon:  <RiAlignItemBottomFill className="w-10 h-10" />,
-    levelUp: true,
-  },
-   {
-      title: "Klc Orders",
-      link: "/KlcOrders",
-      countKey: "KlcOrders",
-      icon:  <TbReorder className="w-10 h-10" />,
-      levelUp: true,
-    },
+//    {
+//     title: "Retail Client Orders",
+//     link: "/RetailClientOrders",
+//     countKey: "RetailClientOrders",
+//     icon:  <AiOutlinePartition className="w-10 h-10" />,
+//     levelUp: true,
+//   },
+//    { 
+//     title: "Wholesale Client Orders",
+//     link: "/WholesaleClientOrders",
+//     countKey: "WholesaleClientOrders",
+//     icon:  <RiAlignItemBottomFill className="w-10 h-10" />,
+//     levelUp: true,
+//   },
+//    {
+//       title: "Klc Orders",
+//       link: "/KlcOrders",
+//       countKey: "KlcOrders",
+//       icon:  <TbReorder className="w-10 h-10" />,
+//       levelUp: true,
+//     },
  
 ];
 

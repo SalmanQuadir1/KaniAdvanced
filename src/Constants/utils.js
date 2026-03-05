@@ -458,6 +458,21 @@ export const GET_WOOL_INPROGRESS_ORDERS_URL = `${BASE_URL}/order/inProgress-wool
 export const GET_WOOL_WHOLESALE_ORDERS_URL = `${BASE_URL}/order/woolEmbroidery/ws-client-orders`;
 export const GET_WOOL_KLC_ORDERS_URL = `${BASE_URL}/order/klc-woolEmbroidery`;
 export const GET_WOOL_RETAIL_ORDERS_URL = `${BASE_URL}/order/woolEmbroidery/retail-client-orders`;
+export const GET_CONTWOOL_ORDERS_URL = `${BASE_URL}/order/contemporary-wool`;
+export const GET_CONTWOOL_INPROGRESS_URL = `${BASE_URL}/order/inProgress-contemporary-wool`;
+export const GET_CONTWOOL_RETAIL_URL = `${BASE_URL}/order/contemporary-wool/retail-client-orders`;
+export const GET_CONTWOOL_WS_URL = `${BASE_URL}/order/contemporary-wool/ws-client-orders`;
+export const GET_CONTWOOL_KLC_URL = `${BASE_URL}/order/klc-contemporary-wool`;
+export const GET_CONTWOOL_SUPP_URL = `${BASE_URL}/order/contemporary-wool`;
+export const GET_COTTON_URL = `${BASE_URL}/order/cotton`;
+export const GET_COTTONORDERS_URL = `${BASE_URL}/order/cotton`;
+export const GET_COTTON_INPROGRESS_URL = `${BASE_URL}/order/inProgress-cotton`;
+export const GET_COTTON_RETAIL_URL = `${BASE_URL}/order/cotton/retail-client-orders`;
+export const GET_COTTON_WHOLESALE_URL = `${BASE_URL}/order/cotton/ws-client-orders`;
+export const GET_COTTON_KLC_URL = `${BASE_URL}/order/klc-cotton`;
+
+
+
 
 
 
