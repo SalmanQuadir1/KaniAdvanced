@@ -1692,22 +1692,23 @@ const AddProduct = () => {
                                             <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>Images</h1>
 
                                             <div className="mb-4.5 flex flex-wrap gap-6">
-                                            {/* Reference Image Upload */}
-<div className="flex flex-col space-y-4">
-    <div className="flex-1 max-w-[370px] md:min-w-[400px] md:max-w-[600px]">
-        <label className="mb-2.5 block text-black dark:text-white">
-            Reference Image <span className="text-meta-1">*</span>
-        </label>
-        <div className="relative w-full">
-            <input
-                name="refrenceImage"
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleFileChange}
-                className="absolute inset-0 z-50 w-full h-full opacity-0 cursor-pointer"
-            />
-                 <div className="flex flex-col items-center justify-center space-y-3 border-[1.5px] border-stroke bg-transparent py-3 px-5 rounded text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary">
+                                                <div className="flex flex-col space-y-4">
+                                                    {/* Upload Field */}
+                                                    <div className="flex-1 max-w-[370px] md:min-w-[400px] md:max-w-[600px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">
+                                                            Reference Image <span className="text-meta-1">*</span>
+                                                        </label>
+                                                        <div className="relative w-full">
+                                                            <Field
+                                                                name="refrenceImage"
+                                                                type="file"
+                                                                //multiple={false}
+                                                                multiple // Allow multiple files
+                                                                accept="image/*"
+                                                                onChange={handleFileChange}
+                                                                className="absolute inset-0 z-50 w-full h-full opacity-0 cursor-pointer"
+                                                            />
+                                                            <div className="flex flex-col items-center justify-center space-y-3 border-[1.5px] border-stroke bg-transparent py-3 px-5 rounded text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary">
                                                                 <span className="flex h-10 w-10 items-center justify-center rounded-full border p-3 border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
                                                                     <svg
                                                                         width="16"
@@ -1742,59 +1743,66 @@ const AddProduct = () => {
                                                                 <p className="mt-1.5">PNG, JPG or GIF(Less Than 5 mb)</p>
                                                                 <p>(max, 800 X 800px)</p>
                                                             </div>
-        </div>
-    </div>
+                                                        </div>
+                                                    </div>
 
-    {/* Reference Image Previews */}
-    {previews.length > 0 && (
-        <div className="mt-4">
-            <label className="mb-2.5 block text-black dark:text-white">
-                Image Previews
-            </label>
-            <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
-                <div className="grid grid-cols-3 gap-4">
-                    {previews.map((preview, index) => (
-                        <div key={`ref-${index}-${preview.url}`} className="relative group">
-                            <img
-                                src={preview.url}
-                                alt={`Preview ${index + 1}`}
-                                className="h-20 border rounded object-cover min-w-[100px] max-w-[100px] transition-transform duration-200 hover:scale-110"
-                            />
-                            <button
-                                type="button"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    handleRemoveImage(index);
-                                }}
-                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                            >
-                                ×
-                            </button>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-    )}
-</div>
 
-{/* Actual Image Upload */}
-<div className="flex-1 min-w-[300px]">
-    <div className="max-w-[370px] md:min-w-[400px] md:max-w-[600px]">
-        <label className="mb-2.5 block text-black dark:text-white">
-            Actual Image <span className="text-meta-1">*</span>
-        </label>
-        <div className="relative w-full">
-            <input
-                name="actualImage"
-                type="file"
-                multiple
-                accept="image/*"
-                onChange={handleFileChangeActual}
-                className="absolute inset-0 z-50 w-full h-full opacity-0 cursor-pointer"
-            />
-               <div className="flex flex-col items-center justify-center space-y-3 border-[1.5px] border-stroke bg-transparent py-3 px-5 rounded text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary">
+                                                    {previews.length > 0 && (
+                                                        <div className="mt-4">
+                                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                                Image Previews
+                                                            </label>
+                                                            {/* Box Wrapper */}
+                                                            <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
+                                                                {/* Grid Layout */}
+                                                                <div className="grid grid-cols-3 gap-4">
+                                                                    {previews.map((preview, index) => (
+                                                                        <div key={index} className="relative group">
+                                                                            {/* Image Preview */}
+                                                                            <img
+                                                                                src={preview.url}
+                                                                                alt={`Preview ${index + 1}`}
+                                                                                className="h-20 border rounded object-cover min-w-[100px] max-w-[100px] transition-transform duration-200 hover:scale-110"
+                                                                            />
+                                                                            {/* Cancel Button */}
+                                                                            <button
+                                                                                type="button" // ← THIS IS THE CRUCIAL FIX
+                                                                                onClick={(e) => {
+                                                                                    e.preventDefault(); // Additional safety
+                                                                                    handleRemoveImage(index);
+                                                                                }}
+                                                                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                            >
+                                                                                &times;
+                                                                            </button>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+
+
+                                                </div>
+
+                                                <div className="flex-1 min-w-[300px]">
+                                                    {/* Upload Field */}
+                                                    <div className="max-w-[370px] md:min-w-[400px] md:max-w-[600px]">
+                                                        <label className="mb-2.5 block text-black dark:text-white">
+                                                            Actual Image <span className="text-meta-1">*</span>
+                                                        </label>
+                                                        <div className="relative w-full">
+                                                            <Field
+                                                                name="actualImage"
+                                                                type="file"
+                                                                //multiple={false}
+                                                                multiple // Allow multiple files
+                                                                accept="image/*"
+                                                                onChange={handleFileChangeActual}
+                                                                className="absolute inset-0 z-50 w-full h-full opacity-0 cursor-pointer"
+                                                            />
+                                                            <div className="flex flex-col items-center justify-center space-y-3 border-[1.5px] border-stroke bg-transparent py-3 px-5 rounded text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary">
                                                                 <span className="flex h-10 w-10 items-center justify-center rounded-full border p-3 border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
                                                                     <svg
                                                                         width="16"
@@ -1826,45 +1834,52 @@ const AddProduct = () => {
                                                                 <p>
                                                                     <span className="text-primary">Click to upload</span> or drag and drop
                                                                 </p>
-                                                                <p className="mt-1.5">PNG, JPG or GIF(Less Than 5 mb)</p>
+                                                                <p className="mt-1.5"> PNG, JPG or GIF(Less Than 5 mb)</p>
                                                                 <p>(max, 800 X 800px)</p>
                                                             </div>
-        </div>
-    </div>
+                                                        </div>
+                                                    </div>
 
-    {/* Actual Image Previews */}
-    {previewsActual.length > 0 && (
-        <div className="mt-4">
-            <label className="mb-2.5 block text-black dark:text-white">
-                Image Previews
-            </label>
-            <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
-                <div className="grid grid-cols-3 gap-4">
-                    {previewsActual.map((previewActual, index) => (
-                        <div key={`actual-${index}-${previewActual.url}`} className="relative group">
-                            <img
-                                src={previewActual.url}
-                                alt={`Preview ${index + 1}`}
-                                className="h-20 border rounded object-cover min-w-[100px] max-w-[100px] transition-transform duration-200 hover:scale-110"
-                            />
-                            <button
-                                type="button"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    handleRemoveActual(index);
-                                }}
-                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                            >
-                                ×
-                            </button>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
-    )}
-</div>
+
+                                                    {previewsActual.length > 0 && (
+                                                        <div className="mt-4">
+                                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                                Image Previews
+                                                            </label>
+                                                            {/* Box Wrapper */}
+                                                            <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
+                                                                {/* Grid Layout */}
+                                                                <div className="grid grid-cols-3 gap-4">
+                                                                    {previewsActual.map((previewActual, index) => (
+                                                                        <div key={index} className="relative group">
+                                                                            {/* Image Preview */}
+                                                                            <img
+                                                                                src={previewActual.url}
+                                                                                alt={`Preview ${index + 1}`}
+                                                                                className="h-20 border rounded object-cover min-w-[100px] max-w-[100px] transition-transform duration-200 hover:scale-110"
+                                                                            />
+                                                                            {/* Cancel Button */}
+                                                                            <button
+                                                                                onClick={(e) => {
+                                                                                    e.preventDefault()
+                                                                                    handleRemoveActual(index)
+                                                                                }
+                                                                                }
+                                                                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                                                            >
+
+                                                                                &times;
+                                                                            </button>
+                                                                        </div>
+                                                                    ))}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+
+
+                                                </div>
 
 
 
