@@ -20,7 +20,7 @@ import { VscDiffModified } from "react-icons/vsc";
 import { toast } from 'react-toastify';
 import { TbReorder } from 'react-icons/tb';
 import { GiWool } from "react-icons/gi";
-
+import { GiRolledCloth } from "react-icons/gi";
 
 const Home = () => {
     const [unitCount, setUnitCount] = useState([]);
@@ -237,7 +237,7 @@ const kaniModeCards = [
     title: "Contemporary Wool",
     link: "/contemporaryWool",
     countKey: "contemporaryWool",
-    icon: <TbReorder className="w-10 h-10" />,
+    icon: <GiRolledCloth  className="w-10 h-10" />,
     levelUp: true,
     isGradient: true,
     gradientColor: "from-orange-600 to-orange-700", 
