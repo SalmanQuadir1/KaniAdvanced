@@ -133,7 +133,7 @@ const Voucher = () => {
         { value: 'CreditNote', label: 'Credit Note' },
         { value: 'DebitNote', label: 'Debit Note' },
         { value: 'Contra', label: 'Contra' },
-        { value: 'StockJournel', label: 'Stock Journel' },
+        { value: 'StockJournal', label: 'Stock Journal' },
     ];
 
     const gstdetails = [

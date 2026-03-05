@@ -376,7 +376,7 @@ const AddStockJournels = () => {
               </div>
 
               {/* Main Table - Source and Destination Side by Side */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+              <div className=" ml-[-30px] mr-[-20px] bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
                 {/* Table Header */}
                 <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
                   <div className="flex justify-between items-center">
