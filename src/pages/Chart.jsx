@@ -102,7 +102,7 @@ const kaniModeCards = [
     title: "Wool Embroidery",
     link: "/woolEmbroidery",
     countKey: "woolEmbroidery",
-    icon: <TbReorder className="w-10 h-10" />,
+    icon: <GiWool className="w-10 h-10" />,
     levelUp: true,
     isGradient: true,
     gradientColor: "from-amber-700 to-amber-800", 
