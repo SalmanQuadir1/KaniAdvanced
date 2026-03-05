@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import DefaultLayout from "../../layout/DefaultLayout";
 import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 import Pagination from "../../components/Pagination/Pagination";
-import {GET_COTTON_RETAIL_URLGET_COTTON_WHOLESALE_URL, GET_IMAGE } from "../../Constants/utils";
+import {GET_COTTON_WHOLESALE_URL, GET_IMAGE } from "../../Constants/utils";
 import { FiEdit } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
 
