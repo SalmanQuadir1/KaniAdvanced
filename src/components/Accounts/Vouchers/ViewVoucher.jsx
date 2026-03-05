@@ -260,6 +260,9 @@ const ViewVoucher = () => {
                             } else if (item.name?.toLowerCase() === "receipt") {
                                 path = `/voucher/createreceipt/${item.id}`;
                             }
+                            else if (item.name?.toLowerCase() === "stock journal") {
+                                path = `/voucher/createstockJournel/${item.id}`;
+                            }
 
                             navigate(path);
                         }}
@@ -290,9 +293,9 @@ const ViewVoucher = () => {
                     )
                 }
 
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                < td className="px-5 py-5 border-b border-gray-200 text-sm" >
                     <IoIosAdd size={30} onClick={() => navigate(`/configurator/vouchers/${item.id}`)} className="cursor-pointer" />
-                </td>
+                </td >
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.defGstRegist?.state}</p>
                 </td>
@@ -319,7 +322,7 @@ const ViewVoucher = () => {
                         <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Voucher' />
                     </p>
                 </td>
-            </tr>
+            </tr >
         ));
     };
 

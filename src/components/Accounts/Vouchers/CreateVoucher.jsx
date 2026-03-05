@@ -223,17 +223,26 @@ const CreateVoucher = () => {
 
     // for gst 
     // GST Ledgers filtering
-    const igstLedgers = Ledger.filter(ledg =>
-        ledg?.name && ledg.name.toLowerCase().includes('igst')
-    );
+ const igstLedgers = Ledger.filter(ledg =>
+    ledg?.name && 
+    ledg.name.toLowerCase().includes('igst') &&
+    !ledg.name.toLowerCase().includes('sale') &&
+    !ledg.name.toLowerCase().includes('purchase')
+);
 
-    const cgstLedgers = Ledger.filter(ledg =>
-        ledg?.name && ledg.name.toLowerCase().includes('cgst')
-    );
+const cgstLedgers = Ledger.filter(ledg =>
+    ledg?.name && 
+    ledg.name.toLowerCase().includes('cgst') &&
+    !ledg.name.toLowerCase().includes('sale') &&
+    !ledg.name.toLowerCase().includes('purchase')
+);
 
-    const sgstLedgers = Ledger.filter(ledg =>
-        ledg?.name && ledg.name.toLowerCase().includes('sgst')
-    );
+const sgstLedgers = Ledger.filter(ledg =>
+    ledg?.name && 
+    ledg.name.toLowerCase().includes('sgst') &&
+    !ledg.name.toLowerCase().includes('sale') &&
+    !ledg.name.toLowerCase().includes('purchase')
+);
 
     // Create options for ReactSelect
     const igstOptions = igstLedgers?.map(ledg => ({

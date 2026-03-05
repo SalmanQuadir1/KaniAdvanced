@@ -501,7 +501,13 @@ export const GET_VoucherNameFromType_URL = `${BASE_URL}/voucher/names/by-type/`;
 export const GET_VoucherEntriessearch_URL = `${BASE_URL}/entryPayment/voucher`;
 export const GET_VoucherEntriessearchPayment_URL = `${BASE_URL}/api/voucher/payment-voucher`;
 
+// entry payment receipts
 
+export const GET_VoucherReceipt_URL = `${BASE_URL}/credit-debit-note/ledger/`;
+
+export const CREATE_CREDITNOTE_URL = `${BASE_URL}/credit-debit-note/voucher`;
+
+export const CREATE_DEBITNOTE_URL = `${BASE_URL}/credit-debit-note/voucher`;
 
 
 export const PRINTEntries_URL = `${BASE_URL}/entryPayment`;

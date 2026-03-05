@@ -298,6 +298,10 @@ import UpdateInventory from './components/ProductsInventory/UpdateInventory.jsx'
 
 
 
+import AddStockJournels from './components/StockJournell/AddStockJournels.jsx';
+
+
+
 import AddStockJournell from './components/StockJournel/AddStockJournell.jsx';
 // import ViewStockJournel from './components/StockJournel/ViewStockJournel.jsx';
 import ViewStockJournels from './components/StockJournel/ViewStockJournels.jsx';
@@ -1999,17 +2003,17 @@ function App() {
           /> */}
 
           <Route
-            path="/stockJournal/AddStockJournal"
+            path="/stock/stockTransfer"
             element={
               <>
-                <PageTitle title="Add Stock Journal" />
+                <PageTitle title="Stock Transfer" />
                 <AddStockJournell />
               </>
             }
           />
 
           <Route
-            path="/stockJournal/ViewStockJournal"
+            path="/stock/ViewStockTransfer"
             element={
               <>
                 <PageTitle title="View Stock Journal" />
@@ -2074,6 +2078,19 @@ function App() {
               <>
                 <PageTitle title="Update Stock Journal" />
                 <UpdateStockJournal />
+              </>
+            }
+          />
+
+
+          {/* stock journel accounts one  */}
+
+           <Route
+            path="/voucher/createstockJournel/:id"
+            element={
+              <>
+                <PageTitle title="Stock Journel" />
+                <AddStockJournels />
               </>
             }
           />

@@ -5,26 +5,34 @@ import * as Yup from 'yup';
 import ReactSelect from 'react-select';
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import useVoucher from '../../../hooks/useVoucher';
-import { GET_VoucherNos_URL, customStyles as createCustomStyles } from '../../../Constants/utils';
+import { CREATE_DEBITNOTE_URL, GET_VoucherNos_URL, customStyles as createCustomStyles } from '../../../Constants/utils';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import useLedger from '../../../hooks/useLedger';
 import { toast } from 'react-toastify';
 
 const CreateReceipt = () => {
     const { id } = useParams();
+
+    const navigate = useNavigate()
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
-    const { GetVoucherById, Vouchers, handleCreateVoucher } = useVoucher();
+    const { GetVoucherById, Vouchers,  } = useVoucher();
     const [voucherNos, setvoucherNos] = useState('')
     const { getLedger, Ledger } = useLedger();
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
-
+  console.log(Ledger,"3333333333333");
+     const SourceLedgers = Ledger.filter(ledg => 
+    ledg?.name && 
+    (ledg?.ledgerType?.toLowerCase() === 'customer' || ledg?.ledgerType?.toLowerCase() === 'supplier')
+);
     // Get all ledgers except those with credit balance for "from" account
-    const allLedgers = Ledger?.map(ledg => ({
+  
+    
+    const allLedgers = SourceLedgers?.map(ledg => ({
         value: ledg?.id,
-        label: ledg?.name,
+        label: `${ledg?.name} -${ledg.ledgerType}`,
         obj: ledg,
         balance: ledg?.openingBalances,
         type: ledg.typeOfOpeningBalance
@@ -80,9 +88,9 @@ const CreateReceipt = () => {
 
     const validationSchema = Yup.object().shape({
         recieptNumber: Yup.string().required('Voucher number is required'),
-        fromLedgerId: Yup.string().required('Received from account is required'),
-        toLedgerId: Yup.string().required('Deposited to account is required'),
-        amount: Yup.number().required('Amount is required').positive('Amount must be positive'),
+        ledgerId: Yup.string().required('Received from account is required'),
+        destinationLedgerId: Yup.string().required('Deposited to account is required'),
+        totalAmount: Yup.number().required('totalAmount is required').positive('totalAmount must be positive'),
         date: Yup.date().required('Date is required'),
         modeOfReceipt: Yup.string().required('Mode of receipt is required'),
     });
@@ -95,6 +103,40 @@ const CreateReceipt = () => {
         { value: 'Online', label: 'Online' },
     ];
 
+     const handleCreateVoucher = async (values) => {
+            console.log(values, "vouchercreate");
+    
+            try {
+                const response = await fetch(`${CREATE_DEBITNOTE_URL}/${id}/create`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify(values)
+                });
+    
+                let data;
+                try {
+                    data = await response.json();
+                } catch {
+                    console.log(data, "catccccccch");
+                    data = { errorMessage: response.errorMessage };
+                }
+                
+                if (response.ok) {
+                    toast.success(`Receipt added successfully`);
+                    navigate("/Vouchers/view");
+                } else {
+                    console.log("i am in error else ");
+                    toast.error(`${data.errorMessage}`);
+                }
+            } catch (error) {
+                console.error(error);
+                toast.error("An error occurred");
+            }
+        };
+
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Configurator/Create Receipt" />
@@ -104,15 +146,15 @@ const CreateReceipt = () => {
                         recieptNumber: voucherNos,
                         date: '',
                         voucherId: Number(id),
-                        fromLedgerId: "",
-                        toLedgerId: "",
-                        amount: "",
+                        ledgerId: "",
+                        destinationLedgerId: "",
+                        totalAmount: "",
                         fromBalance: "",
                         toBalance: "",
                         modeOfReceipt: "",
                         reference: "",
                         narration: "",
-                        typeOfVoucher: "Receipt"
+                        noteType: "RECEIPT_NOTE"
                     }}
                     enableReinitialize={true}
                     validationSchema={validationSchema}
@@ -173,10 +215,10 @@ const CreateReceipt = () => {
                                             <div>
                                                 <label className="mb-2.5 block text-black dark:text-white">Received From <span className='text-red-600'>*</span></label>
                                                 <ReactSelect
-                                                    name='fromLedgerId'
-                                                    value={allLedgers?.find(opt => opt.value === values.fromLedgerId)}
+                                                    name='ledgerId'
+                                                    value={allLedgers?.find(opt => opt.value === values.ledgerId)}
                                                     onChange={(option) => {
-                                                        setFieldValue('fromLedgerId', option?.value || '');
+                                                        setFieldValue('ledgerId', option?.value || '');
                                                         setFieldValue('fromBalance', option?.balance || 0);
                                                     }}
                                                     options={allLedgers}
@@ -185,16 +227,16 @@ const CreateReceipt = () => {
                                                     menuPortalTarget={document.body}
                                                     styles={{ ...customStyles, menuPortal: (base) => ({ ...base, zIndex: 100000 }) }}
                                                 />
-                                                <ErrorMessage name="fromLedgerId" component="div" className="text-red-500 text-xs mt-1" />
+                                                <ErrorMessage name="ledgerId" component="div" className="text-red-500 text-xs mt-1" />
                                             </div>
 
                                             <div>
                                                 <label className="mb-2.5 block text-black dark:text-white">Deposited To <span className='text-red-600'>*</span></label>
                                                 <ReactSelect
-                                                    name='toLedgerId'
-                                                    value={bankCashOptions?.find(opt => opt.value === values.toLedgerId)}
+                                                    name='destinationLedgerId'
+                                                    value={bankCashOptions?.find(opt => opt.value === values.destinationLedgerId)}
                                                     onChange={(option) => {
-                                                        setFieldValue('toLedgerId', option?.value || '');
+                                                        setFieldValue('destinationLedgerId', option?.value || '');
                                                         setFieldValue('toBalance', option?.balance || 0);
                                                     }}
                                                     options={bankCashOptions}
@@ -203,21 +245,21 @@ const CreateReceipt = () => {
                                                     menuPortalTarget={document.body}
                                                     styles={{ ...customStyles, menuPortal: (base) => ({ ...base, zIndex: 100000 }) }}
                                                 />
-                                                <ErrorMessage name="toLedgerId" component="div" className="text-red-500 text-xs mt-1" />
+                                                <ErrorMessage name="destinationLedgerId" component="div" className="text-red-500 text-xs mt-1" />
                                             </div>
                                         </div>
 
-                                        {/* Amount and Reference */}
+                                        {/* totalAmount and Reference */}
                                         <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-4'>
                                             <div>
                                                 <label className="mb-2.5 block text-black dark:text-white">Amount <span className='text-red-600'>*</span></label>
                                                 <Field
                                                     type="number"
-                                                    name="amount"
-                                                    placeholder="Enter Amount"
+                                                    name="totalAmount"
+                                                    placeholder="Enter totalAmount"
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white"
                                                 />
-                                                <ErrorMessage name="amount" component="div" className="text-red-500 text-xs mt-1" />
+                                                <ErrorMessage name="totalAmount" component="div" className="text-red-500 text-xs mt-1" />
                                             </div>
 
                                             <div>
@@ -319,13 +361,13 @@ const CreateReceipt = () => {
                                         </div>
 
                                         {/* Summary */}
-                                        {values.fromLedgerId && values.toLedgerId && values.amount && (
+                                        {values.ledgerId && values.destinationLedgerId && values.totalAmount && (
                                             <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                                                 <h4 className="font-semibold mb-2 text-green-800 dark:text-green-300">Receipt Summary</h4>
                                                 <div className="grid grid-cols-2 gap-2 text-sm">
-                                                    <div>Received From: {allLedgers?.find(opt => opt.value === values.fromLedgerId)?.label}</div>
-                                                    <div>Deposited To: {bankCashOptions?.find(opt => opt.value === values.toLedgerId)?.label}</div>
-                                                    <div>Amount: ₹{values.amount}</div>
+                                                    <div>Received From: {allLedgers?.find(opt => opt.value === values.ledgerId)?.label}</div>
+                                                    <div>Deposited To: {bankCashOptions?.find(opt => opt.value === values.destinationLedgerId)?.label}</div>
+                                                    <div>totalAmount: ₹{values.totalAmount}</div>
                                                     <div>Mode: {values.modeOfReceipt}</div>
                                                 </div>
                                             </div>
