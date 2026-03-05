@@ -21,6 +21,8 @@ import { toast } from 'react-toastify';
 import { TbReorder } from 'react-icons/tb';
 import { GiWool } from "react-icons/gi";
 import { GiRolledCloth } from "react-icons/gi";
+import { GiCottonFlower } from "react-icons/gi";
+import { GiBandageRoll } from "react-icons/gi";
 
 const Home = () => {
     const [unitCount, setUnitCount] = useState([]);
@@ -210,7 +212,7 @@ const kaniModeCards = [
     title: "Contemporary Pashmina",
     link: "/contemporaryPashmina",
     countKey: "contemporaryPashmina",
-    icon: <RiAlignItemBottomFill className="w-10 h-11" />,
+    icon: <GiBandageRoll  className="w-10 h-11" />,
     levelUp: true,
     isGradient: true,
     gradientColor: "from-green-500 to-green-600", 
@@ -246,7 +248,7 @@ const kaniModeCards = [
     title: "Cotton",
     link: "/cotton",
     countKey: "cotton",
-    icon: <TbReorder className="w-10 h-10" />,
+    icon: <GiCottonFlower  className="w-10 h-10" />,
     levelUp: true,
     isGradient: true,
     gradientColor: "from-yellow-600 to-yellow-700", 
