@@ -111,7 +111,7 @@ const kaniModeCards = [
     title: "Contemporary Wool",
     link: "/contemporaryWool",
     countKey: "contemporaryWool",
-    icon: <TbReorder className="w-10 h-10" />,
+    icon: <GiRolledCloth className="w-10 h-10" />,
     levelUp: true,
     isGradient: true,
     gradientColor: "from-orange-600 to-orange-700", 
