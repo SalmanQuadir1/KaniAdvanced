@@ -19,6 +19,8 @@ import { CiCalendarDate } from "react-icons/ci";
 import { VscDiffModified } from "react-icons/vsc";
 import { toast } from 'react-toastify';
 import { TbReorder } from 'react-icons/tb';
+import { GiWool } from "react-icons/gi";
+
 
 const Home = () => {
     const [unitCount, setUnitCount] = useState([]);
@@ -226,7 +228,7 @@ const kaniModeCards = [
     title: "Wool Embroidery",
     link: "/woolEmbroidery",
     countKey: "woolEmbroidery",
-    icon: <TbReorder className="w-10 h-10" />,
+    icon: <GiWool  className="w-10 h-10" />,
     levelUp: true,
     isGradient: true,
     gradientColor: "from-amber-700 to-amber-800", 
