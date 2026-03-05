@@ -21,9 +21,11 @@ const VoucherEntriesDebitView = () => {
     const customStyles = createCustomStyles(theme?.mode);
     const { token } = currentUser;
 
+    const [search, setsearch] = useState('')
+
     // Get noteType and status from URL params
     const { noteType, status } = useParams();
-    
+
     const [Voucher, setVoucher] = useState([]);
     const navigate = useNavigate();
 
@@ -54,8 +56,10 @@ const VoucherEntriesDebitView = () => {
         itemsPerPage: 10,
     });
 
-    const [searchParams]=useSearchParams();
-    const noteTypee = searchParams.get("noteType")
+    const [searchParams] = useSearchParams();
+    const queryParams = Array.from(searchParams.keys());
+    // OR get the first query parameter value
+    const firstParam = queryParams.length > 0 ? queryParams[0] : null;
 
     const getVoucher = async (page = 0, filters = {}) => {
         setisLoading(true);
@@ -67,13 +71,13 @@ const VoucherEntriesDebitView = () => {
                 status: status || filters.status
             };
 
-            const response = await fetch(`${GET_VoucherEntriessearchFORDEBIT_URL}?page=${page}&noteType=${noteTypee}`, {
+            const response = await fetch(`${GET_VoucherEntriessearchFORDEBIT_URL}?page=${page}&noteType=${firstParam}&search=${search}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
                 },
-               
+
             });
 
             if (!response.ok) {
@@ -152,10 +156,10 @@ const VoucherEntriesDebitView = () => {
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 dark:text-white whitespace-no-wrap">
                         <span className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium 
-                            ${item?.status === 'POSTED' ? 'bg-success text-success' : 
-                              item?.status === 'DRAFT' ? 'bg-warning text-warning' : 
-                              item?.status === 'CANCELLED' ? 'bg-danger text-danger' : 
-                              'bg-secondary text-secondary'}`}>
+                            ${item?.status === 'POSTED' ? 'bg-success text-success' :
+                                item?.status === 'DRAFT' ? 'bg-warning text-warning' :
+                                    item?.status === 'CANCELLED' ? 'bg-danger text-danger' :
+                                        'bg-secondary text-secondary'}`}>
                             {item?.status || '-'}
                         </span>
                     </p>
@@ -178,7 +182,7 @@ const VoucherEntriesDebitView = () => {
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 dark:text-white whitespace-no-wrap">{item?.itemCount || 0}</p>
                 </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
                         <FaPrint
                             size={17}
@@ -187,7 +191,7 @@ const VoucherEntriesDebitView = () => {
                             title="Print Entry"
                         />
                     </p>
-                </td>
+                </td> */}
             </tr>
         ));
     };
@@ -196,7 +200,7 @@ const VoucherEntriesDebitView = () => {
         console.log(values, "Search values");
         const filters = {
             voucherId: Number(id) || "",
-            noteNumber: values.noteNumber || undefined,
+            search: values.search || undefined,
             noteType: values.noteType || undefined,
             status: values.status || undefined,
             fromDate: values.fromDate || undefined,
@@ -224,7 +228,7 @@ const VoucherEntriesDebitView = () => {
                     <div className='items-center justify-center'>
                         <Formik
                             initialValues={{
-                                noteNumber: "",
+                                search: "",
                                 noteType: noteType || "",
                                 status: status || "",
                                 fromDate: "",
@@ -239,17 +243,19 @@ const VoucherEntriesDebitView = () => {
                                     <div className="mb-4.5 flex flex-wrap gap-6">
                                         {/* Note Number Field */}
                                         <div className="flex-1 min-w-[200px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">Note Number</label>
+                                            <label className="mb-2.5 block text-black dark:text-white">Search By :Note Number/ Ref No.</label>
                                             <Field
                                                 type="text"
-                                                name="noteNumber"
+                                                onChange={(e) => setsearch(e.target.value)}
+                                                value={search} // Important: bind the value to state
+                                                name="search"
                                                 placeholder="Enter Note Number"
                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                             />
                                         </div>
 
                                         {/* Note Type Dropdown */}
-                                        <div className="flex-1 min-w-[200px]">
+                                        {/* <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Note Type</label>
                                             <ReactSelect
                                                 name="noteType"
@@ -262,10 +268,10 @@ const VoucherEntriesDebitView = () => {
                                                 placeholder="Select Note Type"
                                                 isClearable
                                             />
-                                        </div>
+                                        </div> */}
 
-                                        {/* Status Dropdown */}
-                                        <div className="flex-1 min-w-[200px]">
+
+                                        {/* <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Status</label>
                                             <ReactSelect
                                                 name="status"
@@ -280,7 +286,7 @@ const VoucherEntriesDebitView = () => {
                                             />
                                         </div>
 
-                                        {/* From Date Field */}
+                                 
                                         <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">From Date</label>
                                             <Field
@@ -290,7 +296,7 @@ const VoucherEntriesDebitView = () => {
                                             />
                                         </div>
 
-                                        {/* To Date Field */}
+                                   
                                         <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">To Date</label>
                                             <Field
@@ -298,12 +304,12 @@ const VoucherEntriesDebitView = () => {
                                                 name="toDate"
                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                             />
-                                        </div>
+                                        </div> */}
                                     </div>
 
                                     <div className="mb-4.5 flex flex-wrap gap-6">
                                         {/* Ledger Name Field */}
-                                        <div className="flex-1 min-w-[200px]">
+                                        {/* <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Ledger/Party Name</label>
                                             <Field
                                                 type="text"
@@ -313,7 +319,7 @@ const VoucherEntriesDebitView = () => {
                                             />
                                         </div>
 
-                                        {/* Location Name Field */}
+                                     
                                         <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Location Name</label>
                                             <Field
@@ -322,7 +328,7 @@ const VoucherEntriesDebitView = () => {
                                                 placeholder="Enter Location Name"
                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                             />
-                                        </div>
+                                        </div> */}
                                     </div>
 
                                     <div className="flex justify-center mt-6 gap-4">
@@ -332,7 +338,7 @@ const VoucherEntriesDebitView = () => {
                                         >
                                             Search
                                         </button>
-                                        <button
+                                        {/* <button
                                             type="button"
                                             onClick={() => {
                                                 // Reset form and clear filters
@@ -341,7 +347,7 @@ const VoucherEntriesDebitView = () => {
                                             className="flex md:w-[240px] w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center bg-secondary md:p-2.5 font-medium md:text-sm text-white hover:bg-opacity-90"
                                         >
                                             Clear Filters
-                                        </button>
+                                        </button> */}
                                     </div>
                                 </Form>
                             )}
@@ -363,7 +369,7 @@ const VoucherEntriesDebitView = () => {
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Ledger/Party</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Location</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Item Count</th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+                                        {/* <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th> */}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -378,10 +384,10 @@ const VoucherEntriesDebitView = () => {
                             </table>
                         </div>
                         {pagination.totalPages > 1 && (
-                            <Pagination 
-                                totalPages={pagination.totalPages} 
-                                currentPage={pagination.currentPage + 1} 
-                                handlePageChange={handlePageChange} 
+                            <Pagination
+                                totalPages={pagination.totalPages}
+                                currentPage={pagination.currentPage + 1}
+                                handlePageChange={handlePageChange}
                             />
                         )}
                     </div>
