@@ -4,7 +4,7 @@ import { toast } from "react-hot-toast";
 import DefaultLayout from "../../layout/DefaultLayout";
 import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 import Pagination from "../../components/Pagination/Pagination";
-import {GET_COTTON_RETAIL_URL, GET_IMAGE } from "../../Constants/utils";
+import {GET_COTTON_RETAIL_URLGET_COTTON_WHOLESALE_URL, GET_IMAGE } from "../../Constants/utils";
 import { FiEdit } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
 
@@ -112,7 +112,7 @@ const CottonWholesale = () => {
       let apiUrl;
       
       // Approach 1: Try with page parameter (0-based)
-      apiUrl = `${GET_COTTON_RETAIL_URL}?page=${pagination.currentPage}&size=${pagination.itemsPerPage}`;
+      apiUrl = `${GET_COTTON_WHOLESALE_URL}?page=${pagination.currentPage}&size=${pagination.itemsPerPage}`;
       console.log("Trying API URL:", apiUrl);
       
       const response = await fetch(apiUrl, {
@@ -159,7 +159,7 @@ const CottonWholesale = () => {
       let response;
       
       // Try 1: Without any parameters
-      apiUrl = `${GET_COTTON_RETAIL_URL}`;
+      apiUrl = `${GET_COTTON_WHOLESALE_URL}`;
       console.log("Trying without parameters:", apiUrl);
       
       response = await fetch(apiUrl, {
@@ -178,7 +178,7 @@ const CottonWholesale = () => {
       }
       
       // Try 2: With size only
-      apiUrl = `${GET_COTTON_RETAIL_URL}?size=${pagination.itemsPerPage}`;
+      apiUrl = `${GET_COTTON_WHOLESALE_URL}?size=${pagination.itemsPerPage}`;
       console.log("Trying with size only:", apiUrl);
       
       response = await fetch(apiUrl, {
@@ -198,7 +198,7 @@ const CottonWholesale = () => {
       
       // Try 3: With 1-based indexing (page + 1)
       const pageOneBased = pagination.currentPage + 1;
-      apiUrl = `${GET_COTTON_RETAIL_URL}?page=${pageOneBased}&size=${pagination.itemsPerPage}`;
+      apiUrl = `${GET_COTTON_WHOLESALE_URL}?page=${pageOneBased}&size=${pagination.itemsPerPage}`;
       console.log("Trying with 1-based indexing:", apiUrl);
       
       response = await fetch(apiUrl, {
