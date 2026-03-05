@@ -19,6 +19,10 @@ import { CiCalendarDate } from "react-icons/ci";
 import { VscDiffModified } from "react-icons/vsc";
 import { FaBook } from "react-icons/fa6";
 import { TbReorder } from "react-icons/tb";
+import { GiWool } from "react-icons/gi";
+import { GiRolledCloth } from "react-icons/gi";
+import { GiCottonFlower } from "react-icons/gi";
+import { GiBandageRoll } from "react-icons/gi";
 
 const Chart = () => {
   const [unitCount, setUnitCount] = useState([]);
@@ -80,7 +84,7 @@ const kaniModeCards = [
     title: "Contemporary Pashmina",
     link: "/contemporaryPashmina",
     countKey: "contemporaryPashmina",
-    icon: <RiAlignItemBottomFill className="w-10 h-11" />,
+    icon: <GiBandageRoll className="w-10 h-11" />,
     levelUp: true,
     isGradient: true,
     gradientColor: "from-green-500 to-green-600", 
