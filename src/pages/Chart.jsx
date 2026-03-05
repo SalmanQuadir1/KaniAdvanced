@@ -103,6 +103,24 @@ const kaniModeCards = [
     isGradient: true,
     gradientColor: "from-amber-700 to-amber-800", 
   },
+   {
+    title: "Contemporary Wool",
+    link: "/contemporaryWool",
+    countKey: "contemporaryWool",
+    icon: <TbReorder className="w-10 h-10" />,
+    levelUp: true,
+    isGradient: true,
+    gradientColor: "from-orange-600 to-orange-700", 
+  },
+   {
+    title: "Cotton",
+    link: "/cotton",
+    countKey: "cotton",
+    icon: <TbReorder className="w-10 h-10" />,
+    levelUp: true,
+    isGradient: true,
+    gradientColor: "from-yellow-600 to-yellow-700", 
+  },
   // {
   //   title: "Client Orders",
   //   link: "/ClientOrders",
@@ -110,27 +128,7 @@ const kaniModeCards = [
   //   icon: <RiUserReceived2Fill className="w-10 h-10" />,
   //   levelUp: true,
   // },
-  {
-    title: "Retail Client Orders",
-    link: "/RetailClientOrders",
-    countKey: "RetailClientOrders",
-    icon:  <AiOutlinePartition className="w-10 h-10" />,
-    levelUp: true,
-  },
-   {
-    title: "Wholesale Client Orders",
-    link: "/WholesaleClientOrders",
-    countKey: "WholesaleClientOrders",
-    icon:  <RiAlignItemBottomFill className="w-10 h-10" />,
-    levelUp: true,
-  },
-  {
-    title: "Klc Orders",
-    link: "/KlcOrders",
-    countKey: "KlcOrders",
-    icon:  <TbReorder className="w-10 h-10" />,
-    levelUp: true,
-  },
+  
   
  
 ];
