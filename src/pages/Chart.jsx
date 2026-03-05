@@ -120,7 +120,7 @@ const kaniModeCards = [
     title: "Cotton",
     link: "/cotton",
     countKey: "cotton",
-    icon: <TbReorder className="w-10 h-10" />,
+    icon: <GiCottonFlower className="w-10 h-10" />,
     levelUp: true,
     isGradient: true,
     gradientColor: "from-yellow-600 to-yellow-700", 
