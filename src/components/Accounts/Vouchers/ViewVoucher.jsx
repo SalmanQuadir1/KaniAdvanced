@@ -260,7 +260,7 @@ const ViewVoucher = () => {
                             } else if (item.name?.toLowerCase() === "receipt") {
                                 path = `/voucher/createreceipt/${item.id}`;
                             }
-                            else if (item.name?.toLowerCase() === "stock journel") {
+                            else if (item.name?.toLowerCase() === "stock journal") {
                                 path = `/voucher/createstockJournel/${item.id}`;
                             }
 
