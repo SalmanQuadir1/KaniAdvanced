@@ -30,6 +30,10 @@ import CreateReceipt from './components/Accounts/Vouchers/CreateReceipt.jsx';
 import CreateVoucherPurchase from './components/Accounts/Vouchers/CreateVoucherPurchase.jsx';
 import VoucherEntriesView from './components/Accounts/Vouchers/VoucherEntriesView.jsx';
 
+import StockJournalView from './components/Accounts/Vouchers/StockJournalView.jsx';
+
+import VoucherEntriesDebitView from './components/Accounts/Vouchers/VoucherEntriesDebitView.jsx';
+
 import VoucherEntriesViewPayment from './components/Accounts/Vouchers/VoucherEntriesViewPayment.jsx';
 
 import PrintEntryPayment from './components/Accounts/Vouchers/PrintEntryPayment.jsx';
@@ -583,6 +587,28 @@ function App() {
                 <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
                 <PageTitle title="Voucher Entries" />
                 <VoucherEntriesView />
+              </>
+            }
+          />
+
+           <Route
+            path="/voucherEntriesStockJournal/:id"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Stock Journal Entries" />
+                <StockJournalView />
+              </>
+            }
+          />
+
+           <Route
+            path="/voucherEntriesView/:id"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Stock Journal Entries" />
+                <VoucherEntriesDebitView />
               </>
             }
           />

@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import ReactSelect from 'react-select';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import { useSelector } from 'react-redux';
-import { ADD_STOCKJOURNEL_URL, GET_QUANTITY, GET_VoucherNos_URL, customStyles as createCustomStyles } from '../../Constants/utils';
+import { ADD_STOCKJOURNELL_URL, ADD_STOCKJOURNEL_URL, GET_QUANTITY, GET_VoucherNos_URL, customStyles as createCustomStyles } from '../../Constants/utils';
 import useorder from '../../hooks/useOrder';
 import { toast } from 'react-toastify';
 import { FaTrash, FaPlus, FaExchangeAlt } from 'react-icons/fa';
@@ -163,15 +163,15 @@ const AddStockJournels = () => {
     //   .required('Quantity used is required')
     //   .min(1, 'Quantity used must be at least 1')
     //   .max(Yup.ref('availableQuantity'), 'Quantity used cannot exceed available quantity'),
-    // destinationRows: Yup.array().of(
-    //   Yup.object().shape({
-    //     destProductId: Yup.object().required('Destination Product is required'),
-    //     destinationLocation: Yup.object().required('Destination Location is required'),
-    //     transferQuantity: Yup.number()
-    //       .required('Transfer quantity is required')
-    //       .min(1, 'Transfer quantity must be at least 1')
-    //   })
-    // )
+    destinationRows: Yup.array().of(
+      Yup.object().shape({
+        destProductId: Yup.object().required('Destination Product is required'),
+        destinationLocation: Yup.object().required('Destination Location is required'),
+        transferQuantity: Yup.number()
+          .required('Transfer quantity is required')
+          .min(1, 'Transfer quantity must be at least 1')
+      })
+    )
   });
 
   const fetchQuantityForSource = async (productId, locationId) => {
@@ -214,7 +214,7 @@ const AddStockJournels = () => {
   const calculateSourceAmount = () => {
     const cost = sourceProduct?.cost || 0;
     const qty = Number(sourceQuantity) || 0;
-    return (cost * qty).toFixed(2);
+    return Number((cost * qty).toFixed(2));
   };
 
   const calculateDestinationAmount = (row) => {
@@ -226,7 +226,7 @@ const AddStockJournels = () => {
     const otherCost = Number(row.otherCost) || 0;
 
     const totalAdditionalCost = embroideryCost + dyeingCost + tailoringCost + otherCost;
-    return ((cost * transferQty) + totalAdditionalCost).toFixed(2);
+    return Number(((cost * transferQty) + totalAdditionalCost).toFixed(2));
   };
 
   const onSubmit = async (values, { setSubmitting, resetForm }) => {
@@ -254,38 +254,38 @@ const AddStockJournels = () => {
     }
 
     const formValues = {
-      voucherNo: values?.voucherNo,
-      source: {
-        productId: sourceProduct?.value,
-        locationId: sourceLocation?.value,
-        quantityUsed: Number(values.sourceQuantity),
-        availableQuantity: availableQuantity,
-        sourceAmount: calculateSourceAmount()
-      },
-      destinations: destinationRows.map((row) => ({
-        productId: row.destProductId?.value,
-        locationId: row.destinationLocation?.value,
-        transferQty: Number(row.transferQuantity),
-        amount: calculateDestinationAmount(row),
-        costs: {
-          embroidery: Number(row.embroideryCost) || 0,
-          dyeing: Number(row.dyeingCost) || 0,
-          tailoring: Number(row.tailoringCost) || 0,
-          other: Number(row.otherCost) || 0
-        },
-        totalAdditionalCost: (
-          (Number(row.embroideryCost) || 0) +
-          (Number(row.dyeingCost) || 0) +
-          (Number(row.tailoringCost) || 0) +
-          (Number(row.otherCost) || 0)
-        ).toFixed(2)
+      stockVoucherNo: values?.voucherNo,
+     
+        fromProductId: sourceProduct?.value,
+        fromLocationId: sourceLocation?.value,
+        fromQty: Number(values.sourceQuantity),
+        // availableQuantity: availableQuantity,
+        fromValue: calculateSourceAmount(),
+    
+      toStockVoucher: destinationRows.map((row) => ({
+        toProductId: row.destProductId?.value,
+        toLocationId: row.destinationLocation?.value,
+        toQty: Number(row.transferQuantity),
+        toValue: calculateDestinationAmount(row),
+        // costs: {
+        //   embroidery: Number(row.embroideryCost) || 0,
+        //   dyeing: Number(row.dyeingCost) || 0,
+        //   tailoring: Number(row.tailoringCost) || 0,
+        //   other: Number(row.otherCost) || 0
+        // },
+        // totalAdditionalCost: (
+        //   (Number(row.embroideryCost) || 0) +
+        //   (Number(row.dyeingCost) || 0) +
+        //   (Number(row.tailoringCost) || 0) +
+        //   (Number(row.otherCost) || 0)
+        // ).toFixed(2)
       }))
     };
 
     console.log("Form Values:", formValues);
 
     try {
-      const url = `${ADD_STOCKJOURNEL_URL}`;
+      const url = `${ADD_STOCKJOURNELL_URL}`;
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -298,22 +298,23 @@ const AddStockJournels = () => {
       const data = await response.json();
       if (response.ok) {
         toast.success(`Stock Journal created successfully`);
-        await getVoucherNumber();
-        setSourceProduct(null);
-        setSourceLocation(null);
-        setAvailableQuantity(0);
-        setSourceQuantity("");
-        setDestinationRows([{
-          id: uuidv4(),
-          destProductId: "",
-          destinationLocation: "",
-          transferQuantity: "",
-          embroideryCost: 0,
-          dyeingCost: 0,
-          tailoringCost: 0,
-          otherCost: 0
-        }]);
-        resetForm();
+        navigate("/chart")
+        // await getVoucherNumber();
+        // setSourceProduct(null);
+        // setSourceLocation(null);
+        // setAvailableQuantity(0);
+        // setSourceQuantity("");
+        // setDestinationRows([{
+        //   id: uuidv4(),
+        //   destProductId: "",
+        //   destinationLocation: "",
+        //   transferQuantity: "",
+        //   embroideryCost: 0,
+        //   dyeingCost: 0,
+        //   tailoringCost: 0,
+        //   otherCost: 0
+        // }]);
+        // resetForm();
       } else {
         toast.error(`${data.errorMessage}`);
       }
@@ -365,8 +366,8 @@ const AddStockJournels = () => {
                       <Field
                         name="voucherNo"
                         type="text"
-                        readOnly
-                        className="w-full md:w-64 pl-10 pr-4 py-3 bg-gray-100 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-300 cursor-not-allowed"
+                      
+                        className="w-full md:w-64 pl-10 pr-4 py-3 bg-gray-100 dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-xl text-gray-700 dark:text-gray-300 "
                       />
                       <div className="absolute left-3 top-1/2 transform -translate-y-1/2">
                         <span className="text-gray-400">#</span>

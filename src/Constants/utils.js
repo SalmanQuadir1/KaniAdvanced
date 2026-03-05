@@ -109,6 +109,10 @@ export const DELETE_INVENTORY_URL = `${BASE_URL}/inventory`
 
 
 //stock journel url
+export const ADD_STOCKJOURNELL_URL = `${BASE_URL}/stock-voucher/transfer`
+export const VIEW_STOCKJOURNALL_URL = `${BASE_URL}/stock-voucher/all`
+
+
 export const ADD_STOCKJOURNEL_URL = `${BASE_URL}/stockjournals/add`
 export const VIEW_VOUCHERNOS = `${BASE_URL}/stockjournals/voucherNos`
 export const VIEW_STOCKJOURNALCREATED = `${BASE_URL}/stockjournals/search`
@@ -499,6 +503,9 @@ export const GET_VoucherName_URL = `${BASE_URL}/voucher/dropdown`;
 
 export const GET_VoucherNameFromType_URL = `${BASE_URL}/voucher/names/by-type/`;
 export const GET_VoucherEntriessearch_URL = `${BASE_URL}/entryPayment/voucher`;
+
+export const GET_VoucherEntriessearchFORDEBIT_URL = `${BASE_URL}/credit-debit-note/all-vouchers/credit-debit-notes`;
+
 export const GET_VoucherEntriessearchPayment_URL = `${BASE_URL}/api/voucher/payment-voucher`;
 
 // entry payment receipts
