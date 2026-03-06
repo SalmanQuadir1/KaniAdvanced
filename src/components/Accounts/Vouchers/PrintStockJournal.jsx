@@ -80,16 +80,18 @@ const PrintStockJournal = () => {
 
         // Default to srinagar if location param is provided, otherwise check stockData
         if (location) {
+            
             return addresses[location] || addresses.srinagar;
         }
 
         // Use location from stock data if available
-        if (stockData?.location?.city?.toLowerCase().includes('delhi')) {
+        if (stockData?.location?.locationName?.toLowerCase().includes('delhi')) {
             return addresses.delhi;
         }
 
         return addresses.srinagar;
     };
+console.log(stockData,"6666666");
 
     const companyAddress = getCompanyAddress();
 
@@ -289,7 +291,7 @@ const PrintStockJournal = () => {
                             <strong>{stockData.location?.locationName || 'N/A'}</strong><br />
                             {stockData.location?.address || ''}<br />
                             {stockData.location?.city || ''}, {stockData.location?.state || ''} - {stockData.location?.pinCode || ''}<br />
-                            <strong>GSTIN:</strong> {stockData.location?.gstin || 'N/A'}
+                            {/* <strong>GSTIN:</strong> {stockData.location?.gstin || 'N/A'} */}
                         </td>
                         <td style={styles.tableCell}>
                             <strong>{stockData.product?.productDescription || 'N/A'}</strong><br />
@@ -323,7 +325,7 @@ const PrintStockJournal = () => {
                                     <strong>{line.location?.locationName || 'N/A'}</strong><br />
                                     {line.location?.address || ''}<br />
                                     {line.location?.city || ''}, {line.location?.state || ''} - {line.location?.pinCode || ''}<br />
-                                    <strong>GSTIN:</strong> {line.location?.gstin || 'N/A'}
+                                    {/* <strong>GSTIN:</strong> {line.location?.gstin || 'N/A'} */}
                                 </td>
                                 <td style={styles.tableCell}>
                                     <strong>{line.product?.productDescription || 'N/A'}</strong><br />

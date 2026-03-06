@@ -76,7 +76,7 @@ const CreateDebitNote = () => {
 
     const GetVoucherNos = async () => {
         try {
-            const response = await fetch(`${GET_VoucherNos_URL}/${Vouchers.id}`, {
+            const response = await fetch(`${GET_VoucherNos_URL}/${Vouchers.id}type=DEBIT_NOTE`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -253,7 +253,7 @@ const CreateDebitNote = () => {
     };
 
     const validationSchema = Yup.object().shape({
-        recieptNumber: Yup.string().required('Voucher number is required'),
+        noteNumber: Yup.string().required('Voucher number is required'),
         ledgerId: Yup.string().required('Supplier account is required'),
         date: Yup.date().required('Date is required'),
     });
@@ -298,10 +298,11 @@ const CreateDebitNote = () => {
             <div>
                 <Formik
                     initialValues={{
-                        recieptNumber: voucherNos,
+                        noteNumber: voucherNos,
                         date: '',
                         voucherId: Number(id),
                         ledgerId: "",
+                          locationId: Vouchers?.defGstRegist?.id || "",
                         purchaseVoucherId: "",
                         totalWithoutGst:null,
                         currentBalance: "",
@@ -320,7 +321,7 @@ const CreateDebitNote = () => {
                         totalCgst: 0,
                         totalGst: 0,
                         items: [{
-                            productsId: null,
+                            productId: null,
                             mrp: 0,
                             rate: 0,
                             exclusiveGst: 0,
@@ -424,7 +425,7 @@ const CreateDebitNote = () => {
                                 currentDiscount
                             );
 
-                            setFieldValue(`items.${index}.productsId`, option?.obj.id);
+                            setFieldValue(`items.${index}.productId`, option?.obj.id);
                             setFieldValue(`items.${index}.mrp`, mrp);
                             setFieldValue(`items.${index}.exclusiveGst`, gstCalculation.inclusivePrice);
                             setFieldValue(`items.${index}.rate`, gstCalculation.inclusivePrice);
@@ -443,9 +444,9 @@ const CreateDebitNote = () => {
                             const clampedDiscount = discount > 100 ? 100 : discount;
                             setFieldValue(`items.${index}.discount`, clampedDiscount);
 
-                            if (values.items[index].productsId) {
+                            if (values.items[index].productId) {
                                 const mrp = values.items[index].mrp || 0;
-                                const product = allProducts.find(p => p.value === values.items[index].productsId);
+                                const product = allProducts.find(p => p.value === values.items[index].productId);
                                 const hsnCode = product?.hsnCode || {};
 
                                 const gstCalculation = calculateGSTForDebitNote(
@@ -494,11 +495,11 @@ const CreateDebitNote = () => {
                                                     <label className="mb-2.5 block text-black dark:text-white">Debit Note Number</label>
                                                     <Field
                                                         type="text"
-                                                        name="recieptNumber"
+                                                        name="noteNumber"
                                                         placeholder="Enter No"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white"
                                                     />
-                                                    <ErrorMessage name="recieptNumber" component="div" className="text-red-500" />
+                                                    <ErrorMessage name="noteNumber" component="div" className="text-red-500" />
                                                 </div>
 
                                                 <div className="flex-1 min-w-[200px]">
@@ -648,8 +649,8 @@ const CreateDebitNote = () => {
                                                                             <td className="border-b py-4 px-3">
                                                                                 {selectedLedger ? (
                                                                                     <ReactSelect
-                                                                                        name={`items.${index}.productsId`}
-                                                                                        value={allProducts.find(p => p.value === entry.productsId)}
+                                                                                        name={`items.${index}.productId`}
+                                                                                        value={allProducts.find(p => p.value === entry.productId)}
                                                                                         onChange={(option) => handleProductSelect(option, index)}
                                                                                         options={allProducts}
                                                                                         placeholder="Select Product"
@@ -740,7 +741,7 @@ const CreateDebitNote = () => {
                                                             type="button"
                                                             onClick={() => push({
                                                                 id: uuidv4(),
-                                                                productsId: null,
+                                                                productId: null,
                                                                 mrp: 0,
                                                                 rate: 0,
                                                                 exclusiveGst: 0,

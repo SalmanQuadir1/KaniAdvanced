@@ -17,19 +17,19 @@ const CreateReceipt = () => {
     const navigate = useNavigate()
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
-    const { GetVoucherById, Vouchers,  } = useVoucher();
+    const { GetVoucherById, Vouchers, } = useVoucher();
     const [voucherNos, setvoucherNos] = useState('')
     const { getLedger, Ledger } = useLedger();
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
-  console.log(Ledger,"3333333333333");
-     const SourceLedgers = Ledger.filter(ledg => 
-    ledg?.name && 
-    (ledg?.ledgerType?.toLowerCase() === 'customer' || ledg?.ledgerType?.toLowerCase() === 'supplier')
-);
+    console.log(Ledger, "3333333333333");
+    const SourceLedgers = Ledger.filter(ledg =>
+        ledg?.name &&
+        (ledg?.ledgerType?.toLowerCase() === 'customer' || ledg?.ledgerType?.toLowerCase() === 'supplier')
+    );
     // Get all ledgers except those with credit balance for "from" account
-  
-    
+
+
     const allLedgers = SourceLedgers?.map(ledg => ({
         value: ledg?.id,
         label: `${ledg?.name} -${ledg.ledgerType}`,
@@ -39,7 +39,7 @@ const CreateReceipt = () => {
     }));
 
     // Bank and Cash ledgers for "to" account (where money is received)
-    const BankCashLedgers = Ledger.filter(ledg => 
+    const BankCashLedgers = Ledger.filter(ledg =>
         ledg?.name && (ledg.name.toLowerCase().includes('bank') || ledg.name.toLowerCase().includes('cash'))
     );
 
@@ -58,7 +58,7 @@ const CreateReceipt = () => {
 
     const GetVoucherNos = async () => {
         try {
-            const response = await fetch(`${GET_VoucherNos_URL}/${Vouchers.id}`, {
+            const response = await fetch(`${GET_VoucherNos_URL}/${Vouchers.id}type=RECEIPT_NOTE`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -87,7 +87,7 @@ const CreateReceipt = () => {
     }, [Vouchers.id]);
 
     const validationSchema = Yup.object().shape({
-        recieptNumber: Yup.string().required('Voucher number is required'),
+        noteNumber: Yup.string().required('Voucher number is required'),
         ledgerId: Yup.string().required('Received from account is required'),
         destinationLedgerId: Yup.string().required('Deposited to account is required'),
         totalAmount: Yup.number().required('totalAmount is required').positive('totalAmount must be positive'),
@@ -103,39 +103,39 @@ const CreateReceipt = () => {
         { value: 'Online', label: 'Online' },
     ];
 
-     const handleCreateVoucher = async (values) => {
-            console.log(values, "vouchercreate");
-    
+    const handleCreateVoucher = async (values) => {
+        console.log(values, "vouchercreate");
+
+        try {
+            const response = await fetch(`${CREATE_DEBITNOTE_URL}/${id}/create`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(values)
+            });
+
+            let data;
             try {
-                const response = await fetch(`${CREATE_DEBITNOTE_URL}/${id}/create`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    },
-                    body: JSON.stringify(values)
-                });
-    
-                let data;
-                try {
-                    data = await response.json();
-                } catch {
-                    console.log(data, "catccccccch");
-                    data = { errorMessage: response.errorMessage };
-                }
-                
-                if (response.ok) {
-                    toast.success(`Receipt added successfully`);
-                    navigate("/Vouchers/view");
-                } else {
-                    console.log("i am in error else ");
-                    toast.error(`${data.errorMessage}`);
-                }
-            } catch (error) {
-                console.error(error);
-                toast.error("An error occurred");
+                data = await response.json();
+            } catch {
+                console.log(data, "catccccccch");
+                data = { errorMessage: response.errorMessage };
             }
-        };
+
+            if (response.ok) {
+                toast.success(`Receipt added successfully`);
+                navigate("/Vouchers/view");
+            } else {
+                console.log("i am in error else ");
+                toast.error(`${data.errorMessage}`);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("An error occurred");
+        }
+    };
 
     return (
         <DefaultLayout>
@@ -143,9 +143,10 @@ const CreateReceipt = () => {
             <div>
                 <Formik
                     initialValues={{
-                        recieptNumber: voucherNos,
+                        noteNumber: voucherNos,
                         date: '',
                         voucherId: Number(id),
+                        locationId: Vouchers?.defGstRegist?.id || "",
                         ledgerId: "",
                         destinationLedgerId: "",
                         totalAmount: "",
@@ -177,11 +178,11 @@ const CreateReceipt = () => {
                                                 <label className="mb-2.5 block text-black dark:text-white">Receipt Number</label>
                                                 <Field
                                                     type="text"
-                                                    name="recieptNumber"
+                                                    name="noteNumber"
                                                     placeholder="Enter No"
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white"
                                                 />
-                                                <ErrorMessage name="recieptNumber" component="div" className="text-red-500" />
+                                                <ErrorMessage name="noteNumber" component="div" className="text-red-500" />
                                             </div>
 
                                             <div>

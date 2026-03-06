@@ -141,6 +141,8 @@ const VoucherEntriesDebitView = () => {
         }
 
         const startingSerialNumber = (pagination.currentPage * pagination.itemsPerPage) + 1;
+        console.log(Voucher,"5556");
+        
 
         return Voucher.map((item, index) => (
             <tr key={item.id || index} className='bg-white dark:bg-slate-700 dark:text-white hover:bg-gray-50 dark:hover:bg-slate-600'>
@@ -182,16 +184,16 @@ const VoucherEntriesDebitView = () => {
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 dark:text-white whitespace-no-wrap">{item?.itemCount || 0}</p>
                 </td>
-                {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
                         <FaPrint
                             size={17}
                             className="text-teal-500 hover:text-teal-700 mx-2 cursor-pointer"
-                            onClick={() => navigate(`/printentrypayment/${item.id}/${item.gstRegistration}`)}
+                            onClick={() => navigate(`/printentries/${item?.id}`)}
                             title="Print Entry"
                         />
                     </p>
-                </td> */}
+                </td>
             </tr>
         ));
     };
@@ -369,7 +371,7 @@ const VoucherEntriesDebitView = () => {
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Ledger/Party</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Location</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Item Count</th>
-                                        {/* <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th> */}
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>

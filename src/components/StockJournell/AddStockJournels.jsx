@@ -11,11 +11,13 @@ import { toast } from 'react-toastify';
 import { FaTrash, FaPlus, FaExchangeAlt } from 'react-icons/fa';
 import { MdContentCopy } from 'react-icons/md';
 import { v4 as uuidv4 } from 'uuid';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import useVoucher from '../../hooks/useVoucher';
 
 const AddStockJournels = () => {
   const { id } = useParams();
+
+  const navigate = useNavigate()
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const { token } = currentUser;
   const units = useSelector(state => state?.nonPersisted?.unit);
