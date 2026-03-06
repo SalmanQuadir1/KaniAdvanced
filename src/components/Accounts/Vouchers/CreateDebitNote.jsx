@@ -76,7 +76,7 @@ const CreateDebitNote = () => {
 
     const GetVoucherNos = async () => {
         try {
-            const response = await fetch(`${GET_VoucherNos_URL}/${Vouchers.id}type=DEBIT_NOTE`, {
+            const response = await fetch(`${GET_VoucherNos_URL}/${Vouchers.id}?type=DEBIT_NOTE`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

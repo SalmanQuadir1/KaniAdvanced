@@ -58,7 +58,7 @@ const CreateReceipt = () => {
 
     const GetVoucherNos = async () => {
         try {
-            const response = await fetch(`${GET_VoucherNos_URL}/${Vouchers.id}type=RECEIPT_NOTE`, {
+            const response = await fetch(`${GET_VoucherNos_URL}/${Vouchers.id}?type=RECEIPT_NOTE`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
