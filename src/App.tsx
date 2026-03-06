@@ -32,6 +32,8 @@ import VoucherEntriesView from './components/Accounts/Vouchers/VoucherEntriesVie
 
 import StockJournalView from './components/Accounts/Vouchers/StockJournalView.jsx';
 
+import PrintStockJournal from './components/Accounts/Vouchers/PrintStockJournal.jsx';
+
 import VoucherEntriesDebitView from './components/Accounts/Vouchers/VoucherEntriesDebitView.jsx';
 
 import VoucherEntriesViewPayment from './components/Accounts/Vouchers/VoucherEntriesViewPayment.jsx';
@@ -598,6 +600,18 @@ function App() {
                 <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
                 <PageTitle title="Stock Journal Entries" />
                 <StockJournalView />
+              </>
+            }
+          />
+
+
+             <Route
+            path="/printstockjournal/:id"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Print Journal Entries" />
+                <PrintStockJournal />
               </>
             }
           />

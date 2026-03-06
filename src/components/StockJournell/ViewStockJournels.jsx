@@ -135,7 +135,7 @@ const ViewStockJournels = () => {
 
 
 
-        {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
+        <td className="px-5 py-5 border-b border-gray-200 text-sm">
           <div className="flex items-center">
             <FiEdit
               size={17}
@@ -150,7 +150,7 @@ const ViewStockJournels = () => {
               title='Delete Material PO'
             />
           </div>
-        </td> */}
+        </td>
       </tr>
     ));
   };
