@@ -423,8 +423,8 @@ const PrintCreditDebit = () => {
                     <tr>
                         <td style={styles.tableHeader}>Reference No.</td>
                         <td style={styles.tableCell}>{noteData.referenceNumber || '-'}</td>
-                        <td style={styles.tableHeader}>Ledger ID</td>
-                        <td style={styles.tableCell}>{noteData.ledgerId || '-'}</td>
+                        <td style={styles.tableHeader}>Ledger </td>
+                        <td style={styles.tableCell}>{noteData.ledgerName || '-'}</td>
                     </tr>
                     {/* <tr>
                         <td style={styles.tableHeader}>Reason</td>
@@ -438,6 +438,67 @@ const PrintCreditDebit = () => {
             </table>
 
             {/* Items Table */}
+          {/* Items Table */}
+{
+    noteData.noteType === "RECEIPT_NOTE" ? (
+        <>
+            <div style={styles.sectionTitle}>RECEIPT DETAILS</div>
+            <table style={styles.table}>
+                <thead>
+                    <tr>
+                        <th style={styles.tableHeader} width="30%">From Ledger</th>
+                        <th style={styles.tableHeader} width="30%">To Ledger</th>
+                        <th style={styles.tableHeader} width="20%">Amount</th>
+                        <th style={styles.tableHeader} width="20%">Narration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style={styles.tableCell}>
+                            <strong>Ledger NAME:</strong> {noteData.ledgerName || '-'}<br/>
+                            {/* You can fetch ledger name from your API if available */}
+                        </td>
+                        <td style={styles.tableCell}>
+                            <strong>To Ledger NAME:</strong> {noteData.destinationLedgerName || '-'}<br/>
+                            {/* You can fetch destination ledger name from your API if available */}
+                        </td>
+                        <td style={styles.tableCell}>
+                            <strong>₹{formatCurrency(noteData.totalAmount)}</strong>
+                        </td>
+                        <td style={styles.tableCell}>
+                            {noteData.narration || '-'}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            {/* Show additional receipt details if available */}
+            {(noteData.chequeNumber || noteData.bankName || noteData.transactionId) && (
+                <>
+                    <div style={styles.sectionTitle}>PAYMENT DETAILS</div>
+                    <table style={styles.table}>
+                        <thead>
+                            <tr>
+                                <th style={styles.tableHeader} width="25%">Cheque No.</th>
+                                <th style={styles.tableHeader} width="25%">Bank Name</th>
+                                <th style={styles.tableHeader} width="25%">Transaction ID</th>
+                                <th style={styles.tableHeader} width="25%">Settlement Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style={styles.tableCell}>{noteData.chequeNumber || '-'}</td>
+                                <td style={styles.tableCell}>{noteData.bankName || '-'}</td>
+                                <td style={styles.tableCell}>{noteData.transactionId || '-'}</td>
+                                <td style={styles.tableCell}>{formatDate(noteData.settlementDate)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </>
+            )}
+        </>
+    ) : (
+        <>
             <div style={styles.sectionTitle}>ITEM DETAILS</div>
             <table style={styles.table}>
                 <thead>
@@ -460,7 +521,7 @@ const PrintCreditDebit = () => {
                                 <td style={styles.tableCell}>{index + 1}</td>
                                 <td style={styles.tableCell}>{item.itemType || 'PRODUCT'}</td>
                                 <td style={styles.tableCell}>{item.description || '-'}</td>
-                                <td style={styles.tableCell}>{item?.hsnCode?.hsnCodeName || '-'}</td>
+                                <td style={styles.tableCell}>{item?.hsnCode?.hsnCodeName || item.hsnCode || '-'}</td>
                                 <td style={styles.tableCell}>{item.quantity || 0}</td>
                                 <td style={styles.tableCell}>₹{formatCurrency(item.rate)}</td>
                                 <td style={styles.tableCell}>{item.discountPercentage || 0}%</td>
@@ -475,6 +536,10 @@ const PrintCreditDebit = () => {
                     )}
                 </tbody>
             </table>
+        </>
+    )
+}
+           
 
             {/* Tax Details Table */}
             {(noteData.totalCgst > 0 || noteData.totalSgst > 0 || noteData.totalIgst > 0) && (
