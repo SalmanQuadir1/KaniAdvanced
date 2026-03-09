@@ -504,7 +504,7 @@ const CreateVoucher = () => {
             setloadingOrders(true);
             try {
                 const supplierId = option.obj.supplierId;
-                const response = await fetch(`http://localhost:8081/order/by-type?id=${supplierId}&type=supplier`, {
+                const response = await fetch(`${BASE_URL}/order/by-type?id=${supplierId}&type=supplier`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
@@ -546,7 +546,7 @@ const CreateVoucher = () => {
             setloadingOrders(true);
             try {
                 const customerId = option?.obj.customerId;
-                const response = await fetch(`http://localhost:8081/order/by-type?id=${customerId}&type=customer`, {
+                const response = await fetch(`${BASE_URL}/order/by-type?id=${customerId}&type=customer`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",

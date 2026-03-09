@@ -298,7 +298,7 @@ const CreateVoucherPurchase = () => {
         setloadingOrders(true);
         try {
             // const supplierId = option.obj.supplier.id;
-            const response = await fetch(`http://localhost:8081/order/by-type?id=${supplierId}&type=supplier`, {
+            const response = await fetch(`${BASE_URL}/order/by-type?id=${supplierId}&type=supplier`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
