@@ -719,7 +719,7 @@ const ContemporarySuppOrder = () => {
           <div className="flex gap-2">
             <button
               type="button"
-              onClick={() => navigate("/filter-suppliers")}
+              onClick={() => navigate("/contemporarySuppliers")}
               className="inline-flex items-center gap-2 rounded-md bg-gray-200 dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
             >
               Back to Suppliers

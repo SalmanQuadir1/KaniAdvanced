@@ -157,7 +157,7 @@ const PapierMacheSuppliers = () => {
   // Add new handler for supplier navigation
   const handleViewSupplier = (supplierId) => {
     if (supplierId) {
-      navigate(`/supplier-order/${supplierId}`);
+      navigate(`/papierMacheSuppliers/${supplierId}`);
     } else {
       toast.error("Supplier ID not found");
     }

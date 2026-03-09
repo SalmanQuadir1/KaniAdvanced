@@ -4,11 +4,11 @@ import { toast } from "react-hot-toast";
 import DefaultLayout from "../../layout/DefaultLayout";
 import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 import Pagination from "../../components/Pagination/Pagination";
-import { GET_CONTWOOL_SUPP_URL, GET_IMAGE } from "../../Constants/utils";
+import { GET_SUPP_PAPIERMACHE_URL, GET_IMAGE } from "../../Constants/utils";
 import { FiEdit } from "react-icons/fi";
 import { useNavigate, useParams } from 'react-router-dom';
 
-const ContWoolSuppOrders = () => {
+const PapierMachieSuppOrders = () => {
   const { id: supplierId } = useParams();
   const navigate = useNavigate();
   
@@ -197,7 +197,7 @@ const ContWoolSuppOrders = () => {
 
     try {
       // FIXED: Include supplierId in the URL
-      const apiUrl = `${GET_CONTWOOL_SUPP_URL}/${supplierId}?page=${pagination.currentPage}&size=${pagination.itemsPerPage}`;
+      const apiUrl = `${GET_SUPP_PAPIERMACHE_URL}/${supplierId}?page=${pagination.currentPage}&size=${pagination.itemsPerPage}`;
       console.log("Fetching from correct URL:", apiUrl);
       
       const response = await fetch(apiUrl, {
@@ -212,7 +212,7 @@ const ContWoolSuppOrders = () => {
         // If 404, try without pagination first
         if (response.status === 404) {
           console.log("Trying without pagination...");
-          const apiUrlWithoutPagination = `${GET_CONTWOOL_SUPP_URL}/${supplierId}`;
+          const apiUrlWithoutPagination = `${GET_SUPP_PAPIERMACHE_URL}/${supplierId}`;
           const response2 = await fetch(apiUrlWithoutPagination, {
             method: "GET",
             headers: {
@@ -719,7 +719,7 @@ const ContWoolSuppOrders = () => {
           <div className="flex gap-2">
             <button
               type="button"
-              onClick={() => navigate("/contWoolSuppliers")}
+              onClick={() => navigate("/paperMache_filter-suppliers")}
               className="inline-flex items-center gap-2 rounded-md bg-gray-200 dark:bg-gray-700 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition"
             >
               Back to Suppliers
@@ -774,4 +774,4 @@ const ContWoolSuppOrders = () => {
   );
 };
 
-export default ContWoolSuppOrders;
+export default PapierMachieSuppOrders;

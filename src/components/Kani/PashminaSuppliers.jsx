@@ -30,7 +30,7 @@ const PashminaSuppliers = () => {
   };
 
   const handleAddProduct = (id) => {
-    navigate(`/UpdatePashminaProducts/${id}`);
+    navigate(`/UpdateKaniProducts/${id}`);
   };
 
   const handleChallanInputChange = (e) => {
