@@ -24,6 +24,7 @@ import { GiRolledCloth } from "react-icons/gi";
 import { GiCottonFlower } from "react-icons/gi";
 import { GiBandageRoll } from "react-icons/gi";
 import { GiScrollUnfurled } from "react-icons/gi";
+import { FaDropbox } from "react-icons/fa";
 
 
 const Chart = () => {
@@ -131,7 +132,7 @@ const kaniModeCards = [
     title: "Contemporary Saree",
     link: "/contemporarySaree",
     countKey: "contemporarySaree",
-    icon: <GiCottonFlower  className="w-10 h-10" />,
+    icon: <FaDropbox   className="w-10 h-10" />,
     levelUp: true,
     isGradient: true,
     gradientColor: "from-teal-500 to-teal-600", 
