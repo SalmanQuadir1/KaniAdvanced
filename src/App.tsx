@@ -123,6 +123,7 @@ import SareeSuppOrder from './components/Kani/SareeSuppOrder.jsx';
 import SareeRetail from './components/Kani/SareeRetail.jsx';
 import SareeWholesale from './components/Kani/SareeWholesale.jsx';
 import SareeKlc from './components/Kani/SareeKlc.jsx';
+import PapierMachieSuppOrders from './components/Kani/PapierMachieSuppOrders.jsx';
 
 import AddBom from './components/Products/AddBom.jsx';
 import AddLocationInventory from './components/Products/AddLoctionInventory.jsx';
@@ -1196,6 +1197,7 @@ function App() {
                   <Route path="/sareeRetail" element={<SareeRetail />} />
                   <Route path="/sareeWholesale" element={<SareeWholesale />} />
                   <Route path="/sareeKlc" element={<SareeKlc />} />
+                   <Route path="/papierMacheSuppliers/:id" element={<PapierMachieSuppOrders />} />
             
             
 
