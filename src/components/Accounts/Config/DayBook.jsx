@@ -159,22 +159,24 @@ const ViewDayBook = () => {
                     <td className="px-5 py-5 border-b border-gray-200 text-sm">
                         {new Date(entry.date).toLocaleDateString()}
                     </td>
+                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                        {entry.recieptNumber}
+                    </td>
+                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                        {entry?.ledger?.name}
+                    </td>
                     <td className="px-5 py-5 border-b border-gray-200 text-sm">
                         {entry.narration}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        {entry.typeOfVoucher}
+                        {entry.transactionType}
                     </td>
-                    <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        {entry.recieptNumber}
+                  
+                     <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                        {entry.totalAmount}
                     </td>
-                    <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        {entry.debitAmount?.toFixed(2) || '0.00'}
-                    </td>
-                    <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        {entry.creditAmount?.toFixed(2) || '0.00'}
-                    </td>
-                    <td className="px-5 py-5 border-b border-gray-200 text-sm">
+               
+                    {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
                         {entry.paymentDetails?.length > 0 ? (
                             <div className="flex flex-col">
                                 {entry.paymentDetails.map((payment, idx) => (
@@ -186,7 +188,7 @@ const ViewDayBook = () => {
                         ) : (
                             '0.00'
                         )}
-                    </td>
+                    </td> */}
                     <td className="px-5 py-5 border-b border-gray-200 text-sm">
                         <div className="flex">
                             <FiEdit
@@ -312,12 +314,15 @@ const ViewDayBook = () => {
                                     <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">SNO</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
+                                                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Voucher No</th>
+                                                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Ledger</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Particulars</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Voucher Type</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Voucher No</th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Debit</th>
+                                        {/* <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Debit</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Credit</th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Amount</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Amount</th> */}
+                                                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Amount</th> 
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Action</th>
                                     </tr>
                                 </thead>
