@@ -112,6 +112,14 @@ import CottonInProgress from './components/Kani/CottonInProgress.jsx';
 import CottonRetail from './components/Kani/CottonRetail.jsx';
 import CottonWholesale from './components/Kani/CottonWholesale.jsx';
 import CottonKlc from './components/Kani/CottonKlc.jsx';
+import ContemporarySaree from './components/Kani/ContemporarySaree.jsx';
+import ContemporarySareeOrders from './components/Kani/ContemporarySareeOrders.jsx';
+import SareeSuppliers from './components/Kani/SareeSuppliers.jsx';
+import SareeInProgress from './components/Kani/SareeInProgress.jsx';
+import SareeSuppOrder from './components/Kani/SareeSuppOrder.jsx';
+import SareeRetail from './components/Kani/SareeRetail.jsx';
+import SareeWholesale from './components/Kani/SareeWholesale.jsx';
+import SareeKlc from './components/Kani/SareeKlc.jsx';
 
 import AddBom from './components/Products/AddBom.jsx';
 import AddLocationInventory from './components/Products/AddLoctionInventory.jsx';
@@ -1153,7 +1161,15 @@ function App() {
                   <Route path="/cotton-in-progress" element={<CottonInProgress />} />
                   <Route path="/cotton/retail-client-orders" element={<CottonRetail />} />
                   <Route path="/cotton/wholesale-client-orders" element={<CottonWholesale />} />
-                   <Route path="/cotton-klc-orders" element={<CottonKlc />} />
+                  <Route path="/cotton-klc-orders" element={<CottonKlc />} />
+                  <Route path="/contemporarySaree" element={<ContemporarySaree />} />
+                  <Route path="/contemporarySareeOrders" element={<ContemporarySareeOrders />} />
+                  <Route path="/saree-suppliers" element={<SareeSuppliers />} />
+                  <Route path="/Saree-in-progress" element={<SareeInProgress />} />
+                  <Route path="/supplierSaree-order/:id" element={<SareeSuppOrder />} />
+                  <Route path="/sareeRetail" element={<SareeRetail />} />
+                  <Route path="/sareeWholesale" element={<SareeWholesale />} />
+                  <Route path="/sareeKlc" element={<SareeKlc />} />
             
             
 

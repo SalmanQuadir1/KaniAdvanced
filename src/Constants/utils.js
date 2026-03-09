@@ -470,6 +470,14 @@ export const GET_COTTON_INPROGRESS_URL = `${BASE_URL}/order/inProgress-cotton`;
 export const GET_COTTON_RETAIL_URL = `${BASE_URL}/order/cotton/retail-client-orders`;
 export const GET_COTTON_WHOLESALE_URL = `${BASE_URL}/order/cotton/ws-client-orders`;
 export const GET_COTTON_KLC_URL = `${BASE_URL}/order/klc-cotton`;
+export const GET_CONT_SAREE_URL = `${BASE_URL}/order/contemporary-saree`;
+export const GET_SAREE_INPROGRESS_URL = `${BASE_URL}/order/inProgress-contemporary-saree`;
+export const GET_SAREE_Supp_URL = `${BASE_URL}/order/contemporary-saree`;
+export const GET_SAREE_Retail_URL = `${BASE_URL}/order/contemporary-saree/retail-client-orders`;
+export const GET_SAREE_WHOLESALE_URL = `${BASE_URL}/order/contemporary-saree/ws-client-orders`;
+export const GET_SAREE_KLC_URL = `${BASE_URL}/order/klc-contemporary-saree`;
+
+
 
 
 

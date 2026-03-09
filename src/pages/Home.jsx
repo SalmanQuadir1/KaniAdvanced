@@ -254,6 +254,15 @@ const kaniModeCards = [
     isGradient: true,
     gradientColor: "from-yellow-600 to-yellow-700", 
   },
+   {
+    title: "Contemporary Saree",
+    link: "/contemporarySaree",
+    countKey: "contemporarySaree",
+    icon: <GiCottonFlower  className="w-10 h-10" />,
+    levelUp: true,
+    isGradient: true,
+    gradientColor: "from-teal-500 to-teal-600", 
+  },
 //  {
 //     title: "Client Orders",
 //     link: "/ClientOrders",
