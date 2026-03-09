@@ -31,8 +31,9 @@ const AddProduct = () => {
     const [supplierNameOptions, setsupplierNameOptions] = useState([])
     const [supplierCodeOptions, setsupplierCodeOptions] = useState([])
 
-    const [referenceImages, setrefImage] = useState([])
-    const [actualImages, setactualImage] = useState([])
+    const [referenceImages, setReferenceImages] = useState([]);
+    const [actualImages, setActualImages] = useState([]);
+    
 
     const [gstDetails, setgstDetails] = useState([])
 
@@ -156,46 +157,53 @@ const AddProduct = () => {
     const [previewsActual, setPreviewsActual] = useState([]);
 
 
-    const handleFileChange = async (event) => {
-        const files = Array.from(event.target.files); // Convert FileList to an array
-        const newPreviews = files.map((file) => ({
-            file,
-            url: URL.createObjectURL(file),
-            referenceImage: file, // Or actualImage depending on the logic
-            actualImage: file,    // Or referenceImage depending on the logic
-        }));
+ const handleFileChange = async (event) => {
+    const files = Array.from(event.target.files);
+    
+    // Create new previews
+    const newPreviews = files.map((file) => ({
+        file,
+        url: URL.createObjectURL(file),
+    }));
 
-        // Update the referenceImages state with all selected files
-        setrefImage((prevImages) => [...prevImages, ...files]);
-
-        // Update the previews state with all newPreviews
-        setPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
-    };
+    // Update previews state
+    setPreviews(prev => [...prev, ...newPreviews]);
+    
+    // Update reference images state
+    setReferenceImages(prev => [...prev, ...files]);
+    
+    // Clear the input value to allow re-uploading the same file
+    event.target.value = '';
+};
 
     // Use useEffect to log the updated state after the change
     useEffect(() => {
         console.log(referenceImages, "refimagessssss====================================");
-        setrefImage(referenceImages);
+        setReferenceImages(referenceImages);
     }, [referenceImages]);  //
 
 
-    const handleFileChangeActual = async (event) => {
-        const files = Array.from(event.target.files);
-
-        const newPreviewsActual = files.map((file) => ({
-            file,
-            url: URL.createObjectURL(file),
-            referenceImage: file,  // Or actualImage depending on the logic
-            actualImage: file,     // Or referenceImage depending on the logic
-        }));
-        setPreviewsActual((prevPreviewsActual) => [...prevPreviewsActual, ...newPreviewsActual]);
-        await setactualImage((prevPreviewsActual) => [...prevPreviewsActual, ...files]);
-        console.log(actualImages, "jamshedpuuuuuuuuuuuuuuu===========");
-
-    };
+   const handleFileChangeActual = async (event) => {
+    const files = Array.from(event.target.files);
+    
+    // Create new previews
+    const newPreviewsActual = files.map((file) => ({
+        file,
+        url: URL.createObjectURL(file),
+    }));
+    
+    // Update previews state
+    setPreviewsActual(prev => [...prev, ...newPreviewsActual]);
+    
+    // Update actual images state
+    setActualImages(prev => [...prev, ...files]);
+    
+    // Clear the input value
+    event.target.value = '';
+};
     useEffect(() => {
         console.log(actualImages, "actualImage====================================");
-        setactualImage(actualImages);
+        setActualImages(actualImages);
     }, [actualImages]);
 
 
@@ -212,24 +220,50 @@ const AddProduct = () => {
 
 
 
-    const handleRemoveImage = (indexToRemove) => {
-        setPreviews((prevPreviews) => {
-            const updatedPreviews = [...prevPreviews];
-            // Revoke the object URL to release memory
+   const handleRemoveImage = (indexToRemove) => {
+    // Remove from previews
+    setPreviews(prevPreviews => {
+        const updatedPreviews = [...prevPreviews];
+        
+        // Revoke the object URL for the removed image
+        if (updatedPreviews[indexToRemove]?.url) {
             URL.revokeObjectURL(updatedPreviews[indexToRemove].url);
-            updatedPreviews.splice(indexToRemove, 1);
-            return updatedPreviews;
-        });
-    };
-    const handleRemoveActual = (indexToRemove) => {
-        setPreviewsActual((prevPreviewsActual) => {
-            const updatedPreviewsActual = [...prevPreviewsActual];
-            // Revoke the object URL to release memory
+        }
+        
+        updatedPreviews.splice(indexToRemove, 1);
+        return updatedPreviews;
+    });
+
+    // Remove from referenceImages
+    setReferenceImages(prevImages => {
+        const updatedImages = [...prevImages];
+        updatedImages.splice(indexToRemove, 1);
+        return updatedImages;
+    });
+};
+
+// Handle remove actual image
+const handleRemoveActual = (indexToRemove) => {
+    // Remove from previewsActual
+    setPreviewsActual(prevPreviewsActual => {
+        const updatedPreviewsActual = [...prevPreviewsActual];
+        
+        // Revoke the object URL for the removed image
+        if (updatedPreviewsActual[indexToRemove]?.url) {
             URL.revokeObjectURL(updatedPreviewsActual[indexToRemove].url);
-            updatedPreviewsActual.splice(indexToRemove, 1);
-            return updatedPreviewsActual;
-        });
-    };
+        }
+        
+        updatedPreviewsActual.splice(indexToRemove, 1);
+        return updatedPreviewsActual;
+    });
+
+    // Remove from actualImages
+    setActualImages(prevImages => {
+        const updatedImages = [...prevImages];
+        updatedImages.splice(indexToRemove, 1);
+        return updatedImages;
+    });
+};
 
 
 

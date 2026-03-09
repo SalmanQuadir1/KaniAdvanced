@@ -611,17 +611,45 @@ const PrintEntryPayment = () => {
                     {
                         paymentData.typeOfVoucher == "Sales" && (
 
+                            <>
+                                <tr style={styles.totalRow}>
+                                    <td style={styles.tableCell} colSpan="6" className="text-right">
+                                        <strong>Total Gst</strong>
+                                    </td>
+                                    <td colSpan="2" style={styles.tableCell}>
+                                        <strong>₹{formatCurrency(paymentData.totalGst)}</strong>
+                                    </td>
+                                </tr>
 
-                            <tr style={styles.totalRow}>
-                                <td style={styles.tableCell} colSpan="6" className="text-right">
-                                    <strong>Total Gst</strong>
-                                </td>
-                                <td colSpan="2" style={styles.tableCell}>
-                                    <strong>₹{formatCurrency(paymentData.totalGst)}</strong>
-                                </td>
-                            </tr>
+                                <tr style={styles.totalRow}>
+                                    <td style={styles.tableCell} colSpan="6" className="text-right">
+                                        <strong>Round Off</strong>
+                                    </td>
+                                    <td colSpan="2" style={styles.tableCell}>
+                                        <strong>₹{formatCurrency(paymentData.roundOffAmount)}</strong>
+                                    </td>
+                                </tr>
+                                 <tr style={styles.totalRow}>
+                                    <td style={styles.tableCell} colSpan="6" className="text-right">
+                                        <strong>Total Discount</strong>
+                                    </td>
+                                    <td colSpan="2" style={styles.tableCell}>
+                                        <strong>₹{formatCurrency(paymentData.discountAmount)}</strong>
+                                    </td>
+                                </tr>
+                                <tr style={styles.totalRow}>
+                                    <td style={styles.tableCell} colSpan="6" className="text-right">
+                                        <strong>Courier Charges</strong>
+                                    </td>
+                                    <td colSpan="2" style={styles.tableCell}>
+                                        <strong>₹{formatCurrency(paymentData.courrierAmount)}</strong>
+                                    </td>
+                                </tr>
+                            </>
+
                         )
                     }
+
 
                     <tr style={styles.totalRow}>
                         <td style={styles.tableCell} colSpan="6" className="text-right">

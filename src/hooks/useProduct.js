@@ -448,7 +448,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
 
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-        console.log("Form values:", values); // Debugging purposes
+        // console.log("Form values:", values); // Debugging purposes
 
         const formData = new FormData();
 
@@ -496,9 +496,10 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
 
             // Append the updated product to formData
             formData.append("product", JSON.stringify(product));
-            console.log(product, "666666666666666660000");
+           
 
-            console.log(referenceImages, "reffferrreffefefefefefefefffffffffffff=================");
+            console.log(referenceImages, "reffff=================");
+             console.log(actualImages, "actuallll=================");
 
             Array.from(referenceImages).forEach((file) => formData.append('referenceImages', file)); // Add files
             Array.from(actualImages).forEach((file) => formData.append('actualImages', file));
@@ -512,9 +513,9 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
                     console.log(pair[0], pair[1]);
                 }
             }
-            console.log(formData, "formmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
+            // console.log(formData, "formmmmmmmmmmmmmmmmmmmmmmmmmmmmm");
             for (let [key, value] of formData.entries()) {
-                console.log(`${key}:`, value, "heyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
+                // console.log(`${key}:`, value, "heyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy");
             }
 
 

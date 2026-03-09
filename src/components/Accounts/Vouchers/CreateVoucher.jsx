@@ -223,26 +223,26 @@ const CreateVoucher = () => {
 
     // for gst 
     // GST Ledgers filtering
- const igstLedgers = Ledger.filter(ledg =>
-    ledg?.name && 
-    ledg.name.toLowerCase().includes('igst') &&
-    !ledg.name.toLowerCase().includes('sale') &&
-    !ledg.name.toLowerCase().includes('purchase')
-);
+    const igstLedgers = Ledger.filter(ledg =>
+        ledg?.name &&
+        ledg.name.toLowerCase().includes('igst') &&
+        !ledg.name.toLowerCase().includes('sale') &&
+        !ledg.name.toLowerCase().includes('purchase')
+    );
 
-const cgstLedgers = Ledger.filter(ledg =>
-    ledg?.name && 
-    ledg.name.toLowerCase().includes('cgst') &&
-    !ledg.name.toLowerCase().includes('sale') &&
-    !ledg.name.toLowerCase().includes('purchase')
-);
+    const cgstLedgers = Ledger.filter(ledg =>
+        ledg?.name &&
+        ledg.name.toLowerCase().includes('cgst') &&
+        !ledg.name.toLowerCase().includes('sale') &&
+        !ledg.name.toLowerCase().includes('purchase')
+    );
 
-const sgstLedgers = Ledger.filter(ledg =>
-    ledg?.name && 
-    ledg.name.toLowerCase().includes('sgst') &&
-    !ledg.name.toLowerCase().includes('sale') &&
-    !ledg.name.toLowerCase().includes('purchase')
-);
+    const sgstLedgers = Ledger.filter(ledg =>
+        ledg?.name &&
+        ledg.name.toLowerCase().includes('sgst') &&
+        !ledg.name.toLowerCase().includes('sale') &&
+        !ledg.name.toLowerCase().includes('purchase')
+    );
 
     // Create options for ReactSelect
     const igstOptions = igstLedgers?.map(ledg => ({
@@ -608,65 +608,65 @@ const sgstLedgers = Ledger.filter(ledg =>
     // Calculate totals for the summary
     // Calculate totals for the summary
     // Calculate totals for the summary
-const calculateTotals = (values) => {
-    let subtotal = 0;
-    let totalCGST = 0;
-    let totalSGST = 0;
-    let totalIGST = 0;
-    let totalGST = 0;
-    let grandTotal = 0;
-    let totalDiscount = 0;
-    let totalMRP = 0;
-    let totalQuantity = 0;
+    const calculateTotals = (values) => {
+        let subtotal = 0;
+        let totalCGST = 0;
+        let totalSGST = 0;
+        let totalIGST = 0;
+        let totalGST = 0;
+        let grandTotal = 0;
+        let totalDiscount = 0;
+        let totalMRP = 0;
+        let totalQuantity = 0;
 
-    values.paymentDetails.forEach(entry => {
-        // Check if entry has GST calculation and either Sales/Purchase
-        if ((Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && entry.gstCalculation) {
-            
-            // Calculate line total based on exclusiveGst (price including GST)
-            const lineTotal = parseFloat(entry.exclusiveGst || 0) * (entry.quantity || 1);
-            subtotal += lineTotal;
+        values.paymentDetails.forEach(entry => {
+            // Check if entry has GST calculation and either Sales/Purchase
+            if ((Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && entry.gstCalculation) {
 
-            // Calculate MRP total (before discount)
-            const mrpTotal = (entry.mrp || 0) * (entry.quantity || 1);
-            totalMRP += mrpTotal;
+                // Calculate line total based on exclusiveGst (price including GST)
+                const lineTotal = parseFloat(entry.exclusiveGst || 0) * (entry.quantity || 1);
+                subtotal += lineTotal;
 
-            // Calculate total quantity
-            totalQuantity += (entry.quantity || 1);
+                // Calculate MRP total (before discount)
+                const mrpTotal = (entry.mrp || 0) * (entry.quantity || 1);
+                totalMRP += mrpTotal;
 
-            // Calculate discount amount (only for Sales)
-            if (Vouchers?.typeOfVoucher === "Sales" && entry.discount > 0) {
-                const discountAmount = (entry.mrp * (entry.discount / 100)) * (entry.quantity || 1);
-                totalDiscount += discountAmount;
-            }
+                // Calculate total quantity
+                totalQuantity += (entry.quantity || 1);
 
-            // Add GST amounts
-            if (entry.gstCalculation) {
-                if (entry.gstCalculation.type === 'CGST+SGST') {
-                    totalCGST += (entry.gstCalculation.cgstAmount || 0) * (entry.quantity || 1);
-                    totalSGST += (entry.gstCalculation.sgstAmount || 0) * (entry.quantity || 1);
-                } else if (entry.gstCalculation.type === 'IGST') {
-                    totalIGST += (entry.gstCalculation.gstAmount || 0) * (entry.quantity || 1);
+                // Calculate discount amount (only for Sales)
+                if (Vouchers?.typeOfVoucher === "Sales" && entry.discount > 0) {
+                    const discountAmount = (entry.mrp * (entry.discount / 100)) * (entry.quantity || 1);
+                    totalDiscount += discountAmount;
                 }
-                totalGST += (entry.gstCalculation.totalGstAmount || 0) * (entry.quantity || 1);
+
+                // Add GST amounts
+                if (entry.gstCalculation) {
+                    if (entry.gstCalculation.type === 'CGST+SGST') {
+                        totalCGST += (entry.gstCalculation.cgstAmount || 0) * (entry.quantity || 1);
+                        totalSGST += (entry.gstCalculation.sgstAmount || 0) * (entry.quantity || 1);
+                    } else if (entry.gstCalculation.type === 'IGST') {
+                        totalIGST += (entry.gstCalculation.gstAmount || 0) * (entry.quantity || 1);
+                    }
+                    totalGST += (entry.gstCalculation.totalGstAmount || 0) * (entry.quantity || 1);
+                }
             }
-        }
-    });
+        });
 
-    grandTotal = subtotal;
+        grandTotal = subtotal;
 
-    return {
-        subtotal: subtotal.toFixed(2),
-        totalCGST: totalCGST.toFixed(2),
-        totalSGST: totalSGST.toFixed(2),
-        totalIGST: totalIGST.toFixed(2),
-        totalGST: totalGST.toFixed(2),
-        totalDiscount: totalDiscount.toFixed(2),
-        grandTotal: grandTotal.toFixed(2),
-        totalMRP: totalMRP.toFixed(2),
-        totalQuantity: totalQuantity
+        return {
+            subtotal: subtotal.toFixed(2),
+            totalCGST: totalCGST.toFixed(2),
+            totalSGST: totalSGST.toFixed(2),
+            totalIGST: totalIGST.toFixed(2),
+            totalGST: totalGST.toFixed(2),
+            totalDiscount: totalDiscount.toFixed(2),
+            grandTotal: grandTotal.toFixed(2),
+            totalMRP: totalMRP.toFixed(2),
+            totalQuantity: totalQuantity
+        };
     };
-};
 
     const validationSchema = Yup.object().shape({
         recieptNumber: Yup.string().required('Voucher number is required'),
@@ -999,9 +999,13 @@ const calculateTotals = (values) => {
 
         return grandTotal >= 0 ? grandTotal : 0;
     };
+    console.log(Vouchers, "umershah");
 
 
+    const today = new Date().toISOString().split("T")[0];
 
+    console.log(today,"55");
+    
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Configurator/Create Voucher" />
@@ -1010,7 +1014,7 @@ const calculateTotals = (values) => {
                     initialValues={{
                         recieptNumber: `${voucherNos}`,
                         supplierInvoiceNumber: '',
-                        date: '',
+                        date: '' || today,
                         voucherId: Number(id),
                         paymentDate: '',
                         ledgerId: "",
@@ -1678,23 +1682,23 @@ const calculateTotals = (values) => {
 
 
 
-                       useEffect(() => {
-    if (Vouchers?.typeOfVoucher === "Purchase") {
-        // For Purchase, totalAmount should be subtotal (which includes GST)
-        setFieldValue('totalAmount', totals.subtotal);
-        setFieldValue('totalGst', totals.totalGST);
-        setFieldValue('totalCgst', totals.totalCGST);
-        setFieldValue('totalIgst', totals.totalIGST);
-        setFieldValue('totalSgst', totals.totalSGST);
-    } else if (Vouchers?.typeOfVoucher === "Sales") {
-        // For Sales, totalAmount should be subtotal (which includes GST)
-        setFieldValue('totalAmount', totals.subtotal);
-        setFieldValue('totalGst', totals.totalGST);
-        setFieldValue('totalCgst', totals.totalCGST);
-        setFieldValue('totalIgst', totals.totalIGST);
-        setFieldValue('totalSgst', totals.totalSGST);
-    }
-}, [totals.subtotal, totals.totalGST, totals.totalCGST, totals.totalIGST, totals.totalSGST, setFieldValue, Vouchers?.typeOfVoucher]);
+                        useEffect(() => {
+                            if (Vouchers?.typeOfVoucher === "Purchase") {
+                                // For Purchase, totalAmount should be subtotal (which includes GST)
+                                setFieldValue('totalAmount', totals.subtotal);
+                                setFieldValue('totalGst', totals.totalGST);
+                                setFieldValue('totalCgst', totals.totalCGST);
+                                setFieldValue('totalIgst', totals.totalIGST);
+                                setFieldValue('totalSgst', totals.totalSGST);
+                            } else if (Vouchers?.typeOfVoucher === "Sales") {
+                                // For Sales, totalAmount should be subtotal (which includes GST)
+                                setFieldValue('totalAmount', totals.subtotal);
+                                setFieldValue('totalGst', totals.totalGST);
+                                setFieldValue('totalCgst', totals.totalCGST);
+                                setFieldValue('totalIgst', totals.totalIGST);
+                                setFieldValue('totalSgst', totals.totalSGST);
+                            }
+                        }, [totals.subtotal, totals.totalGST, totals.totalCGST, totals.totalIGST, totals.totalSGST, setFieldValue, Vouchers?.typeOfVoucher]);
 
 
 
