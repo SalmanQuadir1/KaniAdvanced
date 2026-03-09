@@ -78,13 +78,7 @@ const PashminaEmbroidery = () => {
             {/* Background Pattern */}
             <div className="absolute right-0 top-0 -mt-4 -mr-4 h-20 w-20 rounded-full bg-white/10 blur-2xl"></div>
             
-            {/* Level Up Badge */}
-            {card.levelUp && (
-              <span className="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-                Level Up
-              </span>
-            )}
-
+           
             {/* Icon */}
             <div className="mb-4 text-white/90">{card.icon}</div>
 
