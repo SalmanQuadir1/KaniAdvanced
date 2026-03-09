@@ -8,7 +8,7 @@ import { IoMdAdd } from "react-icons/io";
 import { MdDelete } from "react-icons/md";
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import useVoucher from '../../../hooks/useVoucher';
-import { GETPRODUCTBYSUPPLIER, GET_LEDGERSupplierId__URL, GET_VoucherNos_URL, customStyles as createCustomStyles } from '../../../Constants/utils';
+import { BASE_URL, GETPRODUCTBYSUPPLIER, GET_LEDGERSupplierId__URL, GET_VoucherNos_URL, customStyles as createCustomStyles } from '../../../Constants/utils';
 import { useSelector } from 'react-redux';
 import Modall from '../../Products/Modall';
 import NumberingDetailsModal from './NumberingDetailsModal';
@@ -214,7 +214,7 @@ const CreateVoucherPurchase = () => {
 
         try {
 
-            const response = await fetch(`http://localhost:8081/order/order-products/by-order-ids?orderIds=${orderIdd}`, {
+            const response = await fetch(`${BASE_URL}/order/order-products/by-order-ids?orderIds=${orderIdd}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
