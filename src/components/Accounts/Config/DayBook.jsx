@@ -6,13 +6,16 @@ import ReactSelect from 'react-select';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import Pagination from '../../Pagination/Pagination';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom'; // Add useLocation
 import { toast } from 'react-toastify';
 import { SEARCH_DayBook_URL, customStyles as createCustomStyles } from '../../../Constants/utils';
 
 const ViewDayBook = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
+    const location = useLocation(); // Add this to read URL params
+    const navigate = useNavigate();
+    
     const [voucherTypeOptions, setVoucherTypeOptions] = useState([
         { value: 'SALES', label: 'Sales' },
         { value: 'PURCHASE', label: 'Purchase' },
@@ -24,7 +27,18 @@ const ViewDayBook = () => {
     const customStyles = createCustomStyles(theme?.mode);
     const { token } = currentUser;
     const [dayBooks, setDayBooks] = useState([]);
-    const navigate = useNavigate();
+
+    // Parse URL parameters
+    const getInitialFilters = () => {
+        const params = new URLSearchParams(location.search);
+        const today = new Date().toISOString().split('T')[0];
+        
+        return {
+            typeOfVoucher: params.get('typeOfVoucher') || null,
+            startDate: params.get('fromDate') || today,
+            endDate: params.get('toDate') || today,
+        };
+    };
 
     const [pagination, setPagination] = useState({
         totalItems: 0,
@@ -33,15 +47,38 @@ const ViewDayBook = () => {
         itemsPerPage: 10,
     });
 
+    // Build URL with query parameters
+    const buildUrlWithParams = (page, filters) => {
+        const params = new URLSearchParams();
+        
+        if (filters.startDate) params.append('fromDate', filters.startDate);
+        if (filters.endDate) params.append('toDate', filters.endDate);
+        if (filters.typeOfVoucher) params.append('typeOfVoucher', filters.typeOfVoucher);
+        params.append('page', page);
+        params.append('size', pagination.itemsPerPage);
+        
+        return `${SEARCH_DayBook_URL}?${params.toString()}`;
+    };
+
     const getDayBook = async (page = 1, filters = {}) => {
         try {
-            const response = await fetch(`${SEARCH_DayBook_URL}?page=${page}`, {
-                method: "POST",
+            // Merge with current URL params if not provided
+            const currentFilters = {
+                ...getInitialFilters(),
+				typeOfVoucher: filters.typeOfVoucher?.value || filters.typeOfVoucher || "",
+                startDate: filters.startDate || getInitialFilters().startDate,
+                endDate: filters.endDate || getInitialFilters().endDate,
+            };
+
+            const url = buildUrlWithParams(page, currentFilters);
+            
+            const response = await fetch(url, {
+                method: "GET", // Changed to GET since we're using query params
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
-                },
-                body: JSON.stringify(filters)
+                }
+                // Removed body since we're using GET
             });
 
             const data = await response.json();
@@ -66,20 +103,37 @@ const ViewDayBook = () => {
         }
     };
 
+    // Load data when URL params change
     useEffect(() => {
-        getDayBook(pagination.currentPage);
-    }, [pagination.currentPage]);
+        const filters = getInitialFilters();
+        getDayBook(pagination.currentPage, filters);
+    }, [location.search]); // Re-run when URL changes
 
     const handlePageChange = (newPage) => {
         setPagination(prev => ({ ...prev, currentPage: newPage }));
+        
+        // Update URL with new page
+        const params = new URLSearchParams(location.search);
+        params.set('page', newPage);
+        navigate(`${location.pathname}?${params.toString()}`, { replace: true });
     };
 
     const handleSubmit = (values) => {
         const filters = {
             typeOfVoucher: values.typeOfVoucher?.value || "",
-            startDate: values.startDate || undefined,
-            endDate: values.endDate || undefined,
+            startDate: values.startDate,
+            endDate: values.endDate,
         };
+        
+        // Update URL with new filters
+        const params = new URLSearchParams();
+        if (filters.startDate) params.append('fromDate', filters.startDate);
+        if (filters.endDate) params.append('toDate', filters.endDate);
+        if (filters.typeOfVoucher) params.append('typeOfVoucher', filters.typeOfVoucher);
+        params.append('page', 1);
+        
+        navigate(`${location.pathname}?${params.toString()}`);
+        
         getDayBook(1, filters);
     };
 
@@ -87,7 +141,7 @@ const ViewDayBook = () => {
         if (!dayBooks || dayBooks.length === 0) {
             return (
                 <tr className='bg-white dark:bg-slate-700 dark:text-white'>
-                    <td colSpan="8" className="px-5 py-5 border-b border-gray-200 text-sm text-center">
+                    <td colSpan="9" className="px-5 py-5 border-b border-gray-200 text-sm text-center">
                         No DayBook Entries Found
                     </td>
                 </tr>
@@ -178,6 +232,12 @@ const ViewDayBook = () => {
         }
     };
 
+    // Get initial values from URL
+    const initialFilters = getInitialFilters();
+    const initialVoucherType = initialFilters.typeOfVoucher 
+        ? voucherTypeOptions.find(opt => opt.value === initialFilters.typeOfVoucher) 
+        : null;
+
     return (
         <DefaultLayout>
             <Breadcrumb pageName="DayBook / View DayBook" />
@@ -189,16 +249,17 @@ const ViewDayBook = () => {
 
                     <Formik
                         initialValues={{
-                            typeOfVoucher: null,
-                            startDate: '',
-                            endDate: '',
+                            typeOfVoucher: initialVoucherType,
+                            startDate: initialFilters.startDate,
+                            endDate: initialFilters.endDate,
                         }}
                         onSubmit={handleSubmit}
+                        enableReinitialize // Important: updates form when URL changes
                     >
                         {({ setFieldValue, values }) => (
                             <Form>
                                 <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-                                    <div className="w-full md:w-auto">
+                                    {/* <div className="w-full md:w-auto">
                                         <label className="mb-2.5 block text-black dark:text-white">Voucher Type</label>
                                         <ReactSelect
                                             name="typeOfVoucher"
@@ -211,7 +272,7 @@ const ViewDayBook = () => {
                                             placeholder="Select Voucher Type"
                                             isClearable
                                         />
-                                    </div>
+                                    </div> */}
 
                                     <div className="flex-1 min-w-[300px]">
                                         <label className="mb-2.5 block text-black dark:text-white">From Date</label>

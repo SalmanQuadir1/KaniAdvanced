@@ -19,7 +19,7 @@ const ModeSelectionModal = () => {
   const handleSubmit = () => {
     if (selectedMode) {
       dispatch(setAppMode(selectedMode));
-      navigate('/home');
+      navigate('/');
     }
   };
 

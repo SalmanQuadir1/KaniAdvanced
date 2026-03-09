@@ -41,7 +41,8 @@ const UpdateProduct = () => {
     const [referenceImages, setrefImage] = useState([]);
     const [actualImages, setactualImage] = useState([]);
     const navigate = useNavigate();
-    const { getUnits, units } = useProduct({ referenceImages, actualImages, productIdField });
+    const { getUnits, units, getWeave,
+        weave } = useProduct({ referenceImages, actualImages, productIdField });
     const [previews, setPreviews] = useState([]);
     const [previewsActual, setPreviewsActual] = useState([]);
     const [gstDetails, setgstDetails] = useState([]);
@@ -69,12 +70,34 @@ const UpdateProduct = () => {
         return '0000';
     };
 
+     useEffect(() => {
+            getWeave()
+        }, [])
+
+
+          useEffect(() => {
+                if (weave) {
+                    const formattedweaveOptions = weave.map(unitGroup => ({
+                        value: unitGroup?.id,
+                        label: unitGroup?.weaveName,
+                        weaveGroupObject: unitGroup,
+                    }));
+                    setweaveOptions(formattedweaveOptions); // Update the state only when `units` changes
+                }
+            }, [weave]);
+
     // Function to generate barcode
     const generateBarcode = (values) => {
+        // Get supplier code from selected suppliers
         let supplierCode = '00';
-        if (values.supplierCode) {
-            const code = values.supplierCode || '00';
-            supplierCode = code.toString().slice(-2).padStart(2, '0');
+        if (values.supplier && values.supplier.length > 0) {
+            // Use the first supplier's code for barcode
+            const firstSupplier = values.supplier[0];
+            const supplierOption = supplierNameOptions.find(opt => opt.value === firstSupplier.id);
+            if (supplierOption?.supplierNameObject?.supplierCode) {
+                const code = supplierOption.supplierNameObject.supplierCode.toString();
+                supplierCode = code.slice(-2).padStart(2, '0');
+            }
         }
 
         let designCode = 'XXXX';
@@ -248,6 +271,10 @@ const UpdateProduct = () => {
     };
 
     const handleUpdateSubmit = async (values, { setSubmitting }) => {
+        console.log("i am here");
+        console.log(values,"i am hds");
+        
+        
         console.log(values, "Submitted values:");
 
         const formData = new FormData();
@@ -257,7 +284,6 @@ const UpdateProduct = () => {
             productGroup: { id: values.productGroup?.id || 0 },
             subGroup: { id: values.subGroup?.id || 0 },
             supplier: values?.supplier?.map((supp) => ({ id: supp?.id })),
-            supplierCode: { id: values.supplierCode?.id || 0 },
         };
 
         if (gstDetails && gstDetails.length > 0) {
@@ -290,34 +316,34 @@ const UpdateProduct = () => {
         console.log(formData,"66666666666666666666");
         
 
-        // try {
-        //     const url = `${UPDATE_PRODUCT_URL}/${id}`;
-        //     const response = await fetch(url, {
-        //         method: "PUT",
-        //         headers: {
-        //             "Authorization": `Bearer ${token}`,
-        //         },
-        //         body: formData,
-        //     });
+        try {
+            const url = `${UPDATE_PRODUCT_URL}/${id}`;
+            const response = await fetch(url, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: formData,
+            });
 
-        //     let data;
-        //     try {
-        //         data = await response.json();
-        //     } catch {
-        //         data = await response.text();
-        //     }
+            let data;
+            try {
+                data = await response.json();
+            } catch {
+                data = await response.text();
+            }
 
-        //     if (response.ok) {
-        //         toast.success("Product updated successfully");
-        //         navigate('/product/viewProducts');
-        //     } else {
-        //         toast.error(data || "A conflict occurred while updating the product.");
-        //     }
-        // } catch (error) {
-        //     toast.error("An error occurred while updating the product.");
-        // } finally {
-        //     if (setSubmitting) setSubmitting(false);
-        // }
+            if (response.ok) {
+                toast.success("Product updated successfully");
+                navigate('/product/viewProducts');
+            } else {
+                toast.error(data || "A conflict occurred while updating the product.");
+            }
+        } catch (error) {
+            toast.error("An error occurred while updating the product.");
+        } finally {
+            if (setSubmitting) setSubmitting(false);
+        }
     };
 
     const getProductById = async () => {
@@ -430,18 +456,6 @@ const UpdateProduct = () => {
         }
     }, [supplier.data]);
 
-    useEffect(() => {
-        if (supplier.data) {
-            const formattedOptions = supplier.data.map(supp => ({
-                value: supp.id,
-                label: supp?.supplierCode,
-                supplierCodeObject: supp,
-                suplieridd: { id: supp.id }
-            }));
-            setsupplierCodeOptions(formattedOptions);
-        }
-    }, [supplier.data]);
-
     const formikRef = useRef(null);
 
     useEffect(() => {
@@ -549,7 +563,8 @@ const UpdateProduct = () => {
                         netWeight: product?.netWeight || '',
                         warpColors: product?.warpColors || '',
                         weftColors: product?.weftColors || '',
-                        weave: product?.weave || '',
+                          weave: product?.weave ? { id: product.weave.id } : { id: 0 },
+                        // weave: product?.weave || '',
                         warpYarn: product?.warpYarn || '',
                         weftYarn: product?.weftYarn || '',
                         gstratedetails: product?.gstratedetails || '',
@@ -574,7 +589,6 @@ const UpdateProduct = () => {
                         totalCost: product?.totalCost || '',
                         slabBasedRates: product?.slabBasedRates || [],
                         unit: product.unit,
-                        supplierCode: product.supplierCode || { id: 0 },
                         designCode: product?.designCode || '',
                         colorCode: product?.colorCode || '',
                         sizeCode: product?.sizeCode || '',
@@ -979,14 +993,22 @@ const UpdateProduct = () => {
                                             </div>
 
                                             <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Weave</label>
-                                                    <Field
-                                                        name='weave'
-                                                        type="text"
-                                                        placeholder="Enter Weave"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
+                                                                   <div className="flex-1 min-w-[300px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Weave <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                    <div className=" z-20 bg-transparent dark:bg-form-Field">
+                                                        <ReactSelect
+                                                            name="weave"
+                                                            value={weaveOptions?.find(option => option.value === values.weave?.id) || null}
+                                                            onChange={(option) => setFieldValue('weave', option ? { id: option.value } : null)}
+                                                            options={weaveOptions}
+                                                            styles={customStyles} // Pass custom styles here
+                                                            className="bg-white dark:bg-form-Field"
+                                                            classNamePrefix="react-select"
+                                                            placeholder="Select Weave"
+                                                        />
+                                                    </div>
+
+
                                                 </div>
                                                 <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Warp Yarn</label>
@@ -1639,30 +1661,11 @@ const UpdateProduct = () => {
                                                 </div>
                                             </div>
 
-                                            {/* Supplier Code */}
-                                            <div className="flex-1 min-w-[300px] mb-4.5">
-                                                <label className="mb-2.5 block text-black dark:text-white">
-                                                    Supplier Code <span className='text-red-700 text-xl'> *</span>
-                                                </label>
-                                                <div className="bg-transparent dark:bg-form-Field">
-                                                    <ReactSelect
-                                                        name="supplierCode"
-                                                        value={supplierCodeOptions?.find(option => option.value === values.supplierCode?.id) || null}
-                                                        onChange={(option) => setFieldValue('supplierCode', option ? option?.suplieridd : null)}
-                                                        options={supplierCodeOptions}
-                                                        isDisabled={true}
-                                                        styles={customStyles}
-                                                        className="bg-white dark:bg-form-Field"
-                                                        classNamePrefix="react-select"
-                                                        placeholder="Select Supplier Code"
-                                                    />
-                                                </div>
-                                            </div>
-
                                             {/* Submit Button */}
                                             <div className="flex justify-center mt-4">
                                                 <button
-                                                    type="submit"
+                                                    type="button" // Ensures the button does not trigger the form submission
+                                                onClick={(e) => handleUpdateSubmit(values, e)}
                                                     className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none"
                                                 >
                                                     Update Product

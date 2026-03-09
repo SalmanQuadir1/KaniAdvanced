@@ -33,7 +33,7 @@ const Header = (props) => {
   dispatch(setAppMode(newMode));
   toast.success(`Welcome To ${newMode.toUpperCase()} Mode`);
   setShowModeDropdown(false);
-  navigate("/home");
+  navigate("/");
 };
 
 
@@ -104,7 +104,7 @@ const Header = (props) => {
             <DarkModeSwitcher />
           </ul>
           <ul>
-            <FaHome className='cursor-pointer p-2 bg-slate-500 text-white rounded-full' size={35} onClick={() => navigate("/home")}/>
+            <FaHome className='cursor-pointer p-2 bg-slate-500 text-white rounded-full' size={35} onClick={() => navigate("/")}/>
           </ul>
           
           {/* Mode Switcher */}
