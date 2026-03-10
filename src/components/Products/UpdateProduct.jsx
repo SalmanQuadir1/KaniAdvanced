@@ -185,64 +185,94 @@ const UpdateProduct = () => {
         }
     }, [units]);
 
-    const handleFileChange = async (event) => {
-        const files = Array.from(event.target.files);
-        if (!files.length) return;
+ const handleFileChange = async (event) => {
+    const files = Array.from(event.target.files);
+    if (!files.length) return;
 
-        const newPreviews = files.map((file) => ({
-            file,
-            url: URL.createObjectURL(file),
-            isNew: true
-        }));
+    // Create new previews
+    const newPreviews = files.map((file) => ({
+        file,
+        url: URL.createObjectURL(file),
+        isNew: true
+    }));
 
-        setPreviews((prev) => [...prev, ...newPreviews]);
+    // Append new previews to existing ones
+    setPreviews((prev) => [...prev, ...newPreviews]);
 
-        const existingImagesAsFiles = product?.images?.map(img => {
-            const fileName = img?.referenceImage;
-            const fileExtension = fileName;
-            return new File([], fileName, {
-                type: `image/${fileExtension}`,
-                size: 0,
+    // IMPORTANT FIX: Append new files to existing referenceImages, don't replace
+    setrefImage((prev) => [...prev, ...files]);
+};
+useEffect(() => {
+    if (product?.images) {
+        // Separate reference and actual images
+        const refImgs = product.images
+            .filter(img => img.referenceImage && !img.actualImage)
+            .map(img => {
+                // Create a file-like object from the existing image
+                const fileName = img.referenceImage;
+                return new File([], fileName, {
+                    type: 'image/jpeg', // or detect from extension
+                });
             });
-        }) || [];
 
-        setrefImage((prev) => [
-            ...existingImagesAsFiles,
-            ...files
-        ]);
-    };
+        const actImgs = product.images
+            .filter(img => img.actualImage)
+            .map(img => {
+                const fileName = img.actualImage;
+                return new File([], fileName, {
+                    type: 'image/jpeg',
+                });
+            });
 
-    useEffect(() => {
-        console.log(referenceImages, "refimagessssss====================================");
-        setrefImage(referenceImages);
-    }, [referenceImages]);
+        // Set initial images without overwriting
+        setrefImage(refImgs);
+        setactualImage(actImgs);
+    }
+}, [product]);
+    // useEffect(() => {
+    //     console.log(referenceImages, "refimagessssss====================================");
+    //     setrefImage(referenceImages);
+    // }, [referenceImages]);
 
-    const handleFileChangeActual = async (event) => {
-        const files = Array.from(event.target.files);
+   const handleFileChangeActual = async (event) => {
+    const files = Array.from(event.target.files);
+    if (!files.length) return;
 
-        const newPreviewsActual = files.map((file) => ({
-            file,
-            url: URL.createObjectURL(file),
-            referenceImage: file,
-            actualImage: file,
-        }));
-        setPreviewsActual((prevPreviewsActual) => [...prevPreviewsActual, ...newPreviewsActual]);
-        await setactualImage((prevPreviewsActual) => [...prevPreviewsActual, ...files]);
-    };
+    // Create new previews
+    const newPreviewsActual = files.map((file) => ({
+        file,
+        url: URL.createObjectURL(file),
+        referenceImage: file,
+        actualImage: file,
+    }));
 
-    useEffect(() => {
-        console.log(actualImages, "actualImage====================================");
-        setactualImage(actualImages);
-    }, [actualImages]);
+    // Append new previews to existing ones
+    setPreviewsActual((prevPreviewsActual) => [...prevPreviewsActual, ...newPreviewsActual]);
+    
+    // IMPORTANT FIX: Append new files to existing actualImages, don't replace
+    setactualImage((prev) => [...prev, ...files]);
+};
 
-    const handleRemoveImage = (indexToRemove) => {
-        setPreviews((prevPreviews) => {
-            const updatedPreviews = [...prevPreviews];
-            URL.revokeObjectURL(updatedPreviews[indexToRemove].url);
-            updatedPreviews.splice(indexToRemove, 1);
-            return updatedPreviews;
-        });
-    };
+    // useEffect(() => {
+    //     console.log(actualImages, "actualImage====================================");
+    //     setactualImage(actualImages);
+    // }, [actualImages]);
+const handleRemoveImage = (indexToRemove) => {
+    // Remove from previews
+    setPreviews((prevPreviews) => {
+        const updatedPreviews = [...prevPreviews];
+        URL.revokeObjectURL(updatedPreviews[indexToRemove].url);
+        updatedPreviews.splice(indexToRemove, 1);
+        return updatedPreviews;
+    });
+
+    // Remove from referenceImages
+    setrefImage((prev) => {
+        const updated = [...prev];
+        updated.splice(indexToRemove, 1);
+        return updated;
+    });
+};
 
     const handleRemoveImageActual = (indexToRemove) => {
         setProduct((prevProduct) => ({
@@ -261,90 +291,115 @@ const UpdateProduct = () => {
         });
     };
 
-    const handleRemoveActual = (indexToRemove) => {
-        setPreviewsActual((prevPreviewsActual) => {
-            const updatedPreviewsActual = [...prevPreviewsActual];
-            URL.revokeObjectURL(updatedPreviewsActual[indexToRemove].url);
-            updatedPreviewsActual.splice(indexToRemove, 1);
-            return updatedPreviewsActual;
+const handleRemoveActual = (indexToRemove) => {
+    // Remove from previewsActual
+    setPreviewsActual((prevPreviewsActual) => {
+        const updatedPreviewsActual = [...prevPreviewsActual];
+        URL.revokeObjectURL(updatedPreviewsActual[indexToRemove].url);
+        updatedPreviewsActual.splice(indexToRemove, 1);
+        return updatedPreviewsActual;
+    });
+
+    // Remove from actualImages
+    setactualImage((prev) => {
+        const updated = [...prev];
+        updated.splice(indexToRemove, 1);
+        return updated;
+    });
+};
+
+   const handleUpdateSubmit = async (values, { setSubmitting }) => {
+    console.log("i am here");
+    console.log(values, "i am hds");
+
+    const formData = new FormData();
+
+    const product = {
+        ...values,
+        productGroup: { id: values.productGroup?.id || 0 },
+        subGroup: { id: values.subGroup?.id || 0 },
+        supplier: values?.supplier?.map((supp) => ({ id: supp?.id })),
+    };
+
+    if (gstDetails && gstDetails.length > 0) {
+        product.slabBasedRates = values.slabBasedRates;
+    }
+    if (values.gstratedetails === "Specify Slab Based Rates") {
+        product.slabBasedRates = values.slabBasedRates;
+        delete product.hsnCode;
+        delete product.igst;
+        delete product.cgst;
+        delete product.sgst;
+        delete product.gstDescription;
+        delete product.productDescriptionn;
+        delete product.hsn_Sac;
+    } else if (values.gstratedetails === "Use GST Classification") {
+        product.hsnCode = values.hsnCode;
+        delete product.igst;
+        delete product.cgst;
+        delete product.sgst;
+        delete product.productDescriptionn;
+        product.gstDescription = values.hsnCode?.productDescriptionn;
+        product.hsn_Sac = values.hsn_Sac;
+        delete product.slabBasedRates;
+    }
+
+    formData.append("product", JSON.stringify(product));
+
+    // Append all reference images (both old and new)
+    if (referenceImages && referenceImages.length > 0) {
+        referenceImages.forEach((file) => {
+            // Only append if it's a real file (has size > 0)
+            if (file.size > 0) {
+                formData.append('referenceImages', file);
+            }
         });
-    };
+    }
 
-    const handleUpdateSubmit = async (values, { setSubmitting }) => {
-        console.log("i am here");
-        console.log(values, "i am hds");
+    // Append all actual images (both old and new)
+    if (actualImages && actualImages.length > 0) {
+        actualImages.forEach((file) => {
+            if (file.size > 0) {
+                formData.append('actualImages', file);
+            }
+        });
+    }
 
+    console.log(formData, "66666666666666666666");
 
-        console.log(values, "Submitted values:");
+    try {
+        const url = `${UPDATE_PRODUCT_URL}/${id}`;
+        const response = await fetch(url, {
+            method: "PUT",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            },
+            body: formData,
+        });
 
-        const formData = new FormData();
-
-        const product = {
-            ...values,
-            productGroup: { id: values.productGroup?.id || 0 },
-            subGroup: { id: values.subGroup?.id || 0 },
-            supplier: values?.supplier?.map((supp) => ({ id: supp?.id })),
-        };
-
-        if (gstDetails && gstDetails.length > 0) {
-            product.slabBasedRates = values.slabBasedRates;
-        }
-        if (values.gstratedetails === "Specify Slab Based Rates") {
-            product.slabBasedRates = values.slabBasedRates;
-            delete product.hsnCode;
-            delete product.igst;
-            delete product.cgst;
-            delete product.sgst;
-            delete product.gstDescription;
-            delete product.productDescriptionn;
-            delete product.hsn_Sac;
-        } else if (values.gstratedetails === "Use GST Classification") {
-            product.hsnCode = values.hsnCode;
-            delete product.igst;
-            delete product.cgst;
-            delete product.sgst;
-            delete product.productDescriptionn;
-            product.gstDescription = values.hsnCode?.productDescriptionn;
-            product.hsn_Sac = values.hsn_Sac;
-            delete product.slabBasedRates;
-        }
-
-        formData.append("product", JSON.stringify(product));
-        Array.from(referenceImages).forEach((file) => formData.append('referenceImages', file));
-        Array.from(actualImages).forEach((file) => formData.append('actualImages', file));
-
-        console.log(formData, "66666666666666666666");
-
-
+        let data;
         try {
-            const url = `${UPDATE_PRODUCT_URL}/${id}`;
-            const response = await fetch(url, {
-                method: "PUT",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                },
-                body: formData,
-            });
-
-            let data;
-            try {
-                data = await response.json();
-            } catch {
-                data = await response.text();
-            }
-
-            if (response.ok) {
-                toast.success("Product updated successfully");
-                navigate('/product/viewProducts');
-            } else {
-                toast.error(data || "A conflict occurred while updating the product.");
-            }
-        } catch (error) {
-            toast.error("An error occurred while updating the product.");
-        } finally {
-            if (setSubmitting) setSubmitting(false);
+            data = await response.json();
+        } catch {
+            data = await response.text();
         }
-    };
+
+        if (response.ok) {
+            toast.success("Product updated successfully");
+            navigate('/product/viewProducts');
+        } else {
+            toast.error(data || "A conflict occurred while updating the product.");
+        }
+    } catch (error) {
+        toast.error("An error occurred while updating the product.");
+    } finally {
+        if (setSubmitting) setSubmitting(false);
+    }
+};
+
+
+
+
 
     const getProductById = async () => {
         try {
