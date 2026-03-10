@@ -7,15 +7,21 @@ import { Link } from "react-router-dom";
 import DefaultLayout from "../../layout/DefaultLayout";
 import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 
-// Papier Mache card mapping with colors
+// Papier Mache card mapping (simple cards - no colors)
 const papierMacheCards = [
+  // {
+  //   title: "Papier Mache Section",
+  //   link: "/papierMache",
+  //   countKey: "papierMacheOrders",
+  //   icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
+  //   levelUp: true,
+  // },
   {
     title: "Papier Mache Orders",
     link: "/papierMacheOrders",
     countKey: "papierMacheOrders",
     icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
     levelUp: true,
-    color: "from-amber-700 to-amber-800",
   },
   {
     title: "Retail Papier Mache",
@@ -23,7 +29,6 @@ const papierMacheCards = [
     countKey: "RetailPapierMache",
     icon: <AiOutlinePartition className="w-10 h-10" />,
     levelUp: true,
-    color: "from-orange-600 to-orange-700",
   },
   {
     title: "Wholesale Papier Mache",
@@ -31,7 +36,6 @@ const papierMacheCards = [
     countKey: "WholesalePapierMache",
     icon: <RiAlignItemBottomFill className="w-10 h-10" />,
     levelUp: true,
-    color: "from-red-600 to-red-700",
   },
   {
     title: "Klc Papier Mache",
@@ -39,9 +43,7 @@ const papierMacheCards = [
     countKey: "KlcPapierMache",
     icon: <TbReorder className="w-10 h-10" />,
     levelUp: true,
-    color: "from-purple-600 to-purple-700",
   },
- 
 ];
 
 const PapierMache = () => {
@@ -66,51 +68,47 @@ const PapierMache = () => {
     <DefaultLayout>
       <Breadcrumb pageName="Papier Mache" />
 
-      {/* Colored Tiles - Same size as Contemporary */}
+      {/* Simple Cards */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-        {papierMacheCards.map((card, index) => (
-          <Link
-            key={index}
-            to={card.link}
-            className={`group relative overflow-hidden rounded-xl bg-gradient-to-br ${card.color} p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}
-          >
-            {/* Background Pattern */}
-            <div className="absolute right-0 top-0 -mt-4 -mr-4 h-20 w-20 rounded-full bg-white/10 blur-2xl"></div>
-            
-           
-
-            {/* Icon */}
-            <div className="mb-4 text-white/90">{card.icon}</div>
-
-            {/* Title */}
-            <h3 className="mb-2 text-xl font-bold text-white">{card.title}</h3>
-
-            {/* Count - Commented out to match the Contemporary style */}
-            {/* {counts[card.countKey] !== undefined && (
-              <p className="text-sm text-white/80">
-                {counts[card.countKey]} items
-              </p>
-            )} */}
-
-            {/* View Link */}
-            <div className="mt-6 flex items-center text-sm font-medium text-white/90">
-              View
-              <svg
-                className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+        {papierMacheCards.map((card, index) => {
+          // Check if this is the current page (Papier Mache Section)
+          const isCurrentPage = card.title === "Papier Mache Section";
+          
+          if (isCurrentPage) {
+            // For current page, use a div with NO link (not clickable)
+            return (
+              <div
+                key={index}
+                className="rounded-lg border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark cursor-default ring-2 ring-primary ring-offset-2"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </div>
-          </Link>
-        ))}
+                <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4 mb-4">
+                  {card.icon}
+                </div>
+                {/* <h4 className="text-title-md font-bold text-black dark:text-white">
+                  {counts[card.countKey] || 0}
+                </h4> */}
+                <span className="text-sm font-medium">{card.title}</span>
+              </div>
+            );
+          } else {
+            // For other pages, use Link for navigation (clickable)
+            return (
+              <Link
+                key={index}
+                to={card.link}
+                className="rounded-lg border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark cursor-pointer transition-transform hover:scale-105 block"
+              >
+                <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4 mb-4">
+                  {card.icon}
+                </div>
+                {/* <h4 className="text-title-md font-bold text-black dark:text-white">
+                  {counts[card.countKey] || 0}
+                </h4> */}
+                <span className="text-sm font-medium">{card.title}</span>
+              </Link>
+            );
+          }
+        })}
       </div>
     </DefaultLayout>
   );

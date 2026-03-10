@@ -7,31 +7,42 @@ import { Link } from "react-router-dom";
 import DefaultLayout from "../../layout/DefaultLayout";
 import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 
-// Cotton card mapping
+// Cotton card mapping (simple cards - no colors)
 const cottonCards = [
+  // {
+  //   title: "Cotton Section",
+  //   link: "/cotton",
+  //   countKey: "cottonOrders",
+  //   icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
+  //   levelUp: true,
+  // },
   {
     title: "Cotton Orders",
     link: "/cottonOrders",
+    countKey: "cottonOrders",
     icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
-    color: "from-pink-500 to-pink-600",
+    levelUp: true,
   },
   {
     title: "Retail Cotton",
     link: "/cotton/retail-client-orders",
+    countKey: "RetailCotton",
     icon: <AiOutlinePartition className="w-10 h-10" />,
-    color: "from-green-500 to-green-600",
+    levelUp: true,
   },
   {
     title: "Wholesale Cotton",
     link: "/cotton/wholesale-client-orders",
+    countKey: "WholesaleCotton",
     icon: <RiAlignItemBottomFill className="w-10 h-10" />,
-    color: "from-orange-500 to-orange-600",
+    levelUp: true,
   },
   {
     title: "KLC Cotton",
     link: "/cotton-klc-orders",
+    countKey: "KlcCotton",
     icon: <TbReorder className="w-10 h-10" />,
-    color: "from-blue-500 to-blue-600",
+    levelUp: true,
   },
 ];
 
@@ -56,44 +67,47 @@ const Cotton = () => {
     <DefaultLayout>
       <Breadcrumb pageName="Cotton" />
 
-      {/* SAME GRID + SAME CARD SIZE */}
+      {/* Simple Cards */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-        {cottonCards.map((card, index) => (
-          <Link
-            key={index}
-            to={card.link}
-            className={`group relative overflow-hidden rounded-xl bg-gradient-to-br ${card.color} p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 h-48 flex flex-col`}
-          >
-            {/* Glow Background */}
-            <div className="absolute right-0 top-0 -mt-4 -mr-4 h-20 w-20 rounded-full bg-white/10 blur-2xl"></div>
-
-            {/* Icon */}
-            <div className="mb-4 text-white/90">{card.icon}</div>
-
-            {/* Title */}
-            <h3 className="text-xl font-bold text-white min-h-[56px] leading-tight">
-              {card.title}
-            </h3>
-
-            {/* View Button */}
-            <div className="mt-auto flex items-center text-sm font-medium text-white/90 pt-4">
-              View
-              <svg
-                className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+        {cottonCards.map((card, index) => {
+          // Check if this is the current page (Cotton Section)
+          const isCurrentPage = card.title === "Cotton Section";
+          
+          if (isCurrentPage) {
+            // For current page, use a div with NO link (not clickable)
+            return (
+              <div
+                key={index}
+                className="rounded-lg border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark cursor-default ring-2 ring-primary ring-offset-2"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </div>
-          </Link>
-        ))}
+                <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4 mb-4">
+                  {card.icon}
+                </div>
+                {/* <h4 className="text-title-md font-bold text-black dark:text-white">
+                  {counts[card.countKey] || 0}
+                </h4> */}
+                <span className="text-sm font-medium">{card.title}</span>
+              </div>
+            );
+          } else {
+            // For other pages, use Link for navigation (clickable)
+            return (
+              <Link
+                key={index}
+                to={card.link}
+                className="rounded-lg border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark cursor-pointer transition-transform hover:scale-105 block"
+              >
+                <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4 mb-4">
+                  {card.icon}
+                </div>
+                {/* <h4 className="text-title-md font-bold text-black dark:text-white">
+                  {counts[card.countKey] || 0}
+                </h4> */}
+                <span className="text-sm font-medium">{card.title}</span>
+              </Link>
+            );
+          }
+        })}
       </div>
     </DefaultLayout>
   );
