@@ -46,8 +46,6 @@ const UpdateKaniProducts = () => {
     const productGroup = useSelector(state => state?.persisted?.productGroup);
     const [vaaluee, setvaaluee] = useState({})
 
-    const [subGroupOptions, setsubGroupOptions] = useState([]);
-
     const [referenceImages, setrefImage] = useState({})
     const [actualImages, setactualImage] = useState({})
     const navigate = useNavigate(); // Initialize navigate
@@ -657,120 +655,57 @@ const UpdateKaniProducts = () => {
                                     </div>
                                     <div className="p-6.5">
                                         <div className="mb-4.5 flex flex-wrap gap-6">
-                                                {/* Product Group Field */}
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        Product Group <span className='text-red-700 text-xl'> *</span>
-                                                    </label>
-                                                    <div className="bg-white dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            name="productGroup"
-                                                            value={productGroupOption?.find(option => option.value === values?.productGroup?.id) || null}
-                                                            onChange={(option) => setFieldValue('productGroup', option ? option.productGroupObject : null)}
-                                                            options={productGroupOption}
-                                                            styles={customStyles}
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Product Group"
-                                                        />
-                                                    </div>
-                                                </div>
+                                            {/* Product Group Field */}
 
-                                                {/* Sub Group Field */}
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        Sub Group <span className='text-red-700 text-xl'> *</span>
-                                                    </label>
-                                                    <div className="bg-white dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            name="subGroup"
-                                                            value={subGroupOptions?.find(option => option.value === values?.subGroup?.id) || null}
-                                                            onChange={(option) => setFieldValue('subGroup', option ? { id: option.subGroupObject.id } : null)}
-                                                            options={subGroupOptions}
-                                                            styles={customStyles}
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Sub Group"
-                                                        />
-                                                    </div>
-                                                </div>
+                                            <div className="flex-1 min-w-[300px]">
+                                                <label className="mb-2.5 block text-black dark:text-white">Product Group <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                                <div className="bg-white dark:bg-form-Field">
+                                                    <ReactSelect
+                                                        name="productGroup"
+                                                        value={productGroupOption?.find(option => option.value === values?.productGroup?.id) || null}
 
-                                                {/* Color Group Field */}
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        Color Group <span className='text-red-700 text-xl'> *</span>
-                                                    </label>
-                                                    <div className="z-20 bg-transparent dark:bg-form-field">
-                                                        <ReactSelect
-                                                            name="colors"
-                                                            value={colorGroupOptions.find(option => option.value === values.colors?.id) || null}
-                                                            onChange={(option) => setFieldValue('colors', option ? option.color : null)}
-                                                            options={colorGroupOptions}
-                                                            styles={customStyles}
-                                                            className="bg-white dark:bg-form-field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Color Group"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Second Row */}
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                {/* Supplier/Weaver Name */}
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        Supplier/Weaver Name <span className='text-red-700 text-xl'> *</span>
-                                                    </label>
-                                                    <div className="z-20 bg-transparent dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            name="productCategory"
-                                                            value={productCategoryOptions?.find(option => option.value === values.productCategory?.id) || null}
-                                                            onChange={(option) => setFieldValue('productCategory', option ? option.productCategoryid : null)}
-                                                            options={productCategoryOptions}
-                                                            styles={customStyles}
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Product Category"
-                                                            isDisabled={true}
-                                                        />
-                                                    </div>
-                                                </div>
-
-                                                {/* Design Name */}
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        Design Name <span className='text-red-700 text-xl'> *</span>
-                                                    </label>
-                                                    <div className="z-20 bg-transparent dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            name="design"
-                                                            value={designOptions?.find(option => option.value === values.design?.id) || null}
-                                                            onChange={(option) => setFieldValue('design', option ? option.designid : null)}
-                                                            options={designOptions}
-                                                            styles={customStyles}
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Design"
-                                                            isDisabled={true}
-                                                        />
-                                                    </div>
-                                                </div>
-
-                                                {/* Color Name */}
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        Color Name <span className='text-red-700 text-xl'> *</span>
-                                                    </label>
-                                                    <Field
-                                                        name='colorName'
-                                                        type="text"
-                                                        placeholder="Enter Color name"
-                                                        readOnly
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        options={productGroupOption}
+                                                        styles={customStyles}
+                                                        className="bg-white dark:bg-form-Field"
+                                                        classNamePrefix="react-select"
+                                                        placeholder="Select Product Group"
+                                                        isDisabled={true}  // This makes the select readonly
                                                     />
                                                 </div>
                                             </div>
+
+
+                                            <div className="flex-1 min-w-[300px]">
+                                                <label className="mb-2.5 block text-black dark:text-white">
+                                                    Color Group <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span>
+                                                </label>
+                                                <div className="z-20 bg-transparent dark:bg-form-field">
+                                                    <ReactSelect
+                                                        isDisabled={true}
+                                                        name="colors"
+                                                        value={
+                                                            colorGroupOptions.find(option => option.value === values.colors?.id) || null
+                                                        } // Match the current value
+                                                        // onChange={(option) => {
+                                                        //     setFieldValue(
+                                                        //         'colors',
+                                                        //         option
+                                                        //             ? { id: option.value, colorName: option.label }
+                                                        //             : null
+                                                        //     ); // Update the formik state
+                                                        // }}
+                                                        onChange={(option) => setFieldValue('colors', option ? option.color : null)}
+                                                        options={colorGroupOptions}
+                                                        styles={customStyles} // Apply custom styles
+                                                        className="bg-white dark:bg-form-field"
+                                                        classNamePrefix="react-select"
+                                                        placeholder="Select Color Group" // Static placeholder
+                                                    />
+                                                </div>
+                                            </div>
+
+
+                                        </div>
 
                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                             <div className="flex-1 min-w-[300px]">
