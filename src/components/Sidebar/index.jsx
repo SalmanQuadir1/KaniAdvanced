@@ -91,15 +91,15 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         }`}
     >
       {/* <!-- SIDEBAR HEADER --> */}
-      <div className="flex items-center justify-between  px-6  lg:py-6.5 bg-graydark">
+      <div className="flex items-center justify-between  px-4  lg:py-7 bg-slate-900">
 
+        <div className='mt-[-30px]'>
+          <NavLink to="/" className='flex justify-center mx-auto md:h-[80px] h-[80px] '>
+            <img src={Logo} className='w-full h-40 justify-center rounded-full  ' alt="Logo" />
+            {/* <h2 className='mt-7 ml-4 text-3xl text-slate-300 font-bold stroke-form-input'>KANI</h2> */}
+          </NavLink>
 
-        <NavLink to="/" className='flex justify-center mx-auto md:h-[70px] h-[100px] '>
-          <img src={Logo} className='w-full h-22 justify-center rounded-full mb-[-20px] ' alt="Logo" />
-          {/* <h2 className='mt-7 ml-4 text-3xl text-slate-300 font-bold stroke-form-input'>KANI</h2> */}
-        </NavLink>
-
-
+        </div>
 
         <button
           ref={trigger}
@@ -233,12 +233,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                 (isActive && '!text-white')
                               }
                             >
-                              <LiaTruckLoadingSolid/>
+                              <LiaTruckLoadingSolid />
                               Groups
                             </NavLink>
                           </li>
 
-                          
+
                           <li>
                             <NavLink
                               to="/configurator/vouchers"
@@ -247,7 +247,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                 (isActive && '!text-white')
                               }
                             >
-                              <TbReportAnalytics/>
+                              <TbReportAnalytics />
                               Vouchers
                             </NavLink>
                           </li>
@@ -264,7 +264,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             </NavLink>
                           </li> */}
 
-                             <li>
+                          <li>
                             <NavLink
                               to="/configurator/AddLut"
                               className={({ isActive }) =>
@@ -272,11 +272,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                 (isActive && '!text-white')
                               }
                             >
-                              <LuTornado/>
-                             LUT
+                              <LuTornado />
+                              LUT
                             </NavLink>
                           </li>
- </ul> 
+                        </ul>
                       </div>
 
                     </React.Fragment>
@@ -284,62 +284,62 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 }}
               </SidebarLinkGroup>
 
-    {/* Kani */}
+              {/* Kani */}
 
-    <SidebarLinkGroup>
-  {(handleClick, open) => {
-    return (
-      <>
-        {mode === "kani" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
-          <NavLink
-            to="#"
-            className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4`}
-            onClick={(e) => {
-              e.preventDefault();
-              sidebarExpanded
-                ? handleClick()
-                : setSidebarExpanded(true);
-            }}
-          >
-             Kani Section
-            <svg
-              className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'}`}
-              width="20"
-              height="20"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
-              />
-            </svg>
-          </NavLink>
-        ) : null}
+              <SidebarLinkGroup>
+                {(handleClick, open) => {
+                  return (
+                    <>
+                      {mode === "kani" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                        <NavLink
+                          to="#"
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            sidebarExpanded
+                              ? handleClick()
+                              : setSidebarExpanded(true);
+                          }}
+                        >
+                          Kani Section
+                          <svg
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'}`}
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              clipRule="evenodd"
+                              d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
+                            />
+                          </svg>
+                        </NavLink>
+                      ) : null}
 
-        <div className={`translate transform overflow-hidden ${!open && 'hidden'}`}>
-          <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                      <div className={`translate transform overflow-hidden ${!open && 'hidden'}`}>
+                        <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
 
-            <li>
-              <NavLink
-                to="/kaniOrders"
-                className={({ isActive }) =>
-                  'group flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 hover:text-white ' +
-                  (isActive && '!text-white')
-                }
-              >
-               Kani Orders
-              </NavLink>
-            </li>
+                          <li>
+                            <NavLink
+                              to="/kaniOrders"
+                              className={({ isActive }) =>
+                                'group flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 hover:text-white ' +
+                                (isActive && '!text-white')
+                              }
+                            >
+                              Kani Orders
+                            </NavLink>
+                          </li>
 
-           
-           
-          </ul>
-        </div>
-      </>
-    );
-  }}
-</SidebarLinkGroup>
+
+
+                        </ul>
+                      </div>
+                    </>
+                  );
+                }}
+              </SidebarLinkGroup>
 
 
 
@@ -368,7 +368,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           }}
                         >
                           <FaBook size={24} />
-                           Ledger
+                          Ledger
                           <svg
                             className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
                               }`}
@@ -405,7 +405,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               Add Inventory
                             </NavLink>
                           </li> */}
-                             <li>
+                          <li>
                             <NavLink
                               to="/Ledger/CreateLedger"
                               className={({ isActive }) =>
@@ -471,7 +471,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           }}
                         >
                           <RiPagesLine size={24} />
-                           Vouchers
+                          Vouchers
                           <svg
                             className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
                               }`}
@@ -508,8 +508,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               Add Inventory
                             </NavLink>
                           </li> */}
-                             <li>
-                             <NavLink
+                          <li>
+                            <NavLink
                               to="/configurator/vouchers"
                               className={({ isActive }) =>
                                 'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
@@ -540,10 +540,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 }}
               </SidebarLinkGroup>
 
-          
 
 
-           
+
+
 
               {/* Role Admin_dli */}
 
@@ -1038,7 +1038,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       >
 
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                      
+
 
 
                           <li>
@@ -1180,7 +1180,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               : setSidebarExpanded(true);
                           }}
                         >
-                          <BiTransfer  size={24} />
+                          <BiTransfer size={24} />
                           Stock Transfer
                           <svg
                             className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
@@ -1214,7 +1214,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                 (isActive && '!text-white')
                               }
                             >
-                               Stock Transfer
+                              Stock Transfer
                             </NavLink>
                           </li>
 
@@ -1383,7 +1383,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             </NavLink>
                           </li>
 
-                              <li>
+                          <li>
                             <NavLink
                               to="/configurator/addproductSubgroup"
                               className={({ isActive }) =>
@@ -1440,7 +1440,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             </NavLink>
                           </li>
 
-                           <li>
+                          <li>
                             <NavLink
                               to="/configurator/weave"
                               className={({ isActive }) =>

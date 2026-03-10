@@ -318,6 +318,7 @@ const handleRemoveActual = (indexToRemove) => {
                 value: design.id,
                 label: design?.designName,
                 designObject: design,
+                designCode: design?.designCode || '' 
             }));
             setdesignOptions(formattedOptions);
         }
@@ -338,6 +339,7 @@ const handleRemoveActual = (indexToRemove) => {
                 value: size.id,
                 label: size?.sizeName,
                 sizeObject: size,
+                 sizeCode: size?.sizeCode || ''
             }));
             setsizeOptions(formattedOptions);
         }
@@ -815,14 +817,16 @@ const handleRemoveActual = (indexToRemove) => {
                                                         <ReactSelect
                                                             name="design"
                                                             value={designOptions?.find(option => option.value === values.design?.id) || null}
-                                                            onChange={(option) => {
-                                                                setFieldValue('design', option ? option.designObject : null)
+                              onChange={(option) => {
+                                                                setFieldValue('design', option ? option.designObject : null);
+                                                                // Automatically set design code when design is selected
+                                                                if (option && option.designCode) {
+                                                                    setFieldValue('designCode', option.designCode);
+                                                                } else {
+                                                                    setFieldValue('designCode', '');
+                                                                }
                                                                 updateProductId();
-
-                                                            }
-
-
-                                                            }
+                                                            }}
                                                             options={designOptions}
                                                             styles={customStyles} // Pass custom styles here
                                                             className="bg-white dark:bg-form-Field"
@@ -839,6 +843,7 @@ const handleRemoveActual = (indexToRemove) => {
                                                     <Field
                                                         name='designCode'
                                                         type="text"
+                                                        readOnly
                                                         placeholder="Enter Design Code"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 mt-[6px] px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                     />
@@ -881,8 +886,14 @@ const handleRemoveActual = (indexToRemove) => {
                                                         <ReactSelect
                                                             name="sizes"
                                                             value={sizeOptions?.find(option => option.value === values.sizes?.id) || null}
-                                                            onChange={(option) => {
-                                                                setFieldValue('sizes', option ? option.sizeObject : null)
+                                                             onChange={(option) => {
+                                                                setFieldValue('sizes', option ? option.sizeObject : null);
+                                                                // Automatically set size code when size is selected
+                                                                if (option && option.sizeCode) {
+                                                                    setFieldValue('sizeCode', option.sizeCode);
+                                                                } else {
+                                                                    setFieldValue('sizeCode', '');
+                                                                }
                                                                 updateProductId();
                                                             }}
                                                             options={sizeOptions}
@@ -910,6 +921,7 @@ const handleRemoveActual = (indexToRemove) => {
                                                     <Field
                                                         name='sizeCode'
                                                         type="text"
+                                                        readOnly
                                                         placeholder="Enter Size Code"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 mt-[6px] px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                     />
@@ -1157,7 +1169,7 @@ const handleRemoveActual = (indexToRemove) => {
                                                     />
                                                 </div>
                                             </div>
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
+                                            {/* <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white"> Gross Weight </label>
                                                     <Field
@@ -1176,7 +1188,7 @@ const handleRemoveActual = (indexToRemove) => {
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
-                                            </div>
+                                            </div> */}
 
 
 

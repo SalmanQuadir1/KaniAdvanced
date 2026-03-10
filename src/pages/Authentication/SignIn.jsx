@@ -5,7 +5,7 @@ import { signInFailure, signInSuccess, signinStart } from '../../redux/Slice/Use
 import { SIGNIN_URL } from '../../Constants/utils';
 import './style.css'; // Ensure custom styling if needed
 import backgroundImage from '/img/loginimg.jpg';
-import logoImage from '/img/bg123.png';
+import logoImage from '/img/logo.png';
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import the eye icons
 
 const SignIn = () => {

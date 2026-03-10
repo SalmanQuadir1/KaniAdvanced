@@ -21,6 +21,7 @@ import PaymentSummary from './components/Accounts/Config/PaymentSummary.jsx';
 
 import Voucher from './components/Accounts/Vouchers/Voucher.jsx';
 import CreateVoucher from './components/Accounts/Vouchers/CreateVoucher.jsx';
+import UpdateVoucher from './components/Accounts/Vouchers/UpdateVoucher.jsx';
 import CreateDebitNote from './components/Accounts/Vouchers/CreateDebitNote.jsx';
 import CreateCreditNote from './components/Accounts/Vouchers/CreateCreditNote.jsx';
 import CreateContra from './components/Accounts/Vouchers/CreateContra.jsx';
@@ -417,7 +418,7 @@ function App() {
             }
           />
           <Route
-            path="/home"
+            path="/"
             element={
               <>
                 <RoleBasedRoute allowedRoles={["ROLE_ADMIN", "ROLE_FINANCE", 'ROLE_VERIFIER', "ROLE_USER", "ROLE_APPROVER", "ROLE_EXECUTOR", "ROLE_ADMIN_DLI", "ROLE_ADMIN_SXR", "ROLE_QUALITYCONTROL"]}></RoleBasedRoute>
@@ -524,6 +525,17 @@ function App() {
                 <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
                 <PageTitle title="Voucher" />
                 <CreateVoucher />
+              </>
+            }
+          />
+
+             <Route
+            path="/Voucher/updateVoucher/:id"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Voucher Update" />
+                <UpdateVoucher />
               </>
             }
           />

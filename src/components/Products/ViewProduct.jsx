@@ -558,7 +558,7 @@ const ViewProduct = () => {
 
 
                         <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center z-999">
-                            <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[300px] w-[270px] h-[400px] mt-[60px] dark:bg-slate-600 overflow-auto">
+                            <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg  w-[670px] h-[400px] mt-[60px] dark:bg-slate-600 overflow-auto">
                                 <div className="text-right">
                                     <button onClick={() => setisImagesModalOpen(false)} className="text-red-500 text-xl font-bold">&times;</button>
                                 </div>

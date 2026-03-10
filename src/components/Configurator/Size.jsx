@@ -31,6 +31,10 @@ const Size = () => {
                         if (!values.sizeName) {
                             errors.sizeName = 'Required';
                         }
+
+                          if (!values.sizeCode) {
+                            errors.sizeCode = 'Required';
+                        }
                         return errors;
                     }}
                     onSubmit={handleSubmit}
@@ -56,6 +60,17 @@ const Size = () => {
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                 />
                                                 <ErrorMessage name="sizeName" component="div" className="text-red-500" />
+                                            </div>
+
+                                              <div className="flex-1 min-w-[300px]">
+                                                <label className="mb-2.5 block text-black dark:text-white"> Size Code<span className="text-red-500 ml-1">*</span></label>
+                                                <Field
+                                                    type="text"
+                                                    name="sizeCode"
+                                                    placeholder="Enter size Code"
+                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                />
+                                                <ErrorMessage name="sizeCode" component="div" className="text-red-500" />
                                             </div>
                                         </div>
                                         <div className="flex justify-center mt-4 items-center">
