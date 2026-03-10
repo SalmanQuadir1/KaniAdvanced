@@ -152,11 +152,11 @@ const Header = (props) => {
           </div>
            <ul>
  
-<FaKaggle
+{/* <FaKaggle
   className="cursor-pointer p-2 bg-slate-500 text-white rounded-full"
   size={31}
   onClick={() => handleModeeChange('kani')}
-/>
+/> */}
 
 
 </ul>
