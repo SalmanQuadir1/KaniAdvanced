@@ -659,7 +659,7 @@ const SareeSuppliers = () => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Contemporary SareeSuppliers" />
+      <Breadcrumb pageName="Contemporary Saree Suppliers" />
 
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:bg-boxdark mb-6">
         <div className="flex justify-between items-center border-b border-stroke dark:border-strokedark py-4 px-6">

@@ -7,16 +7,21 @@ import { Link } from "react-router-dom";
 import DefaultLayout from "../../layout/DefaultLayout";
 import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 
-// Pashmina Embroidery card mapping with colors
+// Pashmina Embroidery card mapping (simple cards - no colors)
 const pashminaModeCards = [
-  
+  // {
+  //   title: "Pashmina Section",
+  //   link: "/pashminaEmbroidery",
+  //   countKey: "pashminaOrders",
+  //   icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
+  //   levelUp: true,
+  // },
   {
     title: "Embroidery Orders",
     link: "/embroideryOrders",
     countKey: "embroideryOrders",
     icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
     levelUp: true,
-    color: "from-green-500 to-green-600",
   },
   {
     title: "Retail Embroidery",
@@ -24,7 +29,6 @@ const pashminaModeCards = [
     countKey: "RetailEmbroidery",
     icon: <AiOutlinePartition className="w-10 h-10" />,
     levelUp: true,
-    color: "from-purple-500 to-purple-600",
   },
   {
     title: "Wholesale Embroidery",
@@ -32,15 +36,13 @@ const pashminaModeCards = [
     countKey: "WholesaleEmbroidery",
     icon: <RiAlignItemBottomFill className="w-10 h-10" />,
     levelUp: true,
-    color: "from-orange-500 to-orange-600",
   },
   {
-    title: "Klc Orders",
+    title: "Klc Embroidery",
     link: "/KlcEmbroidery",
     countKey: "KlcEmbroidery",
     icon: <TbReorder className="w-10 h-10" />,
     levelUp: true,
-    color: "from-red-500 to-red-600",
   },
 ];
 
@@ -55,7 +57,7 @@ const PashminaEmbroidery = () => {
         embroideryOrders: 18,
         RetailEmbroidery: 10,
         WholesaleEmbroidery: 14,
-        PashminaOrders: 22,
+        KlcEmbroidery: 22,
       };
       setCounts(mockCounts);
     };
@@ -67,50 +69,47 @@ const PashminaEmbroidery = () => {
     <DefaultLayout>
       <Breadcrumb pageName="Pashmina Embroidery" />
 
-      {/* Colored Tiles */}
+      {/* Simple Cards */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-        {pashminaModeCards.map((card, index) => (
-          <Link
-            key={index}
-            to={card.link}
-            className={`group relative overflow-hidden rounded-xl bg-gradient-to-br ${card.color} p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}
-          >
-            {/* Background Pattern */}
-            <div className="absolute right-0 top-0 -mt-4 -mr-4 h-20 w-20 rounded-full bg-white/10 blur-2xl"></div>
-            
-           
-            {/* Icon */}
-            <div className="mb-4 text-white/90">{card.icon}</div>
-
-            {/* Title */}
-            <h3 className="mb-2 text-xl font-bold text-white">{card.title}</h3>
-
-            {/* Count */}
-            {/* {counts[card.countKey] !== undefined && (
-              <p className="text-sm text-white/80">
-                {counts[card.countKey]} items
-              </p>
-            )} */}
-
-            {/* View Link */}
-            <div className="mt-6 flex items-center text-sm font-medium text-white/90">
-              View
-              <svg
-                className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+        {pashminaModeCards.map((card, index) => {
+          // Check if this is the current page (Pashmina Section)
+          const isCurrentPage = card.title === "Pashmina Section";
+          
+          if (isCurrentPage) {
+            // For current page, use a div with NO link (not clickable)
+            return (
+              <div
+                key={index}
+                className="rounded-lg border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark cursor-default ring-2 ring-primary ring-offset-2"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </div>
-          </Link>
-        ))}
+                <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4 mb-4">
+                  {card.icon}
+                </div>
+                {/* <h4 className="text-title-md font-bold text-black dark:text-white">
+                  {counts[card.countKey] || 0}
+                </h4> */}
+                <span className="text-sm font-medium">{card.title}</span>
+              </div>
+            );
+          } else {
+            // For other pages, use Link for navigation (clickable)
+            return (
+              <Link
+                key={index}
+                to={card.link}
+                className="rounded-lg border border-stroke bg-white p-6 shadow-default dark:border-strokedark dark:bg-boxdark cursor-pointer transition-transform hover:scale-105 block"
+              >
+                <div className="flex h-11.5 w-11.5 items-center justify-center rounded-full bg-meta-2 dark:bg-meta-4 mb-4">
+                  {card.icon}
+                </div>
+                {/* <h4 className="text-title-md font-bold text-black dark:text-white">
+                  {counts[card.countKey] || 0}
+                </h4> */}
+                <span className="text-sm font-medium">{card.title}</span>
+              </Link>
+            );
+          }
+        })}
       </div>
     </DefaultLayout>
   );
