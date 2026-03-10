@@ -82,7 +82,7 @@ const UpdateVoucher = () => {
                 const formattedData = formatVoucherData(voucherData);
                 setInitialFormValues(formattedData);
                 setGeneratedVoucherNo(voucherData.generatedVoucherNo || '');
-                
+
                 // If there are GST details, set them
                 if (voucherData.gstDetails) {
                     setGstDetails(voucherData.gstDetails);
@@ -99,6 +99,7 @@ const UpdateVoucher = () => {
             setFetching(false);
         }
     };
+    console.log(initialFormValues, "00000000000");
 
     const formatVoucherData = (voucherData) => {
         return {
@@ -257,10 +258,10 @@ const UpdateVoucher = () => {
                                 System generated voucher number
                             </p>
                         </div>
-                        <Field 
-                            type="hidden" 
-                            name="generatedVoucherNo" 
-                            value={generatedVoucherNo || values.autoReceiptNumber || '1'} 
+                        <Field
+                            type="hidden"
+                            name="generatedVoucherNo"
+                            value={generatedVoucherNo || values.autoReceiptNumber || '1'}
                         />
                     </div>
                 </div>
@@ -300,10 +301,10 @@ const UpdateVoucher = () => {
                                 Voucher number with prefix/suffix and padding
                             </p>
                         </div>
-                        <Field 
-                            type="hidden" 
-                            name="generatedVoucherNo" 
-                            value={generatedVoucherNo || values.autoReceiptNumber} 
+                        <Field
+                            type="hidden"
+                            name="generatedVoucherNo"
+                            value={generatedVoucherNo || values.autoReceiptNumber}
                         />
                     </div>
                     {!generatedVoucherNo && !values.autoReceiptNumber && (
@@ -368,8 +369,22 @@ const UpdateVoucher = () => {
                             <div className="p-6.5">
                                 {/* Basic Information */}
                                 <div className="mb-8">
-                                    <h4 className="text-lg font-semibold mb-4 text-black dark:text-white">Basic Information</h4>
+                                    <h4 className="text-lg font-semibold mb-4 text-black dark:text-white">
+                                        Basic Information
+                                    </h4>
+
+                                    <div className="flex items-center gap-3 bg-gray-100 dark:bg-gray-800 px-4 py-2 rounded-md w-fit">
+                                        <span className="font-bold text-black dark:text-white">
+                                            Voucher Number:
+                                        </span>
+                                        <span className="font-bold text-primary text-lg">
+                                            {initialFormValues.autoReceiptNumber}
+                                        </span>
+                                    </div>
+
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+
                                         <div>
                                             <label className="mb-2.5 block text-black dark:text-white">Voucher Name *</label>
                                             <Field
@@ -428,6 +443,7 @@ const UpdateVoucher = () => {
                                                 value={methodVouchNumbering.find(opt => opt.value === values.methodVouchNumbering)}
                                                 onChange={(opt) => handleNumberingMethodChange(opt, setFieldValue)}
                                                 options={methodVouchNumbering}
+                                                isDisabled="true"
                                                 styles={customStyles}
                                                 placeholder="Select method"
                                             />
@@ -440,6 +456,7 @@ const UpdateVoucher = () => {
                                                 value={NumberingBehaviour.find(opt => opt.value === values.numbInsertDelete)}
                                                 onChange={(opt) => setFieldValue('numbInsertDelete', opt?.value)}
                                                 options={NumberingBehaviour}
+                                                isDisabled="true"
                                                 styles={customStyles}
                                                 placeholder="Select behavior"
                                             />
@@ -447,16 +464,18 @@ const UpdateVoucher = () => {
                                     </div>
 
                                     {/* Render voucher number input based on selected method */}
-                                    {renderVoucherNumberInput(values, setFieldValue)}
+                                    {/* {renderVoucherNumberInput(values, setFieldValue)} */}
+
+
 
                                     <div className="space-y-4">
                                         {/* Show Additional Numbering option only if not Auto or Manual */}
-                                        {values.methodVouchNumbering !== 'Automatic' && 
-                                         values.methodVouchNumbering !== 'Manual' && (
-                                            <>
-                                                {renderYesNoRadio('setAdditionalNumb', 'Set Additional Numbering Details', values, setFieldValue)}
-                                            </>
-                                        )}
+                                        {values.methodVouchNumbering !== 'Automatic' &&
+                                            values.methodVouchNumbering !== 'Manual' && (
+                                                <>
+                                                    {renderYesNoRadio('setAdditionalNumb', 'Set Additional Numbering Details', values, setFieldValue)}
+                                                </>
+                                            )}
 
                                         {renderYesNoRadio('unusedVchNos', 'Show Unused Voucher Numbers', values, setFieldValue)}
 
@@ -547,6 +566,7 @@ const UpdateVoucher = () => {
                                                 value={formattedLocation?.find(opt => opt.value === values.defaultGodown)}
                                                 onChange={(opt) => setFieldValue('defaultGodown', opt?.value)}
                                                 styles={customStyles}
+                                            isDisabled="true"
                                                 placeholder="Select location"
                                             />
                                         </div>
@@ -618,6 +638,7 @@ const UpdateVoucher = () => {
                                             <label className="mb-2.5 block text-black dark:text-white">Default GST Registration</label>
                                             <ReactSelect
                                                 name="defGstRegist"
+                                                isDisabled="true"
                                                 value={formattedGstLocation.find(opt => opt.value === values.defGstRegist)}
                                                 onChange={(opt) => setFieldValue('defGstRegist', opt?.value)}
                                                 options={formattedGstLocation}
@@ -730,7 +751,7 @@ const UpdateVoucher = () => {
                     toast.success(`Voucher number updated: ${voucherNumber}`);
                 }}
             />
-        </DefaultLayout>
+        </DefaultLayout >
     );
 };
 
