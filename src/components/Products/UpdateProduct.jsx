@@ -185,94 +185,94 @@ const UpdateProduct = () => {
         }
     }, [units]);
 
- const handleFileChange = async (event) => {
-    const files = Array.from(event.target.files);
-    if (!files.length) return;
+    const handleFileChange = async (event) => {
+        const files = Array.from(event.target.files);
+        if (!files.length) return;
 
-    // Create new previews
-    const newPreviews = files.map((file) => ({
-        file,
-        url: URL.createObjectURL(file),
-        isNew: true
-    }));
+        // Create new previews
+        const newPreviews = files.map((file) => ({
+            file,
+            url: URL.createObjectURL(file),
+            isNew: true
+        }));
 
-    // Append new previews to existing ones
-    setPreviews((prev) => [...prev, ...newPreviews]);
+        // Append new previews to existing ones
+        setPreviews((prev) => [...prev, ...newPreviews]);
 
-    // IMPORTANT FIX: Append new files to existing referenceImages, don't replace
-    setrefImage((prev) => [...prev, ...files]);
-};
-useEffect(() => {
-    if (product?.images) {
-        // Separate reference and actual images
-        const refImgs = product.images
-            .filter(img => img.referenceImage && !img.actualImage)
-            .map(img => {
-                // Create a file-like object from the existing image
-                const fileName = img.referenceImage;
-                return new File([], fileName, {
-                    type: 'image/jpeg', // or detect from extension
+        // IMPORTANT FIX: Append new files to existing referenceImages, don't replace
+        setrefImage((prev) => [...prev, ...files]);
+    };
+    useEffect(() => {
+        if (product?.images) {
+            // Separate reference and actual images
+            const refImgs = product.images
+                .filter(img => img.referenceImage && !img.actualImage)
+                .map(img => {
+                    // Create a file-like object from the existing image
+                    const fileName = img.referenceImage;
+                    return new File([], fileName, {
+                        type: 'image/jpeg', // or detect from extension
+                    });
                 });
-            });
 
-        const actImgs = product.images
-            .filter(img => img.actualImage)
-            .map(img => {
-                const fileName = img.actualImage;
-                return new File([], fileName, {
-                    type: 'image/jpeg',
+            const actImgs = product.images
+                .filter(img => img.actualImage)
+                .map(img => {
+                    const fileName = img.actualImage;
+                    return new File([], fileName, {
+                        type: 'image/jpeg',
+                    });
                 });
-            });
 
-        // Set initial images without overwriting
-        setrefImage(refImgs);
-        setactualImage(actImgs);
-    }
-}, [product]);
+            // Set initial images without overwriting
+            setrefImage(refImgs);
+            setactualImage(actImgs);
+        }
+    }, [product]);
     // useEffect(() => {
     //     console.log(referenceImages, "refimagessssss====================================");
     //     setrefImage(referenceImages);
     // }, [referenceImages]);
 
-   const handleFileChangeActual = async (event) => {
-    const files = Array.from(event.target.files);
-    if (!files.length) return;
+    const handleFileChangeActual = async (event) => {
+        const files = Array.from(event.target.files);
+        if (!files.length) return;
 
-    // Create new previews
-    const newPreviewsActual = files.map((file) => ({
-        file,
-        url: URL.createObjectURL(file),
-        referenceImage: file,
-        actualImage: file,
-    }));
+        // Create new previews
+        const newPreviewsActual = files.map((file) => ({
+            file,
+            url: URL.createObjectURL(file),
+            referenceImage: file,
+            actualImage: file,
+        }));
 
-    // Append new previews to existing ones
-    setPreviewsActual((prevPreviewsActual) => [...prevPreviewsActual, ...newPreviewsActual]);
-    
-    // IMPORTANT FIX: Append new files to existing actualImages, don't replace
-    setactualImage((prev) => [...prev, ...files]);
-};
+        // Append new previews to existing ones
+        setPreviewsActual((prevPreviewsActual) => [...prevPreviewsActual, ...newPreviewsActual]);
+
+        // IMPORTANT FIX: Append new files to existing actualImages, don't replace
+        setactualImage((prev) => [...prev, ...files]);
+    };
 
     // useEffect(() => {
     //     console.log(actualImages, "actualImage====================================");
     //     setactualImage(actualImages);
     // }, [actualImages]);
-const handleRemoveImage = (indexToRemove) => {
-    // Remove from previews
-    setPreviews((prevPreviews) => {
-        const updatedPreviews = [...prevPreviews];
-        URL.revokeObjectURL(updatedPreviews[indexToRemove].url);
-        updatedPreviews.splice(indexToRemove, 1);
-        return updatedPreviews;
-    });
+    const handleRemoveImage = (indexToRemove) => {
+        // Remove from previews
+        setPreviews((prevPreviews) => {
+            const updatedPreviews = [...prevPreviews];
+            URL.revokeObjectURL(updatedPreviews[indexToRemove].url);
+            updatedPreviews.splice(indexToRemove, 1);
+            return updatedPreviews;
+        });
 
-    // Remove from referenceImages
-    setrefImage((prev) => {
-        const updated = [...prev];
-        updated.splice(indexToRemove, 1);
-        return updated;
-    });
-};
+        // Remove from referenceImages
+        setrefImage((prev) => {
+            const updated = [...prev];
+            updated.splice(indexToRemove, 1);
+            return updated;
+        });
+    };
 
     const handleRemoveImageActual = (indexToRemove) => {
         setProduct((prevProduct) => ({
@@ -291,111 +291,111 @@ const handleRemoveImage = (indexToRemove) => {
         });
     };
 
-const handleRemoveActual = (indexToRemove) => {
-    // Remove from previewsActual
-    setPreviewsActual((prevPreviewsActual) => {
-        const updatedPreviewsActual = [...prevPreviewsActual];
-        URL.revokeObjectURL(updatedPreviewsActual[indexToRemove].url);
-        updatedPreviewsActual.splice(indexToRemove, 1);
-        return updatedPreviewsActual;
-    });
+    const handleRemoveActual = (indexToRemove) => {
+        // Remove from previewsActual
+        setPreviewsActual((prevPreviewsActual) => {
+            const updatedPreviewsActual = [...prevPreviewsActual];
+            URL.revokeObjectURL(updatedPreviewsActual[indexToRemove].url);
+            updatedPreviewsActual.splice(indexToRemove, 1);
+            return updatedPreviewsActual;
+        });
 
-    // Remove from actualImages
-    setactualImage((prev) => {
-        const updated = [...prev];
-        updated.splice(indexToRemove, 1);
-        return updated;
-    });
-};
-
-   const handleUpdateSubmit = async (values, { setSubmitting }) => {
-    console.log("i am here");
-    console.log(values, "i am hds");
-
-    const formData = new FormData();
-
-    const product = {
-        ...values,
-        productGroup: { id: values.productGroup?.id || 0 },
-        subGroup: { id: values.subGroup?.id || 0 },
-        supplier: values?.supplier?.map((supp) => ({ id: supp?.id })),
+        // Remove from actualImages
+        setactualImage((prev) => {
+            const updated = [...prev];
+            updated.splice(indexToRemove, 1);
+            return updated;
+        });
     };
 
-    if (gstDetails && gstDetails.length > 0) {
-        product.slabBasedRates = values.slabBasedRates;
-    }
-    if (values.gstratedetails === "Specify Slab Based Rates") {
-        product.slabBasedRates = values.slabBasedRates;
-        delete product.hsnCode;
-        delete product.igst;
-        delete product.cgst;
-        delete product.sgst;
-        delete product.gstDescription;
-        delete product.productDescriptionn;
-        delete product.hsn_Sac;
-    } else if (values.gstratedetails === "Use GST Classification") {
-        product.hsnCode = values.hsnCode;
-        delete product.igst;
-        delete product.cgst;
-        delete product.sgst;
-        delete product.productDescriptionn;
-        product.gstDescription = values.hsnCode?.productDescriptionn;
-        product.hsn_Sac = values.hsn_Sac;
-        delete product.slabBasedRates;
-    }
+    const handleUpdateSubmit = async (values, { setSubmitting }) => {
+        console.log("i am here");
+        console.log(values, "i am hds");
 
-    formData.append("product", JSON.stringify(product));
+        const formData = new FormData();
 
-    // Append all reference images (both old and new)
-    if (referenceImages && referenceImages.length > 0) {
-        referenceImages.forEach((file) => {
-            // Only append if it's a real file (has size > 0)
-            if (file.size > 0) {
-                formData.append('referenceImages', file);
-            }
-        });
-    }
+        const product = {
+            ...values,
+            productGroup: { id: values.productGroup?.id || 0 },
+            subGroup: { id: values.subGroup?.id || 0 },
+            supplier: values?.supplier?.map((supp) => ({ id: supp?.id })),
+        };
 
-    // Append all actual images (both old and new)
-    if (actualImages && actualImages.length > 0) {
-        actualImages.forEach((file) => {
-            if (file.size > 0) {
-                formData.append('actualImages', file);
-            }
-        });
-    }
+        if (gstDetails && gstDetails.length > 0) {
+            product.slabBasedRates = values.slabBasedRates;
+        }
+        if (values.gstratedetails === "Specify Slab Based Rates") {
+            product.slabBasedRates = values.slabBasedRates;
+            delete product.hsnCode;
+            delete product.igst;
+            delete product.cgst;
+            delete product.sgst;
+            delete product.gstDescription;
+            delete product.productDescriptionn;
+            delete product.hsn_Sac;
+        } else if (values.gstratedetails === "Use GST Classification") {
+            product.hsnCode = values.hsnCode;
+            delete product.igst;
+            delete product.cgst;
+            delete product.sgst;
+            delete product.productDescriptionn;
+            product.gstDescription = values.hsnCode?.productDescriptionn;
+            product.hsn_Sac = values.hsn_Sac;
+            delete product.slabBasedRates;
+        }
 
-    console.log(formData, "66666666666666666666");
+        formData.append("product", JSON.stringify(product));
 
-    try {
-        const url = `${UPDATE_PRODUCT_URL}/${id}`;
-        const response = await fetch(url, {
-            method: "PUT",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-            },
-            body: formData,
-        });
+        // Append all reference images (both old and new)
+        if (referenceImages && referenceImages.length > 0) {
+            referenceImages.forEach((file) => {
+                // Only append if it's a real file (has size > 0)
+                if (file.size > 0) {
+                    formData.append('referenceImages', file);
+                }
+            });
+        }
 
-        let data;
+        // Append all actual images (both old and new)
+        if (actualImages && actualImages.length > 0) {
+            actualImages.forEach((file) => {
+                if (file.size > 0) {
+                    formData.append('actualImages', file);
+                }
+            });
+        }
+
+        console.log(formData, "66666666666666666666");
+
         try {
-            data = await response.json();
-        } catch {
-            data = await response.text();
-        }
+            const url = `${UPDATE_PRODUCT_URL}/${id}`;
+            const response = await fetch(url, {
+                method: "PUT",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: formData,
+            });
 
-        if (response.ok) {
-            toast.success("Product updated successfully");
-            navigate('/product/viewProducts');
-        } else {
-            toast.error(data || "A conflict occurred while updating the product.");
+            let data;
+            try {
+                data = await response.json();
+            } catch {
+                data = await response.text();
+            }
+
+            if (response.ok) {
+                toast.success("Product updated successfully");
+                navigate('/product/viewProducts');
+            } else {
+                toast.error(data || "A conflict occurred while updating the product.");
+            }
+        } catch (error) {
+            toast.error("An error occurred while updating the product.");
+        } finally {
+            if (setSubmitting) setSubmitting(false);
         }
-    } catch (error) {
-        toast.error("An error occurred while updating the product.");
-    } finally {
-        if (setSubmitting) setSubmitting(false);
-    }
-};
+    };
 
 
 
@@ -676,8 +676,8 @@ const handleRemoveActual = (indexToRemove) => {
 
                         // Update barcode when relevant fields change
                         useEffect(() => {
-                            console.log(values,"00000000000000000");
-                            
+                            console.log(values, "00000000000000000");
+
                             if (values) {
                                 const barcode = generateBarcode(values);
                                 setFieldValue('barcode', barcode);
@@ -723,8 +723,8 @@ const handleRemoveActual = (indexToRemove) => {
 
                         // Add this useEffect for productId
                         useEffect(() => {
-                            console.log(values.design,"222222222222.");
-                            
+                            console.log(values.design, "222222222222.");
+
                             const designName = values.design?.designName || values.designName || '';
                             const colorName = values.colorName || '';
                             const styleName = values.styles?.stylesName || '';
@@ -811,7 +811,7 @@ const handleRemoveActual = (indexToRemove) => {
                                             {/* Second Row */}
                                             <div className="mb-4.5 flex flex-wrap gap-6">
                                                 {/* Supplier/Weaver Name */}
-                                                <div className="flex-1 min-w-[300px]">
+                                                {/* <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">
                                                         Supplier/Weaver Name <span className='text-red-700 text-xl'> *</span>
                                                     </label>
@@ -828,7 +828,7 @@ const handleRemoveActual = (indexToRemove) => {
                                                             isDisabled={true}
                                                         />
                                                     </div>
-                                                </div>
+                                                </div> */}
 
                                                 {/* Design Name */}
                                                 <div className="flex-1 min-w-[300px]">
@@ -874,12 +874,6 @@ const handleRemoveActual = (indexToRemove) => {
                                                     <ErrorMessage name="designCode" component="div" className="text-red-500" />
                                                 </div>
 
-                                                {/* Color Name */}
-
-                                            </div>
-
-                                            {/* Design Code and Color Code */}
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">
                                                         Color Name <span className='text-red-700 text-xl'> *</span>
@@ -888,10 +882,18 @@ const handleRemoveActual = (indexToRemove) => {
                                                         name='colorName'
                                                         type="text"
                                                         placeholder="Enter Color name"
-                                                    
+
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
+
+                                                {/* Color Name */}
+
+                                            </div>
+
+                                            {/* Design Code and Color Code */}
+                                            <div className="mb-4.5 flex flex-wrap gap-6">
+
 
 
                                                 <div className="flex-1 min-w-[300px]">
@@ -907,10 +909,7 @@ const handleRemoveActual = (indexToRemove) => {
                                                     />
                                                     <ErrorMessage name="colorCode" component="div" className="text-red-500" />
                                                 </div>
-                                            </div>
 
-                                            {/* Style and Size */}
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">
                                                         Style <span className='text-red-700 text-xl'> *</span>
@@ -931,7 +930,7 @@ const handleRemoveActual = (indexToRemove) => {
                                                             className="bg-white dark:bg-form-Field"
                                                             classNamePrefix="react-select"
                                                             placeholder="Select Style"
-                                                           
+
                                                         />
                                                     </div>
                                                 </div>
@@ -964,32 +963,39 @@ const handleRemoveActual = (indexToRemove) => {
                                                             className="bg-white dark:bg-form-Field"
                                                             classNamePrefix="react-select"
                                                             placeholder="Select Size"
-                                                            // isDisabled={true}
+                                                        // isDisabled={true}
                                                         />
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            {/* Size Code */}
+                                            {/* Style and Size */}
                                             <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2 block text-black dark:text-white">Size Code</label>
-                                                    <Field
-                                                        name='sizeCode'
-                                                        type="text"
-                                                        placeholder="Enter Size Code"
-                                                        readOnly
-                                                        onChange={(e) => {
-                                                            setFieldValue('sizeCode', e.target.value);
-                                                        }}
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 mt-[6px] px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                    <ErrorMessage name="sizeCode" component="div" className="text-red-500" />
-                                                </div>
+
                                             </div>
+
+                                            {/* Size Code */}
+
 
                                             {/* Product ID and Barcode */}
                                             <div className="mb-4.5 flex flex-wrap gap-6">
+
+                                                <div className="mb-4.5 flex flex-wrap gap-6">
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-2 block text-black dark:text-white">Size Code</label>
+                                                        <Field
+                                                            name='sizeCode'
+                                                            type="text"
+                                                            placeholder="Enter Size Code"
+                                                            readOnly
+                                                            onChange={(e) => {
+                                                                setFieldValue('sizeCode', e.target.value);
+                                                            }}
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 mt-[6px] px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                        <ErrorMessage name="sizeCode" component="div" className="text-red-500" />
+                                                    </div>
+                                                </div>
                                                 <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
                                                     <Field
@@ -1016,7 +1022,12 @@ const handleRemoveActual = (indexToRemove) => {
 
                                             {/* Product Status */}
                                             <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-1 min-w-[300px]">
+
+                                            </div>
+
+                                            {/* Weight Fields */}
+                                            <div className="mb-4.5 flex flex-wrap gap-6">
+                                                <div className="flex-1 min-w-[300px] mt-[-10px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Product Status <span className='text-red-700 text-xl'> *</span></label>
                                                     <div className="z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
@@ -1031,10 +1042,6 @@ const handleRemoveActual = (indexToRemove) => {
                                                         />
                                                     </div>
                                                 </div>
-                                            </div>
-
-                                            {/* Weight Fields */}
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Finished Weight</label>
                                                     <Field
