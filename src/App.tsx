@@ -402,7 +402,7 @@ function App() {
             path="/chart"
             element={
               <>
-                <PageTitle title="Kani Homepage" />
+                <PageTitle title="CRAFT-FLOW ERP" />
                 <Chart />
               </>
             }
@@ -1297,7 +1297,7 @@ function App() {
             path="/kaniProducts"
             element={
               <>
-                <PageTitle title=" Kani Products " />
+                <PageTitle title=" Production Dashboard " />
                 <KaniProducts />
               </>
             }

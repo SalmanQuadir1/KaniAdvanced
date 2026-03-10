@@ -34,7 +34,7 @@ const ModeSelectionModal = () => {
 
       {/* Overlay with Blur */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold mb-12 text-slate-300">Welcome To CRAFTS-FLOW ERP</h1>
+        <h1 className="text-4xl font-bold mb-12 text-slate-300">Welcome To CRAFT-FLOW ERP</h1>
 
         {/* Modal Content */}
         <div className="bg-white/10 rounded-lg p-10 shadow-2xl w-full max-w-3xl text-white text-center">
