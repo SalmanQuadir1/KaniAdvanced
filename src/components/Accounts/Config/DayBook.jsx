@@ -15,7 +15,7 @@ const ViewDayBook = () => {
     const theme = useSelector(state => state?.persisted?.theme);
     const location = useLocation(); // Add this to read URL params
     const navigate = useNavigate();
-    
+
     const [voucherTypeOptions, setVoucherTypeOptions] = useState([
         { value: 'SALES', label: 'Sales' },
         { value: 'PURCHASE', label: 'Purchase' },
@@ -32,7 +32,7 @@ const ViewDayBook = () => {
     const getInitialFilters = () => {
         const params = new URLSearchParams(location.search);
         const today = new Date().toISOString().split('T')[0];
-        
+
         return {
             typeOfVoucher: params.get('typeOfVoucher') || null,
             startDate: params.get('fromDate') || today,
@@ -50,13 +50,13 @@ const ViewDayBook = () => {
     // Build URL with query parameters
     const buildUrlWithParams = (page, filters) => {
         const params = new URLSearchParams();
-        
+
         if (filters.startDate) params.append('fromDate', filters.startDate);
         if (filters.endDate) params.append('toDate', filters.endDate);
         if (filters.typeOfVoucher) params.append('typeOfVoucher', filters.typeOfVoucher);
         params.append('page', page);
         params.append('size', pagination.itemsPerPage);
-        
+
         return `${SEARCH_DayBook_URL}?${params.toString()}`;
     };
 
@@ -65,13 +65,13 @@ const ViewDayBook = () => {
             // Merge with current URL params if not provided
             const currentFilters = {
                 ...getInitialFilters(),
-				typeOfVoucher: filters.typeOfVoucher?.value || filters.typeOfVoucher || "",
+                typeOfVoucher: filters.typeOfVoucher?.value || filters.typeOfVoucher || "",
                 startDate: filters.startDate || getInitialFilters().startDate,
                 endDate: filters.endDate || getInitialFilters().endDate,
             };
 
             const url = buildUrlWithParams(page, currentFilters);
-            
+
             const response = await fetch(url, {
                 method: "GET", // Changed to GET since we're using query params
                 headers: {
@@ -111,7 +111,7 @@ const ViewDayBook = () => {
 
     const handlePageChange = (newPage) => {
         setPagination(prev => ({ ...prev, currentPage: newPage }));
-        
+
         // Update URL with new page
         const params = new URLSearchParams(location.search);
         params.set('page', newPage);
@@ -124,16 +124,16 @@ const ViewDayBook = () => {
             startDate: values.startDate,
             endDate: values.endDate,
         };
-        
+
         // Update URL with new filters
         const params = new URLSearchParams();
         if (filters.startDate) params.append('fromDate', filters.startDate);
         if (filters.endDate) params.append('toDate', filters.endDate);
         if (filters.typeOfVoucher) params.append('typeOfVoucher', filters.typeOfVoucher);
         params.append('page', 1);
-        
+
         navigate(`${location.pathname}?${params.toString()}`);
-        
+
         getDayBook(1, filters);
     };
 
@@ -159,10 +159,10 @@ const ViewDayBook = () => {
                     <td className="px-5 py-5 border-b border-gray-200 text-sm">
                         {new Date(entry.date).toLocaleDateString()}
                     </td>
-                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <td className="px-5 py-5 border-b border-gray-200 text-sm">
                         {entry.recieptNumber}
                     </td>
-                      <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <td className="px-5 py-5 border-b border-gray-200 text-sm">
                         {entry?.ledger?.name}
                     </td>
                     <td className="px-5 py-5 border-b border-gray-200 text-sm">
@@ -171,11 +171,11 @@ const ViewDayBook = () => {
                     <td className="px-5 py-5 border-b border-gray-200 text-sm">
                         {entry.transactionType}
                     </td>
-                  
-                     <td className="px-5 py-5 border-b border-gray-200 text-sm">
+
+                    <td className="px-5 py-5 border-b border-gray-200 text-sm">
                         {entry.totalAmount}
                     </td>
-               
+
                     {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
                         {entry.paymentDetails?.length > 0 ? (
                             <div className="flex flex-col">
@@ -236,8 +236,8 @@ const ViewDayBook = () => {
 
     // Get initial values from URL
     const initialFilters = getInitialFilters();
-    const initialVoucherType = initialFilters.typeOfVoucher 
-        ? voucherTypeOptions.find(opt => opt.value === initialFilters.typeOfVoucher) 
+    const initialVoucherType = initialFilters.typeOfVoucher
+        ? voucherTypeOptions.find(opt => opt.value === initialFilters.typeOfVoucher)
         : null;
 
     return (
@@ -314,15 +314,15 @@ const ViewDayBook = () => {
                                     <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">SNO</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Date</th>
-                                                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Voucher No</th>
-                                                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Ledger</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Voucher No</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Ledger</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Particulars</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Voucher Type</th>
-                                        
+
                                         {/* <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Debit</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Credit</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Amount</th> */}
-                                                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Amount</th> 
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Amount</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Action</th>
                                     </tr>
                                 </thead>
