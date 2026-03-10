@@ -10,6 +10,7 @@ const useSize = () => {
     const [edit, setEdit] = useState(false);
     const [currentSize, setCurrentSize] = useState({
         sizeName:"",
+        sizeCode:"",
     });
 
     const [pagination, setPagination] = useState({
