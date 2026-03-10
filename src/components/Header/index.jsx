@@ -93,7 +93,7 @@ const Header = (props) => {
           <form action="https://formbold.com/s/unique_form_id" method="POST">
             <div className="relative">
               <h3 className="uppercase font-bold text-2xl  leading-tight text-center tracking-[10px]">
-                Kashmir Loom
+                CRAFTS-FLOW ERP
               </h3>
             </div>
           </form>

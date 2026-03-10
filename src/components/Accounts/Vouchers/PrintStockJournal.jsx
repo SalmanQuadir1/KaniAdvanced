@@ -246,8 +246,8 @@ console.log(stockData,"6666666");
                                 src="/img/logo.png"
                                 alt="Company Logo"
                                 style={{
-                                    width: '90px',
-                                    height: '90px',
+                                    width: '200px',
+                                    height: '200px',
                                     objectFit: 'contain'
                                 }}
                             />
