@@ -503,7 +503,7 @@ const ProductSubGroup = () => {
           </tbody>
         </table>
 
-        {pagination?.totalPages > 1 && (
+        {pagination?.totalPages > 0 && (
           <Pagination
             totalPages={pagination.totalPages}
             currentPage={pagination.currentPage}
