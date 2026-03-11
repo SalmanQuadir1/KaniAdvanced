@@ -774,6 +774,7 @@ const UpdateKaniProducts = () => {
                                                             className="bg-white dark:bg-form-Field"
                                                             classNamePrefix="react-select"
                                                             placeholder="Select Sub Group"
+                                                            isDisabled={true}  // This makes it readonly
                                                         />
                                                     </div>
                                                 </div>
@@ -793,6 +794,7 @@ const UpdateKaniProducts = () => {
                                                             className="bg-white dark:bg-form-field"
                                                             classNamePrefix="react-select"
                                                             placeholder="Select Color Group"
+                                                            isDisabled={true}  // This makes it readonly
                                                         />
                                                     </div>
                                                 </div>
@@ -1123,238 +1125,238 @@ const UpdateKaniProducts = () => {
                                                                                          {/* Costing Section */}
                                             <h1 className='text-center text-xl mt-[50px] mb-[50px] font-semibold'>Costing</h1>
 
+                                                                 <div className="mb-4.5 flex flex-wrap gap-6">
+                                                                     <div className="flex-2 min-w-[250px]">
+                                                                         <label className="mb-2.5 block text-black dark:text-white">Cost Price</label>
+                                                                         <Field
+                                                                             name='cost'
+                                                                             type="text"
+                                                                             placeholder="Enter Cost Price"
+                                                                              className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                         />
+                                                                     </div>
+                                                                     <div className="flex-2 min-w-[250px]">
+                                                                         <label className="mb-2.5 block text-black dark:text-white">Dyeing Cost</label>
+                                                                         <Field
+                                                                             name='dyeingCost'
+                                                                             type="text"
+                                                                             placeholder="Enter Dyeing Cost"
+                                                                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                         />
+                                                                     </div>
+                                                                 </div>
+
+
+                                                                                    {/* Pricing Section */}
+                                                                            <h1 className='text-center text-xl mt-[50px] mb-[50px] font-semibold'>Pricing</h1>
+                                                                                                                        
                                                                                         <div className="mb-4.5 flex flex-wrap gap-6">
-                                                                                                                                        <div className="flex-2 min-w-[250px]">
-                                                                                                                                            <label className="mb-2.5 block text-black dark:text-white">Cost Price</label>
-                                                                                                                                            <Field
-                                                                                                                                                name='cost'
-                                                                                                                                                type="text"
-                                                                                                                                                placeholder="Enter Cost Price"
-                                                                                                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                                                                                            />
-                                                                                                                                        </div>
-                                                                                                                                        <div className="flex-2 min-w-[250px]">
-                                                                                                                                            <label className="mb-2.5 block text-black dark:text-white">Dyeing Cost</label>
-                                                                                                                                            <Field
-                                                                                                                                                name='dyeingCost'
-                                                                                                                                                type="text"
-                                                                                                                                                placeholder="Enter Dyeing Cost"
-                                                                                                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                                                                                            />
-                                                                                                                                        </div>
-                                                                                                                                    </div>
-
-
-                                                                                                                                    {/* Pricing Section */}
-                                                                                                                                                                                <h1 className='text-center text-xl mt-[50px] mb-[50px] font-semibold'>Pricing</h1>
+                                                                                                <div className="flex-2 min-w-[250px]">
+                                                                                                    <label className="mb-2.5 block text-black dark:text-white">Retail Mrp</label>
+                                                                                                    <Field
+                                                                                                        name='retailMrp'
+                                                                                                    type="text"
+                                                                                                        placeholder="Enter Retail Mrp"
+                                                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                                    />
+                                                                                                </div>
+                                                                                                                                                    <div className="flex-2 min-w-[250px]">
+                                                                                                <label className="mb-2.5 block text-black dark:text-white">WS INR</label>
+                                                                                            <Field
+                                                                                                name='wholesalePrice'
+                                                                                                type="text"
+                                                                                                placeholder="Enter Wholesale Price"
+                                                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                            />
+                                                                                        </div>
+                                                                                        <div className="flex-2 min-w-[250px]">
+                                                                                            <label className="mb-2.5 block text-black dark:text-white">WS USD</label>
+                                                                                            <Field
+                                                                                                    name='usdPrice'
+                                                                                                    type="text"
+                                                                                                    placeholder="Enter USD Price"
+                                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                                />
+                                                                                            </div>
+                                                                                            </div>
                                                                                                                                     
-                                                                                                                                                                                <div className="mb-4.5 flex flex-wrap gap-6">
-                                                                                                                                                                                    <div className="flex-2 min-w-[250px]">
-                                                                                                                                                                                        <label className="mb-2.5 block text-black dark:text-white">Retail Mrp</label>
-                                                                                                                                                                                        <Field
-                                                                                                                                                                                            name='retailMrp'
-                                                                                                                                                                                            type="text"
-                                                                                                                                                                                            placeholder="Enter Retail Mrp"
-                                                                                                                                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                                                                                                                                        />
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                    <div className="flex-2 min-w-[250px]">
-                                                                                                                                                                                        <label className="mb-2.5 block text-black dark:text-white">WS INR</label>
-                                                                                                                                                                                        <Field
-                                                                                                                                                                                            name='wholesalePrice'
-                                                                                                                                                                                            type="text"
-                                                                                                                                                                                            placeholder="Enter Wholesale Price"
-                                                                                                                                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                                                                                                                                        />
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                    <div className="flex-2 min-w-[250px]">
-                                                                                                                                                                                        <label className="mb-2.5 block text-black dark:text-white">WS USD</label>
-                                                                                                                                                                                        <Field
-                                                                                                                                                                                            name='usdPrice'
-                                                                                                                                                                                            type="text"
-                                                                                                                                                                                            placeholder="Enter USD Price"
-                                                                                                                                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                                                                                                                                        />
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                </div>
-                                                                                                                                    
-                                                                                                                                                                                <div className="mb-4.5 flex flex-wrap gap-6">
-                                                                                                                                                                                    <div className="flex-2 min-w-[250px]">
-                                                                                                                                                                                        <label className="mb-2.5 block text-black dark:text-white">WS EURO</label>
-                                                                                                                                                                                        <Field
-                                                                                                                                                                                            name='euroPrice'
-                                                                                                                                                                                            type="text"
-                                                                                                                                                                                            placeholder="Enter EURO Price"
-                                                                                                                                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                                                                                                                                        />
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                    <div className="flex-2 min-w-[250px]">
-                                                                                                                                                                                        <label className="mb-2.5 block text-black dark:text-white">WS GBP</label>
-                                                                                                                                                                                        <Field
-                                                                                                                                                                                            name='gbpPrice'
-                                                                                                                                                                                            type="text"
-                                                                                                                                                                                            placeholder="Enter GBP Price"
-                                                                                                                                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                                                                                                                                        />
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                    <div className="flex-2 min-w-[250px]">
-                                                                                                                                                                                        <label className="mb-2.5 block text-black dark:text-white">WS RMB</label>
-                                                                                                                                                                                        <Field
-                                                                                                                                                                                            name='rmbPrice'
-                                                                                                                                                                                            type="text"
-                                                                                                                                                                                            placeholder="Enter RMB Price"
-                                                                                                                                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                                                                                                                                        />
-                                                                                                                                                                                    </div>
-                                                                                                                                                                                </div>
+                                                                                        <div className="mb-4.5 flex flex-wrap gap-6">
+                                                                                            <div className="flex-2 min-w-[250px]">
+                                                                                                <label className="mb-2.5 block text-black dark:text-white">WS EURO</label>
+                                                                                                <Field
+                                                                                                    name='euroPrice'
+                                                                                                    type="text"
+                                                                                                    placeholder="Enter EURO Price"
+                                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                                />
+                                                                                            </div>
+                                                                                            <div className="flex-2 min-w-[250px]">
+                                                                                                <label className="mb-2.5 block text-black dark:text-white">WS GBP</label>
+                                                                                                <Field
+                                                                                                    name='gbpPrice'
+                                                                                                    type="text"
+                                                                                                    placeholder="Enter GBP Price"
+                                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                                />
+                                                                                            </div>
+                                                                                        <div className="flex-2 min-w-[250px]">
+                                                                                            <label className="mb-2.5 block text-black dark:text-white">WS RMB</label>
+                                                                                                <Field
+                                                                                                name='rmbPrice'
+                                                                                                type="text"
+                                                                                                    placeholder="Enter RMB Price"
+                                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                                />
+                                                                                            </div>
+                                                                                        </div>
 
 
-                                                                                                                                                                                   {/* Product Description */}
-                                                                                                                                                                                                                            <div className="mb-6">
-                                                                                                                                                                                                                                <label className="mb-2.5 block text-black dark:text-white">Product Description</label>
-                                                                                                                                                                                                                                <Field
-                                                                                                                                                                                                                                    name='productDescription'
-                                                                                                                                                                                                                                    as="textarea"
-                                                                                                                                                                                                                                    rows={6}
-                                                                                                                                                                                                                                    placeholder="Type your message"
-                                                                                                                                                                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                                                                                                                                                                                />
-                                                                                                                                                                                                                            </div>
+                                                                                        {/* Product Description */}
+                                                                                                <div className="mb-6">
+                                                                                                    <label className="mb-2.5 block text-black dark:text-white">Product Description</label>
+                                                                                                    <Field
+                                                                                                        name='productDescription'
+                                                                                                        as="textarea"
+                                                                                                        rows={6}
+                                                                                                        placeholder="Type your message"
+                                                                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                                    />
+                                                                                                </div>
                                                                                                                                                                                 
-                                                                                                                                                                                                                            {/* Statutory Details */}
-                                                                                                                                                                                                                            <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>Statutory Details</h1>
-                                                                                                                                                                                
-                                                                                                                                                                                                                            <div className="flex flex-wrap gap-4">
-                                                                                                                                                                                                                                <div className="flex-1 min-w-[250px]">
-                                                                                                                                                                                                                                    <label className="mb-2.5 block text-black dark:text-white">GST DETAILS</label>
-                                                                                                                                                                                                                                    <div className="z-20 bg-transparent dark:bg-form-Field">
-                                                                                                                                                                                                                                        <ReactSelect
-                                                                                                                                                                                                                                            name="gstDetails"
-                                                                                                                                                                                                                                            options={gstOptions}
-                                                                                                                                                                                                                                            value={gstOptions.find((option) => option.value === values.gstDetails)}
-                                                                                                                                                                                                                                            onChange={(option) => setFieldValue("gstDetails", option?.value)}
-                                                                                                                                                                                                                                            styles={customStyles}
-                                                                                                                                                                                                                                            className="bg-white dark:bg-form-Field"
-                                                                                                                                                                                                                                            classNamePrefix="react-select"
-                                                                                                                                                                                                                                            placeholder="Select GST details"
-                                                                                                                                                                                                                                        />
-                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                
-                                                                                                                                                                                                                                {(values.gstDetails === "Applicable") && (
-                                                                                                                                                                                                                                    <div className="flex-1 min-w-[250px]">
-                                                                                                                                                                                                                                        <label className="mb-2.5 block text-black dark:text-white">GST RATE DETAILS</label>
-                                                                                                                                                                                                                                        <ReactSelect
-                                                                                                                                                                                                                                            name="gstratedetails"
-                                                                                                                                                                                                                                            options={gstdetails}
-                                                                                                                                                                                                                                            value={gstdetails.find((option) => option.value === values.gstratedetails)}
-                                                                                                                                                                                                                                            onChange={(option) => handlerateDetails(option, setFieldValue)}
-                                                                                                                                                                                                                                            styles={customStyles}
-                                                                                                                                                                                                                                            classNamePrefix="react-select"
-                                                                                                                                                                                                                                            placeholder="Enter GST Rate Details"
-                                                                                                                                                                                                                                        />
-                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                )}
-                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                
-                                                                                                                                                                                                                            <div className="mb-4.5 gap-6">
-                                                                                                                                                                                                                                <div className="mb-4.5 mt-6">
-                                                                                                                                                                                                                                    {values.gstratedetails === "Use GST Classification" ? (
-                                                                                                                                                                                                                                        <div className="mb-4.5 flex flex-wrap gap-6">
-                                                                                                                                                                                                                                            <div className="flex-2 min-w-[250px]">
-                                                                                                                                                                                                                                                <label className="mb-2.5 block text-black dark:text-white">
-                                                                                                                                                                                                                                                    HSN Code <span className="text-red-700 text-xl">*</span>
-                                                                                                                                                                                                                                                </label>
-                                                                                                                                                                                                                                                <ReactSelect
-                                                                                                                                                                                                                                                    name="hsnCode"
-                                                                                                                                                                                                                                                    value={hsnOptions?.find((option) => option.value === values.hsnCode?.id) || null}
-                                                                                                                                                                                                                                                    onChange={(option) => setFieldValue("hsnCode", option ? option.hsnObject : null)}
-                                                                                                                                                                                                                                                    options={hsnOptions}
-                                                                                                                                                                                                                                                    styles={customStyles}
-                                                                                                                                                                                                                                                    className="bg-white dark:bg-form-Field"
-                                                                                                                                                                                                                                                    classNamePrefix="react-select"
-                                                                                                                                                                                                                                                    placeholder="Select HSN Code"
-                                                                                                                                                                                                                                                />
-                                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                            <div className="flex-2 min-w-[250px]">
-                                                                                                                                                                                                                                                <label className="mb-2.5 block text-black dark:text-white">IGST (%)</label>
-                                                                                                                                                                                                                                                <Field
-                                                                                                                                                                                                                                                    type="number"
-                                                                                                                                                                                                                                                    value={values.hsnCode?.igst || ''}
-                                                                                                                                                                                                                                                    disabled
-                                                                                                                                                                                                                                                    placeholder="IGST"
-                                                                                                                                                                                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
-                                                                                                                                                                                                                                                />
-                                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                            <div className="flex-2 min-w-[250px]">
-                                                                                                                                                                                                                                                <label className="mb-2.5 block text-black dark:text-white">CGST (%)</label>
-                                                                                                                                                                                                                                                <Field
-                                                                                                                                                                                                                                                    type="number"
-                                                                                                                                                                                                                                                    value={values.hsnCode?.cgst || ''}
-                                                                                                                                                                                                                                                    disabled
-                                                                                                                                                                                                                                                    placeholder="CGST"
-                                                                                                                                                                                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
-                                                                                                                                                                                                                                                />
-                                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                            <div className="flex-2 min-w-[250px]">
-                                                                                                                                                                                                                                                <label className="mb-2.5 block text-black dark:text-white">SGST (%)</label>
-                                                                                                                                                                                                                                                <Field
-                                                                                                                                                                                                                                                    type="number"
-                                                                                                                                                                                                                                                    value={values.hsnCode?.sgst || ''}
-                                                                                                                                                                                                                                                    disabled
-                                                                                                                                                                                                                                                    placeholder="SGST"
-                                                                                                                                                                                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
-                                                                                                                                                                                                                                                />
-                                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                            <div className="flex-2 min-w-[250px]">
-                                                                                                                                                                                                                                                <label className="mb-2.5 block text-black dark:text-white">GST Description</label>
-                                                                                                                                                                                                                                                <Field
-                                                                                                                                                                                                                                                    name="gstDescription"
-                                                                                                                                                                                                                                                    value={values.hsnCode?.productDescription || ''}
-                                                                                                                                                                                                                                                    type="text"
-                                                                                                                                                                                                                                                    placeholder="GST Description"
-                                                                                                                                                                                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                                                                                                                                                                                                />
-                                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                            <div className="flex-2 min-w-[250px]">
-                                                                                                                                                                                                                                                <label className="mb-2.5 block text-black dark:text-white">HSN/SAC</label>
-                                                                                                                                                                                                                                                <Field
-                                                                                                                                                                                                                                                    name="hsn_Sac"
-                                                                                                                                                                                                                                                    type="text"
-                                                                                                                                                                                                                                                    placeholder="Enter HSN/SAC"
-                                                                                                                                                                                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                                                                                                                                                                                                />
-                                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                    ) : null}
-                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                
-                                                                                                                                                                                                                                <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>GST Rate & Related Details</h1>
-                                                                                                                                                                                                                                <div className="mb-4.5 flex flex-wrap gap-6">
-                                                                                                                                                                                                                                    <div className="flex-2 min-w-[250px]">
-                                                                                                                                                                                                                                        <label className="mb-2.5 block text-black dark:text-white">Taxation Type</label>
-                                                                                                                                                                                                                                        <Field
-                                                                                                                                                                                                                                            name="taxationType"
-                                                                                                                                                                                                                                            type="text"
-                                                                                                                                                                                                                                            placeholder="Enter Taxation Type"
-                                                                                                                                                                                                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                                                                                                                                                                                        />
-                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                
-                                                                                                                                                                                                                                    <div className="flex-2 min-w-[250px]">
-                                                                                                                                                                                                                                        <label className="mb-2.5 block text-black dark:text-white">Type of Supply</label>
-                                                                                                                                                                                                                                        <ReactSelect
-                                                                                                                                                                                                                                            name="typeOfSupply"
-                                                                                                                                                                                                                                            options={supplyType}
-                                                                                                                                                                                                                                            value={supplyType.find(option => option.value === values.typeOfSupply)}
-                                                                                                                                                                                                                                            onChange={(option) => setFieldValue("typeOfSupply", option?.value)}
-                                                                                                                                                                                                                                            styles={customStyles}
-                                                                                                                                                                                                                                            placeholder="Enter Type of Supply"
-                                                                                                                                                                                                                                        />
-                                                                                                                                                                                                                                    </div>
-                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                            </div>
-                                                                                                                                                                                
+                                                                                                {/* Statutory Details */}
+                                                                                                <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>Statutory Details</h1>
+                                                    
+                                                                                                <div className="flex flex-wrap gap-4">
+                                                                                                    <div className="flex-1 min-w-[250px]">
+                                                                                                        <label className="mb-2.5 block text-black dark:text-white">GST DETAILS</label>
+                                                                                                        <div className="z-20 bg-transparent dark:bg-form-Field">
+                                                                                                            <ReactSelect
+                                                                                                                name="gstDetails"
+                                                                                                                options={gstOptions}
+                                                                                                                value={gstOptions.find((option) => option.value === values.gstDetails)}
+                                                                                                                onChange={(option) => setFieldValue("gstDetails", option?.value)}
+                                                                                                                styles={customStyles}
+                                                                                                                className="bg-white dark:bg-form-Field"
+                                                                                                                classNamePrefix="react-select"
+                                                                                                                placeholder="Select GST details"
+                                                                                                            />
+                                                                                                        </div>
+                                                                                                    </div>
+                                                    
+                                                                                                    {(values.gstDetails === "Applicable") && (
+                                                                                                        <div className="flex-1 min-w-[250px]">
+                                                                                                            <label className="mb-2.5 block text-black dark:text-white">GST RATE DETAILS</label>
+                                                                                                            <ReactSelect
+                                                                                                                name="gstratedetails"
+                                                                                                                options={gstdetails}
+                                                                                                                value={gstdetails.find((option) => option.value === values.gstratedetails)}
+                                                                                                                onChange={(option) => handlerateDetails(option, setFieldValue)}
+                                                                                                                styles={customStyles}
+                                                                                                                classNamePrefix="react-select"
+                                                                                                                placeholder="Enter GST Rate Details"
+                                                                                                            />
+                                                                                                        </div>
+                                                                                                    )}
+                                                                                                </div>
+                                                                                                    
+                                                                                            <div className="mb-4.5 gap-6">
+                                                                                                <div className="mb-4.5 mt-6">
+                                                                                                    {values.gstratedetails === "Use GST Classification" ? (
+                                                                                                        <div className="mb-4.5 flex flex-wrap gap-6">
+                                                                                                            <div className="flex-2 min-w-[250px]">
+                                                                                                                <label className="mb-2.5 block text-black dark:text-white">
+                                                                                                                    HSN Code <span className="text-red-700 text-xl">*</span>
+                                                                                                                </label>
+                                                                                                                <ReactSelect
+                                                                                                                    name="hsnCode"
+                                                                                                                    value={hsnOptions?.find((option) => option.value === values.hsnCode?.id) || null}
+                                                                                                                    onChange={(option) => setFieldValue("hsnCode", option ? option.hsnObject : null)}
+                                                                                                                    options={hsnOptions}
+                                                                                                                    styles={customStyles}
+                                                                                                                    className="bg-white dark:bg-form-Field"
+                                                                                                                    classNamePrefix="react-select"
+                                                                                                                    placeholder="Select HSN Code"
+                                                                                                                />
+                                                                                                            </div>
+                                                                                        <div className="flex-2 min-w-[250px]">
+                                                                                            <label className="mb-2.5 block text-black dark:text-white">IGST (%)</label>
+                                                                                            <Field
+                                                                                                type="number"
+                                                                                                value={values.hsnCode?.igst || ''}
+                                                                                                disabled
+                                                                                                placeholder="IGST"
+                                                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
+                                                                                            />
+                                                                                        </div>
+                                                                                        <div className="flex-2 min-w-[250px]">
+                                                                                            <label className="mb-2.5 block text-black dark:text-white">CGST (%)</label>
+                                                                                            <Field
+                                                                                                type="number"
+                                                                                                value={values.hsnCode?.cgst || ''}
+                                                                                                disabled
+                                                                                                placeholder="CGST"
+                                                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
+                                                                                            />
+                                                                                        </div>
+                                                                                        <div className="flex-2 min-w-[250px]">
+                                                                                            <label className="mb-2.5 block text-black dark:text-white">SGST (%)</label>
+                                                                                            <Field
+                                                                                                type="number"
+                                                                                                value={values.hsnCode?.sgst || ''}
+                                                                                                disabled
+                                                                                                placeholder="SGST"
+                                                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
+                                                                                            />
+                                                                                        </div>
+                                                                                        <div className="flex-2 min-w-[250px]">
+                                                                                            <label className="mb-2.5 block text-black dark:text-white">GST Description</label>
+                                                                                            <Field
+                                                                                                name="gstDescription"
+                                                                                                value={values.hsnCode?.productDescription || ''}
+                                                                                                type="text"
+                                                                                                placeholder="GST Description"
+                                                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                            />
+                                                                                        </div>
+                                                                                        <div className="flex-2 min-w-[250px]">
+                                                                                            <label className="mb-2.5 block text-black dark:text-white">HSN/SAC</label>
+                                                                                            <Field
+                                                                                                name="hsn_Sac"
+                                                                                                type="text"
+                                                                                                placeholder="Enter HSN/SAC"
+                                                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                            />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                ) : null}
+                                                                            </div>
+                                                                                                    
+                                                                        <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>GST Rate & Related Details</h1>
+                                                                        <div className="mb-4.5 flex flex-wrap gap-6">
+                                                                            <div className="flex-2 min-w-[250px]">
+                                                                                <label className="mb-2.5 block text-black dark:text-white">Taxation Type</label>
+                                                                                <Field
+                                                                                    name="taxationType"
+                                                                                    type="text"
+                                                                                    placeholder="Enter Taxation Type"
+                                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                />
+                                                                            </div>
+                        
+                                                                            <div className="flex-2 min-w-[250px]">
+                                                                                <label className="mb-2.5 block text-black dark:text-white">Type of Supply</label>
+                                                                                <ReactSelect
+                                                                                    name="typeOfSupply"
+                                                                                    options={supplyType}
+                                                                                    value={supplyType.find(option => option.value === values.typeOfSupply)}
+                                                                                    onChange={(option) => setFieldValue("typeOfSupply", option?.value)}
+                                                                                    styles={customStyles}
+                                                                                    placeholder="Enter Type of Supply"
+                                                                                />
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                                                    
 
 
 
@@ -1759,7 +1761,7 @@ const UpdateKaniProducts = () => {
                                         </div>
 
                                                                                             {/* Color Way Field */}
-                                                    <div className="flex-1 min-w-[200px]">
+                                                    {/* <div className="flex-1 min-w-[200px]">
                                                          <label className="mb-2.5 block text-black dark:text-white">
                                                         Color Way
                                                         </label>
@@ -1771,7 +1773,7 @@ const UpdateKaniProducts = () => {
                                                         value={values.colorWeave}
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
-                                                    </div>
+                                                    </div> */}
 </div>
                                        
                                         
