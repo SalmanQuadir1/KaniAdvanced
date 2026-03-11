@@ -492,91 +492,82 @@ const Voucher = () => {
     );
 
     // Render voucher number input based on numbering method
-    // Render voucher number input based on numbering method
-const renderVoucherNumberInput = (values, setFieldValue) => {
-    if (values.methodVouchNumbering === 'Automatic') {
-        return (
-            <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                <h5 className="text-lg font-semibold text-blue-700 dark:text-blue-300 mb-2">
-                    Auto-Generated Voucher Number
-                </h5>
-                <div className="flex items-center justify-between">
+    const renderVoucherNumberInput = (values, setFieldValue) => {
+        if (values.methodVouchNumbering === 'Automatic') {
+            return (
+                <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                    <h5 className="text-lg font-semibold text-blue-700 dark:text-blue-300 mb-2">
+                        Auto-Generated Voucher Number
+                    </h5>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-blue-600 dark:text-blue-400 font-bold text-2xl">
+                                {generatedVoucherNo || '1'}
+                            </p>
+                            <p className="text-sm text-blue-500 dark:text-blue-300 mt-1">
+                                System will automatically start from 1
+                            </p>
+                        </div>
+                        <Field
+                            type="hidden"
+                            name="generatedVoucherNo"
+                            value={generatedVoucherNo || '1'}
+                        />
+                    </div>
+                </div>
+            );
+        } else if (values.methodVouchNumbering === 'Manual') {
+            return (
+                <div className="mb-6 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                    <h5 className="text-lg font-semibold text-purple-700 dark:text-purple-300 mb-4">
+                        Manual Voucher Number
+                    </h5>
                     <div>
-                        <p className="text-blue-600 dark:text-blue-400 font-bold text-2xl">
-                            {generatedVoucherNo || '1'}
-                        </p>
-                        <p className="text-sm text-blue-500 dark:text-blue-300 mt-1">
-                            System will automatically start from 1
-                        </p>
-                    </div>
-                    <Field
-                        type="hidden"
-                        name="generatedVoucherNo"
-                        value={generatedVoucherNo || '1'}
-                    />
-                </div>
-            </div>
-        );
-    } else if (values.methodVouchNumbering === 'Manual') {
-        return (
-            <div className="mb-6 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-                <h5 className="text-lg font-semibold text-purple-700 dark:text-purple-300 mb-4">
-                    Manual Voucher Number
-                </h5>
-                <div>
-                    <label className="mb-2.5 block text-black dark:text-white">
-                        Enter Voucher Number *
-                    </label>
-                    <input
-                        type="text"
-                        value={generatedVoucherNo}
-                        onChange={(e) => handleManualVoucherChange(e, setFieldValue)}
-                        placeholder="e.g., VCH-001, INV-2024-001"
-                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
-                    />
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                        Enter your custom voucher number manually
-                    </p>
-                </div>
-            </div>
-        );
-    } else if (values.setAdditionalNumb) {
-        return (
-            <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                <h5 className="text-lg font-semibold text-green-700 dark:text-green-300 mb-2">
-                    Generated Voucher Number (with Additional Settings)
-                </h5>
-                <div className="flex items-center justify-between">
-                    <div>
-                        <p className="text-green-600 dark:text-green-400 font-bold text-2xl">
-                            {generatedVoucherNo || 'Not configured'}
-                        </p>
-                        <p className="text-sm text-green-500 dark:text-green-300 mt-1">
-                            Voucher number with prefix/suffix and padding
+                        <label className="mb-2.5 block text-black dark:text-white">
+                            Enter Voucher Number *
+                        </label>
+                        <input
+                            type="text"
+                            value={generatedVoucherNo}
+                            onChange={(e) => handleManualVoucherChange(e, setFieldValue)}
+                            placeholder="e.g., VCH-001, INV-2024-001"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
+                        />
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                            Enter your custom voucher number manually
                         </p>
                     </div>
-                    <Field
-                        type="hidden"
-                        name="generatedVoucherNo"
-                        value={generatedVoucherNo}
-                    />
                 </div>
-                {!generatedVoucherNo && (
-                    <div className="mt-4">
-                        <button
-                            type="button"
-                            onClick={() => setShowNumberingModal(true)}
-                            className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
-                        >
-                            Configure Numbering Details
-                        </button>
+            );
+        } else if (values.setAdditionalNumb) {
+            return (
+                <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                    <h5 className="text-lg font-semibold text-green-700 dark:text-green-300 mb-2">
+                        Generated Voucher Number (with Additional Settings)
+                    </h5>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-green-600 dark:text-green-400 font-bold text-2xl">
+                                {generatedVoucherNo || 'Not configured'}
+                            </p>
+                            <p className="text-sm text-green-500 dark:text-green-300 mt-1">
+                                Voucher number with prefix/suffix and padding
+                            </p>
+                        </div>
+                        <Field
+                            type="hidden"
+                            name="generatedVoucherNo"
+                            value={generatedVoucherNo}
+                        />
                     </div>
-                )}
-            </div>
-        );
-    }
-    return null;
-};
+                    {/* {!generatedVoucherNo && (
+                        setShowNumberingModal(true)
+                    )} */}
+                </div>
+            );
+        }
+        return null;
+    };
 
     const getPageTitle = () => {
         switch (operationType) {
@@ -937,43 +928,33 @@ const renderVoucherNumberInput = (values, setFieldValue) => {
                                 </div>
                             </div>
 
-                                <NumberingDetailsModal
-                show={showNumberingModal}
-                     onClose={() => {
-                                // Set setAdditionalNumb to false when modal is closed without submitting
-                                // setFieldValue('setAdditionalNumb', false);
-                                setShowNumberingModal(false);
-                                // Clear any partial data if needed
-                                setGeneratedVoucherNo('');
-                                setNumberingConfig(null);
-                            }}
-              onSubmit={(data) => {
-        // Generate voucher number from modal data
-        const voucherNumber = generateVoucherNumber(data);
-        setGeneratedVoucherNo(voucherNumber);
-        setNumberingConfig(data);
+                            <NumberingDetailsModal
+                                show={showNumberingModal}
+                                onClose={() => setShowNumberingModal(false)}
+                                onSubmit={(data) => {
+                                    // Generate voucher number from modal data
+                                    const voucherNumber = generateVoucherNumber(data);
+                                    setGeneratedVoucherNo(voucherNumber);
+                                    setNumberingConfig(data);
 
-        // Store the gst details
-        setGstDetails(data);
+                                    // Store the gst details
+                                    setGstDetails(data);
 
-        // Set setAdditionalNumb to true since user completed the configuration
-        setFieldValue('setAdditionalNumb', true);
-        
-        // Close modal
-        setShowNumberingModal(false);
+                                    // Close modal
+                                    setShowNumberingModal(false);
 
-        // Show success message
-        toast.success(`Voucher number generated: ${voucherNumber}`);
-    }}
-            />
+                                    // Show success message
+                                    toast.success(`Voucher number generated: ${voucherNumber}`);
+                                }}
+                            />
                         </Form>
 
-                        
+
                     )}
                 </Formik>
             </div>
 
-        
+
         </DefaultLayout>
     );
 };
