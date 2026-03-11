@@ -571,8 +571,7 @@ const UpdateVoucher = () => {
                                             />
                                         </div>
 
-                                        {values.typeOfVoucher === "Sales" && (
-                                            <>
+                                      
                                                 <div>
                                                     <label className="mb-2.5 block text-black dark:text-white">Default Print Title</label>
                                                     <Field
@@ -602,8 +601,7 @@ const UpdateVoucher = () => {
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
                                                     />
                                                 </div>
-                                            </>
-                                        )}
+                                        
                                     </div>
 
                                     {values.posInvoicing && (

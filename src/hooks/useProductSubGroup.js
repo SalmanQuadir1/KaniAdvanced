@@ -8,6 +8,7 @@ import {
   DELETE_PRODUCT_SUBGROUP_URL,
   GET_PRODUCT_SUBGROUP_URL,
   GET_GROUPS_URL,
+  DELETE_PRODUCT_SUBGROUPP_URL,
 } from '../Constants/utils';
 
 const useproductSubGroup = () => {
@@ -75,10 +76,12 @@ const useproductSubGroup = () => {
     }
   };
 
-  const handleDelete = async (e, id) => {
-    e.preventDefault();
+  const handleDelete = async (id) => {
+    console.log(id,"000");
+    
+   
     try {
-      const response = await fetch(`${DELETE_PRODUCT_SUBGROUP_URL}${id}`, {
+      const response = await fetch(`${DELETE_PRODUCT_SUBGROUPP_URL}${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
@@ -200,7 +203,7 @@ const useproductSubGroup = () => {
       }
     }
     
-    toast.success('Subgroups updated successfully!');
+    // toast.success('Subgroups updated successfully!');
     
     // Refresh the data
     await getproductSubGroup(pagination.currentPage);
@@ -270,9 +273,9 @@ const useproductSubGroup = () => {
 
       const data = await response.json();
       if (response.ok) {
-        toast.success(
-          `SubGroup ${edit ? 'updated' : 'added'} successfully`,
-        );
+        // toast.success(
+        //   `SubGroup ${edit ? 'updated' : 'added'} successfully`,
+        // );
         resetForm();
         setEdit(false);
         setCurrentproductSubGroup({

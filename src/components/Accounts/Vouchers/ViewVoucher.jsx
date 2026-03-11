@@ -249,18 +249,17 @@ const ViewVoucher = () => {
                         onClick={() => {
                             let path = `/voucher/create/${item.id}`;
 
-                            if (item.name?.toLowerCase() === "debit note") {
+                            if (item.typeOfVoucher?.toLowerCase().replace(/\s+/g, '') === "debitnote") {
                                 path = `/voucher/createdebitNote/${item.id}`;
-                            } else if (item.name?.toLowerCase() === "credit note") {
+                            } else if (item.typeOfVoucher?.toLowerCase().replace(/\s+/g, '') === "creditnote") {
                                 path = `/voucher/createcreditNote/${item.id}`;
-                            } else if (item.name?.toLowerCase() === "contra") {
+                            } else if (item.typeOfVoucher?.toLowerCase().replace(/\s+/g, '') === "contra") {
                                 path = `/voucher/createcontra/${item.id}`;
-                            } else if (item.name?.toLowerCase() === "journal") {
+                            } else if (item.typeOfVoucher?.toLowerCase().replace(/\s+/g, '') === "journal") {
                                 path = `/voucher/createjournal/${item.id}`;
-                            } else if (item.name?.toLowerCase() === "receipt") {
+                            } else if (item.typeOfVoucher?.toLowerCase().replace(/\s+/g, '') === "receipt") {
                                 path = `/voucher/createreceipt/${item.id}`;
-                            }
-                            else if (item.name?.toLowerCase() === "stock journal") {
+                            } else if (item.typeOfVoucher?.toLowerCase().replace(/\s+/g, '') === "stockjournal" ) {
                                 path = `/voucher/createstockJournel/${item.id}`;
                             }
 
@@ -273,63 +272,63 @@ const ViewVoucher = () => {
                 </td>
 
                 {
-    // For Debit Note, Credit Note, Receipt, and Stock Journal - always show View Entries
-    ["debit note", "credit note", "receipt", "stock journal"].includes(item.name?.toLowerCase()) ? (
-        <td>
-            <span
-                onClick={() => {
-                    let viewPath = '';
-                    
-                    if (item.name?.toLowerCase() === "debit note") {
-                        viewPath = `/voucherEntriesView/${item.id}?DEBIT_NOTE`;
-                    } else if (item.name?.toLowerCase() === "credit note") {
-                        viewPath = `/voucherEntriesView/${item.id}?CREDIT_NOTE`;
-                    } else if (item.name?.toLowerCase() === "receipt") {
-                        viewPath = `/voucherEntriesView/${item.id}?RECEIPT_NOTE`;
-                    } else if (item.name?.toLowerCase() === "stock journal") {
-                        viewPath = `/voucherEntriesStockJournal/${item.id}`;
-                    }
-                    
-                    navigate(viewPath);
-                }}
-                className="view-badge bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer"
-            >
-                View Entries
-            </span>
-        </td>
-    ) : (
-        // For other voucher types (Contra, Payment, Journal, etc.), check entryPayments
-        item.entryPayments && item.entryPayments.length > 0 ? (
-            <td>
-                <span
-                    onClick={() => {
-                        let viewPath = '';
+                    // For Debit Note, Credit Note, Receipt, and Stock Journal - always show View Entries
+                    ["debit note", "credit note", "receipt", "stock journal"].includes(item.name?.toLowerCase()) ? (
+                        <td>
+                            <span
+                                onClick={() => {
+                                    let viewPath = '';
 
-                        // Check voucher type for View Entries navigation
-                        if (item.name?.toLowerCase() === "contra") {
-                            viewPath = `/voucherEntriesContra/${item.id}`;
-                        } else if (item.typeOfVoucher === "Payment") {
-                            viewPath = `/voucherEntriesPayment/${item.id}`;
-                        } else {
-                            viewPath = `/voucherEntries/${item.id}`;
-                        }
+                                    if (item.name?.toLowerCase() === "debit note") {
+                                        viewPath = `/voucherEntriesView/${item.id}?DEBIT_NOTE`;
+                                    } else if (item.name?.toLowerCase() === "credit note") {
+                                        viewPath = `/voucherEntriesView/${item.id}?CREDIT_NOTE`;
+                                    } else if (item.name?.toLowerCase() === "receipt") {
+                                        viewPath = `/voucherEntriesView/${item.id}?RECEIPT_NOTE`;
+                                    } else if (item.name?.toLowerCase() === "stock journal") {
+                                        viewPath = `/voucherEntriesStockJournal/${item.id}`;
+                                    }
 
-                        navigate(viewPath);
-                    }}
-                    className="view-badge bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer"
-                >
-                    View Entries
-                </span>
-            </td>
-        ) : (
-            <td>
-                <span className="text-gray-400 text-[10px] font-medium me-2 text-center py-2 px-4">
-                    No Entries
-                </span>
-            </td>
-        )
-    )
-}
+                                    navigate(viewPath);
+                                }}
+                                className="view-badge bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer"
+                            >
+                                View Entries
+                            </span>
+                        </td>
+                    ) : (
+                        // For other voucher types (Contra, Payment, Journal, etc.), check entryPayments
+                        item.entryPayments && item.entryPayments.length > 0 ? (
+                            <td>
+                                <span
+                                    onClick={() => {
+                                        let viewPath = '';
+
+                                        // Check voucher type for View Entries navigation
+                                        if (item.name?.toLowerCase() === "contra") {
+                                            viewPath = `/voucherEntriesContra/${item.id}`;
+                                        } else if (item.typeOfVoucher === "Payment") {
+                                            viewPath = `/voucherEntriesPayment/${item.id}`;
+                                        } else {
+                                            viewPath = `/voucherEntries/${item.id}`;
+                                        }
+
+                                        navigate(viewPath);
+                                    }}
+                                    className="view-badge bg-blue-100 text-green-800 text-[10px] font-medium me-2 text-center py-2 px-4 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer"
+                                >
+                                    View Entries
+                                </span>
+                            </td>
+                        ) : (
+                            <td>
+                                <span className="text-gray-400 text-[10px] font-medium me-2 text-center py-2 px-4">
+                                    No Entries
+                                </span>
+                            </td>
+                        )
+                    )
+                }
 
                 < td className="px-5 py-5 border-b border-gray-200 text-sm" >
                     <IoIosAdd size={30} onClick={() => navigate(`/configurator/vouchers/${item.id}`)} className="cursor-pointer" />
