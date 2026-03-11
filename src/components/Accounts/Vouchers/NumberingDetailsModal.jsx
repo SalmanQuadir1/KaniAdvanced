@@ -2,26 +2,21 @@ import React, { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { MdOutlineCancel } from "react-icons/md";
 import { TiTickOutline } from "react-icons/ti";
-const NumberingDetailsModal = ({ show, onHide, onSubmit }) => {
+
+const NumberingDetailsModal = ({ show, onClose, onSubmit }) => {
     const [formData, setFormData] = useState({
         startingNum: '',
         widthNumPart: '',
         prefillZero: false,
-       
         restartNumAppForm: '',
         restartNumStartNum: '',
         restartPeriodicity: '',
-     
-   
         prefixAppForm: '',
         prefixParticular: '',
-
-     
         suffixAppForm: '',
         suffixParticular: '',
     });
 
- 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         setFormData(prev => ({
@@ -30,44 +25,49 @@ const NumberingDetailsModal = ({ show, onHide, onSubmit }) => {
         }));
     };
 
-    const handleNestedChange = (section, field, value) => {
-        setFormData(prev => ({
-            ...prev,
-            [section]: {
-                ...prev[section],
-                [field]: value
-            }
-        }));
-    };
-
     const handleSubmit = () => {
         onSubmit(formData);
-        onHide();
+        onClose(); // Changed from onHide() to onClose()
+    };
+
+    const handleCancel = () => {
+        // Reset form data if needed
+        setFormData({
+            startingNum: '',
+            widthNumPart: '',
+            prefillZero: false,
+            restartNumAppForm: '',
+            restartNumStartNum: '',
+            restartPeriodicity: '',
+            prefixAppForm: '',
+            prefixParticular: '',
+            suffixAppForm: '',
+            suffixParticular: '',
+        });
+        onClose(); // Call onClose directly
     };
 
     return (
         <Modal
             show={show}
-            onHide={onHide}
+            onHide={onClose} // Add this line - Modal needs onHide prop
             size="xl"
             centered
             backdrop="static"
             style={{
                 position: 'fixed',
                 top: 0,
-           
-              
                 zIndex: 30000,
                 backgroundColor: 'rgba(0,0,0,0.5)'
             }}
-            className='h-[900px] w-[1800px] ml-[250px]  pt-16'
+            className='h-[900px] w-[1800px] ml-[250px] pt-16'
         >
             <Modal.Header className="bg-slate-50 relative w-[1100px]">
                 <Modal.Title className="font-semibold text-xl font-satoshi text-center mt-2 w-full">
                     Additional Numbering Details
                 </Modal.Title>
                 <button
-                    onClick={onHide}
+                    onClick={onClose}
                     className="absolute right-4 top-4 text-red-500 hover:text-red-700 focus:outline-none"
                     aria-label="Close"
                 >
@@ -162,7 +162,8 @@ const NumberingDetailsModal = ({ show, onHide, onSubmit }) => {
                                                 onChange={handleChange}
                                                 name="restartPeriodicity"
                                             >
-                                                <option value="1 Yearly">1 Yearly</option>
+                                                <option value="">Select Periodicity</option>
+                                                <option value="Yearly">Yearly</option>
                                                 <option value="Monthly">Monthly</option>
                                                 <option value="Quarterly">Quarterly</option>
                                             </select>
@@ -245,12 +246,22 @@ const NumberingDetailsModal = ({ show, onHide, onSubmit }) => {
                 </div>
             </Modal.Body>
 
-            <Modal.Footer className=' flex bg-slate-200 w-[1100px] gap-5 p-4'>
+            <Modal.Footer className='flex bg-slate-200 w-[1100px] gap-5 p-4'>
+                <button 
+                    onClick={handleCancel}
+                    className="focus:outline-none hover:opacity-70 transition-opacity"
+                    aria-label="Cancel"
+                >
+                    <MdOutlineCancel color='red' size={30} />
+                </button>
                 
-                <MdOutlineCancel color='red' size={30} onClick={onHide}/>
-             
-                <TiTickOutline color='green' size={30} onClick={handleSubmit}/>
-             
+                <button 
+                    onClick={handleSubmit}
+                    className="focus:outline-none hover:opacity-70 transition-opacity"
+                    aria-label="Submit"
+                >
+                    <TiTickOutline color='green' size={30} />
+                </button>
             </Modal.Footer>
         </Modal>
     );

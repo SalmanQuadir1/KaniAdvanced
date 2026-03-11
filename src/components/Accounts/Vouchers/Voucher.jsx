@@ -197,7 +197,7 @@ const Voucher = () => {
         printFormal: false,
         defGstRegist: { id: '' },
         methodVouchNumbering: '',
-        vchNumbGstRegistration:'',
+        vchNumbGstRegistration: '',
         gstratedetails: '',
         gstDescription: '',
         hsn_Sac: '',
@@ -299,7 +299,7 @@ const Voucher = () => {
             typeOfVoucher: voucherData.typeOfVoucher || '',
             abbreviation: voucherData.abbreviation || '',
             actVoucher: voucherData.actVoucher?.toString() || 'true',
-           
+
             numbInsertDelete: voucherData.numbInsertDelete || '',
             setAdditionalNumb: voucherData.setAdditionalNumb || false,
             autoReceiptNumber: voucherData.autoReceiptNumber || '',
@@ -325,7 +325,7 @@ const Voucher = () => {
             defJurisdiction: voucherData.defJurisdiction || '',
             printFormal: voucherData.printFormal || false,
             defGstRegist: { id: voucherData.defGstRegist || '' },
-            methodVouchNumbering: voucherData.methodVouchNumbering ||'',
+            methodVouchNumbering: voucherData.methodVouchNumbering || '',
             gstratedetails: voucherData.gstratedetails || '',
             gstDescription: voucherData.gstDescription || '',
             hsn_Sac: voucherData.hsn_Sac || '',
@@ -431,10 +431,10 @@ const Voucher = () => {
 
     // Reset generated voucher number when numbering method changes
     const handleNumberingMethodChange = (opt, setFieldValue) => {
-        console.log(opt.value,"kkk");
-        
+        console.log(opt.value, "kkk");
+
         setFieldValue('methodVouchNumbering', opt?.value);
-        
+
         // Reset generated voucher number based on method
         if (opt?.value === 'Automatic') {
             setGeneratedVoucherNo('1');
@@ -492,82 +492,91 @@ const Voucher = () => {
     );
 
     // Render voucher number input based on numbering method
-    const renderVoucherNumberInput = (values, setFieldValue) => {
-        if (values.methodVouchNumbering === 'Automatic') {
-            return (
-                <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                    <h5 className="text-lg font-semibold text-blue-700 dark:text-blue-300 mb-2">
-                        Auto-Generated Voucher Number
-                    </h5>
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-blue-600 dark:text-blue-400 font-bold text-2xl">
-                                {generatedVoucherNo || '1'}
-                            </p>
-                            <p className="text-sm text-blue-500 dark:text-blue-300 mt-1">
-                                System will automatically start from 1
-                            </p>
-                        </div>
-                        <Field 
-                            type="hidden" 
-                            name="generatedVoucherNo" 
-                            value={generatedVoucherNo || '1'} 
-                        />
-                    </div>
-                </div>
-            );
-        } else if (values.methodVouchNumbering === 'Manual') {
-            return (
-                <div className="mb-6 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
-                    <h5 className="text-lg font-semibold text-purple-700 dark:text-purple-300 mb-4">
-                        Manual Voucher Number
-                    </h5>
+    // Render voucher number input based on numbering method
+const renderVoucherNumberInput = (values, setFieldValue) => {
+    if (values.methodVouchNumbering === 'Automatic') {
+        return (
+            <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <h5 className="text-lg font-semibold text-blue-700 dark:text-blue-300 mb-2">
+                    Auto-Generated Voucher Number
+                </h5>
+                <div className="flex items-center justify-between">
                     <div>
-                        <label className="mb-2.5 block text-black dark:text-white">
-                            Enter Voucher Number *
-                        </label>
-                        <input
-                            type="text"
-                            value={generatedVoucherNo}
-                            onChange={(e) => handleManualVoucherChange(e, setFieldValue)}
-                            placeholder="e.g., VCH-001, INV-2024-001"
-                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
-                        />
-                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                            Enter your custom voucher number manually
+                        <p className="text-blue-600 dark:text-blue-400 font-bold text-2xl">
+                            {generatedVoucherNo || '1'}
+                        </p>
+                        <p className="text-sm text-blue-500 dark:text-blue-300 mt-1">
+                            System will automatically start from 1
                         </p>
                     </div>
+                    <Field
+                        type="hidden"
+                        name="generatedVoucherNo"
+                        value={generatedVoucherNo || '1'}
+                    />
                 </div>
-            );
-        } else if (values.setAdditionalNumb) {
-            return (
-                <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-                    <h5 className="text-lg font-semibold text-green-700 dark:text-green-300 mb-2">
-                        Generated Voucher Number (with Additional Settings)
-                    </h5>
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <p className="text-green-600 dark:text-green-400 font-bold text-2xl">
-                                {generatedVoucherNo || 'Not configured'}
-                            </p>
-                            <p className="text-sm text-green-500 dark:text-green-300 mt-1">
-                                Voucher number with prefix/suffix and padding
-                            </p>
-                        </div>
-                        <Field 
-                            type="hidden" 
-                            name="generatedVoucherNo" 
-                            value={generatedVoucherNo} 
-                        />
+            </div>
+        );
+    } else if (values.methodVouchNumbering === 'Manual') {
+        return (
+            <div className="mb-6 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                <h5 className="text-lg font-semibold text-purple-700 dark:text-purple-300 mb-4">
+                    Manual Voucher Number
+                </h5>
+                <div>
+                    <label className="mb-2.5 block text-black dark:text-white">
+                        Enter Voucher Number *
+                    </label>
+                    <input
+                        type="text"
+                        value={generatedVoucherNo}
+                        onChange={(e) => handleManualVoucherChange(e, setFieldValue)}
+                        placeholder="e.g., VCH-001, INV-2024-001"
+                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
+                    />
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                        Enter your custom voucher number manually
+                    </p>
+                </div>
+            </div>
+        );
+    } else if (values.setAdditionalNumb) {
+        return (
+            <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                <h5 className="text-lg font-semibold text-green-700 dark:text-green-300 mb-2">
+                    Generated Voucher Number (with Additional Settings)
+                </h5>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <p className="text-green-600 dark:text-green-400 font-bold text-2xl">
+                            {generatedVoucherNo || 'Not configured'}
+                        </p>
+                        <p className="text-sm text-green-500 dark:text-green-300 mt-1">
+                            Voucher number with prefix/suffix and padding
+                        </p>
                     </div>
-                    {!generatedVoucherNo && (
-                       setShowNumberingModal(true)
-                    )}
+                    <Field
+                        type="hidden"
+                        name="generatedVoucherNo"
+                        value={generatedVoucherNo}
+                    />
                 </div>
-            );
-        }
-        return null;
-    };
+                {!generatedVoucherNo && (
+                    <div className="mt-4">
+                        <button
+                            type="button"
+                            onClick={() => setShowNumberingModal(true)}
+                            className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
+                        >
+                            Configure Numbering Details
+                        </button>
+                    </div>
+                )}
+            </div>
+        );
+    }
+    return null;
+};
 
     const getPageTitle = () => {
         switch (operationType) {
@@ -705,13 +714,13 @@ const Voucher = () => {
 
                                     <div className="space-y-4">
                                         {/* Show Additional Numbering option only if not Auto or Manual */}
-                                        {values.methodVouchNumbering !== 'Automatic' && 
-                                         values.methodVouchNumbering !== 'Manual' && (
-                                            <>
-                                                {renderYesNoRadio('setAdditionalNumb', 'Set Additional Numbering Details', values, setFieldValue)}
-                                                
-                                                {/* Show configure button for Additional Numbering */}
-                                                {/* {values.setAdditionalNumb === true && !generatedVoucherNo && (
+                                        {values.methodVouchNumbering !== 'Automatic' &&
+                                            values.methodVouchNumbering !== 'Manual' && (
+                                                <>
+                                                    {renderYesNoRadio('setAdditionalNumb', 'Set Additional Numbering Details', values, setFieldValue)}
+
+                                                    {/* Show configure button for Additional Numbering */}
+                                                    {values.setAdditionalNumb === true && !generatedVoucherNo && (
                                                     <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                                                         <button
                                                             type="button"
@@ -721,9 +730,9 @@ const Voucher = () => {
                                                             Configure Voucher Numbering Details (Mandatory For Voucher Creation)
                                                         </button>
                                                     </div>
-                                                )} */}
-                                            </>
-                                        )}
+                                                )}
+                                                </>
+                                            )}
 
                                         {renderYesNoRadio('unusedVchNos', 'Show Unused Voucher Numbers', values, setFieldValue)}
 
@@ -818,39 +827,37 @@ const Voucher = () => {
                                             />
                                         </div>
 
-                                        {values.typeOfVoucher === "Sales" && (
-                                            <>
-                                                <div>
-                                                    <label className="mb-2.5 block text-black dark:text-white">Default Print Title</label>
-                                                    <Field
-                                                        type="text"
-                                                        name="defTitlePrint"
-                                                        placeholder="e.g., Tax Invoice"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
-                                                    />
-                                                </div>
 
-                                                <div>
-                                                    <label className="mb-2.5 block text-black dark:text-white">Default Bank</label>
-                                                    <Field
-                                                        type="text"
-                                                        name="defBank"
-                                                        placeholder="Bank name"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
-                                                    />
-                                                </div>
+                                        <div>
+                                            <label className="mb-2.5 block text-black dark:text-white">Default Print Title</label>
+                                            <Field
+                                                type="text"
+                                                name="defTitlePrint"
+                                                placeholder="e.g., Tax Invoice"
+                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
+                                            />
+                                        </div>
 
-                                                <div>
-                                                    <label className="mb-2.5 block text-black dark:text-white">Default Jurisdiction</label>
-                                                    <Field
-                                                        type="text"
-                                                        name="defJurisdiction"
-                                                        placeholder="Jurisdiction area"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
-                                                    />
-                                                </div>
-                                            </>
-                                        )}
+                                        <div>
+                                            <label className="mb-2.5 block text-black dark:text-white">Default Bank</label>
+                                            <Field
+                                                type="text"
+                                                name="defBank"
+                                                placeholder="Bank name"
+                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="mb-2.5 block text-black dark:text-white">Default Jurisdiction</label>
+                                            <Field
+                                                type="text"
+                                                name="defJurisdiction"
+                                                placeholder="Jurisdiction area"
+                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white"
+                                            />
+                                        </div>
+
                                     </div>
 
                                     {values.posInvoicing && (
@@ -901,7 +908,7 @@ const Voucher = () => {
                                 <div className="flex justify-center mt-8">
                                     <button
                                         type="submit"
-                                        disabled={isSubmitting || loading || 
+                                        disabled={isSubmitting || loading ||
                                             (values.methodVouchNumbering === 'Manual' && !generatedVoucherNo) ||
                                             (values.generateVoucherNumber && !generatedVoucherNo)}
                                         className="flex items-center justify-center md:w-[250px] w-full md:h-[44px] h-[44px] rounded-lg bg-primary font-medium text-white hover:bg-primary/90 disabled:opacity-50"
@@ -929,30 +936,44 @@ const Voucher = () => {
                                     </button>
                                 </div>
                             </div>
+
+                                <NumberingDetailsModal
+                show={showNumberingModal}
+                     onClose={() => {
+                                // Set setAdditionalNumb to false when modal is closed without submitting
+                                // setFieldValue('setAdditionalNumb', false);
+                                setShowNumberingModal(false);
+                                // Clear any partial data if needed
+                                setGeneratedVoucherNo('');
+                                setNumberingConfig(null);
+                            }}
+              onSubmit={(data) => {
+        // Generate voucher number from modal data
+        const voucherNumber = generateVoucherNumber(data);
+        setGeneratedVoucherNo(voucherNumber);
+        setNumberingConfig(data);
+
+        // Store the gst details
+        setGstDetails(data);
+
+        // Set setAdditionalNumb to true since user completed the configuration
+        setFieldValue('setAdditionalNumb', true);
+        
+        // Close modal
+        setShowNumberingModal(false);
+
+        // Show success message
+        toast.success(`Voucher number generated: ${voucherNumber}`);
+    }}
+            />
                         </Form>
+
+                        
                     )}
                 </Formik>
             </div>
 
-            <NumberingDetailsModal
-                show={showNumberingModal}
-                onHide={() => setShowNumberingModal(false)}
-                onSubmit={(data) => {
-                    // Generate voucher number from modal data
-                    const voucherNumber = generateVoucherNumber(data);
-                    setGeneratedVoucherNo(voucherNumber);
-                    setNumberingConfig(data);
-
-                    // Store the gst details
-                    setGstDetails(data);
-
-                    // Close modal
-                    setShowNumberingModal(false);
-
-                    // Show success message
-                    toast.success(`Voucher number generated: ${voucherNumber}`);
-                }}
-            />
+        
         </DefaultLayout>
     );
 };

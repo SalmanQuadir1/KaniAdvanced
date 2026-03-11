@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import UserOne from '../../images/user/user-01.png';
-import UserTwo from '../../images/user/user-02.png';
-import UserThree from '../../images/user/user-03.png';
-import UserFour from '../../images/user/user-04.png';
+// import UserOne from '../../images/user/user-01.png';
+// import UserTwo from '../../images/user/user-02.png';
+// import UserThree from '../../images/user/user-03.png';
+// import UserFour from '../../images/user/user-04.png';
 
 const DropdownMessage = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -105,7 +105,7 @@ const DropdownMessage = () => {
               to="/messages"
             >
               <div className="h-12.5 w-12.5 rounded-full">
-                <img src={UserTwo} alt="User" />
+                {/* <img src={UserTwo} alt="User" /> */}
               </div>
 
               <div>
@@ -123,7 +123,7 @@ const DropdownMessage = () => {
               to="/messages"
             >
               <div className="h-12.5 w-12.5 rounded-full">
-                <img src={UserOne} alt="User" />
+                {/* <img src={UserOne} alt="User" /> */}
               </div>
 
               <div>
@@ -140,9 +140,9 @@ const DropdownMessage = () => {
               className="flex gap-4.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4"
               to="/messages"
             >
-              <div className="h-12.5 w-12.5 rounded-full">
+              {/* <div className="h-12.5 w-12.5 rounded-full">
                 <img src={UserThree} alt="User" />
-              </div>
+              </div> */}
 
               <div>
                 <h6 className="text-sm font-medium text-black dark:text-white">
@@ -158,9 +158,9 @@ const DropdownMessage = () => {
               className="flex gap-4.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4"
               to="/messages"
             >
-              <div className="h-12.5 w-12.5 rounded-full">
+              {/* <div className="h-12.5 w-12.5 rounded-full">
                 <img src={UserFour} alt="User" />
-              </div>
+              </div> */}
 
               <div>
                 <h6 className="text-sm font-medium text-black dark:text-white">
@@ -177,7 +177,7 @@ const DropdownMessage = () => {
               to="/messages"
             >
               <div className="h-12.5 w-12.5 rounded-full">
-                <img src={UserTwo} alt="User" />
+                {/* <img src={UserTwo} alt="User" /> */}
               </div>
 
               <div>
