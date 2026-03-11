@@ -66,13 +66,14 @@ const CreateVoucher = () => {
     const getFilteredLedgers = () => {
         if (!Ledger) return [];
 
-        if (Vouchers?.typeOfVoucher === "Purchase") {
+        if (Vouchers?.typeOfVoucher?.toLowerCase() === "purchase") {
             // For Purchase - show only suppliers (ledgers with supplier data)
             return Ledger.filter(ledg => ledg?.ledgerType == "SUPPLIER");
-        } else if (Vouchers?.typeOfVoucher === "Sales") {
+        } else if (Vouchers?.typeOfVoucher?.toLowerCase() === "sales") {
             // For Sales - show only customers (ledgers without supplier data)
             return Ledger.filter(ledg => ledg?.ledgerType == "CUSTOMER");
-        } else {
+        }
+        else {
             // For other voucher types (Payment, Contra) - show all ledgers
             return Ledger;
         }
@@ -87,7 +88,7 @@ const CreateVoucher = () => {
         label: ledg?.name,
         obj: ledg,
         balance: ledg?.openingBalances,
-        type: ledg.typeOfOpeningBalance,
+        type: ledg.ledgerType,
         isSupplier: ledg?.supplier !== null
     }));
 
@@ -1004,8 +1005,11 @@ const CreateVoucher = () => {
 
     const today = new Date().toISOString().split("T")[0];
 
-    console.log(today,"55");
-    
+    console.log(today, "55");
+
+    console.log(LedgerData, "000000000000000000");
+
+
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Configurator/Create Voucher" />
@@ -2092,9 +2096,10 @@ const CreateVoucher = () => {
                                                                         handleLedgerSelect(option);
                                                                     }}
                                                                     // Filter out credit type ledgers from options
-                                                                    options={LedgerData.filter(opt =>
-                                                                        opt.type?.toLowerCase() == 'debit'
-                                                                    )}
+                                                                    options={LedgerData.filter(opt => {
+                                                                        const name = opt.label?.toLowerCase() || '';
+                                                                        return name.includes('cash') || name.includes('bank');
+                                                                    })}
                                                                     className="react-select-container bg-white dark:bg-form-Field w-full"
                                                                     classNamePrefix="react-select"
                                                                     placeholder={getPartyAccountPlaceholder()}
@@ -2430,26 +2435,10 @@ const CreateVoucher = () => {
 
 
                                             <div className='flex flex-row gap-4 mb-6'>
-                                                <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Destination Ledger</label>
-                                                    <ReactSelect
-                                                        name='destinationLedgerId'
-                                                        value={destinationledger.find(opt => opt.value === values.destinationLedgerId)}
-                                                        onChange={handleDestinationLedgerChange}
-                                                        options={destinationledger}
-                                                        className="react-select-container bg-white dark:bg-form-Field w-full"
-                                                        classNamePrefix="react-select"
-                                                        placeholder="Select Ledger"
-                                                        menuPortalTarget={document.body}
-                                                        styles={{
-                                                            ...customStyles,
-                                                            menuPortal: (base) => ({ ...base, zIndex: 100000 })
-                                                        }}
 
-                                                    />
-                                                    <ErrorMessage name="destinationledgerId" component="div" className="text-red-500 text-xs mt-1" />
 
-                                                </div>
+
+
 
                                                 <div className="flex-2 min-w-[150px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Current Balance</label>
@@ -2475,6 +2464,26 @@ const CreateVoucher = () => {
 
                                                     (Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && (
                                                         <>
+                                                            <div className="flex-2 min-w-[250px]">
+                                                                <label className="mb-2.5 block text-black dark:text-white">Destination Ledger</label>
+                                                                <ReactSelect
+                                                                    name='destinationLedgerId'
+                                                                    value={destinationledger.find(opt => opt.value === values.destinationLedgerId)}
+                                                                    onChange={handleDestinationLedgerChange}
+                                                                    options={destinationledger}
+                                                                    className="react-select-container bg-white dark:bg-form-Field w-full"
+                                                                    classNamePrefix="react-select"
+                                                                    placeholder="Select Ledger"
+                                                                    menuPortalTarget={document.body}
+                                                                    styles={{
+                                                                        ...customStyles,
+                                                                        menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                    }}
+
+                                                                />
+                                                                <ErrorMessage name="destinationledgerId" component="div" className="text-red-500 text-xs mt-1" />
+
+                                                            </div>
                                                             <div className="flex-2 min-w-[250px]">
                                                                 <label className="mb-2.5 block text-black dark:text-white">Date</label>
                                                                 <Field
@@ -3494,7 +3503,10 @@ const CreateVoucher = () => {
                                                                                     setFieldValue('toLedgerId', option?.value || '');
                                                                                     setFieldValue('currentBalance2', option?.balance + " " + option.type || 0);
                                                                                 }}
-                                                                                options={LedgerData}
+                                                                                options={LedgerData.filter(opt => {
+                                                                                    const type = opt.type?.toLowerCase() || '';
+                                                                                    return type === 'customer' || type === 'supplier';
+                                                                                })}
                                                                                 className="react-select-container bg-white dark:bg-form-Field w-full"
                                                                                 classNamePrefix="react-select"
                                                                                 placeholder={"Select Particular"}
@@ -3710,6 +3722,23 @@ const CreateVoucher = () => {
                                                                                         Cash Account: {CashLedgers[0]?.name}
                                                                                     </p>
                                                                                     <Field type="hidden" name="cashLedgerId" value={CashLedgers[0]?.id || ''} />
+
+                                                                                    <ReactSelect
+                                                                                        name='cashLedgerId'
+                                                                                        value={cashData.find(opt => opt.value === values.cashLedgerId)}
+                                                                                        onChange={(option) => {
+                                                                                            setFieldValue('cashLedgerId', option?.value || '');
+                                                                                        }}
+                                                                                        options={cashData}
+                                                                                        className="react-select-container bg-white dark:bg-form-Field w-full"
+                                                                                        classNamePrefix="react-select"
+                                                                                        placeholder="Select Cash"
+                                                                                        menuPortalTarget={document.body}
+                                                                                        styles={{
+                                                                                            ...customStyles,
+                                                                                            menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                                        }}
+                                                                                    />
                                                                                 </div>
                                                                             </div>
                                                                             <div className="flex-1">
@@ -4079,7 +4108,23 @@ const CreateVoucher = () => {
                                                                                             <p className="text-green-600 dark:text-green-400 font-medium">
                                                                                                 Cash Account: {CashLedgers[0]?.name}
                                                                                             </p>
-                                                                                            <input type="hidden" value={CashLedgers[0]?.id || ''} />
+                                                                                            {/* <input type="hidden" value={CashLedgers[0]?.id || ''} /> */}
+                                                                                            <ReactSelect
+                                                                                                name='cashLedgerId'
+                                                                                                value={cashData.find(opt => opt.value === values.cashLedgerId)}
+                                                                                                onChange={(option) => {
+                                                                                                    setFieldValue('cashLedgerId', option?.value || '');
+                                                                                                }}
+                                                                                                options={cashData}
+                                                                                                className="react-select-container bg-white dark:bg-form-Field w-full"
+                                                                                                classNamePrefix="react-select"
+                                                                                                placeholder="Select Cash"
+                                                                                                menuPortalTarget={document.body}
+                                                                                                styles={{
+                                                                                                    ...customStyles,
+                                                                                                    menuPortal: (base) => ({ ...base, zIndex: 100000 })
+                                                                                                }}
+                                                                                            />
                                                                                         </div>
                                                                                     </div>
                                                                                 )}

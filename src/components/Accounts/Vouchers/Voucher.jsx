@@ -398,18 +398,9 @@ const Voucher = () => {
             if (response.ok) {
                 toast.success(successMessage);
 
-                if (operationType === 'create' || operationType === 'create-sub') {
-                    resetForm();
-                }
-
-                // Navigate based on operation type
-                if (operationType === 'update') {
-                    navigate('/configurator/vouchers');
-                } else if (operationType === 'create-sub') {
-                    navigate(`/configurator/vouchers/${parentVoucherId}`);
-                } else {
-                    navigate('/configurator/vouchers');
-                }
+           
+                    navigate('/Vouchers/view');
+               
             } else {
                 toast.error(data.errorMessage || 'Operation failed');
             }
@@ -712,16 +703,16 @@ const Voucher = () => {
 
                                                     {/* Show configure button for Additional Numbering */}
                                                     {values.setAdditionalNumb === true && !generatedVoucherNo && (
-                                                    <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => setShowNumberingModal(true)}
-                                                            className="px-4 py-2 bg-primary text-white rounded hover:bg-blue-700"
-                                                        >
-                                                            Configure Voucher Numbering Details (Mandatory For Voucher Creation)
-                                                        </button>
-                                                    </div>
-                                                )}
+                                                        <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setShowNumberingModal(true)}
+                                                                className="px-4 py-2 bg-primary text-white rounded hover:bg-blue-700"
+                                                            >
+                                                                Configure Voucher Numbering Details (Mandatory For Voucher Creation)
+                                                            </button>
+                                                        </div>
+                                                    )}
                                                 </>
                                             )}
 

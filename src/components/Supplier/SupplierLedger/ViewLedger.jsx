@@ -54,6 +54,11 @@ const ViewLedger = () => {
         value: ledg?.name
     }));
 
+     const formattedLedgerType = ledgerName?.map(ledg => ({
+        label: ledg?.ledgerType,
+        value: ledg?.ledgerType
+    }));
+
 
     const { token } = currentUser;
 
@@ -1229,11 +1234,11 @@ const ViewLedger = () => {
                                                 <ReactSelect
                                                     name="type"
 
-                                                    value={LedgerType.find(option => option.value === values.type)}
+                                                    value={formattedLedgerType.find(option => option.value === values.type)}
                                                     onChange={(option) => setFieldValue('type', option ? option.value : null)}
                                                     // options={formattedSupplier}
 
-                                                    options={[{ label: 'View All ', value: null }, ...LedgerType]}
+                                                    options={[{ label: 'View All ', value: null }, ...formattedLedgerType]}
                                                     styles={customStyles} // Pass custom styles here
                                                     className="bg-white dark:bg-form-Field"
                                                     classNamePrefix="react-select"
