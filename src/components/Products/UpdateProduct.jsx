@@ -607,6 +607,7 @@ const UpdateProduct = () => {
                         gstDetails: product?.gstDetails || [],
                         hsnCodes: product?.hsnCodes || '',
                         hsn_Sac: product?.hsn_Sac || '',
+                        alias: product?.alias || '',
                         gstDescription: product?.gstDescription || '',
                         taxationType: product?.taxationType || '',
                         gstRate: product?.gstRate || '',
@@ -1102,6 +1103,15 @@ const UpdateProduct = () => {
                                                         name="weftColors"
                                                         type="text"
                                                         placeholder="Enter Weft / Emb / Kani Color"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                    />
+                                                </div>
+                                                 <div className="flex-1 min-w-[300px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">Alias</label>
+                                                    <Field
+                                                        name="alias"
+                                                        type="text"
+                                                        placeholder="Enter Alias"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
