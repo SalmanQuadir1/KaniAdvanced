@@ -128,7 +128,7 @@ const Voucher = () => {
         { value: 'Journal', label: 'Journal' },
         { value: 'Sales', label: 'Sales' },
         { value: 'Purchase', label: 'Purchase' },
-        { value: 'Reciept', label: 'Receipt' },
+        { value: 'Receipt', label: 'Receipt' },
         { value: 'Payment', label: 'Payment' },
         { value: 'CreditNote', label: 'Credit Note' },
         { value: 'DebitNote', label: 'Debit Note' },

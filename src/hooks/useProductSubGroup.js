@@ -45,6 +45,9 @@ const useproductSubGroup = () => {
         },
       });
       const data = await response.json();
+
+      console.log(data,"00000000000");
+      
       setGroups(data?.content || data || []);
     } catch (error) {
       console.error('Failed to fetch groups:', error);

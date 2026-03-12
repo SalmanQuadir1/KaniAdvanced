@@ -71,7 +71,7 @@ const DropdownUser = () => {
     
     <div className="relative flex items-center bg-white dark:bg-gray-800 rounded-xl shadow-lg  overflow-hidden">
       {/* Left Accent */}
-      <div className="w-1 h-full bg-gradient-to-b from-blue-600 to-purple-600"></div>
+      <div className=" h-full bg-gradient-to-b from-blue-700 to-purple-600"></div>
       
       {/* Content */}
       {/* <div className="flex items-center px-4 py-2 space-x-4"> */}
@@ -89,9 +89,9 @@ const DropdownUser = () => {
         
         {/* Role Badge */}
         <div className="relative">
-          <span className="absolute -top-1 -right-1 flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+          <span className="absolute  flex h-2 w-1">
+            <span className="animate-ping absolute inline-flex h-[10px] w-[10px] rounded-full bg-green-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-6 bg-green-500"></span>
           </span>
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg px-3 py-1.5">
             <span className="text-xs font-bold text-white uppercase tracking-wider">

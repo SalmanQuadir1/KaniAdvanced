@@ -653,7 +653,7 @@ const ViewLedger = () => {
                 groupName.includes('tds') ||
                 groupName.includes('loan') ||
                 groupName.includes('capital') ||
-                groupName.includes('liabilit') ||
+                groupName.includes('liability') ||
                 groupName.includes('sales') ||
                 groupName.includes('income') ||
                 groupName.includes('revenue')) {

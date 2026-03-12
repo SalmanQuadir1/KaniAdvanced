@@ -422,7 +422,7 @@ const ProductSubGroup = () => {
 
                   <td className="p-3">
                     <div className="flex flex-wrap gap-2">
-                      {group.subgroups?.map((sg) => (
+                      {group?.subGroups?.map((sg) => (
                         <span
                           key={sg.id}
                           className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs group hover:bg-red-100 hover:text-red-800 transition-all duration-200"
