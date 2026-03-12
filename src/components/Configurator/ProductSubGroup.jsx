@@ -9,7 +9,7 @@ import { DELETE_PRODUCT_SUBGROUPP_URL } from '../../Constants/utils';
 import { useSelector } from 'react-redux';
 
 const ProductSubGroup = () => {
-
+const [deletedSubgroupIds, setDeletedSubgroupIds] = useState([]);
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const { token } = currentUser;
   const {
@@ -33,15 +33,17 @@ const ProductSubGroup = () => {
   const handleUpdateClick = (group) => {
     console.log('Original group data:', group);
 
-    // Store the entire group object including its ID
+    // Store the group object with proper ID mapping
     setSelectedGroupForEdit({
       ...group,
-      id: group.id || group.productGroupId // Ensure we have an ID
+      id: group.id, // This is the correct ID field
+      productGroupId: group.id, // Also set this for backward compatibility
+      productGroupName: group.productGroupName
     });
 
-    // Extract subgroup names
-    if (group?.subgroups) {
-      const names = group.subgroups.map(sg => sg.productSubGroupName || '');
+    // Extract subgroup names from subGroups array
+    if (group?.subGroups && Array.isArray(group.subGroups)) {
+      const names = group.subGroups.map(sg => sg.productSubGroupName || '');
       console.log('Setting subgroup fields:', names);
       setSubgroupFields(names.length ? names : ['']);
       setIsEditMode(true);
@@ -53,25 +55,27 @@ const ProductSubGroup = () => {
     }
   };
 
-  const handleCancelUpdate = () => {
-    setSelectedGroupForEdit(null);
-    setSubgroupFields(['']);
-    setIsEditMode(false);
-  };
+const handleCancelUpdate = () => {
+  setSelectedGroupForEdit(null);
+  setSubgroupFields(['']);
+  setIsEditMode(false);
+  setDeletedSubgroupIds([]); // Reset deleted IDs
+};
 
   useEffect(() => {
     if (currentproductSubGroup && !selectedGroupForEdit) {
       console.log('Current product subgroup from hook:', currentproductSubGroup);
 
-      if (currentproductSubGroup?.subgroups) {
-        const names = currentproductSubGroup.subgroups.map(
+      if (currentproductSubGroup?.subGroups) {
+        const names = currentproductSubGroup.subGroups.map(
           (sg) => sg.productSubGroupName || ''
         );
         setSubgroupFields(names.length ? names : ['']);
         setIsEditMode(true);
         setSelectedGroupForEdit({
           ...currentproductSubGroup,
-          id: currentproductSubGroup.id || currentproductSubGroup.productGroupId
+          id: currentproductSubGroup.id || currentproductSubGroup.productGroupId,
+          productGroupId: currentproductSubGroup.id || currentproductSubGroup.productGroupId
         });
       }
     }
@@ -82,29 +86,38 @@ const ProductSubGroup = () => {
   };
 
   const removeSubgroupField = (index) => {
-    if (subgroupFields.length > 1) {
-      // Remove from subgroupFields (UI input fields)
-      const newFields = [...subgroupFields];
-      newFields.splice(index, 1);
-      setSubgroupFields(newFields);
-
-      // CRITICAL: Also remove from selectedGroupForEdit.subgroups
-      // This ensures the ID is not sent in the update
-      if (selectedGroupForEdit && selectedGroupForEdit.subgroups) {
-        const updatedSubgroups = [...selectedGroupForEdit.subgroups];
-        updatedSubgroups.splice(index, 1); // Remove the subgroup at this index
-
-        setSelectedGroupForEdit({
-          ...selectedGroupForEdit,
-          subgroups: updatedSubgroups // This now has only IDs 4 and 7
-        });
-
-        console.log('Removed subgroup at index', index);
-        console.log('Remaining subgroups:', updatedSubgroups);
-        console.log('Remaining IDs:', updatedSubgroups.map(sg => sg.id)); // Should show [4, 7]
-      }
+  if (subgroupFields.length > 1) {
+    // Get the subgroup ID if it exists (for existing subgroups)
+    const subgroupId = selectedGroupForEdit?.subGroups?.[index]?.id;
+    
+    // If this is an existing subgroup (has an ID), mark it for deletion
+    if (subgroupId) {
+      // Store deleted IDs in state to handle later
+      setDeletedSubgroupIds(prev => [...prev, subgroupId]);
     }
-  };
+
+    // Remove from subgroupFields (UI input fields)
+    const newFields = [...subgroupFields];
+    newFields.splice(index, 1);
+    setSubgroupFields(newFields);
+
+    // CRITICAL: Also remove from selectedGroupForEdit.subGroups
+    // This ensures the ID is not sent in the update
+    if (selectedGroupForEdit && selectedGroupForEdit.subGroups) {
+      const updatedSubgroups = [...selectedGroupForEdit.subGroups];
+      updatedSubgroups.splice(index, 1); // Remove the subgroup at this index
+
+      setSelectedGroupForEdit({
+        ...selectedGroupForEdit,
+        subGroups: updatedSubgroups // Use subGroups with capital G
+      });
+
+      console.log('Removed subgroup at index', index);
+      console.log('Remaining subgroups:', updatedSubgroups);
+      console.log('Remaining IDs:', updatedSubgroups.map(sg => sg.id));
+    }
+  }
+};
 
   const updateSubgroupField = (index, value) => {
     const newFields = [...subgroupFields];
@@ -112,98 +125,131 @@ const ProductSubGroup = () => {
     setSubgroupFields(newFields);
   };
 
-  const resetSubgroupFields = () => {
-    setSubgroupFields(['']);
-    setIsEditMode(false);
-    setSelectedGroupForEdit(null);
-  };
+ const resetSubgroupFields = () => {
+  setSubgroupFields(['']);
+  setIsEditMode(false);
+  setSelectedGroupForEdit(null);
+  setDeletedSubgroupIds([]); // Reset deleted IDs
+};
 
-  const handleBulkSubmit = async (values, { setSubmitting, resetForm }) => {
-    const validSubgroups = subgroupFields
-      .map((field) => field.trim())
-      .filter((name) => name !== '');
+ const handleBulkSubmit = async (values, { setSubmitting, resetForm }) => {
+  const validSubgroups = subgroupFields
+    .map((field) => field.trim())
+    .filter((name) => name !== '');
 
-    if (validSubgroups.length === 0) {
-      toast.error('Please enter at least one subgroup name');
-      setSubmitting(false);
-      return;
-    }
+  if (validSubgroups.length === 0) {
+    toast.error('Please enter at least one subgroup name');
+    setSubmitting(false);
+    return;
+  }
 
-    if (!values.groupId) {
-      toast.error('Please select a group');
-      setSubmitting(false);
-      return;
-    }
+  if (!values.groupId) {
+    toast.error('Please select a group');
+    setSubmitting(false);
+    return;
+  }
 
-    setIsSubmitting(true);
+  setIsSubmitting(true);
 
-    try {
-      let result;
+  try {
+    let result;
 
-      if (isEditMode && selectedGroupForEdit) {
-        // Get original IDs from when we started editing
-        const originalIds = selectedGroupForEdit.subgroups?.map(sg => sg.id) || [];
-
-        // Get current IDs from the UI (after removals)
-        const currentIds = subgroupFields
-          .map((_, index) => originalIds[index])
-          .filter(id => id !== undefined);
-
-        console.log('Original IDs:', originalIds); // [4, 7, 8]
-        console.log('Current IDs:', currentIds);   // [4, 7]
-
-        // Find which IDs were removed
-        const removedIds = originalIds.filter(id => !currentIds.includes(id));
-        console.log('Removed IDs to delete:', removedIds); // [8]
-
-        // STEP 1: Delete the removed subgroups first
-        if (removedIds.length > 0) {
-          for (const id of removedIds) {
-            console.log(`Deleting removed subgroup ID: ${id}`);
-            await fetch(`${DELETE_PRODUCT_SUBGROUP_URL}${id}`, {
-              method: 'DELETE',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-              },
+    if (isEditMode && selectedGroupForEdit) {
+      // Get the original subgroups
+      const originalSubgroups = selectedGroupForEdit.subGroups || [];
+      
+      // Get IDs of subgroups to keep (those that still have input fields)
+      const currentIds = [];
+      const subgroupsToUpdate = [];
+      
+      // Loop through current input fields
+      subgroupFields.forEach((field, index) => {
+        if (field.trim() !== '') {
+          // Check if this position originally had a subgroup with an ID
+          if (originalSubgroups[index] && originalSubgroups[index].id) {
+            const originalId = originalSubgroups[index].id;
+            // Only include if it hasn't been deleted
+            if (!deletedSubgroupIds.includes(originalId)) {
+              currentIds.push(originalId);
+              subgroupsToUpdate.push({
+                id: originalId,
+                name: field.trim()
+              });
+            }
+          } else {
+            // This is a new subgroup (no ID)
+            subgroupsToUpdate.push({
+              name: field.trim()
             });
           }
         }
+      });
 
-        // STEP 2: Now update the remaining subgroups
-        const updateData = {
-          groupId: values.groupId,
-          subgroups: validSubgroups,
-          subgroupIds: currentIds // Only [4, 7]
-        };
+      // Combine manually deleted IDs with those removed by field deletion
+      const originalIds = originalSubgroups.map(sg => sg.id).filter(id => id);
+      const removedIds = [...new Set([...deletedSubgroupIds, ...originalIds.filter(id => !currentIds.includes(id))])];
 
-        console.log('Updating with data:', updateData);
+      console.log('Original IDs:', originalIds);
+      console.log('Keeping IDs:', currentIds);
+      console.log('Removing IDs:', removedIds);
 
-        const groupIdToUpdate = selectedGroupForEdit.id || selectedGroupForEdit.productGroupId;
-
-        result = await handleBulkUpdate(groupIdToUpdate, updateData);
-      } else {
-        // CREATE MODE
-        result = await handleBulkCreate(values.groupId, validSubgroups);
-      }
-
-      if (result && result.success) {
-        resetForm();
-        resetSubgroupFields();
-        toast.success(isEditMode ? 'SubGroup Updated Successfully' : 'Created successfully!');
-
-        if (handlePageChange) {
-          await handlePageChange(pagination?.currentPage || 1);
+      // STEP 1: Delete removed subgroups
+      if (removedIds.length > 0) {
+        for (const id of removedIds) {
+          console.log(`Deleting removed subgroup ID: ${id}`);
+          const deleteResponse = await fetch(`${DELETE_PRODUCT_SUBGROUPP_URL}${id}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          
+          if (!deleteResponse.ok) {
+            throw new Error(`Failed to delete subgroup ${id}`);
+          }
         }
       }
-    } catch (error) {
-      console.error('Submit error:', error);
-      toast.error('An error occurred. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-      setSubmitting(false);
+
+      // STEP 2: Update/Create subgroups
+      const updateData = {
+        groupId: values.groupId,
+        subgroups: subgroupsToUpdate.map(sg => sg.name),
+        ...(subgroupsToUpdate.some(sg => sg.id) && {
+          subgroupIds: subgroupsToUpdate.filter(sg => sg.id).map(sg => sg.id)
+        })
+      };
+
+      console.log('Update data being sent:', updateData);
+
+      const groupIdToUpdate = selectedGroupForEdit.id || selectedGroupForEdit.productGroupId;
+      result = await handleBulkUpdate(groupIdToUpdate, updateData);
+      
+    } else {
+      // CREATE MODE
+      result = await handleBulkCreate(values.groupId, validSubgroups);
     }
-  };
+
+    if (result && result.success) {
+      resetForm();
+      resetSubgroupFields();
+      setDeletedSubgroupIds([]); // Reset deleted IDs
+      toast.success(isEditMode ? 'SubGroups Updated Successfully' : 'Created successfully!');
+
+      if (handlePageChange) {
+        await handlePageChange(pagination?.currentPage || 1);
+      }
+    } else {
+      toast.error(result?.message || 'Operation failed');
+    }
+  } catch (error) {
+    console.error('Submit error:', error);
+    toast.error(error.message || 'An error occurred. Please try again.');
+  } finally {
+    setIsSubmitting(false);
+    setSubmitting(false);
+  }
+};
 
   console.log(productSubGroup, "000");
 
@@ -258,146 +304,174 @@ const ProductSubGroup = () => {
         enableReinitialize
         initialValues={{
           groupId: selectedGroupForEdit?.productGroupId ||
-            currentproductSubGroup?.productGroupId || '',
+            selectedGroupForEdit?.id || // This will catch the id from your data
+            currentproductSubGroup?.productGroupId ||
+            currentproductSubGroup?.id || '',
         }}
         onSubmit={handleBulkSubmit}
       >
-        {({ values, isSubmitting: formikSubmitting, resetForm }) => (
-          <Form>
+        {({ values, isSubmitting: formikSubmitting, resetForm, setFieldValue }) => {
+          // Use React.useEffect to update the field when selectedGroupForEdit changes
+          React.useEffect(() => {
+            if (selectedGroupForEdit) {
+              // Get the ID from either productGroupId or id field
+              const groupId = selectedGroupForEdit.productGroupId || selectedGroupForEdit.id;
+              if (groupId && groupId !== values.groupId) {
+                console.log('Setting groupId to:', groupId);
+                setFieldValue('groupId', groupId);
+              }
+            }
+          }, [selectedGroupForEdit, setFieldValue, values.groupId]);
+
+          return (
+            <Form>
 
 
-            <div className="rounded-sm border border-stroke bg-white shadow-default p-6.5">
-              {/* EDIT MODE INDICATOR */}
-              {isEditMode && selectedGroupForEdit && (
-                <div className="mb-4 p-3 bg-blue-100 text-blue-700 rounded flex justify-between items-center">
-                  <div>
-                    <span className="font-semibold">Edit Mode:</span> Updating subgroups for{' '}
-                    <span className="font-bold">{selectedGroupForEdit.productGroupName}</span>
-                    {selectedGroupForEdit.subgroups && (
-                      <span className="ml-2 text-sm">
-                        ({selectedGroupForEdit.subgroups.length} existing subgroups)
+              <div className="rounded-sm border border-stroke bg-white shadow-default p-6.5">
+                {/* EDIT MODE INDICATOR */}
+                {isEditMode && selectedGroupForEdit && (
+                  <div className="mb-4 p-3 bg-blue-100 text-blue-700 rounded flex justify-between items-center">
+                    <div>
+                      <span className="font-semibold">Edit Mode:</span> Updating subgroups for{' '}
+                      <span className="font-bold">{selectedGroupForEdit.productGroupName}</span>
+                      {selectedGroupForEdit.subgroups && (
+                        <span className="ml-2 text-sm">
+                          ({selectedGroupForEdit.subgroups.length} existing subgroups)
+                        </span>
+                      )}
+                      <span className="ml-2 text-sm text-blue-600">
+                        (You can change the group if needed)
                       </span>
-                    )}
-                    <span className="ml-2 text-sm text-blue-600">
-                      (You can change the group if needed)
-                    </span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleCancelUpdate}
-                    className="text-sm underline hover:text-blue-900"
-                  >
-                    Cancel Update
-                  </button>
-                </div>
-              )}
-
-              {/* GROUP DROPDOWN */}
-              <div className="mb-6">
-                <label className="mb-2.5 block text-black">
-                  Select Group <span className="text-danger">*</span>
-                </label>
-
-                <Field
-                  as="select"
-                  name="groupId"
-                  className="w-full rounded border-[1.5px] border-stroke py-3 px-5 focus:border-primary"
-                >
-                  <option value="">Select a Group</option>
-
-                  {groups?.map((group) => (
-                    <option
-                      key={group.id}
-                      value={group.id}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleCancelUpdate}
+                      className="text-sm underline hover:text-blue-900"
                     >
-                      {group.productGroupName || group.name}
-                    </option>
-                  ))}
-                </Field>
+                      Cancel Update
+                    </button>
+                  </div>
+                )}
 
-                <ErrorMessage
-                  name="groupId"
-                  component="div"
-                  className="text-red-500 mt-1"
-                />
-              </div>
-
-              {/* SUBGROUP INPUTS */}
-              <div className="mb-6">
-                <div className="flex justify-between mb-3">
-                  <label className="block text-black">
-                    SubGroup Names <span className="text-danger">*</span>
-                    <span className="text-sm text-gray-500 ml-2">
-                      ({subgroupFields.filter(f => f.trim() !== '').length} entered)
-                    </span>
+                {/* GROUP DROPDOWN */}
+                <div className="mb-6">
+                  <label className="mb-2.5 block text-black">
+                    Select Group <span className="text-danger">*</span>
                   </label>
 
-                  <button
-                    type="button"
-                    onClick={addSubgroupField}
-                    className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
+                  <Field
+                    as="select"
+                    name="groupId"
+                    className="w-full rounded border-[1.5px] border-stroke py-3 px-5 focus:border-primary"
                   >
-                    + Add Field
-                  </button>
+                    <option value="">Select a Group</option>
+
+                    {groups?.map((group) => (
+                      <option
+                        key={group.id}
+                        value={group.id}
+                      >
+                        {group.productGroupName || group.name}
+                      </option>
+                    ))}
+                  </Field>
+
+                  <ErrorMessage
+                    name="groupId"
+                    component="div"
+                    className="text-red-500 mt-1"
+                  />
                 </div>
 
-                {subgroupFields.map((field, index) => (
-                  <div key={index} className="flex gap-3 mb-2">
-                    <input
-                      type="text"
-                      value={field}
-                      onChange={(e) =>
-                        updateSubgroupField(index, e.target.value)
-                      }
-                      placeholder={`SubGroup Name ${index + 1}`}
-                      className="w-full rounded border-[1.5px] border-stroke py-3 px-5 focus:border-primary"
-                    />
+                {/* SUBGROUP INPUTS */}
+                <div className="mb-6">
+                  <div className="flex justify-between mb-3">
+                    <label className="block text-black">
+                      SubGroup Names <span className="text-danger">*</span>
+                      <span className="text-sm text-gray-500 ml-2">
+                        ({subgroupFields.filter(f => f.trim() !== '').length} entered)
+                      </span>
+                    </label>
 
-                    {/* {subgroupFields.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeSubgroupField(index)}
-                        className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-                      >
-                        Remove
-                      </button>
-                    )} */}
+                    <button
+                      type="button"
+                      onClick={addSubgroupField}
+                      className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
+                    >
+                      + Add Field
+                    </button>
                   </div>
-                ))}
-              </div>
 
-              {/* BUTTONS */}
-              <div className="flex gap-4">
-                <button
-                  type="submit"
-                  disabled={isSubmitting || formikSubmitting}
-                  className={`px-6 py-2 rounded text-white font-medium transition-colors ${isEditMode
-                    ? 'bg-green-600 hover:bg-green-700'
-                    : 'bg-blue-600 hover:bg-blue-700'
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
-                >
-                  {isSubmitting || formikSubmitting
-                    ? 'Saving...'
-                    : isEditMode
-                      ? 'Update SubGroups'
-                      : 'Save SubGroups'
-                  }
-                </button>
+                  {subgroupFields.map((field, index) => (
+                    <div key={index} className="flex gap-3 mb-2">
+                      <input
+                        type="text"
+                        value={field}
+                        onChange={(e) => updateSubgroupField(index, e.target.value)}
+                        placeholder={`SubGroup Name ${index + 1}`}
+                        className="w-full rounded border-[1.5px] border-stroke py-3 px-5 focus:border-primary"
+                      />
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    resetForm();
-                    handleCancelUpdate();
-                  }}
-                  className="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
-                >
-                  Clear
-                </button>
+                      {/* Show delete button for all fields when in edit mode or when there are multiple fields */}
+                      {(isEditMode || subgroupFields.length > 1) && (
+                        <button
+                          type="button"
+                          onClick={() => removeSubgroupField(index)}
+                          className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors whitespace-nowrap"
+                          title="Delete this subgroup"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                  ))}
+
+                </div>
+
+                {/* BUTTONS */}
+                <div className="flex gap-4">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting || formikSubmitting}
+                    className={`px-6 py-2 rounded text-white font-medium transition-colors ${isEditMode
+                      ? 'bg-green-600 hover:bg-green-700'
+                      : 'bg-blue-600 hover:bg-blue-700'
+                      } disabled:opacity-50 disabled:cursor-not-allowed`}
+                  >
+                    {isSubmitting || formikSubmitting
+                      ? 'Saving...'
+                      : isEditMode
+                        ? 'Update SubGroups'
+                        : 'Save SubGroups'
+                    }
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      resetForm();
+                      handleCancelUpdate();
+                    }}
+                    className="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+                  >
+                    Clear
+                  </button>
+                </div>
               </div>
-            </div>
-          </Form>
-        )}
+            </Form>
+          );
+        }}
       </Formik>
 
       {/* TABLE */}
@@ -448,8 +522,8 @@ const ProductSubGroup = () => {
                           </button>
                         </span>
                       ))}
-                      {(!group.subgroups || group.subgroups.length === 0) && (
-                        <span className="text-gray-400 italic">No subgroups</span>
+                      {(!group.subgroups) && (
+                        <span className="text-gray-400 italic">-</span>
                       )}
                     </div>
                   </td>
