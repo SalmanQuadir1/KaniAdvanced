@@ -19,7 +19,7 @@ import { use } from 'react';
 
 const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails }) => {
 
-    console.log(gstDetails, "umerhumainnkhal");
+  
 
 
     const navigate = useNavigate();
@@ -46,6 +46,8 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
 
 
         subGroup: {},
+
+        alias:'',
 
         colors: {
             // Default value
@@ -188,8 +190,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
 
 
     const getProduct = async (page, filters = {}) => {
-        console.log("iam here");
-        console.log(filters, "filllllllll");
+       
         try {
             const response = await fetch(`${GET_PRODUCT_URL}?page=${page || 1}`, {
                 method: "POST",
@@ -200,7 +201,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
                 body: JSON.stringify(filters)
             });
             const data = await response.json();
-            console.log(data, "pr datatata")
+           
 
             setProduct(data?.content);
             setPagination({
@@ -222,7 +223,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
 
 
     const getProductId = async () => {
-        console.log("iam here");
+   
         try {
             const response = await fetch(`${GET_PRODUCTID_URL}/processProductIds`, {
                 method: "GET",
@@ -232,7 +233,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
                 }
             });
             const data = await response.json();
-            console.log(data, "pr datatata")
+           
 
             setproductId(data);
 
@@ -242,7 +243,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
         }
     };
     const getInventoryProductId = async () => {
-        console.log("iam here");
+       
         try {
             const response = await fetch(`${GET_PRODUCTIDINVENTORY_URL}`, {
                 method: "GET",
@@ -252,7 +253,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
                 }
             });
             const data = await response.json();
-            console.log(data, "pr datatata")
+           
 
             setinventoryproductId(data);
 
@@ -264,7 +265,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
 
 
     const getProductGroup = async () => {
-        console.log("iam here");
+        
         try {
             const response = await fetch(`${VIEW_ALL_PRODUCT_GROUP_URL}`, {
                 method: "GET",
@@ -274,7 +275,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
                 }
             });
             const data = await response.json();
-            console.log(data, "pr datatata")
+          
 
             setinventoryproductId(data);
 
@@ -287,7 +288,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
 
 
     const getUnits = async () => {
-        console.log("iam here");
+       
         try {
             const response = await fetch(`${VIEW_ALL_UNITS}`, {
                 method: "GET",
@@ -297,7 +298,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
                 }
             });
             const data = await response.json();
-            console.log(data, "logining unittt")
+           
 
             setunits(data);
 
@@ -308,7 +309,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
     };
 
         const getWeave = async () => {
-        console.log("iam here");
+        
         try {
             const response = await fetch(`${VIEW_ALL_WEAVE}`, {
                 method: "GET",
@@ -318,7 +319,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
                 }
             });
             const data = await response.json();
-            console.log(data, "logining unittt")
+           
 
             setweave(data);
 
@@ -329,7 +330,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
     };
 
     const getLocation = async () => {
-        console.log("iam here");
+       
         try {
             const response = await fetch(`${VIEW_ALL_LOCATIONS}`, {
                 method: "GET",
@@ -339,7 +340,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
                 }
             });
             const data = await response.json();
-            console.log(data, "pr datatata")
+          
 
             setLocation(data);
 
@@ -352,7 +353,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
 
 
     const getProductList = async () => {
-        console.log("iam here");
+       
         try {
             const response = await fetch(`${GET_PRODUCTID_URL}/all-products`, {
                 method: "GET",
@@ -362,7 +363,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
                 }
             });
             const data = await response.json();
-            console.log(data, "pr datatata")
+           
 
             setproductList(data);
 
@@ -436,7 +437,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
     };
 
     const handleUpdate = (e, item) => {
-        console.log(item, "jjhh");
+ 
 
         e.preventDefault();
         if (item && item.id) {
@@ -498,8 +499,7 @@ const useProduct = ({ referenceImages, actualImages, productIdField, gstDetails 
             formData.append("product", JSON.stringify(product));
            
 
-            console.log(referenceImages, "reffff=================");
-             console.log(actualImages, "actuallll=================");
+         
 
             Array.from(referenceImages).forEach((file) => formData.append('referenceImages', file)); // Add files
             Array.from(actualImages).forEach((file) => formData.append('actualImages', file));

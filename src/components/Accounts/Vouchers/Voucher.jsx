@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import DefaultLayout from '../../../layout/DefaultLayout'
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import * as Yup from 'yup';
@@ -12,6 +12,8 @@ import useLocation from '../../../hooks/useLocation';
 import { toast } from 'react-toastify';
 import { GET_VoucherBYID, ADD_Voucher_URL, UPDATEVoucher_URL, ADD_VoucherEntry_URL } from '../../../Constants/utils';
 import useVoucher from '../../../hooks/useVoucher';
+import VoucherPrintTemplate from './VoucherPrintTemplate';
+import { useReactToPrint } from 'react-to-print';
 
 const Voucher = () => {
     const { id } = useParams();
@@ -21,6 +23,10 @@ const Voucher = () => {
     const { token } = currentUser;
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
+
+    const [printAfterSave, setPrintAfterSave] = useState(false);
+    const [savedVoucherData, setSavedVoucherData] = useState(null);
+    const printRef = useRef();
 
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(false);
@@ -34,6 +40,24 @@ const Voucher = () => {
     const [numberingConfig, setNumberingConfig] = useState(null); // Store numbering config for auto mode
 
     const { Locations, getAllLocation } = useLocation();
+
+
+    const handlePrint = useReactToPrint({
+        content: () => printRef.current,
+        documentTitle: `Voucher_${savedVoucherData?.generatedVoucherNo || 'Details'}`,
+        onAfterPrint: () => {
+            setPrintAfterSave(false);
+            // Navigate after print is done or closed
+            navigate('/Vouchers/view');
+        },
+    });
+
+    // Effect to trigger print when data is available
+    useEffect(() => {
+        if (printAfterSave && savedVoucherData) {
+            handlePrint();
+        }
+    }, [printAfterSave, savedVoucherData, handlePrint]);
 
     // Function to generate voucher number based on modal data (for Additional Numbering mode)
     const generateVoucherNumber = (numberingData) => {
@@ -334,7 +358,7 @@ const Voucher = () => {
     };
 
     // Handle form submission
-    const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    const handleSubmit = async (values, { setSubmitting, resetForm }, shouldPrint = false) => {
         setLoading(true);
 
         // Validate based on numbering method
@@ -398,9 +422,20 @@ const Voucher = () => {
             if (response.ok) {
                 toast.success(successMessage);
 
-           
+                // Set the saved data for printing
+                setSavedVoucherData({
+                    ...formData,
+                    generatedVoucherNo: generatedVoucherNo,
+                    id: data.id || id
+                });
+
+                if (shouldPrint) {
+                    // If print option is selected, trigger print after successful save
+                    setPrintAfterSave(true);
+                } else {
+                    // Otherwise navigate immediately
                     navigate('/Vouchers/view');
-               
+                }
             } else {
                 toast.error(data.errorMessage || 'Operation failed');
             }
@@ -887,13 +922,18 @@ const Voucher = () => {
                                 </div>
 
                                 {/* Submit Button */}
-                                <div className="flex justify-center mt-8">
+                                {/* Submit Buttons */}
+                                <div className="flex justify-center gap-4 mt-8">
                                     <button
-                                        type="submit"
+                                        type="button"
+                                        onClick={() => {
+                                            // Set a flag to indicate this is a regular submit
+                                            handleSubmit(values, { setSubmitting: () => { }, resetForm: () => { } }, false);
+                                        }}
                                         disabled={isSubmitting || loading ||
                                             (values.methodVouchNumbering === 'Manual' && !generatedVoucherNo) ||
-                                            (values.generateVoucherNumber && !generatedVoucherNo)}
-                                        className="flex items-center justify-center md:w-[250px] w-full md:h-[44px] h-[44px] rounded-lg bg-primary font-medium text-white hover:bg-primary/90 disabled:opacity-50"
+                                            (values.setAdditionalNumb && !generatedVoucherNo)}
+                                        className="flex items-center justify-center md:w-[200px] w-full md:h-[44px] h-[44px] rounded-lg bg-primary font-medium text-white hover:bg-primary/90 disabled:opacity-50"
                                     >
                                         {loading ? (
                                             <div className="flex items-center gap-2">
@@ -911,11 +951,49 @@ const Voucher = () => {
 
                                     <button
                                         type="button"
+                                        onClick={() => {
+                                            // Set a flag to indicate this is a save & print submit
+                                            handleSubmit(values, { setSubmitting: () => { }, resetForm: () => { } }, true);
+                                        }}
+                                        disabled={isSubmitting || loading ||
+                                            (values.methodVouchNumbering === 'Manual' && !generatedVoucherNo) ||
+                                            (values.setAdditionalNumb && !generatedVoucherNo)}
+                                        className="flex items-center justify-center md:w-[200px] w-full md:h-[44px] h-[44px] rounded-lg bg-green-600 font-medium text-white hover:bg-green-700 disabled:opacity-50"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            className="h-5 w-5 mr-2"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                                            />
+                                        </svg>
+                                        {operationType === 'update' ? 'Update & Print' :
+                                            operationType === 'create-sub' ? 'Create & Print Sub-Voucher' :
+                                                'Create & Print'}
+                                    </button>
+
+                                    <button
+                                        type="button"
                                         onClick={() => navigate(-1)}
-                                        className="ml-4 flex items-center justify-center md:w-[100px] w-full md:h-[44px] h-[44px] rounded-lg bg-gray-200 font-medium text-gray-700 hover:bg-gray-300"
+                                        className="flex items-center justify-center md:w-[100px] w-full md:h-[44px] h-[44px] rounded-lg bg-gray-200 font-medium text-gray-700 hover:bg-gray-300"
                                     >
                                         Cancel
                                     </button>
+                                </div>
+
+                                {/* Hidden print template */}
+                                <div style={{ display: 'none' }}>
+                                    <VoucherPrintTemplate
+                                        ref={printRef}
+                                        voucherData={savedVoucherData || {}}
+                                    />
                                 </div>
                             </div>
 

@@ -34,7 +34,7 @@ const AddProduct = () => {
 
     const [referenceImages, setReferenceImages] = useState([]);
     const [actualImages, setActualImages] = useState([]);
-    
+
 
     const [gstDetails, setgstDetails] = useState([])
 
@@ -63,23 +63,23 @@ const AddProduct = () => {
         const allWorkerOptions = [];
 
         selectedSuppliers.forEach(supplier => {
-            console.log(supplier, "............................");
+           
 
             // Access the supplier's groupTypes array
             const groupTypes = supplier.supplierNameObject?.groupTypes || [];
-            console.log(groupTypes, "333333333333333333333333");
+            
 
             // Loop through each groupType
             groupTypes.forEach(groupType => {
-                console.log(groupType, "groupType-------------");
+                
 
                 // Access the workers array inside each groupType
                 const workers = groupType.workers || [];
-                console.log(workers, "workers inside groupType");
+                
 
                 // Loop through each worker in the workers array
                 workers.forEach(worker => {
-                    console.log(worker, "individual worker");
+                    
 
                     // Now we can access worker.workerCode
                     allWorkerOptions.push({
@@ -93,7 +93,7 @@ const AddProduct = () => {
             });
         });
 
-        console.log(allWorkerOptions, "999999999999999999999999");
+       
 
         // Remove duplicates if same worker code appears in multiple suppliers/groupTypes
         const uniqueOptions = Array.from(
@@ -158,52 +158,52 @@ const AddProduct = () => {
     const [previewsActual, setPreviewsActual] = useState([]);
 
 
- const handleFileChange = async (event) => {
-    const files = Array.from(event.target.files);
-    
-    // Create new previews
-    const newPreviews = files.map((file) => ({
-        file,
-        url: URL.createObjectURL(file),
-    }));
+    const handleFileChange = async (event) => {
+        const files = Array.from(event.target.files);
 
-    // Update previews state
-    setPreviews(prev => [...prev, ...newPreviews]);
-    
-    // Update reference images state
-    setReferenceImages(prev => [...prev, ...files]);
-    
-    // Clear the input value to allow re-uploading the same file
-    event.target.value = '';
-};
+        // Create new previews
+        const newPreviews = files.map((file) => ({
+            file,
+            url: URL.createObjectURL(file),
+        }));
+
+        // Update previews state
+        setPreviews(prev => [...prev, ...newPreviews]);
+
+        // Update reference images state
+        setReferenceImages(prev => [...prev, ...files]);
+
+        // Clear the input value to allow re-uploading the same file
+        event.target.value = '';
+    };
 
     // Use useEffect to log the updated state after the change
     useEffect(() => {
-        console.log(referenceImages, "refimagessssss====================================");
+       
         setReferenceImages(referenceImages);
     }, [referenceImages]);  //
 
 
-   const handleFileChangeActual = async (event) => {
-    const files = Array.from(event.target.files);
-    
-    // Create new previews
-    const newPreviewsActual = files.map((file) => ({
-        file,
-        url: URL.createObjectURL(file),
-    }));
-    
-    // Update previews state
-    setPreviewsActual(prev => [...prev, ...newPreviewsActual]);
-    
-    // Update actual images state
-    setActualImages(prev => [...prev, ...files]);
-    
-    // Clear the input value
-    event.target.value = '';
-};
+    const handleFileChangeActual = async (event) => {
+        const files = Array.from(event.target.files);
+
+        // Create new previews
+        const newPreviewsActual = files.map((file) => ({
+            file,
+            url: URL.createObjectURL(file),
+        }));
+
+        // Update previews state
+        setPreviewsActual(prev => [...prev, ...newPreviewsActual]);
+
+        // Update actual images state
+        setActualImages(prev => [...prev, ...files]);
+
+        // Clear the input value
+        event.target.value = '';
+    };
     useEffect(() => {
-        console.log(actualImages, "actualImage====================================");
+       
         setActualImages(actualImages);
     }, [actualImages]);
 
@@ -221,50 +221,50 @@ const AddProduct = () => {
 
 
 
-   const handleRemoveImage = (indexToRemove) => {
-    // Remove from previews
-    setPreviews(prevPreviews => {
-        const updatedPreviews = [...prevPreviews];
-        
-        // Revoke the object URL for the removed image
-        if (updatedPreviews[indexToRemove]?.url) {
-            URL.revokeObjectURL(updatedPreviews[indexToRemove].url);
-        }
-        
-        updatedPreviews.splice(indexToRemove, 1);
-        return updatedPreviews;
-    });
+    const handleRemoveImage = (indexToRemove) => {
+        // Remove from previews
+        setPreviews(prevPreviews => {
+            const updatedPreviews = [...prevPreviews];
 
-    // Remove from referenceImages
-    setReferenceImages(prevImages => {
-        const updatedImages = [...prevImages];
-        updatedImages.splice(indexToRemove, 1);
-        return updatedImages;
-    });
-};
+            // Revoke the object URL for the removed image
+            if (updatedPreviews[indexToRemove]?.url) {
+                URL.revokeObjectURL(updatedPreviews[indexToRemove].url);
+            }
 
-// Handle remove actual image
-const handleRemoveActual = (indexToRemove) => {
-    // Remove from previewsActual
-    setPreviewsActual(prevPreviewsActual => {
-        const updatedPreviewsActual = [...prevPreviewsActual];
-        
-        // Revoke the object URL for the removed image
-        if (updatedPreviewsActual[indexToRemove]?.url) {
-            URL.revokeObjectURL(updatedPreviewsActual[indexToRemove].url);
-        }
-        
-        updatedPreviewsActual.splice(indexToRemove, 1);
-        return updatedPreviewsActual;
-    });
+            updatedPreviews.splice(indexToRemove, 1);
+            return updatedPreviews;
+        });
 
-    // Remove from actualImages
-    setActualImages(prevImages => {
-        const updatedImages = [...prevImages];
-        updatedImages.splice(indexToRemove, 1);
-        return updatedImages;
-    });
-};
+        // Remove from referenceImages
+        setReferenceImages(prevImages => {
+            const updatedImages = [...prevImages];
+            updatedImages.splice(indexToRemove, 1);
+            return updatedImages;
+        });
+    };
+
+    // Handle remove actual image
+    const handleRemoveActual = (indexToRemove) => {
+        // Remove from previewsActual
+        setPreviewsActual(prevPreviewsActual => {
+            const updatedPreviewsActual = [...prevPreviewsActual];
+
+            // Revoke the object URL for the removed image
+            if (updatedPreviewsActual[indexToRemove]?.url) {
+                URL.revokeObjectURL(updatedPreviewsActual[indexToRemove].url);
+            }
+
+            updatedPreviewsActual.splice(indexToRemove, 1);
+            return updatedPreviewsActual;
+        });
+
+        // Remove from actualImages
+        setActualImages(prevImages => {
+            const updatedImages = [...prevImages];
+            updatedImages.splice(indexToRemove, 1);
+            return updatedImages;
+        });
+    };
 
 
 
@@ -298,10 +298,10 @@ const handleRemoveActual = (indexToRemove) => {
     }, [])
 
 
-    console.log(productCategory, "9696969");
 
 
-    console.log(vaaluee, "huhu");
+
+
     useEffect(() => {
         if (productCategory.data) {
             const formattedOptions = productCategory.data.map(prodCat => ({
@@ -319,7 +319,7 @@ const handleRemoveActual = (indexToRemove) => {
                 value: design.id,
                 label: design?.designName,
                 designObject: design,
-                designCode: design?.designCode || '' 
+                designCode: design?.designCode || ''
             }));
             setdesignOptions(formattedOptions);
         }
@@ -340,7 +340,7 @@ const handleRemoveActual = (indexToRemove) => {
                 value: size.id,
                 label: size?.sizeName,
                 sizeObject: size,
-                 sizeCode: size?.sizeCode || ''
+                sizeCode: size?.sizeCode || ''
             }));
             setsizeOptions(formattedOptions);
         }
@@ -368,7 +368,7 @@ const handleRemoveActual = (indexToRemove) => {
         }
     }, [supplier.data]);
 
-    console.log(supplierNameOptions, "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkki");
+
 
     useEffect(() => {
         if (supplier.data) {
@@ -437,7 +437,7 @@ const handleRemoveActual = (indexToRemove) => {
 
 
     const changeTextColor = () => {
-        setIsOptionSelected(true); console.log(productGroup, 'productGroup');
+        setIsOptionSelected(true); 
 
     };
 
@@ -524,7 +524,7 @@ const handleRemoveActual = (indexToRemove) => {
     };
 
     const handlerateDetails = (option, setFieldValue) => {
-        console.log(option, "optoooon");
+       
         setFieldValue('gstratedetails', option.value);
         if (option.value === "Specify Slab Based Rates") {
 
@@ -536,12 +536,12 @@ const handleRemoveActual = (indexToRemove) => {
 
     const handleModalSubmit = (values) => {
 
-        console.log(values, "ggjio");
+       
         setgstDetails(values)
 
     }
 
-    console.log(subGroupOptions, "[[[[[[[[[[[[[");
+   
 
     const formatCostPriceToLTTH = (costPrice) => {
         if (!costPrice) return '0000';
@@ -565,18 +565,14 @@ const handleRemoveActual = (indexToRemove) => {
         return '0000';
     };
 
-    // Test cases
-    console.log(formatCostPriceToLTTH(800));    // 0008
-    console.log(formatCostPriceToLTTH(8000));   // 0080
-    console.log(formatCostPriceToLTTH(80000));  // 0800
-    console.log(formatCostPriceToLTTH(800000)); // 8000
+
 
     // Function to generate barcode
     const generateBarcode = (values) => {
         // 1. Supplier Code - Get first 2 digits or '00' if not available
         let supplierCode = '00';
         if (values.supplierCode) {
-            console.log(values.supplierCode, "66666666666663");
+          
 
             const code = values.supplierCode ||
 
@@ -678,7 +674,7 @@ const handleRemoveActual = (indexToRemove) => {
 
                         }, [values.fabricCost, values.embroideryCost])
 
-                        console.log(values.productGroup, "741258");
+                      
 
                         const { id } = values.productGroup || {};
 
@@ -695,7 +691,7 @@ const handleRemoveActual = (indexToRemove) => {
                                         }
                                     });
                                     const data = await response.json();
-                                    console.log(data, "987456");
+                                   
 
                                     const subgroupOptions = data && data.map(subgroup => ({
                                         value: subgroup.id,
@@ -708,12 +704,12 @@ const handleRemoveActual = (indexToRemove) => {
 
                                 } catch (error) {
                                     console.error(error);
-                                    toast.error("Failed to fetch Style");
+                                    // toast.error("Failed to fetch Style");
                                 }
                             };
                             getSubGroup();
 
-                        }, [values.productGroup])
+                        }, [values?.productGroup?.id])
 
                         useEffect(() => {
                             if (values) {
@@ -818,7 +814,7 @@ const handleRemoveActual = (indexToRemove) => {
                                                         <ReactSelect
                                                             name="design"
                                                             value={designOptions?.find(option => option.value === values.design?.id) || null}
-                              onChange={(option) => {
+                                                            onChange={(option) => {
                                                                 setFieldValue('design', option ? option.designObject : null);
                                                                 // Automatically set design code when design is selected
                                                                 if (option && option.designCode) {
@@ -887,7 +883,7 @@ const handleRemoveActual = (indexToRemove) => {
                                                         <ReactSelect
                                                             name="sizes"
                                                             value={sizeOptions?.find(option => option.value === values.sizes?.id) || null}
-                                                             onChange={(option) => {
+                                                            onChange={(option) => {
                                                                 setFieldValue('sizes', option ? option.sizeObject : null);
                                                                 // Automatically set size code when size is selected
                                                                 if (option && option.sizeCode) {
@@ -1063,6 +1059,18 @@ const handleRemoveActual = (indexToRemove) => {
                                                         <ErrorMessage name="barcode" component="div" className="text-red-500" />
 
 
+
+                                                    </div>
+
+                                                    <div className="flex-1 min-w-[300px]">
+                                                        <label className="mb-4 block text-black dark:text-white"> Alias</label>
+                                                        <Field
+                                                            name='alias'
+                                                            type="text"
+                                                            placeholder="Enter alias"
+                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        />
+                                                        <ErrorMessage name="alias" component="div" className="text-red-500" />
 
                                                     </div>
 

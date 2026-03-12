@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import ViewTable from './ViewTable';
 import Pagination from '../Pagination/Pagination';
 import useDesign from '../../hooks/useDesign';
+import { useSelector } from 'react-redux';
+import ReactSelect from 'react-select';
+
+import { customStyles as createCustomStyles, } from '../../Constants/utils';
 
 const Design = () => {
+
+    const theme = useSelector(state => state?.persisted?.theme);
+
+    const customStyles = createCustomStyles(theme?.mode);
+
+    const [productGroupOption, setproductGroupOption] = useState([])
     const {
         Design,
         edit,
@@ -18,6 +28,19 @@ const Design = () => {
         handlePageChange,
     } = useDesign();
 
+    const productGroup = useSelector(state => state?.persisted?.productGroup);
+
+    useEffect(() => {
+        if (productGroup.data) {
+            const formattedOptions = productGroup.data.map(product => ({
+                value: product.id,
+                label: product.productGroupName,
+                productGroupObject: product,
+            }));
+            setproductGroupOption(formattedOptions);
+        }
+    }, [productGroup.data]);
+
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Configurator/Add Design" />
@@ -27,25 +50,25 @@ const Design = () => {
                     enableReinitialize={true}
                     validate={values => {
                         const errors = {};
-                       
+
                         if (!values.designName) {
                             errors.designName = 'Design Name Is Required';
                         }
-                         if (!values.designCode) {
+                        if (!values.designCode) {
                             errors.designCode = 'Design Code Is Required';
                         }
                         return errors;
                     }}
                     onSubmit={handleSubmit}
                 >
-                    {({ isSubmitting }) => (
+                    {({ isSubmitting, values }) => (
                         <Form>
                             <div className="flex flex-col gap-9">
                                 {/* Form fields */}
                                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                                         <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                                        {edit ? "UPDATE DESIGN" : "ADD DESIGN"}
+                                            {edit ? "UPDATE DESIGN" : "ADD DESIGN"}
                                         </h3>
                                     </div>
                                     <div className="p-6.5">
@@ -60,7 +83,7 @@ const Design = () => {
                                                 />
                                                 <ErrorMessage name="designName" component="div" className="text-red-500" />
                                             </div>
-                                             <div className="flex-1 min-w-[300px]">
+                                            <div className="flex-1 min-w-[300px]">
                                                 <label className="mb-2.5 block text-black dark:text-white"> Design Code <span className="text-red-500 ml-1">*</span></label>
                                                 <Field
                                                     type="text"
@@ -70,35 +93,52 @@ const Design = () => {
                                                 />
                                                 <ErrorMessage name="designCode" component="div" className="text-red-500" />
                                             </div>
+                                            <div className="flex-1 min-w-[300px] mt-[-11px]">
+                                                <label className="mb-2.5 block text-black dark:text-white">Product Group <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
+                                         
+                                                    <ReactSelect
+                                                        name="productGroup"
+                                                        value={productGroupOption?.find(option => option.value === values.productGroup?.id) || null}
+                                                        onChange={(option) => setFieldValue('productGroup', option ? option.productGroupObject : null)}
+                                                        options={productGroupOption}
+                                                        styles={customStyles}
+                                                        className="bg-white dark:bg-form-Field"
+
+                                                        classNamePrefix="react-select"
+                                                        placeholder="Select Product Group"
+                                                    />
+                                               
+
+                                            </div>
                                         </div>
                                         <div className="flex justify-center mt-4 items-center">
-                                        <button type="submit" className="flex md:w-[180px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90">
-                                        {edit ? "UPDATE DESIGN" : "CREATE DESIGN"}
-                                        </button>
+                                            <button type="submit" className="flex md:w-[180px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90">
+                                                {edit ? "UPDATE DESIGN" : "CREATE DESIGN"}
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                                 {!edit && (
-                                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                                     <div className="border-b border-stroke py-4 px-2 dark:border-strokedark">
-                                         <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                                             <ViewTable
-                                                 units={Design}
-                                                 pagination={pagination}
-                                                 totalItems={pagination.totalItems}
-                                                 title={'Design'}
-                                                 handleDelete={handleDelete}
-                                                 handleUpdate={handleUpdate}
-                                             />
-                                             <Pagination
-                                                 totalPages={pagination.totalPages}
-                                                 currentPage={pagination.currentPage}
-                                                 handlePageChange={handlePageChange}
-                                             />
-                                         </h3>
-                                     </div>
-                                 </div>
-                             )}
+                                    <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                                        <div className="border-b border-stroke py-4 px-2 dark:border-strokedark">
+                                            <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
+                                                <ViewTable
+                                                    units={Design}
+                                                    pagination={pagination}
+                                                    totalItems={pagination.totalItems}
+                                                    title={'Design'}
+                                                    handleDelete={handleDelete}
+                                                    handleUpdate={handleUpdate}
+                                                />
+                                                <Pagination
+                                                    totalPages={pagination.totalPages}
+                                                    currentPage={pagination.currentPage}
+                                                    handlePageChange={handlePageChange}
+                                                />
+                                            </h3>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </Form>
                     )}

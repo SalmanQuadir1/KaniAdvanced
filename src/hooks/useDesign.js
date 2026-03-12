@@ -10,6 +10,8 @@ const useDesign = () => {
     const [edit, setEdit] = useState(false);
     const [currentDesign, setCurrentDesign] = useState({
         designName:"",
+        designCode:"",
+        productGroup:{}
     });
 
     const [pagination, setPagination] = useState({

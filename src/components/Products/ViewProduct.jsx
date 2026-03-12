@@ -405,7 +405,8 @@ const ViewProduct = () => {
         const filters = {
             productId: values.ProductId || undefined,
             hasActualImage:values.hasActualImage,
-            hasReferenceImage:values.hasReferenceImage
+            hasReferenceImage:values.hasReferenceImage,
+            searchText:values.searchText
         };
         getProduct(pagination.currentPage, filters);
     };
@@ -698,6 +699,7 @@ const ViewProduct = () => {
                             initialValues={{
                                 ProductId: '',
                                 hasActualImage: "",
+                                searchText:"",
                                 hasReferenceImage: ""
                             }}
                             onSubmit={handleSubmit}
@@ -744,7 +746,19 @@ const ViewProduct = () => {
                                             />
                                         </div>
 
+                                           <div className="flex-1 min-w-[300px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">Description/Barcode/Alias</label>
+                                                    <Field
+                                                        name="searchText"
+                                                        type="text"
+                                                        placeholder="Search Description/Barcode/Alias"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                    />
+                                                </div>
+
                                     </div>
+
+                                  
                                     <div className="flex justify-center">
                                         <button
                                             type="submit"
