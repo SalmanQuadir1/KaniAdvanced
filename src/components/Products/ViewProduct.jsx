@@ -405,7 +405,8 @@ const ViewProduct = () => {
         const filters = {
             productId: values.ProductId || undefined,
             hasActualImage:values.hasActualImage,
-            hasReferenceImage:values.hasReferenceImage
+            hasReferenceImage:values.hasReferenceImage,
+            searchText:values.searchText
         };
         getProduct(pagination.currentPage, filters);
     };
