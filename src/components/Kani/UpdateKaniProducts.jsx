@@ -829,7 +829,7 @@ const UpdateKaniProducts = () => {
                                                                  className="bg-white dark:bg-form-Field"
                                                                  classNamePrefix="react-select"
                                                                  placeholder="Select Design"
-                                                             // isDisabled={true}
+                                                                 isDisabled={true}
                                                             />
                                                          </div>
                                                      </div>
@@ -857,7 +857,7 @@ const UpdateKaniProducts = () => {
                                                                                                     name='colorName'
                                                                                                     type="text"
                                                                                                     placeholder="Enter Color name"
-                                            
+                                                                                                    readOnly
                                                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                                                                 />
                                                                                             </div>
@@ -878,6 +878,7 @@ const UpdateKaniProducts = () => {
                                                         name='colorCode'
                                                         type="text"
                                                         placeholder="Enter Color Code"
+                                                        readOnly
                                                         onChange={(e) => {
                                                             setFieldValue('colorCode', e.target.value);
                                                         }}
@@ -906,6 +907,7 @@ const UpdateKaniProducts = () => {
                                                             className="bg-white dark:bg-form-Field"
                                                             classNamePrefix="react-select"
                                                             placeholder="Select Style"
+                                                            isDisabled={true}
 
                                                         />
                                                     </div>
@@ -1004,6 +1006,7 @@ const UpdateKaniProducts = () => {
                                                             className="bg-white dark:bg-form-Field"
                                                             classNamePrefix="react-select"
                                                             placeholder="Select Product Status"
+                                                            isDisabled={true}
                                                         />
                                                     </div>
                                                 </div>
@@ -1014,6 +1017,7 @@ const UpdateKaniProducts = () => {
                                                         type="number"
                                                         placeholder="Enter Finished Weight"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        readOnly
                                                     />
                                                 </div>
 
@@ -1024,7 +1028,8 @@ const UpdateKaniProducts = () => {
                                                         type="number"
                                                         placeholder="Enter Material Weight"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
+                                                        readOnly
+                                                   />
                                                 </div>
                                             </div>
 
@@ -1040,6 +1045,7 @@ const UpdateKaniProducts = () => {
                                                                                                     type="text"
                                                                                                     placeholder="Enter Warp / Base Color"
                                                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                                                                    readOnly
                                                                                                 />
                                                                                             </div>
                                                                                             <div className="flex-1 min-w-[300px]">
@@ -1049,6 +1055,7 @@ const UpdateKaniProducts = () => {
                                                                                                     type="text"
                                                                                                     placeholder="Enter Weft / Emb / Kani Color"
                                                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                                                                    readOnly
                                                                                                 />
                                                                                             </div>
                                                                                         </div>
@@ -1068,6 +1075,7 @@ const UpdateKaniProducts = () => {
                                                             className="bg-white dark:bg-form-Field"
                                                             classNamePrefix="react-select"
                                                             placeholder="Select Weave"
+                                                            isDisabled={true}
                                                         />
                                                     </div>
 
@@ -1080,6 +1088,7 @@ const UpdateKaniProducts = () => {
                                                         type="text"
                                                         placeholder="Enter Warp Yarn"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        readOnly
                                                     />
                                                 </div>
                                                 <div className="flex-1 min-w-[300px]">
@@ -1089,6 +1098,7 @@ const UpdateKaniProducts = () => {
                                                         type="text"
                                                         placeholder="Enter Weft Yarn"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                        readOnly
                                                     />
                                                 </div>
                                             </div>
@@ -1102,6 +1112,7 @@ const UpdateKaniProducts = () => {
                                                                                                     type="text"
                                                                                                     placeholder="Enter Pic & Read"
                                                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                                    readOnly
                                                                                                 />
                                                                                             </div>
                                                                                             <div className="flex-1 min-w-[300px]">
@@ -1116,6 +1127,7 @@ const UpdateKaniProducts = () => {
                                                                                                         className="bg-white dark:bg-form-Field"
                                                                                                         classNamePrefix="react-select"
                                                                                                         placeholder="Select Units"
+                                                                                                        isDisabled={true}
                                                                                                     />
                                                                                                 </div>
                                                                                             </div>
@@ -1142,6 +1154,7 @@ const UpdateKaniProducts = () => {
                                                                              type="text"
                                                                              placeholder="Enter Dyeing Cost"
                                                                              className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                             readOnly
                                                                          />
                                                                      </div>
                                                                  </div>
@@ -1158,6 +1171,7 @@ const UpdateKaniProducts = () => {
                                                                                                     type="text"
                                                                                                         placeholder="Enter Retail Mrp"
                                                                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                                        readOnly
                                                                                                     />
                                                                                                 </div>
                                                                                                                                                     <div className="flex-2 min-w-[250px]">
@@ -1167,6 +1181,7 @@ const UpdateKaniProducts = () => {
                                                                                                 type="text"
                                                                                                 placeholder="Enter Wholesale Price"
                                                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                                readOnly
                                                                                             />
                                                                                         </div>
                                                                                         <div className="flex-2 min-w-[250px]">
@@ -1176,6 +1191,7 @@ const UpdateKaniProducts = () => {
                                                                                                     type="text"
                                                                                                     placeholder="Enter USD Price"
                                                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                                    readOnly
                                                                                                 />
                                                                                             </div>
                                                                                             </div>
@@ -1197,6 +1213,7 @@ const UpdateKaniProducts = () => {
                                                                                                     type="text"
                                                                                                     placeholder="Enter GBP Price"
                                                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                                    readOnly
                                                                                                 />
                                                                                             </div>
                                                                                         <div className="flex-2 min-w-[250px]">
@@ -1206,6 +1223,7 @@ const UpdateKaniProducts = () => {
                                                                                                 type="text"
                                                                                                     placeholder="Enter RMB Price"
                                                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                                    readOnly
                                                                                                 />
                                                                                             </div>
                                                                                         </div>
@@ -1220,6 +1238,7 @@ const UpdateKaniProducts = () => {
                                                                                                         rows={6}
                                                                                                         placeholder="Type your message"
                                                                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                                        readOnly
                                                                                                     />
                                                                                                 </div>
                                                                                                                                                                                 
@@ -1239,6 +1258,7 @@ const UpdateKaniProducts = () => {
                                                                                                                 className="bg-white dark:bg-form-Field"
                                                                                                                 classNamePrefix="react-select"
                                                                                                                 placeholder="Select GST details"
+                                                                                                                isDisabled={true}
                                                                                                             />
                                                                                                         </div>
                                                                                                     </div>
@@ -1254,6 +1274,7 @@ const UpdateKaniProducts = () => {
                                                                                                                 styles={customStyles}
                                                                                                                 classNamePrefix="react-select"
                                                                                                                 placeholder="Enter GST Rate Details"
+                                                                                                                
                                                                                                             />
                                                                                                         </div>
                                                                                                     )}
@@ -1340,6 +1361,7 @@ const UpdateKaniProducts = () => {
                                                                                     type="text"
                                                                                     placeholder="Enter Taxation Type"
                                                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                                                    readOnly
                                                                                 />
                                                                             </div>
                         
@@ -1352,6 +1374,7 @@ const UpdateKaniProducts = () => {
                                                                                     onChange={(option) => setFieldValue("typeOfSupply", option?.value)}
                                                                                     styles={customStyles}
                                                                                     placeholder="Enter Type of Supply"
+                                                                                    isDisabled={true}
                                                                                 />
                                                                             </div>
                                                                         </div>
@@ -1717,6 +1740,7 @@ const UpdateKaniProducts = () => {
                                                             className="bg-white dark:bg-form-Field"
                                                             classNamePrefix="react-select"
                                                             placeholder="Select Workers/Looms"
+                                                            isDisabled={true}
                                                         />
                                                     </div>
                                                 </div>
@@ -1761,7 +1785,7 @@ const UpdateKaniProducts = () => {
                                         </div>
 
                                                                                             {/* Color Way Field */}
-                                                    {/* <div className="flex-1 min-w-[200px]">
+                                                    <div className="flex-1 min-w-[200px]">
                                                          <label className="mb-2.5 block text-black dark:text-white">
                                                         Color Way
                                                         </label>
@@ -1773,7 +1797,7 @@ const UpdateKaniProducts = () => {
                                                         value={values.colorWeave}
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                         />
-                                                    </div> */}
+                                                    </div>
 </div>
                                        
                                         
