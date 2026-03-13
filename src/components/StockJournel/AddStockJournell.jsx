@@ -204,7 +204,7 @@ const AddStockJournell = () => {
 
       const data = await response.json();
       if (response.ok) {
-        toast.success(`Stock Journal created successfully`);
+        toast.success(`Stock  created successfully`);
         // Reset form with empty rows but keep voucherNo if needed
         setRows([{
           id: Date.now(),
@@ -255,7 +255,7 @@ const AddStockJournell = () => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName={"Stock Journal / Add Stock Journal"} />
+      <Breadcrumb pageName={"Stock Transfer / Add Stock Transfer"} />
       <div className="p-4">
         <Formik
           initialValues={initialValues}
@@ -274,7 +274,7 @@ const AddStockJournell = () => {
                     </div>
                     <div>
                       <h2 className="text-md font-xs font-bold text-black dark:text-white bg-clip-text">
-                        Create Stock Journal
+                        Create Stock Transfer
                       </h2>
                       <p className="text-gray-600 dark:text-gray-400 mt-1">
                         Transfer products between locations
