@@ -1873,3 +1873,100 @@ table start */
 .animate-professional-pulse {
   animation: professional-pulse 2s ease-in-out infinite;
 }
+
+
+
+
+/* Print styles */
+@media print {
+  @page {
+    size: A4;
+    margin: 1cm;
+  }
+  
+  body * {
+    visibility: hidden;
+  }
+  
+  .print-only, 
+  .print-only * {
+    visibility: visible;
+  }
+  
+  .print-only {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: white;
+    z-index: 9999;
+  }
+  
+  /* Ensure all content is visible */
+  .print-only div {
+    overflow: visible !important;
+    page-break-inside: avoid;
+  }
+  
+  /* Prevent cutting off content */
+  .print-only .print-section {
+    page-break-inside: avoid;
+  }
+}
+
+/* Screen styles */
+.hidden-print {
+  display: none;
+}
+
+.print-only {
+  display: none;
+}
+
+/* When print is active */
+.print-active .print-only {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background: white;
+  z-index: 10000;
+}
+
+
+/* Add to your global CSS file */
+@media print {
+  @page {
+    size: A4;
+    margin: 1.5cm;
+  }
+
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  /* Ensure page breaks work properly */
+  .page-break {
+    page-break-before: always;
+  }
+
+  /* Prevent elements from breaking across pages */
+  div[style*="pageBreakInside: 'avoid'"] {
+    page-break-inside: avoid !important;
+  }
+
+  /* Ensure content doesn't get cut off */
+  div[style*="maxWidth: '210mm'"] {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 5mm !important;
+  }
+}

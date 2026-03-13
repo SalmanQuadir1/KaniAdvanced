@@ -1,6 +1,17 @@
-import React from 'react';
+// VoucherPrintTemplate.jsx
+import React, { forwardRef } from 'react';
 
-const VoucherPrintTemplate = ({ voucherData, printRef }) => {
+const VoucherPrintTemplate = forwardRef(({ voucherData }, ref) => {
+  console.log('VoucherPrintTemplate rendering with data:', voucherData);
+
+  if (!voucherData || Object.keys(voucherData).length === 0) {
+    return (
+      <div ref={ref} style={{ padding: '20px', textAlign: 'center' }}>
+        <h2>No voucher data available</h2>
+      </div>
+    );
+  }
+
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString('en-IN', {
@@ -14,233 +25,436 @@ const VoucherPrintTemplate = ({ voucherData, printRef }) => {
     return value ? 'Yes' : 'No';
   };
 
+  const formatLocation = (location) => {
+    if (!location) return 'N/A';
+    if (typeof location === 'object') return location.label || location.address || 'N/A';
+    return location;
+  };
+
   return (
-    <div ref={printRef} className="p-8 bg-white" style={{ width: '210mm', margin: '0 auto' }}>
-      {/* Header */}
-      <div className="text-center mb-8 border-b-2 border-gray-800 pb-4">
-        <h1 className="text-3xl font-bold uppercase">Voucher Details</h1>
-        <p className="text-xl mt-2">Voucher Type: {voucherData.typeOfVoucher}</p>
-        {voucherData.generatedVoucherNo && (
-          <p className="text-lg font-semibold mt-1">Voucher No: {voucherData.generatedVoucherNo}</p>
-        )}
+    <div 
+      ref={ref} 
+      style={{
+        fontFamily: 'Arial, sans-serif',
+        maxWidth: '210mm',
+        minHeight: '297mm',
+        margin: '0 auto',
+        padding: '10mm',
+        backgroundColor: 'white',
+        color: '#000',
+        boxSizing: 'border-box'
+      }}
+    >
+      {/* Company Header - Page 1 */}
+      <div style={{
+        textAlign: 'center',
+        marginBottom: '15px',
+        paddingBottom: '10px',
+        borderBottom: '3px double #333'
+      }}>
+        <h1 style={{ 
+          fontSize: '24px', 
+          fontWeight: 'bold', 
+          margin: '0 0 5px 0',
+          color: '#1e3c72',
+          textTransform: 'uppercase',
+          letterSpacing: '2px'
+        }}>
+          VOUCHER
+        </h1>
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginTop: '10px',
+          fontSize: '12px'
+        }}>
+          <div style={{ textAlign: 'left' }}>
+            <strong>Type:</strong> {voucherData.typeOfVoucher || 'N/A'}
+          </div>
+          <div style={{ 
+            background: '#f0f0f0', 
+            padding: '5px 15px', 
+            borderRadius: '4px',
+            fontWeight: 'bold',
+            fontSize: '16px',
+            border: '1px solid #333'
+          }}>
+            #{voucherData.generatedVoucherNo || 'N/A'}
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <strong>Date:</strong> {new Date().toLocaleDateString()}
+          </div>
+        </div>
       </div>
 
-      {/* Basic Information Box */}
-      <div className="mb-6 border-2 border-gray-800 rounded-lg overflow-hidden">
-        <div className="bg-gray-200 px-4 py-2 border-b-2 border-gray-800">
-          <h2 className="font-bold text-lg">Basic Information</h2>
+      {/* Basic Information Card - Always on Page 1 */}
+      <div style={{
+        border: '2px solid #1e3c72',
+        borderRadius: '6px',
+        marginBottom: '15px',
+        overflow: 'hidden',
+        pageBreakInside: 'avoid'
+      }}>
+        <div style={{
+          background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
+          padding: '8px 12px',
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: '14px',
+          textTransform: 'uppercase'
+        }}>
+          📋 Basic Information
         </div>
-        <div className="grid grid-cols-2 gap-4 p-4">
-          <div className="border-r border-gray-300 pr-4">
-            <p className="font-semibold text-gray-700">Voucher Name:</p>
-            <p className="text-lg">{voucherData.name || 'N/A'}</p>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '10px',
+          padding: '12px',
+          background: '#f9f9f9'
+        }}>
+          <div style={fieldStyle}>
+            <span style={labelStyle}>Voucher Name:</span>
+            <span style={valueStyle}>{voucherData.name || 'N/A'}</span>
           </div>
-          <div className="pl-4">
-            <p className="font-semibold text-gray-700">Abbreviation:</p>
-            <p className="text-lg">{voucherData.abbreviation || 'N/A'}</p>
+          <div style={fieldStyle}>
+            <span style={labelStyle}>Abbreviation:</span>
+            <span style={valueStyle}>{voucherData.abbreviation || 'N/A'}</span>
           </div>
-          <div className="border-r border-gray-300 pr-4">
-            <p className="font-semibold text-gray-700">Status:</p>
-            <p className="text-lg">{voucherData.actVoucher === 'true' ? 'Active' : 'Inactive'}</p>
+          {/* <div style={fieldStyle}>
+            <span style={labelStyle}>Status:</span>
+            <span style={{
+              ...valueStyle,
+              color: voucherData.actVoucher === 'true' ? '#28a745' : '#dc3545',
+              fontWeight: 'bold'
+            }}>
+              {voucherData.actVoucher === 'true' ? 'Active' : 'Inactive'}
+            </span>
           </div>
-          <div className="pl-4">
-            <p className="font-semibold text-gray-700">Parent Voucher ID:</p>
-            <p className="text-lg">{voucherData.parentVoucherId || 'N/A'}</p>
-          </div>
+          <div style={fieldStyle}>
+            <span style={labelStyle}>Parent ID:</span>
+            <span style={valueStyle}>{voucherData.parentVoucherId || 'N/A'}</span>
+          </div> */}
         </div>
       </div>
 
-      {/* Voucher Settings Box */}
-      <div className="mb-6 border-2 border-gray-800 rounded-lg overflow-hidden">
-        <div className="bg-gray-200 px-4 py-2 border-b-2 border-gray-800">
-          <h2 className="font-bold text-lg">Voucher Settings</h2>
+      {/* Voucher Settings Card - Page 1 */}
+      <div style={{
+        border: '2px solid #2a5298',
+        borderRadius: '6px',
+        marginBottom: '15px',
+        overflow: 'hidden',
+        pageBreakInside: 'avoid'
+      }}>
+        <div style={{
+          background: 'linear-gradient(135deg, #2a5298 0%, #1e3c72 100%)',
+          padding: '8px 12px',
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: '14px',
+          textTransform: 'uppercase'
+        }}>
+          ⚙️ Voucher Settings
         </div>
-        <div className="grid grid-cols-2 gap-4 p-4">
-          <div>
-            <p className="font-semibold text-gray-700">Numbering Method:</p>
-            <p>{voucherData.methodVouchNumbering || 'N/A'}</p>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '10px',
+          padding: '12px',
+          background: '#f9f9f9'
+        }}>
+          <div style={fieldStyle}>
+            <span style={labelStyle}>Numbering Method:</span>
+            <span style={valueStyle}>{voucherData.methodVouchNumbering || 'N/A'}</span>
           </div>
-          <div>
-            <p className="font-semibold text-gray-700">Numbering Behavior:</p>
-            <p>{voucherData.numbInsertDelete || 'N/A'}</p>
+          <div style={fieldStyle}>
+            <span style={labelStyle}>Numbering Behavior:</span>
+            <span style={valueStyle}>{voucherData.numbInsertDelete || 'N/A'}</span>
           </div>
-          <div>
-            <p className="font-semibold text-gray-700">Additional Numbering:</p>
-            <p>{getYesNo(voucherData.setAdditionalNumb)}</p>
+          {/* <div style={fieldStyle}>
+            <span style={labelStyle}>Additional Numbering:</span>
+            <span style={valueStyle}>{getYesNo(voucherData.setAdditionalNumb)}</span>
           </div>
-          <div>
-            <p className="font-semibold text-gray-700">Show Unused Numbers:</p>
-            <p>{getYesNo(voucherData.unusedVchNos)}</p>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-700">Use Effective Date:</p>
-            <p>{getYesNo(voucherData.dateForVchs)}</p>
-          </div>
+         
+          <div style={fieldStyle}>
+            <span style={labelStyle}>Use Effective Date:</span>
+            <span style={valueStyle}>{getYesNo(voucherData.dateForVchs)}</span>
+          </div> */}
           {voucherData.dateForVchs && (
-            <div>
-              <p className="font-semibold text-gray-700">Effective Date:</p>
-              <p>{formatDate(voucherData.effectiveDate)}</p>
+            <div style={fieldStyle}>
+              <span style={labelStyle}>Effective Date:</span>
+              <span style={valueStyle}>{formatDate(voucherData.effectiveDate)}</span>
             </div>
           )}
-          <div>
-            <p className="font-semibold text-gray-700">Zero Value Transactions:</p>
-            <p>{getYesNo(voucherData.zeroTransactionAllowed)}</p>
+     
+        </div>
+      </div>
+
+      {/* Force page break before Printing Details if content might overflow */}
+      <div style={{ pageBreakBefore: 'always' }}></div>
+
+      {/* Printing Details Card - Page 2 */}
+      <div style={{
+        border: '2px solid #4a6fa5',
+        borderRadius: '6px',
+        marginBottom: '15px',
+        overflow: 'hidden',
+        pageBreakInside: 'avoid'
+      }}>
+        <div style={{
+          background: 'linear-gradient(135deg, #4a6fa5 0%, #6b8cae 100%)',
+          padding: '8px 12px',
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: '14px',
+          textTransform: 'uppercase'
+        }}>
+          🖨️ Printing Details
+        </div>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '10px',
+          padding: '12px',
+          background: '#f9f9f9'
+        }}>
+          <div style={fieldStyle}>
+            <span style={labelStyle}>Print After Saving:</span>
+            <span style={valueStyle}>{getYesNo(voucherData.printVch)}</span>
           </div>
-          <div>
-            <p className="font-semibold text-gray-700">Optional Voucher Type:</p>
-            <p>{getYesNo(voucherData.optionalVchType)}</p>
+          <div style={fieldStyle}>
+            <span style={labelStyle}>POS Invoicing:</span>
+            <span style={valueStyle}>{getYesNo(voucherData.posInvoicing)}</span>
           </div>
-          <div>
-            <p className="font-semibold text-gray-700">Narration in Voucher:</p>
-            <p>{getYesNo(voucherData.narrationVchs)}</p>
+  
+        </div>
+      </div>
+
+      {/* Location and Bank Details - Page 2 */}
+      <div style={{
+        border: '2px solid #6b8cae',
+        borderRadius: '6px',
+        marginBottom: '15px',
+        overflow: 'hidden',
+        pageBreakInside: 'avoid'
+      }}>
+        <div style={{
+          background: 'linear-gradient(135deg, #6b8cae 0%, #8aadc4 100%)',
+          padding: '8px 12px',
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: '14px',
+          textTransform: 'uppercase'
+        }}>
+          🏢 Location & Bank Details
+        </div>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '10px',
+          padding: '12px',
+          background: '#f9f9f9'
+        }}>
+          <div style={fieldStyle}>
+            <span style={labelStyle}>Default Godown/Location:</span>
+            <span style={valueStyle}>{formatLocation(voucherData.defaultGodownName)}</span>
           </div>
-          <div>
-            <p className="font-semibold text-gray-700">Ledger Narration:</p>
-            <p>{getYesNo(voucherData.narratLedgerVch)}</p>
+          <div style={fieldStyle}>
+            <span style={labelStyle}>Default Print Title:</span>
+            <span style={valueStyle}>{voucherData.defTitlePrint || 'N/A'}</span>
           </div>
-          <div>
-            <p className="font-semibold text-gray-700">Default Accounting:</p>
-            <p>{getYesNo(voucherData.defAccounting)}</p>
+          <div style={fieldStyle}>
+            <span style={labelStyle}>Default Bank:</span>
+            <span style={valueStyle}>{voucherData.defBank || 'N/A'}</span>
           </div>
-          <div>
-            <p className="font-semibold text-gray-700">Additional Cost Tracking:</p>
-            <p>{getYesNo(voucherData.costPurchase)}</p>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-700">WhatsApp Notification:</p>
-            <p>{getYesNo(voucherData.whatsAppVch)}</p>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-700">Inter-Company Transfer:</p>
-            <p>{getYesNo(voucherData.inteCompTransfer)}</p>
+          <div style={fieldStyle}>
+            <span style={labelStyle}>Default Jurisdiction:</span>
+            <span style={valueStyle}>{voucherData.defJurisdiction || 'N/A'}</span>
           </div>
         </div>
       </div>
 
-      {/* Printing Details Box */}
-      <div className="mb-6 border-2 border-gray-800 rounded-lg overflow-hidden">
-        <div className="bg-gray-200 px-4 py-2 border-b-2 border-gray-800">
-          <h2 className="font-bold text-lg">Printing Details</h2>
-        </div>
-        <div className="grid grid-cols-2 gap-4 p-4">
-          <div>
-            <p className="font-semibold text-gray-700">Print After Saving:</p>
-            <p>{getYesNo(voucherData.printVch)}</p>
+      {/* POS Messages - Page 2 (if exists) */}
+      {voucherData.posInvoicing && (
+        <div style={{
+          border: '2px solid #8aadc4',
+          borderRadius: '6px',
+          marginBottom: '15px',
+          overflow: 'hidden',
+          pageBreakInside: 'avoid'
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #8aadc4 0%, #a9c9e0 100%)',
+            padding: '8px 12px',
+            color: 'white',
+            fontWeight: 'bold',
+            fontSize: '14px',
+            textTransform: 'uppercase'
+          }}>
+            💬 POS Messages
           </div>
-          <div>
-            <p className="font-semibold text-gray-700">POS Invoicing:</p>
-            <p>{getYesNo(voucherData.posInvoicing)}</p>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-700">Set/Alter Declaration:</p>
-            <p>{getYesNo(voucherData.setAlterDecl)}</p>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-700">Print Formal Receipt:</p>
-            <p>{getYesNo(voucherData.printFormal)}</p>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-700">Default Godown:</p>
-            <p>{voucherData.defaultGodown || 'N/A'}</p>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-700">Default Print Title:</p>
-            <p>{voucherData.defTitlePrint || 'N/A'}</p>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-700">Default Bank:</p>
-            <p>{voucherData.defBank || 'N/A'}</p>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-700">Default Jurisdiction:</p>
-            <p>{voucherData.defJurisdiction || 'N/A'}</p>
-          </div>
-          {voucherData.posInvoicing && (
-            <>
-              <div className="col-span-2">
-                <p className="font-semibold text-gray-700">POS Message Line 1:</p>
-                <p>{voucherData.msgPrintOne || 'N/A'}</p>
-              </div>
-              <div className="col-span-2">
-                <p className="font-semibold text-gray-700">POS Message Line 2:</p>
-                <p>{voucherData.msgPrintTwo || 'N/A'}</p>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Statutory Details Box */}
-      <div className="mb-6 border-2 border-gray-800 rounded-lg overflow-hidden">
-        <div className="bg-gray-200 px-4 py-2 border-b-2 border-gray-800">
-          <h2 className="font-bold text-lg">Statutory Details</h2>
-        </div>
-        <div className="grid grid-cols-2 gap-4 p-4">
-          <div>
-            <p className="font-semibold text-gray-700">Default GST Registration:</p>
-            <p>{voucherData.defGstRegist?.id || 'N/A'}</p>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-700">Common Numbering for GST:</p>
-            <p>{getYesNo(voucherData.vchNumbGstRegistration)}</p>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-700">GST Rate Details:</p>
-            <p>{voucherData.gstratedetails || 'N/A'}</p>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-700">GST Description:</p>
-            <p>{voucherData.gstDescription || 'N/A'}</p>
-          </div>
-          <div>
-            <p className="font-semibold text-gray-700">HSN/SAC Code:</p>
-            <p>{voucherData.hsn_Sac || 'N/A'}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* GST Details Box (if available) */}
-      {voucherData.gstDetails && voucherData.gstDetails.length > 0 && (
-        <div className="mb-6 border-2 border-gray-800 rounded-lg overflow-hidden">
-          <div className="bg-gray-200 px-4 py-2 border-b-2 border-gray-800">
-            <h2 className="font-bold text-lg">GST Numbering Details</h2>
-          </div>
-          <div className="grid grid-cols-2 gap-4 p-4">
-            <div>
-              <p className="font-semibold text-gray-700">Starting Number:</p>
-              <p>{voucherData.gstDetails[0]?.startingNum || 'N/A'}</p>
+          <div style={{
+            padding: '12px',
+            background: '#f9f9f9'
+          }}>
+            <div style={{ ...fieldStyle, marginBottom: '8px' }}>
+              <span style={labelStyle}>Line 1:</span>
+              <span style={valueStyle}>{voucherData.msgPrintOne || 'N/A'}</span>
             </div>
-            <div>
-              <p className="font-semibold text-gray-700">Width of Number Part:</p>
-              <p>{voucherData.gstDetails[0]?.widthNumPart || 'N/A'}</p>
-            </div>
-            <div>
-              <p className="font-semibold text-gray-700">Prefill with Zero:</p>
-              <p>{voucherData.gstDetails[0]?.prefillZero ? 'Yes' : 'No'}</p>
-            </div>
-            <div>
-              <p className="font-semibold text-gray-700">Prefix:</p>
-              <p>{voucherData.gstDetails[0]?.prefixParticular || 'N/A'}</p>
-            </div>
-            <div>
-              <p className="font-semibold text-gray-700">Suffix:</p>
-              <p>{voucherData.gstDetails[0]?.suffixParticular || 'N/A'}</p>
-            </div>
-            <div>
-              <p className="font-semibold text-gray-700">Restart Periodicity:</p>
-              <p>{voucherData.gstDetails[0]?.restartPeriodicity || 'N/A'}</p>
+            <div style={fieldStyle}>
+              <span style={labelStyle}>Line 2:</span>
+              <span style={valueStyle}>{voucherData.msgPrintTwo || 'N/A'}</span>
             </div>
           </div>
         </div>
       )}
 
-      {/* Footer */}
-      <div className="text-center mt-8 pt-4 border-t-2 border-gray-300 text-sm text-gray-600">
-        <p>Generated on: {new Date().toLocaleString()}</p>
-        <p className="mt-1">This is a system-generated voucher document</p>
+      {/* Force page break before Statutory Details */}
+      <div style={{ pageBreakBefore: 'always' }}></div>
+
+      {/* Statutory Details Card - Page 3 */}
+      <div style={{
+        border: '2px solid #8b5a2b',
+        borderRadius: '6px',
+        marginBottom: '15px',
+        overflow: 'hidden',
+        pageBreakInside: 'avoid'
+      }}>
+        <div style={{
+          background: 'linear-gradient(135deg, #8b5a2b 0%, #b8860b 100%)',
+          padding: '8px 12px',
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: '14px',
+          textTransform: 'uppercase'
+        }}>
+          📊 Statutory Details
+        </div>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 1fr)',
+          gap: '10px',
+          padding: '12px',
+          background: '#f9f9f9'
+        }}>
+          <div style={fieldStyle}>
+            <span style={labelStyle}>Default GST Registration:</span>
+            <span style={valueStyle}>
+              {voucherData.defGstRegistName || 'N/A'}
+            </span>
+          </div>
+          <div style={fieldStyle}>
+            <span style={labelStyle}>Common GST Numbering:</span>
+            <span style={valueStyle}>{getYesNo(voucherData.vchNumbGstRegistration)}</span>
+          </div>
+     
+        </div>
+      </div>
+
+      {/* GST Numbering Details - Page 3 (if available) */}
+      {voucherData.gstDetails && voucherData.gstDetails.length > 0 && (
+        <div style={{
+          border: '2px solid #28a745',
+          borderRadius: '6px',
+          marginBottom: '15px',
+          overflow: 'hidden',
+          pageBreakInside: 'avoid'
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
+            padding: '8px 12px',
+            color: 'white',
+            fontWeight: 'bold',
+            fontSize: '14px',
+            textTransform: 'uppercase'
+          }}>
+            🔢 GST Numbering Details
+          </div>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: '10px',
+            padding: '12px',
+            background: '#f9f9f9'
+          }}>
+            <div style={fieldStyle}>
+              <span style={labelStyle}>Starting Number:</span>
+              <span style={valueStyle}>{voucherData.gstDetails[0]?.startingNum || 'N/A'}</span>
+            </div>
+            <div style={fieldStyle}>
+              <span style={labelStyle}>Width of Number Part:</span>
+              <span style={valueStyle}>{voucherData.gstDetails[0]?.widthNumPart || 'N/A'}</span>
+            </div>
+            <div style={fieldStyle}>
+              <span style={labelStyle}>Prefill with Zero:</span>
+              <span style={valueStyle}>{voucherData.gstDetails[0]?.prefillZero ? 'Yes' : 'No'}</span>
+            </div>
+            <div style={fieldStyle}>
+              <span style={labelStyle}>Prefix:</span>
+              <span style={valueStyle}>{voucherData.gstDetails[0]?.prefixParticular || 'N/A'}</span>
+            </div>
+            <div style={fieldStyle}>
+              <span style={labelStyle}>Suffix:</span>
+              <span style={valueStyle}>{voucherData.gstDetails[0]?.suffixParticular || 'N/A'}</span>
+            </div>
+            <div style={fieldStyle}>
+              <span style={labelStyle}>Restart Periodicity:</span>
+              <span style={valueStyle}>{voucherData.gstDetails[0]?.restartPeriodicity || 'N/A'}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Signature and Footer - Page 3 */}
+      <div style={{
+        marginTop: '20px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-end',
+        borderTop: '2px solid #333',
+        paddingTop: '15px',
+        pageBreakInside: 'avoid'
+      }}>
+        <div style={{ textAlign: 'center', width: '180px' }}>
+          <div style={{ borderTop: '1px solid #333', marginTop: '25px', paddingTop: '5px', fontSize: '12px' }}>
+            Authorized Signatory
+          </div>
+        </div>
+        <div style={{ textAlign: 'center', width: '180px' }}>
+          <div style={{ borderTop: '1px solid #333', marginTop: '25px', paddingTop: '5px', fontSize: '12px' }}>
+            Receiver's Signature
+          </div>
+        </div>
+        <div style={{ textAlign: 'right', fontSize: '10px', color: '#666' }}>
+          <div>Generated: {new Date().toLocaleString()}</div>
+          <div style={{ marginTop: '3px' }}>System Generated</div>
+        </div>
       </div>
     </div>
   );
+});
+
+// Style objects for consistency
+const fieldStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  borderBottom: '1px dotted #ccc',
+  paddingBottom: '4px'
 };
 
+const labelStyle = {
+  fontSize: '10px',
+  color: '#666',
+  textTransform: 'uppercase',
+  letterSpacing: '0.5px',
+  marginBottom: '2px'
+};
+
+const valueStyle = {
+  fontSize: '12px',
+  fontWeight: '500',
+  color: '#333'
+};
+
+VoucherPrintTemplate.displayName = 'VoucherPrintTemplate';
 export default VoucherPrintTemplate;

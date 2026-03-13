@@ -41,9 +41,9 @@ const Voucher = () => {
 
     const { Locations, getAllLocation } = useLocation();
 
-
+    // FIX: Properly initialize useReactToPrint with contentRef
     const handlePrint = useReactToPrint({
-        content: () => printRef.current,
+        contentRef: printRef,
         documentTitle: `Voucher_${savedVoucherData?.generatedVoucherNo || 'Details'}`,
         onAfterPrint: () => {
             setPrintAfterSave(false);
@@ -52,12 +52,47 @@ const Voucher = () => {
         },
     });
 
-    // Effect to trigger print when data is available
+    // Effect to trigger print when data is available and ref is ready
+
     useEffect(() => {
         if (printAfterSave && savedVoucherData) {
-            handlePrint();
+            console.log('Preparing to print...');
+            console.log('Saved voucher data:', savedVoucherData);
+            console.log('Print ref current:', printRef.current);
+
+            // Make sure the print template is visible
+            document.body.classList.add('print-active');
+
+            // Force a re-render and wait for DOM to update
+            setTimeout(() => {
+                if (printRef.current) {
+                    console.log('Print ref is ready, triggering print');
+                    window.print();
+                } else {
+                    console.error('Print ref is not available');
+                    // Fallback - try to navigate anyway
+                    setPrintAfterSave(false);
+                    setSavedVoucherData(null);
+                    navigate('/Vouchers/view');
+                }
+            }, 1000); // Increased timeout to ensure DOM is ready
+
+            const handleAfterPrint = () => {
+                console.log('Print completed or cancelled');
+                document.body.classList.remove('print-active');
+                setPrintAfterSave(false);
+                setSavedVoucherData(null);
+                navigate('/Vouchers/view');
+            };
+
+            window.addEventListener('afterprint', handleAfterPrint);
+
+            // Cleanup
+            return () => {
+                window.removeEventListener('afterprint', handleAfterPrint);
+            };
         }
-    }, [printAfterSave, savedVoucherData, handlePrint]);
+    }, [printAfterSave, savedVoucherData, navigate]);
 
     // Function to generate voucher number based on modal data (for Additional Numbering mode)
     const generateVoucherNumber = (numberingData) => {
@@ -213,6 +248,7 @@ const Voucher = () => {
         posInvoicing: false,
         setAlterDecl: false,
         defaultGodown: '',
+            defaultGodownName: '',
         defTitlePrint: '',
         msgPrintOne: '',
         msgPrintTwo: '',
@@ -220,6 +256,7 @@ const Voucher = () => {
         defJurisdiction: '',
         printFormal: false,
         defGstRegist: { id: '' },
+        defGstRegistName: "",
         methodVouchNumbering: '',
         vchNumbGstRegistration: '',
         gstratedetails: '',
@@ -838,7 +875,12 @@ const Voucher = () => {
                                                 name="defaultGodown"
                                                 options={formattedLocation}
                                                 value={formattedLocation?.find(opt => opt.value === values.defaultGodown)}
-                                                onChange={(opt) => setFieldValue('defaultGodown', { id: opt?.value })}
+                                                onChange={(opt) => {
+                                                    setFieldValue('defaultGodown', { id: opt?.value })
+                                                     setFieldValue('defaultGodownName', opt.label)
+                                                
+                                                }
+                                                }
                                                 styles={customStyles}
                                                 placeholder="Select location"
                                             />
@@ -910,7 +952,10 @@ const Voucher = () => {
                                             <ReactSelect
                                                 name="defGstRegist"
                                                 value={formattedGstLocation.find(opt => opt.value === values.defGstRegist)}
-                                                onChange={(opt) => setFieldValue('defGstRegist', { id: opt?.value })}
+                                                onChange={(opt) => {
+                                                    setFieldValue('defGstRegist', { id: opt?.value });
+                                                    setFieldValue('defGstRegistName', opt?.label);
+                                                }}
                                                 options={formattedGstLocation}
                                                 styles={customStyles}
                                                 placeholder="Select registration"
@@ -921,7 +966,6 @@ const Voucher = () => {
                                     {renderYesNoRadio('vchNumbGstRegistration', 'Use Common Voucher Numbering for All GST Registrations', values, setFieldValue)}
                                 </div>
 
-                                {/* Submit Button */}
                                 {/* Submit Buttons */}
                                 <div className="flex justify-center gap-4 mt-8">
                                     <button
@@ -988,8 +1032,8 @@ const Voucher = () => {
                                     </button>
                                 </div>
 
-                                {/* Hidden print template */}
-                                <div style={{ display: 'none' }}>
+                                {/* Print template - always rendered but hidden */}
+                                <div className={printAfterSave ? 'print-only' : 'hidden-print'}>
                                     <VoucherPrintTemplate
                                         ref={printRef}
                                         voucherData={savedVoucherData || {}}
@@ -1017,13 +1061,9 @@ const Voucher = () => {
                                 }}
                             />
                         </Form>
-
-
                     )}
                 </Formik>
             </div>
-
-
         </DefaultLayout>
     );
 };
