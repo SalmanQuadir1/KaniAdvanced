@@ -177,6 +177,8 @@ export const UPDATE_DESIGN_URL = `${BASE_URL}/design`;
 export const VIEW_ALL_DESIGN = `${BASE_URL}/design/viewAll`;
 export const DELETE_DESIGN_URL = `${BASE_URL}/design/`;
 
+export const DESIGNBYPR = `${BASE_URL}/design/fetch-designs/product-groups`;
+
 //pRODUCT CATEGORY
 export const ADD_PRODUCTCATEGORY_URL = `${BASE_URL}/product-category`;
 export const GET_PRODUCTCATEGORY_URL = `${BASE_URL}/product-category`;

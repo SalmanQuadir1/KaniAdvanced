@@ -3,7 +3,7 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import { ErrorMessage, Field, Formik } from 'formik';
 import { useNavigate, useParams } from 'react-router-dom';
-import { GET_IMAGE, GET_PRODUCT_GROUP_SUBGROUP_URL, GET_PRODUCTBYID_URL, UPDATE_PRODUCT_URL } from '../../Constants/utils';
+import { DESIGNBYPR, GET_IMAGE, GET_PRODUCT_GROUP_SUBGROUP_URL, GET_PRODUCTBYID_URL, UPDATE_PRODUCT_URL } from '../../Constants/utils';
 import { useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
 import { customStyles as createCustomStyles } from '../../Constants/utils';
@@ -32,7 +32,6 @@ const UpdateProduct = () => {
     const productCategory = useSelector(state => state?.persisted?.productCategory);
     const hsnCode = useSelector(state => state?.persisted?.hsn);
     const [supplierNameOptions, setsupplierNameOptions] = useState([]);
-    const [supplierCodeOptions, setsupplierCodeOptions] = useState([]);
     const supplier = useSelector(state => state?.nonPersisted?.supplier);
     const [productGroupOption, setproductGroupOption] = useState([]);
     const [gstDetailModal, setgstDetailModal] = useState(false);
@@ -41,8 +40,7 @@ const UpdateProduct = () => {
     const [referenceImages, setrefImage] = useState([]);
     const [actualImages, setactualImage] = useState([]);
     const navigate = useNavigate();
-    const { getUnits, units, getWeave,
-        weave } = useProduct({ referenceImages, actualImages, productIdField });
+    const { getUnits, units, getWeave, weave } = useProduct({ referenceImages, actualImages, productIdField });
     const [previews, setPreviews] = useState([]);
     const [previewsActual, setPreviewsActual] = useState([]);
     const [gstDetails, setgstDetails] = useState([]);
@@ -52,7 +50,6 @@ const UpdateProduct = () => {
 
     const { token } = currentUser;
     const { id } = useParams();
-    const productId = id;
 
     // Function to format cost price to LTTH format
     const formatCostPriceToLTTH = (costPrice) => {
@@ -74,7 +71,6 @@ const UpdateProduct = () => {
         getWeave()
     }, [])
 
-
     useEffect(() => {
         if (weave) {
             const formattedweaveOptions = weave.map(unitGroup => ({
@@ -82,16 +78,14 @@ const UpdateProduct = () => {
                 label: unitGroup?.weaveName,
                 weaveGroupObject: unitGroup,
             }));
-            setweaveOptions(formattedweaveOptions); // Update the state only when `units` changes
+            setweaveOptions(formattedweaveOptions);
         }
     }, [weave]);
 
     // Function to generate barcode
     const generateBarcode = (values) => {
-        // Get supplier code from selected suppliers
         let supplierCode = '00';
         if (values.supplier && values.supplier.length > 0) {
-            // Use the first supplier's code for barcode
             const firstSupplier = values.supplier[0];
             const supplierOption = supplierNameOptions.find(opt => opt.value === firstSupplier.id);
             if (supplierOption?.supplierNameObject?.supplierCode) {
@@ -185,221 +179,216 @@ const UpdateProduct = () => {
         }
     }, [units]);
 
-    const handleFileChange = async (event) => {
-        const files = Array.from(event.target.files);
-        if (!files.length) return;
+const handleFileChange = async (event) => {
+    const files = Array.from(event.target.files);
+    if (!files.length) return;
 
-        // Create new previews
-        const newPreviews = files.map((file) => ({
-            file,
-            url: URL.createObjectURL(file),
-            isNew: true
-        }));
+    // Create new previews for UI
+    const newPreviews = files.map((file) => ({
+        file,
+        url: URL.createObjectURL(file),
+        isNew: true
+    }));
 
-        // Append new previews to existing ones
-        setPreviews((prev) => [...prev, ...newPreviews]);
+    setPreviews((prev) => [...prev, ...newPreviews]);
 
-        // IMPORTANT FIX: Append new files to existing referenceImages, don't replace
-        setrefImage((prev) => [...prev, ...files]);
-    };
-    useEffect(() => {
+    // Append new File objects to referenceImages
+    setrefImage((prev) => [...prev, ...files]);
+};
+
+  useEffect(() => {
         if (product?.images) {
-            // Separate reference and actual images
-            const refImgs = product.images
+            // Store existing images with a flag indicating they're existing
+            const existingRefImages = product.images
                 .filter(img => img.referenceImage && !img.actualImage)
-                .map(img => {
-                    // Create a file-like object from the existing image
-                    const fileName = img.referenceImage;
-                    return new File([], fileName, {
-                        type: 'image/jpeg', // or detect from extension
-                    });
-                });
+                .map(img => ({
+                    imageId: img.referenceImage,
+                    isExisting: true,
+                    url: `${GET_IMAGE}/products/getimages/${img.referenceImage}`
+                }));
 
-            const actImgs = product.images
+            const existingActImages = product.images
                 .filter(img => img.actualImage)
-                .map(img => {
-                    const fileName = img.actualImage;
-                    return new File([], fileName, {
-                        type: 'image/jpeg',
-                    });
-                });
+                .map(img => ({
+                    imageId: img.actualImage,
+                    isExisting: true,
+                    url: `${GET_IMAGE}/products/getimages/${img.actualImage}`
+                }));
 
-            // Set initial images without overwriting
-            setrefImage(refImgs);
-            setactualImage(actImgs);
+            // Store the image IDs in the referenceImages/actualImages arrays
+            setrefImage(existingRefImages.map(img => img.imageId));
+            setactualImage(existingActImages.map(img => img.imageId));
+
+            // Also store the preview data for display
+            setPreviews(existingRefImages);
+            setPreviewsActual(existingActImages);
         }
     }, [product]);
-    // useEffect(() => {
-    //     console.log(referenceImages, "refimagessssss====================================");
-    //     setrefImage(referenceImages);
-    // }, [referenceImages]);
 
-    const handleFileChangeActual = async (event) => {
-        const files = Array.from(event.target.files);
-        if (!files.length) return;
+const handleFileChangeActual = async (event) => {
+    const files = Array.from(event.target.files);
+    if (!files.length) return;
 
-        // Create new previews
-        const newPreviewsActual = files.map((file) => ({
-            file,
-            url: URL.createObjectURL(file),
-            referenceImage: file,
-            actualImage: file,
-        }));
+    // Create new previews for UI
+    const newPreviewsActual = files.map((file) => ({
+        file,
+        url: URL.createObjectURL(file),
+        referenceImage: file,
+        actualImage: file,
+    }));
 
-        // Append new previews to existing ones
-        setPreviewsActual((prevPreviewsActual) => [...prevPreviewsActual, ...newPreviewsActual]);
+    setPreviewsActual((prevPreviewsActual) => [...prevPreviewsActual, ...newPreviewsActual]);
 
-        // IMPORTANT FIX: Append new files to existing actualImages, don't replace
-        setactualImage((prev) => [...prev, ...files]);
-    };
+    // Append new File objects to actualImages
+    setactualImage((prev) => [...prev, ...files]);
+};
+const handleRemoveImage = (indexToRemove) => {
+    // Remove from previews
+    setPreviews((prevPreviews) => {
+        const updatedPreviews = [...prevPreviews];
+        URL.revokeObjectURL(updatedPreviews[indexToRemove].url);
+        updatedPreviews.splice(indexToRemove, 1);
+        return updatedPreviews;
+    });
 
-    // useEffect(() => {
-    //     console.log(actualImages, "actualImage====================================");
-    //     setactualImage(actualImages);
-    // }, [actualImages]);
-    const handleRemoveImage = (indexToRemove) => {
-        // Remove from previews
-        setPreviews((prevPreviews) => {
-            const updatedPreviews = [...prevPreviews];
-            URL.revokeObjectURL(updatedPreviews[indexToRemove].url);
-            updatedPreviews.splice(indexToRemove, 1);
-            return updatedPreviews;
-        });
+    // Remove from referenceImages
+    setrefImage((prev) => {
+        const updated = [...prev];
+        updated.splice(indexToRemove, 1);
+        return updated;
+    });
+};
 
-        // Remove from referenceImages
-        setrefImage((prev) => {
-            const updated = [...prev];
-            updated.splice(indexToRemove, 1);
-            return updated;
-        });
-    };
+ const handleRemoveImageActual = (indexToRemove) => {
+    // Get the actual image ID/path before removing
+    const imageToRemove = product?.images[indexToRemove]?.actualImage;
+    
+    // Remove from actualImages state if it's an existing image
+    if (imageToRemove && typeof imageToRemove === 'string') {
+        setactualImage((prev) => prev.filter(img => img !== imageToRemove));
+    }
+    
+    // Update product.images
+    setProduct((prevProduct) => ({
+        ...prevProduct,
+        images: prevProduct.images.filter((_, index) => index !== indexToRemove),
+    }));
+};
 
-    const handleRemoveImageActual = (indexToRemove) => {
-        setProduct((prevProduct) => ({
+   const handleRemoveImagePreview = (imageId) => {
+    // Remove existing reference image by its ID/path
+    setrefImage((prev) => prev.filter(img => img !== imageId));
+    
+    // Also update product.images if needed
+    setProduct((prevProduct) => {
+        if (!prevProduct?.images) return prevProduct;
+        return {
             ...prevProduct,
-            images: prevProduct.images.filter((_, index) => index !== indexToRemove),
-        }));
-    };
-
-    const handleRemoveImagePreview = (imageId) => {
-        setProduct((prevProduct) => {
-            if (!prevProduct?.images) return prevProduct;
-            return {
-                ...prevProduct,
-                images: prevProduct.images.filter((img) => img.referenceImage !== imageId),
-            };
-        });
-    };
-
-    const handleRemoveActual = (indexToRemove) => {
-        // Remove from previewsActual
-        setPreviewsActual((prevPreviewsActual) => {
-            const updatedPreviewsActual = [...prevPreviewsActual];
-            URL.revokeObjectURL(updatedPreviewsActual[indexToRemove].url);
-            updatedPreviewsActual.splice(indexToRemove, 1);
-            return updatedPreviewsActual;
-        });
-
-        // Remove from actualImages
-        setactualImage((prev) => {
-            const updated = [...prev];
-            updated.splice(indexToRemove, 1);
-            return updated;
-        });
-    };
-
-    const handleUpdateSubmit = async (values, { setSubmitting }) => {
-        console.log("i am here");
-        console.log(values, "i am hds");
-
-        const formData = new FormData();
-
-        const product = {
-            ...values,
-            productGroup: { id: values.productGroup?.id || 0 },
-            subGroup: { id: values.subGroup?.id || 0 },
-            supplier: values?.supplier?.map((supp) => ({ id: supp?.id })),
+            images: prevProduct.images.filter((img) => img.referenceImage !== imageId),
         };
+    });
+};
 
-        if (gstDetails && gstDetails.length > 0) {
-            product.slabBasedRates = values.slabBasedRates;
-        }
-        if (values.gstratedetails === "Specify Slab Based Rates") {
-            product.slabBasedRates = values.slabBasedRates;
-            delete product.hsnCode;
-            delete product.igst;
-            delete product.cgst;
-            delete product.sgst;
-            delete product.gstDescription;
-            delete product.productDescriptionn;
-            delete product.hsn_Sac;
-        } else if (values.gstratedetails === "Use GST Classification") {
-            product.hsnCode = values.hsnCode;
-            delete product.igst;
-            delete product.cgst;
-            delete product.sgst;
-            delete product.productDescriptionn;
-            product.gstDescription = values.hsnCode?.productDescriptionn;
-            product.hsn_Sac = values.hsn_Sac;
-            delete product.slabBasedRates;
-        }
+const handleRemoveActual = (indexToRemove) => {
+    // Remove from previewsActual
+    setPreviewsActual((prevPreviewsActual) => {
+        const updatedPreviewsActual = [...prevPreviewsActual];
+        URL.revokeObjectURL(updatedPreviewsActual[indexToRemove].url);
+        updatedPreviewsActual.splice(indexToRemove, 1);
+        return updatedPreviewsActual;
+    });
 
-        formData.append("product", JSON.stringify(product));
+    // Remove from actualImages
+    setactualImage((prev) => {
+        const updated = [...prev];
+        updated.splice(indexToRemove, 1);
+        return updated;
+    });
+};
 
-        // Append all reference images (both old and new)
-        if (referenceImages && referenceImages.length > 0) {
-            referenceImages.forEach((file) => {
-                // Only append if it's a real file (has size > 0)
-                if (file.size > 0) {
-                    formData.append('referenceImages', file);
-                }
-            });
-        }
+  const handleUpdateSubmit = async (values, { setSubmitting }) => {
+    const formData = new FormData();
 
-        // Append all actual images (both old and new)
-        if (actualImages && actualImages.length > 0) {
-            actualImages.forEach((file) => {
-                if (file.size > 0) {
-                    formData.append('actualImages', file);
-                }
-            });
-        }
-
-        console.log(formData, "66666666666666666666");
-
-        try {
-            const url = `${UPDATE_PRODUCT_URL}/${id}`;
-            const response = await fetch(url, {
-                method: "PUT",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                },
-                body: formData,
-            });
-
-            let data;
-            try {
-                data = await response.json();
-            } catch {
-                data = await response.text();
-            }
-
-            if (response.ok) {
-                toast.success("Product updated successfully");
-                navigate('/product/viewProducts');
-            } else {
-                toast.error(data || "A conflict occurred while updating the product.");
-            }
-        } catch (error) {
-            toast.error("An error occurred while updating the product.");
-        } finally {
-            if (setSubmitting) setSubmitting(false);
-        }
+    const productData = {
+        ...values,
+        productGroup: values.productGroup ? { id: values.productGroup.id } : { id: 0 },
+        subGroup: values.subGroup ? { id: values.subGroup.id } : { id: 0 },
+        supplier: values?.supplier?.map((supp) => ({ id: supp?.id })),
+        // Include existing image references in the product data
+        // existingReferenceImages: referenceImages.filter(img => typeof img === 'string'),
+        // existingActualImages: actualImages.filter(img => typeof img === 'string'),
     };
 
+    if (gstDetails && gstDetails.length > 0) {
+        productData.slabBasedRates = values.slabBasedRates;
+    }
+    if (values.gstratedetails === "Specify Slab Based Rates") {
+        productData.slabBasedRates = values.slabBasedRates;
+        delete productData.hsnCode;
+        delete productData.igst;
+        delete productData.cgst;
+        delete productData.sgst;
+        delete productData.gstDescription;
+        delete productData.productDescriptionn;
+        delete productData.hsn_Sac;
+    } else if (values.gstratedetails === "Use GST Classification") {
+        productData.hsnCode = values.hsnCode;
+        delete productData.igst;
+        delete productData.cgst;
+        delete productData.sgst;
+        delete productData.productDescriptionn;
+        productData.gstDescription = values.hsnCode?.productDescriptionn;
+        productData.hsn_Sac = values.hsn_Sac;
+        delete productData.slabBasedRates;
+    }
 
+    formData.append("product", JSON.stringify(productData));
 
+    // Append NEW reference images only (actual File objects)
+    const newReferenceImages = referenceImages.filter(img => img instanceof File);
+    if (newReferenceImages.length > 0) {
+        newReferenceImages.forEach((file) => {
+            formData.append('referenceImages', file);
+        });
+    }
 
+    // Append NEW actual images only (actual File objects)
+    const newActualImages = actualImages.filter(img => img instanceof File);
+    if (newActualImages.length > 0) {
+        newActualImages.forEach((file) => {
+            formData.append('actualImages', file);
+        });
+    }
+
+    try {
+        const url = `${UPDATE_PRODUCT_URL}/${id}`;
+        const response = await fetch(url, {
+            method: "PUT",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+            },
+            body: formData,
+        });
+
+        let data;
+        try {
+            data = await response.json();
+        } catch {
+            data = await response.text();
+        }
+
+        if (response.ok) {
+            toast.success("Product updated successfully");
+            navigate('/product/viewProducts');
+        } else {
+            toast.error(data || "A conflict occurred while updating the product.");
+        }
+    } catch (error) {
+        toast.error("An error occurred while updating the product.");
+    } finally {
+        if (setSubmitting) setSubmitting(false);
+    }
+};
 
     const getProductById = async () => {
         try {
@@ -515,8 +504,8 @@ const UpdateProduct = () => {
 
     const formikRef = useRef(null);
 
+    // FIX: Effect for product group options
     useEffect(() => {
-        const { id: idd } = product?.productGroup || {};
         if (productGroup?.data && Array.isArray(productGroup.data)) {
             const formattedOptions = productGroup.data.map(product => ({
                 value: product.id,
@@ -524,33 +513,64 @@ const UpdateProduct = () => {
                 productGroupObject: product,
             }));
             setproductGroupOption(formattedOptions);
-        } else {
-            setproductGroupOption([]);
         }
+    }, [productGroup]);
 
-        const getSubGroup = async () => {
+    // FIX: Effect for initial data loading when product is fetched
+    useEffect(() => {
+        const loadInitialData = async () => {
+            const productGroupId = product?.productGroup?.id;
+            
+            if (!productGroupId) return;
+
+            // Fetch SubGroups
             try {
-                const response = await fetch(`${GET_PRODUCT_GROUP_SUBGROUP_URL}/${idd}`, {
+                const subgroupResponse = await fetch(`${GET_PRODUCT_GROUP_SUBGROUP_URL}/${productGroupId}`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`
                     }
                 });
-                const data = await response.json();
-                const subgroupOptions = data && data.map(subgroup => ({
+                const subgroupData = await subgroupResponse.json();
+                const subgroupOptions = subgroupData && subgroupData.map(subgroup => ({
                     value: subgroup.id,
                     label: subgroup.productSubGroupName,
                     subGroupObject: subgroup,
                 }));
                 setsubGroupOptions(subgroupOptions);
             } catch (error) {
-                console.error(error);
+                console.error("Error fetching subgroups:", error);
+            }
+
+            // Fetch Designs based on product group
+            try {
+                const designResponse = await fetch(`${DESIGNBYPR}/${productGroupId}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+                const designData = await designResponse.json();
+                
+                const formattedOptions = designData.map(design => ({
+                    value: design.id,
+                    label: design?.designName,
+                    designObject: design,
+                    designCode: design?.designCode || ''
+                }));
+                setdesignOptions(formattedOptions);
+                
+            } catch (error) {
+                console.error("Error fetching designs:", error);
             }
         };
 
-        getSubGroup();
-    }, [product?.productGroup]);
+        if (product?.productGroup?.id) {
+            loadInitialData();
+        }
+    }, [product, token]);
 
     const gstOptions = [
         { value: 'Applicable', label: 'Applicable' },
@@ -585,8 +605,6 @@ const UpdateProduct = () => {
         setgstDetailModal(false);
     };
 
-    console.log(product, "llooo");
-
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Products / UpdateProduct" />
@@ -596,8 +614,16 @@ const UpdateProduct = () => {
                     enableReinitialize
                     initialValues={{
                         ...product,
-                        productGroup: product?.productGroup,
-                        subGroup: product?.subGroup ? { id: product.subGroup.id } : { id: 0 },
+                        // FIX: Ensure product group is set correctly
+                        productGroup: product?.productGroup ? { 
+                            id: product.productGroup.id,
+                            productGroupName: product.productGroup.productGroupName 
+                        } : null,
+                        // FIX: Ensure subgroup is set correctly
+                        subGroup: product?.subGroup ? { 
+                            id: product.subGroup.id,
+                            productSubGroupName: product.subGroup.productSubGroupName 
+                        } : null,
                         colors: product?.colors || { id: 0 },
                         productCategory: product?.productCategory || { id: 0 },
                         hsnCode: product?.hsnCode || { id: 0 },
@@ -622,7 +648,6 @@ const UpdateProduct = () => {
                         warpColors: product?.warpColors || '',
                         weftColors: product?.weftColors || '',
                         weave: product?.weave ? { id: product.weave.id } : { id: 0 },
-                        // weave: product?.weave || '',
                         warpYarn: product?.warpYarn || '',
                         weftYarn: product?.weftYarn || '',
                         gstratedetails: product?.gstratedetails || '',
@@ -677,8 +702,6 @@ const UpdateProduct = () => {
 
                         // Update barcode when relevant fields change
                         useEffect(() => {
-                            console.log(values, "00000000000000000");
-
                             if (values) {
                                 const barcode = generateBarcode(values);
                                 setFieldValue('barcode', barcode);
@@ -722,10 +745,7 @@ const UpdateProduct = () => {
                             setFieldValue('productId', productId);
                         };
 
-                        // Add this useEffect for productId
                         useEffect(() => {
-                            console.log(values.design, "222222222222.");
-
                             const designName = values.design?.designName || values.designName || '';
                             const colorName = values.colorName || '';
                             const styleName = values.styles?.stylesName || '';
@@ -738,6 +758,78 @@ const UpdateProduct = () => {
                             values.styles,
                             values.sizes
                         ]);
+
+                        // FIX: Effect for when product group changes in form
+                        useEffect(() => {
+                            const fetchDataForProductGroup = async () => {
+                                const productGroupId = values?.productGroup?.id;
+                                
+                                if (!productGroupId) return;
+
+                                // Fetch SubGroups
+                                try {
+                                    const subgroupResponse = await fetch(`${GET_PRODUCT_GROUP_SUBGROUP_URL}/${productGroupId}`, {
+                                        method: "GET",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                            "Authorization": `Bearer ${token}`
+                                        }
+                                    });
+                                    const subgroupData = await subgroupResponse.json();
+                                    const subgroupOptions = subgroupData && subgroupData.map(subgroup => ({
+                                        value: subgroup.id,
+                                        label: subgroup.productSubGroupName,
+                                        subGroupObject: subgroup,
+                                    }));
+                                    setsubGroupOptions(subgroupOptions);
+                                    
+                                    // Clear subgroup selection if it doesn't belong to new group
+                                    if (values?.subGroup?.id) {
+                                        const subgroupStillValid = subgroupOptions.some(opt => opt.value === values.subGroup.id);
+                                        if (!subgroupStillValid) {
+                                            setFieldValue('subGroup', null);
+                                        }
+                                    }
+                                } catch (error) {
+                                    console.error("Error fetching subgroups:", error);
+                                }
+
+                                // Fetch Designs
+                                try {
+                                    const designResponse = await fetch(`${DESIGNBYPR}/${productGroupId}`, {
+                                        method: "GET",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                            "Authorization": `Bearer ${token}`
+                                        }
+                                    });
+                                    const designData = await designResponse.json();
+                                    
+                                    const formattedOptions = designData.map(design => ({
+                                        value: design.id,
+                                        label: design?.designName,
+                                        designObject: design,
+                                        designCode: design?.designCode || ''
+                                    }));
+                                    setdesignOptions(formattedOptions);
+                                    
+                                    // Clear design selection if it doesn't belong to new group
+                                    if (values?.design?.id) {
+                                        const designStillValid = formattedOptions.some(opt => opt.value === values.design.id);
+                                        if (!designStillValid) {
+                                            setFieldValue('design', null);
+                                            setFieldValue('designCode', '');
+                                        }
+                                    }
+                                } catch (error) {
+                                    console.error("Error fetching designs:", error);
+                                }
+                            };
+
+                            if (values?.productGroup?.id) {
+                                fetchDataForProductGroup();
+                            }
+                        }, [values?.productGroup?.id, token]);
 
                         return (
                             <form>
@@ -760,9 +852,16 @@ const UpdateProduct = () => {
                                                         <ReactSelect
                                                             name="productGroup"
                                                             value={productGroupOption?.find(option => option.value === values?.productGroup?.id) || null}
-                                                            onChange={(option) => setFieldValue('productGroup', option ? option.productGroupObject : null)}
+                                                            onChange={(option) => {
+                                                                setFieldValue('productGroup', option ? option.productGroupObject : null);
+                                                                // Clear dependent fields when product group changes
+                                                                setFieldValue('subGroup', null);
+                                                                setFieldValue('design', null);
+                                                                setFieldValue('designCode', '');
+                                                            }}
                                                             options={productGroupOption}
                                                             styles={customStyles}
+                                                            isDisabled="true"
                                                             className="bg-white dark:bg-form-Field"
                                                             classNamePrefix="react-select"
                                                             placeholder="Select Product Group"
@@ -779,7 +878,10 @@ const UpdateProduct = () => {
                                                         <ReactSelect
                                                             name="subGroup"
                                                             value={subGroupOptions?.find(option => option.value === values?.subGroup?.id) || null}
-                                                            onChange={(option) => setFieldValue('subGroup', option ? { id: option.subGroupObject.id } : null)}
+                                                            onChange={(option) => setFieldValue('subGroup', option ? { 
+                                                                id: option.subGroupObject.id,
+                                                                productSubGroupName: option.subGroupObject.productSubGroupName 
+                                                            } : null)}
                                                             options={subGroupOptions}
                                                             styles={customStyles}
                                                             className="bg-white dark:bg-form-Field"
@@ -1106,7 +1208,7 @@ const UpdateProduct = () => {
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
-                                                 <div className="flex-1 min-w-[300px]">
+                                                <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Alias</label>
                                                     <Field
                                                         name="alias"

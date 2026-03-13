@@ -9,7 +9,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import useProduct from '../../hooks/useProduct';
 import { useSelector } from 'react-redux';
 import Modall from "./Modall.jsx"
-import { customStyles as createCustomStyles, GET_PRODUCT_GROUP_SUBGROUP_URL } from '../../Constants/utils';
+import { customStyles as createCustomStyles, DESIGNBYPR, GET_PRODUCT_GROUP_SUBGROUP_URL } from '../../Constants/utils';
 import { toast } from 'react-toastify';
 const AddProduct = () => {
 
@@ -42,7 +42,7 @@ const AddProduct = () => {
 
 
 
-
+    const [productGroupId, setproductGroupId] = useState(null)
 
 
 
@@ -63,23 +63,23 @@ const AddProduct = () => {
         const allWorkerOptions = [];
 
         selectedSuppliers.forEach(supplier => {
-           
+
 
             // Access the supplier's groupTypes array
             const groupTypes = supplier.supplierNameObject?.groupTypes || [];
-            
+
 
             // Loop through each groupType
             groupTypes.forEach(groupType => {
-                
+
 
                 // Access the workers array inside each groupType
                 const workers = groupType.workers || [];
-                
+
 
                 // Loop through each worker in the workers array
                 workers.forEach(worker => {
-                    
+
 
                     // Now we can access worker.workerCode
                     allWorkerOptions.push({
@@ -93,7 +93,7 @@ const AddProduct = () => {
             });
         });
 
-       
+
 
         // Remove duplicates if same worker code appears in multiple suppliers/groupTypes
         const uniqueOptions = Array.from(
@@ -179,7 +179,7 @@ const AddProduct = () => {
 
     // Use useEffect to log the updated state after the change
     useEffect(() => {
-       
+
         setReferenceImages(referenceImages);
     }, [referenceImages]);  //
 
@@ -203,7 +203,7 @@ const AddProduct = () => {
         event.target.value = '';
     };
     useEffect(() => {
-       
+
         setActualImages(actualImages);
     }, [actualImages]);
 
@@ -313,17 +313,10 @@ const AddProduct = () => {
         }
     }, [productCategory]);
 
-    useEffect(() => {
-        if (design.data) {
-            const formattedOptions = design.data.map(design => ({
-                value: design.id,
-                label: design?.designName,
-                designObject: design,
-                designCode: design?.designCode || ''
-            }));
-            setdesignOptions(formattedOptions);
-        }
-    }, [design]);
+
+
+
+
     useEffect(() => {
         if (style.data) {
             const formattedOptions = style.data.map(style => ({
@@ -437,7 +430,7 @@ const AddProduct = () => {
 
 
     const changeTextColor = () => {
-        setIsOptionSelected(true); 
+        setIsOptionSelected(true);
 
     };
 
@@ -524,7 +517,7 @@ const AddProduct = () => {
     };
 
     const handlerateDetails = (option, setFieldValue) => {
-       
+
         setFieldValue('gstratedetails', option.value);
         if (option.value === "Specify Slab Based Rates") {
 
@@ -536,12 +529,12 @@ const AddProduct = () => {
 
     const handleModalSubmit = (values) => {
 
-       
+
         setgstDetails(values)
 
     }
 
-   
+
 
     const formatCostPriceToLTTH = (costPrice) => {
         if (!costPrice) return '0000';
@@ -572,7 +565,7 @@ const AddProduct = () => {
         // 1. Supplier Code - Get first 2 digits or '00' if not available
         let supplierCode = '00';
         if (values.supplierCode) {
-          
+
 
             const code = values.supplierCode ||
 
@@ -674,7 +667,7 @@ const AddProduct = () => {
 
                         }, [values.fabricCost, values.embroideryCost])
 
-                      
+
 
                         const { id } = values.productGroup || {};
 
@@ -691,7 +684,7 @@ const AddProduct = () => {
                                         }
                                     });
                                     const data = await response.json();
-                                   
+
 
                                     const subgroupOptions = data && data.map(subgroup => ({
                                         value: subgroup.id,
@@ -730,6 +723,48 @@ const AddProduct = () => {
                             values.wholesalePrice,
 
                         ]);
+
+
+                        useEffect(() => {
+                            console.log("iammmmmmmmmmmmmm");
+
+                            const getDesign = async () => {
+                                try {
+                                    const response = await fetch(`${DESIGNBYPR}/${values?.productGroup?.id}`, {
+                                        method: "GET",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                            "Authorization": `Bearer ${token}`
+                                        }
+                                    });
+                                    const data = await response.json();
+
+                                    console.log(data,"2220");
+                                    
+
+
+
+
+
+                                    const formattedOptions = data.map(design => ({
+                                        value: design.id,
+                                        label: design?.designName,
+                                        designObject: design,
+                                        designCode: design?.designCode || ''
+                                    }));
+                                    setdesignOptions(formattedOptions);
+
+
+
+                                } catch (error) {
+                                    console.error(error);
+                                    // toast.error("Failed to fetch Style");
+                                }
+                            };
+                            getDesign();
+
+                        }, [values?.productGroup?.id])
+
 
 
 
