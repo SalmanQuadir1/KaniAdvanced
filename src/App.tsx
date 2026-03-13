@@ -174,6 +174,8 @@ import Supplier from './components/Configurator/Supplier.jsx';
 
 import AddSupplier from './components/Supplier/AddSupplier.jsx';
 import ViewLedger from './components/Supplier/SupplierLedger/ViewLedger.jsx';
+// import LedgerPrintPage from './components/Supplier/SupplierLedger/LedgerPrintPage.jsx';
+
 import ViewSuppLedger from './components/Supplier/SupplierLedger/ViewSuppLedger.jsx';
 
 import AddBulkSupplier from './components/Supplier/AddBulkSupplier.jsx';
@@ -1749,6 +1751,9 @@ function App() {
               </>
             }
           />
+
+
+        {/* <Route path="/print/ledger" element={<LedgerPrintPage />} />
           <Route
             path="/Supplier/Viewledger"
             element={
@@ -1757,7 +1762,7 @@ function App() {
                 <ViewSuppLedger />
               </>
             }
-          />
+          /> */}
 
           <Route
             path="/ledger/AddBulk"

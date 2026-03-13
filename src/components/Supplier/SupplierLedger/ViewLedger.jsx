@@ -54,7 +54,7 @@ const ViewLedger = () => {
         value: ledg?.name
     }));
 
-     const formattedLedgerType = ledgerName?.map(ledg => ({
+    const formattedLedgerType = ledgerName?.map(ledg => ({
         label: ledg?.ledgerType,
         value: ledg?.ledgerType
     }));
@@ -232,9 +232,9 @@ const ViewLedger = () => {
                     // Check if the current page becomes empty
                     // const isCurrentPageEmpty = Ledger.length === 1;
 
-                 
-                        getLedger(pagination.currentPage-1); // Refresh Ledgers on the current page
-                 
+
+                    getLedger(pagination.currentPage - 1); // Refresh Ledgers on the current page
+
                 } else {
                     toast.error(`${data.errorMessage}`);
                 }
@@ -346,7 +346,6 @@ const ViewLedger = () => {
                         VIEW
                     </span>
                 </td>
-            
 
 
 
@@ -357,7 +356,8 @@ const ViewLedger = () => {
 
 
 
-                 <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
+
+                <td className="px-5 py-5 bLedger-b bLedger-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
                         <FiEdit
                             size={17}
@@ -385,7 +385,7 @@ const ViewLedger = () => {
                             title="Delete Product"
                         />
                     </p>
-                </td> 
+                </td>
 
             </tr>
         ));
@@ -745,6 +745,528 @@ const ViewLedger = () => {
     const currentYear = new Date().getFullYear().toString().slice(-2); // Gets last 2 digits (e.g., "25" for 2025)
     const openingBalancesDate = `1-Apr-${currentYear}`;
 
+
+
+    const handlePrintModalContent = () => {
+        // Get the current date range display
+        const fromDate = dateFilter.fromDate ? new Date(dateFilter.fromDate).toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        }) : 'N/A';
+
+        const toDate = dateFilter.toDate ? new Date(dateFilter.toDate).toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        }) : 'N/A';
+
+        // Calculate totals
+        const totalCredit = calculateTotalCredit();
+        const totalDebit = calculateTotalDebit();
+        const periodBalance = calculatePeriodBalance();
+        const openingBalance = SelectedLEDGERData?.previousOpBalance || 0;
+        const openingType = SelectedLEDGERData?.previousOpType || 'N/A';
+
+        // Generate transaction rows HTML
+        const transactionRows = filteredLedgerEntries && filteredLedgerEntries.length > 0
+            ? filteredLedgerEntries.map((ledger, index) => `
+      <tr style="${index % 2 === 0 ? 'background-color: #ffffff;' : 'background-color: #f8fafc;'}">
+        <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; color: #334155;">
+          <div>
+            <div>${ledger?.receivedDate ? new Date(ledger?.receivedDate).toLocaleDateString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            }) : 'N/A'}</div>
+            <div style="font-size: 11px; color: #64748b;">${ledger?.receivedDate ? new Date(ledger?.receivedDate).toLocaleTimeString('en-IN', {
+                hour: '2-digit',
+                minute: '2-digit'
+            }) : ''}</div>
+          </div>
+        </td>
+        <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; color: #334155;">
+          <div style="font-weight: 500;">${ledger.toLedgerName || 'N/A'}</div>
+          <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Voucher: ${ledger.voucherNumber || 'N/A'}</div>
+        </td>
+        <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; color: #334155; max-width: 200px;">
+          <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${ledger.description || ''}">
+            ${ledger.description || 'No description'}
+          </div>
+        </td>
+        <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; color: #334155;">${ledger.voucherType || 'N/A'}</td>
+        <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; color: #334155;">
+          ${parseFloat(ledger.debit || 0) > 0
+                    ? `<span style="color: #dc2626; font-weight: 600;">₹${parseFloat(ledger.debit).toFixed(2)}</span>`
+                    : '-'}
+        </td>
+        <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; color: #334155;">
+          ${parseFloat(ledger.credit || 0) > 0
+                    ? `<span style="color: #16a34a; font-weight: 600;">₹${parseFloat(ledger.credit).toFixed(2)}</span>`
+                    : '-'}
+        </td>
+      </tr>
+    `).join('')
+            : `<tr>
+        <td colspan="6" style="padding: 40px; text-align: center; color: #64748b;">
+          <div style="font-size: 16px; margin-bottom: 8px;">📊 No transactions found</div>
+          <div style="font-size: 14px;">Try adjusting your date filters</div>
+        </td>
+      </tr>`;
+
+        const currentYear = new Date().getFullYear().toString().slice(-2);
+        const openingBalancesDate = `1-Apr-${currentYear}`;
+
+        // Create print window
+        const printWindow = window.open('', '_blank');
+
+        // Write the print content
+        printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Ledger Statement - ${SelectedLEDGERData?.name || 'Ledger'}</title>
+      <style>
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+        
+        body {
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+          background: #ffffff;
+          padding: 30px;
+          color: #1e293b;
+        }
+        
+        .print-container {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+          text-align: center;
+          margin-bottom: 30px;
+          padding-bottom: 20px;
+          border-bottom: 3px solid #1e293b;
+        }
+        
+        .header h1 {
+          font-size: 28px;
+          font-weight: 700;
+          color: #1e293b;
+          margin-bottom: 8px;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        }
+        
+        .company-name {
+          font-size: 16px;
+          color: #64748b;
+          margin-bottom: 5px;
+        }
+        
+        /* Ledger Info */
+        .ledger-info {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          margin-bottom: 25px;
+          padding: 20px;
+          background: #f8fafc;
+          border-radius: 8px;
+        }
+        
+        .ledger-details h2 {
+          font-size: 22px;
+          font-weight: 600;
+          color: #0f172a;
+          margin-bottom: 10px;
+        }
+        
+        .ledger-meta {
+          display: flex;
+          gap: 15px;
+          flex-wrap: wrap;
+        }
+        
+        .meta-item {
+          font-size: 13px;
+          color: #475569;
+          background: white;
+          padding: 5px 12px;
+          border-radius: 20px;
+          border: 1px solid #e2e8f0;
+        }
+        
+        .print-date {
+          font-size: 13px;
+          color: #64748b;
+          background: white;
+          padding: 8px 15px;
+          border-radius: 6px;
+          border: 1px solid #e2e8f0;
+        }
+        
+        /* Date Range */
+        .date-range {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 20px;
+          margin-bottom: 30px;
+          padding: 20px;
+          background: #f1f5f9;
+          border-radius: 10px;
+        }
+        
+        .date-box {
+          background: white;
+          padding: 12px 25px;
+          border-radius: 8px;
+          text-align: center;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .date-label {
+          font-size: 11px;
+          color: #64748b;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 4px;
+        }
+        
+        .date-value {
+          font-size: 18px;
+          font-weight: 600;
+          color: #1e293b;
+        }
+        
+        .date-arrow {
+          font-size: 24px;
+          color: #94a3b8;
+        }
+        
+        /* Summary Cards */
+        .summary-cards {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 20px;
+          margin-bottom: 30px;
+        }
+        
+        .card {
+          padding: 20px;
+          border-radius: 10px;
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .card.opening { background: #eff6ff; border-color: #93c5fd; }
+        .card.credit { background: #f0fdf4; border-color: #86efac; }
+        .card.debit { background: #fef2f2; border-color: #fca5a5; }
+        .card.closing { background: #faf5ff; border-color: #d8b4fe; }
+        
+        .card-title {
+          font-size: 13px;
+          font-weight: 600;
+          color: #1e293b;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 10px;
+        }
+        
+        .card-amount {
+          font-size: 26px;
+          font-weight: 700;
+          color: #1e293b;
+          margin-bottom: 10px;
+        }
+        
+        .card-footer {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          font-size: 12px;
+        }
+        
+        .badge {
+          padding: 4px 12px;
+          border-radius: 20px;
+          font-weight: 600;
+          font-size: 11px;
+        }
+        
+        .badge.credit { background: #fee2e2; color: #991b1b; }
+        .badge.debit { background: #dcfce7; color: #166534; }
+        
+        /* Table */
+        .table-section {
+          margin-bottom: 30px;
+        }
+        
+        .table-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 15px;
+        }
+        
+        .table-header h3 {
+          font-size: 18px;
+          font-weight: 600;
+          color: #1e293b;
+        }
+        
+        .record-count {
+          font-size: 13px;
+          color: #64748b;
+          background: #f1f5f9;
+          padding: 4px 12px;
+          border-radius: 20px;
+        }
+        
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          border: 1px solid #e2e8f0;
+          border-radius: 8px;
+          overflow: hidden;
+        }
+        
+        th {
+          background: #1e293b;
+          color: white;
+          padding: 14px 16px;
+          text-align: left;
+          font-size: 12px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+        
+        td {
+          padding: 12px 16px;
+          border-bottom: 1px solid #e2e8f0;
+          font-size: 13px;
+        }
+        
+        /* Footer */
+        .footer {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          margin-top: 40px;
+          padding-top: 20px;
+          border-top: 2px dashed #e2e8f0;
+        }
+        
+        .footer-stats {
+          display: flex;
+          gap: 30px;
+        }
+        
+        .stat {
+          display: flex;
+          flex-direction: column;
+        }
+        
+        .stat-label {
+          font-size: 11px;
+          color: #64748b;
+          text-transform: uppercase;
+          margin-bottom: 4px;
+        }
+        
+        .stat-value {
+          font-size: 16px;
+          font-weight: 600;
+          color: #1e293b;
+        }
+        
+        .signature {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+        }
+        
+        .signature-line {
+          width: 200px;
+          height: 1px;
+          background: #94a3b8;
+        }
+        
+        .print-footer {
+          margin-top: 20px;
+          text-align: center;
+          font-size: 11px;
+          color: #94a3b8;
+        }
+        
+        @media print {
+          body { padding: 15px; }
+          .no-print { display: none; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="print-container">
+        <!-- Header -->
+        <div class="header">
+          <h1>LEDGER STATEMENT</h1>
+          <div class="company-name">Your Company Name</div>
+          <div style="font-size: 12px; color: #64748b; margin-top: 5px;">Tax Invoice/GST Compliance</div>
+        </div>
+
+        <!-- Ledger Info -->
+        <div class="ledger-info">
+          <div class="ledger-details">
+            <h2>${SelectedLEDGERData?.name || 'N/A'}</h2>
+            <div class="ledger-meta">
+              <span class="meta-item">ID: ${SelectedLEDGERData?.ledgerId || 'N/A'}</span>
+              <span class="meta-item">Group: ${SelectedLEDGERData?.groupName || 'N/A'}</span>
+              <span class="meta-item">Type: ${SelectedLEDGERData?.ledgerType || 'N/A'}</span>
+            </div>
+          </div>
+          <div class="print-date">
+            Printed on: ${new Date().toLocaleString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        })}
+          </div>
+        </div>
+
+        <!-- Date Range -->
+        <div class="date-range">
+          <div class="date-box">
+            <div class="date-label">From Date</div>
+            <div class="date-value">${fromDate}</div>
+          </div>
+          <div class="date-arrow">→</div>
+          <div class="date-box">
+            <div class="date-label">To Date</div>
+            <div class="date-value">${toDate}</div>
+          </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+          <!-- Opening Balance -->
+          <div class="card opening">
+            <div class="card-title">OPENING BALANCE <span style="font-size: 10px; color: #64748b;">(as of ${openingBalancesDate})</span></div>
+            <div class="card-amount">₹${(openingBalance).toFixed(2)}</div>
+            <div class="card-footer">
+              <span class="badge ${openingType.toLowerCase() === 'credit' ? 'credit' : 'debit'}">${openingType}</span>
+            </div>
+          </div>
+
+          <!-- Total Credit -->
+          <div class="card credit">
+            <div class="card-title">TOTAL CREDIT</div>
+            <div class="card-amount">₹${totalCredit.toFixed(2)}</div>
+            <div class="card-footer">
+              <span>${filteredLedgerEntries?.length || 0} transactions</span>
+            </div>
+          </div>
+
+          <!-- Total Debit -->
+          <div class="card debit">
+            <div class="card-title">TOTAL DEBIT</div>
+            <div class="card-amount">₹${totalDebit.toFixed(2)}</div>
+            <div class="card-footer">
+              <span>${filteredLedgerEntries?.length || 0} transactions</span>
+            </div>
+          </div>
+
+          <!-- Closing Balance -->
+          <div class="card closing">
+            <div class="card-title">CLOSING BALANCE</div>
+            <div class="card-amount" style="color: ${periodBalance >= 0 ? '#16a34a' : '#dc2626'};">
+              ₹${Math.abs(periodBalance).toFixed(2)}
+            </div>
+            <div class="card-footer">
+              <span class="badge ${periodBalance >= 0 ? 'credit' : 'debit'}">
+                ${periodBalance >= 0 ? 'Credit' : 'Debit'}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transactions Table -->
+        <div class="table-section">
+          <div class="table-header">
+            <h3>Transaction Details</h3>
+            <span class="record-count">${filteredLedgerEntries?.length || 0} entries found</span>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Date & Time</th>
+                <th>Transaction Ledger</th>
+                <th>Description</th>
+                <th>Voucher Type</th>
+                <th>Debit (₹)</th>
+                <th>Credit (₹)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${transactionRows}
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Footer Summary -->
+        <div class="footer">
+          <div class="footer-stats">
+            <div class="stat">
+              <span class="stat-label">Total Debit</span>
+              <span class="stat-value" style="color: #dc2626;">₹${totalDebit.toFixed(2)}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Total Credit</span>
+              <span class="stat-value" style="color: #16a34a;">₹${totalCredit.toFixed(2)}</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Net Balance</span>
+              <span class="stat-value" style="color: ${periodBalance >= 0 ? '#16a34a' : '#dc2626'}; font-weight: 700;">
+                ₹${Math.abs(periodBalance).toFixed(2)} ${periodBalance >= 0 ? 'Cr' : 'Dr'}
+              </span>
+            </div>
+          </div>
+          <div class="signature">
+            <div class="signature-line"></div>
+            <span style="font-size: 12px; color: #64748b;">Authorized Signature</span>
+          </div>
+        </div>
+
+        <!-- Print Footer -->
+        <div class="print-footer">
+          <p>This is a computer generated statement - valid without signature</p>
+          <p style="margin-top: 5px;">GST: Your GST Number | PAN: Your PAN</p>
+        </div>
+      </div>
+
+      <script>
+        window.onload = function() {
+          window.print();
+          // Optional: Close the window after printing
+          // window.onafterprint = function() { window.close(); }
+        }
+      </script>
+    </body>
+    </html>
+  `);
+
+        printWindow.document.close();
+    };
+
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Ledger/ View Ledger" />
@@ -771,6 +1293,19 @@ const ViewLedger = () => {
                                             Ledger ID: {SelectedLEDGERData?.ledgerId} • Type: {SelectedLEDGERData?.groupName}
                                         </p>
                                     </div>
+                                  {/* In your modal footer section, replace the existing buttons with these */}
+<div className="flex space-x-3">
+  <button
+    onClick={handlePrintModalContent}
+    className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors flex items-center gap-2"
+  >
+    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+    </svg>
+    Print Statement
+  </button>
+ 
+</div>
                                     <button
                                         onClick={closeLEDGERModal}
                                         className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl font-bold bg-gray-100 dark:bg-slate-700 w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
