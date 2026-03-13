@@ -170,12 +170,12 @@ const ViewStockJournels = () => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Stock Journal / View Stock Journal" />
+      <Breadcrumb pageName="Stock Transfer / View Stock Transfer" />
       <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
         <div className="pt-5">
           <div className="flex justify-between">
             <h2 className="text-xl font-semibold leading-tight">
-              View Stock Journal
+              View Stock Transfer
             </h2>
             <p className="inline-flex rounded-full bg-opacity-10 py-1 px-3 mb-2 text-sm font-medium bg-success text-success dark:bg-white dark:text-slate-800">
               Total SJ: {pagination.totalItems}
