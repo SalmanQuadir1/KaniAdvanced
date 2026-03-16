@@ -126,16 +126,24 @@ const useDesign = () => {
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         console.log(values, "logg");
         
-        // Prepare the data for API - send full productGroup object for both add and update
-        const apiValues = {
-            designName: values.designName,
-            designCode: values.designCode,
-            productGroup: values.productGroup // Send full productGroup object for both operations
-        };
+        // Prepare the data for API
+        let apiValues;
         
-        // Add id only for update
-        if (edit && currentDesign.id) {
-            apiValues.id = currentDesign.id;
+        if (edit) {
+            // For update: send productGroupId only
+            apiValues = {
+                id: currentDesign.id,
+                designName: values.designName,
+                designCode: values.designCode,
+                productGroupId: values.productGroup?.id // Send only the ID for update
+            };
+        } else {
+            // For add: send full productGroup object
+            apiValues = {
+                designName: values.designName,
+                designCode: values.designCode,
+                productGroup: values.productGroup // Send full object for add
+            };
         }
         
         try {
