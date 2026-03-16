@@ -13,7 +13,7 @@ import { toast } from 'react-toastify';
 import { GET_VoucherBYID, ADD_Voucher_URL, UPDATEVoucher_URL, ADD_VoucherEntry_URL } from '../../../Constants/utils';
 import useVoucher from '../../../hooks/useVoucher';
 import VoucherPrintTemplate from './VoucherPrintTemplate';
-import { useReactToPrint } from 'react-to-print';
+// import { useReactToPrint } from 'react-to-print';
 
 const Voucher = () => {
     const { id } = useParams();
@@ -42,15 +42,15 @@ const Voucher = () => {
     const { Locations, getAllLocation } = useLocation();
 
     // FIX: Properly initialize useReactToPrint with contentRef
-    const handlePrint = useReactToPrint({
-        contentRef: printRef,
-        documentTitle: `Voucher_${savedVoucherData?.generatedVoucherNo || 'Details'}`,
-        onAfterPrint: () => {
-            setPrintAfterSave(false);
-            // Navigate after print is done or closed
-            navigate('/Vouchers/view');
-        },
-    });
+    // const handlePrint = useReactToPrint({
+    //     contentRef: printRef,
+    //     documentTitle: `Voucher_${savedVoucherData?.generatedVoucherNo || 'Details'}`,
+    //     onAfterPrint: () => {
+    //         setPrintAfterSave(false);
+    //         // Navigate after print is done or closed
+    //         navigate('/Vouchers/view');
+    //     },
+    // });
 
     // Effect to trigger print when data is available and ref is ready
 
