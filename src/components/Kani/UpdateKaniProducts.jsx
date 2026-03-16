@@ -463,6 +463,8 @@ const UpdateKaniProducts = () => {
             setsupplierCodeOptions(formattedOptions);
         }
     }, [supplier.data]);
+
+    
     // useEffect(() => {
     //     if (supplier.data) {
     //         const formattedOptions = supplier.data.map(supp => ({
@@ -594,6 +596,47 @@ const UpdateKaniProducts = () => {
 
 
 
+  const updateLoomsOptions = (selectedSuppliers, setFieldValue, currentValues) => {
+        if (!selectedSuppliers || selectedSuppliers.length === 0) {
+            setLoomsOptions([]);
+            if (setFieldValue) setFieldValue('looms', []);
+            return;
+        }
+
+        const allWorkerOptions = [];
+
+        selectedSuppliers.forEach(supplier => {
+            const groupTypes = supplier.supplierNameObject?.groupTypes || [];
+
+            groupTypes.forEach(groupType => {
+                const workers = groupType.workers || [];
+                workers.forEach(worker => {
+                    allWorkerOptions.push({
+                        value: worker.workerCode,
+                        label: `${worker.workerCode} - ${worker.workerName || ''} (${supplier.label} - ${groupType.groupTypeName})`,
+                        supplierId: supplier.value,
+                        groupTypeId: groupType.id,
+                        workerData: worker
+                    });
+                });
+            });
+        });
+
+        const uniqueOptions = Array.from(
+            new Map(allWorkerOptions.map(item => [item.value, item])).values()
+        );
+
+        setLoomsOptions(uniqueOptions);
+
+        if (currentValues?.looms && setFieldValue) {
+            const validLooms = currentValues.looms.filter(loomValue =>
+                uniqueOptions.some(opt => opt.value === loomValue)
+            );
+            if (validLooms.length !== currentValues.looms.length) {
+                setFieldValue('looms', validLooms);
+            }
+        }
+    };
 
 
 
@@ -630,6 +673,8 @@ const UpdateKaniProducts = () => {
 
 
     console.log(productSuppliers, "prodyuuuuuuuuuuuuuuuuuuuuuuct");
+
+    
 
 
     return (
@@ -729,6 +774,7 @@ const UpdateKaniProducts = () => {
                  onSubmit={handleUpdateSubmit}
                 >
                     {({ setFieldValue, values }) => (
+                        
                         <form>
                             <div className="flex flex-col gap-9">
                                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -1718,33 +1764,32 @@ const UpdateKaniProducts = () => {
                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
             />
         </div> */}
-                                                  <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        No Of Looms <span className='text-red-700 text-xl'> *</span>
-                                                    </label>
-                                                    <div className="bg-transparent dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            name="looms"
-                                                            isMulti
-                                                            value={loomsOptions?.filter(option =>
-                                                                values.looms?.includes(option.value)
-                                                            ) || []}
-                                                            onChange={(selectedOptions) => {
-                                                                setFieldValue(
-                                                                    'looms',
-                                                                    selectedOptions?.map(option => option.value) || []
-                                                                );
-                                                            }}
-                                                            options={loomsOptions}
-                                                            styles={customStyles}
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Workers/Looms"
-                                                            isDisabled={true}
-                                                        />
-                                                    </div>
-                                                </div>
-                                                
+                                              <div className="flex-1 min-w-[300px]">
+    <label className="mb-2.5 block text-black dark:text-white">
+        No Of Looms <span className='text-red-700 text-xl'> *</span>
+    </label>
+    <div className="bg-transparent dark:bg-form-Field">
+        <ReactSelect
+            name="looms"
+            isMulti
+            value={loomsOptions?.filter(option =>
+                values.looms?.includes(option.value)
+            ) || []}
+            onChange={(selectedOptions) => {
+                setFieldValue(
+                    'looms',
+                    selectedOptions?.map(option => option.value) || []
+                );
+            }}
+            options={loomsOptions}
+            styles={customStyles}
+            className="bg-white dark:bg-form-Field"
+            classNamePrefix="react-select"
+            placeholder={values.looms && values.looms.length > 0 ? values.looms.join(', ') : "Select Workers/Looms"}
+            isDisabled={true}
+        />
+    </div>
+</div>
                                             </div>
                                         </div>
 
