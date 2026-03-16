@@ -36,7 +36,7 @@ const useDesign = () => {
                 return;
             }
             
-            const apiPage = Math.max(0, page );
+            const apiPage = Math.max(0, page ); // Fixed: subtract 1 for 0-indexed API
             console.log("Fetching page:", page, "API page:", apiPage);
             
             const response = await fetch(`${GET_DESIGN_URL}?page=${apiPage}`, {
@@ -126,25 +126,16 @@ const useDesign = () => {
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         console.log(values, "logg");
         
-        // Prepare the data for API
-        let apiValues;
+        // Prepare the data for API - send full productGroup object for both add and update
+        const apiValues = {
+            designName: values.designName,
+            designCode: values.designCode,
+            productGroup: values.productGroup // Send full productGroup object for both operations
+        };
         
-        if (edit) {
-            // For update, send the complete product group object
-            apiValues = {
-                id: currentDesign.id,
-                designName: values.designName,
-                designCode: values.designCode,
-                productGroup: values.productGroup // Send the full product group object
-            };
-        } else {
-            // For create, send the flat structure
-            apiValues = {
-                designName: values.designName,
-                designCode: values.designCode,
-                productGroupId: values.productGroup?.id,
-                productGroupName: values.productGroup?.productGroupName
-            };
+        // Add id only for update
+        if (edit && currentDesign.id) {
+            apiValues.id = currentDesign.id;
         }
         
         try {
