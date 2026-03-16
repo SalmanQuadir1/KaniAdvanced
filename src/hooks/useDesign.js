@@ -9,9 +9,9 @@ const useDesign = () => {
     const [Design, setDesign] = useState([]);
     const [edit, setEdit] = useState(false);
     const [currentDesign, setCurrentDesign] = useState({
-        designName:"",
-        designCode:"",
-        productGroup:{}
+        designName: "",
+        designCode: "",
+        productGroup: {}
     });
 
     const [pagination, setPagination] = useState({
@@ -22,14 +22,24 @@ const useDesign = () => {
         itemsPerPage: 0
     });
 
+    // Fetch data when page changes
     useEffect(() => {
-        getDesign(pagination.currentPage);
-    }, []);
+        if (pagination.currentPage > 0) {
+            getDesign(pagination.currentPage);
+        }
+    }, [pagination.currentPage]);
 
     const getDesign = async (page) => {
-        
         try {
-            const response = await fetch(`${GET_DESIGN_URL}?page=${page}`, {
+            if (page < 1) {
+                console.error("Invalid page number:", page);
+                return;
+            }
+            
+            const apiPage = Math.max(0, page );
+            console.log("Fetching page:", page, "API page:", apiPage);
+            
+            const response = await fetch(`${GET_DESIGN_URL}?page=${apiPage}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -37,10 +47,23 @@ const useDesign = () => {
                 }
             });
             const data = await response.json();
-            setDesign(data?.content);
+            
+            console.log("API Response:", data);
+            
+            // Transform the data to include productGroup object
+            const transformedContent = data?.content?.map(item => ({
+                ...item,
+                productGroup: item.productGroupId ? {
+                    id: item.productGroupId,
+                    productGroupName: item.productGroupName
+                } : {}
+            }));
+            
+            setDesign(transformedContent || []);
             setPagination({
                 totalItems: data.totalElements,
-                pagUnitList: data.content,
+                data: transformedContent || [],
+                pagUnitList: transformedContent || [],
                 totalPages: data.totalPages,
                 currentPage: data.number + 1,
                 itemsPerPage: data.size
@@ -66,7 +89,6 @@ const useDesign = () => {
             if (response.ok) {
                 toast.success(`Design Deleted Successfully !!`);
 
-                // Check if the current page becomes empty
                 const isCurrentPageEmpty = Design.length === 1;
 
                 if (isCurrentPageEmpty && pagination.currentPage > 1) {
@@ -87,14 +109,46 @@ const useDesign = () => {
     const handleUpdate = (e, item) => {
         e.preventDefault();
         setEdit(true);
-console.log(item,"hey");
-        setCurrentDesign(item);
+        console.log(item, "hey");
+        
+        // Transform the flat data into the expected format
+        const transformedItem = {
+            ...item,
+            productGroup: item.productGroupId ? {
+                id: item.productGroupId,
+                productGroupName: item.productGroupName
+            } : {}
+        };
+        
+        setCurrentDesign(transformedItem);
     };
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         console.log(values, "logg");
+        
+        // Prepare the data for API
+        let apiValues;
+        
+        if (edit) {
+            // For update, send the complete product group object
+            apiValues = {
+                id: currentDesign.id,
+                designName: values.designName,
+                designCode: values.designCode,
+                productGroup: values.productGroup // Send the full product group object
+            };
+        } else {
+            // For create, send the flat structure
+            apiValues = {
+                designName: values.designName,
+                designCode: values.designCode,
+                productGroupId: values.productGroup?.id,
+                productGroupName: values.productGroup?.productGroupName
+            };
+        }
+        
         try {
-            const url = edit ? `${UPDATE_DESIGN_URL}/${currentDesign.id}` : ADD_DESIGN_URL;
+            const url = edit ? `${UPDATE_DESIGN_URL}/update/${currentDesign.id}` : ADD_DESIGN_URL;
             const method = edit ? "PUT" : "POST";
 
             const response = await fetch(url, {
@@ -103,7 +157,7 @@ console.log(item,"hey");
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify(values)
+                body: JSON.stringify(apiValues)
             });
 
             const data = await response.json();
@@ -112,14 +166,24 @@ console.log(item,"hey");
                 resetForm();
                 setEdit(false);
                 setCurrentDesign({
-                    DesignName: ""
+                    designName: "",
+                    designCode: "",
+                    productGroup: {}
                 });
-                // getDesign(pagination.currentPage); // Fetch updated Design
+                
+                if (edit) {
+                    // Stay on current page for update
+                    getDesign(pagination.currentPage);
+                } else {
+                    // Go to first page for new item
+                    setPagination(prev => ({ ...prev, currentPage: 1 }));
+                    getDesign(1);
+                }
             } else {
                 toast.error(`${data.errorMessage}`);
             }
         } catch (error) {
-            console.error(error, response);
+            console.error(error);
             toast.error("An error occurred");
         } finally {
             setSubmitting(false);
@@ -127,9 +191,9 @@ console.log(item,"hey");
     };
 
     const handlePageChange = (newPage) => {
-
-        setPagination((prev) => ({ ...prev, currentPage: newPage }));
-        getDesign(newPage); // API is 0-indexed for pages
+        console.log("Page changing to:", newPage);
+        const safePage = Math.max(1, newPage);
+        setPagination((prev) => ({ ...prev, currentPage: safePage }));
     };
 
     return {
