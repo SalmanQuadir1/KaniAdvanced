@@ -307,17 +307,20 @@ const handleRemoveActual = (indexToRemove) => {
 };
 
   const handleUpdateSubmit = async (values, { setSubmitting }) => {
+
+
+    console.log(values,"11111111111111");
+    
     const formData = new FormData();
 
-    const productData = {
-        ...values,
-        productGroup: values.productGroup ? { id: values.productGroup.id } : { id: 0 },
-        subGroup: values.subGroup ? { id: values.subGroup.id } : { id: 0 },
-        supplier: values?.supplier?.map((supp) => ({ id: supp?.id })),
-        // Include existing image references in the product data
-        // existingReferenceImages: referenceImages.filter(img => typeof img === 'string'),
-        // existingActualImages: actualImages.filter(img => typeof img === 'string'),
-    };
+ const { productGroupId, ...restValues } = values;
+
+const productData = {
+    ...restValues, // This excludes productGroupId
+    productGroup: values.productGroup ? { id: values.productGroup.id } : { id: 0 },
+    subGroup: values.subGroup ? { id: values.subGroup.id } : { id: 0 },
+    supplier: values?.supplier?.map((supp) => ({ id: supp?.id })),
+};
 
     if (gstDetails && gstDetails.length > 0) {
         productData.slabBasedRates = values.slabBasedRates;
@@ -358,7 +361,8 @@ const handleRemoveActual = (indexToRemove) => {
         newActualImages.forEach((file) => {
             formData.append('actualImages', file);
         });
-    }
+    }console.log(formData,"..0");
+    
 
     try {
         const url = `${UPDATE_PRODUCT_URL}/${id}`;

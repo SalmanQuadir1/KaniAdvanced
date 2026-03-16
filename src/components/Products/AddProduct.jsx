@@ -739,8 +739,8 @@ const AddProduct = () => {
                                     });
                                     const data = await response.json();
 
-                                    console.log(data,"2220");
-                                    
+                                    console.log(data, "2220");
+
 
 
 
@@ -914,7 +914,7 @@ const AddProduct = () => {
 
                                                 <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white"> Size (in cm) <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
-                                                    <div className="relative z-20 bg-transparent dark:bg-form-Field">
+                                                    <div className=" z-20 bg-transparent dark:bg-form-Field">
                                                         <ReactSelect
                                                             name="sizes"
                                                             value={sizeOptions?.find(option => option.value === values.sizes?.id) || null}
@@ -931,10 +931,9 @@ const AddProduct = () => {
                                                             options={sizeOptions}
                                                             styles={{
                                                                 ...customStyles,
-                                                                menuPortal: (base) => ({
-                                                                    ...base,
-                                                                    zIndex: 9999,  // Set high z-index to make sure the dropdown appears above other components
-                                                                }),
+
+                                                             
+
                                                             }}
                                                             // styles={customStyles} // Pass custom styles here
                                                             className="bg-white dark:bg-form-Field"
@@ -978,10 +977,7 @@ const AddProduct = () => {
                                                             options={styleOptions}
                                                             styles={{
                                                                 ...customStyles,
-                                                                menuPortal: (base) => ({
-                                                                    ...base,
-                                                                    zIndex: 9999,  // Set high z-index to make sure the dropdown appears above other components
-                                                                }),
+
                                                             }} // Pass custom styles here
                                                             className="bg-white dark:bg-form-Field"
                                                             classNamePrefix="react-select"
