@@ -24,7 +24,7 @@ const useDesign = () => {
 
     useEffect(() => {
         getDesign(pagination.currentPage);
-    }, [currentDesign]);
+    }, []);
 
     const getDesign = async (page) => {
         
