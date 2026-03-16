@@ -151,7 +151,7 @@ const ViewProduct = () => {
 
     // Handle file selection
     const handleFileSelect = (e, productId, type) => {
-        console.log(type, "jjhty[e");
+        console.log(type, "jumanji[e");
         const files = Array.from(e.target.files);
         if (files.length === 0) return;
 
@@ -264,7 +264,7 @@ const ViewProduct = () => {
                         ) : (
                             <div
                                 className="h-[50px] w-[50px] rounded-full bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
-                                onClick={() => fileInputRef.current.click()}
+                                onClick={() => fileInputRef?.current?.click()}
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -304,7 +304,7 @@ const ViewProduct = () => {
                         ) : (
                             <div
                                 className="h-[50px] w-[50px] rounded-full bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
-                                onClick={() => fileInputRef.current.click()}
+                                onClick={() => fileInputRef?.current?.click()}
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"

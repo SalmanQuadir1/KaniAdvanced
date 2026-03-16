@@ -307,10 +307,6 @@ const handleRemoveActual = (indexToRemove) => {
 };
 
   const handleUpdateSubmit = async (values, { setSubmitting }) => {
-
-
-    console.log(values,"11111111111111");
-    
     const formData = new FormData();
 
  const { productGroupId, ...restValues } = values;
