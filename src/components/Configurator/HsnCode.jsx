@@ -150,7 +150,7 @@ if (!values.sgst && values.sgst !== 0) {
                                 {!edit && (
                                     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                                         <div className="border-b border-stroke py-4 px-2 dark:border-strokedark">
-                                            <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
+                                           
                                                 <ViewTable
                                                     units={HsnCode}
                                                     pagination={pagination}
@@ -164,7 +164,7 @@ if (!values.sgst && values.sgst !== 0) {
                                                     currentPage={pagination.currentPage}
                                                     handlePageChange={handlePageChange}
                                                 />
-                                            </h3>
+                                          
                                         </div>
                                     </div>
                                 )}

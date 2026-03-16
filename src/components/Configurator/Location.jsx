@@ -71,7 +71,7 @@ const Location = () => {
                         if (values.pinCode === " ") {
                             errors.pinCode = "pinCode Should not Be Empty"
                         }
-                    
+
                         if (!values.locationName) {
                             errors.locationName = 'locationName is Required';
                         }
@@ -218,17 +218,33 @@ const Location = () => {
                                 {!edit && (
                                     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                                         <div className="border-b border-stroke py-4 px-2 dark:border-strokedark">
-                                            <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                                                <ViewTable units={location} pagination={pagination} totalItems={pagination.totalItems} title={'Location'} handleDelete={handleDelete} handleUpdate={handleUpdate} />
-                                                <Pagination
-                                                    totalPages={pagination.totalPages}
-                                                    currentPage={pagination.currentPage}
-                                                    handlePageChange={handlePageChange}
-                                                />
-                                            </h3>
+                                            {/* ViewTable Component - without h3 wrapper */}
+                                            <ViewTable
+                                                units={location}
+                                                pagination={pagination}
+                                                totalItems={pagination.totalItems}
+                                                title={'Location'}
+                                                handleDelete={handleDelete}
+                                                handleUpdate={handleUpdate}
+                                            />
+
+                                            {/* Pagination - separated from ViewTable */}
+                                            {pagination.totalPages > 1 && (
+                                                <div className="mt-6 flex justify-center">
+                                                    <Pagination
+                                                        totalPages={pagination.totalPages}
+                                                        currentPage={pagination.currentPage}
+                                                        handlePageChange={handlePageChange}
+                                                    />
+                                                </div>
+                                            )}
+
+                                            {/* Optional: Showing entries info */}
+                                            <div className="text-sm text-gray-500 dark:text-gray-400 mt-2 text-center">
+                                                Showing {location?.length || 0} of {pagination.totalItems} entries
+                                            </div>
                                         </div>
                                     </div>
-
                                 )}
                             </div>
                         </Form>
