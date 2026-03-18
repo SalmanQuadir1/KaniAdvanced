@@ -422,12 +422,13 @@ const CreateVoucher = () => {
 
 
 
+console.log(data,"jakata");
 
             if (response.ok && Array.isArray(data)) {
                 const productOptions = data.map(prod => ({
                     value: prod.id,
                     orderProdId: prod.id,
-                    label: prod.product.productDescription,
+                    label: prod.product?.productId,
                     price: prod.product?.retailMrp,
                     hsnCode: prod.product?.hsnCode || '',
                     obj: prod,
@@ -857,7 +858,7 @@ const CreateVoucher = () => {
             if (response.ok && Array.isArray(data.content)) {
                 const productOptions = data?.content?.map(product => ({
                     value: product.id,
-                    label: `${product?.productDescription} ${product.barcode}`,
+                    label: `${product?.productId} -${product.barcode}`,
                     price: product?.retailMrp,
                     hsnCode: product?.hsnCode || {},
                     obj: product,
@@ -2622,7 +2623,7 @@ const CreateVoucher = () => {
                                                                                                         : rowProducts
                                                                                                 }
                                                                                                 placeholder="Select Product"
-                                                                                                className="react-select-container"
+                                                                                                className="react-select-container w-[220px]"
                                                                                                 classNamePrefix="react-select"
                                                                                                 menuPortalTarget={document.body}
                                                                                                 styles={{
@@ -2655,7 +2656,7 @@ const CreateVoucher = () => {
                                                                                     <td>
                                                                                         <div >
 
-                                                                                            <span onClick={() => openINVENTORYModal(entry?.productsId)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[220px]"> VIEW INVENTORY</span>
+                                                                                            <span onClick={() => openINVENTORYModal(entry?.productsId)} className="bg-green-100 text-green-800 text-[10px] font-medium me-6 ml-5 text-center py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[120px]"> VIEW INVENTORY</span>
 
 
                                                                                         </div>
@@ -2895,33 +2896,111 @@ const CreateVoucher = () => {
 
                                                                 <span className="text-gray-400">|</span>
 
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={() => {
-                                                                        // Add a new row and mark it for all products
-                                                                        const newIndex = values.paymentDetails.length;
-                                                                        push({
-                                                                            id: uuidv4(),
-                                                                            productsId: null,
-                                                                            mrp: 0,
-                                                                            rate: 0,
-                                                                            exclusiveGst: 0,
-                                                                            discount: 0,
-                                                                            quantity: 1,
-                                                                            value: 0,
-                                                                            igstRate: 0,
-                                                                            gstAmount: 0,
-                                                                            gstCalculation: null,
-                                                                            isNewProduct: true // Flag to indicate this is for new product
-                                                                        });
-                                                                        setNewProductRowIndex(newIndex);
-                                                                        setAddingNewProduct(true);
-                                                                    }}
+                                                               <button
+    type="button"
+    onClick={() => {
+        // Clean up empty rows before adding new one
+        const cleanupEmptyRows = () => {
+            const rowsToKeep = [];
+            const rowsToRemove = [];
 
-                                                                    className="flex items-center gap-2 text-green-600 hover:text-green-700 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
-                                                                >
-                                                                    <IoMdAdd size={20} /> Add New Product (Not in Order)
-                                                                </button>
+            values.paymentDetails.forEach((entry, index) => {
+                const isEmpty = !entry.productsId || entry.productsId === null;
+                
+                if (isEmpty) {
+                    rowsToRemove.push(index);
+                } else {
+                    rowsToKeep.push(entry);
+                }
+            });
+
+            // Remove empty rows from the end (only if they're at the end)
+            // We don't want to remove empty rows in the middle
+            if (rowsToRemove.length > 0) {
+                // Check if the empty rows are at the end
+                const lastNonEmptyIndex = Math.max(...values.paymentDetails.map((_, i) => i)
+                    .filter(i => !rowsToRemove.includes(i)), -1);
+                
+                const emptyRowsAtEnd = rowsToRemove.filter(i => i > lastNonEmptyIndex);
+                
+                // Remove empty rows from the end (in reverse order to avoid index issues)
+                emptyRowsAtEnd.sort((a, b) => b - a).forEach(index => {
+                    remove(index);
+                });
+                
+                if (emptyRowsAtEnd.length > 0) {
+                    toast.info(`Removed ${emptyRowsAtEnd.length} empty row(s)`);
+                }
+            }
+        };
+
+        // First clean up any empty rows
+        cleanupEmptyRows();
+
+        // Check if there are any rows with selected products after cleanup
+        setTimeout(() => {
+            const hasSelectedProducts = values.paymentDetails.some(
+                entry => entry.productsId !== null && entry.productsId !== undefined
+            );
+
+            // Check if the last row is empty after cleanup
+            const lastRow = values.paymentDetails[values.paymentDetails.length - 1];
+            const isLastRowEmpty = !lastRow?.productsId || lastRow?.productsId === null;
+
+            if (!hasSelectedProducts) {
+                // If no products are selected at all, just add the new row
+                const newIndex = values.paymentDetails.length;
+                push({
+                    id: uuidv4(),
+                    productsId: null,
+                    mrp: 0,
+                    rate: 0,
+                    exclusiveGst: 0,
+                    discount: 0,
+                    quantity: 1,
+                    value: 0,
+                    igstRate: 0,
+                    gstAmount: 0,
+                    gstCalculation: null,
+                    isNewProduct: true
+                });
+                setNewProductRowIndex(newIndex);
+                setAddingNewProduct(true);
+            } 
+            else if (isLastRowEmpty) {
+                // If last row is empty, transform it to "new product" type
+                setFieldValue(`paymentDetails.${values.paymentDetails.length - 1}.isNewProduct`, true);
+                setNewProductRowIndex(values.paymentDetails.length - 1);
+                setAddingNewProduct(true);
+                toast.info("Last row converted to 'New Product' type");
+            } 
+            else {
+                // Last row has product, add new row normally
+                const newIndex = values.paymentDetails.length;
+                push({
+                    id: uuidv4(),
+                    productsId: null,
+                    mrp: 0,
+                    rate: 0,
+                    exclusiveGst: 0,
+                    discount: 0,
+                    quantity: 1,
+                    value: 0,
+                    igstRate: 0,
+                    gstAmount: 0,
+                    gstCalculation: null,
+                    isNewProduct: true
+                });
+                setNewProductRowIndex(newIndex);
+                setAddingNewProduct(true);
+            }
+        }, 100); // Small timeout to allow state updates
+    }}
+    disabled={!selectedLedger}
+    className="flex items-center gap-2 text-green-600 hover:text-green-700 font-medium disabled:text-gray-400 disabled:cursor-not-allowed"
+>
+    <IoMdAdd size={20} /> Add New Product (Not in Order)
+</button>
 
                                                             </div>
 
