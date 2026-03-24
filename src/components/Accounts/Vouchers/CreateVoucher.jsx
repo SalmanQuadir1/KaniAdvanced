@@ -479,6 +479,11 @@ const CreateVoucher = () => {
 
 
     const PaymentReceiveType = [
+         {
+            value: "Credit",
+            label: "Credit"
+
+        },
         {
             value: "Partially",
             label: "Partially"
@@ -3587,7 +3592,7 @@ const CreateVoucher = () => {
 
 
 
-                                                            {Vouchers?.typeOfVoucher === "Sales" && Vouchers?.posInvoicing && (
+                                                            {Vouchers?.typeOfVoucher === "Sales" && Vouchers?.posInvoicing && values.paymentReceivedType !== 'Credit' && (
 
                                                                 <>
 
@@ -3772,7 +3777,7 @@ const CreateVoucher = () => {
                                                 </div>
                                             )}
 
-                                            {Vouchers?.typeOfVoucher === "Sales" && Vouchers?.posInvoicing && (
+                                            {Vouchers?.typeOfVoucher === "Sales" && Vouchers?.posInvoicing && values.paymentReceivedType !== 'Credit' && (
                                                 <div>
                                                     <label className="mb-2.5 block text-black dark:text-white">Mode Of Payment</label>
 
