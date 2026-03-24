@@ -3,7 +3,7 @@ import DefaultLayout from '../../../layout/DefaultLayout'
 import Breadcrumb from '../../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { DELETE_Ledger_URL, VIEW_LEDGERBYDATE, VIEW_SUPPLIER_LEDGER, VIEW_SUPPLIER_LEDGERBYID, } from "../../../Constants/utils";
+import { DELETE_Ledger_URL, GET_LEDGERRENAMEE__URL, VIEW_LEDGERBYDATE, VIEW_SUPPLIER_LEDGER, VIEW_SUPPLIER_LEDGERBYID, } from "../../../Constants/utils";
 import ReactSelect from 'react-select';
 import useOrder from '../../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -34,25 +34,64 @@ const ViewLedger = () => {
     const [prodIdOptions, setprodIdOptions] = useState([])
 
     const [ledgerNameOptions, setledgerNameOptions] = useState([])
+    const [ledgerType, setledgerType] = useState('')
 
 
     useEffect(() => {
         getLedgerName()
 
 
-        const formattedLedgerName = ledgerName?.map(ledg => ({
-            label: ledg?.name,
-            value: ledg?.name
-        }));
-        setledgerNameOptions(formattedLedgerName);
+     
     }, [])
+
+
+
+     useEffect(() => {
+
+        if (!ledgerType) return;
+
+        const fetchLedgerName = async () => {
+            try {
+                const response = await fetch(`${GET_LEDGERRENAMEE__URL}/${ledgerType}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+
+
+                const formattedLedgerNameOptions = data?.map(ledg => ({
+                    label: ledg?.name,
+                    value: ledg?.name
+                }));
+
+                setledgerNameOptions(formattedLedgerNameOptions);
+
+               
+
+            } catch (error) {
+                console.error(error);
+                toast.error("Failed to fetch Ledger Name");
+                
+            }
+        }
+
+        fetchLedgerName()
+
+    
+
+    }, [ledgerType])
+
+
 
     console.log(ledgerName, "llllllllllllllllllllllllllllllllllllllllllllll");
 
-    const formattedLedgerName = ledgerName?.map(ledg => ({
-        label: ledg?.name,
-        value: ledg?.name
-    }));
+
+
+  
 
     const formattedLedgerType = ledgerName?.map(ledg => ({
         label: ledg?.ledgerType,
@@ -745,6 +784,7 @@ const ViewLedger = () => {
     const currentYear = new Date().getFullYear().toString().slice(-2); // Gets last 2 digits (e.g., "25" for 2025)
     const openingBalancesDate = `1-Apr-${currentYear}`;
 
+console.log(ledgerType,"56");
 
 
     const handlePrintModalContent = () => {
@@ -1293,7 +1333,7 @@ const ViewLedger = () => {
                                             Ledger ID: {SelectedLEDGERData?.ledgerId} • Type: {SelectedLEDGERData?.groupName}
                                         </p>
                                     </div>
-                        
+
                                     <button
                                         onClick={closeLEDGERModal}
                                         className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-2xl font-bold bg-gray-100 dark:bg-slate-700 w-10 h-10 rounded-full flex items-center justify-center hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
@@ -1721,19 +1761,19 @@ const ViewLedger = () => {
                                             Close
                                         </button>
 
-                                                    {/* In your modal footer section, replace the existing buttons with these */}
-                                    <div className="flex space-x-3">
-                                        <button
-                                            onClick={handlePrintModalContent}
-                                            className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors flex items-center gap-2"
-                                        >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                                            </svg>
-                                            Print Statement
-                                        </button>
+                                        {/* In your modal footer section, replace the existing buttons with these */}
+                                        <div className="flex space-x-3">
+                                            <button
+                                                onClick={handlePrintModalContent}
+                                                className="px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors flex items-center gap-2"
+                                            >
+                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                                </svg>
+                                                Print Statement
+                                            </button>
 
-                                    </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1772,7 +1812,14 @@ const ViewLedger = () => {
                                                     name="type"
 
                                                     value={formattedLedgerType.find(option => option.value === values.type)}
-                                                    onChange={(option) => setFieldValue('type', option ? option.value : null)}
+                                                    onChange={(option) => {
+                                                        setFieldValue('type', option ? option.value : null),
+                                                            setFieldValue('ledgerName', null),
+                                                            setledgerType(option ? option.value : '')
+
+                                                    }
+
+                                                    }
                                                     // options={formattedSupplier}
 
                                                     options={[{ label: 'View All ', value: null }, ...formattedLedgerType]}
@@ -1793,11 +1840,11 @@ const ViewLedger = () => {
                                                 <ReactSelect
                                                     name="ledgerName"
 
-                                                    value={formattedLedgerName.find(option => option.value === values.ledgerName)}
+                                                    value={ledgerNameOptions.find(option => option.value === values.ledgerName)}
                                                     onChange={(option) => setFieldValue('ledgerName', option ? option.value : null)}
                                                     // options={formattedSupplier}
 
-                                                    options={[{ label: 'View All Ledgers', value: null }, ...formattedLedgerName]}
+                                                    options={[{ label: 'View All Ledgers', value: null }, ...ledgerNameOptions]}
                                                     styles={customStyles}
                                                     className="bg-white dark:bg-form-Field"
                                                     classNamePrefix="react-select"
