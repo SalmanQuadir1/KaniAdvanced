@@ -163,8 +163,6 @@ const AddSupplier = () => {
                         // Validate account number
                         if (!values.accountNo) {
                             errors.accountNo = 'Required';
-                        } else if (values.accountNo.length < 16) {
-                            errors.accountNo = 'Account Number must be at least 16 digits';
                         }
 
                         // Validate IFSC code
