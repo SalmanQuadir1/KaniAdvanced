@@ -779,7 +779,7 @@ const UpdateOrderProduct = () => {
 
 
                     {
-                      order?.productStatus.toLowerCase() === "closed" ? null : (
+                      order?.productStatus?.toLowerCase() === "closed" ? null : (
                         <div className="flex justify-center mt-4"> {/* Centering the button */}
                           <button
                             // type="button" // Ensures the button does not trigger the form submission

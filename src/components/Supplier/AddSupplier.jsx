@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { ErrorMessage, Field, Form, Formik } from 'formik';
 import ReactSelect from 'react-select';
@@ -11,11 +11,28 @@ import { ADD_SUPPLIER_URL } from "../../Constants/utils"
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 const AddSupplier = () => {
+    const [productGroupOptions, setproductGroupOptions] = useState([])
     const navigate = useNavigate();
     const {
         seloptions,
         groups
     } = useSupplier();
+
+
+
+    const productGroup = useSelector(state => state?.persisted?.productGroup);
+
+
+        useEffect(() => {
+        if (productGroup.data) {
+            const formattedOptions = productGroup.data.map(product => ({
+                value: product.productGroupName,
+                label: product.productGroupName,
+                productGroupObject: product,
+            }));
+            setproductGroupOptions(formattedOptions);
+        }
+    }, [productGroup.data]);
 
     const theme = useSelector(state => state?.persisted?.theme);
 
@@ -163,8 +180,6 @@ const AddSupplier = () => {
                         // Validate account number
                         if (!values.accountNo) {
                             errors.accountNo = 'Required';
-                        } else if (values.accountNo.length < 16) {
-                            errors.accountNo = 'Account Number must be at least 16 digits';
                         }
 
                         // Validate IFSC code
@@ -392,7 +407,7 @@ const AddSupplier = () => {
                                                                                     setRows(newRows);
                                                                                 }}
                                                                                 classNamePrefix="react-select"
-                                                                                options={groups}
+                                                                                options={productGroupOptions}
                                                                                 placeholder="Group Name"
                                                                                 styles={customStyles}
                                                                             />

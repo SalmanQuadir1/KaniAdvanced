@@ -64,6 +64,7 @@ export const GET_LEDGERR__URL = `${BASE_URL}/ledger/getAll`;
 export const GET_LEDGERRExpense__URL = `${BASE_URL}/ledger/dropdown/income-expense`;
 
 export const GET_LEDGERRENAME__URL = `${BASE_URL}/ledger/dropdown/ledgername`;
+export const GET_LEDGERRENAMEE__URL = `${BASE_URL}/ledger/dropdown/by-type`;
 
 export const GET_LEDGERSupplierId__URL = `${BASE_URL}/ledger`;
 
@@ -299,6 +300,10 @@ export const GET_PID = `${BASE_URL}/order/generateOrderProforma`;
 export const GET_PROFORMAID_URL = `${BASE_URL}/order/getOrderProforma`;
 
 export const UPDATE_PROFORMA_URL = `${BASE_URL}/order/updateOrderProforma`;
+
+export const UPDATE_ReceivedQuantity_URL = `${BASE_URL}/order/updateReceivedQtyData`;
+
+
 export const VIEW_ALLACCEPTED_ORDERS = `${BASE_URL}/order/searchAccepted`;
 
 export const VIEW_PARTIALLYAPPROVED_ORDERS = `${BASE_URL}/order/searchApprovedAndAccepted`;
