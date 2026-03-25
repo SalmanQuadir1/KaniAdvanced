@@ -1012,7 +1012,7 @@ console.log(supplier,"11111");
                 <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700">Supplier Name</th>
                 <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700">Quantity</th>
                 <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700">Received Date</th>
-                <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700">Actions</th>
+                {/* <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700">Actions</th> */}
               </tr>
             </thead>
             <tbody>
@@ -1070,7 +1070,7 @@ console.log(supplier,"11111");
                     <td className="px-4 py-3 border-b text-sm text-gray-900">
                       {new Date(supplierData.receivedDate).toLocaleDateString()}
                     </td>
-                    <td className="px-4 py-3 border-b">
+                    {/* <td className="px-4 py-3 border-b">
                       <button
                         onClick={() => {
                           const updatedSuppliers = supplier.suppliers.filter((_, i) => i !== index);
@@ -1087,7 +1087,7 @@ console.log(supplier,"11111");
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
                       </button>
-                    </td>
+                    </td> */}
                   </tr>
                 );
               })}
