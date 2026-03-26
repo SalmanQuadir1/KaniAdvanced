@@ -76,6 +76,7 @@ const PaymentSummary = () => {
                 cashDebitTotal: 0,
                 supplierCreditTotal: 0,
                 customerCreditTotal: 0,
+                customerDebitTotal:0,
                 totalDebit: 0,
                 totalCredit: 0,
                 netBalance: 0,
@@ -90,10 +91,15 @@ const PaymentSummary = () => {
         // Extract values from the object (with fallbacks)
         const bankDebitTotal = parseFloat(data?.bankTotalDebitBalance || 0);
         const bankCreditTotal = parseFloat(data?.bankTotalCreditBalance || 0);
+        const bankClosing = parseFloat(data?.bankTotalOpeningBalance || 0);
         const cashDebitTotal = parseFloat(data?.cashTotalDebitBalance || 0);
         const cashCreditTotal = parseFloat(data?.cashTotalCreditBalance || 0);
+
+        const cashClosing = parseFloat(data?.cashTotalOpeningBalance || 0);
         const supplierDebitTotal = parseFloat(data?.supplierTotalDebitBalance || 0);
         const supplierCreditTotal = parseFloat(data?.supplierTotalCreditBalance || 0);
+
+          const supplierClosing = parseFloat(data?.supplierTotalOpeningBalance || 0);
         const customerDebitTotal = parseFloat(data?.customerTotalDebitBalance || 0);
         const customerCreditTotal = parseFloat(data?.customerTotalCreditBalance || 0);
 
@@ -103,8 +109,8 @@ const PaymentSummary = () => {
         const netBalance = totalDebit - totalCredit;
 
         // Calculate available funds (debits are positive for bank/cash)
-        const totalBankBalance = bankDebitTotal - bankCreditTotal; // Positive = money in bank
-        const totalCashBalance = cashDebitTotal - cashCreditTotal; // Positive = cash in hand
+        const totalBankBalance = bankClosing; // Positive = money in bank
+        const totalCashBalance = cashClosing; // Positive = cash in hand
 
         // Calculate liabilities (credits are positive for suppliers/customers)
         const totalSupplierPayable = supplierCreditTotal - supplierDebitTotal; // Positive = you owe suppliers
@@ -116,6 +122,7 @@ const PaymentSummary = () => {
             cashDebitTotal: totalCashBalance > 0 ? totalCashBalance : 0,
             supplierCreditTotal: totalSupplierPayable > 0 ? totalSupplierPayable : 0,
             customerCreditTotal: totalCustomerReceivable > 0 ? totalCustomerReceivable : 0,
+            customerDebitTotal:  Math.abs(customerDebitTotal) > 0 ? Math.abs(customerDebitTotal) : 0,
 
             // Detailed breakdown
             bankDetails: {
@@ -210,7 +217,7 @@ const PaymentSummary = () => {
         },
         {
             title: "Receivable from Customers",
-            amount: summaryData.customerCreditTotal,
+            amount: summaryData.customerDebitTotal,
             icon: <FaHandHoldingUsd className="text-purple-500 text-2xl" />,
             color: "bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-800/30",
             textColor: "text-purple-700 dark:text-purple-300",
@@ -456,7 +463,7 @@ const PaymentSummary = () => {
                                     <RiMoneyDollarCircleFill className="text-green-600 dark:text-green-400 text-xl" />
                                 </div>
                                 <div>
-                                    <p className="text-sm text-slate-600 dark:text-slate-400">Available Cash</p>
+                                    <p className="text-sm text-slate-600 dark:text-slate-400">Total Money Available</p>
                                     <p className="text-2xl font-bold text-slate-800 dark:text-white">
                                         {formatCurrency(summaryData.cashDebitTotal + summaryData.bankDebitTotal)}
                                     </p>

@@ -1307,6 +1307,9 @@ console.log(ledgerType,"56");
         printWindow.document.close();
     };
 
+    console.log(SelectedLEDGERData,"umer");
+    
+
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Ledger/ View Ledger" />
@@ -1520,7 +1523,7 @@ console.log(ledgerType,"56");
                                             <div className="flex items-center justify-between">
                                                 <div>
                                                     <h3 className="text-sm font-medium text-purple-800 dark:text-purple-300 mb-1">Closing Balance</h3>
-                                                    <p className={`text-3xl font-bold ${calculatePeriodBalance() >= 0
+                                                    {/* <p className={`text-3xl font-bold ${calculatePeriodBalance() >= 0
                                                         ? 'text-green-600 dark:text-green-400'
                                                         : 'text-red-600 dark:text-red-400'
                                                         }`}>
@@ -1528,7 +1531,18 @@ console.log(ledgerType,"56");
                                                         <span className="text-lg ml-2">
                                                             ({calculatePeriodBalance() >= 0 ? 'Credit' : 'Debit'})
                                                         </span>
-                                                    </p>
+                                                    </p> */}
+
+
+                                                     <p className={`text-3xl font-bold ${SelectedLEDGERData?.openingBalances?.toFixed(2)>=0
+                                                        ? 'text-green-600 dark:text-green-400'
+                                                        : 'text-red-600 dark:text-red-400'
+                                                        }`}>
+                                                        ₹{SelectedLEDGERData?.openingBalances?.toFixed(2)}
+                                                        <span className="text-lg ml-2">
+                                                            ({SelectedLEDGERData?.typeOfOpeningBalance?.toLowerCase() === 'credit' ? 'Credit' : 'Debit'})
+                                                        </span>
+                                                    </p> 
                                                     <div className="mt-1">
                                                         <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${SelectedLEDGERData?.typeOfOpeningBalance?.toLowerCase() === 'credit'
                                                             ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
@@ -1566,13 +1580,13 @@ console.log(ledgerType,"56");
                                                 </div>
                                                 <div className="mt-3 md:mt-0 text-center md:text-right">
                                                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Balance</p>
-                                                    <p className={`text-3xl font-bold ${calculatePeriodBalance() >= 0
+                                                    <p className={`text-3xl font-bold ${SelectedLEDGERData?.openingBalances >= 0
                                                         ? 'text-green-600 dark:text-green-400'
                                                         : 'text-red-600 dark:text-red-400'
                                                         }`}>
-                                                        ₹{calculatePeriodBalance().toFixed(2)}
+                                                        ₹{SelectedLEDGERData?.openingBalances?.toFixed(2)}
                                                         <span className="text-lg ml-2">
-                                                            ({calculatePeriodBalance() >= 0 ? 'Credit' : 'Debit'})
+                                                            ({SelectedLEDGERData?.typeOfOpeningBalance?.toLowerCase() === 'credit' ? 'Credit' : 'Debit'})
                                                         </span>
                                                     </p>
                                                     <div className="mt-2 flex items-center justify-center md:justify-end gap-4">

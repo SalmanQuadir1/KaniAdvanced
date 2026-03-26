@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 
 import Loader from './common/Loader/index.js';
 import PageTitle from './components/PageTitle.js';
@@ -7,6 +7,8 @@ import SignIn from './pages/Authentication/SignIn.jsx';
 import SignUp from './pages/Authentication/SignUp.jsx';
 import Calendar from './pages/Calendar.js';
 import Chart from './pages/Chart.jsx';
+
+import AccReports from './pages/AccReports.jsx';
 import Home from './pages/Home.jsx';
 import FinancialReportDashboard from './pages/FinancialReportDashboard.jsx';
 import GeneralFinancialReportDashboard from './pages/GeneralFinancialReportDashboard.jsx';
@@ -176,7 +178,7 @@ import AddSupplier from './components/Supplier/AddSupplier.jsx';
 import ViewLedger from './components/Supplier/SupplierLedger/ViewLedger.jsx';
 // import LedgerPrintPage from './components/Supplier/SupplierLedger/LedgerPrintPage.jsx';
 
-import ViewSuppLedger from './components/Supplier/SupplierLedger/ViewSuppLedger.jsx';
+// import ViewSuppLedger from './components/Supplier/SupplierLedger/ViewSuppLedger.jsx';
 
 import AddBulkSupplier from './components/Supplier/AddBulkSupplier.jsx';
 
@@ -193,6 +195,8 @@ import Reports from './components/Reports/Reports.jsx';
 import ProductReport from './components/Reports/ProductReport.jsx';
 
 import RetailWholeSaleReport from './components/Reports/RetailWholesaleReport.jsx';
+
+import CreditorsReports from './components/AccReports/CreditorsReports.jsx';
 import FinanceReportByDate from './components/Reports/FinanceReportByDate.jsx';
 
 
@@ -337,7 +341,7 @@ import ViewStockJournalCreated from './components/StockJournel/ViewStockJournalC
 // import UpdateProduct from './components/Products/UpdateProduct';
 
 import UpdateStockJournal from './components/StockJournel/UpdateStockJournal.jsx';
-import { signoutSuccess } from './redux/Slice/UserSlice';
+// import { signoutSuccess } from './redux/Slice/UserSlice';
 
 // import useInactivity from './hooks/useInactivity';
 
@@ -349,21 +353,21 @@ import UpdatePashminaProducts from './components/Kani/UpdatePashminaProducts.jsx
 
 import 'react-toastify/dist/ReactToastify.css';
 
-import { useDispatch } from 'react-redux';
-import { toast } from 'react-toastify';
+// import { useDispatch } from 'react-redux';
+// import { toast } from 'react-toastify';
 
 function App() {
   const [loading, setLoading] = useState(true);
   const { pathname } = useLocation();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+  // const navigate = useNavigate();
+  // const dispatch = useDispatch();
 
   // Logout function
-  const handleLogout = () => {
-    dispatch(signoutSuccess());
-    navigate('/auth/signin');
-    toast.success('Logout:Session Expired ');
-  };
+  // const handleLogout = () => {
+  //   dispatch(signoutSuccess());
+  //   navigate('/auth/signin');
+  //   toast.success('Logout:Session Expired ');
+  // };
 
   // useInactivity(5 * 60 * 1000, handleLogout);
 
@@ -409,6 +413,18 @@ function App() {
               </>
             }
           />
+
+            <Route
+            path="/configurator/accreports"
+            element={
+              <>
+                <PageTitle title="CRAFT-FLOW ERP" />
+                <AccReports />
+              </>
+            }
+          />
+
+
           <Route
             path="/"
             element={
@@ -812,6 +828,16 @@ function App() {
               <>
                 <PageTitle title="Retail WholeSale Report" />
                 <RetailWholeSaleReport />
+              </>
+            }
+          />
+
+           <Route
+            path="/accReport/Creditors"
+            element={
+              <>
+                <PageTitle title="Creditors Report" />
+                <CreditorsReports />
               </>
             }
           />

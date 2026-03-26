@@ -273,7 +273,7 @@ const ViewVoucher = () => {
 
                 {
                     // For Debit Note, Credit Note, Receipt, and Stock Journal - always show View Entries
-                    ["debit note", "credit note", "receipt", "stock journal"].includes(item.name?.toLowerCase()) ? (
+                    ["debit note", "credit note", "receipt", "stock journal","contra"].includes(item.name?.toLowerCase()) ? (
                         <td>
                             <span
                                 onClick={() => {
@@ -287,6 +287,9 @@ const ViewVoucher = () => {
                                         viewPath = `/voucherEntriesView/${item.id}?RECEIPT_NOTE`;
                                     } else if (item.name?.toLowerCase() === "stock journal") {
                                         viewPath = `/voucherEntriesStockJournal/${item.id}`;
+                                    }
+                                     else if (item.name?.toLowerCase() === "contra") {
+                                        viewPath = `/voucherEntriesView/${item.id}?CONTRA`;
                                     }
 
                                     navigate(viewPath);

@@ -13,7 +13,7 @@ import { AiOutlinePartition, AiOutlineClose } from "react-icons/ai";
 import { RiProgress1Line, RiProgress8Fill, RiUserReceived2Fill, RiAlignItemBottomFill } from "react-icons/ri";
 import { FcApproval, FcCancel } from "react-icons/fc";
 import { GrCompliance, GrUpdate } from "react-icons/gr";
-import { MdRepartition, MdOutlinePendingActions, MdOutlinePending, MdRecommend, MdEditSquare } from "react-icons/md";
+import { MdRepartition, MdOutlinePendingActions, MdOutlinePending, MdRecommend, MdEditSquare, MdReport } from "react-icons/md";
 import { PiGearFineFill } from "react-icons/pi";
 import { CiCalendarDate } from "react-icons/ci";
 import { VscDiffModified } from "react-icons/vsc";
@@ -25,6 +25,7 @@ import { GiCottonFlower } from "react-icons/gi";
 import { GiBandageRoll } from "react-icons/gi";
 import { GiScrollUnfurled } from "react-icons/gi";
 import { FaDropbox } from "react-icons/fa";
+import { BiBookOpen } from 'react-icons/bi';
 
 
 const Chart = () => {
@@ -158,6 +159,7 @@ const kaniModeCards = [
     { title: "Day Book", link: "/configurator/dayBook", countKey: "invoices", icon: <FaBook className="w-10 h-10" />, levelUp: true },
     { title: "Ledger Summary Balances", link: "/configurator/ledgersummary", countKey: "invoices", icon: <FaBook className="w-10 h-10" />, levelUp: true },
     { title: "Orders With Vouchers", link: "/configurator/OrderVoucher", countKey: "invoices", icon: <TbReorder className="w-10 h-10" />, levelUp: true },
+    { title: "Reports", link:"/configurator/accreports", countKey: "accReports", icon: <BiBookOpen className="w-10 h-10" />, levelUp: true },
   ];
   const roleBasedCards = {
     ROLE_ADMIN: [

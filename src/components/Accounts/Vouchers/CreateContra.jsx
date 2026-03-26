@@ -5,21 +5,59 @@ import * as Yup from 'yup';
 import ReactSelect from 'react-select';
 import Breadcrumb from '../../../components/Breadcrumbs/Breadcrumb';
 import useVoucher from '../../../hooks/useVoucher';
-import { GET_VoucherNos_URL, customStyles as createCustomStyles } from '../../../Constants/utils';
+import { CREATE_DEBITNOTE_URL, GET_VoucherNos_URL, customStyles as createCustomStyles } from '../../../Constants/utils';
 import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import useLedger from '../../../hooks/useLedger';
 import { toast } from 'react-toastify';
 
 const CreateContra = () => {
     const { id } = useParams();
+
+    const navigate = useNavigate();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
-    const { GetVoucherById, Vouchers, handleCreateVoucher } = useVoucher();
+    const { GetVoucherById, Vouchers,  } = useVoucher();
     const [voucherNos, setvoucherNos] = useState('')
     const { getLedger, Ledger } = useLedger();
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
+
+
+
+      const handleCreateVoucher = async (values) => {
+            console.log(values, "vouchercreate");
+    
+            try {
+                const response = await fetch(`${CREATE_DEBITNOTE_URL}/${id}/create`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify(values)
+                });
+    
+                let data;
+                try {
+                    data = await response.json();
+                } catch {
+                    console.log(data, "catccccccch");
+                    data = { errorMessage: response.errorMessage };
+                }
+    
+                if (response.ok) {
+                    toast.success(`Contra added successfully`);
+                    navigate("/Vouchers/view");
+                } else {
+                    console.log("i am in error else ");
+                    toast.error(`${data.errorMessage}`);
+                }
+            } catch (error) {
+                console.error(error);
+                toast.error("An error occurred");
+            }
+        };
 
     // Get all bank and cash ledgers
     const BankCashLedgers = Ledger.filter(ledg => 
@@ -70,10 +108,10 @@ const CreateContra = () => {
     }, [Vouchers.id]);
 
     const validationSchema = Yup.object().shape({
-        recieptNumber: Yup.string().required('Voucher number is required'),
-        fromLedgerId: Yup.string().required('From account is required'),
-        toLedgerId: Yup.string().required('To account is required'),
-        amount: Yup.number().required('Amount is required').positive('Amount must be positive'),
+        noteNumber: Yup.string().required('Voucher number is required'),
+        ledgerId: Yup.string().required('From account is required'),
+        destinationLedgerId: Yup.string().required('To account is required'),
+        totalAmount: Yup.number().required('totalAmount is required').positive('totalAmount must be positive'),
         date: Yup.date().required('Date is required'),
     });
 
@@ -83,16 +121,16 @@ const CreateContra = () => {
             <div>
                 <Formik
                     initialValues={{
-                        recieptNumber: voucherNos,
+                        noteNumber: voucherNos,
                         date: '',
                         voucherId: Number(id),
-                        fromLedgerId: "",
-                        toLedgerId: "",
-                        amount: "",
+                        ledgerId: "",
+                        destinationLedgerId: "",
+                        totalAmount: "",
                         fromBalance: "",
                         toBalance: "",
                         narration: "",
-                        typeOfVoucher: "Contra"
+                        noteType: "CONTRA"
                     }}
                     enableReinitialize={true}
                     validationSchema={validationSchema}
@@ -115,11 +153,11 @@ const CreateContra = () => {
                                                 <label className="mb-2.5 block text-black dark:text-white">Contra Number</label>
                                                 <Field
                                                     type="text"
-                                                    name="recieptNumber"
+                                                    name="noteNumber"
                                                     placeholder="Enter No"
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white"
                                                 />
-                                                <ErrorMessage name="recieptNumber" component="div" className="text-red-500" />
+                                                <ErrorMessage name="noteNumber" component="div" className="text-red-500" />
                                             </div>
 
                                             <div>
@@ -138,10 +176,10 @@ const CreateContra = () => {
                                             <div>
                                                 <label className="mb-2.5 block text-black dark:text-white">From Account <span className='text-red-600'>*</span></label>
                                                 <ReactSelect
-                                                    name='fromLedgerId'
-                                                    value={ledgerOptions.find(opt => opt.value === values.fromLedgerId)}
+                                                    name='ledgerId'
+                                                    value={ledgerOptions.find(opt => opt.value === values.ledgerId)}
                                                     onChange={(option) => {
-                                                        setFieldValue('fromLedgerId', option?.value || '');
+                                                        setFieldValue('ledgerId', option?.value || '');
                                                         setFieldValue('fromBalance', option?.balance || 0);
                                                     }}
                                                     options={ledgerOptions}
@@ -150,7 +188,7 @@ const CreateContra = () => {
                                                     menuPortalTarget={document.body}
                                                     styles={{ ...customStyles, menuPortal: (base) => ({ ...base, zIndex: 100000 }) }}
                                                 />
-                                                <ErrorMessage name="fromLedgerId" component="div" className="text-red-500 text-xs mt-1" />
+                                                <ErrorMessage name="ledgerId" component="div" className="text-red-500 text-xs mt-1" />
                                                 {values.fromBalance && (
                                                     <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                                                         Balance: ₹{values.fromBalance}
@@ -161,19 +199,19 @@ const CreateContra = () => {
                                             <div>
                                                 <label className="mb-2.5 block text-black dark:text-white">To Account <span className='text-red-600'>*</span></label>
                                                 <ReactSelect
-                                                    name='toLedgerId'
-                                                    value={ledgerOptions.find(opt => opt.value === values.toLedgerId)}
+                                                    name='destinationLedgerId'
+                                                    value={ledgerOptions.find(opt => opt.value === values.destinationLedgerId)}
                                                     onChange={(option) => {
-                                                        setFieldValue('toLedgerId', option?.value || '');
+                                                        setFieldValue('destinationLedgerId', option?.value || '');
                                                         setFieldValue('toBalance', option?.balance || 0);
                                                     }}
-                                                    options={ledgerOptions.filter(opt => opt.value !== values.fromLedgerId)}
+                                                    options={ledgerOptions.filter(opt => opt.value !== values.ledgerId)}
                                                     classNamePrefix="react-select"
                                                     placeholder="Select To Account"
                                                     menuPortalTarget={document.body}
                                                     styles={{ ...customStyles, menuPortal: (base) => ({ ...base, zIndex: 100000 }) }}
                                                 />
-                                                <ErrorMessage name="toLedgerId" component="div" className="text-red-500 text-xs mt-1" />
+                                                <ErrorMessage name="destinationLedgerId" component="div" className="text-red-500 text-xs mt-1" />
                                                 {values.toBalance && (
                                                     <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                                                         Balance: ₹{values.toBalance}
@@ -182,25 +220,25 @@ const CreateContra = () => {
                                             </div>
                                         </div>
 
-                                        {/* Amount */}
+                                        {/* totalAmount */}
                                         <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-4'>
                                             <div>
-                                                <label className="mb-2.5 block text-black dark:text-white">Amount <span className='text-red-600'>*</span></label>
+                                                <label className="mb-2.5 block text-black dark:text-white">totalAmount <span className='text-red-600'>*</span></label>
                                                 <Field
                                                     type="number"
-                                                    name="amount"
-                                                    placeholder="Enter Amount"
+                                                    name="totalAmount"
+                                                    placeholder="Enter totalAmount"
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white"
                                                     validate={(value) => {
-                                                        const amount = parseFloat(value) || 0;
+                                                        const totalAmount = parseFloat(value) || 0;
                                                         const fromBalance = parseFloat(values.fromBalance) || 0;
-                                                        if (amount > fromBalance) {
-                                                            return `Amount cannot exceed from account balance (₹${fromBalance})`;
+                                                        if (totalAmount > fromBalance) {
+                                                            return `totalAmount cannot exceed from account balance (₹${fromBalance})`;
                                                         }
                                                         return undefined;
                                                     }}
                                                 />
-                                                <ErrorMessage name="amount" component="div" className="text-red-500 text-xs mt-1" />
+                                                <ErrorMessage name="totalAmount" component="div" className="text-red-500 text-xs mt-1" />
                                             </div>
                                         </div>
 
@@ -217,13 +255,13 @@ const CreateContra = () => {
                                         </div>
 
                                         {/* Summary */}
-                                        {values.fromLedgerId && values.toLedgerId && values.amount && (
+                                        {values.ledgerId && values.destinationLedgerId && values.totalAmount && (
                                             <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                                                 <h4 className="font-semibold mb-2 text-blue-800 dark:text-blue-300">Transaction Summary</h4>
                                                 <div className="grid grid-cols-2 gap-2 text-sm">
-                                                    <div>From: {ledgerOptions.find(opt => opt.value === values.fromLedgerId)?.label}</div>
-                                                    <div>To: {ledgerOptions.find(opt => opt.value === values.toLedgerId)?.label}</div>
-                                                    <div>Amount: ₹{values.amount}</div>
+                                                    <div>From: {ledgerOptions.find(opt => opt.value === values.ledgerId)?.label}</div>
+                                                    <div>To: {ledgerOptions.find(opt => opt.value === values.destinationLedgerId)?.label}</div>
+                                                    <div>totalAmount: ₹{values.totalAmount}</div>
                                                 </div>
                                             </div>
                                         )}
