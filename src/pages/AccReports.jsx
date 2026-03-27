@@ -13,12 +13,12 @@ import { AiOutlinePartition, AiOutlineClose } from "react-icons/ai";
 import { RiProgress1Line, RiProgress8Fill, RiUserReceived2Fill, RiAlignItemBottomFill } from "react-icons/ri";
 import { FcApproval, FcCancel } from "react-icons/fc";
 import { GrCompliance, GrUpdate } from "react-icons/gr";
-import { MdRepartition, MdOutlinePendingActions, MdOutlinePending, MdRecommend, MdEditSquare } from "react-icons/md";
+import { MdRepartition, MdOutlinePendingActions, MdOutlinePending, MdRecommend, MdEditSquare, MdReport } from "react-icons/md";
 import { PiGearFineFill } from "react-icons/pi";
 import { CiCalendarDate } from "react-icons/ci";
 import { VscDiffModified } from "react-icons/vsc";
 import { toast } from 'react-toastify';
-import { TbReorder, TbReport } from 'react-icons/tb';
+import { TbReorder, TbReport, TbReportAnalytics } from 'react-icons/tb';
 import { GiWool } from "react-icons/gi";
 import { GiRolledCloth } from "react-icons/gi";
 import { GiCottonFlower } from "react-icons/gi";
@@ -197,8 +197,8 @@ const AccReports = () => {
 
     //acounts
     const accountsModeCards = [
-        { title: "Crediors Report", link: "/accReport/Creditors", countKey: "accountsData", icon: <TbReport className="w-10 h-10" />, levelUp: true },
-       
+        { title: "Creditors Report", link: "/accReport/Creditors", countKey: "accountsData", icon: <TbReport className="w-10 h-10" />, levelUp: true },
+        { title: "Deditors Report", link: "/accReport/Deditors", countKey: "accountsData", icon: <TbReportAnalytics className="w-10 h-10" />, levelUp: true },
     ];
 
     // Get all cards user should see based on roles
