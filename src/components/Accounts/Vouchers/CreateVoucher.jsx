@@ -479,7 +479,7 @@ const CreateVoucher = () => {
 
 
     const PaymentReceiveType = [
-         {
+        {
             value: "Credit",
             label: "Credit"
 
@@ -2338,13 +2338,24 @@ const CreateVoucher = () => {
                                                                     type="checkbox"
                                                                     name="isDeliveryDifferent"
                                                                     className="h-5 ml-9 w-5 rounded border-stroke bg-transparent text-primary focus:ring-primary dark:border-form-strokedark dark:bg-form-input"
+                                                                    onChange={(e) => {
+                                                                        const isChecked = e.target.checked;
+                                                                        setFieldValue('isDeliveryDifferent', isChecked);
+
+                                                                        // Clear the delivery address fields when unchecked
+                                                                        if (!isChecked) {
+                                                                            setFieldValue('customerNewDeliveryShippingAddress', '');
+                                                                            setFieldValue('customerNewDeliveryShippingState', '');
+                                                                            setnewShippingState(''); // Reset the shipping state variable
+                                                                        }
+                                                                    }}
                                                                 />
                                                             </div>
                                                         </div>
 
                                                         {/* Expanded content - positioned absolutely below */}
                                                         {values.isDeliveryDifferent && (
-                                                            <div className="absolute left-0 right-0 top-[40px] z-20">
+                                                            <div className="absolute left-0 right-0 top-[40px] z-20 mt-4 mb-4 animate-fadeIn ">
                                                                 <div className="flex flex-wrap gap-4 mt-2 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50">
                                                                     <div className="flex-1 min-w-[200px]">
                                                                         <label className="mb-2.5 block text-black dark:text-white">New Delivery Address</label>
@@ -3078,7 +3089,7 @@ const CreateVoucher = () => {
                                                                         <h4 className="text-lg font-semibold mb-3 text-black dark:text-white">GST Summary</h4>
                                                                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-sm">
 
-                                                                           
+
                                                                             <div>
                                                                                 <p className="text-gray-600 dark:text-gray-400">Total MRP</p>
                                                                                 <p className="font-medium text-black dark:text-white">₹{totals.totalMRP}</p>
@@ -3166,7 +3177,7 @@ const CreateVoucher = () => {
                                                                         <h4 className="text-lg font-semibold mb-3 text-black dark:text-white">GST Summary</h4>
                                                                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-sm">
 
-                                                                             <div>
+                                                                            <div>
                                                                                 <p className="text-gray-600 dark:text-gray-400">Total Base Price (Excl. GST)</p>
                                                                                 <p className="font-medium text-black dark:text-white">₹{totals.totalBasePrice}</p>
                                                                             </div>
