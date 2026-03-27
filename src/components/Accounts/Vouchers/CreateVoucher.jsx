@@ -2355,7 +2355,7 @@ const CreateVoucher = () => {
 
                                                         {/* Expanded content - positioned absolutely below */}
                                                         {values.isDeliveryDifferent && (
-                                                            <div className="absolute left-0 right-0 top-[40px] z-20 mt-4 mb-4 animate-fadeIn ">
+                                                            <div className="absolute left-0 right-0 top-[40px] z-20 mt-4 mb-4 animate-fadeIn bg-white">
                                                                 <div className="flex flex-wrap gap-4 mt-2 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-800/50">
                                                                     <div className="flex-1 min-w-[200px]">
                                                                         <label className="mb-2.5 block text-black dark:text-white">New Delivery Address</label>
