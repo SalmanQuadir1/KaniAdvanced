@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customStyles as createCustomStyles } from '../../Constants/utils';
 import useReports from '../../hooks/useReports';
+import { FaDownload } from 'react-icons/fa6';
 
 const productgrp = [
     { value: 'BrandA', label: 'Brand A' },
@@ -200,16 +201,16 @@ const CreditorsReports = () => {
                     {item.customerName || '-'}
                 </td>
                 <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    ${Number(item.openingBalance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    {Number(item.openingBalance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </td>
                 <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    ${Number(item.previousOpeningBalance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    {Number(item.previousOpeningBalance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </td>
                 <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    ${Number(item.totalDebitTransaction || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    {Number(item.totalDebitTransaction || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </td>
                 <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    ${Number(item.totalCreditTransaction || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    {Number(item.totalCreditTransaction || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </td>
             </tr>
         ));
@@ -282,7 +283,8 @@ const CreditorsReports = () => {
                                             onClick={() => handlegenerateCsv(values)}
                                             className="flex items-center justify-center gap-2 mb-4 md:w-[200px] w-[220px] md:h-[45px] h-[45px] rounded-lg bg-success text-white font-medium hover:bg-opacity-90 transition-all"
                                         >
-                                            Generate CSV
+                                            <FaDownload size={18} />
+                                            Generate Report
                                         </button>
                                     </div>
                                 </Form>
