@@ -259,6 +259,8 @@ export const DOWNLOADPENDINGFINNCIALORDERS_REPORT = `${BASE_URL}/report/download
 export const DOWNLOADCSV_REPORT = `${BASE_URL}/report/downloadCsv`;
 
 export const DOWNLOADACCCSV_REPORT = `${BASE_URL}/api/reports/creditor-report`;
+
+export const DOWNLOADSALESCSV_REPORT = `${BASE_URL}/api/reports/sales`;
 export const DOWNLOADPENDINGPDFBYDATE_REPORT = `${BASE_URL}/report/downloadPendingPdf`;
 
 export const DOWNLOADINPROGRESSBYDATE_REPORT = `${BASE_URL}/report/downloadInProgressPdf`;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
-import { DELETE_ORDER_URL, DOWNLOADACCCSV_REPORT, DOWNLOADCSV_REPORT, DOWNLOAD_REPORT, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS, VIEW_REPORT } from "../../Constants/utils";
+import { DELETE_ORDER_URL, DOWNLOADACCCSV_REPORT, DOWNLOADCSV_REPORT, DOWNLOADSALESCSV_REPORT, DOWNLOAD_REPORT, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS, VIEW_REPORT } from "../../Constants/utils";
 import ReactSelect from 'react-select';
 import useorder from '../../hooks/useOrder';
 import { FiEdit, FiTrash2, FiEye } from 'react-icons/fi';
@@ -14,18 +14,12 @@ import { customStyles as createCustomStyles } from '../../Constants/utils';
 import useReports from '../../hooks/useReports';
 import { FaDownload } from 'react-icons/fa6';
 
-const productgrp = [
-    { value: 'BrandA', label: 'Brand A' },
-    { value: 'BrandB', label: 'Brand B' },
-    { value: 'BrandC', label: 'Brand C' },
-];
-
-const CreditorsReports = () => {
+const SalesReports = () => {
     const [loading, setLoading] = useState(false);
     const [reportData, setReportData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [isDataFetched, setIsDataFetched] = useState(false);
-    const [currentPageData, setCurrentPageData] = useState([]); // New state for current page data
+    const [currentPageData, setCurrentPageData] = useState([]);
 
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
@@ -41,68 +35,71 @@ const CreditorsReports = () => {
         itemsPerPage: 10,
     });
 
-    // Function to fetch report data
-    const fetchReportData = async (values) => {
+    // Store current filter values
+    const [currentFilters, setCurrentFilters] = useState({
+        fromDate: new Date().toISOString().split('T')[], 
+        toDate: '' 
+    });
+
+    // Function to fetch a specific page from API
+    const fetchPageData = async (page, filters) => {
+        if (!filters.fromDate || !filters.toDate) return;
+        
         setLoading(true);
-        const groupName = "Sundry Creditors"
+        
         try {
-            const response = await fetch(`${DOWNLOADACCCSV_REPORT}?fromDate=${values.fromDate}&toDate=${values.toDate}&groupName=${encodeURIComponent(groupName)}&size=10`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error("Failed to fetch report data");
-            }
-            console.log(response, "response");
-            const data = await response.json();
-            console.log(data, "ll");
-
-            setReportData(data.content);
-            setFilteredData(data.content);
+            const response = await fetch(
+                `${DOWNLOADSALESCSV_REPORT}?fromDate=${filters.fromDate}&toDate=${filters.toDate}&page=${page - 1}&size=${pagination.itemsPerPage}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
             
-            // Update pagination state with the data from API
+            if (!response.ok) {
+                throw new Error("Failed to fetch page data");
+            }
+            
+            const data = await response.json();
+            
+            setReportData(data.content || []);
+            setFilteredData(data.content || []);
+            setCurrentPageData(data.content || []);
+            
             setPagination({
-                totalItems: data?.totalElements,
-                data: data?.content,
-                totalPages: data?.totalPages,
-                currentPage: data?.number + 1,
+                totalItems: data?.totalElements || 0,
+                data: data?.content || [],
+                totalPages: data?.totalPages || 0,
+                currentPage: (data?.number || 0) + 1,
                 itemsPerPage: data?.size || 10,
             });
             
-            // Set current page data to the first page of results
-            setCurrentPageData(data?.content || []);
-            
-            setIsDataFetched(true);
-            toast.success("Report loaded successfully");
         } catch (error) {
             console.error(error);
-            toast.error("An error occurred while fetching the report");
-            setReportData([]);
-            setFilteredData([]);
+            toast.error("Failed to load page data");
             setCurrentPageData([]);
-            setPagination({
-                totalItems: 0,
-                data: [],
-                totalPages: 0,
-                currentPage: 1,
-                itemsPerPage: 10,
-            });
         } finally {
             setLoading(false);
         }
     };
 
-    // Handle View button click
+    // Handle View button click with server-side pagination
     const handleViewReport = async (values) => {
         if (!values.fromDate || !values.toDate) {
             toast.warning("Please select both From Date and To Date");
             return;
         }
-        await fetchReportData(values);
+        
+        setCurrentFilters({
+            fromDate: values.fromDate,
+            toDate: values.toDate
+        });
+        
+        await fetchPageData(1, values);
+        setIsDataFetched(true);
     };
 
     // Handle CSV download
@@ -112,14 +109,8 @@ const CreditorsReports = () => {
             return;
         }
 
-        const filters = {
-            fromDate: values.fromDate,
-            toDate: values.toDate,
-            groupName: "Sundry Creditors"
-        };
-
         try {
-            const response = await fetch(`${DOWNLOADACCCSV_REPORT}/download?fromDate=${values.fromDate}&toDate=${values.toDate}&groupName=${encodeURIComponent(filters.groupName)}`, {
+            const response = await fetch(`${DOWNLOADSALESCSV_REPORT}/download?fromDate=${values.fromDate}&toDate=${values.toDate}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -136,7 +127,7 @@ const CreditorsReports = () => {
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", `creditors_report_${values.fromDate}_to_${values.toDate}.csv`);
+            link.setAttribute("download", `sales_report_${values.fromDate}_to_${values.toDate}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -149,94 +140,19 @@ const CreditorsReports = () => {
         }
     };
 
-    // Handle pagination - fetch new page from API
+    // Handle pagination
     const handlePageChange = async (page) => {
-        // If you have server-side pagination, fetch the new page from API
-        // You'll need to store the current filter values to fetch the correct page
-        // For now, this is a client-side pagination fix
-        
-        if (filteredData.length === 0) return;
-        
-        const startIndex = (page - 1) * pagination.itemsPerPage;
-        const endIndex = startIndex + pagination.itemsPerPage;
-        const newPageData = filteredData.slice(startIndex, endIndex);
-        
-        setCurrentPageData(newPageData);
-        setPagination(prev => ({
-            ...prev,
-            currentPage: page,
-        }));
-    };
-
-    // Alternative: If you want to fetch new page from API (recommended)
-    // Store the current filter values
-    const [currentFilters, setCurrentFilters] = useState({
-        fromDate: '',
-        toDate: ''
-    });
-    
-    // Function to fetch a specific page from API
-    const fetchPageData = async (page, filters) => {
-        if (!filters.fromDate || !filters.toDate) return;
-        
-        setLoading(true);
-        const groupName = "Sundry Creditors";
-        
-        try {
-            const response = await fetch(
-                `${DOWNLOADACCCSV_REPORT}?fromDate=${filters.fromDate}&toDate=${filters.toDate}&groupName=${encodeURIComponent(groupName)}&page=${page - 1}&size=${pagination.itemsPerPage}`,
-                {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                }
-            );
-            
-            if (!response.ok) {
-                throw new Error("Failed to fetch page data");
-            }
-            
-            const data = await response.json();
-            
-            setPagination({
-                totalItems: data?.totalElements,
-                data: data?.content,
-                totalPages: data?.totalPages,
-                currentPage: data?.number + 1,
-                itemsPerPage: data?.size,
-            });
-            
-            setCurrentPageData(data?.content || []);
-            
-        } catch (error) {
-            console.error(error);
-            toast.error("Failed to load page data");
-        } finally {
-            setLoading(false);
-        }
-    };
-    
-    // Update handlePageChange to use API pagination
-    const handlePageChangeAPI = async (page) => {
         await fetchPageData(page, currentFilters);
     };
-    
-    // Update handleViewReport to store filters and fetch first page
-    const handleViewReportAPI = async (values) => {
-        if (!values.fromDate || !values.toDate) {
-            toast.warning("Please select both From Date and To Date");
-            return;
-        }
-        
-        setCurrentFilters({
-            fromDate: values.fromDate,
-            toDate: values.toDate
-        });
-        
-        await fetchPageData(1, values);
-        setIsDataFetched(true);
+
+    // Format currency values
+    const formatCurrency = (value) => {
+        return Number(value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    };
+
+    // Format percentage values
+    const formatPercentage = (value) => {
+        return Number(value || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
     };
 
     // Render table rows
@@ -244,7 +160,7 @@ const CreditorsReports = () => {
         if (loading) {
             return (
                 <tr>
-                    <td colSpan="9" className="px-5 py-10 text-center">
+                    <td colSpan="16" className="px-5 py-10 text-center">
                         <div className="flex justify-center items-center">
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                             <span className="ml-2 text-gray-600 dark:text-gray-300">Loading...</span>
@@ -257,7 +173,7 @@ const CreditorsReports = () => {
         if (!isDataFetched) {
             return (
                 <tr>
-                    <td colSpan="9" className="px-5 py-10 text-center">
+                    <td colSpan="16" className="px-5 py-10 text-center">
                         <p className="text-gray-500 dark:text-gray-400">Select dates and click "View" to load report</p>
                     </td>
                 </tr>
@@ -267,7 +183,7 @@ const CreditorsReports = () => {
         if (!currentPageData.length) {
             return (
                 <tr>
-                    <td colSpan="9" className="px-5 py-10 text-center">
+                    <td colSpan="16" className="px-5 py-10 text-center">
                         <p className="text-gray-500 dark:text-gray-400">No data found for the selected date range</p>
                     </td>
                 </tr>
@@ -277,33 +193,66 @@ const CreditorsReports = () => {
         const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
 
         return currentPageData.map((item, index) => (
-            <tr key={item.ledgerId || index} className="hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
+            <tr key={item.id || index} className="hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-center">
                     {startingSerialNumber + index}
                 </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-900 dark:text-white">
-                    {item.ledgerName || '-'}
+                  <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
+                    {item.saleDate || '-'}
                 </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300">
-                    {item.supplierCode || '-'}
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
+                    {item.salesChannel || '-'}
                 </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300">
-                    {item.supplierName || '-'}
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
+                    {item.supplier || '-'}
                 </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300">
-                    {item.customerName || '-'}
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
+                    {item.stockGroup || '-'}
                 </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    {Number(item.openingBalance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-900 dark:text-white">
+                    {item.itemName || '-'}
                 </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    {Number(item.previousOpeningBalance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
+                    {item.partNo || '-'}
                 </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    {Number(item.totalDebitTransaction || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
+                    {item.designName || '-'}
                 </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    {Number(item.totalCreditTransaction || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
+                    {item.style || '-'}
+                </td>
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
+                    {item.size || '-'}
+                </td>
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
+                    {item.designGroup || '-'}
+                </td>
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
+                    {item.productStatus || '-'}
+                </td>
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
+                    {item.colour || '-'}
+                </td>
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right">
+                    {formatCurrency(item.qtySold)}
+                </td>
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right">
+                    {formatCurrency(item.saleValue)}
+                </td>
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right">
+                    {formatCurrency(item.costPrice)}
+                </td>
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right">
+                    {formatCurrency(item.mrp)}
+                </td>
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right">
+                    {formatPercentage(item.grossProfitPercentage)}
+                </td>
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right">
+                    {formatPercentage(item.discountPercentageOnMRP)}
+                </td>
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right">
+                    {formatCurrency(item.stockInHand)}
                 </td>
             </tr>
         ));
@@ -311,12 +260,12 @@ const CreditorsReports = () => {
 
     return (
         <DefaultLayout>
-            <Breadcrumb pageName="/Report/CreditorsReports" />
+            <Breadcrumb pageName="/Report/SalesReports" />
             <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
                 <div className="pt-5">
                     <div className='flex justify-between items-center mb-6'>
                         <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-white">
-                            Creditors Report
+                            Sales Report
                         </h2>
                         {isDataFetched && (
                             <p className="inline-flex rounded-full bg-primary bg-opacity-10 py-1 px-3 text-sm font-medium text-primary">
@@ -330,7 +279,6 @@ const CreditorsReports = () => {
                             initialValues={{
                                 fromDate: '',
                                 toDate: '',
-                                groupName: "Sundry Creditors"
                             }}
                         >
                             {({ setFieldValue, values, handleBlur }) => (
@@ -364,7 +312,7 @@ const CreditorsReports = () => {
                                     <div className="flex justify-center gap-4">
                                         <button
                                             type="button"
-                                            onClick={() => handleViewReportAPI(values)}
+                                            onClick={() => handleViewReport(values)}
                                             className="flex items-center justify-center gap-2 mb-4 md:w-[180px] w-[200px] md:h-[45px] h-[45px] rounded-lg bg-primary text-white font-medium hover:bg-opacity-90 transition-all"
                                         >
                                             <FiEye size={18} />
@@ -390,15 +338,26 @@ const CreditorsReports = () => {
                         <table className="min-w-full bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
                             <thead className="bg-gray-100 dark:bg-slate-700">
                                 <tr>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">#</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Ledger Name</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Supplier Code</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Supplier Name</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Customer Name</th>
-                                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Opening Balance</th>
-                                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Previous Opening Balance</th>
-                                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Total Debit</th>
-                                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Total Credit</th>
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">#</th>
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Sales Date</th>
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Sales Channel</th>
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Supplier</th>
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Stock Group</th>
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Item Name</th>
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Part No</th>
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Design Name</th>
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Style</th>
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Size</th>
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Design Group</th>
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Product Status</th>
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Colour</th>
+                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Qty Sold</th>
+                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Sale Value</th>
+                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Cost Price</th>
+                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">MRP</th>
+                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Gross Profit %</th>
+                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Discount % on MRP</th>
+                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Stock In Hand</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -412,7 +371,7 @@ const CreditorsReports = () => {
                                 <Pagination 
                                     totalPages={pagination.totalPages} 
                                     currentPage={pagination.currentPage} 
-                                    handlePageChange={handlePageChangeAPI} 
+                                    handlePageChange={handlePageChange} 
                                 />
                             </div>
                         )}
@@ -423,4 +382,4 @@ const CreditorsReports = () => {
     )
 }
 
-export default CreditorsReports
+export default SalesReports

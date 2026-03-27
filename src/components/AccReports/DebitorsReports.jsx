@@ -25,6 +25,7 @@ const DebitorsReports = () => {
     const [reportData, setReportData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [isDataFetched, setIsDataFetched] = useState(false);
+    const [currentPageData, setCurrentPageData] = useState([]);
 
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
@@ -40,55 +41,72 @@ const DebitorsReports = () => {
         itemsPerPage: 10,
     });
 
-    // Function to fetch report data
-    const fetchReportData = async (values) => {
+    // Store current filters for pagination
+    const [currentFilters, setCurrentFilters] = useState({
+        fromDate: '',
+        toDate: ''
+    });
+
+    // Function to fetch a specific page from API
+    const fetchPageData = async (page, filters) => {
+        if (!filters.fromDate || !filters.toDate) return;
+        
         setLoading(true);
-        const groupName = "Sundry Debitors"
+        const groupName = "Sundry Debitors";
+        
         try {
-            // Replace with your actual API endpoint
-            const response = await fetch(`${DOWNLOADACCCSV_REPORT}?fromDate=${values.fromDate}&toDate=${values.toDate}&groupName=${encodeURIComponent(groupName)}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
+            const response = await fetch(
+                `${DOWNLOADACCCSV_REPORT}?fromDate=${filters.fromDate}&toDate=${filters.toDate}&groupName=${encodeURIComponent(groupName)}&page=${page - 1}&size=${pagination.itemsPerPage}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            
             if (!response.ok) {
-                throw new Error("Failed to fetch report data");
+                throw new Error("Failed to fetch page data");
             }
-            console.log(response, "response");
+            
             const data = await response.json();
-            console.log(data, "ll");
-
-            setReportData(data);
-            setFilteredData(data);
-            setPagination(prev => ({
-                ...prev,
-                totalItems: data.length,
-                totalPages: Math.ceil(data.length / prev.itemsPerPage),
-                currentPage: 1,
-                data: data.slice(0, prev.itemsPerPage)
-            }));
-            setIsDataFetched(true);
-            toast.success("Report loaded successfully");
+            
+            setReportData(data.content || []);
+            setFilteredData(data.content || []);
+            setCurrentPageData(data.content || []);
+            
+            setPagination({
+                totalItems: data?.totalElements || 0,
+                data: data?.content || [],
+                totalPages: data?.totalPages || 0,
+                currentPage: (data?.number || 0) + 1,
+                itemsPerPage: data?.size || 10,
+            });
+            
         } catch (error) {
             console.error(error);
-            toast.error("An error occurred while fetching the report");
-            setReportData([]);
-            setFilteredData([]);
+            toast.error("Failed to load page data");
+            setCurrentPageData([]);
         } finally {
             setLoading(false);
         }
     };
 
-    // Handle View button click
+    // Handle View button click with server-side pagination
     const handleViewReport = async (values) => {
         if (!values.fromDate || !values.toDate) {
             toast.warning("Please select both From Date and To Date");
             return;
         }
-        await fetchReportData(values);
+        
+        setCurrentFilters({
+            fromDate: values.fromDate,
+            toDate: values.toDate
+        });
+        
+        await fetchPageData(1, values);
+        setIsDataFetched(true);
     };
 
     // Handle CSV download
@@ -136,14 +154,8 @@ const DebitorsReports = () => {
     };
 
     // Handle pagination
-    const handlePageChange = (page) => {
-        const startIndex = (page - 1) * pagination.itemsPerPage;
-        const endIndex = startIndex + pagination.itemsPerPage;
-        setPagination(prev => ({
-            ...prev,
-            currentPage: page,
-            data: filteredData.slice(startIndex, endIndex)
-        }));
+    const handlePageChange = async (page) => {
+        await fetchPageData(page, currentFilters);
     };
 
     // Render table rows
@@ -171,7 +183,7 @@ const DebitorsReports = () => {
             );
         }
 
-        if (!filteredData.length) {
+        if (!currentPageData.length) {
             return (
                 <tr>
                     <td colSpan="9" className="px-5 py-10 text-center">
@@ -183,7 +195,7 @@ const DebitorsReports = () => {
 
         const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
 
-        return pagination.data.map((item, index) => (
+        return currentPageData.map((item, index) => (
             <tr key={item.ledgerId || index} className="hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
                 <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
                     {startingSerialNumber + index}
@@ -227,7 +239,7 @@ const DebitorsReports = () => {
                         </h2>
                         {isDataFetched && (
                             <p className="inline-flex rounded-full bg-primary bg-opacity-10 py-1 px-3 text-sm font-medium text-primary">
-                                TOTAL RECORDS: {filteredData.length}
+                                TOTAL RECORDS: {pagination.totalItems}
                             </p>
                         )}
                     </div>
@@ -314,9 +326,13 @@ const DebitorsReports = () => {
                         </table>
 
                         {/* Pagination */}
-                        {isDataFetched && filteredData.length > 0 && (
+                        {isDataFetched && pagination.totalItems > 0 && (
                             <div className="mt-4">
-                               <Pagination totalPages={pagination.totalPages} currentPage={pagination.currentPage} handlePageChange={handlePageChange} />
+                                <Pagination 
+                                    totalPages={pagination.totalPages} 
+                                    currentPage={pagination.currentPage} 
+                                    handlePageChange={handlePageChange} 
+                                />
                             </div>
                         )}
                     </div>

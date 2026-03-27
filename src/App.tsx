@@ -198,6 +198,8 @@ import RetailWholeSaleReport from './components/Reports/RetailWholesaleReport.js
 
 import CreditorsReports from './components/AccReports/CreditorsReports.jsx';
 import DebitorsReports from './components/AccReports/DebitorsReports.jsx';
+import SalesReports from './components/AccReports/SalesReports.jsx';
+
 import FinanceReportByDate from './components/Reports/FinanceReportByDate.jsx';
 
 
@@ -849,6 +851,16 @@ function App() {
               <>
                 <PageTitle title="Debitors Report" />
                 <DebitorsReports />
+              </>
+            }
+          />
+
+           <Route
+            path="/accReport/Sales"
+            element={
+              <>
+                <PageTitle title="Sales Report" />
+                <SalesReports />
               </>
             }
           />
