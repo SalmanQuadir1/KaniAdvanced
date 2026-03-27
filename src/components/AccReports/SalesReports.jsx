@@ -37,7 +37,7 @@ const SalesReports = () => {
 
     // Store current filter values
     const [currentFilters, setCurrentFilters] = useState({
-        fromDate: new Date().toISOString().split('T')[], 
+        fromDate: '', 
         toDate: '' 
     });
 
