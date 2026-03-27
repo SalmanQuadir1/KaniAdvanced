@@ -314,11 +314,7 @@ const CreditorsReports = () => {
                         {/* Pagination */}
                         {isDataFetched && filteredData.length > 0 && (
                             <div className="mt-4">
-                                <Pagination
-                                    currentPage={pagination.currentPage}
-                                    totalPages={pagination.totalPages}
-                                    onPageChange={handlePageChange}
-                                />
+                               <Pagination totalPages={pagination.totalPages} currentPage={pagination.currentPage} handlePageChange={handlePageChange} />
                             </div>
                         )}
                     </div>
