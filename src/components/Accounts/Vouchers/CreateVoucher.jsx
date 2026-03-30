@@ -603,12 +603,20 @@ const CreateVoucher = () => {
     };
 
     const calculateLineTotal = (entry) => {
-        // Use finalPrice (which includes GST) multiplied by quantity
-        console.log(entry, "lllllllllllllll");
-
-        const finalPrice = entry.gstCalculation?.finalPrice || entry.mrp || 0;
+        // Calculate base price (excl. GST) * quantity
+        const basePrice = entry.gstCalculation?.basePrice || 0;
         const quantity = entry.quantity || 1;
-        return (finalPrice * quantity).toFixed(2);
+        const discount = entry.discount || 0;
+
+        // Apply discount to base price
+        const discountedBasePrice = basePrice * (1 - discount / 100);
+        const baseTotal = discountedBasePrice * quantity;
+
+        // Add GST amount
+        const gstAmount = (entry.gstCalculation?.totalGstAmount || 0) * quantity;
+        const finalTotal = baseTotal + gstAmount;
+
+        return finalTotal.toFixed(2);
     };
 
     const calculateLineTotalForPur = (entry) => {
@@ -632,39 +640,54 @@ const CreateVoucher = () => {
         let totalMRP = 0;
         let totalQuantity = 0;
         let totalBasePrice = 0;
+        let totalDiscountedBasePrice = 0;
 
         values.paymentDetails.forEach(entry => {
-            // Calculate line total based on exclusiveGst or fallback to mrp
-            const lineTotal = parseFloat(entry.exclusiveGst || entry.mrp || 0) * (entry.quantity || 1);
-            subtotal += lineTotal;
-
-            // Calculate MRP total
-            const mrpTotal = (entry.mrp || 0) * (entry.quantity || 1);
-            totalMRP += mrpTotal;
-
             const basePrice = entry.gstCalculation?.basePrice || 0;
-            const basePriceTotal = basePrice * (entry.quantity || 1);
+            const discount = entry.discount || 0;
+            const quantity = entry.quantity || 1;
+
+            // Calculate discounted base price
+            const discountedBasePrice = basePrice * (1 - discount / 100);
+            const discountedBaseTotal = discountedBasePrice * quantity;
+
+            // Calculate base price total (without discount)
+            const basePriceTotal = basePrice * quantity;
             totalBasePrice += basePriceTotal;
 
+            // Calculate discount amount
+            const discountAmount = (basePrice * discount / 100) * quantity;
+            totalDiscount += discountAmount;
+
+            // Calculate MRP total
+            const mrpTotal = (entry.mrp || 0) * quantity;
+            totalMRP += mrpTotal;
+
             // Calculate total quantity
-            totalQuantity += (entry.quantity || 1);
+            totalQuantity += quantity;
 
-            // Calculate discount amount (only for Sales)
-            if (Vouchers?.typeOfVoucher === "Sales" && entry.discount > 0) {
-                const discountAmount = (entry.mrp * (entry.discount / 100)) * (entry.quantity || 1);
-                totalDiscount += discountAmount;
-            }
-
-            // Add GST amounts if they exist
+            // Calculate GST amounts (GST is on base price before discount)
             if (entry.gstCalculation) {
                 if (entry.gstCalculation.type === 'CGST+SGST') {
-                    totalCGST += (entry.gstCalculation.cgstAmount || 0) * (entry.quantity || 1);
-                    totalSGST += (entry.gstCalculation.sgstAmount || 0) * (entry.quantity || 1);
+                    const cgstAmount = (entry.gstCalculation.cgstAmount || 0) * quantity;
+                    const sgstAmount = (entry.gstCalculation.sgstAmount || 0) * quantity;
+                    totalCGST += cgstAmount;
+                    totalSGST += sgstAmount;
+                    totalGST += (cgstAmount + sgstAmount);
                 } else if (entry.gstCalculation.type === 'IGST') {
-                    totalIGST += (entry.gstCalculation.gstAmount || 0) * (entry.quantity || 1);
+                    const igstAmount = (entry.gstCalculation.gstAmount || 0) * quantity;
+                    totalIGST += igstAmount;
+                    totalGST += igstAmount;
                 }
-                totalGST += (entry.gstCalculation.totalGstAmount || 0) * (entry.quantity || 1);
             }
+
+            // Calculate subtotal (discounted base price + GST)
+            const gstAmount = (entry.gstCalculation?.totalGstAmount || 0) * quantity;
+            const lineTotal = discountedBaseTotal + gstAmount;
+            subtotal += lineTotal;
+
+            // Track discounted base price total for summary
+            totalDiscountedBasePrice += discountedBaseTotal;
         });
 
         grandTotal = subtotal;
@@ -679,7 +702,8 @@ const CreateVoucher = () => {
             grandTotal: grandTotal.toFixed(2),
             totalMRP: totalMRP.toFixed(2),
             totalQuantity: totalQuantity,
-            totalBasePrice: totalBasePrice.toFixed(2)
+            totalBasePrice: totalBasePrice.toFixed(2),
+            totalDiscountedBasePrice: totalDiscountedBasePrice.toFixed(2)
         };
     };
 
@@ -1832,12 +1856,14 @@ const CreateVoucher = () => {
                             // Calculate total GST rate
                             const totalGstRate = igstRate || (cgstRate + sgstRate);
 
-                            // Calculate base price (exclusive of GST)
-                            // Formula: Base Price = MRP / (1 + GST rate/100)
+                            // Calculate base price (exclusive of GST) - THIS SHOULD NOT CHANGE WITH DISCOUNT
                             const basePrice = mrp / (1 + (totalGstRate / 100));
 
-                            // Apply discount on base price if applicable
-                            const discountedBasePrice = discount > 0 ? basePrice * (1 - discount / 100) : basePrice;
+                            // Calculate GST amount based on base price (without discount)
+                            let cgstAmount = 0;
+                            let sgstAmount = 0;
+                            let gstAmount = 0;
+                            let totalGstAmount = 0;
 
                             // Normalize state codes
                             const registrationCode = String(gstRegistration || '').trim();
@@ -1875,27 +1901,30 @@ const CreateVoucher = () => {
                                 (registrationStateCode === '01' || registrationStateCode === '07');
 
                             if (isSameState) {
-                                // Same state - apply CGST + SGST on discounted base price
-                                const cgstAmount = discountedBasePrice * (cgstRate / 100);
-                                const sgstAmount = discountedBasePrice * (sgstRate / 100);
-                                const totalGstAmount = cgstAmount + sgstAmount;
-                                const finalPrice = discountedBasePrice + totalGstAmount;
+                                // Same state - apply CGST + SGST on base price (without discount)
+                                cgstAmount = basePrice * (cgstRate / 100);
+                                sgstAmount = basePrice * (sgstRate / 100);
+                                totalGstAmount = cgstAmount + sgstAmount;
 
                                 if (typeof setgsttype === 'function') {
                                     setgsttype("SGST+CGST");
                                 }
+
+                                // Calculate final price after discount
+                                const discountedBasePrice = discount > 0 ? basePrice * (1 - discount / 100) : basePrice;
+                                const finalPrice = discountedBasePrice + totalGstAmount;
 
                                 return {
                                     type: 'CGST+SGST',
                                     cgstRate,
                                     sgstRate,
                                     igstRate: 0,
-                                    basePrice: discountedBasePrice,
+                                    basePrice: basePrice, // This stays as original base price (excl. GST)
                                     cgstAmount,
                                     sgstAmount,
                                     gstAmount: 0,
                                     totalGstAmount,
-                                    finalPrice, // This should equal MRP after discount
+                                    finalPrice,
                                     originalMrp: mrp,
                                     discountedPrice: discountedBasePrice,
                                     discountApplied: discount > 0,
@@ -1907,24 +1936,28 @@ const CreateVoucher = () => {
                                     usedShippingState: newShippingStateCode ? 'newShippingState' : 'customerState'
                                 };
                             } else {
-                                // Different state - apply IGST on discounted base price
-                                const gstAmount = discountedBasePrice * (igstRate / 100);
-                                const finalPrice = discountedBasePrice + gstAmount;
+                                // Different state - apply IGST on base price (without discount)
+                                gstAmount = basePrice * (igstRate / 100);
+                                totalGstAmount = gstAmount;
 
                                 if (typeof setgsttype === 'function') {
                                     setgsttype("IGST");
                                 }
+
+                                // Calculate final price after discount
+                                const discountedBasePrice = discount > 0 ? basePrice * (1 - discount / 100) : basePrice;
+                                const finalPrice = discountedBasePrice + totalGstAmount;
 
                                 return {
                                     type: 'IGST',
                                     igstRate,
                                     cgstRate: 0,
                                     sgstRate: 0,
-                                    basePrice: discountedBasePrice,
+                                    basePrice: basePrice, // This stays as original base price (excl. GST)
                                     gstAmount,
                                     cgstAmount: 0,
                                     sgstAmount: 0,
-                                    totalGstAmount: gstAmount,
+                                    totalGstAmount,
                                     finalPrice,
                                     originalMrp: mrp,
                                     discountedPrice: discountedBasePrice,
@@ -2068,8 +2101,11 @@ const CreateVoucher = () => {
 
                             const totalBasePrice = parseFloat(totals.totalBasePrice) || 0;
 
-                            setFieldValue('totalWithoutgst', totalBasePrice);
-                        }, [totals.totalBasePrice, setFieldValue]);
+
+                            const totalDiscount = parseFloat(totals.totalDiscount) || 0;
+
+                            setFieldValue('totalWithoutgst', totalBasePrice - totalDiscount);
+                        }, [totals.totalBasePrice, totals.totalDiscount, setFieldValue]);
 
 
                         return (
@@ -2624,11 +2660,12 @@ const CreateVoucher = () => {
                                                                             {[
                                                                                 "Product",
                                                                                 "View Inventory",
-                                                                                "MRP (Inc. GST)",
-                                                                                ...(Vouchers?.typeOfVoucher === "Sales" ? ["Base Price (Excl. GST)", "GST Amount", "Discount %"] : []),
-                                                                                ...(Vouchers?.typeOfVoucher === "Purchase" ? ["Purchase Price"] : []),
                                                                                 "Quantity",
-                                                                                "Total (Inc. GST)",
+                                                                                "MRP",
+                                                                                ...(Vouchers?.typeOfVoucher === "Sales" ? ["Rate", "Discount %"] : []),
+                                                                                ...(Vouchers?.typeOfVoucher === "Purchase" ? ["Purchase Price"] : []),
+
+                                                                                "Total Value",
                                                                                 "GST Type",
                                                                                 "Action"
                                                                             ].map((header, i) => (
@@ -2743,6 +2780,34 @@ const CreateVoucher = () => {
                                                                                         </div>
                                                                                     </td>
 
+                                                                                    {/* Quantity */}
+                                                                                    <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
+                                                                                        <Field
+                                                                                            type="number"
+                                                                                            name={`paymentDetails.${index}.quantity`}
+                                                                                            placeholder="1"
+                                                                                            min="1"
+                                                                                            step="1"
+                                                                                            className="w-full py-2 px-3 text-sm rounded border focus:border-primary"
+                                                                                            onChange={(e) => {
+                                                                                                const quantity = parseFloat(e.target.value) || 1;
+                                                                                                setFieldValue(`paymentDetails.${index}.quantity`, quantity);
+                                                                                                setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
+                                                                                                    ...entry,
+                                                                                                    quantity: quantity
+                                                                                                }));
+                                                                                                setFieldValue(`paymentDetails.${index}.voucherAmount`, calculateLineTotal({
+                                                                                                    ...entry,
+                                                                                                    quantity: quantity
+                                                                                                }));
+                                                                                            }}
+                                                                                        />
+                                                                                    </td>
+
+
+
+
+
                                                                                     {/* MRP (Inc. GST) */}
                                                                                     <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
                                                                                         <Field
@@ -2768,7 +2833,7 @@ const CreateVoucher = () => {
                                                                                         </td>
                                                                                     )}
 
-                                                                                    {/* GST Amount - NEW COLUMN */}
+                                                                                    {/* GST Amount - NEW COLUMN
                                                                                     {Vouchers?.typeOfVoucher === "Sales" && (
                                                                                         <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
                                                                                             <Field
@@ -2780,7 +2845,7 @@ const CreateVoucher = () => {
                                                                                                 className="w-full bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm rounded border"
                                                                                             />
                                                                                         </td>
-                                                                                    )}
+                                                                                    )} */}
 
                                                                                     {/* Discount % */}
                                                                                     {Vouchers?.typeOfVoucher === "Sales" && (
@@ -2794,22 +2859,18 @@ const CreateVoucher = () => {
                                                                                                 step="1"
                                                                                                 className="w-full py-2 px-3 text-sm rounded border focus:border-primary"
                                                                                                 onChange={(e) => {
-                                                                                                    const discount = parseFloat(e.target.value) || 0;
+                                                                                                    let discount = parseFloat(e.target.value) || 0;
 
                                                                                                     // Validate discount doesn't exceed 100%
                                                                                                     if (discount > 100) {
                                                                                                         toast.warning("Discount cannot exceed 100%");
+                                                                                                        discount = 100;
                                                                                                         setFieldValue(`paymentDetails.${index}.discount`, 100);
-
-                                                                                                        // setFieldValue("totalWithoutgst",totals.totalMRP-totals.discountAmount)
-
                                                                                                     } else {
                                                                                                         setFieldValue(`paymentDetails.${index}.discount`, discount);
-                                                                                                        // setFieldValue("totalWithoutgst",totals.totalMRP-totals.discountAmount)
-
                                                                                                     }
 
-                                                                                                    // Recalculate GST when discount changes
+                                                                                                    // Recalculate when discount changes
                                                                                                     if (entry.productsId) {
                                                                                                         const mrp = entry.mrp || 0;
                                                                                                         const hsnCode = (availableProducts.find(p => p.value === entry.productsId) ||
@@ -2824,25 +2885,24 @@ const CreateVoucher = () => {
                                                                                                             hsnCode,
                                                                                                             gstRegistration,
                                                                                                             customerAddress,
-                                                                                                            discount > 100 ? 100 : discount,
+                                                                                                            discount,
                                                                                                             customerState
                                                                                                         );
 
                                                                                                         setFieldValue(`paymentDetails.${index}.gstCalculation`, gstCalculation);
                                                                                                         setFieldValue(`paymentDetails.${index}.gstAmount`, gstCalculation.totalGstAmount);
-                                                                                                        setFieldValue(`paymentDetails.${index}.exclusiveGst`, gstCalculation.inclusivePrice);
-                                                                                                        setFieldValue(`paymentDetails.${index}.rate`, gstCalculation.inclusivePrice);
+                                                                                                        setFieldValue(`paymentDetails.${index}.exclusiveGst`, gstCalculation.finalPrice);
+                                                                                                        setFieldValue(`paymentDetails.${index}.rate`, gstCalculation.finalPrice);
 
-                                                                                                        // Update value with new calculation
-                                                                                                        const lineTotal = calculateLineTotal({
-                                                                                                            ...entry,
-                                                                                                            exclusiveGst: gstCalculation.inclusivePrice,
-                                                                                                            rate: gstCalculation.inclusivePrice,
-                                                                                                            quantity: entry.quantity || 1
-                                                                                                        });
+                                                                                                        // Calculate new line total with discount
+                                                                                                        const basePrice = gstCalculation.basePrice;
+                                                                                                        const discountedBasePrice = basePrice * (1 - discount / 100);
+                                                                                                        const quantity = entry.quantity || 1;
+                                                                                                        const gstAmount = gstCalculation.totalGstAmount;
+                                                                                                        const lineTotal = (discountedBasePrice + gstAmount) * quantity;
 
-                                                                                                        setFieldValue(`paymentDetails.${index}.value`, lineTotal);
-                                                                                                        setFieldValue(`paymentDetails.${index}.voucherAmount`, lineTotal);
+                                                                                                        setFieldValue(`paymentDetails.${index}.value`, lineTotal.toFixed(2));
+                                                                                                        setFieldValue(`paymentDetails.${index}.voucherAmount`, lineTotal.toFixed(2));
                                                                                                     }
                                                                                                 }}
                                                                                             />
@@ -2850,36 +2910,21 @@ const CreateVoucher = () => {
                                                                                         </td>
                                                                                     )}
 
-                                                                                    {/* Quantity */}
-                                                                                    <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
-                                                                                        <Field
-                                                                                            type="number"
-                                                                                            name={`paymentDetails.${index}.quantity`}
-                                                                                            placeholder="1"
-                                                                                            min="1"
-                                                                                            step="1"
-                                                                                            className="w-full py-2 px-3 text-sm rounded border focus:border-primary"
-                                                                                            onChange={(e) => {
-                                                                                                const quantity = parseFloat(e.target.value) || 1;
-                                                                                                setFieldValue(`paymentDetails.${index}.quantity`, quantity);
-                                                                                                setFieldValue(`paymentDetails.${index}.value`, calculateLineTotal({
-                                                                                                    ...entry,
-                                                                                                    quantity: quantity
-                                                                                                }));
-                                                                                                setFieldValue(`paymentDetails.${index}.voucherAmount`, calculateLineTotal({
-                                                                                                    ...entry,
-                                                                                                    quantity: quantity
-                                                                                                }));
-                                                                                            }}
-                                                                                        />
-                                                                                    </td>
 
-                                                                                    {/* Total (Inc. GST) */}
+
+
                                                                                     <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark font-medium">
                                                                                         <Field
                                                                                             type="number"
                                                                                             name={`paymentDetails.${index}.value`}
-                                                                                            value={calculateLineTotal(entry)}
+                                                                                            value={(() => {
+                                                                                                const basePrice = entry.gstCalculation?.basePrice || 0;
+                                                                                                const discount = entry.discount || 0;
+                                                                                                const quantity = entry.quantity || 1;
+                                                                                                const discountedBasePrice = basePrice * (1 - discount / 100);
+                                                                                                const gstAmount = entry.gstCalculation?.totalGstAmount || 0;
+                                                                                                return ((discountedBasePrice) * quantity).toFixed(2);
+                                                                                            })()}
                                                                                             readOnly
                                                                                             className="w-full bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm rounded border"
                                                                                         />
@@ -3172,432 +3217,85 @@ const CreateVoucher = () => {
 
                                                             {/* GST Summary */}
                                                             {Vouchers?.typeOfVoucher === "Sales" && (
-                                                                <>
-                                                                    <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                                                                        <h4 className="text-lg font-semibold mb-3 text-black dark:text-white">GST Summary</h4>
-                                                                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-sm">
-
-                                                                            <div>
-                                                                                <p className="text-gray-600 dark:text-gray-400">Total Base Price (Excl. GST)</p>
-                                                                                <p className="font-medium text-black dark:text-white">₹{totals.totalBasePrice}</p>
-                                                                            </div>
-                                                                            <div>
-                                                                                <p className="text-gray-600 dark:text-gray-400">Total MRP</p>
-                                                                                <p className="font-medium text-black dark:text-white">₹{totals.totalMRP}</p>
-                                                                            </div>
-
-
-
-                                                                            <div>
-                                                                                <p className="text-gray-600 dark:text-gray-400">Total Quantity</p>
-                                                                                <p className="font-medium text-black dark:text-white">{totals.totalQuantity}</p>
-                                                                            </div>
-                                                                            {totals.totalDiscount > 0 && (
-                                                                                <div>
-                                                                                    <p className="text-gray-600 dark:text-gray-400">Total Discount</p>
-                                                                                    <p className="font-medium text-red-600">-₹{totals.totalDiscount}</p>
-                                                                                </div>
-                                                                            )}
-                                                                            {totals.totalCGST > 0 && (
-                                                                                // <div>
-                                                                                //     <p className="text-gray-600 dark:text-gray-400">CGST</p>
-                                                                                //     <p className="font-medium text-black dark:text-white">₹{totals.totalCGST}</p>
-                                                                                // </div>
-
-                                                                                <div className='flex flex-col'>
-                                                                                    <p className="text-gray-600 dark:text-gray-400">CGST</p>
-                                                                                    <Field
-                                                                                        type="number"
-                                                                                        name="totalCgst"
-                                                                                        value={totals.totalCGST}
-                                                                                        placeholder="0.00"
-                                                                                        readOnly
-                                                                                        className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
-                                                                                    />
-                                                                                </div>
-                                                                            )}
-                                                                            {totals.totalSGST > 0 && (
-                                                                                // <div>
-                                                                                //     <p className="text-gray-600 dark:text-gray-400">SGST</p>
-                                                                                //     <p className="font-medium text-black dark:text-white">₹{totals.totalSGST}</p>
-                                                                                // </div>
-
-                                                                                <div className='flex flex-col'>
-                                                                                    <p className="text-gray-600 dark:text-gray-400">SGST</p>
-                                                                                    <Field
-                                                                                        type="number"
-                                                                                        name="totalSgst"
-                                                                                        value={totals.totalSGST}
-                                                                                        placeholder="0.00"
-                                                                                        readOnly
-                                                                                        className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
-                                                                                    />
-                                                                                </div>
-                                                                            )}
-                                                                            {totals.totalIGST > 0 && (
-                                                                                // <div>
-                                                                                //     <p className="text-gray-600 dark:text-gray-400">IGST</p>
-                                                                                //     <p className="font-medium text-black dark:text-white">₹{totals.totalIGST}</p>
-                                                                                // </div>
-
-                                                                                <div className='flex flex-col'>
-                                                                                    <p className="text-gray-600 dark:text-gray-400">IGST</p>
-                                                                                    <Field
-                                                                                        type="number"
-                                                                                        name="totalIgst"
-                                                                                        value={totals.totalIGST}
-                                                                                        placeholder="0.00"
-                                                                                        readOnly
-                                                                                        className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
-                                                                                    />
-                                                                                </div>
-                                                                            )}
-                                                                            <div>
-                                                                                <p className="text-gray-600 dark:text-gray-400">Total GST</p>
-                                                                                <p className="font-medium text-black dark:text-white">₹{totals.totalGST}</p>
-                                                                            </div>
-                                                                            {/* <div>
-                                                                            <p className="text-gray-600 dark:text-gray-400">Grand Total</p>
-                                                                            <p className="font-medium text-lg text-primary">₹{totals?.subtotal}</p>
+                                                                <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                                                    <h4 className="text-lg font-semibold mb-3 text-black dark:text-white">GST Summary</h4>
+                                                                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-sm">
+                                                                        {/* <div>
+                                                                            <p className="text-gray-600 dark:text-gray-400">Total Base Price (Excl. GST)</p>
+                                                                            <p className="font-medium text-black dark:text-white">₹{totals.totalBasePrice}</p>
                                                                         </div> */}
-
-
+                                                                        {/* <div>
+                                                                            <p className="text-gray-600 dark:text-gray-400">Total Discount</p>
+                                                                            <p className="font-medium text-red-600">-₹{totals.totalDiscount}</p>
+                                                                        </div> */}
+                                                                        <div>
+                                                                            <p className="text-gray-600 dark:text-gray-400">Total (Excl. GST)</p>
+                                                                            <p className="font-medium text-black dark:text-white">₹{(parseFloat(totals.totalBasePrice) - parseFloat(totals.totalDiscount)).toFixed(2)}</p>
                                                                         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                                                        {
-                                                                            Vouchers?.posInvoicing && (
-
-                                                                                <>
-
-                                                                                    <div className='flex gap-2 mt-4'>
-                                                                                        <div className="flex-1 min-w-[250px]">
-                                                                                            <label className="mb-2.5 block text-black dark:text-white">Discount</label>
-                                                                                            <ReactSelect
-                                                                                                name='discountLedgerId'
-                                                                                                value={discountData.find(opt => opt.value === values.discountLedgerId)}
-                                                                                                // onChange={handleDestinationLedgerChange}
-                                                                                                onChange={(option) => {
-                                                                                                    setFieldValue('discountLedgerId', option?.value);
-                                                                                                }}
-
-
-                                                                                                options={discountData}
-                                                                                                className="react-select-container bg-white dark:bg-form-Field w-full"
-                                                                                                classNamePrefix="react-select"
-                                                                                                placeholder="Select Discount"
-                                                                                                menuPortalTarget={document.body}
-                                                                                                styles={{
-                                                                                                    ...customStyles,
-                                                                                                    menuPortal: (base) => ({ ...base, zIndex: 100000 })
-                                                                                                }}
-
-                                                                                            />
-                                                                                            <ErrorMessage name="destinationledgerId" component="div" className="text-red-500 text-xs mt-1" />
-
-                                                                                        </div>
-                                                                                        <div className="flex-1 min-w-[250px]">
-                                                                                            <p className="text-gray-600 dark:text-gray-400">Discount Amount</p>
-                                                                                            <Field
-                                                                                                type="number"
-                                                                                                name="discountAmount"
-
-                                                                                                onChange={(e) => {
-                                                                                                    const discountAmount = parseFloat(e.target.value) || 0;
-                                                                                                    setFieldValue('discountAmount', discountAmount);
-
-                                                                                                    // Calculate new grand total (subtotal - discount)
-                                                                                                    const newGrandTotal = totals.subtotal - discountAmount;
-                                                                                                    setFieldValue('totalAmount', newGrandTotal >= 0 ? newGrandTotal : 0);
-                                                                                                }}
-                                                                                                // value={totals?.subtotal}
-                                                                                                placeholder="0.00"
-
-                                                                                                className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
-                                                                                            />
-                                                                                        </div>
-
-                                                                                        <div className='flex gap-2 mt-4'>
-                                                                                            <div className="flex-1 min-w-[250px]">
-                                                                                                <label className="mb-2.5 block text-black dark:text-white">Round Off</label>
-                                                                                                <ReactSelect
-                                                                                                    name='roundOffLedgerId'
-                                                                                                    value={roundOffData.find(opt => opt.value === values.roundOffLedgerId)}
-                                                                                                    onChange={(option) => {
-                                                                                                        setFieldValue('roundOffLedgerId', option?.value);
-                                                                                                    }}
-                                                                                                    options={roundOffData}
-                                                                                                    className="react-select-container bg-white dark:bg-form-Field w-full"
-                                                                                                    classNamePrefix="react-select"
-                                                                                                    placeholder="Select roundOff"
-                                                                                                    menuPortalTarget={document.body}
-                                                                                                    styles={{
-                                                                                                        ...customStyles,
-                                                                                                        menuPortal: (base) => ({ ...base, zIndex: 100000 })
-                                                                                                    }}
-                                                                                                />
-                                                                                                <ErrorMessage name="roundOffLedgerId" component="div" className="text-red-500 text-xs mt-1" />
-                                                                                            </div>
-
-                                                                                            <div className="flex-1 min-w-[250px]">
-                                                                                                <p className="text-gray-600 dark:text-gray-400">Round Off</p>
-                                                                                                <Field
-                                                                                                    type="number"
-                                                                                                    name="roundOffAmount"
-                                                                                                    onChange={(e) => {
-                                                                                                        const roundOffAmount = parseFloat(e.target.value) || 0;
-                                                                                                        setFieldValue('roundOffAmount', roundOffAmount);
-
-                                                                                                        // Recalculate grand total with discount and round off
-                                                                                                        const discountAmount = parseFloat(values.discountAmount) || 0;
-                                                                                                        const newGrandTotal = totals.subtotal - roundOffAmount;
-                                                                                                        console.log(totals.subtotal, newGrandTotal, "5656");
-
-                                                                                                        setFieldValue('totalAmount', newGrandTotal >= 0 ? newGrandTotal : 0);
-                                                                                                    }}
-                                                                                                    placeholder="0.00"
-                                                                                                    className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
-                                                                                                />
-                                                                                            </div>
-                                                                                        </div>
-
-
-
-
-
-                                                                                    </div>
-
-                                                                                    <div className='flex'>
-
-                                                                                        <div className="flex-1 min-w-[250px]">
-                                                                                            <label className="mb-2.5 block text-black dark:text-white">Courrier Ledger</label>
-                                                                                            <ReactSelect
-                                                                                                name='courrierLedgerId'
-                                                                                                value={courrierData.find(opt => opt.value === values.courrierLedgerId)}
-                                                                                                onChange={(option) => {
-                                                                                                    setFieldValue('courrierLedgerId', option?.value);
-                                                                                                }}
-                                                                                                options={courrierData}
-                                                                                                className="react-select-container bg-white dark:bg-form-Field w-full"
-                                                                                                classNamePrefix="react-select"
-                                                                                                placeholder="Select Courrier"
-                                                                                                menuPortalTarget={document.body}
-                                                                                                styles={{
-                                                                                                    ...customStyles,
-                                                                                                    menuPortal: (base) => ({ ...base, zIndex: 100000 })
-                                                                                                }}
-                                                                                            />
-                                                                                            <ErrorMessage name="courrierLedgerId" component="div" className="text-red-500 text-xs mt-1" />
-                                                                                        </div>
-
-                                                                                        <div className="flex-1 min-w-[250px]">
-                                                                                            <p className="text-gray-600 dark:text-gray-400">Courrier Amount</p>
-                                                                                            <Field
-                                                                                                type="number"
-                                                                                                name="courrierAmount"
-                                                                                                onChange={(e) => {
-                                                                                                    const courrierAmount = parseFloat(e.target.value) || 0;
-                                                                                                    setFieldValue('courrierAmount', courrierAmount);
-
-                                                                                                    // Recalculate grand total with all adjustments
-                                                                                                    const discountAmount = parseFloat(values.discountAmount) || 0;
-                                                                                                    const roundOffAmount = parseFloat(values.roundOffAmount) || 0;
-                                                                                                    const newGrandTotal = totals.subtotal - discountAmount + roundOffAmount + courrierAmount;
-                                                                                                    setFieldValue('totalAmount', newGrandTotal >= 0 ? newGrandTotal : 0);
-                                                                                                }}
-                                                                                                placeholder="0.00"
-                                                                                                className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
-                                                                                            />
-                                                                                        </div>
-                                                                                    </div>
-
-
-
-
-
-
-
-
-                                                                                    <div className='flex flex-end justify-end'>
-
-                                                                                        <div className='flex flex-col'>
-                                                                                            <p className="text-gray-600 dark:text-gray-400">Grand Total</p>
-                                                                                            <Field
-                                                                                                type="number"
-                                                                                                name="totalAmount"
-                                                                                                value={calculateGrandTotalWithAdjustments(values, totals)}
-                                                                                                placeholder="0.00"
-                                                                                                readOnly
-                                                                                                className="w-full bg-gray-50 dark:bg-slate-800  text-sm rounded border"
-                                                                                            />
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div className='flex gap-5 mt-4'>
-                                                                                        <div className="min-w-[250px]">
-                                                                                            <label className="mb-2.5 block text-black dark:text-white">Currency (Optional)</label>
-                                                                                            <ReactSelect
-                                                                                                name="currency"
-                                                                                                value={currencies.find(option => option.value === values.currency)}
-                                                                                                onChange={(option) => {
-                                                                                                    setFieldValue('currency', option.value);
-                                                                                                    // Auto-calculate currency value when currency changes
-                                                                                                    if (values.currencyValue && totals?.subtotal) {
-                                                                                                        const calculatedValue = totals.subtotal / values.currencyValue;
-                                                                                                        setFieldValue('totalCurrencyValue', calculatedValue.toFixed(2));
-                                                                                                    }
-                                                                                                }}
-                                                                                                options={currencies}
-                                                                                                styles={customStyles}
-                                                                                                className="bg-white dark:bg-form-input"
-                                                                                                classNamePrefix="react-select"
-                                                                                                placeholder="Select"
-                                                                                            />
-                                                                                            <ErrorMessage name="currency" component="div" className="text-red-500" />
-                                                                                        </div>
-
-                                                                                        <div className='flex flex-col'>
-                                                                                            <label className="mb-2.5 block text-black dark:text-white">Exchange Rate (1 {values.currency || 'Currency'} = ? INR)</label>
-                                                                                            <Field
-                                                                                                type="number"
-                                                                                                name='currencyValue'
-                                                                                                value={values.currencyValue}
-                                                                                                placeholder="0.00"
-                                                                                                onChange={(e) => {
-                                                                                                    const rate = e.target.value;
-                                                                                                    setFieldValue('currencyValue', rate);
-                                                                                                    // Recalculate total when exchange rate changes
-                                                                                                    if (rate && totals?.subtotal) {
-                                                                                                        const calculatedValue = totals.subtotal / rate;
-                                                                                                        setFieldValue('totalCurrencyValue', calculatedValue.toFixed(2));
-                                                                                                    }
-                                                                                                }}
-                                                                                                className="w-full bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm rounded border"
-                                                                                            />
-                                                                                        </div>
-
-                                                                                        <div className='flex flex-col'>
-                                                                                            <label className="mb-2.5 block text-black dark:text-white">Total in {values.currency || 'Selected Currency'}</label>
-                                                                                            <Field
-                                                                                                type="number"
-                                                                                                name='totalCurrencyValue'
-                                                                                                value={values.totalCurrencyValue}
-                                                                                                placeholder="0.00"
-                                                                                                readOnly
-                                                                                                className="w-full bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm rounded border"
-                                                                                            />
-                                                                                        </div>
-                                                                                    </div>
-
-
-                                                                                </>
-
-
-
-
-                                                                            )
-                                                                        }
-
-
+                                                                        {/* <div>
+                                                                            <p className="text-gray-600 dark:text-gray-400">Total MRP</p>
+                                                                            <p className="font-medium text-black dark:text-white">₹{totals.totalMRP}</p>
+                                                                        </div> */}
+                                                                        <div>
+                                                                            <p className="text-gray-600 dark:text-gray-400">Total Quantity</p>
+                                                                            <p className="font-medium text-black dark:text-white">{totals.totalQuantity}</p>
+                                                                        </div>
+                                                                        {totals.totalCGST > 0 && (
+                                                                            <div className='flex flex-col'>
+                                                                                <p className="text-gray-600 dark:text-gray-400">CGST</p>
+                                                                                <Field
+                                                                                    type="number"
+                                                                                    name="totalCgst"
+                                                                                    value={totals.totalCGST}
+                                                                                    placeholder="0.00"
+                                                                                    readOnly
+                                                                                    className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
+                                                                                />
+                                                                            </div>
+                                                                        )}
+                                                                        {totals.totalSGST > 0 && (
+                                                                            <div className='flex flex-col'>
+                                                                                <p className="text-gray-600 dark:text-gray-400">SGST</p>
+                                                                                <Field
+                                                                                    type="number"
+                                                                                    name="totalSgst"
+                                                                                    value={totals.totalSGST}
+                                                                                    placeholder="0.00"
+                                                                                    readOnly
+                                                                                    className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
+                                                                                />
+                                                                            </div>
+                                                                        )}
+                                                                        {totals.totalIGST > 0 && (
+                                                                            <div className='flex flex-col'>
+                                                                                <p className="text-gray-600 dark:text-gray-400">IGST</p>
+                                                                                <Field
+                                                                                    type="number"
+                                                                                    name="totalIgst"
+                                                                                    value={totals.totalIGST}
+                                                                                    placeholder="0.00"
+                                                                                    readOnly
+                                                                                    className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
+                                                                                />
+                                                                            </div>
+                                                                        )}
+                                                                        <div>
+                                                                            <p className="text-gray-600 dark:text-gray-400">Total GST</p>
+                                                                            <p className="font-medium text-black dark:text-white">₹{totals.totalGST}</p>
+                                                                        </div>
+                                                                        <div className='flex flex-col'>
+                                                                            <p className="text-gray-600 dark:text-gray-400">Grand Total (After Discount)</p>
+                                                                            <Field
+                                                                                type="number"
+                                                                                name="totalAmount"
+                                                                                value={totals.subtotal}
+                                                                                placeholder="0.00"
+                                                                                readOnly
+                                                                                className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border font-bold"
+                                                                            />
+                                                                        </div>
                                                                     </div>
-
-
-
-
-                                                                    {
-                                                                        Vouchers?.posInvoicing && (
-
-                                                                            <>
-                                                                                <div>
-                                                                                    <div>
-                                                                                        <label className="mb-2.5 block text-black dark:text-white">Payment Received</label>
-                                                                                        <ReactSelect
-                                                                                            name="paymentReceivedType"
-                                                                                            options={PaymentReceiveType}
-                                                                                            value={PaymentReceiveType.find(option => option.value === values.paymentReceivedType)}
-                                                                                            onChange={(selectedOption) => {
-                                                                                                const paymentType = selectedOption ? selectedOption.value : '';
-                                                                                                setFieldValue('paymentReceivedType', paymentType);
-
-                                                                                                const adjustedGrandTotal = calculateGrandTotalWithAdjustments(values, totals);
-
-                                                                                                // Automatically set amount based on payment type
-                                                                                                if (paymentType === 'Fully') {
-                                                                                                    setFieldValue('amountReceived', adjustedGrandTotal);
-                                                                                                    setFieldValue('remainingBalance', 0);
-                                                                                                } else if (paymentType === 'Partially') {
-                                                                                                    setFieldValue('amountReceived', 0);
-                                                                                                    setFieldValue('remainingBalance', adjustedGrandTotal);
-                                                                                                } else {
-                                                                                                    setFieldValue('amountReceived', 0);
-                                                                                                    setFieldValue('remainingBalance', adjustedGrandTotal);
-                                                                                                }
-                                                                                            }}
-                                                                                            placeholder="Payment Received Type"
-                                                                                            className="react-select-container mb-4"
-                                                                                            classNamePrefix="react-select"
-                                                                                        />
-                                                                                    </div>
-
-                                                                                    {/* Amount Received Field - Show for both Fully and Partially */}
-                                                                                    {(values.paymentReceivedType === 'Partially' || values.paymentReceivedType === 'Fully') && (
-                                                                                        <div className="mt-4">
-                                                                                            <label className="mb-2.5 block text-black dark:text-white">
-                                                                                                Amount Received
-                                                                                                {values.paymentReceivedType === 'Fully' &&
-                                                                                                    <span className="text-green-600 text-sm ml-2">(Auto-filled with full amount)</span>
-                                                                                                }
-                                                                                            </label>
-                                                                                            <Field
-                                                                                                type="number"
-                                                                                                name="amountReceived"
-                                                                                                placeholder="0.00"
-                                                                                                readOnly={values.paymentReceivedType === 'Fully'}
-                                                                                                className={`w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary ${values.paymentReceivedType === 'Fully' ? 'bg-gray-100 dark:bg-slate-800 cursor-not-allowed' : ''
-                                                                                                    }`}
-                                                                                                onChange={(e) => {
-                                                                                                    const amountReceived = parseFloat(e.target.value) || 0;
-                                                                                                    setFieldValue('amountReceived', amountReceived);
-
-                                                                                                    // Calculate remaining balance
-                                                                                                    const remainingBalance = totals.subtotal - amountReceived;
-                                                                                                    setFieldValue('remainingBalance', remainingBalance >= 0 ? remainingBalance : 0);
-                                                                                                }}
-                                                                                            />
-                                                                                        </div>
-                                                                                    )}
-
-                                                                                    {/* Show Remaining Balance when payment is not fully received */}
-                                                                                    {values.paymentReceivedType === 'Partially' && values.amountReceived > 0 && (
-                                                                                        <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded">
-                                                                                            <p className="text-blue-600 dark:text-blue-300">
-                                                                                                Remaining Balance: <span className="font-bold">₹{values.remainingBalance || 0}</span>
-                                                                                            </p>
-                                                                                        </div>
-                                                                                    )}
-
-                                                                                    {/* Hidden field for remaining balance */}
-                                                                                    <Field type="hidden" name="remainingBalance" />
-                                                                                </div>
-
-                                                                            </>
-                                                                        )
-
-                                                                    }
-
-                                                                </>
-
-
+                                                                </div>
                                                             )}
 
 
