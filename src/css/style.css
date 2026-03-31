@@ -1884,9 +1884,7 @@ table start */
     margin: 1cm;
   }
   
-  body * {
-    visibility: hidden;
-  }
+ 
   
   .print-only, 
   .print-only * {

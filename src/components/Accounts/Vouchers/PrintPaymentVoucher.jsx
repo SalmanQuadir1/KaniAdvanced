@@ -278,11 +278,7 @@ const PrintPaymentVoucher = () => {
             borderTop: '1px solid #000',
             paddingTop: '15px'
         },
-        printHide: {
-            '@media print': {
-                display: 'none'
-            }
-        },
+       
         amountBox: {
             border: '2px solid #000',
             padding: '15px',

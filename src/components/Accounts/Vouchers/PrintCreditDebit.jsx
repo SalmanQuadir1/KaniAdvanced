@@ -277,11 +277,7 @@ const PrintCreditDebit = () => {
             borderTop: '1px solid #000',
             paddingTop: '15px'
         },
-        printHide: {
-            '@media print': {
-                display: 'none'
-            }
-        },
+        
         statusBadge: {
             display: 'inline-block',
             padding: '3px 8px',

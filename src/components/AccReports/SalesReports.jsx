@@ -16,6 +16,7 @@ import { FaDownload } from 'react-icons/fa6';
 
 const SalesReports = () => {
     const [loading, setLoading] = useState(false);
+    const [downloadLoading, setDownloadLoading] = useState(false);
     const [reportData, setReportData] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [isDataFetched, setIsDataFetched] = useState(false);
@@ -41,7 +42,7 @@ const SalesReports = () => {
         toDate: '' 
     });
 
-    // Function to fetch a specific page from API
+    // Function to fetch a specific page from API using POST
     const fetchPageData = async (page, filters) => {
         if (!filters.fromDate || !filters.toDate) return;
         
@@ -49,13 +50,17 @@ const SalesReports = () => {
         
         try {
             const response = await fetch(
-                `${DOWNLOADSALESCSV_REPORT}?fromDate=${filters.fromDate}&toDate=${filters.toDate}&page=${page - 1}&size=${pagination.itemsPerPage}`,
+                `${DOWNLOADSALESCSV_REPORT}/preview?pageNumber=${page - 1}&pageSize=${pagination.itemsPerPage}`,
                 {
-                    method: "GET",
+                    method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
                     },
+                    body: JSON.stringify({
+                        startDate: filters.fromDate,
+                        endDate: filters.toDate
+                    })
                 }
             );
             
@@ -102,25 +107,38 @@ const SalesReports = () => {
         setIsDataFetched(true);
     };
 
-    // Handle CSV download
+    // Handle CSV download with POST request
     const handlegenerateCsv = async (values) => {
         if (!values.fromDate || !values.toDate) {
             toast.warning("Please select both From Date and To Date");
             return;
         }
 
+        setDownloadLoading(true);
+
         try {
-            const response = await fetch(`${DOWNLOADSALESCSV_REPORT}/download?fromDate=${values.fromDate}&toDate=${values.toDate}`, {
-                method: "GET",
+            const response = await fetch(`${DOWNLOADSALESCSV_REPORT}/download`, {
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
+                body: JSON.stringify({
+                    startDate: values.fromDate,
+                    endDate: values.toDate
+                })
             });
 
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(errorText || "Failed to download report");
+            }
+
+            // Check if response is a blob (CSV file)
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Failed to download report");
             }
 
             const blob = await response.blob();
@@ -136,7 +154,9 @@ const SalesReports = () => {
             toast.success("Report downloaded successfully");
         } catch (error) {
             console.error(error);
-            toast.error("An error occurred while downloading the report");
+            toast.error(error.message || "An error occurred while downloading the report");
+        } finally {
+            setDownloadLoading(false);
         }
     };
 
@@ -160,7 +180,7 @@ const SalesReports = () => {
         if (loading) {
             return (
                 <tr>
-                    <td colSpan="16" className="px-5 py-10 text-center">
+                    <td colSpan="20" className="px-5 py-10 text-center">
                         <div className="flex justify-center items-center">
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                             <span className="ml-2 text-gray-600 dark:text-gray-300">Loading...</span>
@@ -173,7 +193,7 @@ const SalesReports = () => {
         if (!isDataFetched) {
             return (
                 <tr>
-                    <td colSpan="16" className="px-5 py-10 text-center">
+                    <td colSpan="20" className="px-5 py-10 text-center">
                         <p className="text-gray-500 dark:text-gray-400">Select dates and click "View" to load report</p>
                     </td>
                 </tr>
@@ -183,7 +203,7 @@ const SalesReports = () => {
         if (!currentPageData.length) {
             return (
                 <tr>
-                    <td colSpan="16" className="px-5 py-10 text-center">
+                    <td colSpan="20" className="px-5 py-10 text-center">
                         <p className="text-gray-500 dark:text-gray-400">No data found for the selected date range</p>
                     </td>
                 </tr>
@@ -197,7 +217,7 @@ const SalesReports = () => {
                 <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-center">
                     {startingSerialNumber + index}
                 </td>
-                  <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
+                <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
                     {item.saleDate || '-'}
                 </td>
                 <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
@@ -313,19 +333,39 @@ const SalesReports = () => {
                                         <button
                                             type="button"
                                             onClick={() => handleViewReport(values)}
-                                            className="flex items-center justify-center gap-2 mb-4 md:w-[180px] w-[200px] md:h-[45px] h-[45px] rounded-lg bg-primary text-white font-medium hover:bg-opacity-90 transition-all"
+                                            disabled={loading}
+                                            className="flex items-center justify-center gap-2 mb-4 md:w-[180px] w-[200px] md:h-[45px] h-[45px] rounded-lg bg-primary text-white font-medium hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
-                                            <FiEye size={18} />
-                                            View Report
+                                            {loading ? (
+                                                <>
+                                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                                    Loading...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <FiEye size={18} />
+                                                    View Report
+                                                </>
+                                            )}
                                         </button>
 
                                         <button
                                             type="button"
                                             onClick={() => handlegenerateCsv(values)}
-                                            className="flex items-center justify-center gap-2 mb-4 md:w-[200px] w-[220px] md:h-[45px] h-[45px] rounded-lg bg-success text-white font-medium hover:bg-opacity-90 transition-all"
+                                            disabled={downloadLoading}
+                                            className="flex items-center justify-center gap-2 mb-4 md:w-[200px] w-[220px] md:h-[45px] h-[45px] rounded-lg bg-success text-white font-medium hover:bg-opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
-                                            <FaDownload size={18} />
-                                            Generate Report
+                                            {downloadLoading ? (
+                                                <>
+                                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                                    Downloading...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <FaDownload size={18} />
+                                                    Generate Report
+                                                </>
+                                            )}
                                         </button>
                                     </div>
                                 </Form>

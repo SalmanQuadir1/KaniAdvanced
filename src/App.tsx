@@ -694,7 +694,7 @@ function App() {
 
 
           <Route
-            path="/printentrypayment/:id/:gstRegistration"
+            path="/printentrypayment/:id/:gstRegistration?"
             element={
               <>
                 <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>

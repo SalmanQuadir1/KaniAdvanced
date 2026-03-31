@@ -267,11 +267,7 @@ const PrintPosEntryPayment = () => {
             borderTop: '1px solid #000',
             paddingTop: '15px'
         },
-        printHide: {
-            '@media print': {
-                display: 'none'
-            }
-        }
+     
     };
 
     if (loading) return (

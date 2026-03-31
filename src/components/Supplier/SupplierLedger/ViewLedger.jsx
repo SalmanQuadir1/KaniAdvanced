@@ -14,6 +14,7 @@ import { toast } from 'react-toastify';
 import { customStyles as createCustomStyles } from '../../../Constants/utils';
 import { MdCreateNewFolder } from "react-icons/md";
 import useLedger from '../../../hooks/useLedger';
+import { FaPrint } from 'react-icons/fa6';
 
 
 
@@ -41,12 +42,12 @@ const ViewLedger = () => {
         getLedgerName()
 
 
-     
+
     }, [])
 
 
 
-     useEffect(() => {
+    useEffect(() => {
 
         if (!ledgerType) return;
 
@@ -70,18 +71,18 @@ const ViewLedger = () => {
 
                 setledgerNameOptions(formattedLedgerNameOptions);
 
-               
+
 
             } catch (error) {
                 console.error(error);
                 toast.error("Failed to fetch Ledger Name");
-                
+
             }
         }
 
         fetchLedgerName()
 
-    
+
 
     }, [ledgerType])
 
@@ -91,7 +92,7 @@ const ViewLedger = () => {
 
 
 
-  
+
 
     const formattedLedgerType = ledgerName?.map(ledg => ({
         label: ledg?.ledgerType,
@@ -784,7 +785,7 @@ const ViewLedger = () => {
     const currentYear = new Date().getFullYear().toString().slice(-2); // Gets last 2 digits (e.g., "25" for 2025)
     const openingBalancesDate = `1-Apr-${currentYear}`;
 
-console.log(ledgerType,"56");
+    console.log(ledgerType, "56");
 
 
     const handlePrintModalContent = () => {
@@ -1146,10 +1147,7 @@ console.log(ledgerType,"56");
           color: #94a3b8;
         }
         
-        @media print {
-          body { padding: 15px; }
-          .no-print { display: none; }
-        }
+       
       </style>
     </head>
     <body>
@@ -1307,8 +1305,8 @@ console.log(ledgerType,"56");
         printWindow.document.close();
     };
 
-    console.log(SelectedLEDGERData,"umer");
-    
+    console.log(SelectedLEDGERData, "umer");
+
 
     return (
         <DefaultLayout>
@@ -1534,7 +1532,7 @@ console.log(ledgerType,"56");
                                                     </p> */}
 
 
-                                                     <p className={`text-3xl font-bold ${SelectedLEDGERData?.openingBalances?.toFixed(2)>=0
+                                                    <p className={`text-3xl font-bold ${SelectedLEDGERData?.openingBalances?.toFixed(2) >= 0
                                                         ? 'text-green-600 dark:text-green-400'
                                                         : 'text-red-600 dark:text-red-400'
                                                         }`}>
@@ -1542,7 +1540,7 @@ console.log(ledgerType,"56");
                                                         <span className="text-lg ml-2">
                                                             ({SelectedLEDGERData?.typeOfOpeningBalance?.toLowerCase() === 'credit' ? 'Credit' : 'Debit'})
                                                         </span>
-                                                    </p> 
+                                                    </p>
                                                     <div className="mt-1">
                                                         <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${SelectedLEDGERData?.typeOfOpeningBalance?.toLowerCase() === 'credit'
                                                             ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
@@ -1617,6 +1615,7 @@ console.log(ledgerType,"56");
 
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Debit (₹)</th>
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Credit (₹)</th>
+                                                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Action</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -1669,6 +1668,49 @@ console.log(ledgerType,"56");
                                                                     <div className={`text-sm font-semibold ${parseFloat(ledger.credit || 0) > 0 ? 'text-green-600 dark:text-green-400' : 'text-gray-400'}`}>
                                                                         {parseFloat(ledger.credit || 0) > 0 ? `₹${parseFloat(ledger.credit || 0).toFixed(2)}` : '-'}
                                                                     </div>
+                                                                </td>
+
+
+                                                                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
+                                                                    <p className="flex text-gray-900 whitespace-no-wrap">
+                                                                        {
+                                                                            ledger.posInvoicing === true &&
+
+                                                                            <FaPrint
+                                                                                size={17}
+                                                                                className="text-teal-500 hover:text-teal-700 mx-2"
+                                                                                onClick={() => navigate(`/printentrypaymentPos/${item.id}/${item.gstRegistration}`)}
+                                                                                title="Print Entry"
+                                                                            />
+
+                                                                        }
+
+                                                                        {
+
+                                                                        }
+                                                                        <FaPrint
+                                                                            size={17}
+                                                                            className="text-teal-500 hover:text-teal-700 mx-2"
+                                                                            onClick={() => {
+                                                                                if (
+                                                                                    ledger.voucherType.toLowerCase() === "sales" ||
+                                                                                    ledger.voucherType.toLowerCase() === "purchase"
+                                                                                ) {
+                                                                                    navigate(`/printentrypayment/${ledger.entryPaymentId}`);
+                                                                                } else {
+                                                                                    navigate(`/printentries/${ledger.creditDebitNoteId}`);
+                                                                                }
+                                                                            }}
+                                                                            title="Print Entry"
+                                                                        />
+
+                                                                        {/* <FiTrash2
+                                                                                            size={17}
+                                                                                            className="text-red-500 hover:text-red-700 mx-2"
+                                                                                            onClick={(e) => handleDelete(e, item?.id)}
+                                                                                            title="Delete Product"
+                                                                                        /> */}
+                                                                    </p>
                                                                 </td>
                                                             </tr>
                                                         ))

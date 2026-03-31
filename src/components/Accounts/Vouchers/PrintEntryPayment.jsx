@@ -8,7 +8,7 @@ import { PRINTEntries_URL } from '../../../Constants/utils';
 const PrintEntryPayment = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
-    const { id, location } = useParams();
+    const { id, gstRegistration } = useParams();
     const [paymentData, setPaymentData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -45,10 +45,7 @@ const PrintEntryPayment = () => {
 
     useEffect(() => {
         if (paymentData && !loading) {
-            const timer = setTimeout(() => {
-                window.print();
-            }, 500);
-
+            const timer = setTimeout(() => { window.print(); }, 500);
             return () => clearTimeout(timer);
         }
     }, [paymentData, loading]);
@@ -192,9 +189,9 @@ const PrintEntryPayment = () => {
     // Helper function to calculate taxable value (excluding GST)
     const calculateTaxableValue = (item) => {
         const mrp = item.mrp || 0;
-        const gstRate = item.gstCalculation?.totalGstRate || 
-                       (item.igstRate || item.cgstRate + item.sgstRate || 0);
-        
+        const gstRate = item.gstCalculation?.totalGstRate ||
+            (item.igstRate || item.cgstRate + item.sgstRate || 0);
+
         if (gstRate > 0) {
             // MRP is inclusive of GST, so taxable value = MRP / (1 + GST rate/100)
             return mrp / (1 + (gstRate / 100));
@@ -205,9 +202,9 @@ const PrintEntryPayment = () => {
     // Helper function to get GST amount
     const calculateGSTAmount = (item) => {
         const taxableValue = calculateTaxableValue(item);
-        const gstRate = item.gstCalculation?.totalGstRate || 
-                       (item.igstRate || item.cgstRate + item.sgstRate || 0);
-        
+        const gstRate = item.gstCalculation?.totalGstRate ||
+            (item.igstRate || item.cgstRate + item.sgstRate || 0);
+
         return (taxableValue * gstRate / 100);
     };
 
@@ -276,11 +273,7 @@ const PrintEntryPayment = () => {
             borderTop: '1px solid #000',
             paddingTop: '15px'
         },
-        printHide: {
-            '@media print': {
-                display: 'none'
-            }
-        }
+
     };
 
     if (loading) return (
@@ -478,21 +471,21 @@ const PrintEntryPayment = () => {
                         const quantity = product.quantity || 1;
                         const mrp = product.mrp || 0;
                         const discount = product.discount || 0;
-                        
+
                         // Calculate taxable value (exclusive of GST)
                         const taxableValue = calculateTaxableValue(product) * quantity;
-                        
+
                         // Get GST rates
                         const gstCalc = product.gstCalculation || {};
                         const cgstRate = gstCalc.cgstRate || product.cgstRate || 0;
                         const sgstRate = gstCalc.sgstRate || product.sgstRate || 0;
                         const igstRate = gstCalc.igstRate || product.igstRate || 0;
-                        
+
                         // Calculate GST amounts
                         const cgstAmount = taxableValue * (cgstRate / 100);
                         const sgstAmount = taxableValue * (sgstRate / 100);
                         const igstAmount = taxableValue * (igstRate / 100);
-                        
+
                         // Calculate total amount after discount
                         const discountMultiplier = (100 - discount) / 100;
                         const totalAmount = mrp * quantity * discountMultiplier;
@@ -506,20 +499,20 @@ const PrintEntryPayment = () => {
                                 <td style={styles.tableCell}>₹{formatCurrency(mrp)}</td>
                                 <td style={styles.tableCell}>₹{formatCurrency(taxableValue)}</td>
                                 <td style={styles.tableCell}>
-                                    {cgstRate > 0 ? 
-                                        `₹${formatCurrency(cgstAmount)} (${cgstRate}%)` : 
+                                    {cgstRate > 0 ?
+                                        `₹${formatCurrency(cgstAmount)} (${cgstRate}%)` :
                                         '-'
                                     }
                                 </td>
                                 <td style={styles.tableCell}>
-                                    {sgstRate > 0 ? 
-                                        `₹${formatCurrency(sgstAmount)} (${sgstRate}%)` : 
+                                    {sgstRate > 0 ?
+                                        `₹${formatCurrency(sgstAmount)} (${sgstRate}%)` :
                                         '-'
                                     }
                                 </td>
                                 <td style={styles.tableCell}>
-                                    {igstRate > 0 ? 
-                                        `₹${formatCurrency(igstAmount)} (${igstRate}%)` : 
+                                    {igstRate > 0 ?
+                                        `₹${formatCurrency(igstAmount)} (${igstRate}%)` :
                                         '-'
                                     }
                                 </td>

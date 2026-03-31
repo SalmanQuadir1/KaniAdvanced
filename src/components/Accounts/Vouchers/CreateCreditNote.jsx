@@ -118,7 +118,7 @@ const CreateCreditNote = () => {
             if (response.ok && Array.isArray(data.content)) {
                 const productOptions = data?.content?.map(product => ({
                     value: product.id,
-                    label: `${product?.productDescription} ${product.barcode}`,
+                    label: `${product?.productId} ${product.barcode}`,
                     price: product?.retailMrp,
                     hsnCode: product?.hsnCode || {},
                     obj: product
