@@ -672,7 +672,7 @@ const ViewSupplierProduct = () => {
 
 
 
-    console.log(productSuppliers, "prodyuuuuuuuuuuuuuuuuuuuuuuct");
+    console.log(productSuppliers, "product");
 
     
 
