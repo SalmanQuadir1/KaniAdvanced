@@ -26,7 +26,7 @@ import { GiBandageRoll } from "react-icons/gi";
 import { GiScrollUnfurled } from "react-icons/gi";
 import { FaDropbox } from "react-icons/fa";
 import { FaSalesforce } from 'react-icons/fa6';
-import { BiRupee } from 'react-icons/bi';
+import { BiMoney, BiRupee } from 'react-icons/bi';
 
 
 const AccReports = () => {
@@ -202,6 +202,7 @@ const AccReports = () => {
         { title: "Creditors Report", link: "/accReport/Creditors", countKey: "accountsData", icon: <TbReport className="w-10 h-10" />, levelUp: true },
         { title: "Deditors Report", link: "/accReport/Deditors", countKey: "accountsData", icon: <TbReportAnalytics className="w-10 h-10" />, levelUp: true },
         { title: "Sales Report", link: "/accReport/Sales", countKey: "accountsData", icon: <BiRupee className="w-10 h-10" />, levelUp: true },
+        { title: "Purchase Report", link: "/accReport/Purchase", countKey: "accountsData", icon: <BiMoney className="w-10 h-10" />, levelUp: true },
     ];
 
     // Get all cards user should see based on roles

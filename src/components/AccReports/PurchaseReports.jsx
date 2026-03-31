@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
-import { DOWNLOADSALESCSV_REPORT } from "../../Constants/utils";
+import { DOWNLOADPURCHASECSV_REPORT } from "../../Constants/utils";
 import { FiEye } from 'react-icons/fi';
 import Pagination from '../Pagination/Pagination';
 import { useSelector } from 'react-redux';
@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 import { customStyles as createCustomStyles } from '../../Constants/utils';
 import { FaDownload } from 'react-icons/fa6';
 
-const SalesReports = () => {
+const PurchaseReports = () => {
     const [loading, setLoading] = useState(false);
     const [downloadLoading, setDownloadLoading] = useState(false);
     const [reportData, setReportData] = useState([]);
@@ -45,7 +45,7 @@ const SalesReports = () => {
         
         try {
             const response = await fetch(
-                `${DOWNLOADSALESCSV_REPORT}/preview?page=${page - 1}&size=${pagination.itemsPerPage}`,
+                `${DOWNLOADPURCHASECSV_REPORT}/preview?page=${page - 1}&size=${pagination.itemsPerPage}`,
                 {
                     method: "POST",
                     headers: {
@@ -112,7 +112,7 @@ const SalesReports = () => {
         setDownloadLoading(true);
 
         try {
-            const response = await fetch(`${DOWNLOADSALESCSV_REPORT}/download`, {
+            const response = await fetch(`${DOWNLOADPURCHASECSV_REPORT}/download`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -139,7 +139,7 @@ const SalesReports = () => {
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", `sales_report_${values.fromDate}_to_${values.toDate}.csv`);
+            link.setAttribute("download", `Purchase_report_${values.fromDate}_to_${values.toDate}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -271,7 +271,7 @@ const SalesReports = () => {
                             {sale.customerName || '-'}
                         </td>
                         <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
-                            {sale.salesChannel || '-'}
+                            {sale.PurchaseChannel || '-'}
                         </td>
                         <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
                             {sale.supplier || '-'}
@@ -313,7 +313,7 @@ const SalesReports = () => {
                             {sale.customerName || '-'}
                         </td>
                         <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm" rowSpan={productCount}>
-                            {sale.salesChannel || '-'}
+                            {sale.PurchaseChannel || '-'}
                         </td>
                         <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm" rowSpan={productCount}>
                             {sale.supplier || '-'}
@@ -388,12 +388,12 @@ const SalesReports = () => {
 
     return (
         <DefaultLayout>
-            <Breadcrumb pageName="/Report/SalesReports" />
+            <Breadcrumb pageName="/Report/PurchaseReports" />
             <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
                 <div className="pt-5">
                     <div className='flex justify-between items-center mb-6'>
                         <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-white">
-                            Sales Report
+                            Purchase Report
                         </h2>
                         {isDataFetched && (
                             <p className="inline-flex rounded-full bg-primary bg-opacity-10 py-1 px-3 text-sm font-medium text-primary">
@@ -489,7 +489,7 @@ const SalesReports = () => {
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">#</th>
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Sale Date</th>
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Customer Name</th>
-                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Sales Channel</th>
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Purchase Channel</th>
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Supplier</th>
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Receipt No</th>
                                     <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Total Amount</th>
@@ -536,4 +536,4 @@ const SalesReports = () => {
     )
 }
 
-export default SalesReports
+export default PurchaseReports
