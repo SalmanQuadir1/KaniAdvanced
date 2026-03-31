@@ -529,9 +529,7 @@ const AddCustomer = () => {
                       classNamePrefix="react-select"
                       placeholder="Select Shipping State"
                     />
-                    {formik.touched.shippingState && formik.errors.shippingState && (
-                      renderError(formik.errors.shippingState)
-                    )}
+                   
                   </div>
                   <div className="flex-1 min-w-[300px]">
                     <label className="mb-2.5 block text-black dark:text-white">

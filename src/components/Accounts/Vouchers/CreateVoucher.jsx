@@ -96,7 +96,7 @@ const CreateVoucher = () => {
         isSupplier: ledg?.supplier !== null
     }));
 
-    console.log(LedgerData, "5454544444444444444444444444444444444444");
+
 
 
 
@@ -399,7 +399,7 @@ const CreateVoucher = () => {
     //     calculateGST()
     // }, [newShippingState, custaddress])
 
-    console.log(regType, "33333");
+
 
 
 
@@ -1038,15 +1038,15 @@ const CreateVoucher = () => {
 
         return grandTotal >= 0 ? grandTotal : 0;
     };
-    console.log(Vouchers, "umershah");
+
 
 
     const today = new Date().toISOString().split("T")[0];
 
-    console.log(today, "55");
+    console.log(regType, "2222");
 
-    console.log(LedgerData, "000000000000000000");
 
+    console.log("444444");
 
     return (
         <DefaultLayout>
@@ -1247,12 +1247,12 @@ const CreateVoucher = () => {
                         };
 
                         function determineDestinationLedger(Vouchers, custAddress, isExport, destinationledgerOptions, newShippingState) {
-                            console.log(custAddress, "333333333333333333333");
+
 
                             const typeOfVoucher = Vouchers?.typeOfVoucher?.toLowerCase() || '';
                             const defGstRegist = Vouchers?.defGstRegist || '';
 
-                            console.log(typeOfVoucher, defGstRegist, "3322");
+
 
                             // Determine registration location from GST registration
                             const getRegistrationLocation = (gstReg) => {
@@ -1306,7 +1306,7 @@ const CreateVoucher = () => {
                                 // Handle export case first
                                 if (regLocation) {
                                     if (isExport === true) {
-                                        console.log(`${baseType} Export`, "hereeeeeeeeeeeeeeeeeeeeeee");
+
                                         return `${baseType} Export`; // Export case
                                     }
                                 }
@@ -1322,11 +1322,11 @@ const CreateVoucher = () => {
 
                                 // Convert customer location using the same mapping
                                 const custLocation = custGstCode ? gstCodeMapping[custGstCode] : null;
-                                console.log('Customer Location (converted):', custLocation, ".............");
+
 
                                 // Convert new shipping state using the same mapping
                                 const newShippingStateLocation = newShippingState ? gstCodeMapping[newShippingState] : null;
-                                console.log('New Shipping Location (converted):', newShippingStateLocation, "hhhh");
+
 
                                 // Handle new shipping state first if it exists
                                 if (newShippingStateLocation) {
@@ -1352,16 +1352,16 @@ const CreateVoucher = () => {
                                     return `${baseType} IGST-${regLocation}`;
                                 }
 
-                                console.log(regLocation, custLocation, "33333333333333333330");
+
 
                                 // Check if same state (local) or different state (IGST)
                                 if (regLocation === custLocation) {
                                     // SAME STATE - Return "Sale Local-Delhi" or "Sale Local-SXR"
-                                    console.log(`Same state transaction - returning ${baseType} Local-${regLocation}`);
+
                                     return `${baseType} Local-${regLocation}`;
                                 } else {
                                     // DIFFERENT STATE - Return "Sale IGST-Delhi" or "Sale IGST-SXR"
-                                    console.log(`Different state transaction - returning ${baseType} IGST-${regLocation}`);
+
                                     return `${baseType} IGST-${regLocation}`;
                                 }
                             };
@@ -1381,6 +1381,8 @@ const CreateVoucher = () => {
                         const determineGSTLedgers = (Vouchers, custAddress, isExport, newShippingState, values) => {
                             const defGstRegist = Vouchers?.defGstRegist || '';
                             const typeOfVoucher = Vouchers?.typeOfVoucher || '';
+                            console.log(defGstRegist, typeOfVoucher, "1111111111111111111111111");
+
 
                             // Determine registration location from GST registration
                             const getRegistrationLocation = (gstReg) => {
@@ -1453,7 +1455,7 @@ const CreateVoucher = () => {
                             // Check if same state or different state
                             if (registrationLocation === partyLocation && partyLocation) {
                                 // Same state transaction
-                                if (typeOfVoucher === "Purchase") {
+                                if (typeOfVoucher.toLowerCase() === "purchase") {
                                     // PURCHASE - Same state: Input CGST + Input SGST
                                     console.log('PURCHASE - Same state - looking for Input CGST/SGST ledgers for:', registrationLocation);
 
@@ -1669,9 +1671,11 @@ const CreateVoucher = () => {
 
 
 
+
                         useEffect(() => {
                             // Auto-select GST ledgers for Purchase when conditions change
-                            if (Vouchers?.typeOfVoucher === "Purchase" && Vouchers?.defGstRegist && regType === "regular") {
+                            // Only run for regular GST registration
+                            if (Vouchers?.typeOfVoucher === "Purchase" && Vouchers?.defGstRegist && regType.toLowerCase() === "regular") {
                                 const { igstLedgerId, cgstLedgerId, sgstLedgerId } = determineGSTLedgers(
                                     Vouchers,
                                     custaddress,
@@ -1690,9 +1694,13 @@ const CreateVoucher = () => {
                                 if (sgstLedgerId && sgstLedgerId !== values.sgstLedgerId) {
                                     setFieldValue('sgstLedgerId', sgstLedgerId);
                                 }
+                            } else if (Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() !== "regular") {
+                                // Clear GST ledgers for non-regular suppliers
+                                setFieldValue('igstLedgerId', null);
+                                setFieldValue('cgstLedgerId', null);
+                                setFieldValue('sgstLedgerId', null);
                             }
                         }, [Vouchers?.typeOfVoucher, Vouchers?.defGstRegist, regType, custaddress, newShippingState, values.ledgerId, values.isExport]);
-
 
 
                         const handleIgstLedgerChange = (option) => {
@@ -1727,14 +1735,26 @@ const CreateVoucher = () => {
 
 
                         useEffect(() => {
-                            if (Vouchers?.typeOfVoucher === "Purchase") {
+                            if (Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() === "regular") {
                                 // For Purchase, totalAmount should be subtotal (which includes GST)
                                 setFieldValue('totalAmount', totals.subtotal);
                                 setFieldValue('totalGst', totals.totalGST);
                                 setFieldValue('totalCgst', totals.totalCGST);
                                 setFieldValue('totalIgst', totals.totalIGST);
                                 setFieldValue('totalSgst', totals.totalSGST);
-                            } else if (Vouchers?.typeOfVoucher === "Sales") {
+                            } else if (Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() !== "regular") {
+                                // For Purchase, totalAmount should be subtotal (which includes GST)
+                                setFieldValue('totalAmount', totals.totalBasePrice);
+                                setFieldValue('totalGst', totals.totalGST);
+                                setFieldValue('totalCgst', totals.totalCGST);
+                                setFieldValue('totalIgst', totals.totalIGST);
+                                setFieldValue('totalSgst', totals.totalSGST);
+                            }
+
+
+
+
+                            else if (Vouchers?.typeOfVoucher === "Sales") {
                                 // For Sales, totalAmount should be subtotal (which includes GST)
                                 setFieldValue('totalAmount', totals.subtotal);
                                 setFieldValue('totalGst', totals.totalGST);
@@ -1757,7 +1777,7 @@ const CreateVoucher = () => {
                                     newShippingState
                                 );
 
-                                console.log(selectedValue, "heyyyy");
+
 
 
                                 if (selectedValue && selectedValue !== values.destinationLedgerId) {
@@ -2465,7 +2485,7 @@ const CreateVoucher = () => {
 
                                                 {
 
-                                                    (Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && (
+                                                    (Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() == "regular") && (
                                                         <>
                                                             <div className="flex-2 min-w-[250px]">
                                                                 <label className="mb-2.5 block text-black dark:text-white">Destination Ledger</label>
@@ -2557,7 +2577,7 @@ const CreateVoucher = () => {
 
 
                                             <div>
-                                                {(Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && (
+                                                {(Vouchers?.typeOfVoucher === "Sales" || (Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() == "regular")) && (
                                                     <>
                                                         {/* Collapsible Header */}
                                                         <div
@@ -2570,7 +2590,8 @@ const CreateVoucher = () => {
                                                                 <FaChevronDown className="text-gray-600 dark:text-gray-400" size={16} />
                                                             )}
                                                             <span className="font-medium text-black dark:text-white">
-                                                                GST Ledgers {showGSTLedgers ? '(Click to hide)' : '(Click to show)'} <span className='text-red-600'>Important To Check These Ledgers Before Submit</span>
+                                                                GST Ledgers {showGSTLedgers ? '(Click to hide)' : '(Click to show)'}
+                                                                <span className='text-red-600'> Important To Check These Ledgers Before Submit</span>
                                                             </span>
                                                             <span className="text-xs text-gray-500 dark:text-gray-400 ml-2">
                                                                 (IGST, CGST, SGST)
@@ -2640,6 +2661,15 @@ const CreateVoucher = () => {
                                                         )}
                                                     </>
                                                 )}
+
+                                                {/* Show message for non-regular suppliers in Purchase */}
+                                                {Vouchers?.typeOfVoucher === "Purchase" && regType && regType.toLowerCase() !== "regular" && (
+                                                    <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded">
+                                                        <p className="text-yellow-700 dark:text-yellow-400 text-sm">
+                                                            ⚠️ This supplier is registered as {regType.toUpperCase()}. GST is not applicable for this transaction.
+                                                        </p>
+                                                    </div>
+                                                )}
                                             </div>
 
 
@@ -2661,12 +2691,12 @@ const CreateVoucher = () => {
                                                                                 "Product",
                                                                                 "View Inventory",
                                                                                 "Quantity",
-                                                                                "MRP",
-                                                                                ...(Vouchers?.typeOfVoucher === "Sales" ? ["Rate", "Discount %"] : []),
-                                                                                ...(Vouchers?.typeOfVoucher === "Purchase" ? ["Purchase Price"] : []),
+                                                                                ...(Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() === "regular" ? ["MRP", "Purchase Price"] : []),
+                                                                                ...(Vouchers?.typeOfVoucher === "Sales" ? ["MRP", "Rate", "Discount %"] : []),
+                                                                                ...(Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() !== "regular" ? ["Purchase Price"] : []),
 
                                                                                 "Total Value",
-                                                                                "GST Type",
+                                                                                ...(Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher.toLowerCase() === "purchase" && regType.toLowerCase() === "regular" ? ["GST Type"] : []), ,
                                                                                 "Action"
                                                                             ].map((header, i) => (
                                                                                 <th
@@ -2809,18 +2839,22 @@ const CreateVoucher = () => {
 
 
                                                                                     {/* MRP (Inc. GST) */}
-                                                                                    <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
-                                                                                        <Field
-                                                                                            type="number"
-                                                                                            name={`paymentDetails.${index}.mrp`}
-                                                                                            placeholder="0.00"
-                                                                                            readOnly
-                                                                                            className="w-full bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm rounded border"
-                                                                                        />
-                                                                                    </td>
+                                                                                    {Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() === "regular" && (
+                                                                                        <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
+                                                                                            <Field
+                                                                                                type="number"
+                                                                                                name={`paymentDetails.${index}.mrp`}
+                                                                                                placeholder="0.00"
+                                                                                                readOnly
+                                                                                                className="w-full bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm rounded border"
+                                                                                            />
+                                                                                        </td>
+
+
+                                                                                    )}
 
                                                                                     {/* Base Price (Excl. GST) - NEW COLUMN */}
-                                                                                    {Vouchers?.typeOfVoucher === "Sales" && (
+                                                                                    {Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase" && (
                                                                                         <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
                                                                                             <Field
                                                                                                 type="number"
@@ -2853,7 +2887,7 @@ const CreateVoucher = () => {
                                                                                             <Field
                                                                                                 type="number"
                                                                                                 name={`paymentDetails.${index}.discount`}
-                                                                                                placeholder="0"
+                                                                                                // placeholder="0"
                                                                                                 min="0"
                                                                                                 max="100"
                                                                                                 step="1"
@@ -2931,7 +2965,7 @@ const CreateVoucher = () => {
                                                                                     </td>
 
                                                                                     {/* Value - Auto-calculated */}
-                                                                                    {
+                                                                                    {/* {
                                                                                         Vouchers.typeOfVoucher === "Purchase" && (
 
                                                                                             <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark font-medium">
@@ -2944,13 +2978,13 @@ const CreateVoucher = () => {
                                                                                                 />
                                                                                             </td>
                                                                                         )
-                                                                                    }
+                                                                                    } */}
 
 
                                                                                     {/* GST Type */}
 
                                                                                     {
-                                                                                        (Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && (
+                                                                                        (Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && regType.toLowerCase() === "regular" && (
 
                                                                                             // GST Type column - update the display
                                                                                             <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
@@ -3128,7 +3162,7 @@ const CreateVoucher = () => {
 
                                                             </div>
 
-                                                            {Vouchers?.typeOfVoucher === "Purchase" && (
+                                                            {/* {Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() === "regular" && (
                                                                 <>
                                                                     <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                                                                         <h4 className="text-lg font-semibold mb-3 text-black dark:text-white">GST Summary</h4>
@@ -3213,89 +3247,175 @@ const CreateVoucher = () => {
                                                                         </div>
                                                                     </div>
                                                                 </>
-                                                            )}
+                                                            )} */}
 
                                                             {/* GST Summary */}
-                                                            {Vouchers?.typeOfVoucher === "Sales" && (
-                                                                <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                                                                    <h4 className="text-lg font-semibold mb-3 text-black dark:text-white">GST Summary</h4>
-                                                                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-sm">
-                                                                        {/* <div>
-                                                                            <p className="text-gray-600 dark:text-gray-400">Total Base Price (Excl. GST)</p>
-                                                                            <p className="font-medium text-black dark:text-white">₹{totals.totalBasePrice}</p>
-                                                                        </div> */}
-                                                                        {/* <div>
-                                                                            <p className="text-gray-600 dark:text-gray-400">Total Discount</p>
-                                                                            <p className="font-medium text-red-600">-₹{totals.totalDiscount}</p>
-                                                                        </div> */}
-                                                                        <div>
-                                                                            <p className="text-gray-600 dark:text-gray-400">Total (Excl. GST)</p>
-                                                                            <p className="font-medium text-black dark:text-white">₹{(parseFloat(totals.totalBasePrice) - parseFloat(totals.totalDiscount)).toFixed(2)}</p>
-                                                                        </div>
-                                                                        {/* <div>
-                                                                            <p className="text-gray-600 dark:text-gray-400">Total MRP</p>
-                                                                            <p className="font-medium text-black dark:text-white">₹{totals.totalMRP}</p>
-                                                                        </div> */}
-                                                                        <div>
-                                                                            <p className="text-gray-600 dark:text-gray-400">Total Quantity</p>
-                                                                            <p className="font-medium text-black dark:text-white">{totals.totalQuantity}</p>
-                                                                        </div>
-                                                                        {totals.totalCGST > 0 && (
+
+
+                                                            {/* GST Summary */}
+                                                            {Vouchers?.typeOfVoucher === "Sales" || (Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() === "regular") ? (
+                                                                Vouchers?.typeOfVoucher === "Sales" ? (
+                                                                    <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                                                        <h4 className="text-lg font-semibold mb-3 text-black dark:text-white">GST Summary</h4>
+                                                                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-sm">
+                                                                            {/* Sales GST Summary */}
+                                                                            <div>
+                                                                                <p className="text-gray-600 dark:text-gray-400">Total (Excl. GST)</p>
+                                                                                <p className="font-medium text-black dark:text-white">₹{(parseFloat(totals.totalBasePrice) - parseFloat(totals.totalDiscount)).toFixed(2)}</p>
+                                                                            </div>
+                                                                            <div>
+                                                                                <p className="text-gray-600 dark:text-gray-400">Total Quantity</p>
+                                                                                <p className="font-medium text-black dark:text-white">{totals.totalQuantity}</p>
+                                                                            </div>
+                                                                            {totals.totalCGST > 0 && (
+                                                                                <div className='flex flex-col'>
+                                                                                    <p className="text-gray-600 dark:text-gray-400">CGST</p>
+                                                                                    <Field
+                                                                                        type="number"
+                                                                                        name="totalCgst"
+                                                                                        value={totals.totalCGST}
+                                                                                        placeholder="0.00"
+                                                                                        readOnly
+                                                                                        className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
+                                                                                    />
+                                                                                </div>
+                                                                            )}
+                                                                            {totals.totalSGST > 0 && (
+                                                                                <div className='flex flex-col'>
+                                                                                    <p className="text-gray-600 dark:text-gray-400">SGST</p>
+                                                                                    <Field
+                                                                                        type="number"
+                                                                                        name="totalSgst"
+                                                                                        value={totals.totalSGST}
+                                                                                        placeholder="0.00"
+                                                                                        readOnly
+                                                                                        className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
+                                                                                    />
+                                                                                </div>
+                                                                            )}
+                                                                            {totals.totalIGST > 0 && (
+                                                                                <div className='flex flex-col'>
+                                                                                    <p className="text-gray-600 dark:text-gray-400">IGST</p>
+                                                                                    <Field
+                                                                                        type="number"
+                                                                                        name="totalIgst"
+                                                                                        value={totals.totalIGST}
+                                                                                        placeholder="0.00"
+                                                                                        readOnly
+                                                                                        className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
+                                                                                    />
+                                                                                </div>
+                                                                            )}
+                                                                            <div>
+                                                                                <p className="text-gray-600 dark:text-gray-400">Total GST</p>
+                                                                                <p className="font-medium text-black dark:text-white">₹{totals.totalGST}</p>
+                                                                            </div>
                                                                             <div className='flex flex-col'>
-                                                                                <p className="text-gray-600 dark:text-gray-400">CGST</p>
+                                                                                <p className="text-gray-600 dark:text-gray-400">Grand Total (After Discount)</p>
                                                                                 <Field
                                                                                     type="number"
-                                                                                    name="totalCgst"
-                                                                                    value={totals.totalCGST}
+                                                                                    name="totalAmount"
+                                                                                    value={totals.subtotal}
                                                                                     placeholder="0.00"
                                                                                     readOnly
-                                                                                    className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
+                                                                                    className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border font-bold"
                                                                                 />
                                                                             </div>
-                                                                        )}
-                                                                        {totals.totalSGST > 0 && (
-                                                                            <div className='flex flex-col'>
-                                                                                <p className="text-gray-600 dark:text-gray-400">SGST</p>
-                                                                                <Field
-                                                                                    type="number"
-                                                                                    name="totalSgst"
-                                                                                    value={totals.totalSGST}
-                                                                                    placeholder="0.00"
-                                                                                    readOnly
-                                                                                    className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
-                                                                                />
-                                                                            </div>
-                                                                        )}
-                                                                        {totals.totalIGST > 0 && (
-                                                                            <div className='flex flex-col'>
-                                                                                <p className="text-gray-600 dark:text-gray-400">IGST</p>
-                                                                                <Field
-                                                                                    type="number"
-                                                                                    name="totalIgst"
-                                                                                    value={totals.totalIGST}
-                                                                                    placeholder="0.00"
-                                                                                    readOnly
-                                                                                    className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
-                                                                                />
-                                                                            </div>
-                                                                        )}
-                                                                        <div>
-                                                                            <p className="text-gray-600 dark:text-gray-400">Total GST</p>
-                                                                            <p className="font-medium text-black dark:text-white">₹{totals.totalGST}</p>
-                                                                        </div>
-                                                                        <div className='flex flex-col'>
-                                                                            <p className="text-gray-600 dark:text-gray-400">Grand Total (After Discount)</p>
-                                                                            <Field
-                                                                                type="number"
-                                                                                name="totalAmount"
-                                                                                value={totals.subtotal}
-                                                                                placeholder="0.00"
-                                                                                readOnly
-                                                                                className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border font-bold"
-                                                                            />
                                                                         </div>
                                                                     </div>
-                                                                </div>
+                                                                ) : (
+                                                                    // Purchase GST Summary (only for regular suppliers)
+                                                                    Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() === "regular" && (
+                                                                        <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                                                            <h4 className="text-lg font-semibold mb-3 text-black dark:text-white">GST Summary</h4>
+                                                                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-sm">
+                                                                                <div>
+                                                                                    <p className="text-gray-600 dark:text-gray-400">Total MRP</p>
+                                                                                    <p className="font-medium text-black dark:text-white">₹{totals.totalMRP}</p>
+                                                                                </div>
+                                                                                <div>
+                                                                                    <p className="text-gray-600 dark:text-gray-400">Total Quantity</p>
+                                                                                    <p className="font-medium text-black dark:text-white">{totals.totalQuantity}</p>
+                                                                                </div>
+                                                                                {totals.totalCGST > 0 && (
+                                                                                    <div className='flex flex-col'>
+                                                                                        <p className="text-gray-600 dark:text-gray-400">CGST</p>
+                                                                                        <Field
+                                                                                            type="number"
+                                                                                            name="totalCgst"
+                                                                                            value={totals.totalCGST}
+                                                                                            placeholder="0.00"
+                                                                                            readOnly
+                                                                                            className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
+                                                                                        />
+                                                                                    </div>
+                                                                                )}
+                                                                                {totals.totalSGST > 0 && (
+                                                                                    <div className='flex flex-col'>
+                                                                                        <p className="text-gray-600 dark:text-gray-400">SGST</p>
+                                                                                        <Field
+                                                                                            type="number"
+                                                                                            name="totalSgst"
+                                                                                            value={totals.totalSGST}
+                                                                                            placeholder="0.00"
+                                                                                            readOnly
+                                                                                            className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
+                                                                                        />
+                                                                                    </div>
+                                                                                )}
+                                                                                {totals.totalIGST > 0 && (
+                                                                                    <div className='flex flex-col'>
+                                                                                        <p className="text-gray-600 dark:text-gray-400">IGST</p>
+                                                                                        <Field
+                                                                                            type="number"
+                                                                                            name="totalIgst"
+                                                                                            value={totals.totalIGST}
+                                                                                            placeholder="0.00"
+                                                                                            readOnly
+                                                                                            className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
+                                                                                        />
+                                                                                    </div>
+                                                                                )}
+                                                                                <div>
+                                                                                    <p className="text-gray-600 dark:text-gray-400">Total GST</p>
+                                                                                    <p className="font-medium text-black dark:text-white">₹{totals.totalGST}</p>
+                                                                                </div>
+                                                                                <div className='flex flex-col'>
+                                                                                    <p className="text-gray-600 dark:text-gray-400">Grand Total</p>
+                                                                                    <Field
+                                                                                        type="number"
+                                                                                        name="totalAmount"
+                                                                                        value={totals?.subtotal}
+                                                                                        placeholder="0.00"
+                                                                                        readOnly
+                                                                                        className="w-full bg-gray-50 dark:bg-slate-800 text-sm rounded border"
+                                                                                    />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    )
+                                                                )
+                                                            ) : (
+                                                                // No GST Summary for non-regular suppliers
+                                                                Vouchers?.typeOfVoucher === "Purchase" && regType && regType.toLowerCase() !== "regular" && (
+                                                                    <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                                                                        <h4 className="text-lg font-semibold mb-3 text-black dark:text-white">Transaction Summary</h4>
+                                                                        <div className="grid grid-cols-2 gap-4">
+                                                                            <div>
+                                                                                <p className="text-gray-600 dark:text-gray-400">Total Amount</p>
+                                                                                <p className="font-medium text-black dark:text-white">₹{totals.totalBasePrice}</p>
+                                                                            </div>
+                                                                            <div>
+                                                                                <p className="text-gray-600 dark:text-gray-400">Total Quantity</p>
+                                                                                <p className="font-medium text-black dark:text-white">{totals.totalQuantity}</p>
+                                                                            </div>
+                                                                            {/* <div>
+                                                                                <p className="text-gray-600 dark:text-gray-400">Total MRP</p>
+                                                                                <p className="font-medium text-black dark:text-white">₹{totals.totalMRP}</p>
+                                                                            </div> */}
+                                                                        </div>
+                                                                    </div>
+                                                                )
                                                             )}
 
 

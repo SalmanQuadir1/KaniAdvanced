@@ -43,12 +43,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   const appMode = useSelector((state) => state?.persisted?.appMode);
 
   const { mode } = appMode
-  console.log(mode, "kk");
+
 
   const { user } = currentUser || {};
   const roles = user?.authorities.map((auth) => auth.authority) || []; // Ensure it's always an array
 
-  console.log(roles, "rolehai ye");
+
   // close on click outside
   useEffect(() => {
     const clickHandler = ({ target }) => {

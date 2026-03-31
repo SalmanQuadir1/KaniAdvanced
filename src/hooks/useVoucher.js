@@ -196,7 +196,7 @@ const useVoucher = (numberingDetails) => {
             const data = await response.json();
             console.log(data + "xsdfghjkl")
             if (response.ok) {
-                console.log("get Material data", data);
+           
                 setVoucher(data);
                 return data; // Return the fetched data
             } else {

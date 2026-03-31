@@ -73,7 +73,7 @@ const useLedger = () => {
             });
             const data = await response.json();
             
-            console.log(data,"ledger data");
+           
             setLedger(data);
           
         } catch (error) {
@@ -94,7 +94,7 @@ const useLedger = () => {
             });
             const data = await response.json();
             
-            console.log(data,"ledger data");
+           
             setLedgerIncome(data);
           
         } catch (error) {
@@ -115,7 +115,7 @@ const useLedger = () => {
             });
             const data = await response.json();
 
-            console.log(data,"454545454466969696969");
+       
             
             
          
@@ -126,7 +126,7 @@ const useLedger = () => {
             toast.error("Failed to fetch Ledger");
         }
     };
-    console.log(ledgerName,"55555555555555555555555555555555555555555555555555555555555555");
+   
     
 
 

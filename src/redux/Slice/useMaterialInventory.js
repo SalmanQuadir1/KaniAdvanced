@@ -110,7 +110,7 @@ const useMaterialInventory = () => {
             const data = await response.json();
 
             if (response.ok) {
-                console.log("get MAterial data", data)
+            
                 setCurrentMaterial(data);
 
             } else {

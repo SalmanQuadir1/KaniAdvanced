@@ -18,12 +18,53 @@ const AddSupplier = () => {
         groups
     } = useSupplier();
 
+    const stateOption = [
+        { value: '01', label: 'Jammu & Kashmir' },
+        { value: '02', label: 'Himachal Pradesh' },
+        { value: '03', label: 'Punjab' },
+        { value: '04', label: 'Chandigarh' },
+        { value: '05', label: 'Uttarakhand' },
+        { value: '06', label: 'Haryana' },
+        { value: '07', label: 'Delhi' },
+        { value: '08', label: 'Rajasthan' },
+        { value: '09', label: 'Uttar Pradesh' },
+        { value: '10', label: 'Bihar' },
+        { value: '11', label: 'Sikkim' },
+        { value: '12', label: 'Arunachal Pradesh' },
+        { value: '13', label: 'Nagaland' },
+        { value: '14', label: 'Manipur' },
+        { value: '15', label: 'Mizoram' },
+        { value: '16', label: 'Tripura' },
+        { value: '17', label: 'Meghalaya' },
+        { value: '18', label: 'Assam' },
+        { value: '19', label: 'West Bengal' },
+        { value: '20', label: 'Jharkhand' },
+        { value: '21', label: 'Odisha' },
+        { value: '22', label: 'Chhattisgarh' },
+        { value: '23', label: 'Madhya Pradesh' },
+        { value: '24', label: 'Gujarat' },
+        { value: '25', label: 'Daman & Diu' },
+        { value: '26', label: 'Dadra & Nagar Haveli' },
+        { value: '27', label: 'Maharashtra' },
+        { value: '28', label: 'Andhra Pradesh' },
+        { value: '29', label: 'Karnataka' },
+        { value: '30', label: 'Goa' },
+        { value: '31', label: 'Lakshadweep' },
+        { value: '32', label: 'Kerala' },
+        { value: '33', label: 'Tamil Nadu' },
+        { value: '34', label: 'Puducherry' },
+        { value: '35', label: 'Andaman & Nicobar Islands' },
+        { value: '36', label: 'Telangana' },
+        { value: '37', label: 'Andhra Pradesh (New)' },
+        { value: '38', label: 'Ladakh' }
+    ];
+
 
 
     const productGroup = useSelector(state => state?.persisted?.productGroup);
 
 
-        useEffect(() => {
+    useEffect(() => {
         if (productGroup.data) {
             const formattedOptions = productGroup.data.map(product => ({
                 value: product.productGroupName,
@@ -139,6 +180,7 @@ const AddSupplier = () => {
                         address: '',
                         bankName: '',
                         accountNo: '',
+                        shippingState: '',
                         ifscCode: '',
                         typeOfopeningBalance: "",
                         previousOpType: "",
@@ -154,6 +196,12 @@ const AddSupplier = () => {
                         if (!values.name) {
                             errors.name = 'Required';
                         }
+
+                        if (!values.shippingState) {
+                            errors.shippingState = 'Required';
+                        }
+
+
 
                         // Validate phone number
                         if (!values.phoneNumber) {
@@ -252,6 +300,32 @@ const AddSupplier = () => {
                                                 />
                                                 <ErrorMessage name="address" component="div" className="text-red-500" />
                                             </div>
+
+                                            <div className="flex-1 min-w-[300px]">
+                                                <label className="mb-2.5 block text-black dark:text-white">
+                                                    State <span className="text-red-600">*</span>
+                                                </label>
+                                                <ReactSelect
+                                                    name="shippingState"
+                                                    styles={customStyles}
+                                                    value={stateOption.find(option => option.value === values.shippingState) || null}
+
+                                                    onChange={(option) =>
+                                                        setFieldValue(
+                                                            'shippingState',
+                                                            option ? option.value : null,
+                                                        )
+                                                    }
+
+                                                    options={stateOption}
+                                                    className="bg-white dark:bg-form-input"
+                                                    classNamePrefix="react-select"
+                                                    placeholder="Select  State"
+                                                />
+
+                                                <ErrorMessage name="shippingState" component="div" className="text-red-600 text-sm" />
+
+                                            </div>
                                             <div className="flex-1 min-w-[300px]">
                                                 <label className="mb-2.5 block text-black dark:text-white">Supplier Type</label>
                                                 <ReactSelect
@@ -296,8 +370,8 @@ const AddSupplier = () => {
                                                 />
                                                 <ErrorMessage name="ifscCode" component="div" className="text-red-500" />
                                             </div>
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="mb-4.5 border-t border-stroke pt-4 dark:border-strokedark w-full">
+                                            <div className="mb-4.5  gap-6">
+                                                <div className="flex mb-4.5 gap-7   pt-4 dark:border-strokedark w-full">
                                                     {/* Radio Buttons for Opening Balance Type */}
                                                     <div className="mb-2.5 flex items-center gap-4">
                                                         <h4 className="font-medium text-black dark:text-white">Opening Balance Type:</h4>
@@ -313,7 +387,7 @@ const AddSupplier = () => {
                                                                 }}
                                                                 className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
                                                             />
-                                                            <span className="text-black dark:text-white">Debit (DR)</span>
+                                                            <span className="text-black dark:text-white"> (DR)</span>
                                                         </label>
                                                         <label className="flex items-center gap-2">
                                                             <input
@@ -327,7 +401,7 @@ const AddSupplier = () => {
                                                                 }}
                                                                 className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
                                                             />
-                                                            <span className="text-black dark:text-white">Credit (CR)</span>
+                                                            <span className="text-black dark:text-white"> (CR)</span>
                                                         </label>
                                                     </div>
 
@@ -341,7 +415,7 @@ const AddSupplier = () => {
                                                                 onChange={(e) => {
 
                                                                     setFieldValue('previousOpBalance', e.target.value);
-                                                                     setFieldValue('openingBalances', e.target.value);
+                                                                    setFieldValue('openingBalances', e.target.value);
                                                                 }}
                                                                 //   onBlur={formik.handleBlur}
                                                                 value={values.openingBalances}

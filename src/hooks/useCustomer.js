@@ -145,7 +145,7 @@ const useCustomer = () => {
       const data = await response.json();
       console.log(data + "xsdfghjkl")
       if (response.ok) {
-        console.log("get Material data", data);
+     
         setCurrentCustomer(data);
         return data; // Return the fetched data
       } else {
