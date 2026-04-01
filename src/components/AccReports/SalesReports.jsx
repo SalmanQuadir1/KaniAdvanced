@@ -220,8 +220,8 @@ const SalesReports = () => {
         if (loading) {
             return (
                 <tr>
-                    <td colSpan="26" className="px-5 py-10 text-center">
-                        <div className="flex justify-center items-center">
+                    <td colSpan="26" className="px-5 py-10 text-start">
+                        <div className="flex justify-center items-start">
                             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
                             <span className="ml-2 text-gray-600 dark:text-gray-300">Loading...</span>
                         </div>
@@ -243,7 +243,7 @@ const SalesReports = () => {
         if (!currentPageData.length) {
             return (
                 <tr>
-                    <td colSpan="26" className="px-5 py-10 text-center">
+                    <td colSpan="26" className="px-5 py-10 text-start">
                         <p className="text-gray-500 dark:text-gray-400">No data found for the selected date range</p>
                     </td>
                 </tr>

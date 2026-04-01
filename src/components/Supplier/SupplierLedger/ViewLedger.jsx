@@ -350,13 +350,13 @@ const ViewLedger = () => {
                 </td> */}
                 <td className="px-5 py-5  text-sm">
                     <div className="flex items-center gap-2">
-                        <span className="text-gray-900">{item?.previousOpBalance}</span>
+                        <span className="text-gray-900">{item?.openingBalances}</span>
                         <span className="text-gray-500">|</span>
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${item?.previousOpType?.toLowerCase() === 'credit'
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${item?.typeOfOpeningBalance?.toLowerCase() === 'credit'
                             ? 'bg-red-100 text-red-800'
                             : 'bg-green-100 text-green-800'
                             }`}>
-                            {item?.previousOpType}
+                            {item?.typeOfOpeningBalance}
                         </span>
                     </div>
                 </td>
@@ -1940,7 +1940,7 @@ const ViewLedger = () => {
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">LedgerName</th>
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Ledger Group</th>
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">LedgerType</th>
-                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Opening Balance <br /> (as of {openingBalancesDate})</th>
+                                        <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Closing Balance </th>
                                         {/* <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Closing Balance</th> */}
                                         <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Ledger Transactions</th>
                                         {/* <th className="px-2 py-3 bLedger-b-2 bLedger-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}

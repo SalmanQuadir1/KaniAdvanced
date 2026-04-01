@@ -748,9 +748,9 @@ const PrintEntryPayment = () => {
                         <div style={styles.companyAddress}>
                             Unused goods can be exchanged within 14 days from date of invoice.
                         </div>
-                        <div style={{ marginTop: '40px' }}>
+                        {/* <div style={{ marginTop: '40px' }}>
                             <strong>Customer's Seal and Signature</strong>
-                        </div>
+                        </div> */}
                     </Col>
                     <Col md={6} className="text-end">
                         <div style={{ marginTop: '40px' }}>
