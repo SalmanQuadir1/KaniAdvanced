@@ -703,25 +703,39 @@ const AddOrder = () => {
 
             useEffect(() => {
               values.orderProducts.forEach((product, index) => {
+                console.log(values.orderType, "5151");
+
+                // Check if order type is WSClient
+                const selectedOrderType = orderTypeOptions?.find(
+                  (option) => option.value === values.orderType?.id
+                );
+
+                selectedOrderType && console.log(selectedOrderType.label, "selected order type label");
+                const isWSClient = selectedOrderType?.label === "WSClients";
+
+                // Use wholesalePrice for WSClient, otherwise use retailMrp
+                console.log(prodIdModal[index],"umi");
+                
+                const cost = isWSClient
+                  ? (prodIdModal[index]?.wPrice || 0)
+                  : (prodIdModal[index]?.cost || 0);
+                  console.log(cost,"0000");
+                  
 
                 const quantityToManufacture = product.inStockQuantity - product.clientOrderQuantity;
-                const cost = prodIdModal[index]?.cost || 0;
+                const clientOrderQuantity = product.clientOrderQuantity;
+
                 if (product.clientOrderQuantity && product.inStockQuantity !== undefined) {
                   if (product.clientOrderQuantity <= product.inStockQuantity) {
                     setFieldValue(`orderProducts[${index}].quantityToManufacture`, 0);
-                    setFieldValue(`orderProducts[${index}].value`, Math.abs(quantityToManufacture * cost));
-                  }
-                  else {
-
-
-
+                    setFieldValue(`orderProducts[${index}].value`, Math.abs(clientOrderQuantity * cost));
+                  } else {
                     setFieldValue(`orderProducts[${index}].quantityToManufacture`, Math.abs(quantityToManufacture));
-                    setFieldValue(`orderProducts[${index}].value`, Math.abs(quantityToManufacture * cost));
-
+                    setFieldValue(`orderProducts[${index}].value`, Math.abs(clientOrderQuantity * cost));
                   }
                 }
               });
-            }, [values.orderProducts, setFieldValue]);
+            }, [values.orderProducts, values.orderType, setFieldValue, prodIdModal, orderTypeOptions]);
 
 
             return (

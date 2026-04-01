@@ -77,6 +77,7 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
   
     // You can now send this data to your API
   };
+  console.log(products,'products');
 
 
   return (
@@ -435,8 +436,8 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
                           disabled
                           type="text"
                           id="mrp"
-                          value={products?.mrp}
-                          name="mro"
+                          value={products?.retailMrp}
+                          name="mrp"
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
                         <ErrorMessage name="mrp" component="div" className="text-red-600 text-sm" />
@@ -455,6 +456,7 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
                           type="text"
                           disabled
                           id="wPrice"
+                            value={products?.wholesalePrice}
                           name="wPrice"
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
