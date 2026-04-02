@@ -703,7 +703,7 @@ const AddOrder = () => {
 
             useEffect(() => {
               values.orderProducts.forEach((product, index) => {
-                console.log(values.orderType, "5151");
+              
 
                 // Check if order type is WSClient
                 const selectedOrderType = orderTypeOptions?.find(
@@ -719,7 +719,7 @@ const AddOrder = () => {
                 const cost = isWSClient
                   ? (prodIdModal[index]?.wPrice || 0)
                   : (prodIdModal[index]?.cost || 0);
-                  console.log(cost,"0000");
+                  
                   
 
                 const quantityToManufacture = product.inStockQuantity - product.clientOrderQuantity;

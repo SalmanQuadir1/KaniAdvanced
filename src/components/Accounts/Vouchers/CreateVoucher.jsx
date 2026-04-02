@@ -1675,7 +1675,7 @@ const CreateVoucher = () => {
                         useEffect(() => {
                             // Auto-select GST ledgers for Purchase when conditions change
                             // Only run for regular GST registration
-                            if (Vouchers?.typeOfVoucher === "Purchase" && Vouchers?.defGstRegist && regType.toLowerCase() === "regular") {
+                            if (Vouchers?.typeOfVoucher === "Purchase" && Vouchers?.defGstRegist && regType?.toLowerCase() === "regular") {
                                 const { igstLedgerId, cgstLedgerId, sgstLedgerId } = determineGSTLedgers(
                                     Vouchers,
                                     custaddress,
@@ -1694,7 +1694,7 @@ const CreateVoucher = () => {
                                 if (sgstLedgerId && sgstLedgerId !== values.sgstLedgerId) {
                                     setFieldValue('sgstLedgerId', sgstLedgerId);
                                 }
-                            } else if (Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() !== "regular") {
+                            } else if (Vouchers?.typeOfVoucher === "Purchase" && regType?.toLowerCase() !== "regular") {
                                 // Clear GST ledgers for non-regular suppliers
                                 setFieldValue('igstLedgerId', null);
                                 setFieldValue('cgstLedgerId', null);
@@ -1735,14 +1735,14 @@ const CreateVoucher = () => {
 
 
                         useEffect(() => {
-                            if (Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() === "regular") {
+                            if (Vouchers?.typeOfVoucher === "Purchase" && regType?.toLowerCase() === "regular") {
                                 // For Purchase, totalAmount should be subtotal (which includes GST)
                                 setFieldValue('totalAmount', totals.subtotal);
                                 setFieldValue('totalGst', totals.totalGST);
                                 setFieldValue('totalCgst', totals.totalCGST);
                                 setFieldValue('totalIgst', totals.totalIGST);
                                 setFieldValue('totalSgst', totals.totalSGST);
-                            } else if (Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() !== "regular") {
+                            } else if (Vouchers?.typeOfVoucher === "Purchase" && regType?.toLowerCase() !== "regular") {
                                 // For Purchase, totalAmount should be subtotal (which includes GST)
                                 setFieldValue('totalAmount', totals.totalBasePrice);
                                 setFieldValue('totalGst', totals.totalGST);
@@ -2485,7 +2485,7 @@ const CreateVoucher = () => {
 
                                                 {
 
-                                                    (Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() == "regular") && (
+                                                    (Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase" && regType?.toLowerCase() == "regular") && (
                                                         <>
                                                             <div className="flex-2 min-w-[250px]">
                                                                 <label className="mb-2.5 block text-black dark:text-white">Destination Ledger</label>
@@ -2577,7 +2577,7 @@ const CreateVoucher = () => {
 
 
                                             <div>
-                                                {(Vouchers?.typeOfVoucher === "Sales" || (Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() == "regular")) && (
+                                                {(Vouchers?.typeOfVoucher === "Sales" || (Vouchers?.typeOfVoucher === "Purchase" && regType?.toLowerCase() == "regular")) && (
                                                     <>
                                                         {/* Collapsible Header */}
                                                         <div
@@ -2663,10 +2663,10 @@ const CreateVoucher = () => {
                                                 )}
 
                                                 {/* Show message for non-regular suppliers in Purchase */}
-                                                {Vouchers?.typeOfVoucher === "Purchase" && regType && regType.toLowerCase() !== "regular" && (
+                                                {Vouchers?.typeOfVoucher === "Purchase" && regType && regType?.toLowerCase() !== "regular" && (
                                                     <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded">
                                                         <p className="text-yellow-700 dark:text-yellow-400 text-sm">
-                                                            ⚠️ This supplier is registered as {regType.toUpperCase()}. GST is not applicable for this transaction.
+                                                            ⚠️ This supplier is registered as {regType?.toUpperCase()}. GST is not applicable for this transaction.
                                                         </p>
                                                     </div>
                                                 )}
@@ -2691,12 +2691,12 @@ const CreateVoucher = () => {
                                                                                 "Product",
                                                                                 "View Inventory",
                                                                                 "Quantity",
-                                                                                ...(Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() === "regular" ? ["MRP", "Purchase Price"] : []),
+                                                                                ...(Vouchers?.typeOfVoucher === "Purchase" && regType?.toLowerCase() === "regular" ? ["MRP", "Purchase Price"] : []),
                                                                                 ...(Vouchers?.typeOfVoucher === "Sales" ? ["MRP", "Rate", "Discount %"] : []),
-                                                                                ...(Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() !== "regular" ? ["Purchase Price"] : []),
+                                                                                ...(Vouchers?.typeOfVoucher === "Purchase" && regType?.toLowerCase() !== "regular" ? ["Purchase Price"] : []),
 
                                                                                 "Total Value",
-                                                                                ...(Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher.toLowerCase() === "purchase" && regType.toLowerCase() === "regular" ? ["GST Type"] : []), ,
+                                                                                ...(Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher.toLowerCase() === "purchase" && regType?.toLowerCase() === "regular" ? ["GST Type"] : []), ,
                                                                                 "Action"
                                                                             ].map((header, i) => (
                                                                                 <th
@@ -2839,22 +2839,26 @@ const CreateVoucher = () => {
 
 
                                                                                     {/* MRP (Inc. GST) */}
-                                                                                    {Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() === "regular" && (
-                                                                                        <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
-                                                                                            <Field
-                                                                                                type="number"
-                                                                                                name={`paymentDetails.${index}.mrp`}
-                                                                                                placeholder="0.00"
-                                                                                                readOnly
-                                                                                                className="w-full bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm rounded border"
-                                                                                            />
-                                                                                        </td>
+                                                                                    {(
+                                                                                        Vouchers?.typeOfVoucher === "Sales" ||
+                                                                                        (Vouchers?.typeOfVoucher === "Purchase" && regType?.toLowerCase() === "regular")
+                                                                                    ) && (
+                                                                                            <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
+                                                                                                <Field
+                                                                                                    type="number"
+                                                                                                    name={`paymentDetails.${index}.mrp`}
+                                                                                                    placeholder="0.00"
+                                                                                                    readOnly
+                                                                                                    className="w-full bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm rounded border"
+                                                                                                />
+                                                                                            </td>
 
 
-                                                                                    )}
+                                                                                        )}
 
                                                                                     {/* Base Price (Excl. GST) - NEW COLUMN */}
-                                                                                    {Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase" && (
+                                                                                     {(Vouchers?.typeOfVoucher.toLowerCase() === "sales" || Vouchers?.typeOfVoucher.toLowerCase() === "purchase") && (
+                                                                                      
                                                                                         <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
                                                                                             <Field
                                                                                                 type="number"
@@ -2882,7 +2886,7 @@ const CreateVoucher = () => {
                                                                                     )} */}
 
                                                                                     {/* Discount % */}
-                                                                                    {Vouchers?.typeOfVoucher === "Sales" && (
+                                                                                    {Vouchers?.typeOfVoucher.toLowerCase() === "sales" && (
                                                                                         <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
                                                                                             <Field
                                                                                                 type="number"
@@ -2983,8 +2987,10 @@ const CreateVoucher = () => {
 
                                                                                     {/* GST Type */}
 
-                                                                                    {
-                                                                                        (Vouchers?.typeOfVoucher === "Sales" || Vouchers?.typeOfVoucher === "Purchase") && regType.toLowerCase() === "regular" && (
+                                                                                     {(
+                                                                                        Vouchers?.typeOfVoucher === "Sales" ||
+                                                                                        (Vouchers?.typeOfVoucher === "Purchase" && regType?.toLowerCase() === "regular")
+                                                                                    ) && (
 
                                                                                             // GST Type column - update the display
                                                                                             <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
@@ -3253,7 +3259,7 @@ const CreateVoucher = () => {
 
 
                                                             {/* GST Summary */}
-                                                            {Vouchers?.typeOfVoucher === "Sales" || (Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() === "regular") ? (
+                                                            {Vouchers?.typeOfVoucher === "Sales" || (Vouchers?.typeOfVoucher === "Purchase" && regType?.toLowerCase() === "regular") ? (
                                                                 Vouchers?.typeOfVoucher === "Sales" ? (
                                                                     <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                                                                         <h4 className="text-lg font-semibold mb-3 text-black dark:text-white">GST Summary</h4>
@@ -3325,7 +3331,7 @@ const CreateVoucher = () => {
                                                                     </div>
                                                                 ) : (
                                                                     // Purchase GST Summary (only for regular suppliers)
-                                                                    Vouchers?.typeOfVoucher === "Purchase" && regType.toLowerCase() === "regular" && (
+                                                                    Vouchers?.typeOfVoucher === "Purchase" && regType?.toLowerCase() === "regular" && (
                                                                         <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                                                                             <h4 className="text-lg font-semibold mb-3 text-black dark:text-white">GST Summary</h4>
                                                                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 text-sm">
@@ -3397,7 +3403,7 @@ const CreateVoucher = () => {
                                                                 )
                                                             ) : (
                                                                 // No GST Summary for non-regular suppliers
-                                                                Vouchers?.typeOfVoucher === "Purchase" && regType && regType.toLowerCase() !== "regular" && (
+                                                                Vouchers?.typeOfVoucher === "Purchase" && regType && regType?.toLowerCase() !== "regular" && (
                                                                     <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
                                                                         <h4 className="text-lg font-semibold mb-3 text-black dark:text-white">Transaction Summary</h4>
                                                                         <div className="grid grid-cols-2 gap-4">
