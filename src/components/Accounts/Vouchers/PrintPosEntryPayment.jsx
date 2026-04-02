@@ -267,7 +267,7 @@ const PrintPosEntryPayment = () => {
             borderTop: '1px solid #000',
             paddingTop: '15px'
         },
-     
+
     };
 
     if (loading) return (
@@ -350,8 +350,27 @@ const PrintPosEntryPayment = () => {
             </div>
 
             {/* Consignee and Buyer Section */}
-    
 
+            
+                <table style={styles.table}>
+                    <tbody>
+                        <tr>
+                            <td style={styles.tableHeader} width="50%">Consignee (Ship to)</td>
+                            <td style={styles.tableHeader} width="50%">Buyer (Bill to)</td>
+                        </tr>
+                        <tr>
+                            <td style={styles.tableCell}>
+                                <strong>{paymentData.ledgerName}</strong> <br />
+                                {paymentData.shippingAddress || paymentData.shippingAddress}
+                            </td>
+                            <td style={styles.tableCell}>
+                                <strong>{paymentData.ledgerName}</strong> <br />
+                                {paymentData.billingAddress || paymentData.billingAddress}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+     
             {/* Invoice Details */}
             <table style={styles.table}>
                 <tbody>
@@ -364,21 +383,21 @@ const PrintPosEntryPayment = () => {
                         <td style={styles.tableCell} width="25%">{formatDate(paymentData.date)}</td>
                     </tr>
 
-                  
+
 
                     {
                         paymentData.isExport === true && (
                             <tr>
                                 <td style={styles.tableHeader}>LUT/Bond Details</td>
                                 <td style={styles.tableCell} colSpan="5">
-                                   <span className='font-semibold'> LUT No:</span> {paymentData?.lut?.lutNumber || '-'} <br/>
-                                  <span className='font-semibold'>  From:</span> {paymentData?.lut?.fromDate || '-'} <br/>
-                                  <span className='font-semibold'>  To:</span> {paymentData?.lut?.toDate || '-'}
+                                    <span className='font-semibold'> LUT No:</span> {paymentData?.lut?.lutNumber || '-'} <br />
+                                    <span className='font-semibold'>  From:</span> {paymentData?.lut?.fromDate || '-'} <br />
+                                    <span className='font-semibold'>  To:</span> {paymentData?.lut?.toDate || '-'}
                                 </td>
                             </tr>
                         )
                     }
-                 
+
                 </tbody>
             </table>
 
@@ -499,7 +518,7 @@ const PrintPosEntryPayment = () => {
                 Amount Chargeable (in words): INR {numberToWords(paymentData.totalAmount)}
             </div>
 
-       
+
 
             {/* Tax Amount in Words */}
             <div style={styles.sectionTitle}>
@@ -507,52 +526,52 @@ const PrintPosEntryPayment = () => {
             </div>
 
 
-    {/* Invoice Details */}
-           
+            {/* Invoice Details */}
 
 
 
-   <table style={styles.table}>
+
+            <table style={styles.table}>
                 <tbody>
 
 
-                 
 
-                  
 
-                  
-                            <tr>
-                                <td style={styles.tableHeader}>Payment Details</td>
-                                <td style={styles.tableCell} colSpan="5">
-                                   <span className='font-semibold'> Mode Of Payment:</span> {paymentData?.modeOfPayment || ''} <br/>
 
-                                   {
-                                    paymentData?.modeOfPayment === 'Card' && (
-                                        <>
-                                          <span className='font-semibold'>  Card No:</span> {paymentData?.cardNumber || '-'} <br/>
-                                        </>
-                                    )
-                                   }
-                                   {
-                                    paymentData?.modeOfPayment === 'Cheque' && (
-                                        <>
-                                          <span className='font-semibold'>  Cheque No:</span> {paymentData?.cardNumber || '-'} <br/>
-                                        </>
-                                    )
-                                   }
-                                   {
-                                    paymentData?.modeOfPayment === 'Bank Transfer' && (
-                                        <>
-                                          <span className='font-semibold'>  Transaction Id:</span> {paymentData?.transactionId || '-'} <br/>
-                                        </>
-                                    )
-                                   }
 
-                                </td>
-                            </tr>
-                        
-                    
-                 
+
+                    <tr>
+                        <td style={styles.tableHeader}>Payment Details</td>
+                        <td style={styles.tableCell} colSpan="5">
+                            <span className='font-semibold'> Mode Of Payment:</span> {paymentData?.modeOfPayment || ''} <br />
+
+                            {
+                                paymentData?.modeOfPayment === 'Card' && (
+                                    <>
+                                        <span className='font-semibold'>  Card No:</span> {paymentData?.cardNumber || '-'} <br />
+                                    </>
+                                )
+                            }
+                            {
+                                paymentData?.modeOfPayment === 'Cheque' && (
+                                    <>
+                                        <span className='font-semibold'>  Cheque No:</span> {paymentData?.cardNumber || '-'} <br />
+                                    </>
+                                )
+                            }
+                            {
+                                paymentData?.modeOfPayment === 'Bank Transfer' && (
+                                    <>
+                                        <span className='font-semibold'>  Transaction Id:</span> {paymentData?.transactionId || '-'} <br />
+                                    </>
+                                )
+                            }
+
+                        </td>
+                    </tr>
+
+
+
                 </tbody>
             </table>
 
@@ -587,7 +606,7 @@ const PrintPosEntryPayment = () => {
                 </Row>
             </div>
 
-        
+
 
             {/* Footer */}
             <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '10px' }}>
