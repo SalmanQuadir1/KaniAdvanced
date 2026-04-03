@@ -33,16 +33,16 @@ const PurchaseReports = () => {
 
     // Store current filter values
     const [currentFilters, setCurrentFilters] = useState({
-        fromDate: '', 
-        toDate: '' 
+        fromDate: '',
+        toDate: ''
     });
 
     // Function to fetch a specific page from API using POST
     const fetchPageData = async (page, filters) => {
         if (!filters.fromDate || !filters.toDate) return;
-        
+
         setLoading(true);
-        
+
         try {
             const response = await fetch(
                 `${DOWNLOADPURCHASECSV_REPORT}/preview?page=${page - 1}&size=${pagination.itemsPerPage}`,
@@ -58,17 +58,19 @@ const PurchaseReports = () => {
                     })
                 }
             );
-            
+
             if (!response.ok) {
                 throw new Error("Failed to fetch page data");
             }
-            
+
             const data = await response.json();
+            console.log(data,"5");
             
+
             // Store the raw data
             setReportData(data.content || []);
             setCurrentPageData(data.content || []);
-            
+
             setPagination({
                 totalItems: data?.totalElements || 0,
                 data: data?.content || [],
@@ -76,7 +78,7 @@ const PurchaseReports = () => {
                 currentPage: (data?.number || 0) + 1,
                 itemsPerPage: data?.size || 10,
             });
-            
+
         } catch (error) {
             console.error(error);
             toast.error("Failed to load page data");
@@ -92,12 +94,12 @@ const PurchaseReports = () => {
             toast.warning("Please select both From Date and To Date");
             return;
         }
-        
+
         setCurrentFilters({
             fromDate: values.fromDate,
             toDate: values.toDate
         });
-        
+
         await fetchPageData(1, values);
         setIsDataFetched(true);
     };
@@ -173,8 +175,8 @@ const PurchaseReports = () => {
 
     // Calculate total number of product columns
     const productColumns = [
-        'stockGroup', 'itemName', 'partNo', 'designName', 'style', 'size', 
-        'designGroup', 'productStatus', 'colour', 'qtySold', 'costPrice', 
+        'stockGroup', 'itemName', 'partNo', 'designName', 'style', 'size',
+        'designGroup', 'productStatus', 'colour', 'qtySold', 'costPrice',
         'mrp', 'grossProfitPercentage', 'discountPercentageOnMRP', 'stockInHand'
     ];
 
@@ -194,7 +196,7 @@ const PurchaseReports = () => {
                 <td className="px-3 py-2"></td>
                 <td className="px-3 py-2"></td>
                 <td className="px-3 py-2"></td>
-                
+
                 {/* Product details */}
                 <td className="px-3 py-2 text-sm">{product.stockGroup || '-'}</td>
                 <td className="px-3 py-2 text-sm font-medium text-gray-900 dark:text-white">{product.itemName || '-'}</td>
@@ -256,7 +258,7 @@ const PurchaseReports = () => {
         currentPageData.forEach((sale, saleIndex) => {
             const products = sale.products || [];
             const productCount = products.length;
-            
+
             if (productCount === 0) {
                 // Handle case with no products
                 rows.push(
@@ -268,32 +270,17 @@ const PurchaseReports = () => {
                             {sale.saleDate || '-'}
                         </td>
                         <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
-                            {sale.customerName || '-'}
+                            {sale.receiptNumber || '-'}
                         </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
-                            {sale.PurchaseChannel || '-'}
-                        </td>
+
                         <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
                             {sale.supplier || '-'}
                         </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
-                            {sale.receiptNumber || '-'}
-                        </td>
+
                         <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right">
-                            {formatCurrency(sale.totalAmount)}
+                            {formatCurrency(sale.purchaseValue)}
                         </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
-                            {sale.narration || '-'}
-                        </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
-                            {sale.modeOfPayment || '-'}
-                        </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
-                            {sale.paymentStatus || '-'}
-                        </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right">
-                            {formatCurrency(sale.saleValue)}
-                        </td>
+
                         <td colSpan="15" className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-center text-gray-500">
                             No products found
                         </td>
@@ -310,33 +297,18 @@ const PurchaseReports = () => {
                             {sale.saleDate || '-'}
                         </td>
                         <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm" rowSpan={productCount}>
-                            {sale.customerName || '-'}
+                            {sale.receiptNumber || '-'}
                         </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm" rowSpan={productCount}>
-                            {sale.PurchaseChannel || '-'}
-                        </td>
+
                         <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm" rowSpan={productCount}>
                             {sale.supplier || '-'}
                         </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm" rowSpan={productCount}>
-                            {sale.receiptNumber || '-'}
-                        </td>
+
                         <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right" rowSpan={productCount}>
-                            {formatCurrency(sale.totalAmount)}
+                            {formatCurrency(sale.purchaseValue)}
                         </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm" rowSpan={productCount}>
-                            {sale.narration || '-'}
-                        </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm" rowSpan={productCount}>
-                            {sale.modeOfPayment || '-'}
-                        </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm" rowSpan={productCount}>
-                            {sale.paymentStatus || '-'}
-                        </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right" rowSpan={productCount}>
-                            {formatCurrency(sale.saleValue)}
-                        </td>
-                        
+
+
                         {/* First product details */}
                         <td className="px-3 py-2 text-sm">{products[0].stockGroup || '-'}</td>
                         <td className="px-3 py-2 text-sm font-medium text-gray-900 dark:text-white">{products[0].itemName || '-'}</td>
@@ -345,17 +317,18 @@ const PurchaseReports = () => {
                         <td className="px-3 py-2 text-sm">{products[0].style || '-'}</td>
                         <td className="px-3 py-2 text-sm">{products[0].size || '-'}</td>
                         <td className="px-3 py-2 text-sm">{products[0].designGroup || '-'}</td>
-                        <td className="px-3 py-2 text-sm">{products[0].productStatus || '-'}</td>
+
+
                         <td className="px-3 py-2 text-sm">{products[0].colour || '-'}</td>
-                        <td className="px-3 py-2 text-sm text-right">{formatCurrency(products[0].qtySold)}</td>
+
                         <td className="px-3 py-2 text-sm text-right">{formatCurrency(products[0].costPrice)}</td>
-                        <td className="px-3 py-2 text-sm text-right">{formatCurrency(products[0].mrp)}</td>
-                        <td className="px-3 py-2 text-sm text-right">{formatPercentage(products[0].grossProfitPercentage)}</td>
-                        <td className="px-3 py-2 text-sm text-right">{formatPercentage(products[0].discountPercentageOnMRP)}</td>
-                        <td className="px-3 py-2 text-sm text-right">{formatCurrency(products[0].stockInHand)}</td>
+
+                        <td className="px-3 py-2 text-sm text-right">{products[0].qtySold}</td>
+                        <td className="px-3 py-2 text-sm text-right">{products[0].productStatus}</td>
+
                     </tr>
                 );
-                
+
                 // Render remaining products (if any)
                 for (let i = 1; i < productCount; i++) {
                     rows.push(
@@ -369,20 +342,19 @@ const PurchaseReports = () => {
                             <td className="px-3 py-2 text-sm">{products[i].style || '-'}</td>
                             <td className="px-3 py-2 text-sm">{products[i].size || '-'}</td>
                             <td className="px-3 py-2 text-sm">{products[i].designGroup || '-'}</td>
-                            <td className="px-3 py-2 text-sm">{products[i].productStatus || '-'}</td>
+
                             <td className="px-3 py-2 text-sm">{products[i].colour || '-'}</td>
-                            <td className="px-3 py-2 text-sm text-right">{formatCurrency(products[i].qtySold)}</td>
+
                             <td className="px-3 py-2 text-sm text-right">{formatCurrency(products[i].costPrice)}</td>
-                            <td className="px-3 py-2 text-sm text-right">{formatCurrency(products[i].mrp)}</td>
-                            <td className="px-3 py-2 text-sm text-right">{formatPercentage(products[i].grossProfitPercentage)}</td>
-                            <td className="px-3 py-2 text-sm text-right">{formatPercentage(products[i].discountPercentageOnMRP)}</td>
-                            <td className="px-3 py-2 text-sm text-right">{formatCurrency(products[i].stockInHand)}</td>
+                            <td className="px-3 py-2 text-sm text-right">{products[i].qtySold}</td>
+                            <td className="px-3 py-2 text-sm text-right">{products[i].productStatus}</td>
+
                         </tr>
                     );
                 }
             }
         });
-        
+
         return rows;
     };
 
@@ -487,16 +459,14 @@ const PurchaseReports = () => {
                             <thead className="bg-gray-100 dark:bg-slate-700 sticky top-0">
                                 <tr>
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">#</th>
-                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Sale Date</th>
-                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Customer Name</th>
-                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Purchase Channel</th>
-                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Supplier</th>
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Date</th>
+
+
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Receipt No</th>
-                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Total Amount</th>
-                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Narration</th>
-                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Mode of Payment</th>
-                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Payment Status</th>
-                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Sale Value</th>
+                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Supplier</th>
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Purchase Value</th>
+
+
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Stock Group</th>
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Item Name</th>
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Part No</th>
@@ -504,14 +474,14 @@ const PurchaseReports = () => {
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Style</th>
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Size</th>
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Design Group</th>
-                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Product Status</th>
+
+
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Colour</th>
-                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Qty Sold</th>
+
                                     <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Cost Price</th>
-                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">MRP</th>
-                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Gross Profit %</th>
-                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Discount %</th>
-                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Stock In Hand</th>
+                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Qty Purchased</th>
+
+                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Product Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -522,10 +492,10 @@ const PurchaseReports = () => {
                         {/* Pagination */}
                         {isDataFetched && pagination.totalItems > 0 && (
                             <div className="mt-4">
-                                <Pagination 
-                                    totalPages={pagination.totalPages} 
-                                    currentPage={pagination.currentPage} 
-                                    handlePageChange={handlePageChange} 
+                                <Pagination
+                                    totalPages={pagination.totalPages}
+                                    currentPage={pagination.currentPage}
+                                    handlePageChange={handlePageChange}
                                 />
                             </div>
                         )}

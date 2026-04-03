@@ -276,21 +276,15 @@ const SalesReports = () => {
                         <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
                             {sale.supplier || '-'}
                         </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
+                        {/* <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
                             {sale.receiptNumber || '-'}
-                        </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right">
-                            {formatCurrency(sale.totalAmount)}
-                        </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
-                            {sale.narration || '-'}
-                        </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
+                        </td> */}
+                       
+                      
+                        {/* <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
                             {sale.modeOfPayment || '-'}
-                        </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
-                            {sale.paymentStatus || '-'}
-                        </td>
+                        </td> */}
+                      
                         <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right">
                             {formatCurrency(sale.saleValue)}
                         </td>
@@ -318,10 +312,10 @@ const SalesReports = () => {
                         <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm" rowSpan={productCount}>
                             {sale.supplier || '-'}
                         </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm" rowSpan={productCount}>
+                        {/* <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm" rowSpan={productCount}>
                             {sale.receiptNumber || '-'}
-                        </td>
-                        <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right" rowSpan={productCount}>
+                        </td> */}
+                        {/* <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right" rowSpan={productCount}>
                             {formatCurrency(sale.totalAmount)}
                         </td>
                         <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm" rowSpan={productCount}>
@@ -332,7 +326,7 @@ const SalesReports = () => {
                         </td>
                         <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm" rowSpan={productCount}>
                             {sale.paymentStatus || '-'}
-                        </td>
+                        </td> */}
                         <td className="px-3 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right" rowSpan={productCount}>
                             {formatCurrency(sale.saleValue)}
                         </td>
@@ -345,13 +339,13 @@ const SalesReports = () => {
                         <td className="px-3 py-2 text-sm">{products[0].style || '-'}</td>
                         <td className="px-3 py-2 text-sm">{products[0].size || '-'}</td>
                         <td className="px-3 py-2 text-sm">{products[0].designGroup || '-'}</td>
-                        <td className="px-3 py-2 text-sm">{products[0].productStatus || '-'}</td>
+                        {/* <td className="px-3 py-2 text-sm">{products[0].productStatus || '-'}</td> */}
                         <td className="px-3 py-2 text-sm">{products[0].colour || '-'}</td>
-                        <td className="px-3 py-2 text-sm text-right">{formatCurrency(products[0].qtySold)}</td>
+                        {/* <td className="px-3 py-2 text-sm text-right">{formatCurrency(products[0].qtySold)}</td> */}
                         <td className="px-3 py-2 text-sm text-right">{formatCurrency(products[0].costPrice)}</td>
                         <td className="px-3 py-2 text-sm text-right">{formatCurrency(products[0].mrp)}</td>
-                        <td className="px-3 py-2 text-sm text-right">{formatPercentage(products[0].grossProfitPercentage)}</td>
-                        <td className="px-3 py-2 text-sm text-right">{formatPercentage(products[0].discountPercentageOnMRP)}</td>
+                        {/* <td className="px-3 py-2 text-sm text-right">{formatPercentage(products[0].grossProfitPercentage)}</td>
+                        <td className="px-3 py-2 text-sm text-right">{formatPercentage(products[0].discountPercentageOnMRP)}</td> */}
                         <td className="px-3 py-2 text-sm text-right">{formatCurrency(products[0].stockInHand)}</td>
                     </tr>
                 );
@@ -369,13 +363,13 @@ const SalesReports = () => {
                             <td className="px-3 py-2 text-sm">{products[i].style || '-'}</td>
                             <td className="px-3 py-2 text-sm">{products[i].size || '-'}</td>
                             <td className="px-3 py-2 text-sm">{products[i].designGroup || '-'}</td>
-                            <td className="px-3 py-2 text-sm">{products[i].productStatus || '-'}</td>
+                            {/* <td className="px-3 py-2 text-sm">{products[i].productStatus || '-'}</td> */}
                             <td className="px-3 py-2 text-sm">{products[i].colour || '-'}</td>
-                            <td className="px-3 py-2 text-sm text-right">{formatCurrency(products[i].qtySold)}</td>
+                            {/* <td className="px-3 py-2 text-sm text-right">{formatCurrency(products[i].qtySold)}</td> */}
                             <td className="px-3 py-2 text-sm text-right">{formatCurrency(products[i].costPrice)}</td>
                             <td className="px-3 py-2 text-sm text-right">{formatCurrency(products[i].mrp)}</td>
-                            <td className="px-3 py-2 text-sm text-right">{formatPercentage(products[i].grossProfitPercentage)}</td>
-                            <td className="px-3 py-2 text-sm text-right">{formatPercentage(products[i].discountPercentageOnMRP)}</td>
+                            {/* <td className="px-3 py-2 text-sm text-right">{formatPercentage(products[i].grossProfitPercentage)}</td>
+                            <td className="px-3 py-2 text-sm text-right">{formatPercentage(products[i].discountPercentageOnMRP)}</td> */}
                             <td className="px-3 py-2 text-sm text-right">{formatCurrency(products[i].stockInHand)}</td>
                         </tr>
                     );
@@ -491,11 +485,11 @@ const SalesReports = () => {
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Customer Name</th>
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Sales Channel</th>
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Supplier</th>
-                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Receipt No</th>
-                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Total Amount</th>
-                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Narration</th>
-                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Mode of Payment</th>
-                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Payment Status</th>
+                                    {/* <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Receipt No</th>
+                                    
+                                    
+                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Mode of Payment</th> */}
+                                   
                                     <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Sale Value</th>
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Stock Group</th>
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Item Name</th>
@@ -504,13 +498,13 @@ const SalesReports = () => {
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Style</th>
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Size</th>
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Design Group</th>
-                                    <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Product Status</th>
+
                                     <th className="px-3 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Colour</th>
-                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Qty Sold</th>
+
                                     <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Cost Price</th>
                                     <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">MRP</th>
-                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Gross Profit %</th>
-                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Discount %</th>
+                                    {/* <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Gross Profit %</th>
+                                    <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Discount %</th> */}
                                     <th className="px-3 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Stock In Hand</th>
                                 </tr>
                             </thead>
