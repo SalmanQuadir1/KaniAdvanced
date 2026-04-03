@@ -3,7 +3,7 @@ import DefaultLayout from '../../../layout/DefaultLayout'
 import Breadcrumb from '../../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 //  import Flatpickr from 'react-flatpickr';
-import { DELETE_Ledger_URL, GET_LEDGERRENAMEE__URL, VIEW_LEDGERBYDATE, VIEW_SUPPLIER_LEDGER, VIEW_SUPPLIER_LEDGERBYID, } from "../../../Constants/utils";
+import { BASE_URL, DELETE_Ledger_URL, ENTRYPAYMENT_URL, GET_LEDGERRENAMEE__URL, VIEW_LEDGERBYDATE, VIEW_SUPPLIER_LEDGER, VIEW_SUPPLIER_LEDGERBYID, } from "../../../Constants/utils";
 import ReactSelect from 'react-select';
 import useOrder from '../../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
@@ -259,12 +259,14 @@ const ViewLedger = () => {
                 const response = await fetch(`${DELETE_Ledger_URL}/${id}`, { // Correct API endpoint
                     method: 'DELETE',
                     headers: {
-                        "Content-Type": "application/json",
+
                         "Authorization": `Bearer ${token}`,
                     },
                 });
 
                 const data = await response.json();
+                console.log(data, "555");
+
                 if (response.ok) {
                     toast.success(`Ledger Deleted Successfully !!`);
                     // window.location.reload()
@@ -1308,6 +1310,51 @@ const ViewLedger = () => {
     console.log(SelectedLEDGERData, "umer");
 
 
+    const handleDeletee = async (e, ledger) => {
+        e.stopPropagation();
+
+        const confirmDelete = window.confirm("Are you sure you want to delete this entry?");
+        if (!confirmDelete) return;
+
+        try {
+            let url = "";
+
+            const type = ledger.voucherType?.toLowerCase();
+
+            if (type === "sales" || type === "purchase") {
+                url = `${ENTRYPAYMENT_URL}/delete/${ledger.entryPaymentId}`;
+            } else {
+                url = `${BASE_URL}/credit-debit-note/delete/${ledger.creditDebitNoteId}`;
+            }
+
+            const response = await fetch(url, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                     "Authorization": `Bearer ${token}`,
+                  
+                    // add auth token if needed
+                    // Authorization: `Bearer ${token}`
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error("Delete failed");
+            }
+
+            // ✅ Optional: refresh or update UI
+            // fetchLedgerData();
+
+            fetchFilteredLedgerData()
+
+            alert("Entry deleted successfully");
+        } catch (error) {
+            console.error(error);
+            alert("Failed to delete entry");
+        }
+    };
+
+
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Ledger/ View Ledger" />
@@ -1702,6 +1749,12 @@ const ViewLedger = () => {
                                                                                 }
                                                                             }}
                                                                             title="Print Entry"
+                                                                        />
+                                                                        <FiTrash2
+                                                                            size={17}
+                                                                            className="text-red-500 hover:text-red-700 mx-2 cursor-pointer"
+                                                                            onClick={(e) => handleDeletee(e, ledger)}
+                                                                            title="Delete Entry"
                                                                         />
 
                                                                         {/* <FiTrash2

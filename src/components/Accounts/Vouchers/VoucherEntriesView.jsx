@@ -113,7 +113,7 @@ const VoucherEntriesView = () => {
                 totalItems: data?.totalElements || 0,
                 data: data?.content || [],
                 totalPages: data?.totalPages || 1,
-                currentPage: data?.number !== undefined ? data.number  : 0,
+                currentPage: data?.number !== undefined ? data.number : 0,
                 itemsPerPage: data?.size || 10,
             });
 
@@ -145,8 +145,8 @@ const VoucherEntriesView = () => {
     const handlePageChange = (newPage) => {
         console.log("Page change requested:", newPage);
 
-        setPagination((prev) => ({ ...prev, currentPage: newPage-1 }));
-        getVoucher(newPage -1); // Correct function name and 1-indexed for user interaction
+        setPagination((prev) => ({ ...prev, currentPage: newPage - 1 }));
+        getVoucher(newPage - 1); // Correct function name and 1-indexed for user interaction
     };
 
     console.log(Voucher, "heyVoucher");
@@ -166,7 +166,7 @@ const VoucherEntriesView = () => {
             );
         }
 
-          const startingSerialNumber = (pagination.currentPage * pagination.itemsPerPage) + 1;
+        const startingSerialNumber = (pagination.currentPage * pagination.itemsPerPage) + 1;
 
         const handleDelete = async (e, id) => {
             e.preventDefault();
@@ -206,7 +206,7 @@ const VoucherEntriesView = () => {
 
 
 
-console.log(Voucher,"amjh");
+        console.log(Voucher, "amjh");
 
 
 
@@ -239,9 +239,15 @@ console.log(Voucher,"amjh");
                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.totalAmount} </p>
                 </td>
-                <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.supplierInvoiceNumber} </p>
-                </td>
+                {
+                    item?.typeOfVoucher?.toLowerCase() === "purchase" &&
+                    (
+                        <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
+                            <p className="text-gray-900 whitespace-no-wrap">{item?.supplierInvoiceNumber} </p>
+                        </td>
+
+                    )
+                }
 
 
 
@@ -266,19 +272,19 @@ console.log(Voucher,"amjh");
                 <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
                         {
-                            item.posInvoicing===true &&
+                            item.posInvoicing === true &&
 
-                              <FaPrint
-                            size={17}
-                            className="text-teal-500 hover:text-teal-700 mx-2"
-                            onClick={() => navigate(`/printentrypaymentPos/${item.id}/${item.gstRegistration}`)}
-                            title="Print Entry"
-                        />
+                            <FaPrint
+                                size={17}
+                                className="text-teal-500 hover:text-teal-700 mx-2"
+                                onClick={() => navigate(`/printentrypaymentPos/${item.id}/${item.gstRegistration}`)}
+                                title="Print Entry"
+                            />
 
                         }
 
                         {
-                            
+
                         }
                         <FaPrint
                             size={17}
@@ -305,7 +311,7 @@ console.log(Voucher,"amjh");
 
         console.log(values, "valiiiiii");
         const filters = {
-            voucherId: Number(id)||"",
+            voucherId: Number(id) || "",
 
             recieptNumber: values.recieptNumber || undefined,
             fromDate: values.fromDate || undefined,
@@ -400,7 +406,7 @@ console.log(Voucher,"amjh");
                                             />
                                         </div>
 
-                              
+
 
                                         {/* Voucher Name Field */}
 
@@ -435,7 +441,10 @@ console.log(Voucher,"amjh");
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">gstRegistration</th>
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">narration</th>
                                         <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">totalAmount</th>
-                                        <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">supplierInvoiceNumber</th>
+                                        {Voucher && Voucher.length > 0 && Voucher[0]?.typeOfVoucher?.toLowerCase() === "purchase" && (
+                                            <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Supplier Invoice Number</th>
+                                        )}
+
 
                                         {/* <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
 
@@ -447,7 +456,7 @@ console.log(Voucher,"amjh");
                                 </tbody>
                             </table>
                         </div>
-                        <Pagination totalPages={pagination.totalPages} currentPage={pagination.currentPage+1} handlePageChange={handlePageChange} />
+                        <Pagination totalPages={pagination.totalPages} currentPage={pagination.currentPage + 1} handlePageChange={handlePageChange} />
                     </div>
 
 

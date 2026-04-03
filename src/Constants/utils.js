@@ -519,7 +519,7 @@ export const DELETE_Groups_URL = `${BASE_URL}/accountGroup/delete`;
 //Vouchers
 export const ADD_Voucher_URL = `${BASE_URL}/voucher/addVoucher`;
 export const ADD_VoucherEntry_URL = `${BASE_URL}/entryPayment/add`;
-
+export const ENTRYPAYMENT_URL = `${BASE_URL}/entryPayment`;
 export const ADD_VoucherPaymentEntry_URL = `${BASE_URL}/api/voucher/payment-voucher`;
 
 export const GET_Voucher_URL = `${BASE_URL}/voucher/getAll`;

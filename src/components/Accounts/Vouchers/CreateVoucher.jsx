@@ -1254,8 +1254,10 @@ const CreateVoucher = () => {
 
 
 
+
                             // Determine registration location from GST registration
                             const getRegistrationLocation = (gstReg) => {
+
 
 
                                 if (!gstReg) return null;
@@ -1288,6 +1290,8 @@ const CreateVoucher = () => {
                             const determineLedgerType = () => {
                                 // First, get the raw registration location
                                 const rawRegLocation = getRegistrationLocation(defGstRegist);
+                                console.log(rawRegLocation, "221");
+
 
                                 // Convert at the very beginning - map jammu_and_kashmir to sxr, keep delhi as delhi
                                 // Also handle case - if it's delhi, keep as Delhi with capital D, if sxr keep as SXR with capital
@@ -1353,6 +1357,7 @@ const CreateVoucher = () => {
                                 }
 
 
+                                console.log(regLocation, "220");
 
                                 // Check if same state (local) or different state (IGST)
                                 if (regLocation === custLocation) {
@@ -2134,7 +2139,7 @@ const CreateVoucher = () => {
                                     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                                         <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                                             <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                                                {Vouchers?.name} 
+                                                {Vouchers?.name}
                                             </h3>
                                         </div>
 
@@ -2857,8 +2862,8 @@ const CreateVoucher = () => {
                                                                                         )}
 
                                                                                     {/* Base Price (Excl. GST) - NEW COLUMN */}
-                                                                                     {(Vouchers?.typeOfVoucher.toLowerCase() === "sales" || Vouchers?.typeOfVoucher.toLowerCase() === "purchase") && (
-                                                                                      
+                                                                                    {(Vouchers?.typeOfVoucher.toLowerCase() === "sales" || Vouchers?.typeOfVoucher.toLowerCase() === "purchase") && (
+
                                                                                         <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
                                                                                             <Field
                                                                                                 type="number"
@@ -2891,13 +2896,19 @@ const CreateVoucher = () => {
                                                                                             <Field
                                                                                                 type="number"
                                                                                                 name={`paymentDetails.${index}.discount`}
-                                                                                                // placeholder="0"
+                                                                                                placeholder="0"
                                                                                                 min="0"
                                                                                                 max="100"
                                                                                                 step="1"
                                                                                                 className="w-full py-2 px-3 text-sm rounded border focus:border-primary"
+                                                                                                value={values.paymentDetails?.[index]?.discount === 0 ? "" : values.paymentDetails?.[index]?.discount}
                                                                                                 onChange={(e) => {
-                                                                                                    let discount = parseFloat(e.target.value) || 0;
+                                                                                                    let discount = e.target.value === "" ? 0 : parseFloat(e.target.value);
+
+                                                                                                    // Handle empty or invalid input
+                                                                                                    if (isNaN(discount)) {
+                                                                                                        discount = 0;
+                                                                                                    }
 
                                                                                                     // Validate discount doesn't exceed 100%
                                                                                                     if (discount > 100) {
@@ -2943,8 +2954,20 @@ const CreateVoucher = () => {
                                                                                                         setFieldValue(`paymentDetails.${index}.voucherAmount`, lineTotal.toFixed(2));
                                                                                                     }
                                                                                                 }}
+                                                                                                onFocus={(e) => {
+                                                                                                    // Clear the field when focused if it's 0
+                                                                                                    if (values.paymentDetails?.[index]?.discount === 0) {
+                                                                                                        setFieldValue(`paymentDetails.${index}.discount`, "");
+                                                                                                    }
+                                                                                                }}
+                                                                                                onBlur={(e) => {
+                                                                                                    // Set to 0 when blurred if empty
+                                                                                                    const currentValue = values.paymentDetails?.[index]?.discount;
+                                                                                                    if (currentValue === "" || currentValue === undefined || currentValue === null) {
+                                                                                                        setFieldValue(`paymentDetails.${index}.discount`, 0);
+                                                                                                    }
+                                                                                                }}
                                                                                             />
-
                                                                                         </td>
                                                                                     )}
 
@@ -2987,7 +3010,7 @@ const CreateVoucher = () => {
 
                                                                                     {/* GST Type */}
 
-                                                                                     {(
+                                                                                    {(
                                                                                         Vouchers?.typeOfVoucher === "Sales" ||
                                                                                         (Vouchers?.typeOfVoucher === "Purchase" && regType?.toLowerCase() === "regular")
                                                                                     ) && (
