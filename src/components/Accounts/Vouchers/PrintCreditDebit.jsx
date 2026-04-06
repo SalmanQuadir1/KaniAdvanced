@@ -78,9 +78,12 @@ const PrintCreditDebit = () => {
             }
         };
 
-        // Use location from params if provided
-        if (location) {
-            return addresses[location] || addresses.srinagar;
+       const gstRegistration = noteData?.locationState?.toLowerCase() || '';
+
+        if (gstRegistration.includes('delhi')) {
+            return addresses.delhi;
+        } else if (gstRegistration.includes('srinagar')) {
+            return addresses.srinagar;
         }
 
         return addresses.srinagar;

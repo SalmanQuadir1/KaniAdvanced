@@ -82,9 +82,11 @@ const PrintPosEntryPayment = () => {
                 stateCode: "01"
             }
         };
+console.log(paymentData,"555555555555");
 
         // Get GST registration from payment data
-        const gstRegistration = paymentData?.gstRegistration?.toLowerCase() || '';
+        const gstRegistration = paymentData?.locationState?.toLowerCase() || '';
+        console.log(gstRegistration,"2110");
 
         // Determine location based on GST registration
         if (gstRegistration.includes('delhi')) {

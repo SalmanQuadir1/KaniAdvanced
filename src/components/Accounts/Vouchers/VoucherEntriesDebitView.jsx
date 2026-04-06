@@ -71,7 +71,7 @@ const VoucherEntriesDebitView = () => {
                 status: status || filters.status
             };
 
-            const response = await fetch(`${GET_VoucherEntriessearchFORDEBIT_URL}?page=${page}&noteType=${firstParam}&search=${search}`, {
+            const response = await fetch(`${GET_VoucherEntriessearchFORDEBIT_URL}/${id}?page=${page}&noteType=${firstParam}&search=${search}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

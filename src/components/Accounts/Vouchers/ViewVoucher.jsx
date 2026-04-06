@@ -273,22 +273,22 @@ const ViewVoucher = () => {
 
                 {
                     // For Debit Note, Credit Note, Receipt, and Stock Journal - always show View Entries
-                    ["debit note", "credit note", "receipt", "stock journal","contra"].includes(item.name?.toLowerCase()) ? (
+                    ["debitnote", "creditnote", "receipt", "stockjournal","contra"].includes(item.typeOfVoucher?.toLowerCase()) ? (
                         <td>
                             <span
                                 onClick={() => {
                                     let viewPath = '';
 
-                                    if (item.name?.toLowerCase() === "debit note") {
+                                    if (item.typeOfVoucher?.toLowerCase() === "debitnote") {
                                         viewPath = `/voucherEntriesView/${item.id}?DEBIT_NOTE`;
-                                    } else if (item.name?.toLowerCase() === "credit note") {
+                                    } else if (item.typeOfVoucher?.toLowerCase() === "creditnote") {
                                         viewPath = `/voucherEntriesView/${item.id}?CREDIT_NOTE`;
-                                    } else if (item.name?.toLowerCase() === "receipt") {
+                                    } else if (item.typeOfVoucher?.toLowerCase() === "receipt") {
                                         viewPath = `/voucherEntriesView/${item.id}?RECEIPT_NOTE`;
-                                    } else if (item.name?.toLowerCase() === "stock journal") {
+                                    } else if (item.typeOfVoucher?.toLowerCase() === "stockjournal") {
                                         viewPath = `/voucherEntriesStockJournal/${item.id}`;
                                     }
-                                     else if (item.name?.toLowerCase() === "contra") {
+                                     else if (item.typeOfVoucher?.toLowerCase() === "contra") {
                                         viewPath = `/voucherEntriesView/${item.id}?CONTRA`;
                                     }
 

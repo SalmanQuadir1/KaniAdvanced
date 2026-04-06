@@ -74,7 +74,7 @@ const PrintEntryPayment = () => {
             }
         };
 
-        const gstRegistration = paymentData?.gstRegistration?.toLowerCase() || '';
+        const gstRegistration = paymentData?.locationState?.toLowerCase() || '';
 
         if (gstRegistration.includes('delhi')) {
             return addresses.delhi;
