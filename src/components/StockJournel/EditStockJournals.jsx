@@ -394,6 +394,7 @@ const EditStockJournals = () => {
                                     //     newValue
                                     //   );
                                     // }}
+                                    disabled='true'
                                     className="w-[150px] bg-white dark:bg-form-input dark:text-white rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                     placeholder="Enter Product ID"
                                   />

@@ -123,7 +123,7 @@ const ViewStockJournels = () => {
         <td className="flex px-2 py-2 border-b border-gray-200 text-sm gap-1">
           <button
             onClick={() => navigate(`/stockjournel/acceptStockJournal/${item.id}`)}
-            disabled={item.journalStatus == 'FULLY_ACCEPTED'}
+            disabled={item.journalStatus == 'FULLY_ACCEPTED'||item.journalStatus == 'PARTIALLY_ACCEPTED'}
             className="flex items-center   bg-primary text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow hover:shadow-lg transform hover:-translate-y-0.5"
           >
             <FcAcceptDatabase size={18} />

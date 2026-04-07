@@ -518,6 +518,7 @@ const VerifyStockJournals = () => {
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <Field
                                     name={`stockJournal[${index}].transferedQuantity`}
+                                    disabled='true'
                                     // onChange={(e) => {
                                     //   const newValue = e.target.value;
                                     //   console.log(`New Product ID: ${newValue}`);
