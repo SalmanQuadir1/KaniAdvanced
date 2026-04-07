@@ -66,7 +66,7 @@ const DebitorsReports = () => {
                     body: JSON.stringify({
                         fromDate: filters.fromDate,
                         toDate: filters.toDate,
-                        groupName: encodeURIComponent(groupName),
+                       
                         page: page - 1,
                         size: pagination.itemsPerPage
                     })
