@@ -115,16 +115,17 @@ const CreditorsReports = () => {
         const filters = {
             fromDate: values.fromDate,
             toDate: values.toDate,
-            groupName: "Sundry Creditors"
+           
         };
 
         try {
-            const response = await fetch(`${DOWNLOADACCCSV_REPORT}/download?fromDate=${values.fromDate}&toDate=${values.toDate}&groupName=${encodeURIComponent(filters.groupName)}`, {
-                method: "GET",
+            const response = await fetch(`${DOWNLOADACCCSV_REPORT}/download`, {
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
+                body: JSON.stringify(filters),
             });
 
             if (!response.ok) {
@@ -282,20 +283,15 @@ const CreditorsReports = () => {
                     {startingSerialNumber + index}
                 </td>
                 <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-900 dark:text-white">
-                    {item.ledgerName || '-'}
+                    {item.groupTypes || '-'}
                 </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300">
+                 <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300">
                     {item.supplierCode || '-'}
                 </td>
                 <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300">
                     {item.supplierName || '-'}
                 </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300">
-                    {item.customerName || '-'}
-                </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    {Number(item.openingBalance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                </td>
+               
                 <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
                     {Number(item.previousOpeningBalance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </td>
@@ -304,6 +300,10 @@ const CreditorsReports = () => {
                 </td>
                 <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
                     {Number(item.totalCreditTransaction || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                </td>
+                
+                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
+                    {Number(item.openingBalance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                 </td>
             </tr>
         ));
@@ -391,14 +391,14 @@ const CreditorsReports = () => {
                             <thead className="bg-gray-100 dark:bg-slate-700">
                                 <tr>
                                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">#</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Ledger Name</th>
+                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Product Group</th>
                                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Supplier Code</th>
                                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Supplier Name</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Customer Name</th>
-                                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Closing Balance</th>
+
                                     <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Opening Balance</th>
                                     <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Total Debit</th>
                                     <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Total Credit</th>
+                                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Closing Balance</th>
                                 </tr>
                             </thead>
                             <tbody>

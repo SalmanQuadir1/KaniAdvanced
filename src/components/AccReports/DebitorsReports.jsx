@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
-import { DELETE_ORDER_URL, DOWNLOADACCCSV_REPORT, DOWNLOADCSV_REPORT, DOWNLOAD_REPORT, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS, VIEW_REPORT } from "../../Constants/utils";
+import { DELETE_ORDER_URL, DOWNLOADACCCSVDebi_REPORT, DOWNLOADACCCSV_REPORT, DOWNLOADCSV_REPORT, DOWNLOAD_REPORT, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS, VIEW_REPORT } from "../../Constants/utils";
 import ReactSelect from 'react-select';
 import useorder from '../../hooks/useOrder';
 import { FiEdit, FiTrash2, FiEye } from 'react-icons/fi';
@@ -50,13 +50,13 @@ const DebitorsReports = () => {
     // Function to fetch a specific page from API
     const fetchPageData = async (page, filters) => {
         if (!filters.fromDate || !filters.toDate) return;
-        
+
         setLoading(true);
         const groupName = "Sundry Debitors";
-        
+
         try {
             const response = await fetch(
-                `${DOWNLOADACCCSV_REPORT}?fromDate=${filters.fromDate}&toDate=${filters.toDate}&groupName=${encodeURIComponent(groupName)}&page=${page - 1}&size=${pagination.itemsPerPage}`,
+                `${DOWNLOADACCCSVDebi_REPORT}?fromDate=${filters.fromDate}&toDate=${filters.toDate}&groupName=${encodeURIComponent(groupName)}&page=${page - 1}&size=${pagination.itemsPerPage}`,
                 {
                     method: "GET",
                     headers: {
@@ -65,17 +65,17 @@ const DebitorsReports = () => {
                     },
                 }
             );
-            
+
             if (!response.ok) {
                 throw new Error("Failed to fetch page data");
             }
-            
+
             const data = await response.json();
-            
+
             setReportData(data.content || []);
             setFilteredData(data.content || []);
             setCurrentPageData(data.content || []);
-            
+
             setPagination({
                 totalItems: data?.totalElements || 0,
                 data: data?.content || [],
@@ -83,7 +83,7 @@ const DebitorsReports = () => {
                 currentPage: (data?.number || 0) + 1,
                 itemsPerPage: data?.size || 10,
             });
-            
+
         } catch (error) {
             console.error(error);
             toast.error("Failed to load page data");
@@ -99,12 +99,12 @@ const DebitorsReports = () => {
             toast.warning("Please select both From Date and To Date");
             return;
         }
-        
+
         setCurrentFilters({
             fromDate: values.fromDate,
             toDate: values.toDate
         });
-        
+
         await fetchPageData(1, values);
         setIsDataFetched(true);
     };
@@ -119,17 +119,19 @@ const DebitorsReports = () => {
         const filters = {
             fromDate: values.fromDate,
             toDate: values.toDate,
-            groupName: "Sundry Debitors"
+
         };
 
         try {
-            const response = await fetch(`${DOWNLOADACCCSV_REPORT}/download?fromDate=${values.fromDate}&toDate=${values.toDate}&groupName=${encodeURIComponent(filters.groupName)}`, {
-                method: "GET",
+            const response = await fetch(`${DOWNLOADACCCSVDebi_REPORT}/download`, {
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-            });
+                body: JSON.stringify(filters),
+            },
+            );
 
             if (!response.ok) {
                 const errorText = await response.text();
@@ -204,26 +206,24 @@ const DebitorsReports = () => {
                     {item.ledgerName || '-'}
                 </td>
                 <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300">
-                    {item.supplierCode || '-'}
+                    {item.previousOpeningBalance || '-'}
                 </td>
+                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
+                    {Number(item.debitTransaction || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                </td>
+                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
+                    {Number(item.creditTransaction || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                </td>
+
                 <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300">
-                    {item.supplierName || '-'}
+                    {item.openingBalance || '-'}
                 </td>
+
                 <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300">
-                    {item.customerName || '-'}
+                    {item.createdDate? new Date(item.createdDate).toLocaleDateString() : '-'}
                 </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    {Number(item.openingBalance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    {Number(item.previousOpeningBalance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    {Number(item.totalDebitTransaction || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    {Number(item.totalCreditTransaction || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                </td>
+
+
             </tr>
         ));
     };
@@ -310,14 +310,13 @@ const DebitorsReports = () => {
                             <thead className="bg-gray-100 dark:bg-slate-700">
                                 <tr>
                                     <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">#</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Ledger Name</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Supplier Code</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Supplier Name</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Customer Name</th>
-                                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Closing Balance</th>
+                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Client Name</th>
                                     <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Opening Balance</th>
                                     <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Total Debit</th>
                                     <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Total Credit</th>
+                                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Closing Balance</th>
+
+                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Age Of  Debt</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -328,10 +327,10 @@ const DebitorsReports = () => {
                         {/* Pagination */}
                         {isDataFetched && pagination.totalItems > 0 && (
                             <div className="mt-4">
-                                <Pagination 
-                                    totalPages={pagination.totalPages} 
-                                    currentPage={pagination.currentPage} 
-                                    handlePageChange={handlePageChange} 
+                                <Pagination
+                                    totalPages={pagination.totalPages}
+                                    currentPage={pagination.currentPage}
+                                    handlePageChange={handlePageChange}
                                 />
                             </div>
                         )}

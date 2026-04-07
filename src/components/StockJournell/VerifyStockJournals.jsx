@@ -176,7 +176,7 @@ const VerifyStockJournals = () => {
       const data = await response.json();
       if (response.ok) {
         toast.success(`Journal Verified successfully`);
-        navigate("/stockJournal/ViewStockJournal");
+        navigate("/stock/ViewStockTransfer");
       } else {
         toast.error(`${data.errorMessage}`);
       }

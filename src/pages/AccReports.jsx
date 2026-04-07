@@ -139,7 +139,7 @@ const AccReports = () => {
             { title: "Product Report", link: "/report/product", countKey: "approvedOrders", icon: <GrCompliance className="w-10 h-10" />, levelUp: true },
             { title: "Verifiy Product Transfer", link: "/stockJournal/verify", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
             { title: "Pending for Bill", link: "/Recieved/pendingForBill", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
-            { title: "Stock Journal Accept", link: "/StockJournal/get", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
+            // { title: "Stock Journal Accept", link: "/StockJournal/get", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
             { title: "Production Dashboard", link: "/kaniProducts", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelUp: true },
         ],
         ROLE_EXECUTOR: [

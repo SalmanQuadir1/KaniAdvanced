@@ -137,7 +137,7 @@ const Home = () => {
             { title: "Product Report", link: "/report/product", countKey: "approvedOrders", icon: <GrCompliance className="w-10 h-10" />, levelUp: true },
             { title: "Verifiy Product Transfer", link: "/stockJournal/verify", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
             { title: "Pending for Bill", link: "/Recieved/pendingForBill", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
-            { title: "Stock Journal Accept", link: "/StockJournal/get", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
+            // { title: "Stock Journal Accept", link: "/StockJournal/get", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
             { title: "Production Dashboard", link: "/kaniProducts",  icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelUp: true },
         ],
         ROLE_EXECUTOR: [
@@ -301,7 +301,7 @@ const kaniModeCards = [
     const accountsModeCards = [
         // { title: "Accounts Dashboard", link: "/accounts/dashboard", countKey: "accountsData", icon: <LuScale className="w-10 h-10" />, levelUp: true },
         { title: "Pending for Bill", link: "/Recieved/pendingForBill", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
-        { title: "Billing Info", link: "/accounts/billing", countKey: "billing", icon: <MdRepartition className="w-10 h-10" />, levelDown: true },
+        // { title: "Billing Info", link: "/accounts/billing", countKey: "billing", icon: <MdRepartition className="w-10 h-10" />, levelDown: true },
         // { title: "Invoices", link: "/accounts/invoices", countKey: "invoices", icon: <MdOutlinePending className="w-10 h-10" />, levelUp: true },
       ];
 
