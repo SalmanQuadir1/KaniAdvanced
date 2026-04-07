@@ -354,7 +354,7 @@ const PrintPaymentVoucher = () => {
                         </div>
 
                         {/* Logo */}
-                        <div style={{ marginLeft: '20px', marginTop: '0' }}>
+                        {/* <div style={{ marginLeft: '20px', marginTop: '0' }}>
                             <img
                                 src="/img/logo.png"
                                 alt="Company Logo"
@@ -364,7 +364,7 @@ const PrintPaymentVoucher = () => {
                                     objectFit: 'contain'
                                 }}
                             />
-                        </div>
+                        </div> */}
                     </Col>
 
                     {/* Voucher Title */}

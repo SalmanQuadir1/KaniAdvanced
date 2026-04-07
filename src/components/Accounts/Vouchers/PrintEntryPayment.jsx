@@ -332,7 +332,7 @@ const PrintEntryPayment = () => {
                             </div>
                         </div>
 
-                        <div style={{ marginLeft: '20px', marginTop: '0' }}>
+                        {/* <div style={{ marginLeft: '20px', marginTop: '0' }}>
                             <img
                                 src="/img/logo.png"
                                 alt="Company Logo"
@@ -342,7 +342,7 @@ const PrintEntryPayment = () => {
                                     objectFit: 'contain'
                                 }}
                             />
-                        </div>
+                        </div> */}
                     </Col>
 
                     <Col md={4} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>

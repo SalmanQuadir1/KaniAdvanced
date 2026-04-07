@@ -241,7 +241,7 @@ console.log(stockData,"6666666");
                             </div>
                         </div>
 
-                        <div style={{ marginLeft: '20px', marginTop: '0' }}>
+                        {/* <div style={{ marginLeft: '20px', marginTop: '0' }}>
                             <img
                                 src="/img/logo.png"
                                 alt="Company Logo"
@@ -251,7 +251,7 @@ console.log(stockData,"6666666");
                                     objectFit: 'contain'
                                 }}
                             />
-                        </div>
+                        </div> */}
                     </Col>
 
                     <Col md={4} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>

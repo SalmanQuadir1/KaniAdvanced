@@ -2028,7 +2028,7 @@ const AddProduct = () => {
 
                                             <div className="flex-1 min-w-[300px]">
                                                 <label className="mb-2.5 block text-black dark:text-white">
-                                                    No Of Looms <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span>
+                                                    No Of Looms <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> </span>
                                                 </label>
                                                 <div className="bg-transparent dark:bg-form-Field">
                                                     <ReactSelect

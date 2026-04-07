@@ -331,7 +331,7 @@ console.log(paymentData,"555555555555");
                         </div>
 
                         {/* Right side - Logo (inside same column as address) */}
-                        <div style={{ marginLeft: '20px', marginTop: '0' }}>
+                        {/* <div style={{ marginLeft: '20px', marginTop: '0' }}>
                             <img
                                 src="/img/logo.png"
                                 alt="Company Logo"
@@ -341,7 +341,7 @@ console.log(paymentData,"555555555555");
                                     objectFit: 'contain'
                                 }}
                             />
-                        </div>
+                        </div> */}
                     </Col>
 
                     {/* Separate column for TAX INVOICE title */}
