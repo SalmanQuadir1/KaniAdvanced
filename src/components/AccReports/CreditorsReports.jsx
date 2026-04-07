@@ -185,13 +185,19 @@ const CreditorsReports = () => {
         
         try {
             const response = await fetch(
-                `${DOWNLOADACCCSV_REPORT}?fromDate=${filters.fromDate}&toDate=${filters.toDate}&groupName=${encodeURIComponent(groupName)}&page=${page - 1}&size=${pagination.itemsPerPage}`,
+                `${DOWNLOADACCCSV_REPORT}/preview`,
                 {
-                    method: "GET",
+                    method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
                     },
+                    body: JSON.stringify({
+                        fromDate: filters.fromDate,
+                        toDate: filters.toDate,
+                        
+                       
+                    })
                 }
             );
             

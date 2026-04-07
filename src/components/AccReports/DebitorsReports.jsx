@@ -56,13 +56,21 @@ const DebitorsReports = () => {
 
         try {
             const response = await fetch(
-                `${DOWNLOADACCCSVDebi_REPORT}?fromDate=${filters.fromDate}&toDate=${filters.toDate}&groupName=${encodeURIComponent(groupName)}&page=${page - 1}&size=${pagination.itemsPerPage}`,
+                `${DOWNLOADACCCSVDebi_REPORT}/preview`,
                 {
-                    method: "GET",
+                    method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
                     },
+                    body: JSON.stringify({
+                        fromDate: filters.fromDate,
+                        toDate: filters.toDate,
+                        groupName: encodeURIComponent(groupName),
+                        page: page - 1,
+                        size: pagination.itemsPerPage
+                    })
+
                 }
             );
 
@@ -209,10 +217,10 @@ const DebitorsReports = () => {
                     {item.previousOpeningBalance || '-'}
                 </td>
                 <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    {Number(item.debitTransaction || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    {Number(item.debitTransaction || 0)}
                 </td>
                 <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    {Number(item.creditTransaction || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                    {Number(item.creditTransaction || 0)}
                 </td>
 
                 <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300">
