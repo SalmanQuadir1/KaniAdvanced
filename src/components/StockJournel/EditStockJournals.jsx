@@ -15,8 +15,9 @@ import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { MdDelete } from 'react-icons/md';
 import { IoIosGitMerge } from 'react-icons/io';
+import { FaPrint } from 'react-icons/fa';
 
-const VerifyStockJournals = () => {
+const EditStockJournals = () => {
   const [StockJournal, setStockJournal] = useState([])
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state?.persisted?.user);
@@ -136,46 +137,36 @@ const VerifyStockJournals = () => {
   const handleSubmit = async (values) => {
     console.log(values, "Form values");
 
-    // Filter only the selected rows based on selectedRows array
-    const selectedIndexes = values.selectedRows.map(id => {
-      return values.stockJournal.findIndex(item => item.product?.id === id);
-    }).filter(index => index !== -1);
+    // Build acceptances for ALL products in the journal
+    const acceptances = values.stockJournal.map((item, index) => ({
+      transferProductId: item.product.productIdd, // this is the transfer product ID
+      acceptedQty: Number(item.acceptedQty) || 0,
+      rejectedQty: Number(item.rejectedQty) || 0,
+      remarks: item.remarks || ""
+    }));
 
-    // Prepare the final data with only selected rows
     const finalData = {
-      stockJournalId: values?.stockJournalId,
+      stockJournalId: values.stockJournalId,
       acceptedBy: currentUser?.user.username,
-      acceptances: selectedIndexes.map(index => ({
-        transferProductId: values?.stockJournal[index]?.product.productIdd,
-        // transferQty: Number(values.stockJournal[index]?.transferedQuantity),
-        acceptedQty: Number(values?.stockJournal[index]?.acceptedQty) || 0,
-        rejectedQty: Number(values?.stockJournal[index]?.rejectedQty) || 0,
-        remarks: values?.stockJournal[index]?.remarks || ""
-      }))
+      acceptances: acceptances
     };
 
     console.log(finalData, "Final data to submit");
 
-    // Uncomment the API call when ready
-
     try {
-      const url = `${VERIFY_STOCK_JOURNAL}`;
-      const method = "POST";
-
+      const url = `${VERIFY_STOCK_JOURNAL}/update`;
       const response = await fetch(url, {
-        method: method,
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify(finalData)
       });
-      console.log(response, "kjkjkj");
-
 
       const data = await response.json();
       if (response.ok) {
-        toast.success(`Journal Verified successfully`);
+        toast.success(`Journal updated successfully`);
         navigate("/stock/ViewStockTransfer");
       } else {
         toast.error(`${data.errorMessage}`);
@@ -184,7 +175,6 @@ const VerifyStockJournals = () => {
       console.error(error);
       toast.error("An error occurred");
     }
-
   };
 
 
@@ -235,7 +225,7 @@ const VerifyStockJournals = () => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Order/Update Order" />
+      <Breadcrumb pageName="Stock Journal /Edit Stock Journal" />
       <div>
         <Formik
           onSubmit={handleSubmit}
@@ -288,83 +278,7 @@ const VerifyStockJournals = () => {
                   <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
 
                     <div className="p-6.5">
-                      <div className="flex flex-col gap-4">
-                        <div className="bg-gradient-to-br from-white/20 to-white/5 dark:from-gray-900/50 dark:to-gray-800/50 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-white/20 dark:border-gray-700/50">
-                          <div className="flex flex-col items-center mb-8">
-                            <div className="p-3 mb-3 bg-primary rounded-2xl shadow-xl">
-                              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                              </svg>
-                            </div>
-                            <h3 className="text-2xl font-bold text-transparent bg-primary bg-clip-text">
-                              Journal Detailss
-                            </h3>
-                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Complete journal information</p>
-                          </div>
 
-                          <div className="grid  grid-cols-1 md:grid-cols-3 gap-8">
-                            {[
-                              {
-                                key: 'voucherNo',
-                                label: 'Voucher No',
-                                value: StockJournal?.voucherNo,
-                                icon: '#',
-                                color: 'blue',
-                                gradient: 'from-blue-500/20 to-cyan-500/20',
-                                border: 'border-blue-300/50',
-                                text: 'text-blue-800 dark:text-blue-200'
-                              },
-                              {
-                                key: 'createdDate',
-                                label: 'Created Date',
-                                value: StockJournal?.createdDate ? new Date(StockJournal.createdDate).toLocaleString() : '',
-                                icon: '📅',
-                                color: 'emerald',
-                                gradient: 'from-emerald-500/20 to-teal-500/20',
-                                border: 'border-emerald-300/50',
-                                text: 'text-emerald-800 dark:text-emerald-200'
-                              },
-                              {
-                                key: 'journalStatus',
-                                label: 'Status',
-                                value: StockJournal?.journalStatus,
-                                icon: '📊',
-                                color: 'purple',
-                                gradient: 'from-purple-500/20 to-pink-500/20',
-                                border: 'border-purple-300/50',
-                                text: 'text-purple-800 dark:text-purple-200'
-                              }
-                            ].map((item) => (
-                              <div key={item.key} className=" relative group">
-                                <div className={`absolute -inset-1 bg-gradient-to-r ${item.gradient} rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-500`}></div>
-                                <div className="h-[150px] relative bg-white/40 dark:bg-gray-900/40 backdrop-blur-sm rounded-xl p-6 border ${item.border}">
-                                  <div className="flex items-center justify-center mb-4">
-                                    <div className={`p-2 bg-gradient-to-br ${item.gradient.replace('/20', '')} rounded-lg shadow-md`}>
-                                      <span className="text-xl font-bold text-white">{item.icon}</span>
-                                    </div>
-                                  </div>
-                                  <label className="block text-sm font-semibold text-gray-600 dark:text-gray-400 text-center mb-2">
-                                    {item.label}
-                                  </label>
-                                  {item.key === 'journalStatus' ? (
-                                    <div className={`text-center text-xl font-bold ${item.text} px-4  rounded-lg bg-white/50 dark:bg-gray-800/50`}>
-                                      {item.value || 'N/A'}
-                                    </div>
-                                  ) : (
-                                    <Field
-                                      type="text"
-                                      name={item.key}
-                                      readOnly
-                                      value={item.value}
-                                      className={`w-full text-center text-xl font-bold ${item.text} bg-transparent border-none focus:outline-none`}
-                                    />
-                                  )}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
                       <h6 className='text-sm text-red-500 mt-3'> * Hover On The Field To View The Full Title</h6>
 
 
@@ -414,41 +328,7 @@ const VerifyStockJournals = () => {
                               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Transfer Status
                               </th>
-                              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                Action
-                                <Field
-                                  type="checkbox"
-                                  name="selectAll"
-                                  checked={checkAll}
-                                  onChange={(e) => {
-                                    const isChecked = e.target.checked;
-                                    setCheckAll(isChecked);
 
-                                    if (isChecked) {
-                                      // Select all products
-                                      const allProductIds = StockJournal?.transferProducts?.map(item => item.product?.id) || [];
-                                      setFieldValue("selectedRows", allProductIds);
-
-                                      // Auto-fill all quantities
-                                      StockJournal?.transferProducts?.forEach((_, index) => {
-                                        const transferedQty = values.stockJournal[index]?.transferedQuantity || 0;
-                                        setFieldValue(`stockJournal[${index}].acceptedQty`, transferedQty);
-                                        setFieldValue(`stockJournal[${index}].rejectedQty`, 0);
-                                      });
-                                    } else {
-                                      // Deselect all
-                                      setFieldValue("selectedRows", []);
-
-                                      // Clear all quantities
-                                      StockJournal?.transferProducts?.forEach((_, index) => {
-                                        setFieldValue(`stockJournal[${index}].acceptedQty`, "");
-                                        setFieldValue(`stockJournal[${index}].rejectedQty`, "");
-                                      });
-                                    }
-                                  }}
-                                  className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500 ml-2"
-                                />
-                              </th>
                             </tr>
                           </thead>
                           <tbody>
@@ -672,66 +552,7 @@ const VerifyStockJournals = () => {
 
                                 </td>
                                 {/* Radio Button */}
-                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                  {item.transferStatus === "PENDING" || item.transferStatus === "Pending" ? (
-                                    // Show checkbox for Pending items
-                                    <Field
-                                      type="checkbox"
-                                      name="selectedRows"
-                                      value={item.product?.id}
-                                      checked={values.selectedRows.includes(item.product?.id)}
-                                      onChange={(e) => {
-                                        const checked = e.target.checked;
-                                        const productId = item.product?.id;
 
-                                        if (checked) {
-                                          // If checked, add the product ID to selectedRows
-                                          setFieldValue("selectedRows", [...values.selectedRows, productId]);
-
-                                          // Auto-fill accepted quantity with transfered quantity
-                                          setFieldValue(
-                                            `stockJournal[${index}].acceptedQty`,
-                                            values.stockJournal[index]?.acceptedQty || 0
-                                          );
-
-                                          // Auto-calculate rejected quantity
-                                          const transferedQty = Number(values.stockJournal[index]?.transferedQuantity) || 0;
-                                          const acceptedQty = Number(values.stockJournal[index]?.acceptedQty) || 0;
-                                          setFieldValue(
-                                            `stockJournal[${index}].rejectedQty`,
-                                            transferedQty - acceptedQty
-                                          );
-                                        } else {
-                                          // If unchecked, remove the product ID from selectedRows
-                                          setFieldValue(
-                                            "selectedRows",
-                                            values.selectedRows.filter(id => id !== productId)
-                                          );
-
-                                          // Clear the accepted and rejected quantities
-                                          setFieldValue(`stockJournal[${index}].acceptedQty`, "");
-                                          setFieldValue(`stockJournal[${index}].rejectedQty`, "");
-                                        }
-                                      }}
-                                      className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
-                                      title="Select this pending item"
-                                    />
-                                  ) : (
-                                    // Show status badge for non-Pending items
-                                    <div className="flex justify-center">
-                                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${item.transferStatus === "ACCEPTED" || item.transferStatus === "Accepted" || item.transferStatus === "APPROVED"
-                                        ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                                        : item.transferStatus === "REJECTED" || item.transferStatus === "Rejected"
-                                          ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                                          : item.transferStatus === "COMPLETED" || item.transferStatus === "Completed"
-                                            ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-                                            : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                                        }`}>
-                                        {item.transferStatus}
-                                      </span>
-                                    </div>
-                                  )}
-                                </td>
 
 
 
@@ -772,13 +593,12 @@ const VerifyStockJournals = () => {
                       <div className="flex justify-center mt-4">
                         <button
                           type="submit"
-                          disabled={values.selectedRows.length === 0}
-                          className={`w-1/3 px-6 py-2 text-white rounded-lg shadow-md transition-colors duration-300 ${values.selectedRows.length === 0
-                            ? "bg-slate-400 cursor-not-allowed"
-                            : "bg-primary hover:bg-primary-dark"
-                            }`}
+
+                          className={`w-1/3 px-6 py-2 text-white rounded-lg shadow-md transition-colors duration-300  bg-primary hover:bg-primary-dark`}
+
+
                         >
-                          Submit Selected ({values.selectedRows.length})
+                          Update
                         </button>
                       </div>
                     </div>
@@ -800,4 +620,4 @@ const VerifyStockJournals = () => {
   );
 };
 
-export default VerifyStockJournals;
+export default EditStockJournals;

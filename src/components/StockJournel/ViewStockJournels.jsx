@@ -120,7 +120,7 @@ const ViewStockJournels = () => {
           ))}
         </td>
 
-        <td className="px-2 py-2 border-b border-gray-200 text-sm">
+        <td className="flex px-2 py-2 border-b border-gray-200 text-sm">
           <button
             onClick={() => navigate(`/stockjournel/acceptStockJournal/${item.id}`)}
             disabled={item.journalStatus == 'FULLY_ACCEPTED'}
@@ -128,6 +128,15 @@ const ViewStockJournels = () => {
           >
             <FcAcceptDatabase size={18} />
             <span className="text-xs">Accept</span>
+          </button>
+
+          <button
+            onClick={() => navigate(`/stockjournel/editStockJournal/${item.id}`)}
+            disabled={item.journalStatus == 'FULLY_ACCEPTED'}
+            className="flex items-center   bg-primary text-white rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all duration-300 shadow hover:shadow-lg transform hover:-translate-y-0.5"
+          >
+            <FcAcceptDatabase size={18} />
+            <span className="text-xs">Edit</span>
           </button>
         </td>
 
@@ -328,8 +337,8 @@ const ViewStockJournels = () => {
               <table className="min-w-full leading-normal">
                 <thead>
                   <tr className="bg-slate-300 dark:bg-slate-700 dark:text-white">
-                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Serial No.
+                    <th className="px-1 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                  No.
                     </th>
                     <th className="px-7 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Created Date

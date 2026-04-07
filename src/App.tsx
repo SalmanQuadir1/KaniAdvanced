@@ -336,11 +336,13 @@ import ViewStockJournels from './components/StockJournel/ViewStockJournels.jsx';
 
 import VerifyStockJournal from './components/StockJournel/VerifyStockJournal.jsx';
 import VerifyStockJournals from './components/StockJournel/VerifyStockJournals.jsx';
+
+
 import PrintStockJournals from './components/StockJournel/PrintStockJournals.jsx';
 import Godown from './components/Godown/Godown.jsx'
 
 import ViewStockJournalCreated from './components/StockJournel/ViewStockJournalCreated.jsx';
-
+import EditStockJournals from './components/StockJournel/EditStockJournals.jsx';
 // import ViewStockJournel from './components/StockJournel/ViewStockJournel.jsx';
 
 // import UpdateProduct from './components/Products/UpdateProduct';
@@ -2170,6 +2172,11 @@ function App() {
             }
           />
 
+
+
+
+
+
           <Route
             path="/StockJournal/verifyStockJournalCreated/:id"
             element={
@@ -2188,6 +2195,10 @@ function App() {
               </>
             }
           />
+
+        
+
+          
 
              <Route
             path="/stock/printStockJournal"
@@ -2216,6 +2227,16 @@ function App() {
               <>
                 <PageTitle title="Verify Stock Journal" />
                 <ViewStockJournalCreated />
+              </>
+            }
+          />
+
+           <Route
+            path="/stockjournel/editStockJournal/:id"
+            element={
+              <>
+                <PageTitle title="Edit Stock Journal" />
+                <EditStockJournals/>
               </>
             }
           />
