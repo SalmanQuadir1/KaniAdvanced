@@ -120,7 +120,7 @@ const ViewStockJournels = () => {
           ))}
         </td>
 
-        <td className="flex px-2 py-2 border-b border-gray-200 text-sm">
+        <td className="flex px-2 py-2 border-b border-gray-200 text-sm gap-1">
           <button
             onClick={() => navigate(`/stockjournel/acceptStockJournal/${item.id}`)}
             disabled={item.journalStatus == 'FULLY_ACCEPTED'}
@@ -349,7 +349,7 @@ const ViewStockJournels = () => {
                     {/* <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Source Quantity</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Source Price</th> */}
                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      Voucher Number
+                      Voucher No
                     </th>
                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       Products
