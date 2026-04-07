@@ -336,7 +336,7 @@ import ViewStockJournels from './components/StockJournel/ViewStockJournels.jsx';
 
 import VerifyStockJournal from './components/StockJournel/VerifyStockJournal.jsx';
 import VerifyStockJournals from './components/StockJournel/VerifyStockJournals.jsx';
-
+import PrintStockJournals from './components/StockJournel/PrintStockJournals.jsx';
 import Godown from './components/Godown/Godown.jsx'
 
 import ViewStockJournalCreated from './components/StockJournel/ViewStockJournalCreated.jsx';
@@ -2185,6 +2185,16 @@ function App() {
               <>
                 <PageTitle title="Verify Stock Journal" />
                 <VerifyStockJournals />
+              </>
+            }
+          />
+
+             <Route
+            path="/stock/printStockJournal"
+            element={
+              <>
+                <PageTitle title="Print Stock Journal" />
+                <PrintStockJournals />
               </>
             }
           />

@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { MdDelete } from 'react-icons/md';
 import { IoIosGitMerge } from 'react-icons/io';
+import { FaPrint } from 'react-icons/fa';
 
 const VerifyStockJournals = () => {
   const [StockJournal, setStockJournal] = useState([])
@@ -292,9 +293,20 @@ const VerifyStockJournals = () => {
                         <div className="bg-gradient-to-br from-white/20 to-white/5 dark:from-gray-900/50 dark:to-gray-800/50 backdrop-blur-lg rounded-3xl p-8 shadow-2xl border border-white/20 dark:border-gray-700/50">
                           <div className="flex flex-col items-center mb-8">
                             <div className="p-3 mb-3 bg-primary rounded-2xl shadow-xl">
-                              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                              </svg>
+                               <FaPrint
+                                type="button"
+                                onClick={() => {
+                                  navigate("/stock/printStockJournal", { state: { stockJournal: StockJournal } });
+                                }}
+                                size={30}
+                              >
+                                Print / Preview
+                              </FaPrint>
+                            </div>
+
+                            <div className="flex justify-center gap-4 mt-4">
+                            
+                              
                             </div>
                             <h3 className="text-2xl font-bold text-transparent bg-primary bg-clip-text">
                               Journal Details
