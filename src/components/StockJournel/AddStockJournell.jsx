@@ -120,7 +120,7 @@ const AddStockJournell = () => {
   }, [rows]);
 
   const validationSchema = Yup.object({
-    voucherNo: Yup.string().required('Voucher Number is required'),
+    // voucherNo: Yup.string().required('Voucher Number is required'),
     stockJournals: Yup.array().of(
       Yup.object().shape({
         productId: Yup.object().required('Product is required'),
@@ -187,7 +187,7 @@ const AddStockJournell = () => {
     }));
 
     const formValues = {
-      voucherNo: values?.voucherNo,
+      // voucherNo: values?.voucherNo,
       transferProducts: formattedValues
     };
 
@@ -215,7 +215,7 @@ const AddStockJournell = () => {
           destinationLocation: ""
         }]);
         resetForm({
-          voucherNo: "",
+          // voucherNo: "",
           stockJournals: [{
             productId: "",
             location: "",
@@ -282,7 +282,7 @@ const AddStockJournell = () => {
                     </div>
                   </div>
 
-                  <div className="w-full md:w-auto">
+                  {/* <div className="w-full md:w-auto">
                     <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                       Voucher Number <span className="text-red-500 ml-1">*</span>
                     </label>
@@ -298,7 +298,7 @@ const AddStockJournell = () => {
                       </div>
                     </div>
                     <ErrorMessage name="voucherNo" component="div" className="text-red-500 text-xs mt-1" />
-                  </div>
+                  </div> */}
                 </div>
               </div>
 

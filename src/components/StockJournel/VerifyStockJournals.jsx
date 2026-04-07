@@ -554,12 +554,7 @@ const VerifyStockJournals = () => {
                                       }
 
                                       // Handle 0 value
-                                      if (inputQty === 0) {
-                                        toast.error("Accepted Quantity cannot be 0");
-                                        setFieldValue(`stockJournal[${index}].acceptedQty`, '');
-                                        setFieldValue(`stockJournal[${index}].rejectedQty`, transferedQty);
-                                        return;
-                                      }
+                                    
 
                                       // Handle greater than transfered quantity
                                       if (inputQty > transferedQty) {
@@ -592,9 +587,7 @@ const VerifyStockJournals = () => {
                                       const numValue = Number(value) || 0;
                                       const transferedQty = Number(values.stockJournal[index]?.transferedQuantity) || 0;
 
-                                      if (value === '' || numValue === 0) {
-                                        return "Accepted Quantity cannot be empty or 0";
-                                      }
+                                    
                                       if (numValue > transferedQty) {
                                         return "Cannot exceed transferred quantity";
                                       }

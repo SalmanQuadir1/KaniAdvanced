@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+
+/// cancellled oneeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
 import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -580,9 +582,7 @@ const VerifyStockJournals = () => {
                                       const numValue = Number(value) || 0;
                                       const transferedQty = Number(values.stockJournal[index]?.transferedQuantity) || 0;
 
-                                      if (value === '' || numValue === 0) {
-                                        return "Accepted Quantity cannot be empty or 0";
-                                      }
+                                     
                                       if (numValue > transferedQty) {
                                         return "Cannot exceed transferred quantity";
                                       }
