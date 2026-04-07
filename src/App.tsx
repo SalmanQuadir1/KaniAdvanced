@@ -320,7 +320,12 @@ import UpdateInventoryMaterial from './components/Inventory/UpdateInventoryMater
 //productInventory
 
 
+
+
 import AddProductInventory from './components/ProductsInventory/AddProductInventory.jsx';
+
+import ViewRecentTransactions from './components/ProductsInventory/ViewRecentTransactions.jsx';
+
 import ViewProductsInventory from './components/ProductsInventory/ViewProductsInventory.jsx';
 import UpdateInventory from './components/ProductsInventory/UpdateInventory.jsx';
 
@@ -2119,6 +2124,16 @@ function App() {
               <>
                 <PageTitle title="Inventory" />
                 <AddProductInventory />
+              </>
+            }
+          />
+
+          <Route
+            path="/inventory/recentTransacTions"
+            element={
+              <>
+                <PageTitle title="Recent Transactions" />
+                <ViewRecentTransactions />
               </>
             }
           />
