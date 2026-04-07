@@ -299,14 +299,14 @@ const PrintEntryPayment = () => {
     return (
         <Container style={styles.container}>
             {/* Print Button */}
-            <div style={styles.printHide} className="text-center mb-3">
+            {/* <div style={styles.printHide} className="text-center mb-3">
                 <button
                     onClick={() => window.print()}
                     className="btn btn-primary"
                 >
                     Print Invoice
                 </button>
-            </div>
+            </div> */}
 
             {/* Header Section */}
             <div style={styles.header}>

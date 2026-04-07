@@ -296,14 +296,14 @@ console.log(paymentData,"555555555555");
     return (
         <Container style={styles.container}>
             {/* Print Button (hidden during actual print) */}
-            <div style={styles.printHide} className="text-center mb-3">
+            {/* <div style={styles.printHide} className="text-center mb-3">
                 <button
                     onClick={() => window.print()}
                     className="btn btn-primary"
                 >
                     Print Invoice
                 </button>
-            </div>
+            </div> */}
 
             {/* Header Section */}
             <div style={styles.header}>
