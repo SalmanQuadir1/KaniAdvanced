@@ -131,7 +131,7 @@ const ViewRecentTransactions = () => {
                
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.narration ?? '-'}</td>
 
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.transactionType ?? '-'}</td>
+               
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.quantity ?? '-'}</td>
 
 
@@ -178,7 +178,6 @@ const ViewRecentTransactions = () => {
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Credit Debit Note Number</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Narration</th>
 
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Type</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Quantity</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Rate</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Value</th>
