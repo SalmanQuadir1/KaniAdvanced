@@ -137,7 +137,7 @@ const ViewProductsInventory = () => {
                 }
             });
             const data = await response.json();
-            log(data, "summary response");
+           
             setSummaryData(data);
         } catch (error) {
             console.error("Error fetching inventory summary:", error);
@@ -488,18 +488,12 @@ const ViewProductsInventory = () => {
                                 {transactionsArray.length > 0 && (
                                     <div className="mb-4 p-3 bg-gray-50 dark:bg-slate-700 rounded-lg">
                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                            <div>
-                                                <p className="text-xs text-gray-500">Product ID</p>
-                                                <p className="text-sm font-semibold">{transactionsArray[0]?.productId || inventoryItem?.productId}</p>
-                                            </div>
+                                          
                                             <div>
                                                 <p className="text-xs text-gray-500">Product Name</p>
                                                 <p className="text-sm font-semibold">{transactionsArray[0]?.productName || inventoryItem?.productDescription}</p>
                                             </div>
-                                            <div>
-                                                <p className="text-xs text-gray-500">Location ID</p>
-                                                <p className="text-sm font-semibold">{transactionsArray[0]?.locationId || inventoryItem?.location?.id}</p>
-                                            </div>
+                                            
                                             <div>
                                                 <p className="text-xs text-gray-500">Location Name</p>
                                                 <p className="text-sm font-semibold">{transactionsArray[0]?.locationName || inventoryItem?.location?.address}</p>
@@ -513,9 +507,9 @@ const ViewProductsInventory = () => {
                                         <thead className="bg-gray-50 dark:bg-slate-700 sticky top-0">
                                             <tr>
                                                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product ID</th>
+                                               
                                                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product Name</th>
-                                                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location ID</th>
+
                                                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location Name</th>
                                                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
                                                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Available</th>
@@ -528,11 +522,11 @@ const ViewProductsInventory = () => {
                                                 transactionsArray.map((transaction, idx) => (
                                                     <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-slate-700">
                                                         <td className="px-4 py-3 text-sm">{idx + 1}</td>
-                                                        <td className="px-4 py-3 text-sm">{transaction.productId || 'N/A'}</td>
+                                                       
                                                         <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">
                                                             {transaction.productName || 'N/A'}
                                                         </td>
-                                                        <td className="px-4 py-3 text-sm">{transaction.locationId || 'N/A'}</td>
+                                                       
                                                         <td className="px-4 py-3 text-sm">{transaction.locationName || 'N/A'}</td>
                                                         <td className="px-4 py-3 text-sm">
                                                             <span className="font-semibold text-blue-600">
