@@ -164,8 +164,11 @@ const AddStockJournell = () => {
       });
 
       const data = await response.json();
+
+      console.log(data,"ll");
+      
       if (response.ok) {
-        setFieldValue(`stockJournals.${index}.quantity`, data.closingBalance);
+        setFieldValue(`stockJournals.${index}.quantity`, (data.openingBalance-data.closingBalance));
         const updatedRows = [...rows];
         updatedRows[index].quantity = data.closingBalance;
         setRows(updatedRows);
