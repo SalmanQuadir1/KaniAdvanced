@@ -120,15 +120,28 @@ const ViewRecentTransactions = () => {
             <tr key={item.id} className="bg-white dark:bg-slate-700 dark:text-white">
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">{startSerial + idx + 1}</td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.productName || '-'}</td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.productId || '-'}</td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.locationName || '-'}</td>
+                 <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.transactionType || '-'}</td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     {item.transactionDate ? new Date(item.transactionDate).toLocaleDateString() : '-'}
                 </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.transactionType || '-'}</td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.entryPaymentReference || '-'}</td>
+
+                  <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.creditDebitNoteNumber || '-'}</td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.productName ?? '-'}</td>
+
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.transactionType ?? '-'}</td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.quantity ?? '-'}</td>
+
+
+        
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.rate ?? '-'}</td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.value ?? '-'}</td>
+
+                  <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.referenceNumber ?? '-'}</td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.narration ?? '-'}</td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.runningBalance ?? '-'}</td>
+                <td className="px-5 py-5 border-b border-gray-200 text-sm">{item.runningValue ?? '-'}</td>
              </tr>
         ));
     };
@@ -156,18 +169,28 @@ const ViewRecentTransactions = () => {
                                     <tr className="bg-slate-300 dark:bg-slate-700 dark:text-white">
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">SNO</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Name</th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product ID</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Location Name</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Transaction Type</th>
+
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Transaction Date</th>
+
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Entry Payment Reference ID</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Credit Debit Note Number</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product ID</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Type</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Quantity</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Rate</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Value</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Reference Number</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Narration</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Running Balance</th>
+                                                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Running Value</th>
                                     </tr>
                                 </thead>
                                 <tbody>{renderTableRows()}</tbody>
                              </table>
                         </div>
+                    </div>
                         {pagination.totalPages > 0 && (
                             <Pagination
                                 totalPages={pagination.totalPages}
@@ -175,7 +198,6 @@ const ViewRecentTransactions = () => {
                                 handlePageChange={handlePageChange}
                             />
                         )}
-                    </div>
                 </div>
             </div>
         </DefaultLayout>

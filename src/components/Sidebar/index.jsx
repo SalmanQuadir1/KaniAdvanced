@@ -1061,7 +1061,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                 (isActive && '!text-white')
                               }
                             >
-                              View Recent Inventory
+                              View Recent Transactions
                             </NavLink>
                           </li>
 
