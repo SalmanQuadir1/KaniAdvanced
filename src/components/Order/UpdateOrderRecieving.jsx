@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 import useorder from '../../hooks/useOrder';
 import ReactDatePicker from "react-datepicker";
 import useProduct from '../../hooks/useProduct';
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, VIEW_ORDER_PRODUCT, UPDATE_ORDERPRODUCT_ALL, UPDATE_ISSUECHALLAN, UPDATE_ORDERRECIEVED, VIEW_SUPPLIERHISTORY, UPDATE_ReceivedQuantity_URL } from '../../Constants/utils';
+import { customStyles as createCustomStyles, GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, VIEW_ORDER_PRODUCT, UPDATE_ORDERPRODUCT_ALL, UPDATE_ISSUECHALLAN, UPDATE_ORDERRECIEVED, VIEW_SUPPLIERHISTORY, UPDATE_ReceivedQuantity_URL } from '../../Constants/utils';
 import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
@@ -27,7 +27,7 @@ const UpdateOrderRecieving = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Add this state in your component
-const [selectedSupplierId, setSelectedSupplierId] = useState(null);
+  const [selectedSupplierId, setSelectedSupplierId] = useState(null);
   const [orderTypeOptions, setorderTypeOptions] = useState([])
   const [prodIdOptions, setprodIdOptions] = useState([])
   const [prodIdd, setprodIdd] = useState("")
@@ -67,7 +67,7 @@ const [selectedSupplierId, setSelectedSupplierId] = useState(null);
 
 
 
-
+  const theme = useSelector(state => state?.persisted?.theme);
 
 
   const { id } = useParams();
@@ -221,25 +221,7 @@ const [selectedSupplierId, setSelectedSupplierId] = useState(null);
 
   ];
 
-  const customStyles = {
-    control: (provided) => ({
-      ...provided,
-      minHeight: '50px',
-      fontSize: '16px',
-    }),
-    valueContainer: (provided) => ({
-      ...provided,
-      padding: '10px 14px',
-    }),
-    input: (provided) => ({
-      ...provided,
-      fontSize: '16px',
-    }),
-    singleValue: (provided) => ({
-      ...provided,
-      fontSize: '16px',
-    }),
-  };
+  const customStyles = createCustomStyles(theme?.mode);
 
 
 
@@ -395,55 +377,55 @@ const [selectedSupplierId, setSelectedSupplierId] = useState(null);
   };
 
 
-const handleUpdateSupplierQuantity = async () => {
-  if (!selectedSupplierId) {
-    toast.warning("Please select a supplier to update");
-    return;
-  }
-
-  // Find the selected supplier data
-  const selectedSupplier = supplier?.suppliers?.find(
-    (item, index) => (item.id || index) === selectedSupplierId
-  );
-
-  if (!selectedSupplier) {
-    toast.error("Selected supplier not found");
-    return;
-  }
-
-  // Prepare the data for API update
-  const updateData = {
-    id: selectedSupplier.id,
-    qty: selectedSupplier.receivedQuantity,
-    receivedDate: new Date().toISOString().split('T')[0], 
-    // Add any other fields your API expects
-  };
-
-  try {
-    const response = await fetch(`${UPDATE_ReceivedQuantity_URL}/${selectedSupplier.id}`, {
-      method: "PUT", 
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify(updateData)
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      toast.success(`Updated ${selectedSupplier.supplierName} quantity successfully!`);
-      setSelectedSupplierId(null); // Clear selection after successful update
-      // Optionally refresh the data
-      // fetchSupplierData();
-    } else {
-      toast.error(data.message || "Failed to update quantity");
+  const handleUpdateSupplierQuantity = async () => {
+    if (!selectedSupplierId) {
+      toast.warning("Please select a supplier to update");
+      return;
     }
-  } catch (error) {
-    console.error("Error updating supplier quantity:", error);
-    toast.error("An error occurred while updating");
-  }
-};
+
+    // Find the selected supplier data
+    const selectedSupplier = supplier?.suppliers?.find(
+      (item, index) => (item.id || index) === selectedSupplierId
+    );
+
+    if (!selectedSupplier) {
+      toast.error("Selected supplier not found");
+      return;
+    }
+
+    // Prepare the data for API update
+    const updateData = {
+      id: selectedSupplier.id,
+      qty: selectedSupplier.receivedQuantity,
+      receivedDate: new Date().toISOString().split('T')[0],
+      // Add any other fields your API expects
+    };
+
+    try {
+      const response = await fetch(`${UPDATE_ReceivedQuantity_URL}/${selectedSupplier.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(updateData)
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success(`Updated ${selectedSupplier.supplierName} quantity successfully!`);
+        setSelectedSupplierId(null); // Clear selection after successful update
+        // Optionally refresh the data
+        // fetchSupplierData();
+      } else {
+        toast.error(data.message || "Failed to update quantity");
+      }
+    } catch (error) {
+      console.error("Error updating supplier quantity:", error);
+      toast.error("An error occurred while updating");
+    }
+  };
 
 
 
@@ -465,8 +447,8 @@ const handleUpdateSupplierQuantity = async () => {
 
   console.log(order, "5454545");
 
-console.log(selectedSupplierId,"000000000000000");
-console.log(supplier,"11111");
+  console.log(selectedSupplierId, "000000000000000");
+  console.log(supplier, "11111");
 
   return (
     <DefaultLayout>
@@ -563,10 +545,14 @@ console.log(supplier,"11111");
                           value={OrderCategoryOptions.find(option => option.value === values.orderCategory) || null}
                           onChange={(option) => setFieldValue("orderCategory", option.value)} // Store only value
                           options={OrderCategoryOptions}
+
                           styles={customStyles}
-                          isDisabled={true}
                           className="bg-white dark:bg-form-Field"
+
                           classNamePrefix="react-select"
+                          isDisabled={true}
+
+
                           placeholder="Select Order Category"
                         />
 
@@ -583,10 +569,20 @@ console.log(supplier,"11111");
 
                           value={values?.productId} // Ensure it reflects Formik state
                           onChange={(e) => setFieldValue("productId", e.target.value)} // Update Formik state
-                          className="w-[200px] bg-gray-3 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                          className="w-[270px] bg-gray-3 dark:bg-form-input rounded border-[1.5px] border-stroke  text-black"
                           placeholder="Enter Product ID"
                         />
                         <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
+                      </div>
+
+                      <div className="flex-1 ">
+                        <label className="mb-2.5 block text-black dark:text-white">Unit</label>
+                        <Field
+                          name="units"
+                          className=" bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke  text-black"
+                          readOnly
+                        />
+                        <ErrorMessage name="units" component="div" className="text-red-600 text-sm" />
                       </div>
 
                       {/* Quantity to Manufacture */}
@@ -597,11 +593,11 @@ console.log(supplier,"11111");
 
                     <div className="flex flex-wrap gap-3 mt-5">
 
-                      <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Supplier Order Quantity</label>
+                      <div className="flex-1 min-w-[10px]">
+                        <label className="mb-2.5 block text-black dark:text-white min-w-[10px]">Supplier Order Quantity</label>
                         <Field
                           name="quantityToManufacture"
-                          className="w-[200px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                          className="w-[300px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           readOnly // Read-only field
                         />
                         <ErrorMessage name="quantityToManufacture" component="div" className="text-red-600 text-sm" />
@@ -633,15 +629,7 @@ console.log(supplier,"11111");
 
 
                       {/* Order No */}
-                      <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Unit</label>
-                        <Field
-                          name="units"
-                          className="w-[200px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                          readOnly
-                        />
-                        <ErrorMessage name="units" component="div" className="text-red-600 text-sm" />
-                      </div>
+
 
 
                       {/* Order Category */}
@@ -652,20 +640,20 @@ console.log(supplier,"11111");
                           readOnly
                           // name={`orderProducts[${index}].expectedDate`}
                           value={values.expectedDate || ""}
-                          className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                          className="w-[300px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                         //readOnly
                         />
                         <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
                       </div>
 
-                      <div className="flex-1 min-w-[200px]">
+                      <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">Expected Supplier Date</label>
                         <Field
                           type="date"
                           readOnly
                           // name={`orderProducts[${index}].expectedDate`}
                           value={values.expectedSupplierDate || ""}
-                          className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                          className="w-[300px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                         //readOnly
                         />
                         <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
@@ -998,79 +986,78 @@ console.log(supplier,"11111");
           height="80%"
           style={{ marginLeft: '70px', marginRight: '0' }}  // Add this line
         />
-     {
-  showModal && (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-80">
-      <div className="bg-white p-6 rounded shadow-lg w-3/4 max-h-[90vh]  max-w-[99vh] overflow-auto">
-        <h2 className="text-xl font-bold mb-4">Supplier History</h2>
-        
-        <div className="overflow-x-auto">
-          <table className="min-w-full leading-normal border-collapse">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 w-12">Select</th>
-                <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700">Supplier Name</th>
-                <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700">Quantity</th>
-                <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700">Received Date</th>
-                {/* <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700">Actions</th> */}
-              </tr>
-            </thead>
-            <tbody>
-              {supplier?.suppliers?.map((supplierData, index) => {
-                const isSelected = selectedSupplierId === (supplierData.id || index);
-                const isQuantityEditable = isSelected;
-                
-                return (
-                  <tr key={supplierData.id || index} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 border-b text-center">
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={() => {
-                          // Only allow selecting one row at a time
-                          if (isSelected) {
-                            setSelectedSupplierId(null);
-                          } else {
-                            setSelectedSupplierId(supplierData.id || index);
-                          }
-                        }}
-                        className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
-                      />
-                    </td>
-                    <td className="px-4 py-3 border-b text-sm text-gray-900">
-                      {supplierData.supplierName}
-                    </td>
-                    <td className="px-4 py-3 border-b">
-                      <input
-                        type="number"
-                        value={supplierData.receivedQuantity}
-                        onChange={(e) => {
-                          if (!isSelected) {
-                            toast.warning("Please select this row first to edit quantity");
-                            return;
-                          }
-                          
-                          const updatedSuppliers = [...supplier.suppliers];
-                          updatedSuppliers[index] = {
-                            ...updatedSuppliers[index],
-                            receivedQuantity: parseFloat(e.target.value) || 0
-                          };
-                          setsupplier({ ...supplier, suppliers: updatedSuppliers });
-                        }}
-                        disabled={!isQuantityEditable}
-                        className={`w-24 px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                          isQuantityEditable 
-                            ? 'border-gray-300 bg-white' 
-                            : 'border-gray-200 bg-gray-50 text-gray-500 cursor-not-allowed'
-                        }`}
-                        min="0"
-                        step="1"
-                      />
-                    </td>
-                    <td className="px-4 py-3 border-b text-sm text-gray-900">
-                      {new Date(supplierData.receivedDate).toLocaleDateString()}
-                    </td>
-                    {/* <td className="px-4 py-3 border-b">
+        {
+          showModal && (
+            <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-80">
+              <div className="bg-white p-6 rounded shadow-lg w-3/4 max-h-[90vh]  max-w-[99vh] overflow-auto">
+                <h2 className="text-xl font-bold mb-4">Supplier History</h2>
+
+                <div className="overflow-x-auto">
+                  <table className="min-w-full leading-normal border-collapse">
+                    <thead className="bg-gray-100">
+                      <tr>
+                        <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700 w-12">Select</th>
+                        <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700">Supplier Name</th>
+                        <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700">Quantity</th>
+                        <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700">Received Date</th>
+                        {/* <th className="px-4 py-3 border-b text-left text-sm font-semibold text-gray-700">Actions</th> */}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {supplier?.suppliers?.map((supplierData, index) => {
+                        const isSelected = selectedSupplierId === (supplierData.id || index);
+                        const isQuantityEditable = isSelected;
+
+                        return (
+                          <tr key={supplierData.id || index} className="hover:bg-gray-50">
+                            <td className="px-4 py-3 border-b text-center">
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => {
+                                  // Only allow selecting one row at a time
+                                  if (isSelected) {
+                                    setSelectedSupplierId(null);
+                                  } else {
+                                    setSelectedSupplierId(supplierData.id || index);
+                                  }
+                                }}
+                                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                              />
+                            </td>
+                            <td className="px-4 py-3 border-b text-sm text-gray-900">
+                              {supplierData.supplierName}
+                            </td>
+                            <td className="px-4 py-3 border-b">
+                              <input
+                                type="number"
+                                value={supplierData.receivedQuantity}
+                                onChange={(e) => {
+                                  if (!isSelected) {
+                                    toast.warning("Please select this row first to edit quantity");
+                                    return;
+                                  }
+
+                                  const updatedSuppliers = [...supplier.suppliers];
+                                  updatedSuppliers[index] = {
+                                    ...updatedSuppliers[index],
+                                    receivedQuantity: parseFloat(e.target.value) || 0
+                                  };
+                                  setsupplier({ ...supplier, suppliers: updatedSuppliers });
+                                }}
+                                disabled={!isQuantityEditable}
+                                className={`w-24 px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${isQuantityEditable
+                                    ? 'border-gray-300 bg-white'
+                                    : 'border-gray-200 bg-gray-50 text-gray-500 cursor-not-allowed'
+                                  }`}
+                                min="0"
+                                step="1"
+                              />
+                            </td>
+                            <td className="px-4 py-3 border-b text-sm text-gray-900">
+                              {new Date(supplierData.receivedDate).toLocaleDateString()}
+                            </td>
+                            {/* <td className="px-4 py-3 border-b">
                       <button
                         onClick={() => {
                           const updatedSuppliers = supplier.suppliers.filter((_, i) => i !== index);
@@ -1088,48 +1075,47 @@ console.log(supplier,"11111");
                         </svg>
                       </button>
                     </td> */}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
 
-        {(!supplier?.suppliers || supplier.suppliers.length === 0) && (
-          <div className="text-center py-8 text-gray-500">
-            No supplier history found
-          </div>
-        )}
+                {(!supplier?.suppliers || supplier.suppliers.length === 0) && (
+                  <div className="text-center py-8 text-gray-500">
+                    No supplier history found
+                  </div>
+                )}
 
-        <div className="flex justify-end gap-3 mt-6">
-          <button
-            onClick={handleUpdateSupplierQuantity}
-            disabled={!selectedSupplierId}
-            className={`px-4 py-2 rounded transition-colors flex items-center gap-2 ${
-              selectedSupplierId
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            }`}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-            Update Selected Quantity
-          </button>
-          <button
-            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
-            onClick={() => {
-              setshowModal(false);
-              setSelectedSupplierId(null); // Reset selection on close
-            }}
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
+                <div className="flex justify-end gap-3 mt-6">
+                  <button
+                    onClick={handleUpdateSupplierQuantity}
+                    disabled={!selectedSupplierId}
+                    className={`px-4 py-2 rounded transition-colors flex items-center gap-2 ${selectedSupplierId
+                        ? 'bg-green-600 hover:bg-green-700 text-white'
+                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      }`}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Update Selected Quantity
+                  </button>
+                  <button
+                    className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+                    onClick={() => {
+                      setshowModal(false);
+                      setSelectedSupplierId(null); // Reset selection on close
+                    }}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )
+        }
 
 
       </div>

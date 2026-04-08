@@ -216,9 +216,9 @@ const ViewProductsInventory = () => {
                                             <thead className="bg-gray-50 dark:bg-slate-700 sticky top-0">
                                                 <tr>
                                                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product ID</th>
+                                                   
                                                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product Name</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location ID</th>
+                                                   
                                                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location Name</th>
                                                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
                                                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Available</th>
@@ -230,11 +230,11 @@ const ViewProductsInventory = () => {
                                                     dataArray.map((item, idx) => (
                                                         <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-slate-700">
                                                             <td className="px-4 py-2 text-sm">{idx + 1}</td>
-                                                            <td className="px-4 py-2 text-sm">{item.productId || 'N/A'}</td>
+                                                            
                                                             <td className="px-4 py-2 text-sm font-medium text-gray-900 dark:text-white">
                                                                 {item.productName || 'N/A'}
                                                             </td>
-                                                            <td className="px-4 py-2 text-sm">{item.locationId || 'N/A'}</td>
+                                                           
                                                             <td className="px-4 py-2 text-sm">{item.locationName || 'N/A'}</td>
                                                             <td className="px-4 py-2 text-sm">
                                                                 <span className="font-semibold text-blue-600">
@@ -319,12 +319,12 @@ const ViewProductsInventory = () => {
                                 <div className="mb-6">
                                     <h4 className="text-md font-semibold text-gray-700 dark:text-gray-300 mb-3">Product Summary</h4>
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                                        {/* <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                                             <p className="text-sm text-gray-500">Product ID</p>
                                             <p className="text-lg font-bold text-blue-600 dark:text-blue-400">
                                                 {summaryData.productId || inventoryItem?.productId || 'N/A'}
                                             </p>
-                                        </div>
+                                        </div> */}
                                         <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                                             <p className="text-sm text-gray-500">Product Name</p>
                                             <p className="text-lg font-bold text-green-600 dark:text-green-400">
@@ -354,7 +354,7 @@ const ViewProductsInventory = () => {
                                             <thead className="bg-gray-50 dark:bg-slate-700 sticky top-0">
                                                 <tr>
                                                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location ID</th>
+                                                    {/* <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location ID</th> */}
                                                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location Name</th>
                                                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
                                                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Available</th>
@@ -366,7 +366,7 @@ const ViewProductsInventory = () => {
                                                     locations.map((location, idx) => (
                                                         <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-slate-700">
                                                             <td className="px-4 py-3 text-sm">{idx + 1}</td>
-                                                            <td className="px-4 py-3 text-sm">{location.locationId || 'N/A'}</td>
+                                                            {/* <td className="px-4 py-3 text-sm">{location.locationId || 'N/A'}</td> */}
                                                             <td className="px-4 py-3 text-sm font-medium text-gray-900 dark:text-white">
                                                                 {location.locationName || 'N/A'}
                                                             </td>
@@ -712,7 +712,7 @@ const ViewProductsInventory = () => {
                         View Summary
                     </button>
                 </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <button
                         onClick={() => {
                             setSelectedInventory(item);
@@ -723,7 +723,7 @@ const ViewProductsInventory = () => {
                     >
                         View Transactions
                     </button>
-                </td>
+                </td> */}
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
                         <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2 cursor-pointer' onClick={(e) => handleUpdate(item.id)} title='Edit Inventory' />  |
@@ -814,7 +814,7 @@ const ViewProductsInventory = () => {
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">In Progress Orders</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Recent History</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Inventory Summary</th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Inventory Transactions</th>
+
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
