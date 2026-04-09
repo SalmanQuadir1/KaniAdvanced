@@ -8,14 +8,18 @@ import { useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
-import { customStyles as createCustomStyles } from '../../Constants/utils';
+import { customStyles as createCustomStyles, VIEW_ALL_PRODUCT_GROUP_URL } from '../../Constants/utils';
+import { use } from 'react';
 
 const Design = () => {
+
+    const { currentUser } = useSelector((state) => state?.persisted?.user);
+    const { token } = currentUser;
     const theme = useSelector(state => state?.persisted?.theme);
     const customStyles = createCustomStyles(theme?.mode);
 
     const [productGroupOption, setproductGroupOption] = useState([]);
-    
+
     const {
         Design,
         edit,
@@ -29,16 +33,54 @@ const Design = () => {
 
     const productGroup = useSelector(state => state?.persisted?.productGroup);
 
-    useEffect(() => {
-        if (productGroup.data) {
-            const formattedOptions = productGroup.data.map(product => ({
-                value: product.id,
-                label: product.productGroupName,
-                productGroupObject: product,
-            }));
-            setproductGroupOption(formattedOptions);
+    const getProductGroup = async () => {
+        try {
+
+            const response = await fetch(VIEW_ALL_PRODUCT_GROUP_URL, {
+                method: "GET",
+                headers: {
+                    "content-type": "application/json",
+                    "authorization": `Bearer ${token}`,
+                }
+            });
+
+            const data = await response.json()
+            if (response.ok) {
+                const formattedOptions = data.map(product => ({
+                    value: product.id,
+                    label: product.productGroupName,
+                    productGroupObject: product,
+                }));
+                setproductGroupOption(formattedOptions);
+
+
+            }
+
+
+        } catch (error) {
+            console.error("Error fetching product groups:", error);
+
         }
-    }, [productGroup.data]);
+    }
+
+    useEffect(() => {
+     getProductGroup()
+    }, [])
+    
+
+    // useEffect(() => {
+    //     if (productGroup.data) {
+    //         const formattedOptions = productGroup.data.map(product => ({
+    //             value: product.id,
+    //             label: product.productGroupName,
+    //             productGroupObject: product,
+    //         }));
+    //         setproductGroupOption(formattedOptions);
+    //     }
+    // }, [productGroup.data]);
+
+    console.log(productGroup, "55");
+
 
     return (
         <DefaultLayout>
@@ -87,7 +129,7 @@ const Design = () => {
                                                 />
                                                 <ErrorMessage name="designName" component="div" className="text-red-500" />
                                             </div>
-                                            
+
                                             <div className="flex-1 min-w-[300px]">
                                                 <label className="mb-2.5 block text-black dark:text-white">
                                                     Design Code <span className="text-red-500 ml-1">*</span>
@@ -100,7 +142,7 @@ const Design = () => {
                                                 />
                                                 <ErrorMessage name="designCode" component="div" className="text-red-500" />
                                             </div>
-                                            
+
                                             <div className="flex-1 min-w-[300px]">
                                                 <label className="mb-2.5 block text-black dark:text-white">
                                                     Product Group <span className="text-red-500 ml-1">*</span>
@@ -108,15 +150,15 @@ const Design = () => {
                                                 <ReactSelect
                                                     name="productGroup"
                                                     value={
-                                                        values.productGroup?.id 
+                                                        values.productGroup?.id
                                                             ? productGroupOption.find(
                                                                 option => option.value === values.productGroup.id
-                                                              ) 
+                                                            )
                                                             : null
                                                     }
                                                     onChange={(option) => {
                                                         setFieldValue(
-                                                            'productGroup', 
+                                                            'productGroup',
                                                             option ? option.productGroupObject : null
                                                         );
                                                     }}
@@ -129,10 +171,10 @@ const Design = () => {
                                                 <ErrorMessage name="productGroup" component="div" className="text-red-500" />
                                             </div>
                                         </div>
-                                        
+
                                         <div className="flex justify-center mt-4 items-center">
-                                            <button 
-                                                type="submit" 
+                                            <button
+                                                type="submit"
                                                 className="flex md:w-[230px] w-[190px] md:h-[37px] h-[47px] justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4"
                                             >
                                                 {edit ? "UPDATE DESIGN" : "CREATE DESIGN"}
@@ -148,7 +190,7 @@ const Design = () => {
                                             <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white mb-4">
                                                 Designs List
                                             </h3>
-                                            
+
                                             {/* Table */}
                                             <div className="overflow-x-auto">
                                                 <table className="min-w-full leading-normal">
@@ -177,7 +219,7 @@ const Design = () => {
                                                                 <tr key={item.id || index}>
                                                                     <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                                                                         <h5 className="font-medium text-black dark:text-white">
-                                                                            {(pagination.currentPage -1) * pagination.itemsPerPage + index + 1}
+                                                                            {(pagination.currentPage - 1) * pagination.itemsPerPage + index + 1}
                                                                         </h5>
                                                                     </td>
                                                                     <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -234,7 +276,7 @@ const Design = () => {
                                                     handlePageChange={handlePageChange}
                                                 />
                                             </div>
-                                            
+
                                             {/* Showing entries info */}
                                             <div className="text-sm text-gray-500 dark:text-gray-400 mt-2 text-center">
                                                 Showing {Design.length} of {pagination.totalItems} entries
