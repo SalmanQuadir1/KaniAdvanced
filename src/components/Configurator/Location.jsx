@@ -59,12 +59,7 @@ const Location = () => {
                         if (values.state === " ") {
                             errors.state = "state Should not Be Empty"
                         }
-                        if (!values.gstin) {
-                            errors.gstin = 'Field is Required';
-                        }
-                        if (values.gstin === " ") {
-                            errors.gstin = "gstin Should not Be Empty"
-                        }
+                       
                         if (!values.pinCode) {
                             errors.pinCode = 'Field is Required';
                         }
@@ -171,7 +166,7 @@ const Location = () => {
 
 
                                             <div className="flex-2 min-w-[270px]">
-                                                <label className="mb-2.5 block text-black dark:text-white"> Gstin <span className="text-red-500 ml-1">*</span></label>
+                                                <label className="mb-2.5 block text-black dark:text-white"> Gstin <span className="text-red-500 ml-1"></span></label>
                                                 <Field
                                                     type="text"
                                                     name="gstin"
