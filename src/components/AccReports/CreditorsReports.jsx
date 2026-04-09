@@ -137,7 +137,7 @@ const CreditorsReports = () => {
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", `creditors_report_${values.fromDate}_to_${values.toDate}.csv`);
+            link.setAttribute("download", `creditors_report_${values.fromDate}_to_${values.toDate}.xlsx`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);

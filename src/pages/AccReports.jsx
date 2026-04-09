@@ -203,6 +203,7 @@ const AccReports = () => {
         { title: "Deditors Report", link: "/accReport/Deditors", countKey: "accountsData", icon: <TbReportAnalytics className="w-10 h-10" />, levelUp: true },
         { title: "Sales Report", link: "/accReport/Sales", countKey: "accountsData", icon: <BiRupee className="w-10 h-10" />, levelUp: true },
         { title: "Purchase Report", link: "/accReport/Purchase", countKey: "accountsData", icon: <BiMoney className="w-10 h-10" />, levelUp: true },
+        { title: "Client Report", link: "/accReport/Client", countKey: "accountsData", icon: <BiMoney className="w-10 h-10" />, levelUp: true },
     ];
 
     // Get all cards user should see based on roles
