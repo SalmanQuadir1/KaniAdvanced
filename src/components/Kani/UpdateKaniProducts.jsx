@@ -39,7 +39,7 @@ const UpdateKaniProducts = () => {
     const productCategory = useSelector(state => state?.persisted?.productCategory);
     const hsnCode = useSelector(state => state?.persisted?.hsn);
     const [supplierNameOptions, setsupplierNameOptions] = useState([])
-    const [supplierCodeOptions, setsupplierCodeOptions] = useState([])
+    // const [supplierCodeOptions, setsupplierCodeOptions] = useState([])
     const supplier = useSelector(state => state?.nonPersisted?.supplier);
     const [productGroupOption, setproductGroupOption] = useState([])
     const [gstDetailModal, setgstDetailModal] = useState(false)
@@ -111,7 +111,7 @@ const UpdateKaniProducts = () => {
         id: supp?.supplier?.id || supp?.id || 0  // Check nested supplier object first
       }))
     : [],
-        supplierCode: { id: values.supplierCode?.id || 0 },
+        // supplierCode: { id: values.supplierCode?.id || 0 },
         warpColors: values.warpColors || "",
         weftColors: values.weftColors || "",
         warpYarn: values.warpYarn || "",
@@ -452,17 +452,17 @@ const UpdateKaniProducts = () => {
             setsupplierNameOptions(formattedOptions);
         }
     }, [supplier.data]);
-    useEffect(() => {
-        if (supplier.data) {
-            const formattedOptions = supplier.data.map(supp => ({
-                value: supp.id,
-                label: supp?.supplierCode,
-                supplierCodeObject: supp,
-                suplieridd: { id: supp.id }
-            }));
-            setsupplierCodeOptions(formattedOptions);
-        }
-    }, [supplier.data]);
+    // useEffect(() => {
+    //     if (supplier.data) {
+    //         const formattedOptions = supplier.data.map(supp => ({
+    //             value: supp.id,
+    //             label: supp?.supplierCode,
+    //             supplierCodeObject: supp,
+    //             suplieridd: { id: supp.id }
+    //         }));
+    //         setsupplierCodeOptions(formattedOptions);
+    //     }
+    // }, [supplier.data]);
 
     
     // useEffect(() => {
@@ -737,7 +737,7 @@ const UpdateKaniProducts = () => {
                         totalCost: product?.totalCost || '',
                         slabBasedRates: product?.slabBasedRates || [],
                         unit: product.unit || { id: 0 },
-                        supplierCode: product.supplierCode || { id: 0 }
+                        // supplierCode: product.supplierCode || { id: 0 }
 
                         // igst :vaaluee?.hsnCode?.igst ??product?.hsnCode?.igst ??  '',
                         // cgst :vaaluee?.hsnCode?.cgst ?? product?.hsnCode?.cgst ?? '',
@@ -1802,7 +1802,7 @@ const UpdateKaniProducts = () => {
 <div className="mb-4.5 flex flex-wrap gap-6">
 
 
-     <div className="flex-1 min-w-[300px]">
+     {/* <div className="flex-1 min-w-[300px]">
                                             <label className="mb-2.5 block text-black dark:text-white"> Supplier Code <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                             <div className=" bg-transparent dark:bg-form-Field">
 
@@ -1827,7 +1827,7 @@ const UpdateKaniProducts = () => {
 
                                             </div>
                                             
-                                        </div>
+                                        </div> */}
 
                                                                                             {/* Color Way Field */}
                                                     <div className="flex-1 min-w-[200px]">
