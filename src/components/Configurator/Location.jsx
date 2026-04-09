@@ -26,7 +26,7 @@ const Location = () => {
 
 
 
-    console.log(location, "locaaaaaaaaaaaaaaaaa");
+   
 
 
 

@@ -130,8 +130,7 @@ const PendingForBill = () => {
 
 
     const getOrder = async (page, filters = {}) => {
-        console.log(filters, "filterssssssssssssssssssssssssssssssssssssssss");
-        console.log("Fetching orders for page", page); // Log the page number being requested
+       
 
         try {
             const response = await fetch(`${VIEW_SEARCHBILL}?page=${page || 1}`, {

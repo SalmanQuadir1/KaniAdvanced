@@ -23,6 +23,7 @@ import Modalll from '../../Order/Modallll';
 
 
 
+
 const CreateVoucher = () => {
     const { id } = useParams();
 
@@ -637,6 +638,7 @@ const CreateVoucher = () => {
         let totalGST = 0;
         let grandTotal = 0;
         let totalDiscount = 0;
+         let totalDiscountPer = 0;
         let totalMRP = 0;
         let totalQuantity = 0;
         let totalBasePrice = 0;
@@ -646,6 +648,7 @@ const CreateVoucher = () => {
             const basePrice = entry.gstCalculation?.basePrice || 0;
             const discount = entry.discount || 0;
             const quantity = entry.quantity || 1;
+
 
             // Calculate discounted base price
             const discountedBasePrice = basePrice * (1 - discount / 100);
@@ -1112,7 +1115,7 @@ const CreateVoucher = () => {
                         courrierLedgerId: null,
                         courrierAmount: 0,
 
-
+                        totalDiscountPer: null,
 
                         typeOfVoucher: Vouchers?.typeOfVoucher || "",
                         isExport: false,
@@ -1760,6 +1763,7 @@ const CreateVoucher = () => {
 
 
                             else if (Vouchers?.typeOfVoucher === "Sales") {
+                                console.log(totals, "totals in sales");
                                 // For Sales, totalAmount should be subtotal (which includes GST)
                                 setFieldValue('totalAmount', totals.subtotal);
                                 setFieldValue('totalGst', totals.totalGST);
@@ -2131,6 +2135,17 @@ const CreateVoucher = () => {
 
                             setFieldValue('totalWithoutgst', totalBasePrice - totalDiscount);
                         }, [totals.totalBasePrice, totals.totalDiscount, setFieldValue]);
+
+                        useEffect(() => {
+                            let totalDiscountPer = 0;
+
+                            const totalDiscountP= values?.paymentDetails.map(entry=> {
+                                totalDiscountPer+= parseFloat(entry.discount) || 0;
+                                setFieldValue('totalDiscountPer', totalDiscountPer);
+                            })
+                       
+                        }, [values?.paymentDetails,setFieldValue]);
+                        
 
 
                         return (
@@ -3446,6 +3461,8 @@ const CreateVoucher = () => {
                                                                     </div>
                                                                 )
                                                             )}
+
+
 
 
 
