@@ -260,6 +260,7 @@ export const DOWNLOADCSV_REPORT = `${BASE_URL}/report/downloadCsv`;
 
 export const DOWNLOADACCCSV_REPORT = `${BASE_URL}/api/reports/creditor-report`;
 export const DOWNLOADACClient_REPORT = `${BASE_URL}/api/reports/client-report`;
+export const DOWNLOADAC_STOCK_REPORT = `${BASE_URL}/api/reports/order/stock-report`;
 export const DOWNLOADACCCSVDebi_REPORT = `${BASE_URL}/api/reports/debtor-report`;
 
 export const VIEWSALES_REPORT = `${BASE_URL}/api/reports/salesReport`;

@@ -7,12 +7,12 @@ import { Link } from 'react-router-dom';
 import { Count, DOWNLOADCUSTOMER_REPORT } from '../Constants/utils';
 
 // Import Icons
-import { LuScale, LuPanelLeftClose } from "react-icons/lu";
-import { SiHomeassistantcommunitystore } from "react-icons/si";
+import { LuScale, LuPanelLeftClose, LuGroup } from "react-icons/lu";
+import { SiHomeassistantcommunitystore, SiShutterstock } from "react-icons/si";
 import { AiOutlinePartition, AiOutlineClose } from "react-icons/ai";
 import { RiProgress1Line, RiProgress8Fill, RiUserReceived2Fill, RiAlignItemBottomFill } from "react-icons/ri";
 import { FcApproval, FcCancel } from "react-icons/fc";
-import { GrCompliance, GrUpdate } from "react-icons/gr";
+import { GrCompliance, GrGroup, GrUpdate } from "react-icons/gr";
 import { MdRepartition, MdOutlinePendingActions, MdOutlinePending, MdRecommend, MdEditSquare, MdReport } from "react-icons/md";
 import { PiGearFineFill } from "react-icons/pi";
 import { CiCalendarDate } from "react-icons/ci";
@@ -25,7 +25,7 @@ import { GiCottonFlower } from "react-icons/gi";
 import { GiBandageRoll } from "react-icons/gi";
 import { GiScrollUnfurled } from "react-icons/gi";
 import { FaDropbox } from "react-icons/fa";
-import { FaSalesforce } from 'react-icons/fa6';
+import { FaPersonWalking, FaSalesforce } from 'react-icons/fa6';
 import { BiMoney, BiRupee } from 'react-icons/bi';
 
 
@@ -203,7 +203,9 @@ const AccReports = () => {
         { title: "Deditors Report", link: "/accReport/Deditors", countKey: "accountsData", icon: <TbReportAnalytics className="w-10 h-10" />, levelUp: true },
         { title: "Sales Report", link: "/accReport/Sales", countKey: "accountsData", icon: <BiRupee className="w-10 h-10" />, levelUp: true },
         { title: "Purchase Report", link: "/accReport/Purchase", countKey: "accountsData", icon: <BiMoney className="w-10 h-10" />, levelUp: true },
-        { title: "Client Report", link: "/accReport/Client", countKey: "accountsData", icon: <BiMoney className="w-10 h-10" />, levelUp: true },
+        { title: "Client Report", link: "/accReport/Client", countKey: "accountsData", icon: <FaPersonWalking className="w-10 h-10" />, levelUp: true },
+        { title: "Stock Report", link: "/accReport/Stock", countKey: "accountsData", icon: <SiShutterstock className="w-10 h-10" />, levelUp: true },
+        { title: "ProductGroup Report", link: "/accReport/ProductGroup", countKey: "accountsData", icon: <LuGroup className="w-10 h-10" />, levelUp: true },
     ];
 
     // Get all cards user should see based on roles

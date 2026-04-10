@@ -43,17 +43,17 @@ const AddColorGroup = () => {
                                 <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                                     <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                                         <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                                            {edit ? 'Update Design' : 'Add Design'}
+                                            {edit ? 'Update Design Group' : 'Add Design Group'}
                                         </h3>
                                     </div>
                                     <div className="p-6.5">
                                         <div className="mb-4.5 flex flex-wrap gap-6">
                                             <div className="flex-1 min-w-[300px]">
-                                                <label className="mb-2.5 block text-black dark:text-white">Design Name <span className="text-red-500 ml-1">*</span> </label>
+                                                <label className="mb-2.5 block text-black dark:text-white">Design Group Name <span className="text-red-500 ml-1">*</span> </label>
                                                 <Field
                                                     type="text"
                                                     name="colorName"
-                                                    placeholder="Enter Design Name"
+                                                    placeholder="Enter Design Group Name"
                                                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
                                                 />
                                                 <ErrorMessage name="colorName" component="div" className="text-red-500" />
@@ -62,7 +62,7 @@ const AddColorGroup = () => {
 
                                         <div className="flex justify-center mt-4 items-center">
                                             <button type="submit" className="flex md:w-[180px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90" disabled={isSubmitting}>
-                                                {edit ? 'Update Color' : 'Create Color'}
+                                                {edit ? 'Update Design Group' : 'Create Design Group'}
                                             </button>
                                         </div>
                                     </div>
