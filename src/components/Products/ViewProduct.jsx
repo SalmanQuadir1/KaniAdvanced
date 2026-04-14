@@ -24,29 +24,26 @@ const ViewProduct = () => {
     const { Product, handleDelete, handleUpdate, handlePageChange, pagination, getProduct, productId, getProductId, getBOMData } = useProduct({ referenceImages, actualImages });
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const [isImagesModalOpen, setisImagesModalOpen] = useState(false)
-
-    const [Images, setImages] = useState(null)
+    const [isImagesModalOpen, setisImagesModalOpen] = useState(false);
+    const [Images, setImages] = useState(null);
     const [selectedBOMData, setSelectedBOMData] = useState(null);
-
-
     const [isINVENTORYModalOpen, setIsINVENTORYModalOpen] = useState(false);
     const [selectedINVENTORYData, setSelectedINVENTORYData] = useState(null);
-    const [mrp, setmrp] = useState(0)
+    const [mrp, setmrp] = useState(0);
 
-
-
-
-
-
-
+    // Image upload states
+    const [uploadModalOpen, setUploadModalOpen] = useState(false);
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [uploading, setUploading] = useState(false);
+    const [currentProductId, setCurrentProductId] = useState(null);
+    
+    // Use object ref instead of single ref
+    const fileInputRefs = useRef({});
 
     useEffect(() => {
         getProduct();
         getProductId();
     }, []);
-
 
     const formattedProductId = productId.map(id => ({
         label: id,
@@ -63,100 +60,61 @@ const ViewProduct = () => {
     }
     ];
 
-
-
-    // console.log(Product,"lololo");
     const customStyles = createCustomStyles(theme?.mode);
 
     const openBOMModal = (bomData) => {
-
-
         setSelectedBOMData(bomData);
         setIsModalOpen(true);
     };
 
     const openImageModal = (Images) => {
         console.log("image modeel before");
-
-
         setisImagesModalOpen(true);
         console.log(isImagesModalOpen, "afterimage");
         setImages(Images);
-
     };
-    console.log(Images, "image huuuun===============================================");
-
-
-    // console.log(selectedBOMData, "jijiji");
 
     const closeBOMModal = () => {
         setIsModalOpen(false);
         setSelectedBOMData(null);
     };
 
-
     const openINVENTORYModal = (id) => {
-
-
         const getInventory = async () => {
-
             try {
                 const response = await fetch(`${GET_INVENTORYLOCATION}/${id}`, {
                     method: "GET",
                     headers: {
-                        // "Content-Type": "multipart/form-data",
                         "Authorization": `Bearer ${token}`
                     }
                 });
                 const data = await response.json();
-
-
-                // setLocation(data);
                 setSelectedINVENTORYData(data);
-
-
             } catch (error) {
                 console.error(error);
                 toast.error("Failed to fetch Product");
             }
         };
-
-        getInventory()
-            // useEffect(() => {
-            //     getInventory()
-            // }, [])
-
-
-
-
-            ;
-        setmrp(mrp)
+        getInventory();
+        setmrp(mrp);
         setIsINVENTORYModalOpen(true);
     };
-
-
-    // console.log(selectedBOMData, "jijiji");
 
     const closeINVENTORYModal = () => {
         setIsINVENTORYModalOpen(false);
         setSelectedINVENTORYData(null);
     };
 
-    //image upload loagic
-    const [uploadModalOpen, setUploadModalOpen] = useState(false);
-    const [selectedFiles, setSelectedFiles] = useState([]);
-    const [uploading, setUploading] = useState(false);
-    const [currentProductId, setCurrentProductId] = useState(null);
-    const fileInputRef = useRef(null);
-
     // Handle file selection
-    const handleFileSelect = (e, productId, type) => {
-        console.log(type, "jumanji[e");
+    const handleFileSelect = (e, id, type) => {
+        console.log("Selected ID:", id);
+        console.log("Type:", type);
+        
         const files = Array.from(e.target.files);
         if (files.length === 0) return;
 
-        setCurrentProductId(productId);
-        setUploadType(type); // Set the upload type
+        setCurrentProductId(id);
+        setUploadType(type);
         setSelectedFiles(files.map(file => ({
             file,
             preview: URL.createObjectURL(file)
@@ -167,9 +125,10 @@ const ViewProduct = () => {
     // Handle image upload
     const handleImageUpload = async () => {
         if (!currentProductId || selectedFiles.length === 0) return;
+        console.log("Uploading for product ID:", currentProductId);
 
         setUploading(true);
-        // const toastId = toast.loading(`Uploading ${selectedFiles.length} ${uploadType} images...`);
+        const toastId = toast.loading(`Uploading ${selectedFiles.length} ${uploadType} images...`);
 
         try {
             const formData = new FormData();
@@ -196,19 +155,18 @@ const ViewProduct = () => {
             }
 
             toast.success(`${selectedFiles.length} ${uploadType} images uploaded successfully!`);
-            getProduct();
+            getProduct(); // Refresh the product list
         } catch (error) {
             console.error('Error uploading images:', error);
-            toast.error(error.message || `Failed to upload ${uploadType} images`, { id: toastId });
+            toast.error(error.message || `Failed to upload ${uploadType} images`);
         } finally {
             setUploadModalOpen(false);
             setSelectedFiles([]);
             setCurrentProductId(null);
             setUploading(false);
+            toast.dismiss(toastId);
         }
     };
-
-
 
     // Clean up object URLs
     useEffect(() => {
@@ -217,41 +175,34 @@ const ViewProduct = () => {
         };
     }, [selectedFiles]);
 
-    //image uplaod ends here 
-
-
     const renderTableRows = () => {
         if (!Product || !Product.length) {
             return (
                 <tr className='bg-white dark:bg-slate-700 dark:text-white'>
-                    <td colSpan="6" className="px-5 py-5 border-b border-gray-200 text-sm">
+                    <td colSpan="10" className="px-5 py-5 border-b border-gray-200 text-sm">
                         <p className="text-gray-900 whitespace-no-wrap text-center">No Products Found</p>
                     </td>
                 </tr>
             );
         }
 
-
         const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
 
         const handleUpdateBom = (id) => {
-            navigate(`/product/updateBom/${id}`)
-
-
-        }
+            navigate(`/product/updateBom/${id}`);
+        };
 
         const handleUpdateInventory = (id) => {
-            navigate(`/product/updateInventory/${id}`)
-        }
-
-
+            navigate(`/product/updateInventory/${id}`);
+        };
 
         return Product.map((item, index) => (
-            <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
+            <tr key={item.id} className='bg-white dark:bg-slate-700 dark:text-white'>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
                 </td>
 
+                {/* Reference Image Column */}
                 <td className="px-1 py-5 border-b border-gray-200 text-sm">
                     <div className="relative group">
                         {item?.images?.find((img) => img.referenceImage) ? (
@@ -262,36 +213,40 @@ const ViewProduct = () => {
                                 alt="Product Image"
                             />
                         ) : (
-                            <div
-                                className="h-[50px] w-[50px] rounded-full bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
-                                onClick={() => fileInputRef?.current?.click()}
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-6 w-6 text-gray-500"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
+                            <>
+                                <div
+                                    className="h-[50px] w-[50px] rounded-full bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+                                    onClick={() => fileInputRefs.current[`ref_${item.id}`]?.click()}
                                 >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M12 4v16m8-8H4"
-                                    />
-                                </svg>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-6 w-6 text-gray-500"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M12 4v16m8-8H4"
+                                        />
+                                    </svg>
+                                </div>
                                 <input
-                                    ref={fileInputRef}
+                                    ref={el => fileInputRefs.current[`ref_${item.id}`] = el}
                                     type="file"
                                     accept="image/*"
                                     className="hidden"
                                     onChange={(e) => handleFileSelect(e, item.id, "referenceImages")}
                                     multiple
                                 />
-                            </div>
+                            </>
                         )}
                     </div>
                 </td>
+
+                {/* Actual Image Column */}
                 <td className="px-1 py-5 border-b border-gray-200 text-sm">
                     <div className="relative group">
                         {item?.images?.find(img => img?.actualImage) ? (
@@ -302,99 +257,127 @@ const ViewProduct = () => {
                                 alt="Product Actual Image"
                             />
                         ) : (
-                            <div
-                                className="h-[50px] w-[50px] rounded-full bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
-                                onClick={() => fileInputRef?.current?.click()}
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    className="h-6 w-6 text-gray-500"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
+                            <>
+                                <div
+                                    className="h-[50px] w-[50px] rounded-full bg-gray-100 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+                                    onClick={() => fileInputRefs.current[`actual_${item.id}`]?.click()}
                                 >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M12 4v16m8-8H4"
-                                    />
-                                </svg>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-6 w-6 text-gray-500"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M12 4v16m8-8H4"
+                                        />
+                                    </svg>
+                                </div>
                                 <input
-                                    ref={fileInputRef}
+                                    ref={el => fileInputRefs.current[`actual_${item.id}`] = el}
                                     type="file"
                                     accept="image/*"
                                     className="hidden"
                                     onChange={(e) => handleFileSelect(e, item.id, "actualImages")}
                                     multiple
                                 />
-                            </div>
+                            </>
                         )}
                     </div>
                 </td>
 
-                <td className="px-2 py-5  md:w-[50px] border-b border-gray-200 font-xs text-xs">
-                    <span onClick={() => openImageModal(item?.images)} className="bg-green-100 text-green-800  font-xs text-xs me-2 px-1 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer "> VIEW</span>
-
+                {/* View Images Button */}
+                <td className="px-2 py-5 md:w-[50px] border-b border-gray-200 font-xs text-xs">
+                    <span 
+                        onClick={() => openImageModal(item?.images)} 
+                        className="bg-green-100 text-green-800 font-xs text-xs me-2 px-1 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer"
+                    >
+                        VIEW
+                    </span>
                 </td>
+
+                {/* Product ID */}
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.productId?.substring(0, 34) + ".."}</p>
-
                 </td>
+
+                {/* Product Group */}
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.productGroup?.productGroupName.substring(0, 40)}</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item.productGroup?.productGroupName?.substring(0, 40)}</p>
                 </td>
+
+                {/* Category */}
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.productCategory?.productCategoryName.substring(0, 50) }</p>
+                    <p className="text-gray-900 whitespace-no-wrap">{item.productCategory?.productCategoryName?.substring(0, 50)}</p>
                 </td>
 
-                {/* BOM View Button */}
-                {
-                    item?.bom ?
-                        <td className=" py-5 border-b border-gray-200 text-sm">
-                            {/* <button
-                                className="bg-blue-500 hover:bg-blue-600 text-white font-bold h-10 w-[100px] rounded-lg"
-                                onClick={() => openBOMModal(item.bom)}
-                            > */}
-                            <div className='flex flex-col gap-2'>
-                                <span onClick={() => openBOMModal(item.bom)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"> VIEW BOM</span>
-                                <span onClick={() => handleUpdateBom(item?.bom?.id)} className=" bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]">UPDATE BOM</span>
-                            </div>
+                {/* BOM Section */}
+                {item?.bom ? (
+                    <td className="py-5 border-b border-gray-200 text-sm">
+                        <div className='flex flex-col gap-2'>
+                            <span 
+                                onClick={() => openBOMModal(item.bom)} 
+                                className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
+                            >
+                                VIEW BOM
+                            </span>
+                            <span 
+                                onClick={() => handleUpdateBom(item?.bom?.id)} 
+                                className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
+                            >
+                                UPDATE BOM
+                            </span>
+                        </div>
+                    </td>
+                ) : (
+                    <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                        <IoIosAdd size={30} onClick={() => navigate(`/product/addBom/${item.id}`)} />
+                    </td>
+                )}
 
-                            {/* </button> */}
-                        </td>
-                        :
-                        <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                            <IoIosAdd size={30} onClick={(e) => navigate(`/product/addBom/${item.id}`)} />
-                        </td>
-                }
+                {/* Inventory Section */}
+                {item?.inventoryStatus ? (
+                    <td className="py-5 border-b border-gray-200 text-sm">
+                        <div className='flex flex-col gap-2 mx-3'>
+                            <span 
+                                onClick={() => openINVENTORYModal(item.id)} 
+                                className="view-badge bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[110px]"
+                            >
+                                VIEW INVENTORY
+                            </span>
+                            <span 
+                                onClick={() => handleUpdateInventory(item?.id)} 
+                                className="view-badge bg-red-100 text-red-800 text-[10px] font-medium me-2 text-center py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400 cursor-pointer w-[110px]"
+                            >
+                                UPDATE INVENTORY
+                            </span>
+                        </div>
+                    </td>
+                ) : (
+                    <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                        <IoIosAdd size={30} onClick={() => navigate(`/product/addInventoryLocation/${item.id}`)} />
+                    </td>
+                )}
 
-
-
-                {
-                    item?.inventoryStatus ?
-                        <td className=" py-5 border-b border-gray-200 text-sm">
-                            {/* <button
-                                className="bg-blue-500 hover:bg-blue-600 text-white font-bold h-10 w-[100px] rounded-lg"
-                                onClick={() => openBOMModal(item.bom)}
-                            > */}
-                            <div className='flex flex-col gap-2 mx-3'>
-                                <span onClick={() => openINVENTORYModal(item.id)} className="view-badge bg-green-100 text-green-800 text-[10px] font-medium me-2 text-center py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[110px]"> VIEW INVENTORY</span>
-                                <span onClick={() => handleUpdateInventory(item?.id)} className="view-badge bg-red-100 text-red-800 text-[10px] font-medium me-2  text-center py-0.5 rounded dark:bg-gray-700 dark:text-red-400 border border-red-400 cursor-pointer w-[110px]">UPDATE INVENTORY</span>
-                            </div>
-
-                            {/* </button> */}
-                        </td>
-                        :
-                        <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                            <IoIosAdd size={30} onClick={(e) => navigate(`/product/addInventoryLocation/${item.id}`)} />
-                        </td>
-                }
-
+                {/* Actions */}
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
-                        <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2' onClick={(e) => handleUpdate(e, item)} title='Edit Product' />  |
-                        <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' onClick={(e) => handleDelete(e, item?.id)} title='Delete Product' />
+                        <FiEdit 
+                            size={17} 
+                            className='text-teal-500 hover:text-teal-700 mx-2 cursor-pointer' 
+                            onClick={(e) => handleUpdate(e, item)} 
+                            title='Edit Product' 
+                        />
+                        <FiTrash2 
+                            size={17} 
+                            className='text-red-500 hover:text-red-700 mx-2 cursor-pointer' 
+                            onClick={(e) => handleDelete(e, item?.id)} 
+                            title='Delete Product' 
+                        />
                     </p>
                 </td>
             </tr>
@@ -404,15 +387,16 @@ const ViewProduct = () => {
     const handleSubmit = (values) => {
         const filters = {
             productId: values.ProductId || undefined,
-            hasActualImage:values.hasActualImage,
-            hasReferenceImage:values.hasReferenceImage,
-            searchText:values.searchText
+            hasActualImage: values.hasActualImage,
+            hasReferenceImage: values.hasReferenceImage,
+            searchText: values.searchText
         };
         getProduct(pagination.currentPage, filters);
     };
+
     const renderUploadModal = () => (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center z-40">
-            <div className="bg-slate-100 dark:bg-slate-600 border border-b-1 rounded p-6 shadow-lg w-[900px] ml-[300px] max-h-[90vh] overflow-auto">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center z-50">
+            <div className="bg-slate-100 dark:bg-slate-600 border border-b-1 rounded p-6 shadow-lg w-[900px] max-h-[90vh] overflow-auto">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-2xl font-extrabold">Upload Images ({selectedFiles.length} selected)</h2>
                     <button
@@ -440,11 +424,9 @@ const ViewProduct = () => {
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    // Remove the image from selectedFiles
                                     const updatedFiles = [...selectedFiles];
                                     updatedFiles.splice(index, 1);
                                     setSelectedFiles(updatedFiles);
-                                    // Revoke the object URL to prevent memory leaks
                                     URL.revokeObjectURL(fileObj.preview);
                                 }}
                                 className="absolute top-1 left-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
@@ -494,21 +476,21 @@ const ViewProduct = () => {
             <Breadcrumb pageName="Products/ View Products" />
             <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
                 <div className="pt-5">
-               <div className='flex flex-row items-center justify-between w-full'>
-  <h2 className="text-xl text-slate-500 font-semibold w-full flex items-center justify-between">
-    <span>View Products</span>
-    <span className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-blue-900/20 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-800/30 text-sm font-semibold text-blue-700 dark:text-blue-300 ml-4">
-      TOTAL PRODUCTS: {pagination.totalItems}
-    </span>
-  </h2>
-</div>
+                    <div className='flex flex-row items-center justify-between w-full'>
+                        <h2 className="text-xl text-slate-500 font-semibold w-full flex items-center justify-between">
+                            <span>View Products</span>
+                            <span className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-blue-900/20 px-4 py-2 rounded-lg border border-blue-200 dark:border-blue-800/30 text-sm font-semibold text-blue-700 dark:text-blue-300 ml-4">
+                                TOTAL PRODUCTS: {pagination.totalItems}
+                            </span>
+                        </h2>
+                    </div>
 
                     {/* BOM Modal */}
                     {isModalOpen && (
-                        <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50">
-                            <div className="bg-slate-100 dark:bg-slate-500 border border-b-1 rounded p-6 shadow-lg md:ml-[100px]  w-[350px]  md:w-[700px] md:h-[400px] mt-[50px]">
+                        <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center z-50">
+                            <div className="bg-slate-100 dark:bg-slate-500 border border-b-1 rounded p-6 shadow-lg md:ml-[100px] w-[350px] md:w-[700px] md:h-[400px] mt-[50px]">
                                 <div className="text-right">
-                                    <button color='red' onClick={closeBOMModal} className="text-red-500  text-xl  font-bold">&times;</button>
+                                    <button onClick={closeBOMModal} className="text-red-500 text-xl font-bold">&times;</button>
                                 </div>
                                 <h2 className="text-2xl text-center mb-4 font-extrabold">BOM Details</h2>
                                 <div className="md:inline-block md:min-w-full overflow-scroll w-[320px] shadow-md rounded-lg md:overflow-hidden">
@@ -518,48 +500,33 @@ const ViewProduct = () => {
                                                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" style={{ minWidth: '250px' }}>PRODUCT LIST</th>
                                                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">UNIT OF MEASURE</th>
                                                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">QUANTITY</th>
-
                                             </tr>
                                         </thead>
                                         <tbody>
-
-
-                                            {selectedBOMData?.productMaterials?.map((row, index) => (
+                                            {selectedBOMData?.productMaterials?.map((row) => (
                                                 <tr key={row.id}>
                                                     <td className="px-2 py-2 border-b dark:text-white">
                                                         <p>{row?.products?.productDescription}</p>
-
                                                     </td>
                                                     <td className="px-2 py-2 border-b dark:text-white">
                                                         {row.unitOfMeasurement}
                                                     </td>
                                                     <td className="px-2 py-2 border-b dark:text-white">
                                                         {row.quantity}
-
                                                     </td>
-                                                    {/* <td className="px-2 py-2 border-b">
-                                                        <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' title='Delete BOM' />
-
-                                                    </td> */}
-
                                                 </tr>
                                             ))}
-
-
                                         </tbody>
                                     </table>
                                 </div>
-
-                                {/* <pre>{JSON.stringify(selectedBOMData, null, 2)}</pre> */}
                             </div>
                         </div>
                     )}
 
+                    {/* Images Modal */}
                     {isImagesModalOpen && (
-
-
-                        <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center z-999">
-                            <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg  w-[670px] h-[400px] mt-[60px] dark:bg-slate-600 overflow-auto">
+                        <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center z-50">
+                            <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg w-[670px] h-[400px] mt-[60px] dark:bg-slate-600 overflow-auto">
                                 <div className="text-right">
                                     <button onClick={() => setisImagesModalOpen(false)} className="text-red-500 text-xl font-bold">&times;</button>
                                 </div>
@@ -569,23 +536,20 @@ const ViewProduct = () => {
                                 <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden mb-4">
                                     <h1>Reference Images</h1>
                                     <div className="flex overflow-x-auto space-x-4 py-2">
-                                        {
-                                            Images.map((image, index) => {
-                                                // Check if the referenceImage is not null or undefined before rendering
-                                                if (image?.referenceImage) {
-                                                    return (
-                                                        <img
-                                                            key={index}
-                                                            className="h-[200px] w-[200px] rounded-lg transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
-                                                            crossOrigin="use-credentials"
-                                                            src={`${GET_IMAGE}/products/getimages/${image.referenceImage}`}
-                                                            alt="Product Image"
-                                                        />
-                                                    );
-                                                }
-                                                return null; // Return null if referenceImage is null or undefined
-                                            })
-                                        }
+                                        {Images?.map((image, index) => {
+                                            if (image?.referenceImage) {
+                                                return (
+                                                    <img
+                                                        key={index}
+                                                        className="h-[200px] w-[200px] rounded-lg transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                                                        crossOrigin="use-credentials"
+                                                        src={`${GET_IMAGE}/products/getimages/${image.referenceImage}`}
+                                                        alt="Product Image"
+                                                    />
+                                                );
+                                            }
+                                            return null;
+                                        })}
                                     </div>
                                 </div>
 
@@ -593,64 +557,51 @@ const ViewProduct = () => {
                                 <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden mb-4">
                                     <h1>Actual Images</h1>
                                     <div className="flex overflow-x-auto space-x-4 py-2">
-                                        {
-                                            Images.map((image, index) => {
-                                                // Check if the actualImage is not null or undefined before rendering
-                                                if (image?.actualImage) {
-                                                    return (
-                                                        <img
-                                                            key={index}
-                                                            className="h-[200px] w-[200px] rounded-lg transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
-                                                            crossOrigin="use-credentials"
-                                                            src={`${GET_IMAGE}/products/getimages/${image.actualImage}`}
-                                                            alt="Product Image"
-                                                        />
-                                                    );
-                                                }
-                                                return null; // Return null if actualImage is null or undefined
-                                            })
-                                        }
+                                        {Images?.map((image, index) => {
+                                            if (image?.actualImage) {
+                                                return (
+                                                    <img
+                                                        key={index}
+                                                        className="h-[200px] w-[200px] rounded-lg transition-transform duration-500 ease-in-out transform group-hover:scale-[2] group-hover:shadow-2xl"
+                                                        crossOrigin="use-credentials"
+                                                        src={`${GET_IMAGE}/products/getimages/${image.actualImage}`}
+                                                        alt="Product Image"
+                                                    />
+                                                );
+                                            }
+                                            return null;
+                                        })}
                                     </div>
                                 </div>
-
-                                {/* <pre>{JSON.stringify(selectedBOMData, null, 2)}</pre> */}
                             </div>
                         </div>
-
-
-
-
                     )}
 
-                    {/* Image Modal */}
+                    {/* Upload Modal */}
                     {uploadModalOpen && renderUploadModal()}
-
 
                     {/* Inventory Modal */}
                     {isINVENTORYModalOpen && (
-                        <div className="min-w-[500px] fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50 overflow-scroll">
-                            <div className="min-w-[800px] bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[100px]  w-[70px] h-[400px] mt-[60px] dark:bg-slate-600 overflow-scroll">
+                        <div className="min-w-[500px] fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center z-50 overflow-scroll">
+                            <div className="min-w-[800px] bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[100px] w-[70px] h-[400px] mt-[60px] dark:bg-slate-600 overflow-scroll">
                                 <div className="text-right">
-                                    <button onClick={closeINVENTORYModal} className="text-red-500 text-xl  font-bold">&times;</button>
+                                    <button onClick={closeINVENTORYModal} className="text-red-500 text-xl font-bold">&times;</button>
                                 </div>
-                                <h2 className="text-2xl text-center mb-4 font-extrabold">INVENTORY  DETAILS</h2>
+                                <h2 className="text-2xl text-center mb-4 font-extrabold">INVENTORY DETAILS</h2>
                                 <div className="inline-block min-w-full shadow-md rounded-lg overflow-auto">
                                     <table className="min-w-full leading-normal overflow-auto">
                                         <thead>
                                             <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >LOCATION</th>
+                                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">LOCATION</th>
                                                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">OPENING BALANCE</th>
-
                                                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Rate</th>
                                                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Value</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-
-
                                             {selectedINVENTORYData && (
                                                 <>
-                                                    {selectedINVENTORYData.map((row, index) => (
+                                                    {selectedINVENTORYData.map((row) => (
                                                         <tr key={row.id}>
                                                             <td className="px-2 py-2 border-b dark:text-white">
                                                                 <p>{row?.location?.address}</p>
@@ -667,10 +618,7 @@ const ViewProduct = () => {
                                                         </tr>
                                                     ))}
                                                     <tr>
-                                                        <td
-                                                            className="px-2 py-2 border-t font-bold text-black dark:text-white"
-                                                            colSpan={3}
-                                                        >
+                                                        <td className="px-2 py-2 border-t font-bold text-black dark:text-white" colSpan={3}>
                                                             Total Values
                                                         </td>
                                                         <td className="px-2 py-2 border-t font-bold text-black dark:text-white">
@@ -678,28 +626,23 @@ const ViewProduct = () => {
                                                                 .reduce((total, currentRow) => total + (currentRow.value || 0), 0)
                                                                 .toFixed(2)}
                                                         </td>
-                                                        <td className="px-2 py-2 border-t"></td>
                                                     </tr>
                                                 </>
                                             )}
-
-
-
                                         </tbody>
                                     </table>
                                 </div>
-
-                                {/* <pre>{JSON.stringify(selectedBOMData, null, 2)}</pre> */}
                             </div>
                         </div>
                     )}
 
+                    {/* Search Form */}
                     <div className='items-center justify-center'>
                         <Formik
                             initialValues={{
                                 ProductId: '',
                                 hasActualImage: "",
-                                searchText:"",
+                                searchText: "",
                                 hasReferenceImage: ""
                             }}
                             onSubmit={handleSubmit}
@@ -726,7 +669,7 @@ const ViewProduct = () => {
                                                 component={ReactSelect}
                                                 options={[{ label: 'Select', value: null }, ...optionsForImage]}
                                                 styles={customStyles}
-                                                placeholder="Select Product Id"
+                                                placeholder="Select Has Reference Image"
                                                 value={optionsForImage.find(option => option.value === values.hasReferenceImage)}
                                                 onChange={option => setFieldValue('hasReferenceImage', option ? option.value : '')}
                                             />
@@ -740,29 +683,27 @@ const ViewProduct = () => {
                                                 component={ReactSelect}
                                                 options={[{ label: 'Select', value: null }, ...optionsForImage]}
                                                 styles={customStyles}
-                                                placeholder="Select has Actual Image"
+                                                placeholder="Select Has Actual Image"
                                                 value={optionsForImage.find(option => option.value === values.hasActualImage)}
                                                 onChange={option => setFieldValue('hasActualImage', option ? option.value : '')}
                                             />
                                         </div>
 
-                                           <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Description/Barcode/Alias</label>
-                                                    <Field
-                                                        name="searchText"
-                                                        type="text"
-                                                        placeholder="Search Description/Barcode/Alias"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-
+                                        <div className="flex-1 min-w-[300px]">
+                                            <label className="mb-2.5 block text-black dark:text-white">Description/Barcode/Alias</label>
+                                            <Field
+                                                name="searchText"
+                                                type="text"
+                                                placeholder="Search Description/Barcode/Alias"
+                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                            />
+                                        </div>
                                     </div>
 
-                                  
                                     <div className="flex justify-center">
                                         <button
                                             type="submit"
-                                            className="flex md:w-[240px] w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
+                                            className="flex md:w-[240px] w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                         >
                                             Search
                                         </button>
@@ -772,20 +713,21 @@ const ViewProduct = () => {
                         </Formik>
                     </div>
 
+                    {/* Products Table */}
                     <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                         <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
                             <table className="min-w-full leading-normal">
                                 <thead>
                                     <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">SNO</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">REF IMAGE</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">ACT IMAGE</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider md:w-[500px]">View Images</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">PRODUCT ID</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">PRODUCT GROUP</th>
                                         <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">CATEGORY</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider ">ADD INVENTORY </th>
+                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">BOM</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">INVENTORY</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
