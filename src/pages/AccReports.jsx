@@ -19,7 +19,7 @@ import { CiCalendarDate } from "react-icons/ci";
 import { VscDiffModified } from "react-icons/vsc";
 import { toast } from 'react-toastify';
 import { TbReorder, TbReport, TbReportAnalytics } from 'react-icons/tb';
-import { GiWool } from "react-icons/gi";
+import { GiProfit, GiWool } from "react-icons/gi";
 import { GiRolledCloth } from "react-icons/gi";
 import { GiCottonFlower } from "react-icons/gi";
 import { GiBandageRoll } from "react-icons/gi";
@@ -206,6 +206,7 @@ const AccReports = () => {
         { title: "Client Report", link: "/accReport/Client", countKey: "accountsData", icon: <FaPersonWalking className="w-10 h-10" />, levelUp: true },
         { title: "Stock Report", link: "/accReport/Stock", countKey: "accountsData", icon: <SiShutterstock className="w-10 h-10" />, levelUp: true },
         { title: "ProductGroup Report", link: "/accReport/ProductGroup", countKey: "accountsData", icon: <LuGroup className="w-10 h-10" />, levelUp: true },
+         { title: "Profit & Loss Report", link: "/accReport/ProfitLoss", countKey: "accountsData", icon: <GiProfit className="w-10 h-10" />, levelUp: true },
     ];
 
     // Get all cards user should see based on roles
