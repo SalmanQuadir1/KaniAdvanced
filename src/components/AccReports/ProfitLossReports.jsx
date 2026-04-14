@@ -2,51 +2,31 @@ import React, { useEffect, useState } from 'react'
 import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
-import { DELETE_ORDER_URL, DOWNLOADACCCSV_REPORT, DOWNLOADAC_PROFITLOSS_REPORT, DOWNLOADCSV_REPORT, DOWNLOAD_REPORT, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS, VIEW_REPORT } from "../../Constants/utils";
-import ReactSelect from 'react-select';
-import useorder from '../../hooks/useOrder';
-import { FiEdit, FiTrash2, FiEye } from 'react-icons/fi';
-import Pagination from '../Pagination/Pagination';
+import { DOWNLOADAC_PROFITLOSS_REPORT } from "../../Constants/utils";
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { customStyles as createCustomStyles } from '../../Constants/utils';
-import useReports from '../../hooks/useReports';
 import { FaDownload } from 'react-icons/fa6';
-
-const productgrp = [
-    { value: 'BrandA', label: 'Brand A' },
-    { value: 'BrandB', label: 'Brand B' },
-    { value: 'BrandC', label: 'Brand C' },
-];
+import { FiEye } from 'react-icons/fi';
 
 const ProfitLossReports = () => {
     const [loading, setLoading] = useState(false);
-    const [reportData, setReportData] = useState([]);
-    const [filteredData, setFilteredData] = useState([]);
+    const [reportData, setReportData] = useState(null);
     const [isDataFetched, setIsDataFetched] = useState(false);
-    const [currentPageData, setCurrentPageData] = useState([]); // New state for current page data
 
     const { currentUser } = useSelector((state) => state?.persisted?.user);
-    const theme = useSelector(state => state?.persisted?.theme);
-
-    const customStyles = createCustomStyles(theme?.mode);
     const { token } = currentUser;
 
-    const [pagination, setPagination] = useState({
-        totalItems: 0,
-        data: [],
-        totalPages: 0,
-        currentPage: 1,
-        itemsPerPage: 10,
+    const [currentFilters, setCurrentFilters] = useState({
+        fromDate: '',
+        toDate: ''
     });
 
     // Function to fetch report data
     const fetchReportData = async (values) => {
         setLoading(true);
-        const groupName = "Sundry Creditors"
+        
         try {
-            const response = await fetch(`${DOWNLOADAC_PROFITLOSS_REPORT}`, {
+            const response = await fetch(`${DOWNLOADAC_PROFITLOSS_REPORT}/preview`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -57,40 +37,17 @@ const ProfitLossReports = () => {
             if (!response.ok) {
                 throw new Error("Failed to fetch report data");
             }
-            console.log(response, "response");
+            
             const data = await response.json();
-            console.log(data, "ll");
-
-            setReportData(data.content);
-            setFilteredData(data.content);
+            console.log(data, "API Response");
             
-            // Update pagination state with the data from API
-            setPagination({
-                totalItems: data?.totalElements,
-                data: data?.content,
-                totalPages: data?.totalPages,
-                currentPage: data?.number + 1,
-                itemsPerPage: data?.size || 10,
-            });
-            
-            // Set current page data to the first page of results
-            setCurrentPageData(data?.content || []);
-            
+            setReportData(data);
             setIsDataFetched(true);
             toast.success("Report loaded successfully");
         } catch (error) {
             console.error(error);
             toast.error("An error occurred while fetching the report");
-            setReportData([]);
-            setFilteredData([]);
-            setCurrentPageData([]);
-            setPagination({
-                totalItems: 0,
-                data: [],
-                totalPages: 0,
-                currentPage: 1,
-                itemsPerPage: 10,
-            });
+            setReportData(null);
         } finally {
             setLoading(false);
         }
@@ -98,20 +55,15 @@ const ProfitLossReports = () => {
 
     // Handle View button click
     const handleViewReport = async (values) => {
-       
+        setCurrentFilters({
+            fromDate: values.fromDate,
+            toDate: values.toDate
+        });
         await fetchReportData(values);
     };
 
     // Handle CSV download
-    const handlegenerateCsv = async (values) => {
-      
-
-        const filters = {
-            fromDate: values.fromDate,
-            toDate: values.toDate,
-           
-        };
-
+    const handleGenerateCsv = async (values) => {
         try {
             const response = await fetch(`${DOWNLOADAC_PROFITLOSS_REPORT}/download`, {
                 method: "GET",
@@ -119,7 +71,6 @@ const ProfitLossReports = () => {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-               
             });
 
             if (!response.ok) {
@@ -131,7 +82,7 @@ const ProfitLossReports = () => {
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", `creditors_report_${values.fromDate}_to_${values.toDate}.xlsx`);
+            link.setAttribute("download", `profit_loss_report_${new Date().toISOString().split('T')[0]}.xlsx`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -144,220 +95,455 @@ const ProfitLossReports = () => {
         }
     };
 
-    // Handle pagination - fetch new page from API
-    const handlePageChange = async (page) => {
-        // If you have server-side pagination, fetch the new page from API
-        // You'll need to store the current filter values to fetch the correct page
-        // For now, this is a client-side pagination fix
-        
-        if (filteredData.length === 0) return;
-        
-        const startIndex = (page - 1) * pagination.itemsPerPage;
-        const endIndex = startIndex + pagination.itemsPerPage;
-        const newPageData = filteredData.slice(startIndex, endIndex);
-        
-        setCurrentPageData(newPageData);
-        setPagination(prev => ({
-            ...prev,
-            currentPage: page,
-        }));
+    // Render Opening Stock Table
+    const renderOpeningStockTable = () => {
+        if (!reportData?.openingStock || reportData.openingStock.ledgers.length === 0) return null;
+
+        return (
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 mb-6">
+                <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-3">
+                    <h3 className="text-white font-semibold text-lg">{reportData.openingStock.groupName}</h3>
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full">
+                        <thead className="bg-gray-50 dark:bg-slate-700">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Particulars</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Amount (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                            {reportData.openingStock.ledgers.map((ledger, idx) => (
+                                <tr key={`opening-${idx}`} className="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <td className="px-6 py-3 text-sm text-gray-700 dark:text-gray-300">
+                                        {ledger.ledgerName}
+                                    </td>
+                                    <td className="px-6 py-3 text-sm text-right text-gray-700 dark:text-gray-300">
+                                        ₹{ledger.closingBalance?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}
+                                    </td>
+                                </tr>
+                            ))}
+                            <tr className="bg-gray-50 dark:bg-slate-700/30 font-semibold">
+                                <td className="px-6 py-3 text-sm font-bold text-gray-900 dark:text-white">Total</td>
+                                <td className="px-6 py-3 text-sm text-right font-bold text-gray-900 dark:text-white">
+                                    ₹{reportData.openingStock.totalAmount?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
     };
 
-    // Alternative: If you want to fetch new page from API (recommended)
-    // Store the current filter values
-    const [currentFilters, setCurrentFilters] = useState({
-        fromDate: '',
-        toDate: ''
-    });
-    
-    // Function to fetch a specific page from API
-    const fetchPageData = async (page, filters) => {
-        if (!filters.fromDate || !filters.toDate) return;
-        
-        setLoading(true);
-        const groupName = "Sundry Creditors";
-        
-        try {
-            const response = await fetch(
-                `${DOWNLOADACCCSV_REPORT}/preview`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`,
-                    },
-                    body: JSON.stringify({
-                        fromDate: filters.fromDate,
-                        toDate: filters.toDate,
-                        
-                       
-                    })
-                }
-            );
-            
-            if (!response.ok) {
-                throw new Error("Failed to fetch page data");
-            }
-            
-            const data = await response.json();
-            
-            setPagination({
-                totalItems: data?.totalElements,
-                data: data?.content,
-                totalPages: data?.totalPages,
-                currentPage: data?.number + 1,
-                itemsPerPage: data?.size,
-            });
-            
-            setCurrentPageData(data?.content || []);
-            
-        } catch (error) {
-            console.error(error);
-            toast.error("Failed to load page data");
-        } finally {
-            setLoading(false);
-        }
-    };
-    
-    // Update handlePageChange to use API pagination
-    const handlePageChangeAPI = async (page) => {
-        await fetchPageData(page, currentFilters);
-    };
-    
-    // Update handleViewReport to store filters and fetch first page
-    const handleViewReportAPI = async (values) => {
-        // if (!values.fromDate || !values.toDate) {
-        //     toast.warning("Please select both From Date and To Date");
-        //     return;
-        // }
-        
-        setCurrentFilters({
-            fromDate: values.fromDate,
-            toDate: values.toDate
-        });
-        
-        await fetchPageData(1, values);
-        setIsDataFetched(true);
+    // Render Purchase Accounts Table
+    const renderPurchaseTable = () => {
+        if (!reportData?.purchaseAccounts || reportData.purchaseAccounts.ledgers.length === 0) return null;
+
+        return (
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 mb-6">
+                <div className="bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-3">
+                    <h3 className="text-white font-semibold text-lg">{reportData.purchaseAccounts.groupName}</h3>
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full">
+                        <thead className="bg-gray-50 dark:bg-slate-700">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Particulars</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Amount (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                            {reportData.purchaseAccounts.ledgers.map((ledger, idx) => (
+                                <tr key={`purchase-${idx}`} className="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <td className="px-6 py-3 text-sm text-gray-700 dark:text-gray-300">
+                                        {ledger.ledgerName}
+                                    </td>
+                                    <td className="px-6 py-3 text-sm text-right text-gray-700 dark:text-gray-300">
+                                        ₹{ledger.closingBalance?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}
+                                    </td>
+                                </tr>
+                            ))}
+                            <tr className="bg-gray-50 dark:bg-slate-700/30 font-semibold">
+                                <td className="px-6 py-3 text-sm font-bold text-gray-900 dark:text-white">Total</td>
+                                <td className="px-6 py-3 text-sm text-right font-bold text-gray-900 dark:text-white">
+                                    ₹{reportData.purchaseAccounts.totalAmount?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
     };
 
-    // Render table rows
-    const renderTableRows = () => {
-        if (loading) {
-            return (
-                <tr>
-                    <td colSpan="9" className="px-5 py-10 text-center">
-                        <div className="flex justify-center items-center">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-                            <span className="ml-2 text-gray-600 dark:text-gray-300">Loading...</span>
+    // Render Direct Expenses Table
+    const renderDirectExpensesTable = () => {
+        if (!reportData?.directExpenses || reportData.directExpenses.ledgers.length === 0) return null;
+
+        return (
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 mb-6">
+                <div className="bg-gradient-to-r from-red-500 to-red-600 px-6 py-3">
+                    <h3 className="text-white font-semibold text-lg">{reportData.directExpenses.groupName}</h3>
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full">
+                        <thead className="bg-gray-50 dark:bg-slate-700">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Particulars</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Amount (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                            {reportData.directExpenses.ledgers.map((ledger, idx) => (
+                                <tr key={`direct-exp-${idx}`} className="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <td className="px-6 py-3 text-sm text-gray-700 dark:text-gray-300">
+                                        {ledger.ledgerName}
+                                    </td>
+                                    <td className="px-6 py-3 text-sm text-right text-gray-700 dark:text-gray-300">
+                                        ₹{ledger.closingBalance?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}
+                                    </td>
+                                </tr>
+                            ))}
+                            <tr className="bg-gray-50 dark:bg-slate-700/30 font-semibold">
+                                <td className="px-6 py-3 text-sm font-bold text-gray-900 dark:text-white">Total</td>
+                                <td className="px-6 py-3 text-sm text-right font-bold text-gray-900 dark:text-white">
+                                    ₹{reportData.directExpenses.totalAmount?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
+    };
+
+    // Render Indirect Expenses Table
+    const renderIndirectExpensesTable = () => {
+        if (!reportData?.indirectExpenses || reportData.indirectExpenses.ledgers.length === 0) return null;
+
+        return (
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
+                <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-3">
+                    <h3 className="text-white font-semibold text-lg">{reportData.indirectExpenses.groupName}</h3>
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full">
+                        <thead className="bg-gray-50 dark:bg-slate-700">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Particulars</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Amount (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                            {reportData.indirectExpenses.ledgers.map((ledger, idx) => (
+                                <tr key={`indirect-exp-${idx}`} className="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <td className="px-6 py-3 text-sm text-gray-700 dark:text-gray-300">
+                                        {ledger.ledgerName}
+                                    </td>
+                                    <td className="px-6 py-3 text-sm text-right text-gray-700 dark:text-gray-300">
+                                        ₹{ledger.closingBalance?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}
+                                    </td>
+                                </tr>
+                            ))}
+                            <tr className="bg-gray-50 dark:bg-slate-700/30 font-semibold">
+                                <td className="px-6 py-3 text-sm font-bold text-gray-900 dark:text-white">Total</td>
+                                <td className="px-6 py-3 text-sm text-right font-bold text-gray-900 dark:text-white">
+                                    ₹{reportData.indirectExpenses.totalAmount?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
+    };
+
+    // Render Sales Accounts Table
+    const renderSalesTable = () => {
+        if (!reportData?.salesAccounts || reportData.salesAccounts.ledgers.length === 0) return null;
+
+        return (
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 mb-6">
+                <div className="bg-gradient-to-r from-green-500 to-green-600 px-6 py-3">
+                    <h3 className="text-white font-semibold text-lg">{reportData.salesAccounts.groupName}</h3>
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full">
+                        <thead className="bg-gray-50 dark:bg-slate-700">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Particulars</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Amount (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                            {reportData.salesAccounts.ledgers.map((ledger, idx) => (
+                                <tr key={`sales-${idx}`} className="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <td className="px-6 py-3 text-sm text-gray-700 dark:text-gray-300">
+                                        {ledger.ledgerName}
+                                    </td>
+                                    <td className="px-6 py-3 text-sm text-right text-gray-700 dark:text-gray-300">
+                                        ₹{ledger.closingBalance?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}
+                                    </td>
+                                </tr>
+                            ))}
+                            <tr className="bg-gray-50 dark:bg-slate-700/30 font-semibold">
+                                <td className="px-6 py-3 text-sm font-bold text-gray-900 dark:text-white">Total</td>
+                                <td className="px-6 py-3 text-sm text-right font-bold text-gray-900 dark:text-white">
+                                    ₹{reportData.salesAccounts.totalAmount?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
+    };
+
+    // Render Direct Incomes Table
+    const renderDirectIncomesTable = () => {
+        if (!reportData?.directIncomes || reportData.directIncomes.ledgers.length === 0) return null;
+
+        return (
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 mb-6">
+                <div className="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-3">
+                    <h3 className="text-white font-semibold text-lg">{reportData.directIncomes.groupName}</h3>
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full">
+                        <thead className="bg-gray-50 dark:bg-slate-700">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Particulars</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Amount (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                            {reportData.directIncomes.ledgers.map((ledger, idx) => (
+                                <tr key={`direct-inc-${idx}`} className="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <td className="px-6 py-3 text-sm text-gray-700 dark:text-gray-300">
+                                        {ledger.ledgerName}
+                                    </td>
+                                    <td className="px-6 py-3 text-sm text-right text-gray-700 dark:text-gray-300">
+                                        ₹{ledger.closingBalance?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}
+                                    </td>
+                                </tr>
+                            ))}
+                            <tr className="bg-gray-50 dark:bg-slate-700/30 font-semibold">
+                                <td className="px-6 py-3 text-sm font-bold text-gray-900 dark:text-white">Total</td>
+                                <td className="px-6 py-3 text-sm text-right font-bold text-gray-900 dark:text-white">
+                                    ₹{reportData.directIncomes.totalAmount?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
+    };
+
+    // Render Closing Stock Table
+    const renderClosingStockTable = () => {
+        if (!reportData?.closingStock || reportData.closingStock.ledgers.length === 0) return null;
+
+        return (
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 mb-6">
+                <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 px-6 py-3">
+                    <h3 className="text-white font-semibold text-lg">{reportData.closingStock.groupName}</h3>
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full">
+                        <thead className="bg-gray-50 dark:bg-slate-700">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Particulars</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Amount (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                            {reportData.closingStock.ledgers.map((ledger, idx) => (
+                                <tr key={`closing-${idx}`} className="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <td className="px-6 py-3 text-sm text-gray-700 dark:text-gray-300">
+                                        {ledger.ledgerName}
+                                    </td>
+                                    <td className="px-6 py-3 text-sm text-right text-gray-700 dark:text-gray-300">
+                                        ₹{ledger.closingBalance?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}
+                                    </td>
+                                </tr>
+                            ))}
+                            <tr className="bg-gray-50 dark:bg-slate-700/30 font-semibold">
+                                <td className="px-6 py-3 text-sm font-bold text-gray-900 dark:text-white">Total</td>
+                                <td className="px-6 py-3 text-sm text-right font-bold text-gray-900 dark:text-white">
+                                    ₹{reportData.closingStock.totalAmount?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
+    };
+
+    // Render Indirect Incomes Table
+    const renderIndirectIncomesTable = () => {
+        if (!reportData?.indirectIncomes || reportData.indirectIncomes.ledgers.length === 0) return null;
+
+        return (
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
+                <div className="bg-gradient-to-r from-cyan-500 to-cyan-600 px-6 py-3">
+                    <h3 className="text-white font-semibold text-lg">{reportData.indirectIncomes.groupName}</h3>
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="min-w-full">
+                        <thead className="bg-gray-50 dark:bg-slate-700">
+                            <tr>
+                                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Particulars</th>
+                                <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Amount (₹)</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                            {reportData.indirectIncomes.ledgers.map((ledger, idx) => (
+                                <tr key={`indirect-inc-${idx}`} className="hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">
+                                    <td className="px-6 py-3 text-sm text-gray-700 dark:text-gray-300">
+                                        {ledger.ledgerName}
+                                    </td>
+                                    <td className="px-6 py-3 text-sm text-right text-gray-700 dark:text-gray-300">
+                                        ₹{ledger.closingBalance?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}
+                                    </td>
+                                </tr>
+                            ))}
+                            <tr className="bg-gray-50 dark:bg-slate-700/30 font-semibold">
+                                <td className="px-6 py-3 text-sm font-bold text-gray-900 dark:text-white">Total</td>
+                                <td className="px-6 py-3 text-sm text-right font-bold text-gray-900 dark:text-white">
+                                    ₹{reportData.indirectIncomes.totalAmount?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
+    };
+
+    // Render Gross Profit/Loss Card
+    const renderGrossProfitLoss = () => {
+        if (reportData?.grossProfit === null && reportData?.grossLoss === null) return null;
+
+        const isProfit = reportData?.grossProfit !== null;
+        const amount = isProfit ? reportData.grossProfit : reportData.grossLoss;
+        const title = isProfit ? 'Gross Profit' : 'Gross Loss';
+        const bgGradient = isProfit 
+            ? 'from-emerald-500 to-emerald-600' 
+            : 'from-rose-500 to-rose-600';
+
+        return (
+            <div className={`bg-gradient-to-r ${bgGradient} rounded-xl shadow-lg p-6 text-white mb-6`}>
+                <div className="flex justify-between items-center">
+                    <h3 className="text-xl font-bold">{title}</h3>
+                    <p className="text-2xl font-bold">₹{amount?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}</p>
+                </div>
+            </div>
+        );
+    };
+
+    // Render Net Profit/Loss Card
+    const renderNetProfitLoss = () => {
+        if (reportData?.netProfit === null && reportData?.netLoss === null) return null;
+
+        const isProfit = reportData?.netProfit !== null;
+        const amount = isProfit ? reportData.netProfit : reportData.netLoss;
+        const title = isProfit ? 'Net Profit' : 'Net Loss';
+        const bgGradient = isProfit 
+            ? 'from-emerald-600 to-emerald-700' 
+            : 'from-rose-600 to-rose-700';
+
+        return (
+            <div className={`bg-gradient-to-r ${bgGradient} rounded-xl shadow-xl p-6 text-white transform hover:scale-105 transition-transform duration-300`}>
+                <div className="flex justify-between items-center">
+                    <h3 className="text-2xl font-bold">{title}</h3>
+                    <p className="text-3xl font-bold">₹{amount?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}</p>
+                </div>
+            </div>
+        );
+    };
+
+    // Render Summary Cards
+    const renderSummaryCards = () => {
+        return (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl shadow-lg p-6 text-white">
+                    <div className="flex justify-between items-center">
+                        <h3 className="text-lg font-semibold">Total Debit </h3>
+                        <p className="text-2xl font-bold">₹{reportData?.leftTotal?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}</p>
+                    </div>
+                </div>
+                <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl shadow-lg p-6 text-white">
+                    <div className="flex justify-between items-center">
+                        <h3 className="text-lg font-semibold">Total Credit </h3>
+                        <p className="text-2xl font-bold">₹{reportData?.rightTotal?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}</p>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    // Render loading state
+    if (loading) {
+        return (
+            <DefaultLayout>
+                <Breadcrumb pageName="Report/Profit & Loss Reports" />
+                <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800 min-h-screen">
+                    <div className="flex justify-center items-center h-96">
+                        <div className="text-center">
+                            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary mx-auto mb-4"></div>
+                            <p className="text-gray-600 dark:text-gray-400">Loading report data...</p>
                         </div>
-                    </td>
-                </tr>
-            );
-        }
-
-        if (!isDataFetched) {
-            return (
-                <tr>
-                    <td colSpan="9" className="px-5 py-10 text-center">
-                        <p className="text-gray-500 dark:text-gray-400">Select dates and click "View" to load report</p>
-                    </td>
-                </tr>
-            );
-        }
-
-        if (!currentPageData.length) {
-            return (
-                <tr>
-                    <td colSpan="9" className="px-5 py-10 text-center">
-                        <p className="text-gray-500 dark:text-gray-400">No data found for the selected date range</p>
-                    </td>
-                </tr>
-            );
-        }
-
-        const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
-
-        return currentPageData.map((item, index) => (
-            <tr key={item.ledgerId || index} className="hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm">
-                    {startingSerialNumber + index}
-                </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-900 dark:text-white">
-                    {item.groupTypes || '-'}
-                </td>
-                 <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300">
-                    {item.supplierCode || '-'}
-                </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300">
-                    {item.supplierName || '-'}
-                </td>
-               
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    {Number(item.previousOpeningBalance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    {Number(item.debitTransaction
- || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                </td>
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    {Number(item.creditTransaction || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                </td>
-                
-                <td className="px-4 py-3 border-b border-gray-200 dark:border-gray-700 text-sm text-right text-gray-700 dark:text-gray-300">
-                    {Number(item.openingBalance || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
-                </td>
-            </tr>
-        ));
-    };
+                    </div>
+                </div>
+            </DefaultLayout>
+        );
+    }
 
     return (
         <DefaultLayout>
-            <Breadcrumb pageName="/Report/ProfitLossReports" />
-            <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
-                <div className="pt-5">
-                    <div className='flex justify-between items-center mb-6'>
-                        <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-white">
+            <Breadcrumb pageName="Report/Profit & Loss Reports" />
+            <div className="container mx-auto px-4 sm:px-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-slate-900 dark:to-slate-800 min-h-screen">
+                <div className="pt-5 pb-10">
+                    {/* Header */}
+                    <div className='flex justify-between items-center mb-8'>
+                        <h2 className="text-2xl font-bold leading-tight text-gray-800 dark:text-white">
                             Profit & Loss Report
                         </h2>
-                        {isDataFetched && (
-                            <p className="inline-flex rounded-full bg-primary bg-opacity-10 py-1 px-3 text-sm font-medium text-primary">
-                                TOTAL RECORDS: {pagination.totalItems}
-                            </p>
-                        )}
                     </div>
 
-                    <div className='items-center justify-center'>
+                    {/* Filter Section */}
+                    <div className='bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8'>
                         <Formik
                             initialValues={{
                                 fromDate: '',
                                 toDate: '',
-                                groupName: "Sundry Creditors"
                             }}
                         >
-                            {({ setFieldValue, values, handleBlur }) => (
+                            {({ values }) => (
                                 <Form>
-                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-                                        <div className="flex-1 min-w-[300px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                        <div>
+                                            <label className="mb-2.5 block text-black dark:text-white font-medium">
                                                 From Date
                                             </label>
                                             <Field
                                                 name='fromDate'
                                                 type="date"
-                                                placeholder="Enter From Date"
-                                                className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                             />
                                         </div>
 
-                                        <div className="flex-1 min-w-[300px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">
+                                        <div>
+                                            <label className="mb-2.5 block text-black dark:text-white font-medium">
                                                 To Date
                                             </label>
                                             <Field
                                                 name='toDate'
                                                 type="date"
-                                                placeholder="Enter To Date"
-                                                className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                className="w-full rounded-lg border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                             />
                                         </div>
                                     </div>
@@ -365,8 +551,9 @@ const ProfitLossReports = () => {
                                     <div className="flex justify-center gap-4">
                                         <button
                                             type="button"
-                                            onClick={() => handleViewReportAPI(values)}
-                                            className="flex items-center justify-center gap-2 mb-4 md:w-[180px] w-[200px] md:h-[45px] h-[45px] rounded-lg bg-primary text-white font-medium hover:bg-opacity-90 transition-all"
+                                            onClick={() => handleViewReport(values)}
+                                            className="flex items-center justify-center gap-2 px-8 py-3 rounded-lg bg-primary text-white font-medium hover:bg-opacity-90 transition-all shadow-md hover:shadow-lg"
+                                            disabled={loading}
                                         >
                                             <FiEye size={18} />
                                             View Report
@@ -374,8 +561,9 @@ const ProfitLossReports = () => {
 
                                         <button
                                             type="button"
-                                            onClick={() => handlegenerateCsv(values)}
-                                            className="flex items-center justify-center gap-2 mb-4 md:w-[200px] w-[220px] md:h-[45px] h-[45px] rounded-lg bg-success text-white font-medium hover:bg-opacity-90 transition-all"
+                                            onClick={() => handleGenerateCsv(values)}
+                                            className="flex items-center justify-center gap-2 px-8 py-3 rounded-lg bg-success text-white font-medium hover:bg-opacity-90 transition-all shadow-md hover:shadow-lg"
+                                            disabled={loading}
                                         >
                                             <FaDownload size={18} />
                                             Generate Report
@@ -386,42 +574,72 @@ const ProfitLossReports = () => {
                         </Formik>
                     </div>
 
-                    {/* Table Section */}
-                    <div className="mt-8 overflow-x-auto">
-                        <table className="min-w-full bg-white dark:bg-slate-800 rounded-lg overflow-hidden">
-                            <thead className="bg-gray-100 dark:bg-slate-700">
-                                <tr>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">#</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Product Group</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Supplier Code</th>
-                                    <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Supplier Name</th>
+                    {/* Report Content */}
+                    {isDataFetched && reportData && (
+                        <div className="space-y-8">
+                            {/* Summary Cards */}
+                            {renderSummaryCards()}
 
-                                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Opening Balance</th>
-                                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Total Debit</th>
-                                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Total Credit</th>
-                                    <th className="px-4 py-3 text-right text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Closing Balance</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {renderTableRows()}
-                            </tbody>
-                        </table>
+                            {/* Two Column Layout for Debit and Credit Sides */}
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                {/* Left Column - Debit Side */}
+                                <div className="space-y-6">
+                                    <div className="flex items-center mb-4">
+                                        <div className="w-1 h-8 bg-red-500 rounded-full mr-3"></div>
+                                        <h3 className="text-xl font-bold text-gray-800 dark:text-white">Debit Side (Expenses & Losses)</h3>
+                                    </div>
+                                    {renderOpeningStockTable()}
+                                    {renderPurchaseTable()}
+                                    {renderDirectExpensesTable()}
+                                    {renderIndirectExpensesTable()}
+                                </div>
 
-                        {/* Pagination */}
-                        {isDataFetched && pagination.totalItems > 0 && (
-                            <div className="mt-4">
-                                <Pagination 
-                                    totalPages={pagination.totalPages} 
-                                    currentPage={pagination.currentPage} 
-                                    handlePageChange={handlePageChangeAPI} 
-                                />
+                                {/* Right Column - Credit Side */}
+                                <div className="space-y-6">
+                                    <div className="flex items-center mb-4">
+                                        <div className="w-1 h-8 bg-green-500 rounded-full mr-3"></div>
+                                        <h3 className="text-xl font-bold text-gray-800 dark:text-white">Credit Side (Incomes & Profits)</h3>
+                                    </div>
+                                    {renderSalesTable()}
+                                    {renderDirectIncomesTable()}
+                                    {renderClosingStockTable()}
+                                    {renderIndirectIncomesTable()}
+                                </div>
                             </div>
-                        )}
-                    </div>
+
+                            {/* Gross Profit/Loss - Full Width */}
+                            <div className="w-full">
+                                {renderGrossProfitLoss()}
+                            </div>
+
+                            {/* Net Profit/Loss - Full Width */}
+                            <div className="w-full">
+                                {renderNetProfitLoss()}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* No Data State */}
+                    {isDataFetched && !reportData && (
+                        <div className="text-center py-12">
+                            <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-8">
+                                <p className="text-gray-500 dark:text-gray-400 text-lg">No data found for the selected filters</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Initial State */}
+                    {!isDataFetched && !loading && (
+                        <div className="text-center py-12">
+                            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-8">
+                                <p className="text-gray-500 dark:text-gray-400 text-lg">Select dates and click "View Report" to load data</p>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </DefaultLayout>
     )
 }
 
-export default ProfitLossReports
+export default ProfitLossReports;
