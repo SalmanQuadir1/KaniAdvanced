@@ -724,12 +724,12 @@ const ViewProductsInventory = () => {
                         View Transactions
                     </button>
                 </td> */}
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="flex text-gray-900 whitespace-no-wrap">
                         <FiEdit size={17} className='text-teal-500 hover:text-teal-700 mx-2 cursor-pointer' onClick={(e) => handleUpdate(item.id)} title='Edit Inventory' />  |
                         <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2 cursor-pointer' onClick={(e) => handleInventoryDelete(e, item?.id)} title='Delete Inventory' />
                     </p>
-                </td>
+                </td> */}
             </tr>
         ));
     };
@@ -815,7 +815,7 @@ const ViewProductsInventory = () => {
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Recent History</th>
                                         <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">View Inventory Summary</th>
 
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th>
+                                        {/* <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Actions</th> */}
                                     </tr>
                                 </thead>
                                 <tbody>
