@@ -342,6 +342,8 @@ const ProfitLossReports = () => {
     };
 
     // Render Closing Stock Table
+    
+
     const renderClosingStockTable = () => {
         if (!reportData?.closingStock || reportData.closingStock.ledgers.length === 0) return null;
 
