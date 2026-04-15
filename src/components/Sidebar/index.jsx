@@ -1065,6 +1065,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             </NavLink>
                           </li>
 
+                            <li>
+                            <NavLink
+                              to="/inventory/ExcelUpdateInventory"
+                              className={({ isActive }) =>
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                (isActive && '!text-white')
+                              }
+                            >
+                              Upload Excel Update
+                            </NavLink>
+                          </li>
+
                         </ul>
                       </div>
                     </React.Fragment>

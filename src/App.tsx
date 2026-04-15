@@ -327,7 +327,7 @@ import UpdateInventoryMaterial from './components/Inventory/UpdateInventoryMater
 
 
 import AddProductInventory from './components/ProductsInventory/AddProductInventory.jsx';
-
+import UpdateExcelInventory from './components/ProductsInventory/UpdateExcelInventory.jsx';
 import ViewRecentTransactions from './components/ProductsInventory/ViewRecentTransactions.jsx';
 
 import ViewProductsInventory from './components/ProductsInventory/ViewProductsInventory.jsx';
@@ -2158,6 +2158,16 @@ function App() {
               <>
                 <PageTitle title="Inventory" />
                 <AddProductInventory />
+              </>
+            }
+          />
+
+          <Route
+            path="/inventory/ExcelUpdateInventory"
+            element={
+              <>
+                <PageTitle title="Inventory" />
+                <UpdateExcelInventory />
               </>
             }
           />

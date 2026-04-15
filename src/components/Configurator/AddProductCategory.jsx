@@ -77,7 +77,7 @@ const AddProductCategory = () => {
                                         </div>
 
                                         <div className="overflow-x-auto">
-                                            <table className="min-w-full leading-normal">
+                                            <table className="min-w-full leading-normal p-3">
                                                 <thead>
                                                     <tr className="bg-gray-2 text-left dark:bg-meta-4">
                                                       
