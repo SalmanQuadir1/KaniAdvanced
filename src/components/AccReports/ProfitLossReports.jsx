@@ -718,7 +718,7 @@ const generateExcelReport = async () => {
         }
         
         // Add totals row
-        addStyledRow('TOTAL (DEBIT)', reportData.leftTotal, 'TOTAL (CREDIT)', reportData.rightTotal, true, true);
+       
         
         // Add empty row for spacing
         worksheet.addRow([]);
@@ -736,6 +736,8 @@ const generateExcelReport = async () => {
         } else if (reportData.netLoss !== null && reportData.netLoss > 0) {
             addStyledRow('NET LOSS', reportData.netLoss, '', '', true, true);
         }
+
+         addStyledRow('TOTAL (DEBIT)', reportData.leftTotal, 'TOTAL (CREDIT)', reportData.rightTotal, true, true);
         
         // Generate buffer and download
         const buffer = await workbook.xlsx.writeBuffer();
