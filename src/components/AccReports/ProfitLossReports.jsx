@@ -563,9 +563,9 @@ const generateExcelReport = async () => {
             };
         });
         
-        // Helper to add styled row
+        // Helper to add styled row with both left and right content
         const addStyledRow = (leftText, leftAmount, rightText, rightAmount, isBold = false, isTotal = false) => {
-            const row = worksheet.addRow([leftText, leftAmount, rightText, rightAmount]);
+            const row = worksheet.addRow([leftText || '', leftAmount || '', rightText || '', rightAmount || '']);
             
             // Style left column
             const leftCell = row.getCell(1);
@@ -584,7 +584,7 @@ const generateExcelReport = async () => {
             leftAmountCell.font = { bold: isBold };
             leftAmountCell.alignment = { horizontal: 'right', vertical: 'middle' };
             leftAmountCell.numFmt = '#,##0.00';
-            if (isTotal) {
+            if (isTotal && leftAmount) {
                 leftAmountCell.fill = {
                     type: 'pattern',
                     pattern: 'solid',
@@ -609,7 +609,7 @@ const generateExcelReport = async () => {
             rightAmountCell.font = { bold: isBold };
             rightAmountCell.alignment = { horizontal: 'right', vertical: 'middle' };
             rightAmountCell.numFmt = '#,##0.00';
-            if (isTotal) {
+            if (isTotal && rightAmount) {
                 rightAmountCell.fill = {
                     type: 'pattern',
                     pattern: 'solid',
@@ -630,69 +630,100 @@ const generateExcelReport = async () => {
             return row;
         };
         
-        // Add sections
-        const addSection = (title, items, total, isRightSide = false) => {
-            addStyledRow(title, null, isRightSide ? title : null, null, true, false);
-            
-            items.forEach(item => {
-                if (isRightSide) {
-                    addStyledRow(null, null, `  ${item.ledgerName}`, item.closingBalance, false, false);
-                } else {
-                    addStyledRow(`  ${item.ledgerName}`, item.closingBalance, null, null, false, false);
-                }
-            });
-            
-            if (isRightSide) {
-                addStyledRow(null, null, `Total ${title}`, total, true, true);
-            } else {
-                addStyledRow(`Total ${title}`, total, null, null, true, true);
-            }
-        };
+        // Prepare left and right sections data
+        const leftSectionRows = [];
+        const rightSectionRows = [];
         
-        // Add left sections
+        // Build left section rows (Debit side)
         if (reportData.openingStock?.ledgers?.length > 0) {
-            addSection(reportData.openingStock.groupName?.toUpperCase(), reportData.openingStock.ledgers, reportData.openingStock.totalAmount, false);
+            leftSectionRows.push({ text: reportData.openingStock.groupName?.toUpperCase(), amount: null, isBold: true, isTotal: false });
+            reportData.openingStock.ledgers.forEach(ledger => {
+                leftSectionRows.push({ text: `  ${ledger.ledgerName}`, amount: ledger.closingBalance, isBold: false, isTotal: false });
+            });
+            leftSectionRows.push({ text: `Total ${reportData.openingStock.groupName?.toUpperCase()}`, amount: reportData.openingStock.totalAmount, isBold: true, isTotal: true });
         }
         
         if (reportData.purchaseAccounts?.ledgers?.length > 0) {
-            addSection(reportData.purchaseAccounts.groupName?.toUpperCase(), reportData.purchaseAccounts.ledgers, reportData.purchaseAccounts.totalAmount, false);
+            leftSectionRows.push({ text: reportData.purchaseAccounts.groupName?.toUpperCase(), amount: null, isBold: true, isTotal: false });
+            reportData.purchaseAccounts.ledgers.forEach(ledger => {
+                leftSectionRows.push({ text: `  ${ledger.ledgerName}`, amount: ledger.closingBalance, isBold: false, isTotal: false });
+            });
+            leftSectionRows.push({ text: `Total ${reportData.purchaseAccounts.groupName?.toUpperCase()}`, amount: reportData.purchaseAccounts.totalAmount, isBold: true, isTotal: true });
         }
         
         if (reportData.directExpenses?.ledgers?.length > 0) {
-            addSection(reportData.directExpenses.groupName?.toUpperCase(), reportData.directExpenses.ledgers, reportData.directExpenses.totalAmount, false);
+            leftSectionRows.push({ text: reportData.directExpenses.groupName?.toUpperCase(), amount: null, isBold: true, isTotal: false });
+            reportData.directExpenses.ledgers.forEach(ledger => {
+                leftSectionRows.push({ text: `  ${ledger.ledgerName}`, amount: ledger.closingBalance, isBold: false, isTotal: false });
+            });
+            leftSectionRows.push({ text: `Total ${reportData.directExpenses.groupName?.toUpperCase()}`, amount: reportData.directExpenses.totalAmount, isBold: true, isTotal: true });
         }
         
         if (reportData.indirectExpenses?.ledgers?.length > 0) {
-            addSection(reportData.indirectExpenses.groupName?.toUpperCase(), reportData.indirectExpenses.ledgers, reportData.indirectExpenses.totalAmount, false);
+            leftSectionRows.push({ text: reportData.indirectExpenses.groupName?.toUpperCase(), amount: null, isBold: true, isTotal: false });
+            reportData.indirectExpenses.ledgers.forEach(ledger => {
+                leftSectionRows.push({ text: `  ${ledger.ledgerName}`, amount: ledger.closingBalance, isBold: false, isTotal: false });
+            });
+            leftSectionRows.push({ text: `Total ${reportData.indirectExpenses.groupName?.toUpperCase()}`, amount: reportData.indirectExpenses.totalAmount, isBold: true, isTotal: true });
         }
         
-        // Add empty rows for spacing before right side
-        worksheet.addRow([]);
-        worksheet.addRow([]);
-        
-        // Add right sections
+        // Build right section rows (Credit side)
         if (reportData.salesAccounts?.ledgers?.length > 0) {
-            addSection(reportData.salesAccounts.groupName?.toUpperCase(), reportData.salesAccounts.ledgers, reportData.salesAccounts.totalAmount, true);
+            rightSectionRows.push({ text: reportData.salesAccounts.groupName?.toUpperCase(), amount: null, isBold: true, isTotal: false });
+            reportData.salesAccounts.ledgers.forEach(ledger => {
+                rightSectionRows.push({ text: `  ${ledger.ledgerName}`, amount: ledger.closingBalance, isBold: false, isTotal: false });
+            });
+            rightSectionRows.push({ text: `Total ${reportData.salesAccounts.groupName?.toUpperCase()}`, amount: reportData.salesAccounts.totalAmount, isBold: true, isTotal: true });
         }
         
         if (reportData.directIncomes?.ledgers?.length > 0) {
-            addSection(reportData.directIncomes.groupName?.toUpperCase(), reportData.directIncomes.ledgers, reportData.directIncomes.totalAmount, true);
+            rightSectionRows.push({ text: reportData.directIncomes.groupName?.toUpperCase(), amount: null, isBold: true, isTotal: false });
+            reportData.directIncomes.ledgers.forEach(ledger => {
+                rightSectionRows.push({ text: `  ${ledger.ledgerName}`, amount: ledger.closingBalance, isBold: false, isTotal: false });
+            });
+            rightSectionRows.push({ text: `Total ${reportData.directIncomes.groupName?.toUpperCase()}`, amount: reportData.directIncomes.totalAmount, isBold: true, isTotal: true });
         }
         
         if (reportData.closingStock?.ledgers?.length > 0) {
-            addSection(reportData.closingStock.groupName?.toUpperCase(), reportData.closingStock.ledgers, reportData.closingStock.totalAmount, true);
+            rightSectionRows.push({ text: reportData.closingStock.groupName?.toUpperCase(), amount: null, isBold: true, isTotal: false });
+            reportData.closingStock.ledgers.forEach(ledger => {
+                rightSectionRows.push({ text: `  ${ledger.ledgerName}`, amount: ledger.closingBalance, isBold: false, isTotal: false });
+            });
+            rightSectionRows.push({ text: `Total ${reportData.closingStock.groupName?.toUpperCase()}`, amount: reportData.closingStock.totalAmount, isBold: true, isTotal: true });
         }
         
         if (reportData.indirectIncomes?.ledgers?.length > 0) {
-            addSection(reportData.indirectIncomes.groupName?.toUpperCase(), reportData.indirectIncomes.ledgers, reportData.indirectIncomes.totalAmount, true);
+            rightSectionRows.push({ text: reportData.indirectIncomes.groupName?.toUpperCase(), amount: null, isBold: true, isTotal: false });
+            reportData.indirectIncomes.ledgers.forEach(ledger => {
+                rightSectionRows.push({ text: `  ${ledger.ledgerName}`, amount: ledger.closingBalance, isBold: false, isTotal: false });
+            });
+            rightSectionRows.push({ text: `Total ${reportData.indirectIncomes.groupName?.toUpperCase()}`, amount: reportData.indirectIncomes.totalAmount, isBold: true, isTotal: true });
         }
         
-        // Add totals
-        worksheet.addRow([]);
+        // Combine left and right rows (side by side)
+        const maxRows = Math.max(leftSectionRows.length, rightSectionRows.length);
+        
+        for (let i = 0; i < maxRows; i++) {
+            const left = leftSectionRows[i] || {};
+            const right = rightSectionRows[i] || {};
+            
+            addStyledRow(
+                left.text || '',
+                left.amount,
+                right.text || '',
+                right.amount,
+                left.isBold || right.isBold,
+                left.isTotal || right.isTotal
+            );
+        }
+        
+        // Add totals row
         addStyledRow('TOTAL (DEBIT)', reportData.leftTotal, 'TOTAL (CREDIT)', reportData.rightTotal, true, true);
         
-        // Add Gross Profit/Loss
+        // Add empty row for spacing
         worksheet.addRow([]);
+        
+        // Add Gross Profit/Loss
         if (reportData.grossProfit !== null && reportData.grossProfit > 0) {
             addStyledRow('GROSS PROFIT', reportData.grossProfit, '', '', true, true);
         } else if (reportData.grossLoss !== null && reportData.grossLoss > 0) {
@@ -700,7 +731,6 @@ const generateExcelReport = async () => {
         }
         
         // Add Net Profit/Loss
-        worksheet.addRow([]);
         if (reportData.netProfit !== null && reportData.netProfit > 0) {
             addStyledRow('NET PROFIT', reportData.netProfit, '', '', true, true);
         } else if (reportData.netLoss !== null && reportData.netLoss > 0) {
