@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import { FaDownload } from 'react-icons/fa6';
 import { FiEye } from 'react-icons/fi';
 
-import * as XLSX from 'xlsx';
+import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
 const ProfitLossReports = () => {
@@ -98,19 +98,13 @@ const ProfitLossReports = () => {
     //     }
     // };
 
-    const handleGenerateCsv = async (values) => {
-    try {
-        // If you need to fetch fresh data before download
-        if (!reportData) {
-            await fetchReportData(values);
-        }
-        
-        // Generate Excel from current reportData
-        generateExcelReport();
-    } catch (error) {
-        console.error(error);
-        toast.error("An error occurred while generating the report");
+  const handleGenerateCsv = async (values) => {
+    if (!reportData) {
+        toast.warning("Please view the report first before downloading");
+        return;
     }
+    await generateExcelReport();
+
 };
 
     // Render Opening Stock Table
@@ -512,331 +506,212 @@ const ProfitLossReports = () => {
   
 
 // Add this function to your component
-const generateExcelReport = () => {
+
+
+// Add this function to your component
+
+
+const generateExcelReport = async () => {
     if (!reportData) {
         toast.error("No data available to generate report");
         return;
     }
 
     try {
-        // Prepare data for Excel in the format shown in screenshot
-        const excelData = [];
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Profit & Loss Statement');
         
-        // Header with company info and date range
-        excelData.push(['Profit & Loss Account']);
-        excelData.push([`For the period from ${currentFilters.fromDate} to ${currentFilters.toDate}`]);
-        excelData.push([]); // Empty row
+        // Set worksheet properties
+        worksheet.properties.defaultRowHeight = 25;
+        worksheet.columns = [
+            { header: 'Particulars', key: 'leftParticular', width: 45 },
+            { header: 'Amount (₹)', key: 'leftAmount', width: 18, style: { numFmt: '#,##0.00' } },
+            { header: 'Particulars', key: 'rightParticular', width: 45 },
+            { header: 'Amount (₹)', key: 'rightAmount', width: 18, style: { numFmt: '#,##0.00' } }
+        ];
         
-        // Left Side Headers (Expenses) and Right Side Headers (Incomes)
-        excelData.push(['Particulars', 'Amount (₹)', 'Particulars', 'Amount (₹)']);
+        // Merge cells for title
+        worksheet.mergeCells('A1:D1');
+        worksheet.mergeCells('A2:D2');
         
-        // Helper function to add rows with proper alignment
-        const addRow = (leftParticular, leftAmount, rightParticular = '', rightAmount = '') => {
-            excelData.push([
-                leftParticular || '',
-                leftAmount !== undefined && leftAmount !== null ? formatAmountForExcel(leftAmount) : '',
-                rightParticular || '',
-                rightAmount !== undefined && rightAmount !== null ? formatAmountForExcel(rightAmount) : ''
-            ]);
+        // Add title rows
+        const titleRow = worksheet.getCell('A1');
+        titleRow.value = 'PROFIT & LOSS ACCOUNT';
+        titleRow.font = { bold: true, size: 16, name: 'Arial' };
+        titleRow.alignment = { horizontal: 'center', vertical: 'middle' };
+        
+        const periodRow = worksheet.getCell('A2');
+        periodRow.value = `For the period from ${currentFilters.fromDate} to ${currentFilters.toDate}`;
+        periodRow.font = { bold: true, size: 12 };
+        periodRow.alignment = { horizontal: 'center', vertical: 'middle' };
+        
+        // Add header row
+        const headerRow = worksheet.addRow(['PARTICULARS', 'AMOUNT (₹)', 'PARTICULARS', 'AMOUNT (₹)']);
+        headerRow.font = { bold: true, size: 12, color: { argb: 'FFFFFFFF' } };
+        headerRow.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FF1F4E79' }
+        };
+        headerRow.alignment = { horizontal: 'center', vertical: 'middle' };
+        headerRow.eachCell((cell) => {
+            cell.border = {
+                top: { style: 'medium' },
+                bottom: { style: 'medium' },
+                left: { style: 'thin' },
+                right: { style: 'thin' }
+            };
+        });
+        
+        // Helper to add styled row
+        const addStyledRow = (leftText, leftAmount, rightText, rightAmount, isBold = false, isTotal = false) => {
+            const row = worksheet.addRow([leftText, leftAmount, rightText, rightAmount]);
+            
+            // Style left column
+            const leftCell = row.getCell(1);
+            leftCell.font = { bold: isBold, size: isBold ? 11 : 10 };
+            leftCell.alignment = { horizontal: 'left', vertical: 'middle' };
+            if (isTotal) {
+                leftCell.fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FFE2F0D9' }
+                };
+            }
+            
+            // Style left amount column
+            const leftAmountCell = row.getCell(2);
+            leftAmountCell.font = { bold: isBold };
+            leftAmountCell.alignment = { horizontal: 'right', vertical: 'middle' };
+            leftAmountCell.numFmt = '#,##0.00';
+            if (isTotal) {
+                leftAmountCell.fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FFE2F0D9' }
+                };
+            }
+            
+            // Style right column
+            const rightCell = row.getCell(3);
+            rightCell.font = { bold: isBold, size: isBold ? 11 : 10 };
+            rightCell.alignment = { horizontal: 'left', vertical: 'middle' };
+            if (isTotal) {
+                rightCell.fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FFE2F0D9' }
+                };
+            }
+            
+            // Style right amount column
+            const rightAmountCell = row.getCell(4);
+            rightAmountCell.font = { bold: isBold };
+            rightAmountCell.alignment = { horizontal: 'right', vertical: 'middle' };
+            rightAmountCell.numFmt = '#,##0.00';
+            if (isTotal) {
+                rightAmountCell.fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FFE2F0D9' }
+                };
+            }
+            
+            // Add borders to all cells in row
+            row.eachCell((cell) => {
+                cell.border = {
+                    top: { style: 'thin', color: { argb: 'FFCCCCCC' } },
+                    bottom: { style: 'thin', color: { argb: 'FFCCCCCC' } },
+                    left: { style: 'thin', color: { argb: 'FFCCCCCC' } },
+                    right: { style: 'thin', color: { argb: 'FFCCCCCC' } }
+                };
+            });
+            
+            return row;
         };
         
-        // Add Opening Stock
+        // Add sections
+        const addSection = (title, items, total, isRightSide = false) => {
+            addStyledRow(title, null, isRightSide ? title : null, null, true, false);
+            
+            items.forEach(item => {
+                if (isRightSide) {
+                    addStyledRow(null, null, `  ${item.ledgerName}`, item.closingBalance, false, false);
+                } else {
+                    addStyledRow(`  ${item.ledgerName}`, item.closingBalance, null, null, false, false);
+                }
+            });
+            
+            if (isRightSide) {
+                addStyledRow(null, null, `Total ${title}`, total, true, true);
+            } else {
+                addStyledRow(`Total ${title}`, total, null, null, true, true);
+            }
+        };
+        
+        // Add left sections
         if (reportData.openingStock?.ledgers?.length > 0) {
-            addRow(reportData.openingStock.groupName, '');
-            reportData.openingStock.ledgers.forEach(ledger => {
-                addRow(`  ${ledger.ledgerName}`, ledger.closingBalance);
-            });
-            addRow('', '');
-        }
-        
-        // Add Purchases
-        if (reportData.purchaseAccounts?.ledgers?.length > 0) {
-            addRow(reportData.purchaseAccounts.groupName, '');
-            reportData.purchaseAccounts.ledgers.forEach(ledger => {
-                addRow(`  ${ledger.ledgerName}`, ledger.closingBalance);
-            });
-            addRow('', '');
-        }
-        
-        // Add Direct Expenses
-        if (reportData.directExpenses?.ledgers?.length > 0) {
-            addRow(reportData.directExpenses.groupName, '');
-            reportData.directExpenses.ledgers.forEach(ledger => {
-                addRow(`  ${ledger.ledgerName}`, ledger.closingBalance);
-            });
-            addRow('', '');
-        }
-        
-        // Calculate Total Debits (Left side)
-        const totalDebits = reportData.leftTotal || 0;
-        
-        // Right Side - Incomes
-        let maxRows = Math.max(
-            reportData.openingStock?.ledgers?.length || 0,
-            reportData.purchaseAccounts?.ledgers?.length || 0,
-            reportData.salesAccounts?.ledgers?.length || 0,
-            reportData.closingStock?.ledgers?.length || 0,
-            reportData.directExpenses?.ledgers?.length || 0,
-            reportData.directIncomes?.ledgers?.length || 0,
-            reportData.indirectExpenses?.ledgers?.length || 0,
-            reportData.indirectIncomes?.ledgers?.length || 0
-        );
-        
-        // Rebuild the Excel data with proper left/right alignment
-        const formattedData = [];
-        formattedData.push(['Profit & Loss Account']);
-        formattedData.push([`For the period from ${currentFilters.fromDate} to ${currentFilters.toDate}`]);
-        formattedData.push([]);
-        formattedData.push(['Particulars', 'Amount (₹)', 'Particulars', 'Amount (₹)']);
-        
-        // Collect all sections for left and right
-        const leftSections = [];
-        const rightSections = [];
-        
-        // Left Side Sections
-        if (reportData.openingStock?.ledgers?.length > 0) {
-            leftSections.push({
-                title: reportData.openingStock.groupName,
-                items: reportData.openingStock.ledgers,
-                total: reportData.openingStock.totalAmount
-            });
+            addSection(reportData.openingStock.groupName?.toUpperCase(), reportData.openingStock.ledgers, reportData.openingStock.totalAmount, false);
         }
         
         if (reportData.purchaseAccounts?.ledgers?.length > 0) {
-            leftSections.push({
-                title: reportData.purchaseAccounts.groupName,
-                items: reportData.purchaseAccounts.ledgers,
-                total: reportData.purchaseAccounts.totalAmount
-            });
+            addSection(reportData.purchaseAccounts.groupName?.toUpperCase(), reportData.purchaseAccounts.ledgers, reportData.purchaseAccounts.totalAmount, false);
         }
         
         if (reportData.directExpenses?.ledgers?.length > 0) {
-            leftSections.push({
-                title: reportData.directExpenses.groupName,
-                items: reportData.directExpenses.ledgers,
-                total: reportData.directExpenses.totalAmount
-            });
+            addSection(reportData.directExpenses.groupName?.toUpperCase(), reportData.directExpenses.ledgers, reportData.directExpenses.totalAmount, false);
         }
         
         if (reportData.indirectExpenses?.ledgers?.length > 0) {
-            leftSections.push({
-                title: reportData.indirectExpenses.groupName,
-                items: reportData.indirectExpenses.ledgers,
-                total: reportData.indirectExpenses.totalAmount
-            });
+            addSection(reportData.indirectExpenses.groupName?.toUpperCase(), reportData.indirectExpenses.ledgers, reportData.indirectExpenses.totalAmount, false);
         }
         
-        // Right Side Sections
+        // Add empty rows for spacing before right side
+        worksheet.addRow([]);
+        worksheet.addRow([]);
+        
+        // Add right sections
         if (reportData.salesAccounts?.ledgers?.length > 0) {
-            rightSections.push({
-                title: reportData.salesAccounts.groupName,
-                items: reportData.salesAccounts.ledgers,
-                total: reportData.salesAccounts.totalAmount
-            });
+            addSection(reportData.salesAccounts.groupName?.toUpperCase(), reportData.salesAccounts.ledgers, reportData.salesAccounts.totalAmount, true);
         }
         
         if (reportData.directIncomes?.ledgers?.length > 0) {
-            rightSections.push({
-                title: reportData.directIncomes.groupName,
-                items: reportData.directIncomes.ledgers,
-                total: reportData.directIncomes.totalAmount
-            });
+            addSection(reportData.directIncomes.groupName?.toUpperCase(), reportData.directIncomes.ledgers, reportData.directIncomes.totalAmount, true);
         }
         
         if (reportData.closingStock?.ledgers?.length > 0) {
-            rightSections.push({
-                title: reportData.closingStock.groupName,
-                items: reportData.closingStock.ledgers,
-                total: reportData.closingStock.totalAmount
-            });
+            addSection(reportData.closingStock.groupName?.toUpperCase(), reportData.closingStock.ledgers, reportData.closingStock.totalAmount, true);
         }
         
         if (reportData.indirectIncomes?.ledgers?.length > 0) {
-            rightSections.push({
-                title: reportData.indirectIncomes.groupName,
-                items: reportData.indirectIncomes.ledgers,
-                total: reportData.indirectIncomes.totalAmount
-            });
+            addSection(reportData.indirectIncomes.groupName?.toUpperCase(), reportData.indirectIncomes.ledgers, reportData.indirectIncomes.totalAmount, true);
         }
         
-        // Calculate max rows needed
-        let leftRowIndex = 0;
-        let rightRowIndex = 0;
-        const maxRows_needed = Math.max(
-            leftSections.reduce((sum, section) => sum + section.items.length + 1, 0),
-            rightSections.reduce((sum, section) => sum + section.items.length + 1, 0)
-        );
-        
-        // Build rows
-        for (let i = 0; i < maxRows_needed + 5; i++) {
-            let leftParticular = '';
-            let leftAmount = '';
-            let rightParticular = '';
-            let rightAmount = '';
-            
-            // Fill left side
-            let currentLeftRow = 0;
-            for (const section of leftSections) {
-                if (currentLeftRow === i) {
-                    leftParticular = section.title;
-                    break;
-                }
-                currentLeftRow++;
-                
-                for (const item of section.items) {
-                    if (currentLeftRow === i) {
-                        leftParticular = `  ${item.ledgerName}`;
-                        leftAmount = item.closingBalance;
-                        break;
-                    }
-                    currentLeftRow++;
-                }
-                if (leftParticular) break;
-                
-                if (currentLeftRow === i && section.total !== undefined) {
-                    leftParticular = `Total ${section.title}`;
-                    leftAmount = section.total;
-                    break;
-                }
-                currentLeftRow++;
-            }
-            
-            // Fill right side
-            let currentRightRow = 0;
-            for (const section of rightSections) {
-                if (currentRightRow === i) {
-                    rightParticular = section.title;
-                    break;
-                }
-                currentRightRow++;
-                
-                for (const item of section.items) {
-                    if (currentRightRow === i) {
-                        rightParticular = `  ${item.ledgerName}`;
-                        rightAmount = item.closingBalance;
-                        break;
-                    }
-                    currentRightRow++;
-                }
-                if (rightParticular) break;
-                
-                if (currentRightRow === i && section.total !== undefined) {
-                    rightParticular = `Total ${section.title}`;
-                    rightAmount = section.total;
-                    break;
-                }
-                currentRightRow++;
-            }
-            
-            if (leftParticular || rightParticular) {
-                formattedData.push([
-                    leftParticular,
-                    leftAmount !== '' ? formatAmountForExcel(leftAmount) : '',
-                    rightParticular,
-                    rightAmount !== '' ? formatAmountForExcel(rightAmount) : ''
-                ]);
-            }
-        }
-        
-        // Add totals row
-        formattedData.push([]);
-        formattedData.push([
-            'Total (Debit)',
-            formatAmountForExcel(reportData.leftTotal || 0),
-            'Total (Credit)',
-            formatAmountForExcel(reportData.rightTotal || 0)
-        ]);
+        // Add totals
+        worksheet.addRow([]);
+        addStyledRow('TOTAL (DEBIT)', reportData.leftTotal, 'TOTAL (CREDIT)', reportData.rightTotal, true, true);
         
         // Add Gross Profit/Loss
-        formattedData.push([]);
+        worksheet.addRow([]);
         if (reportData.grossProfit !== null && reportData.grossProfit > 0) {
-            formattedData.push([
-                'Gross Profit',
-                formatAmountForExcel(reportData.grossProfit),
-                '',
-                ''
-            ]);
+            addStyledRow('GROSS PROFIT', reportData.grossProfit, '', '', true, true);
         } else if (reportData.grossLoss !== null && reportData.grossLoss > 0) {
-            formattedData.push([
-                'Gross Loss',
-                formatAmountForExcel(reportData.grossLoss),
-                '',
-                ''
-            ]);
+            addStyledRow('GROSS LOSS', reportData.grossLoss, '', '', true, true);
         }
         
         // Add Net Profit/Loss
-        formattedData.push([]);
+        worksheet.addRow([]);
         if (reportData.netProfit !== null && reportData.netProfit > 0) {
-            formattedData.push([
-                'Net Profit',
-                formatAmountForExcel(reportData.netProfit),
-                '',
-                ''
-            ]);
+            addStyledRow('NET PROFIT', reportData.netProfit, '', '', true, true);
         } else if (reportData.netLoss !== null && reportData.netLoss > 0) {
-            formattedData.push([
-                'Net Loss',
-                formatAmountForExcel(reportData.netLoss),
-                '',
-                ''
-            ]);
+            addStyledRow('NET LOSS', reportData.netLoss, '', '', true, true);
         }
         
-        // Create worksheet
-        const ws = XLSX.utils.aoa_to_sheet(formattedData);
-        
-        // Set column widths
-        ws['!cols'] = [
-            { wch: 40 },  // Column A - Particulars
-            { wch: 15 },  // Column B - Amount
-            { wch: 40 },  // Column C - Particulars
-            { wch: 15 }   // Column D - Amount
-        ];
-        
-        // Style the worksheet (basic styling)
-        const range = XLSX.utils.decode_range(ws['!ref'] || 'A1:D1');
-        for (let row = range.s.r; row <= range.e.r; row++) {
-            for (let col = range.s.c; col <= range.e.c; col++) {
-                const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
-                if (!ws[cellAddress]) continue;
-                
-                // Make header rows bold
-                if (row === 0 || row === 3) {
-                    ws[cellAddress].s = {
-                        font: { bold: true, sz: 12 },
-                        alignment: { horizontal: 'center' }
-                    };
-                }
-                
-                // Style total rows
-                if (formattedData[row] && formattedData[row][0]?.toString().includes('Total')) {
-                    ws[cellAddress].s = {
-                        font: { bold: true },
-                        fill: { fgColor: { rgb: "E0E0E0" } }
-                    };
-                }
-                
-                // Style profit/loss rows
-                if (formattedData[row] && (
-                    formattedData[row][0]?.toString().includes('Gross') ||
-                    formattedData[row][0]?.toString().includes('Net')
-                )) {
-                    ws[cellAddress].s = {
-                        font: { bold: true, color: { rgb: "00B050" } },
-                        fill: { fgColor: { rgb: "E2F0D9" } }
-                    };
-                }
-            }
-        }
-        
-        // Create workbook
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Profit & Loss Statement');
-        
-        // Generate Excel file
-        const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-        const blob = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        // Generate buffer and download
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { 
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+        });
         saveAs(blob, `Profit_Loss_Statement_${currentFilters.fromDate}_to_${currentFilters.toDate}.xlsx`);
         
         toast.success("Excel report generated successfully");
@@ -846,14 +721,19 @@ const generateExcelReport = () => {
     }
 };
 
-// Helper function to format amounts for Excel
-const formatAmountForExcel = (amount) => {
-    if (amount === undefined || amount === null) return '';
-    return Number(amount).toLocaleString('en-IN', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-};
+// Update your download handler
+// const handleGenerateExcel = async (values) => {
+//     if (!reportData) {
+//         toast.warning("Please view the report first before downloading");
+//         return;
+//     }
+//     generateExcelReport();
+// };
+
+// Ultra bold styling for professional look
+
+
+
 
     // Render loading state
     if (loading) {
