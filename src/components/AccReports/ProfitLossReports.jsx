@@ -644,7 +644,7 @@ const ProfitLossReports = () => {
             // Opening Stock Section
             const openingStockLedgers = reportData.openingStock?.ledgers || [];
             const openingStockTotal = getSafeAmount(reportData.openingStock?.totalAmount);
-            leftSectionRows.push({ text: 'OPENING STOCK', amount: null, isBold: true, isTotal: false });
+            leftSectionRows.push({ text: 'OPENING STOCK', amount: openingStockTotal, isBold: true, isTotal: false });
             if (openingStockLedgers.length > 0) {
                 openingStockLedgers.forEach(ledger => {
                     leftSectionRows.push({ text: `  ${ledger.ledgerName}`, amount: getSafeAmount(ledger.closingBalance), isBold: false, isTotal: false });
@@ -652,12 +652,12 @@ const ProfitLossReports = () => {
             } else {
                 leftSectionRows.push({ text: '  No Data Available', amount: 0, isBold: false, isTotal: false });
             }
-            leftSectionRows.push({ text: 'Total Opening Stock', amount: openingStockTotal, isBold: true, isTotal: true });
+            // leftSectionRows.push({ text: 'Total Opening Stock', amount: openingStockTotal, isBold: true, isTotal: true });
 
             // Purchase Accounts Section
             const purchaseLedgers = reportData.purchaseAccounts?.ledgers || [];
             const purchaseTotal = getSafeAmount(reportData.purchaseAccounts?.totalAmount);
-            leftSectionRows.push({ text: 'PURCHASE ACCOUNTS', amount: null, isBold: true, isTotal: false });
+            leftSectionRows.push({ text: 'PURCHASE ACCOUNTS', amount: purchaseTotal, isBold: true, isTotal: false });
             if (purchaseLedgers.length > 0) {
                 purchaseLedgers.forEach(ledger => {
                     leftSectionRows.push({ text: `  ${ledger.ledgerName}`, amount: getSafeAmount(ledger.closingBalance), isBold: false, isTotal: false });
@@ -665,12 +665,12 @@ const ProfitLossReports = () => {
             } else {
                 leftSectionRows.push({ text: '  No Data Available', amount: 0, isBold: false, isTotal: false });
             }
-            leftSectionRows.push({ text: 'Total Purchase Accounts', amount: purchaseTotal, isBold: true, isTotal: true });
+            // leftSectionRows.push({ text: 'Total Purchase Accounts', amount: purchaseTotal, isBold: true, isTotal: true });
 
             // Direct Expenses Section
             const directExpensesLedgers = reportData.directExpenses?.ledgers || [];
             const directExpensesTotal = getSafeAmount(reportData.directExpenses?.totalAmount);
-            leftSectionRows.push({ text: 'DIRECT EXPENSES', amount: null, isBold: true, isTotal: false });
+            leftSectionRows.push({ text: 'DIRECT EXPENSES', amount: directExpensesTotal, isBold: true, isTotal: false });
             if (directExpensesLedgers.length > 0) {
                 directExpensesLedgers.forEach(ledger => {
                     leftSectionRows.push({ text: `  ${ledger.ledgerName}`, amount: getSafeAmount(ledger.closingBalance), isBold: false, isTotal: false });
@@ -678,12 +678,12 @@ const ProfitLossReports = () => {
             } else {
                 leftSectionRows.push({ text: '  No Data Available', amount: 0, isBold: false, isTotal: false });
             }
-            leftSectionRows.push({ text: 'Total Direct Expenses', amount: directExpensesTotal, isBold: true, isTotal: true });
+            // leftSectionRows.push({ text: 'Total Direct Expenses', amount: directExpensesTotal, isBold: true, isTotal: true });
 
             // Indirect Expenses Section
             const indirectExpensesLedgers = reportData.indirectExpenses?.ledgers || [];
             const indirectExpensesTotal = getSafeAmount(reportData.indirectExpenses?.totalAmount);
-            leftSectionRows.push({ text: 'INDIRECT EXPENSES', amount: null, isBold: true, isTotal: false });
+            leftSectionRows.push({ text: 'INDIRECT EXPENSES', amount: indirectExpensesTotal, isBold: true, isTotal: false });
             if (indirectExpensesLedgers.length > 0) {
                 indirectExpensesLedgers.forEach(ledger => {
                     leftSectionRows.push({ text: `  ${ledger.ledgerName}`, amount: getSafeAmount(ledger.closingBalance), isBold: false, isTotal: false });
@@ -691,14 +691,14 @@ const ProfitLossReports = () => {
             } else {
                 leftSectionRows.push({ text: '  No Data Available', amount: 0, isBold: false, isTotal: false });
             }
-            leftSectionRows.push({ text: 'Total Indirect Expenses', amount: indirectExpensesTotal, isBold: true, isTotal: true });
+            // leftSectionRows.push({ text: 'Total Indirect Expenses', amount: indirectExpensesTotal, isBold: true, isTotal: true });
 
             // ============ RIGHT SECTIONS (CREDIT SIDE) - Always show even if no data ============
 
             // Sales Accounts Section
             const salesLedgers = reportData.salesAccounts?.ledgers || [];
             const salesTotal = getSafeAmount(reportData.salesAccounts?.totalAmount);
-            rightSectionRows.push({ text: 'SALES ACCOUNTS', amount: null, isBold: true, isTotal: false });
+            rightSectionRows.push({ text: 'SALES ACCOUNTS', amount: salesTotal, isBold: true, isTotal: false });
             if (salesLedgers.length > 0) {
                 salesLedgers.forEach(ledger => {
                     rightSectionRows.push({ text: `  ${ledger.ledgerName}`, amount: getSafeAmount(ledger.closingBalance), isBold: false, isTotal: false });
@@ -706,7 +706,7 @@ const ProfitLossReports = () => {
             } else {
                 rightSectionRows.push({ text: '  No Data Available', amount: 0, isBold: false, isTotal: false });
             }
-            rightSectionRows.push({ text: 'Total Sales Accounts', amount: salesTotal, isBold: true, isTotal: true });
+            // rightSectionRows.push({ text: 'Total Sales Accounts', amount: salesTotal, isBold: true, isTotal: true });
 
             // Direct Incomes Section
             const directIncomesLedgers = reportData.directIncomes?.ledgers || [];
@@ -724,7 +724,7 @@ const ProfitLossReports = () => {
             // Closing Stock Section
             const closingStockLedgers = reportData.closingStock?.ledgers || [];
             const closingStockTotal = getSafeAmount(reportData.closingStock?.totalAmount);
-            rightSectionRows.push({ text: 'CLOSING STOCK', amount: null, isBold: true, isTotal: false });
+            rightSectionRows.push({ text: 'CLOSING STOCK', amount: closingStockTotal, isBold: true, isTotal: false });
             if (closingStockLedgers.length > 0) {
                 closingStockLedgers.forEach(ledger => {
                     rightSectionRows.push({ text: `  ${ledger.ledgerName}`, amount: getSafeAmount(ledger.closingBalance), isBold: false, isTotal: false });
@@ -732,7 +732,7 @@ const ProfitLossReports = () => {
             } else {
                 rightSectionRows.push({ text: '  No Data Available', amount: 0, isBold: false, isTotal: false });
             }
-            rightSectionRows.push({ text: 'Total Closing Stock', amount: closingStockTotal, isBold: true, isTotal: true });
+            // rightSectionRows.push({ text: 'Total Closing Stock', amount: closingStockTotal, isBold: true, isTotal: true });
 
             // Indirect Incomes Section
             const indirectIncomesLedgers = reportData.indirectIncomes?.ledgers || [];
