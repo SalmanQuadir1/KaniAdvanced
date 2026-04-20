@@ -24,6 +24,7 @@
     "chart.js": "^4.4.8",
     "classnames": "^2.5.1",
     "date-fns": "^4.1.0",
+    "file-saver": "^2.0.5",
     "flatpickr": "^4.6.13",
     "formik": "^2.4.6",
     "google-auth-library": "^10.6.1",
@@ -53,6 +54,7 @@
     "redux-persist": "^6.0.0",
     "sort-by": "^0.0.2",
     "uuid": "^13.0.0",
+    "xlsx": "^0.18.5",
     "yup": "^1.4.0"
   },
   "proxy": "http://localhost:8072",

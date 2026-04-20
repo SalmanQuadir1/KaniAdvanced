@@ -65,90 +65,90 @@ const Chart = () => {
   }, {});
 
   // Kani-based card mapping
-const kaniModeCards = [
-  {
-    title: "Kani Section",
-    link: "/kaniSection",
-    countKey: "kaniOrders",
-    icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
-    levelUp: true,
-    isGradient: true,
-  },
-  
-  {
-    title: "Pashmina Embroidery",
-    link: "/pashminaEmbroidery",
-    countKey: "pashminaEmbroidery",
-    icon: <GiScrollUnfurled  className="w-10 h-10" />,
-    levelUp: true,
-    isGradient: true,
-    gradientColor: "from-purple-500 to-purple-600", // Add this line for purple
-  },
-  {
-    title: "Contemporary Pashmina",
-    link: "/contemporaryPashmina",
-    countKey: "contemporaryPashmina",
-    icon: <GiBandageRoll className="w-10 h-11" />,
-    levelUp: true,
-    isGradient: true,
-    gradientColor: "from-green-500 to-green-600", 
-  },
-  {
-    title: "Papier Mache",
-    link: "/papierMache",
-    countKey: "papierMache",
-    icon: <TbReorder className="w-10 h-10" />,
-    levelUp: true,
-    isGradient: true,
-    gradientColor: "from-red-500 to-red-600", 
-  },
-   {
-    title: "Wool Embroidery",
-    link: "/woolEmbroidery",
-    countKey: "woolEmbroidery",
-    icon: <GiWool className="w-10 h-10" />,
-    levelUp: true,
-    isGradient: true,
-    gradientColor: "from-amber-700 to-amber-800", 
-  },
-   {
-    title: "Contemporary Wool",
-    link: "/contemporaryWool",
-    countKey: "contemporaryWool",
-    icon: <GiRolledCloth className="w-10 h-10" />,
-    levelUp: true,
-    isGradient: true,
-    gradientColor: "from-orange-600 to-orange-700", 
-  },
-   {
-    title: "Cotton",
-    link: "/cotton",
-    countKey: "cotton",
-    icon: <GiCottonFlower className="w-10 h-10" />,
-    levelUp: true,
-    isGradient: true,
-    gradientColor: "from-yellow-600 to-yellow-700", 
-  },
-   {
-    title: "Contemporary Saree",
-    link: "/contemporarySaree",
-    countKey: "contemporarySaree",
-    icon: <FaDropbox   className="w-10 h-10" />,
-    levelUp: true,
-    isGradient: true,
-    gradientColor: "from-teal-500 to-teal-600", 
-  },
-  // {
-  //   title: "Client Orders",
-  //   link: "/ClientOrders",
-  //   countKey: "ClientOrders",
-  //   icon: <RiUserReceived2Fill className="w-10 h-10" />,
-  //   levelUp: true,
-  // },
-  
-  
- 
-];
+  const kaniModeCards = [
+    {
+      title: "Kani Section",
+      link: "/kaniSection",
+      countKey: "kaniOrders",
+      icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
+      levelUp: true,
+      isGradient: true,
+    },
+
+    {
+      title: "Pashmina Embroidery",
+      link: "/pashminaEmbroidery",
+      countKey: "pashminaEmbroidery",
+      icon: <GiScrollUnfurled className="w-10 h-10" />,
+      levelUp: true,
+      isGradient: true,
+      gradientColor: "from-purple-500 to-purple-600", // Add this line for purple
+    },
+    {
+      title: "Contemporary Pashmina",
+      link: "/contemporaryPashmina",
+      countKey: "contemporaryPashmina",
+      icon: <GiBandageRoll className="w-10 h-11" />,
+      levelUp: true,
+      isGradient: true,
+      gradientColor: "from-green-500 to-green-600",
+    },
+    {
+      title: "Papier Mache",
+      link: "/papierMache",
+      countKey: "papierMache",
+      icon: <TbReorder className="w-10 h-10" />,
+      levelUp: true,
+      isGradient: true,
+      gradientColor: "from-red-500 to-red-600",
+    },
+    {
+      title: "Wool Embroidery",
+      link: "/woolEmbroidery",
+      countKey: "woolEmbroidery",
+      icon: <GiWool className="w-10 h-10" />,
+      levelUp: true,
+      isGradient: true,
+      gradientColor: "from-amber-700 to-amber-800",
+    },
+    {
+      title: "Contemporary Wool",
+      link: "/contemporaryWool",
+      countKey: "contemporaryWool",
+      icon: <GiRolledCloth className="w-10 h-10" />,
+      levelUp: true,
+      isGradient: true,
+      gradientColor: "from-orange-600 to-orange-700",
+    },
+    {
+      title: "Cotton",
+      link: "/cotton",
+      countKey: "cotton",
+      icon: <GiCottonFlower className="w-10 h-10" />,
+      levelUp: true,
+      isGradient: true,
+      gradientColor: "from-yellow-600 to-yellow-700",
+    },
+    {
+      title: "Contemporary Saree",
+      link: "/contemporarySaree",
+      countKey: "contemporarySaree",
+      icon: <FaDropbox className="w-10 h-10" />,
+      levelUp: true,
+      isGradient: true,
+      gradientColor: "from-teal-500 to-teal-600",
+    },
+    // {
+    //   title: "Client Orders",
+    //   link: "/ClientOrders",
+    //   countKey: "ClientOrders",
+    //   icon: <RiUserReceived2Fill className="w-10 h-10" />,
+    //   levelUp: true,
+    // },
+
+
+
+  ];
 
 
   // Role-based card mapping
@@ -159,7 +159,7 @@ const kaniModeCards = [
     { title: "Day Book", link: "/configurator/dayBook", countKey: "invoices", icon: <FaBook className="w-10 h-10" />, levelUp: true },
     { title: "Ledger Summary Balances", link: "/configurator/ledgersummary", countKey: "invoices", icon: <FaBook className="w-10 h-10" />, levelUp: true },
     { title: "Orders With Vouchers", link: "/configurator/OrderVoucher", countKey: "invoices", icon: <TbReorder className="w-10 h-10" />, levelUp: true },
-    { title: "Reports", link:"/configurator/accreports", countKey: "accReports", icon: <BiBookOpen className="w-10 h-10" />, levelUp: true },
+    { title: "Reports", link: "/configurator/accreports", countKey: "accReports", icon: <BiBookOpen className="w-10 h-10" />, levelUp: true },
   ];
   const roleBasedCards = {
     ROLE_ADMIN: [
@@ -171,8 +171,8 @@ const kaniModeCards = [
       { title: "Approved By Production Orders", link: "/orderlist/Executed", countKey: "ordersWithOnlyAccepted", icon: <FcApproval className="w-10 h-10" />, levelUp: true },
       { title: "In Progress Orders", link: "/order/Approved", countKey: "approvedOrders", icon: <GrCompliance className="w-10 h-10" />, levelUp: true },
       { title: "Partially In Progress Orders", link: "/order/partiallyApproved", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
-      
-      
+
+
       { title: "Completed Orders", link: "/orderlist/Closed", countKey: "ordersWithOnlyClosed", icon: <MdRecommend className="w-10 h-10" />, levelUp: true },
       { title: "Partially Closed Orders", link: "/orderlist/PartiallyClosed", countKey: "ordersWithOnlyPartiallyClosed", icon: <MdRepartition className="w-10 h-10" />, levelUp: true },
       { title: "Update Challan No And Date", link: "/orderlist/UpdateChallan", countKey: "ordersWithApprovedChallan", icon: <PiGearFineFill className="w-10 h-10" />, levelUp: true },
@@ -191,7 +191,7 @@ const kaniModeCards = [
     ROLE_QUALITYCONTROL: [
       // { title: "Products", link: "/product/viewProducts", countKey: "products", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },{ title: "Approved By Production Orders", link: "/orderlist/Executed", countKey: "ordersWithOnlyAccepted", icon: <FcApproval className="w-10 h-10" />, levelUp: true },
       { title: "Completed Orders", link: "/orderlist/Closed", countKey: "ordersWithOnlyClosed", icon: <MdRecommend className="w-10 h-10" />, levelUp: true },
-      
+
     ],
 
     ROLE_EXECUTOR: [
@@ -225,7 +225,7 @@ const kaniModeCards = [
       { title: "Update Shipping Date", link: "/order/updateShippingDate", countKey: "ordersWithShippingDate", icon: <GrUpdate className="w-10 h-10" />, levelUp: true },
 
     ],
-    
+
     ROLE_ADMIN_SXR: [
       { title: "Total Orders", link: "/Order/ViewOrder", countKey: "orders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
       { title: "Approved By Production Orders", link: "/orderlist/Executed", countKey: "ordersWithOnlyAccepted", icon: <FcApproval className="w-10 h-10" />, levelUp: true },
@@ -243,10 +243,10 @@ const kaniModeCards = [
 
     ],
     ROLE_VERIFIER: [
-           
+
       { title: "Verifiy Product Transfer", link: "/stockJournal/verify", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
 
-  ],
+    ],
   };
 
   // Get all cards user should see based on roles
@@ -254,15 +254,15 @@ const kaniModeCards = [
     if (mode === "production") {
       return role.flatMap(roleName => roleBasedCards[roleName] || []);
     }
-  
+
     if (mode === "accounts" && role.includes("ROLE_ADMIN")) {
       return accountsModeCards;
     }
     // 🔹 Kani Dashboard
-  if (mode === "kani") {
-    return kaniModeCards;
-  }
-  
+    if (mode === "kani") {
+      return kaniModeCards;
+    }
+
     return [];
   })();
 
@@ -285,56 +285,56 @@ const kaniModeCards = [
     //   </div>
     // </DefaultLayout>
 
-<DefaultLayout>
+    <DefaultLayout>
       <Breadcrumb pageName="Dashboard" />
-      <div className="grid grid-cols-1 gap-3 my-1 md:grid-cols-4 md:gap-3 xl:grid-cols-4 2xl:gap-7.5">
+      <div className="grid grid-cols-1 gap-1 my-1 md:grid-cols-4 md:gap-3 xl:grid-cols-5 2xl:gap-4 rounded-lg ">
         {cardsToShow.map((card, index) => (
           <Link to={card.link} key={index}>
-{card.isGradient ? (
-  // Gradient styled card with fixed height and consistent layout
-  <div className={`group relative overflow-hidden rounded-xl bg-gradient-to-br ${card.gradientColor || 'from-blue-500 to-blue-600'} p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer h-48 flex flex-col`}>
-    <div className="absolute right-0 top-0 -mt-4 -mr-4 h-20 w-20 rounded-full bg-white/10 blur-2xl"></div>
-    {card.levelUp && (
-      <span className="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
-        Level Up
-      </span>
-    )}
-    <div className="mb-4 text-white/90">{card.icon}</div>
-    
-    {/* Title with fixed height for 2 lines */}
-    <h3 className="text-xl font-bold text-white min-h-[56px] leading-tight">
-      {card.title}
-    </h3>
-    
-    {/* Count with fixed margin */}
-    {card.countKey && countMapping[card.countKey] !== undefined && (
-      <p className="text-sm text-white/80 mt-2">{countMapping[card.countKey]} items</p>
-    )}
-    
-    {/* View link always at bottom */}
-    <div className="mt-auto flex items-center text-sm font-medium text-white/90 pt-4">
-      View
-      <svg className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-      </svg>
-    </div>
-  </div>
-) : (
-  // Regular CardDataStats for all other cards
-  <CardDataStats
-    title={card.title}
-    total={countMapping[card.countKey]}
-    levelUp={card.levelUp}
-    levelDown={card.levelDown}
-  >
-    {card.icon}
-  </CardDataStats>
-)}
+            {card.isGradient ? (
+              // Gradient styled card with fixed height and consistent layout
+              <div className={`group relative overflow-hidden rounded-xl bg-gradient-to-br ${card.gradientColor || 'from-blue-500 to-blue-600'} p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer h-48 flex flex-col rounded-lg width-"100px"`}>
+                <div className="absolute right-0 top-0 -mt-4 -mr-4 h-20 w-20 rounded-full bg-white/10 blur-2xl "></div>
+                {card.levelUp && (
+                  <span className="absolute right-4 top-4 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold text-white backdrop-blur-sm">
+                    Level Up
+                  </span>
+                )}
+                <div className="mb-4 text-white/90">{card.icon}</div>
+
+                {/* Title with fixed height for 2 lines */}
+                <h3 className="text-xl font-bold text-white min-h-[56px] leading-tight">
+                  {card.title}
+                </h3>
+
+                {/* Count with fixed margin */}
+                {card.countKey && countMapping[card.countKey] !== undefined && (
+                  <p className="text-sm text-white/80 mt-2">{countMapping[card.countKey]} items</p>
+                )}
+
+                {/* View link always at bottom */}
+                <div className="mt-auto flex items-center text-sm font-medium text-white/90 pt-4">
+                  View
+                  <svg className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+            ) : (
+              // Regular CardDataStats for all other cards
+              <CardDataStats
+                title={card.title}
+                total={countMapping[card.countKey]}
+                levelUp={card.levelUp}
+                levelDown={card.levelDown}
+              >
+                {card.icon}
+              </CardDataStats>
+            )}
           </Link>
         ))}
       </div>
     </DefaultLayout>
-    
+
   );
 };
 

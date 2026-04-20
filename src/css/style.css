@@ -1968,3 +1968,75 @@ table start */
     padding: 5mm !important;
   }
 }
+
+
+
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Custom shadow utilities */
+.shadow-3xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Gradient text utility */
+.bg-gradient-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+
+
+@keyframes gentlePulse {
+  0%, 100% {
+    opacity: 1;
+    text-shadow: 0 0 0px rgba(168, 85, 247, 0);
+  }
+  50% {
+    opacity: 0.7;
+    text-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
+  }
+}
+
+.animate-gentle-pulse {
+  animation: gentlePulse 1.5s ease-in-out infinite;
+}
