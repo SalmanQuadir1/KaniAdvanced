@@ -114,7 +114,7 @@ const ProfitLossReports = () => {
         return (
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 mb-6">
                 <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-3">
-                    <h3 className="text-white font-semibold text-lg">{reportData.openingStock.groupName}</h3>
+                    <h3 className="text-white font-semibold text-md">{reportData.openingStock.groupName}</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="min-w-full">
@@ -155,7 +155,7 @@ const ProfitLossReports = () => {
         return (
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 mb-6">
                 <div className="bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-3">
-                    <h3 className="text-white font-semibold text-lg">{reportData.purchaseAccounts.groupName}</h3>
+                    <h3 className="text-white font-semibold text-md">{reportData.purchaseAccounts.groupName}</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="min-w-full">
@@ -196,7 +196,7 @@ const ProfitLossReports = () => {
         return (
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 mb-6">
                 <div className="bg-gradient-to-r from-red-500 to-red-600 px-6 py-3">
-                    <h3 className="text-white font-semibold text-lg">{reportData.directExpenses.groupName}</h3>
+                    <h3 className="text-white font-semibold text-md">{reportData.directExpenses.groupName}</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="min-w-full">
@@ -237,7 +237,7 @@ const ProfitLossReports = () => {
         return (
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
                 <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-3">
-                    <h3 className="text-white font-semibold text-lg">{reportData.indirectExpenses.groupName}</h3>
+                    <h3 className="text-white font-semibold text-md">{reportData.indirectExpenses.groupName}</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="min-w-full">
@@ -278,7 +278,7 @@ const ProfitLossReports = () => {
         return (
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 mb-6">
                 <div className="bg-gradient-to-r from-green-500 to-green-600 px-6 py-3">
-                    <h3 className="text-white font-semibold text-lg">{reportData.salesAccounts.groupName}</h3>
+                    <h3 className="text-white font-semibold text-md">{reportData.salesAccounts.groupName}</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="min-w-full">
@@ -319,7 +319,7 @@ const ProfitLossReports = () => {
         return (
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 mb-6">
                 <div className="bg-gradient-to-r from-teal-500 to-teal-600 px-6 py-3">
-                    <h3 className="text-white font-semibold text-lg">{reportData.directIncomes.groupName}</h3>
+                    <h3 className="text-white font-semibold text-md">{reportData.directIncomes.groupName}</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="min-w-full">
@@ -362,7 +362,7 @@ const ProfitLossReports = () => {
         return (
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 mb-6">
                 <div className="bg-gradient-to-r from-indigo-500 to-indigo-600 px-6 py-3">
-                    <h3 className="text-white font-semibold text-lg">{reportData.closingStock.groupName}</h3>
+                    <h3 className="text-white font-semibold text-md">{reportData.closingStock.groupName}</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="min-w-full">
@@ -403,7 +403,7 @@ const ProfitLossReports = () => {
         return (
             <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-200 dark:border-gray-700">
                 <div className="bg-gradient-to-r from-cyan-500 to-cyan-600 px-6 py-3">
-                    <h3 className="text-white font-semibold text-lg">{reportData.indirectIncomes.groupName}</h3>
+                    <h3 className="text-white font-semibold text-md">{reportData.indirectIncomes.groupName}</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="min-w-full">
@@ -452,7 +452,7 @@ const ProfitLossReports = () => {
             <div className={`bg-gradient-to-r ${bgGradient} rounded-xl shadow-lg p-6 text-white mb-6`}>
                 <div className="flex justify-between items-center">
                     <h3 className="text-xl font-bold">{title}</h3>
-                    <p className="text-2xl font-bold">₹{amount?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}</p>
+                    <p className="text-lg font-bold">₹{amount?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}</p>
                 </div>
             </div>
         );
@@ -472,7 +472,7 @@ const ProfitLossReports = () => {
         return (
             <div className={`bg-gradient-to-r ${bgGradient} rounded-xl shadow-xl p-6 text-white transform hover:scale-105 transition-transform duration-300`}>
                 <div className="flex justify-between items-center">
-                    <h3 className="text-2xl font-bold">{title}</h3>
+                    <h3 className="text-lg font-bold">{title}</h3>
                     <p className="text-3xl font-bold">₹{amount?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}</p>
                 </div>
             </div>
@@ -482,17 +482,17 @@ const ProfitLossReports = () => {
     // Render Summary Cards
     const renderSummaryCards = () => {
         return (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-2">
                 <div className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl shadow-lg p-6 text-white">
                     <div className="flex justify-between items-center">
-                        <h3 className="text-lg font-semibold">Total Debit </h3>
-                        <p className="text-2xl font-bold">₹{reportData?.leftTotal?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}</p>
+                        <h3 className="text-md font-semibold">Total Debit </h3>
+                        <p className="text-lg font-bold">₹{reportData?.leftTotal?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}</p>
                     </div>
                 </div>
                 <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-xl shadow-lg p-6 text-white">
                     <div className="flex justify-between items-center">
-                        <h3 className="text-lg font-semibold">Total Credit </h3>
-                        <p className="text-2xl font-bold">₹{reportData?.rightTotal?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}</p>
+                        <h3 className="text-md font-semibold">Total Credit </h3>
+                        <p className="text-lg font-bold">₹{reportData?.rightTotal?.toLocaleString('en-IN', { minimumFractionDigits: 2 }) || '0.00'}</p>
                     </div>
                 </div>
             </div>
@@ -862,7 +862,7 @@ const ProfitLossReports = () => {
                 <div className="pt-5 pb-10">
                     {/* Header */}
                     <div className='flex justify-between items-center mb-8'>
-                        <h2 className="text-2xl font-bold leading-tight text-gray-800 dark:text-white">
+                        <h2 className="text-lg font-bold leading-tight text-gray-800 dark:text-white">
                             Profit & Loss Report
                         </h2>
                     </div>
@@ -937,10 +937,10 @@ const ProfitLossReports = () => {
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                 {/* Left Column - Debit Side */}
                                 <div className="space-y-6">
-                                    <div className="flex items-center mb-4">
+                                    {/* <div className="flex items-center mb-4">
                                         <div className="w-1 h-8 bg-red-500 rounded-full mr-3"></div>
                                         <h3 className="text-xl font-bold text-gray-800 dark:text-white">Debit Side (Expenses & Losses)</h3>
-                                    </div>
+                                    </div> */}
                                     {renderOpeningStockTable()}
                                     {renderPurchaseTable()}
                                     {renderDirectExpensesTable()}
@@ -949,10 +949,10 @@ const ProfitLossReports = () => {
 
                                 {/* Right Column - Credit Side */}
                                 <div className="space-y-6">
-                                    <div className="flex items-center mb-4">
+                                    {/* <div className="flex items-center mb-4">
                                         <div className="w-1 h-8 bg-green-500 rounded-full mr-3"></div>
                                         <h3 className="text-xl font-bold text-gray-800 dark:text-white">Credit Side (Incomes & Profits)</h3>
-                                    </div>
+                                    </div> */}
                                     {renderSalesTable()}
                                     {renderDirectIncomesTable()}
                                     {renderClosingStockTable()}
@@ -976,7 +976,7 @@ const ProfitLossReports = () => {
                     {isDataFetched && !reportData && (
                         <div className="text-center py-12">
                             <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-8">
-                                <p className="text-gray-500 dark:text-gray-400 text-lg">No data found for the selected filters</p>
+                                <p className="text-gray-500 dark:text-gray-400 text-md">No data found for the selected filters</p>
                             </div>
                         </div>
                     )}
@@ -985,7 +985,7 @@ const ProfitLossReports = () => {
                     {!isDataFetched && !loading && (
                         <div className="text-center py-12">
                             <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-8">
-                                <p className="text-gray-500 dark:text-gray-400 text-lg">Select dates and click "View Report" to load data</p>
+                                <p className="text-gray-500 dark:text-gray-400 text-md">Select dates and click "View Report" to load data</p>
                             </div>
                         </div>
                     )}

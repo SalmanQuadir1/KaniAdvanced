@@ -894,7 +894,7 @@ const productData = {
                                                 {/* Color Group Field */}
                                                 <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">
-                                                        Color Group <span className='text-red-700 text-xl'> *</span>
+                                                        Design Group <span className='text-red-700 text-xl'> *</span>
                                                     </label>
                                                     <div className="z-20 bg-transparent dark:bg-form-field">
                                                         <ReactSelect
