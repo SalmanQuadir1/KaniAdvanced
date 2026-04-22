@@ -627,9 +627,9 @@ const CreateVoucherPurchase = () => {
                                     quantity: orderProduct?.receivedQuantity || 1,
                                     value: (orderProduct?.product?.retailMrp || 0) * (orderProduct?.receivedQuantity || 1),
                                     voucherAmount: (orderProduct?.product?.retailMrp || 0) * (orderProduct?.receivedQuantity || 1),
-                                    igstRate: orderProduct?.igst,
-                                    cgstRate: orderProduct?.cgst,
-                                    sgstRate: orderProduct?.sgst,
+                                    igstRate: order?.igst,
+                                    cgstRate: order?.cgst,
+                                    sgstRate: order?.sgst,
                                     gstAmount: 0,
                                     gstCalculation: null,
                                     productName: orderProduct.product?.productDescription
@@ -853,6 +853,9 @@ const CreateVoucherPurchase = () => {
 
                         // Function to calculate purchase rate based on MRP and GST
                         const calculatePurchaseRate = (mrp, gstCalculation, regType, isExport) => {
+
+                            console.log(gstCalculation,"7788");
+                            
                             // If not regular supplier or export, no GST - rate = MRP
                             if (regType?.toLowerCase() !== "regular" || isExport) {
                                 return {
@@ -889,6 +892,10 @@ const CreateVoucherPurchase = () => {
                                     sgstRate: 0
                                 };
                             } else if (gstCalculation?.type === 'CGST+SGST') {
+                                console.log("tahttt");
+                                console.log(gstCalculation,"44444");
+                                
+                                
                                 // MRP is inclusive of GST, calculate base price (excluding GST)
                                 const cgstRate = gstCalculation.cgstRate || 0;
                                 const sgstRate = gstCalculation.sgstRate || 0;
@@ -984,6 +991,8 @@ const CreateVoucherPurchase = () => {
 
                                 // Loop through all paymentDetails and calculate GST for each
                                 values.paymentDetails.forEach((entry, index) => {
+                                    console.log(entry,"00000000000000.");
+                                    
                                     const mrp = entry.mrp || 0;
 
                                     // Get HSN code and GST rates from the product
@@ -993,9 +1002,9 @@ const CreateVoucherPurchase = () => {
 
 
                                     // Check if product has GST rates from order data
-                                    igstRate = entry.igstRate || entry.igst || 0;
-                                    cgstRate = entry.cgstRate || entry.cgst || 0;
-                                    sgstRate = entry.sgstRate || entry.sgst || 0;
+                                    igstRate = entry.igst || entry.igst || 0;
+                                    cgstRate = entry.cgst || entry.cgst || 0;
+                                    sgstRate = entry.sgst || entry.sgst || 0;
 
                                     console.log(igstRate, cgstRate, sgstRate, "444444444444444");
 
