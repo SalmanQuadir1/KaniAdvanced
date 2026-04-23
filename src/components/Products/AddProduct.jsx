@@ -1381,7 +1381,7 @@ const AddProduct = () => {
 
                                             <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Cost Price </label>
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Cost Price <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <Field
                                                         name='cost'
                                                         type="text"
@@ -1422,7 +1422,7 @@ const AddProduct = () => {
                                                             />
                                                         </div> */}
                                                 <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Retail Mrp</label>
+                                                    <label className="mb-2.5 block text-black dark:text-white"> Retail Mrp <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
                                                     <Field
                                                         name='retailMrp'
                                                         type="text"
