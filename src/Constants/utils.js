@@ -501,6 +501,10 @@ export const GET_SAREE_Supp_URL = `${BASE_URL}/order/contemporary-saree`;
 export const GET_SAREE_Retail_URL = `${BASE_URL}/order/contemporary-saree/retail-client-orders`;
 export const GET_SAREE_WHOLESALE_URL = `${BASE_URL}/order/contemporary-saree/ws-client-orders`;
 export const GET_SAREE_KLC_URL = `${BASE_URL}/order/klc-contemporary-saree`;
+export const GET_PRODUCTDETAILS_URL = `${BASE_URL}/order/by-product-group`;
+export const GET_SUPPLIERS_URL = `${BASE_URL}/order/by-product-group`;
+export const GET_INPROGRESS_URL = `${BASE_URL}/order/approved-orders`;
+
 
 
 

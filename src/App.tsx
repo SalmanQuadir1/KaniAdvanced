@@ -56,6 +56,7 @@ import KaniClientOrders from './components/Kani/KaniClientOrders.jsx';
 import RetailClientOrders from './components/Kani/RetailClientOrders.jsx';
 import WholesaleClientOrders from './components/Kani/WholesaleClientOrders.jsx';
 import KlcOrders from './components/Kani/KlcOrders.jsx';
+import ProductGroupDetails from './components/Kani/ProductGroupDetails.jsx';
 
 import CreateLedger from './components/Ledger/CreateLedger.jsx';
 import UpdateCustomerLedger from './components/Ledger/UpdateCustomerLedger.jsx';
@@ -1397,16 +1398,24 @@ function App() {
           />
 
 
-           <Route
-            path="/kaniProducts"
-            element={
-              <>
-                <PageTitle title=" Production Dashboard " />
-                <KaniProducts />
-              </>
-            }
-          />
-
+          <Route
+  path="/kaniProducts"
+  element={
+    <>
+      <PageTitle title="Production Dashboard" />
+      <KaniProducts />
+    </>
+  }
+/>
+<Route
+  path="/ProductGroupDetails/:id"  // Add productGroupName parameter
+  element={
+    <>
+      <PageTitle title="Production Dashboard" />
+      <ProductGroupDetails />
+    </>
+  }
+/>
 
           <Route
             path="/Order/updatependingforbill/:id"
