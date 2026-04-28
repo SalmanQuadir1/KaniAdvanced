@@ -137,7 +137,7 @@ const AccReports = () => {
             },
             { title: "Monthly Order Calender", link: "/Order/monthlyorders", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
             { title: "Product Report", link: "/report/product", countKey: "approvedOrders", icon: <GrCompliance className="w-10 h-10" />, levelUp: true },
-            { title: "Verifiy Product Transfer", link: "/stockJournal/verify", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
+            { title: "Verify Product Transfer", link: "/stockJournal/verify", countKey: "verifyStockJournals", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
             { title: "Pending for Bill", link: "/Recieved/pendingForBill", countKey: "orderBillStatusAllowed", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
             // { title: "Stock Journal Accept", link: "/StockJournal/get", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
             { title: "Production Dashboard", link: "/kaniProducts", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelUp: true },
@@ -168,7 +168,7 @@ const AccReports = () => {
         ],
         ROLE_VERIFIER: [
 
-            { title: "Verifiy Product Transfer", link: "/stockJournal/verify", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
+            { title: "Verify Product Transfer", link: "/stockJournal/verify", countKey: "verifyStockJournals", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
 
         ],
         ROLE_FINANCE: [

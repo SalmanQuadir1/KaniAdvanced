@@ -1,3 +1,6 @@
+//this is the latest one
+
+
 import React, { useEffect, useState } from 'react'
 import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
@@ -256,7 +259,7 @@ console.log("stockjournal+++++",StockJournal)
                             size={17}
                             className="text-teal-500 hover:text-teal-700 mx-2"
                             onClick={() => navigate(`/StockJournal/verifyStockJournalCreated/${item?.id}`)}
-                            title="Edit StockJournal"
+                            title="Edit StockTransfer"
                         />
                         
                      
@@ -284,15 +287,15 @@ console.log("stockjournal+++++",StockJournal)
         // ViewInventory(pagination.currentPage, filters);
     };
 
-    console.log(prodIdOptions, "llkkllkk");
+   
 
     return (
         <DefaultLayout>
-            <Breadcrumb pageName="StockJournal/ View StockJournal" />
+            <Breadcrumb pageName="StockTransfer/ View StockTransfer" />
             <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
                 <div className="pt-5">
                     <div className='flex justify-between'>
-                        <h2 className="text-xl font-semibold leading-tight">Verify Stock Journal</h2>
+                        <h2 className="text-xl font-semibold leading-tight">Verify Stock Transfer</h2>
                         {/* <p className={`inline-flex rounded-full bg-opacity-10 py-1 px-3 text-sm font-medium bg-success text-success dark:bg-white dark:text-slate-800`}>
                             TOTAL PRODUCTS: {pagination.totalItems}
                         </p> */}
