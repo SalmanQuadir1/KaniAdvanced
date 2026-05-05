@@ -1,143 +1,102 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 import DefaultLayout from "../../layout/DefaultLayout";
 import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 import CardDataStats from "../../components/CardDataStats";
 import { SiHomeassistantcommunitystore } from "react-icons/si";
 import { GiScrollUnfurled } from "react-icons/gi";
-import { AiOutlinePartition } from "react-icons/ai";
-import { RiUserReceived2Fill, RiAlignItemBottomFill } from "react-icons/ri";
 import { GiBandageRoll } from "react-icons/gi";
 import { TbReorder } from 'react-icons/tb';
 import { GiCottonFlower } from "react-icons/gi";
 import { GiWool } from "react-icons/gi";
 import { GiRolledCloth } from "react-icons/gi";
 import { FaDropbox } from "react-icons/fa";
+import { VIEW_ALL_PRODUCT_SUBGROUP_URL } from "../../Constants/utils";
 
 const KaniProducts = () => {
   const { currentUser } = useSelector((state) => state?.persisted?.user || {});
+  const [productGroups, setProductGroups] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Kani-based card mapping
-  const kaniModeCards = [
-     {
-    title: "Kani Section",
-    link: "/kaniSection",
-    countKey: "kaniOrders",
-    icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
-    levelUp: true,
-    isGradient: true,
-  },
+  // Icon mapping for different product types
+  const getIconForProduct = (productName) => {
+    const name = productName?.toLowerCase() || "";
+    if (name.includes("kani")) return <SiHomeassistantcommunitystore className="w-10 h-10" />;
+    if (name.includes("pashmina")) return <GiScrollUnfurled className="w-10 h-10" />;
+    if (name.includes("contemporary pashmina")) return <GiBandageRoll className="w-10 h-11" />;
+    if (name.includes("papier")) return <TbReorder className="w-10 h-10" />;
+    if (name.includes("wool embroidery")) return <GiWool className="w-10 h-10" />;
+    if (name.includes("contemporary wool")) return <GiRolledCloth className="w-10 h-10" />;
+    if (name.includes("cotton")) return <GiCottonFlower className="w-10 h-10" />;
+    if (name.includes("saree")) return <FaDropbox className="w-10 h-10" />;
+    return <FaDropbox className="w-10 h-10" />;
+  };
 
-  {
-      title: "Pashmina Embroidery",
-      link: "/pashminaEmbroidery",
-      countKey: "pashminaEmbroidery",
-      icon: <GiScrollUnfurled className="w-10 h-10" />,
-      levelUp: true,
-      isGradient: true,
-      gradientColor: "from-purple-500 to-purple-600",
-    },
+  // Fetch product groups from API
+  useEffect(() => {
+    const fetchProductGroups = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(VIEW_ALL_PRODUCT_SUBGROUP_URL, {
+          headers: {
+            'Authorization': `Bearer ${currentUser?.token}`
+          }
+        });
+        
+        const products = response.data;
+        
+        // Transform API data to card format - ONLY THIS PART CHANGED
+        const cards = products.map((product, index) => ({
+          title: product.name || product.productGroupName || product.title,
+          link: `/ProductGroupDetails/${product.id}?name=${encodeURIComponent(product.name || product.productGroupName)}`,
+          icon: getIconForProduct(product.name || product.productGroupName),
+          levelUp: true,
+          id: product.id
+        }));
+        
+        setProductGroups(cards);
+      } catch (error) {
+        console.error("Error fetching product groups:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    {
-        title: "Contemporary Pashmina",
-        link: "/contemporaryPashmina",
-        countKey: "contemporaryPashmina",
-        icon: <GiBandageRoll  className="w-10 h-11" />,
-        levelUp: true,
-        isGradient: true,
-        gradientColor: "from-green-500 to-green-600", 
-      },
-       {
-        title: "Papier Mache",
-        link: "/papierMache",
-        countKey: "papierMache",
-        icon: <TbReorder className="w-10 h-10" />,
-        levelUp: true,
-        isGradient: true,
-        gradientColor: "from-red-500 to-red-600", 
-      },
-       {
-        title: "Wool Embroidery",
-        link: "/woolEmbroidery",
-        countKey: "woolEmbroidery",
-        icon: <GiWool  className="w-10 h-10" />,
-        levelUp: true,
-        isGradient: true,
-        gradientColor: "from-amber-700 to-amber-800", 
-      },
-      {
-        title: "Contemporary Wool",
-        link: "/contemporaryWool",
-        countKey: "contemporaryWool",
-        icon: <GiRolledCloth  className="w-10 h-10" />,
-        levelUp: true,
-        isGradient: true,
-        gradientColor: "from-orange-600 to-orange-700", 
-      },
-      {
-        title: "Cotton",
-        link: "/cotton",
-        countKey: "cotton",
-        icon: <GiCottonFlower  className="w-10 h-10" />,
-        levelUp: true,
-        isGradient: true,
-        gradientColor: "from-yellow-600 to-yellow-700", 
-      },
-       {
-        title: "Contemporary Saree",
-        link: "/contemporarySaree",
-        countKey: "contemporarySaree",
-        icon: <FaDropbox   className="w-10 h-10" />,
-        levelUp: true,
-        isGradient: true,
-        gradientColor: "from-teal-500 to-teal-600", 
-      },
-  
-  ];
+    fetchProductGroups();
+  }, [currentUser]);
+
+  if (loading) {
+    return (
+      <DefaultLayout>
+        <Breadcrumb pageName="Kani Orders" />
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        </div>
+      </DefaultLayout>
+    );
+  }
 
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Kani Orders" />
 
-      {/* Kani Mode Tiles Section */}
+      {/* Dynamic Tiles from API */}
       <div className="mb-6">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-4 gap-y-8 2xl:gap-4">
-          {kaniModeCards.map((card, index) => {
-            // Check if this is the current page (Kani Orders)
-            const isCurrentPage = card.title === "";
-            
-            if (isCurrentPage) {
-              // For current page, use a div with NO link (not clickable)
-              return (
-                <div 
-                  key={index} 
-                  className="flex-col cursor-default ring-2 ring-primary ring-offset-2"
+          {productGroups.map((card, index) => (
+            <Link to={card.link} key={card.id || index} className="flex-col">
+              <div className="cursor-pointer transition-transform hover:scale-105">
+                <CardDataStats
+                  title={card.title}
+                  levelUp={card.levelUp}
                 >
-                  <CardDataStats
-                    title={card.title}
-                    levelUp={card.levelUp}
-                  >
-                    {card.icon}
-                  </CardDataStats>
-                </div>
-              );
-            } else {
-              // For other pages, use Link for navigation (clickable)
-              return (
-                <Link to={card.link} key={index} className="flex-col">
-                  <div className="cursor-pointer transition-transform hover:scale-105">
-                    <CardDataStats
-                      title={card.title}
-                      levelUp={card.levelUp}
-                    >
-                      {card.icon}
-                    </CardDataStats>
-                  </div>
-                </Link>
-              );
-            }
-          })}
+                  {card.icon}
+                </CardDataStats>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
     </DefaultLayout>
