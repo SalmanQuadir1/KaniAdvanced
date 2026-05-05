@@ -134,7 +134,7 @@ const ViewProductsInventory = () => {
     };
 
     // API functions for the three modals
-    const fetchRecentHistory = async (productId,locationId) => {
+    const fetchRecentHistory = async (productId, locationId) => {
         setLoading(true);
         try {
             const response = await fetch(`${BASE_URL}/productInventory/inventory-transactions/product/${productId}/location/${locationId}`, {
@@ -378,8 +378,11 @@ const ViewProductsInventory = () => {
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 {isGroupExpanded ? <FiChevronDown className="text-blue-600" /> : <FiChevronRight className="text-blue-600" />}
-                                <span className="font-bold text-lg text-blue-800 dark:text-blue-300">
+                                <span className="font-bold text-lg text-blue-800 dark:text-blue-300 flex items-center gap-2">
                                     {group.productGroupName}
+                                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                        Product Group
+                                    </span>
                                 </span>
                                 {/* <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
                                     (Group ID: {group.id})
@@ -415,8 +418,12 @@ const ViewProductsInventory = () => {
                                     <div className="flex items-center gap-3">
                                         {isSubGroupExpanded ? <FiChevronDown className="text-gray-600" /> : <FiChevronRight className="text-gray-600" />}
                                         <span className="font-semibold text-md text-gray-700 dark:text-gray-300">
-                                            {subGroup.productSubGroupName}
+                                            {subGroup.productSubGroupName}  
                                         </span>
+
+                                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                         Sub-Group
+                                    </span>
                                         {/* <span className="text-xs text-gray-400">(ID: {subGroup.id})</span> */}
                                     </div>
                                     <div className="flex gap-3 text-xs">
