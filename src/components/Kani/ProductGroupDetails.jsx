@@ -907,10 +907,7 @@ const ProductGroupDetails = () => {
                   <tr key={product.orderNo + idx} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{sno}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{product.orderNo}</td>
-                    {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{product.productId}</td> */}
-                   <td className="px-6 py-4 whitespace-normal text-sm text-gray-900 dark:text-white break-words">
-  {product.productId}
-</td>
+                    <td className="px-6 py-4 whitespace-normal text-sm text-gray-900 dark:text-white break-words">{product.productId}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{product.productGroup}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -1375,7 +1372,7 @@ const ProductGroupDetails = () => {
                         <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-xs font-medium">
                           {order.category}
                         </span>
-                       </td>
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         {refImageUrl ? (
                           <div className="relative group">
@@ -1396,7 +1393,7 @@ const ProductGroupDetails = () => {
                             <span className="text-gray-400 text-xs">No Ref</span>
                           </div>
                         )}
-                       </td>
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         {actImageUrl ? (
                           <div className="relative group">
@@ -1417,7 +1414,7 @@ const ProductGroupDetails = () => {
                             <span className="text-gray-400 text-xs">No Act</span>
                           </div>
                         )}
-                       </td>
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <button
                           onClick={() => {
@@ -1431,7 +1428,7 @@ const ProductGroupDetails = () => {
                         >
                           VIEW ({allImagesCount})
                         </button>
-                       </td>
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <div className="flex items-center gap-3">
                           <FiEdit
@@ -1441,7 +1438,7 @@ const ProductGroupDetails = () => {
                             title="Edit Product"
                           />
                         </div>
-                       </td>
+                      </td>
                     </tr>
                   );
                 })}
@@ -1537,7 +1534,7 @@ const ProductGroupDetails = () => {
                       >
                         {supplier.supplierName}
                       </span>
-                     </td>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{supplier.supplierQty}</td>
                     
                     {/* CHALLAN NO CELL WITH DROPDOWN */}
@@ -1556,7 +1553,7 @@ const ProductGroupDetails = () => {
                           </span>
                         )}
                       </div>
-                     </td>
+                    </td>
                     
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -1567,7 +1564,7 @@ const ProductGroupDetails = () => {
                       }`}>
                         {supplier.status}
                       </span>
-                     </td>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{supplier.productGroup}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <div className="flex flex-col gap-1">
@@ -1595,14 +1592,14 @@ const ProductGroupDetails = () => {
                               toast.error("Product ID not found");
                             }
                           }}
-                           className="inline-block bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded
+                          className="inline-block bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded
                          dark:bg-gray-700 dark:text-green-400 border border-green-400
                          cursor-pointer hover:bg-green-200 transition-colors duration-200 view-badge"
                         >
                           ADD PRODUCT
                         </span>
                       </div>
-                     </td>
+                    </td>
                   </tr>
                 );
               })}
@@ -1821,103 +1818,115 @@ const ProductGroupDetails = () => {
             </button>
           </div>
         </div>
+
+        {/* Search Tabs Label */}
+<p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+  🔍 Search Tabs - Click any tile below to filter orders by category
+</p>
         
-        <div className="grid grid-cols-5 gap-2 mb-6">
-          <div 
-            onClick={() => handleCategoryClick('retail')}
-            className={`cursor-pointer bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg shadow-md py-1.5 px-2 transform transition-all duration-300 hover:scale-105 hover:shadow-lg ${
-              (selectedCategory === 'retail' && activeView === 'orders') || (activeView === 'category' && selectedOrderType === 'RetailClients') ? 'ring-2 ring-purple-300 scale-105' : ''
-            }`}
-          >
-            <div className="flex items-center justify-center gap-1.5">
-              <div className="bg-white bg-opacity-20 rounded-full p-1">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-white font-bold uppercase tracking-wide text-xs">Retail</p>
-                <p className="text-purple-200 text-[10px]">Clients</p>
-              </div>
-            </div>
-          </div>
+        {/* Clean Border Cards - No Colors */}
+               {/* Clean Border Cards - No Colors - Smaller Size */}
+     <div className="grid grid-cols-5 gap-2 mb-6">
+  {/* Retail Card */}
+  <div 
+    onClick={() => handleCategoryClick('retail')}
+    className={`cursor-pointer rounded-lg border transition-all duration-200 p-2 ${
+      (selectedCategory === 'retail' && activeView === 'orders') || (activeView === 'category' && selectedOrderType === 'RetailClients') 
+        ? 'border-primary ring-2 ring-primary/20 bg-primary/20 dark:bg-primary/30' 
+        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm'
+    }`}
+  >
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-gray-900 dark:text-white font-medium text-xs uppercase">Retail</p>
+        <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Clients</p>
+      </div>
+      <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+      </svg>
+    </div>
+  </div>
 
-          <div 
-            onClick={() => handleCategoryClick('wholesale')}
-            className={`cursor-pointer bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow-md py-1.5 px-2 transform transition-all duration-300 hover:scale-105 hover:shadow-lg ${
-              (selectedCategory === 'wholesale' && activeView === 'orders') || (activeView === 'category' && selectedOrderType === 'WSClients') ? 'ring-2 ring-blue-300 scale-105' : ''
-            }`}
-          >
-            <div className="flex items-center justify-center gap-1.5">
-              <div className="bg-white bg-opacity-20 rounded-full p-1">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 21h6M12 15v6" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-white font-bold uppercase tracking-wide text-xs">Wholesale</p>
-                <p className="text-blue-200 text-[10px]">Clients</p>
-              </div>
-            </div>
-          </div>
+  {/* Wholesale Card */}
+  <div 
+    onClick={() => handleCategoryClick('wholesale')}
+    className={`cursor-pointer rounded-lg border transition-all duration-200 p-2 ${
+      (selectedCategory === 'wholesale' && activeView === 'orders') || (activeView === 'category' && selectedOrderType === 'WSClients') 
+        ? 'border-primary ring-2 ring-primary/20 bg-primary/20 dark:bg-primary/30' 
+        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm'
+    }`}
+  >
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-gray-900 dark:text-white font-medium text-xs uppercase">Wholesale</p>
+        <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Clients</p>
+      </div>
+      <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 21h6M12 15v6" />
+      </svg>
+    </div>
+  </div>
 
-          <div 
-            onClick={() => handleCategoryClick('klc')}
-            className={`cursor-pointer bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-md py-1.5 px-2 transform transition-all duration-300 hover:scale-105 hover:shadow-lg ${
-              (selectedCategory === 'klc' && activeView === 'orders') || (activeView === 'category' && selectedOrderType === 'KLCStock') ? 'ring-2 ring-green-300 scale-105' : ''
-            }`}
-          >
-            <div className="flex items-center justify-center gap-1.5">
-              <div className="bg-white bg-opacity-20 rounded-full p-1">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-white font-bold uppercase tracking-wide text-xs">KLC</p>
-                <p className="text-green-200 text-[10px]">Stock</p>
-              </div>
-            </div>
-          </div>
+  {/* KLC Card */}
+  <div 
+    onClick={() => handleCategoryClick('klc')}
+    className={`cursor-pointer rounded-lg border transition-all duration-200 p-2 ${
+      (selectedCategory === 'klc' && activeView === 'orders') || (activeView === 'category' && selectedOrderType === 'KLCStock') 
+        ? 'border-primary ring-2 ring-primary/20 bg-primary/20 dark:bg-primary/30' 
+        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm'
+    }`}
+  >
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-gray-900 dark:text-white font-medium text-xs uppercase">KLC</p>
+        <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Stock</p>
+      </div>
+      <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </div>
+  </div>
 
-          <div 
-            onClick={handleInProgressClick}
-            className={`cursor-pointer bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg shadow-md py-1.5 px-2 transform transition-all duration-300 hover:scale-105 hover:shadow-lg ${
-              activeView === 'inProgress' ? 'ring-2 ring-yellow-300 scale-105' : ''
-            }`}
-          >
-            <div className="flex items-center justify-center gap-1.5">
-              <div className="bg-white bg-opacity-20 rounded-full p-1">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-white font-bold uppercase tracking-wide text-xs">In Progress</p>
-                <p className="text-yellow-200 text-[10px]">Orders</p>
-              </div>
-            </div>
-          </div>
+  {/* In Progress Card */}
+  <div 
+    onClick={handleInProgressClick}
+    className={`cursor-pointer rounded-lg border transition-all duration-200 p-2 ${
+      activeView === 'inProgress' 
+        ? 'border-primary ring-2 ring-primary/20 bg-primary/20 dark:bg-primary/30' 
+        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm'
+    }`}
+  >
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-gray-900 dark:text-white font-medium text-xs uppercase">In Progress</p>
+        <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Orders</p>
+      </div>
+      <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </div>
+  </div>
 
-          <div 
-            onClick={handleSupplierClick}
-            className={`cursor-pointer bg-gradient-to-r from-orange-500 to-red-500 rounded-lg shadow-md py-1.5 px-2 transform transition-all duration-300 hover:scale-105 hover:shadow-lg ${
-              activeView === 'suppliers' ? 'ring-2 ring-yellow-300 scale-105' : ''
-            }`}
-          >
-            <div className="flex items-center justify-center gap-1.5">
-              <div className="bg-white bg-opacity-20 rounded-full p-1">
-                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-white font-bold uppercase tracking-wide text-xs">Filter Suppliers</p>
-                <p className="text-orange-200 text-[10px]">View</p>
-              </div>
-            </div>
-          </div>
-        </div>
+  {/* Suppliers Card */}
+  <div 
+    onClick={handleSupplierClick}
+    className={`cursor-pointer rounded-lg border transition-all duration-200 p-2 ${
+      activeView === 'suppliers' 
+        ? 'border-primary ring-2 ring-primary/20 bg-primary/20 dark:bg-primary/30' 
+        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm'
+    }`}
+  >
+    <div className="flex items-center justify-between">
+      <div>
+        <p className="text-gray-900 dark:text-white font-medium text-xs uppercase">Suppliers</p>
+        <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Filter View</p>
+      </div>
+      <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+      </svg>
+    </div>
+  </div>
+</div>
 
         {activeView === 'orders' && (selectedCategory !== 'all' || selectedSupplier !== 'all') && (
           <div className="flex justify-end mb-4">
