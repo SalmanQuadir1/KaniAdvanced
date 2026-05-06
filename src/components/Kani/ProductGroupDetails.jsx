@@ -1015,12 +1015,12 @@ const ProductGroupDetails = () => {
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
           {/* <h3 className="font-bold mb-2">Error loading in-progress orders:</h3> */}
           <p>{inProgressError}</p>
-          <button
+          {/* <button
             onClick={() => fetchInProgressOrders(1)}
             className="mt-3 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
           >
             Retry
-          </button>
+          </button> */}
         </div>
       );
     }
@@ -1137,12 +1137,12 @@ const ProductGroupDetails = () => {
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
           {/* <h3 className="font-bold mb-2">Error loading {getDisplayOrderType(selectedOrderType)} orders:</h3> */}
           <p>{categoryError}</p>
-          <button
+          {/* <button
             onClick={() => fetchCategoryOrders(selectedOrderType, 1)}
             className="mt-3 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
           >
             Retry
-          </button>
+          </button> */}
         </div>
       );
     }
@@ -1475,12 +1475,12 @@ const ProductGroupDetails = () => {
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
           {/* <h3 className="font-bold mb-2">Error loading supplier orders:</h3> */}
           <p>{supplierError}</p>
-          <button
+          {/* <button
             onClick={() => fetchSuppliers()}
             className="mt-3 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
           >
             Retry
-          </button>
+          </button> */}
         </div>
       );
     }

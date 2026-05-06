@@ -117,9 +117,10 @@ const Home = () => {
     // Role-based card mapping
     const roleBasedCards = {
         ROLE_ADMIN: [
+            { title: "Production Dashboard", link: "/kaniProducts", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelUp: true },
             { title: "Reports", link: "/Reports", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
             { title: "Retail/WholeSale Reports", link: "/report/wsRetailReport", countKey: "proforma", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
-            { title: "Production Dashboard", link: "/kaniProducts", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelUp: true },
+           
             { title: "Orders", link: "/chart", countKey: "orders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
 
             { title: "Upload Excel", link: "/product/addExcelProduct", countKey: "ordersWithCreated", icon: <AiOutlinePartition className="w-10 h-10" />, levelUp: true },
