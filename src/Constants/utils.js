@@ -39,6 +39,8 @@ export const GETDESCRIPTIONS = `${BASE_URL}/products/all-products`;
 //inventory
 
 export const GET_INVENTORY = `${BASE_URL}/productInventory/search`;
+export const GET_INVENTORYYS = `${BASE_URL}/productgroup/product-inventories`;
+
 export const GET_INVENTORYY = `${BASE_URL}/productInventory/recent-transactions`;
 //Godown
 export const GET_GODOWN = `${BASE_URL}/productInventory/searchGoDown`;
