@@ -473,44 +473,48 @@ const ViewProductsInventory = () => {
                         // Add table headers inside the subgroup
                      // Add table headers inside the subgroup
 rows.push(
-    <tr key={`subgroup-headers-${subGroup.id}`} className="bg-slate-300 dark:bg-slate-700">
-        <th className="px-9 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap ">
+ <tr 
+    key={`subgroup-headers-${subGroup.id}`} 
+    className="dark:bg-slate-700 dark:text-white"
+    style={{ backgroundColor: 'rgb(71 85 105)' }} // Slate-600 RGB value
+>
+        <th className="px-9 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white  ">
             S.No
         </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
             Product Description
         </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
             Product Id
         </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
             Location
         </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
             Opening Balance
         </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
             Purchase
         </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
             Sale
         </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
             Transfer In
         </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
             Transfer Out
         </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
             Closing Balance
         </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
             In Progress
         </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
             Recent History
         </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
             Summary
         </th>
      </tr>
@@ -629,7 +633,7 @@ rows.push(
 
                     <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                         <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
-                            <table className="min-w-full leading-normal">
+                           <table className="min-w-full leading-normal overflow-auto">
                                 <tbody>
                                     {renderTableRows()}
                                 </tbody>
