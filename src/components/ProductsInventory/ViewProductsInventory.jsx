@@ -63,39 +63,56 @@ const ViewProductsInventory = () => {
         value: loc.address
     })) || [];
 
-    const ViewInventory = async (page, filters = {}) => {
-        try {
-            const response = await fetch(`${GET_INVENTORYYS}?page=${page || 0}`, {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${token}`
-                },
-            });
-            const data = await response.json();
-            console.log(data, "API Response");
-
-            setInventoryData(data.content || []);
-            setPagination({
-                totalItems: data?.totalElements,
-                data: data?.content,
-                totalPages: data?.totalPages,
-                currentPage: data?.number + 1,
-                itemsPerPage: data.size
-            });
-        } catch (error) {
-            console.log(error);
-            toast.error("Failed to fetch Inventory");
+   const ViewInventory = async (page = 1, filters = {}) => {
+    try {
+        // Convert to zero-based for API
+        const pageNumber = page - 1;
+        
+        console.log("Fetching page:", page, "API page number:", pageNumber);
+        
+        const response = await fetch(`${GET_INVENTORYYS}?page=${pageNumber}`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            },
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-    };
+        
+        const data = await response.json();
+        console.log("Pagination Response:", {
+            currentPageAPI: data.number,
+            currentPageDisplay: data.number + 1,
+            totalPages: data.totalPages,
+            totalElements: data.totalElements,
+            pageSize: data.size
+        });
+
+        setInventoryData(data.content || []);
+        setPagination({
+            totalItems: data?.totalElements || 0,
+            data: data?.content || [],
+            totalPages: data?.totalPages || 0,
+            currentPage: (data?.number || 0) + 1, // Convert to 1-based for display
+            itemsPerPage: data?.size || 20
+        });
+    } catch (error) {
+        console.error("Error fetching inventory:", error);
+        toast.error("Failed to fetch Inventory");
+    }
+};
 
     useEffect(() => {
-        ViewInventory();
+        ViewInventory(0);
     }, []);
 
     const handlePageChange = (newPage) => {
-        setPagination((prev) => ({ ...prev, currentPage: newPage }));
-        ViewInventory(newPage);
-    };
+    console.log("Changing to page:", newPage);
+    setPagination((prev) => ({ ...prev, currentPage: newPage }));
+    ViewInventory(newPage); // Pass the page number directly
+};
 
     const handleUpdate = (id) => {
         navigate(`/inventory/updateInventory/${id}`);
@@ -354,27 +371,47 @@ const ViewProductsInventory = () => {
         );
     };
 
+    // Table Headers Component
+    const TableHeaders = () => (
+        <thead>
+            <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
+                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">S.No</th>
+                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Product Description</th>
+                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Product Id</th>
+                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Location</th>
+                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Opening Balance</th>
+                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Purchase</th>
+                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Sale</th>
+                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Transfer In</th>
+                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Transfer Out</th>
+                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Closing Balance</th>
+                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">In Progress</th>
+                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Recent History</th>
+                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Summary</th>
+            </tr>
+        </thead>
+    );
+
     const renderTableRows = () => {
         if (!inventoryData || inventoryData.length === 0) {
             return (
                 <tr className="bg-white dark:bg-slate-700">
-                    <td colSpan="15" className="px-5 py-5 text-center">No Data Found</td>
+                    <td colSpan="13" className="px-5 py-5 text-center">No Data Found</td>
                 </tr>
             );
         }
 
         const rows = [];
-        let serialNumber = 1;
 
         inventoryData.forEach((group, groupIndex) => {
             const isGroupExpanded = expandedGroups[group.id];
             const totalProductsInGroup = getTotalProductsInGroup(group.subGroups || []);
             const totalInventoryCount = getGroupInventoryCount(group.subGroups || []);
 
-            // Product Group Row with Colspan
+            // Product Group Row
             rows.push(
                 <tr key={`group-${group.id}`} className="bg-blue-50 dark:bg-blue-900/30 cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900/50" onClick={() => toggleGroup(group.id)}>
-                    <td colSpan="15" className="px-5 py-4 border-b border-gray-200">
+                    <td colSpan="13" className="px-5 py-4 border-b border-gray-200">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-3">
                                 {isGroupExpanded ? <FiChevronDown className="text-blue-600" /> : <FiChevronRight className="text-blue-600" />}
@@ -384,9 +421,6 @@ const ViewProductsInventory = () => {
                                         Product Group
                                     </span>
                                 </span>
-                                {/* <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
-                                    (Group ID: {group.id})
-                                </span> */}
                             </div>
                             <div className="flex gap-4 text-sm">
                                 <span className="bg-blue-200 dark:bg-blue-800 px-3 py-1 rounded-full">
@@ -413,18 +447,16 @@ const ViewProductsInventory = () => {
                     // Sub Group Row
                     rows.push(
                         <tr key={`subgroup-${subGroup.id}`} className="bg-gray-50 dark:bg-gray-800/50 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => toggleSubGroup(subGroup.id)}>
-                            <td colSpan="15" className="px-5 py-3 border-b border-gray-200 pl-10">
+                            <td colSpan="13" className="px-5 py-3 border-b border-gray-200 pl-10">
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         {isSubGroupExpanded ? <FiChevronDown className="text-gray-600" /> : <FiChevronRight className="text-gray-600" />}
-                                        <span className="font-semibold text-md text-gray-700 dark:text-gray-300">
-                                            {subGroup.productSubGroupName}  
+                                        <span className="font-semibold text-md text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                                            {subGroup.productSubGroupName}
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
+                                                Sub Group
+                                            </span>
                                         </span>
-
-                                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                                         Sub-Group
-                                    </span>
-                                        {/* <span className="text-xs text-gray-400">(ID: {subGroup.id})</span> */}
                                     </div>
                                     <div className="flex gap-3 text-xs">
                                         <span className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">
@@ -436,16 +468,68 @@ const ViewProductsInventory = () => {
                         </tr>
                     );
 
-                    // If sub group is expanded, show inventory items
+                    // If sub group is expanded, show inventory items with table headers
                     if (isSubGroupExpanded && subGroup.inventories && subGroup.inventories.length > 0) {
+                        // Add table headers inside the subgroup
+                     // Add table headers inside the subgroup
+rows.push(
+    <tr key={`subgroup-headers-${subGroup.id}`} className="bg-slate-300 dark:bg-slate-700">
+        <th className="px-9 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap ">
+            S.No
+        </th>
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+            Product Description
+        </th>
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+            Product Id
+        </th>
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+            Location
+        </th>
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+            Opening Balance
+        </th>
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+            Purchase
+        </th>
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+            Sale
+        </th>
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+            Transfer In
+        </th>
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+            Transfer Out
+        </th>
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+            Closing Balance
+        </th>
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+            In Progress
+        </th>
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+            Recent History
+        </th>
+        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap">
+            Summary
+        </th>
+     </tr>
+);
+
+                        // Add inventory items
                         subGroup.inventories.forEach((item, idx) => {
                             rows.push(
                                 <tr key={`inventory-${item.id}`} className="bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600">
                                     <td className="px-5 py-3 border-b text-sm pl-16">
-                                        {serialNumber++}
+                                        {idx + 1}
                                     </td>
                                     <td className="px-5 py-3 border-b text-sm">
-                                        {item.productDescription || 'N/A'}
+                                        <div className="flex items-center gap-2">
+                                            {item.productDescription || 'N/A'}
+                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                                                Item
+                                            </span>
+                                        </div>
                                     </td>
                                     <td className="px-5 py-3 border-b text-sm">
                                         {item.productId || 'N/A'}
@@ -478,7 +562,8 @@ const ViewProductsInventory = () => {
                                     </td>
                                     <td className="px-5 py-3 border-b text-sm">
                                         <button
-                                            onClick={() => {
+                                            onClick={(e) => {
+                                                e.stopPropagation();
                                                 setSelectedInventory(item);
                                                 fetchRecentHistory(item.productIntegerId, item.locationId);
                                                 setIsRecentHistoryModalOpen(true);
@@ -490,7 +575,8 @@ const ViewProductsInventory = () => {
                                     </td>
                                     <td className="px-5 py-3 border-b text-sm">
                                         <button
-                                            onClick={() => {
+                                            onClick={(e) => {
+                                                e.stopPropagation();
                                                 setSelectedInventory(item);
                                                 fetchInventorySummary(item.locationId, item.productIntegerId);
                                                 setIsSummaryModalOpen(true);
@@ -541,80 +627,13 @@ const ViewProductsInventory = () => {
                         </h2>
                     </div>
 
-                    <div className='items-center justify-center'>
-                        <Formik
-                            initialValues={{
-                                ProductId: '',
-                                address: ""
-                            }}
-                            onSubmit={handleSubmit}
-                        >
-                            {({ setFieldValue, values }) => (
-                                <Form>
-                                    {/* <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-                                        <div className="flex-1 min-w-[300px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
-                                            <Field
-                                                name="ProductId"
-                                                component={ReactSelect}
-                                                styles={customStyles}
-                                                options={[{ label: 'View All Products', value: null }, ...formattedProductId]}
-                                                placeholder="Select Product Id"
-                                                value={formattedProductId.find(option => option.value === values.ProductId)}
-                                                onChange={option => setFieldValue('ProductId', option ? option.value : '')}
-                                            />
-                                        </div>
-                                        <div className="flex-1 min-w-[300px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">Location</label>
-                                            <Field
-                                                name="address"
-                                                component={ReactSelect}
-                                                options={[{ label: 'View All Locations', value: null }, ...formattedLocation]}
-                                                styles={customStyles}
-                                                placeholder="Select Location"
-                                                value={formattedLocation.find(option => option.value === values.address)}
-                                                onChange={option => setFieldValue('address', option ? option.value : '')}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="flex justify-center">
-                                        <button
-                                            type="submit"
-                                            className="bg-primary hover:bg-blue-600 text-white font-bold h-10 w-[150px] rounded-lg"
-                                        >
-                                            Search
-                                        </button>
-                                    </div> */}
-                                </Form>
-                            )}
-                        </Formik>
-                    </div>
-
                     <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                         <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
                             <table className="min-w-full leading-normal">
-                                <thead>
-                                    <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                        <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">S.No</th>
-                                        <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Product Description</th>
-                                        <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Product Id</th>
-                                        <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Location</th>
-                                        <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Opening Balance</th>
-                                        <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Purchase</th>
-                                        <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Sale</th>
-                                        <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Transfer In</th>
-                                        <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Transfer Out</th>
-                                        <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Closing Balance</th>
-                                        <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">In Progress</th>
-                                        <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Recent History</th>
-                                        <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Summary</th>
-                                    </tr>
-                                </thead>
                                 <tbody>
                                     {renderTableRows()}
                                 </tbody>
-                            </table>
+                             </table>
                         </div>
                     </div>
                     <Pagination totalPages={pagination.totalPages} currentPage={pagination.currentPage} handlePageChange={handlePageChange} />
