@@ -1013,7 +1013,7 @@ const ProductGroupDetails = () => {
     if (inProgressError) {
       return (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <h3 className="font-bold mb-2">Error loading in-progress orders:</h3>
+          {/* <h3 className="font-bold mb-2">Error loading in-progress orders:</h3> */}
           <p>{inProgressError}</p>
           <button
             onClick={() => fetchInProgressOrders(1)}
@@ -1135,7 +1135,7 @@ const ProductGroupDetails = () => {
     if (categoryError) {
       return (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <h3 className="font-bold mb-2">Error loading {getDisplayOrderType(selectedOrderType)} orders:</h3>
+          {/* <h3 className="font-bold mb-2">Error loading {getDisplayOrderType(selectedOrderType)} orders:</h3> */}
           <p>{categoryError}</p>
           <button
             onClick={() => fetchCategoryOrders(selectedOrderType, 1)}
@@ -1473,7 +1473,7 @@ const ProductGroupDetails = () => {
     if (supplierError) {
       return (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          <h3 className="font-bold mb-2">Error loading supplier orders:</h3>
+          {/* <h3 className="font-bold mb-2">Error loading supplier orders:</h3> */}
           <p>{supplierError}</p>
           <button
             onClick={() => fetchSuppliers()}
@@ -1838,7 +1838,10 @@ const ProductGroupDetails = () => {
   >
     <div className="flex items-center justify-between">
       <div>
-        <p className="text-gray-900 dark:text-white font-medium text-xs uppercase">Retail</p>
+        {/* <p className="text-gray-900 dark:text-white font-medium text-xs uppercase">Retail</p> */}
+        <p className="text-gray-900 dark:text-white font-bold text-xs uppercase">
+  Retail
+</p>
         <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Clients</p>
       </div>
       <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1858,7 +1861,7 @@ const ProductGroupDetails = () => {
   >
     <div className="flex items-center justify-between">
       <div>
-        <p className="text-gray-900 dark:text-white font-medium text-xs uppercase">Wholesale</p>
+        <p className="text-gray-900 dark:text-white font-bold text-xs uppercase">Wholesale</p>
         <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Clients</p>
       </div>
       <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1878,7 +1881,7 @@ const ProductGroupDetails = () => {
   >
     <div className="flex items-center justify-between">
       <div>
-        <p className="text-gray-900 dark:text-white font-medium text-xs uppercase">KLC</p>
+        <p className="text-gray-900 dark:text-white font-bold text-xs uppercase">KLC</p>
         <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Stock</p>
       </div>
       <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1898,7 +1901,7 @@ const ProductGroupDetails = () => {
   >
     <div className="flex items-center justify-between">
       <div>
-        <p className="text-gray-900 dark:text-white font-medium text-xs uppercase">In Progress</p>
+        <p className="text-gray-900 dark:text-white font-bold text-xs uppercase">In Progress</p>
         <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Orders</p>
       </div>
       <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1918,7 +1921,7 @@ const ProductGroupDetails = () => {
   >
     <div className="flex items-center justify-between">
       <div>
-        <p className="text-gray-900 dark:text-white font-medium text-xs uppercase">Suppliers</p>
+        <p className="text-gray-900 dark:text-white font-bold text-xs uppercase">Suppliers</p>
         <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Filter View</p>
       </div>
       <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
