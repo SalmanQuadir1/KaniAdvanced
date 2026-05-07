@@ -661,6 +661,7 @@ const AddOrder = () => {
 
                 const updatedOrderProducts = prodIdModal.map((item, index) => ({
                   products: { id: item?.id || "" },
+                  sourceProductId: item?.sourceProductId.id || "",
                   orderCategory: item?.orderCatagory || "",
                   clientOrderQuantity: values?.orderProducts[index]?.clientOrderQuantity || "",  // Correctly referencing the specific index
                   inStockQuantity: values?.orderProducts[index]?.inStockQuantity || "",
@@ -703,7 +704,7 @@ const AddOrder = () => {
 
             useEffect(() => {
               values.orderProducts.forEach((product, index) => {
-              
+
 
                 // Check if order type is WSClient
                 const selectedOrderType = orderTypeOptions?.find(
@@ -714,13 +715,13 @@ const AddOrder = () => {
                 const isWSClient = selectedOrderType?.label === "WSClients";
 
                 // Use wholesalePrice for WSClient, otherwise use retailMrp
-                console.log(prodIdModal[index],"umi");
-                
+                console.log(prodIdModal[index], "umi");
+
                 const cost = isWSClient
                   ? (prodIdModal[index]?.wPrice || 0)
                   : (prodIdModal[index]?.cost || 0);
-                  
-                  
+
+
 
                 const quantityToManufacture = product.inStockQuantity - product.clientOrderQuantity;
                 const clientOrderQuantity = product.clientOrderQuantity;
@@ -1166,6 +1167,12 @@ const AddOrder = () => {
                           <table className="min-w-full leading-normal overflow-auto">
                             <thead>
                               <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
+
+                                <th
+                                  className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider "
+                                >
+                                  Source Product Id
+                                </th>
                                 <th
                                   className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider "
                                 >
@@ -1244,6 +1251,35 @@ const AddOrder = () => {
 
                               {prodIdModal?.map((item, index) => (
                                 <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white px-5 py-3'>
+
+                                  <td className="px-5 py-5 border-b border-gray-200  text-sm">
+
+                                    {
+                                      item.orderCatagory.split(" ").join("").toLowerCase() === 'dyeing' || item.orderCatagory.split(" ").join("").toLowerCase() === 'embroidery' ? (
+
+                                        <div >
+
+                                          <Field
+                                            name={`orderProducts[${index}].sourceProductId.id`}
+
+                                            value={item?.sourceProductId?.productId || ""}
+
+                                            placeholder="Enter Source Product ID"
+                                            onChange={(e) => {
+                                              console.log(`Source Product ID: ${e.target.value}`); // Log the value on change
+                                            }}
+                                            className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                          />
+                                          <ErrorMessage name={`orderProducts[${index}].sourceProductId`} component="div" className="text-red-600 text-sm" />
+                                        </div>
+
+                                      ) : (
+                                        <div>
+                                          <p>Plain Order</p>
+                                        </div>
+                                      )
+                                    }
+                                  </td>
                                   <td className="px-5 py-5 border-b border-gray-200  text-sm">
 
 

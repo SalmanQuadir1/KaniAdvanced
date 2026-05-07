@@ -7,12 +7,54 @@ import { customStyles as createCustomStyles } from '../../Constants/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import { GET_IMAGE } from '../../Constants/utils';
 import { useNavigate, useNavigation } from 'react-router-dom';
+import useorder from '../../hooks/useOrder';
 
 const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, width = "400px", height = "auto", GET_PRODUCTBYID_URL }) => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const { token } = currentUser;
   const navigate = useNavigate();
   const [products, setproducts] = useState([])
+  const [isLoading, setisLoading] = useState(false)
+  const [prodIdOptions, setprodIdOptions] = useState([])
+  const {
+
+    productId,
+    getprodId,
+
+
+
+
+
+  } = useorder();
+
+  useEffect(async () => {
+
+
+    // Set loading to true when data starts loading
+    await getprodId();
+
+
+    // Set loading to false once data is loaded
+
+
+
+  }, []);
+
+  useEffect(() => {
+
+
+    if (productId) {
+      const formattedProdIdOptions = productId?.map(prodId => ({
+        value: prodId.id,
+        label: prodId?.productId,
+        prodIdObject: prodId,
+        prodId: prodId.id
+      }));
+      setprodIdOptions(formattedProdIdOptions);
+    }
+
+  }, [productId])
+
 
   const theme = useSelector(state => state?.persisted?.theme);
 
@@ -46,13 +88,13 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
         }
       });
       const data = await response.json();
-      console.log(data,'dataaaaaaaaak');
-      
+      console.log(data, 'dataaaaaaaaak');
+
 
 
 
       setproducts(data);
-     
+
 
     } catch (error) {
       console.error(error);
@@ -73,11 +115,12 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
   };
 
   const handleSubmit = (values) => {
+    console.log(values, "submitted values");
     onSubmit(values);
-  
+
     // You can now send this data to your API
   };
-  console.log(products,'products');
+  console.log(products, 'products');
 
 
   return (
@@ -118,10 +161,12 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
               initialValues={{
                 id: products.id || '',
                 productId: products.productId || '',
+
+                sourceProductId: {} || '',
                 barCode: products?.barcode || '',
                 orderCatagory: products.orderCatagory || '',
                 weight: products.finishedWeight || '',
-                units: products?.unit?.name||'',
+                units: products?.unit?.name || '',
                 colorGroup: products?.colors?.colorName || '',
                 warpColors: products.warpColors || '',
                 weftColors: products.weftColors || '',
@@ -129,7 +174,7 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
                 warpYarn: products.warpYarn || '',
                 weftYarn: products.weftYarn || '',
                 pixAndReed: products.pixAndReed || '',
-                deying: products.pixAndReed||'',
+                deying: products.pixAndReed || '',
                 cost: products.cost || '',
                 mrp: products.mrp || '',
                 wPrice: products.wholesalePrice || '',
@@ -148,7 +193,7 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
                 return errors;
               }}
               onSubmit={(values, { setSubmitting }) => {
-                console.log(values,"umershah");
+                console.log(values, "umershah");
 
                 handleSubmit(values);
                 setSubmitting(false); // Stop Formik loader
@@ -158,7 +203,7 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
                 <Form>
                   <div>
                     <div className="flex flex-wrap gap-4">
-                      <div className="flex-1 min-w-[300px] mt-2">
+                      <div className="flex-1 min-w-[300px] ">
                         <label className="mb-1 block text-black dark:text-[rgb(200,200,200)]">Order Category</label>
                         <ReactSelect
                           name="orderCatagory"
@@ -172,7 +217,29 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
                         />
                         <ErrorMessage name="orderCatagory" component="div" className="text-red-600 text-sm" />
                       </div>
-                      <div className="flex-1 min-w-[300px] mt-4">
+
+
+                      {
+                        (values.orderCatagory.toLowerCase() === 'dyeing' || values.orderCatagory.toLowerCase() === 'embroidery') && (
+                          <div className="flex-1 min-w-[200px] ">
+                            <label className="mb-2.5 block text-black dark:text-white">Source Product <span className="text-red-500 ml-1">*</span></label>
+                            <ReactSelect
+                              name="sourceProductId"
+                              value={prodIdOptions?.find(option => option.prodIdObject === values.sourceProductId) || null}
+
+                              onChange={(option) => setFieldValue("sourceProductId", option.prodIdObject)}
+                              isLoading={isLoading}
+                              options={prodIdOptions || "Loading"}
+                              styles={customStyles}
+                              className="bg-white dark:bg-form-Field"
+                              classNamePrefix="react-select"
+                              placeholder={isLoading ? 'Loading Products...' : 'Select ProductId'}
+                            />
+                            <ErrorMessage name="sourceProductId" component="div" className="text-red-600 text-sm" />
+                          </div>
+                        )
+                      }
+                      <div className="flex-1 min-w-[300px] ">
                         <label htmlFor="productId" className="mb-3">Product ID</label>
                         <Field
                           type="text"
@@ -186,7 +253,7 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
                       </div>
 
 
-                      <div className="flex-1 min-w-[300px] mt-4">
+                      <div className="flex-1 min-w-[300px]">
                         <label htmlFor="barCode" className="mb-2">BarCode</label>
                         <Field
                           type="text"
@@ -304,14 +371,14 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
 
                       <div className="flex-1 min-w-[300px] mt-4">
                         <label className="mb-2.5 block text-black dark:text-[rgb(200,200,200)]">Units</label>
-                    
+
                         <Field
-                         type="text"
-                         // as="select" // Use 'as' to render a select element
-                         id="units"
-                         name="units"
-                         disabled
-                         value={products?.unit?.name}
+                          type="text"
+                          // as="select" // Use 'as' to render a select element
+                          id="units"
+                          name="units"
+                          disabled
+                          value={products?.unit?.name}
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
                         <ErrorMessage name="units" component="div" className="text-red-600 text-sm" />
@@ -456,7 +523,7 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
                           type="text"
                           disabled
                           id="wPrice"
-                            value={products?.wholesalePrice}
+                          value={products?.wholesalePrice}
                           name="wPrice"
                           className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         />
