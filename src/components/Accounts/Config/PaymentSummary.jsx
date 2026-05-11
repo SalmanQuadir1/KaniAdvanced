@@ -3,14 +3,13 @@ import DefaultLayout from '../../../layout/DefaultLayout'
 import Breadcrumb from '../../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
 import ReactSelect from 'react-select';
-import { FiEdit, FiTrash2, FiCreditCard, FiDollarSign, FiTrendingUp, FiTrendingDown } from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiCreditCard, FiDollarSign, FiTrendingUp, FiTrendingDown, FiX } from 'react-icons/fi';
 import { RiBankFill, RiMoneyDollarCircleFill } from "react-icons/ri";
 import { FaUsers, FaHandHoldingUsd } from "react-icons/fa";
-
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { SEARCH_DayBook_URL, SEARCH_PAYMENTSUMMARY_URL, customStyles as createCustomStyles } from '../../../Constants/utils';
+import { SEARCH_PAYMENTSUMMARY_URL, customStyles as createCustomStyles } from '../../../Constants/utils';
 
 const PaymentSummary = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
@@ -23,19 +22,25 @@ const PaymentSummary = () => {
         cashDebitTotal: 0,
         supplierCreditTotal: 0,
         customerCreditTotal: 0,
+        customerDebitTotal: 0,
         totalDebit: 0,
         totalCredit: 0,
         netBalance: 0,
         entries: []
     });
 
+    // Modal states
+    const [modalOpen, setModalOpen] = useState(false);
+    const [modalData, setModalData] = useState({
+        title: '',
+        entries: [],
+        type: '', // bank, cash, supplier, customer
+        totalAmount: 0
+    });
+
     const navigate = useNavigate();
 
-
-
     const getPaymentSummary = async (filters = {}) => {
-        console.log(filters, "kkkkkkkkkkkkkkkkkkkkkkkkkk");
-
         try {
             const response = await fetch(`${SEARCH_PAYMENTSUMMARY_URL}`, {
                 method: "POST",
@@ -47,27 +52,27 @@ const PaymentSummary = () => {
             });
 
             const data = await response.json();
-            console.log("API Response:", data);
 
             if (data) {
-                console.log("Data fetched successfully:", data);
-                // Process the data to get totals
                 const processedData = processSummaryData(data);
-                setSummaryData(processedData);
+                setSummaryData({
+                    ...processedData,
+                    rawData: data // Store raw data for modal display
+                });
             } else {
                 setSummaryData({
                     bankDebitTotal: 0,
                     cashDebitTotal: 0,
                     supplierCreditTotal: 0,
                     customerCreditTotal: 0,
+                    customerDebitTotal: 0,
                     totalDebit: 0,
                     totalCredit: 0,
                     netBalance: 0,
-                    entries: []
+                    entries: [],
+                    rawData: null
                 });
             }
-
-
         } catch (error) {
             console.error("Error fetching Payment Summary:", error);
             toast.error("Failed to fetch Payment Summary");
@@ -76,97 +81,85 @@ const PaymentSummary = () => {
                 cashDebitTotal: 0,
                 supplierCreditTotal: 0,
                 customerCreditTotal: 0,
-                customerDebitTotal:0,
+                customerDebitTotal: 0,
                 totalDebit: 0,
                 totalCredit: 0,
                 netBalance: 0,
-                entries: []
+                entries: [],
+                rawData: null
             });
         }
     };
 
     const processSummaryData = (data) => {
-        console.log("Received data:", data);
-
-        // Extract values from the object (with fallbacks)
         const bankDebitTotal = parseFloat(data?.bankTotalDebitBalance || 0);
         const bankCreditTotal = parseFloat(data?.bankTotalCreditBalance || 0);
         const bankClosing = parseFloat(data?.bankTotalOpeningBalance || 0);
         const cashDebitTotal = parseFloat(data?.cashTotalDebitBalance || 0);
         const cashCreditTotal = parseFloat(data?.cashTotalCreditBalance || 0);
-
         const cashClosing = parseFloat(data?.cashTotalOpeningBalance || 0);
         const supplierDebitTotal = parseFloat(data?.supplierTotalDebitBalance || 0);
         const supplierCreditTotal = parseFloat(data?.supplierTotalCreditBalance || 0);
-
-          const supplierClosing = parseFloat(data?.supplierTotalOpeningBalance || 0);
+        const supplierClosing = parseFloat(data?.supplierTotalOpeningBalance || 0);
         const customerDebitTotal = parseFloat(data?.customerTotalDebitBalance || 0);
         const customerCreditTotal = parseFloat(data?.customerTotalCreditBalance || 0);
 
-        // Calculate totals
         const totalDebit = bankDebitTotal + cashDebitTotal + supplierDebitTotal + customerDebitTotal;
         const totalCredit = bankCreditTotal + cashCreditTotal + supplierCreditTotal + customerCreditTotal;
         const netBalance = totalDebit - totalCredit;
 
-        // Calculate available funds (debits are positive for bank/cash)
-        const totalBankBalance = bankClosing; // Positive = money in bank
-        const totalCashBalance = cashClosing; // Positive = cash in hand
-
-        // Calculate liabilities (credits are positive for suppliers/customers)
-        const totalSupplierPayable = supplierCreditTotal - supplierDebitTotal; // Positive = you owe suppliers
-        const totalCustomerReceivable = customerDebitTotal - customerCreditTotal; // Positive = customers owe you
+        const totalBankBalance = bankClosing;
+        const totalCashBalance = cashClosing;
+        const totalSupplierPayable = supplierCreditTotal - supplierDebitTotal;
+        const totalCustomerReceivable = customerDebitTotal - customerCreditTotal;
 
         return {
-            // Original field mapping for cards
             bankDebitTotal: totalBankBalance > 0 ? totalBankBalance : 0,
             cashDebitTotal: totalCashBalance > 0 ? totalCashBalance : 0,
             supplierCreditTotal: totalSupplierPayable > 0 ? totalSupplierPayable : 0,
             customerCreditTotal: totalCustomerReceivable > 0 ? totalCustomerReceivable : 0,
-            customerDebitTotal:  Math.abs(customerDebitTotal) > 0 ? Math.abs(customerDebitTotal) : 0,
-
-            // Detailed breakdown
+            customerDebitTotal: Math.abs(customerDebitTotal) > 0 ? Math.abs(customerDebitTotal) : 0,
             bankDetails: {
                 debit: bankDebitTotal,
                 credit: bankCreditTotal,
-                net: totalBankBalance
+                net: totalBankBalance,
+                entries: data?.bankDebitEntries || [],
+                creditEntries: data?.bankCreditEntries || []
             },
             cashDetails: {
                 debit: cashDebitTotal,
                 credit: cashCreditTotal,
-                net: totalCashBalance
+                net: totalCashBalance,
+                entries: data?.cashDebitEntries || [],
+                creditEntries: data?.cashCreditEntries || []
             },
             supplierDetails: {
                 debit: supplierDebitTotal,
                 credit: supplierCreditTotal,
-                net: totalSupplierPayable
+                net: totalSupplierPayable,
+                entries: data?.supplierDebitEntries || [],
+                creditEntries: data?.supplierCreditEntries || []
             },
             customerDetails: {
                 debit: customerDebitTotal,
                 credit: customerCreditTotal,
-                net: totalCustomerReceivable
+                net: totalCustomerReceivable,
+                entries: data?.customerDebitEntries || [],
+                creditEntries: data?.customerCreditEntries || []
             },
-
-            // Totals
             totalDebit,
             totalCredit,
             netBalance,
-
-            // Additional calculated fields
             totalAvailableFunds: (totalBankBalance + totalCashBalance),
             totalLiabilities: (totalSupplierPayable + Math.abs(totalCustomerReceivable < 0 ? totalCustomerReceivable : 0)),
             totalAssets: (totalBankBalance + totalCashBalance + totalCustomerReceivable),
-
-            // Raw data for debugging
             rawData: data
         };
     };
 
-
     useEffect(() => {
         getPaymentSummary();
     }, [])
-
-
 
     const handleSubmit = (values) => {
         const filters = {
@@ -176,7 +169,6 @@ const PaymentSummary = () => {
         getPaymentSummary(filters);
     };
 
-    // Format currency with Indian numbering system
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat('en-IN', {
             style: 'currency',
@@ -186,7 +178,65 @@ const PaymentSummary = () => {
         }).format(amount || 0);
     };
 
-    // Summary Cards Data
+    // Open modal with specific data
+    const openModal = (title, entries, totalAmount, type) => {
+        setModalData({
+            title,
+            entries: entries || [],
+            type,
+            totalAmount
+        });
+        setModalOpen(true);
+    };
+
+    // Close modal
+    const closeModal = () => {
+        setModalOpen(false);
+        setModalData({
+            title: '',
+            entries: [],
+            type: '',
+            totalAmount: 0
+        });
+    };
+
+    // Format date for display
+    const formatDate = (dateString) => {
+        if (!dateString) return '—';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
+
+    // Get entries based on type
+    const getEntriesForModal = () => {
+        const rawData = summaryData.rawData;
+        if (!rawData) return [];
+
+        switch (modalData.type) {
+            case 'bank':
+                return rawData.bankDebitEntries || [];
+            case 'cash':
+                return rawData.cashDebitEntries || [];
+            case 'supplier':
+                // For suppliers, show credit entries (money you owe)
+                return rawData.supplierCreditEntries || [];
+            case 'customer':
+                // For customers, show debit entries (money customers owe you)
+                return rawData.customerDebitEntries || [];
+            default:
+                return [];
+        }
+    };
+
+    const modalEntries = getEntriesForModal();
+
+    // Summary Cards Data with onClick handlers
     const summaryCards = [
         {
             title: "Bank Balance",
@@ -195,7 +245,9 @@ const PaymentSummary = () => {
             color: "bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/30 dark:to-blue-800/30",
             textColor: "text-blue-700 dark:text-blue-300",
             borderColor: "border-blue-200 dark:border-blue-700",
-            description: "Total money in bank accounts"
+            description: "Total money in bank accounts",
+            modalType: "bank",
+            entries: summaryData.rawData?.bankDebitEntries || []
         },
         {
             title: "Cash in Hand",
@@ -204,7 +256,9 @@ const PaymentSummary = () => {
             color: "bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/30 dark:to-green-800/30",
             textColor: "text-green-700 dark:text-green-300",
             borderColor: "border-green-200 dark:border-green-700",
-            description: "Physical cash available"
+            description: "Physical cash available",
+            modalType: "cash",
+            entries: summaryData.rawData?.cashDebitEntries || []
         },
         {
             title: "Payable to Suppliers",
@@ -213,7 +267,9 @@ const PaymentSummary = () => {
             color: "bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/30 dark:to-red-800/30",
             textColor: "text-red-700 dark:text-red-300",
             borderColor: "border-red-200 dark:border-red-700",
-            description: "Total amount owed to suppliers"
+            description: "Total amount owed to suppliers",
+            modalType: "supplier",
+            entries: summaryData.rawData?.supplierCreditEntries || []
         },
         {
             title: "Receivable from Customers",
@@ -222,11 +278,12 @@ const PaymentSummary = () => {
             color: "bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/30 dark:to-purple-800/30",
             textColor: "text-purple-700 dark:text-purple-300",
             borderColor: "border-purple-200 dark:border-purple-700",
-            description: "Total amount customers owe"
+            description: "Total amount customers owe",
+            modalType: "customer",
+            entries: summaryData.rawData?.customerDebitEntries || []
         }
     ];
 
-    // Overview Cards
     const overviewCards = [
         {
             title: "Total Debits",
@@ -327,14 +384,15 @@ const PaymentSummary = () => {
                         </Formik>
                     </div>
 
-                    {/* Summary Cards - Total Debits (Bank + Cash) */}
+                    {/* Summary Cards - Clickable */}
                     <div className="mb-8">
                         <h3 className="text-xl font-semibold mb-4 text-slate-800 dark:text-white">💰 Available Funds</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                             {summaryCards.map((card, index) => (
                                 <div
                                     key={index}
-                                    className={`${card.color} rounded-2xl border ${card.borderColor} p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1`}
+                                    onClick={() => openModal(card.title, card.entries, card.amount, card.modalType)}
+                                    className={`${card.color} rounded-2xl border ${card.borderColor} p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer`}
                                 >
                                     <div className="flex items-center justify-between mb-4">
                                         <div>
@@ -401,9 +459,6 @@ const PaymentSummary = () => {
                                             style={{ width: `${Math.min(100, ((summaryData.bankDebitTotal + summaryData.cashDebitTotal) / (summaryData.supplierCreditTotal + 1)) * 10)}%` }}
                                         ></div>
                                     </div>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">
-                                        {/* {(Cash + Bank) : Payables ratio */}
-                                    </p>
                                 </div>
 
                                 <div>
@@ -471,9 +526,129 @@ const PaymentSummary = () => {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
+
+            {/* Modal Component */}
+            {modalOpen && (
+                <div
+                    className="fixed inset-0 overflow-y-auto"
+                    style={{ zIndex: 9999 }}
+                >
+                    <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                        {/* Background overlay */}
+                        <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75 dark:bg-gray-900 dark:bg-opacity-90" onClick={closeModal}></div>
+
+                        {/* Modal panel */}
+                        <div className="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white dark:bg-slate-800 rounded-2xl shadow-xl sm:my-8 sm:align-middle sm:max-w-5xl sm:w-full">
+                            {/* Modal Header */}
+                            <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 dark:border-slate-700">
+                                <div>
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                                        {modalData.title} Details
+                                    </h3>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                                        Total Amount: <span className="font-semibold">{formatCurrency(modalData.totalAmount)}</span>
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={closeModal}
+                                    className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 focus:outline-none"
+                                >
+                                    <FiX className="w-6 h-6" />
+                                </button>
+                            </div>
+
+                            {/* Modal Body - Table */}
+                            <div className="px-6 py-4 max-h-[70vh] overflow-y-auto">
+                                {modalEntries.length === 0 ? (
+                                    <div className="text-center py-12">
+                                        <p className="text-gray-500 dark:text-gray-400">No entries found</p>
+                                    </div>
+                                ) : (
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
+                                            <thead className="bg-gray-50 dark:bg-slate-900">
+                                                <tr>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                        ID
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                        Date
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                        Description
+                                                    </th>
+                                                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                        Debit (₹)
+                                                    </th>
+                                                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                        Credit (₹)
+                                                    </th>
+                                                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                        Voucher Type
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
+                                                {modalEntries.map((entry, idx) => (
+                                                    <tr key={entry.id || idx} className="hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors">
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                                            {entry.id || '—'}
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                                            {formatDate(entry.receivedDate)}
+                                                        </td>
+                                                        <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400 max-w-md truncate">
+                                                            {entry.description || '—'}
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-green-600 dark:text-green-400">
+                                                            {entry.debit > 0 ? formatCurrency(entry.debit) : '—'}
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-medium text-red-600 dark:text-red-400">
+                                                            {entry.credit > 0 ? formatCurrency(entry.credit) : '—'}
+                                                        </td>
+                                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                                                            <span className="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 dark:bg-slate-700">
+                                                                {entry.voucherType || '—'}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                            {/* Table Footer with Total */}
+                                            <tfoot className="bg-gray-50 dark:bg-slate-900 sticky bottom-0">
+                                                <tr>
+                                                    <th colSpan="3" className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                                        Total
+                                                    </th>
+                                                    <th className="px-6 py-3 text-right text-sm font-bold text-green-600 dark:text-green-400">
+                                                        {formatCurrency(modalEntries.reduce((sum, e) => sum + (e.debit || 0), 0))}
+                                                    </th>
+                                                    <th className="px-6 py-3 text-right text-sm font-bold text-red-600 dark:text-red-400">
+                                                        {formatCurrency(modalEntries.reduce((sum, e) => sum + (e.credit || 0), 0))}
+                                                    </th>
+                                                    <th></th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Modal Footer */}
+                            <div className="px-6 py-4 border-t border-gray-200 dark:border-slate-700 flex justify-end">
+                                <button
+                                    onClick={closeModal}
+                                    className="px-4 py-2 bg-gray-200 dark:bg-slate-700 text-gray-800 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-slate-600 transition-colors"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </DefaultLayout>
     );
 };
