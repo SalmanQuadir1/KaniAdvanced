@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 import useorder from '../../hooks/useOrder';
 import ReactDatePicker from "react-datepicker";
 import useProduct from '../../hooks/useProduct';
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL, UPDATE_CANCELLEDORDER_ALL } from '../../Constants/utils';
+import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL, UPDATE_CANCELLEDORDER_ALL, GET_ORDERBYIDD_URL } from '../../Constants/utils';
 import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
@@ -170,7 +170,7 @@ const UpdateOrderAccepted = () => {
 
     // Log the data to check the format
     console.log(finalData, "finalData");
-console.log(finalData,"jump");
+    console.log(finalData, "jump");
 
 
 
@@ -215,7 +215,7 @@ console.log(finalData,"jump");
 
   const getOrderById = async () => {
     try {
-      const response = await fetch(`${GET_ORDERBYID_URL}/${id}`, {
+      const response = await fetch(`${GET_ORDERBYIDD_URL}/${id}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -322,8 +322,8 @@ console.log(finalData,"jump");
 
   console.log(order, "orderrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
 
-  const handleCancelOrder = async(values) => {
-    console.log(values,"heyyy");
+  const handleCancelOrder = async (values) => {
+    console.log(values, "heyyy");
 
     const selectedProducts = values.selectedRows.map((productId) => ({
       id: productId,
@@ -336,7 +336,7 @@ console.log(finalData,"jump");
 
     // Log the data to check the format
     console.log(finalData, "finalData");
-  
+
     try {
       const url = `${UPDATE_CANCELLEDORDER_ALL}/${id}`;
       const method = "PUT";
@@ -382,10 +382,10 @@ console.log(finalData,"jump");
 
 
             orderProducts: order?.orderProducts?.map((product) => ({
-
+              sourceProductName: product.sourceProductName || "No Source Product",
               products: {
                 ...product.products,
-                productId: product.products?.productId || '',  // Set initial value for productId
+                productId: product?.productIdName || '',  // Set initial value for productId
               },
               productSuppliers: [
                 {
@@ -480,6 +480,9 @@ console.log(finalData,"jump");
                                 Order No
                               </th> */}
                               <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                SourceProduct Id
+                              </th>
+                              <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Product Id
                               </th>
                               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
@@ -500,7 +503,28 @@ console.log(finalData,"jump");
                             {order?.orderProducts?.map((product, index) => (
                               <tr key={product.id}>
                                 {/* Radio Button */}
-                             
+
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    name={`orderProducts[${index}].sourceProductName`}
+                                    onChange={(e) => {
+                                      const newValue = e.target.value;
+                                      console.log(`New Product ID: ${newValue}`);
+                                      setFieldValue(
+                                        `orderProducts[${index}].sourceProductName`,
+                                        newValue
+                                      );
+                                    }}
+                                    className="w-[150px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                    placeholder="Enter Product ID"
+                                  />
+                                  <ErrorMessage
+                                    name={`orderProducts[${index}].sourceProductName`}
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
+                                </td>
+
 
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <Field
@@ -586,8 +610,8 @@ console.log(finalData,"jump");
                                           VIEW PRODUCT DETAILS
                                         </span>
                                       </div>
-                                    ) 
-                                    
+                                    )
+
                                     // : (product.productStatus?.toLowerCase() === "approved" || product.productStatus === "Pending") ? (
                                     //   <div className="flex items-center gap-2">
                                     //     <span
@@ -604,21 +628,21 @@ console.log(finalData,"jump");
                                     //     </span>
                                     //   </div>
                                     // ) : (
-                                      // <div className="flex items-center gap-2">
-                                      //   <span
-                                      //     onClick={() => navigate(`/order/modifyorderproduct/${product?.id}`)}
-                                      //     className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
-                                      //   >
-                                      //     VIEW ORDER PRODUCT
-                                      //   </span>
-                                      //   <span
-                                      //     onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
-                                      //     className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
-                                      //   >
-                                      //     VIEW PRODUCT DETAILS
-                                      //   </span>
-                                      // </div>
-                                    
+                                    // <div className="flex items-center gap-2">
+                                    //   <span
+                                    //     onClick={() => navigate(`/order/modifyorderproduct/${product?.id}`)}
+                                    //     className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
+                                    //   >
+                                    //     VIEW ORDER PRODUCT
+                                    //   </span>
+                                    //   <span
+                                    //     onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
+                                    //     className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
+                                    //   >
+                                    //     VIEW PRODUCT DETAILS
+                                    //   </span>
+                                    // </div>
+
                                   }
 
 
@@ -653,7 +677,7 @@ console.log(finalData,"jump");
                         role === "ROLE_EXECUTOR" ? (
                           <div className="flex justify-center mt-4">
                             <button
-                            type='button'
+                              type='button'
                               onClick={() => handleCancelOrder(values)} // Ensure the function is executed
                               className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none"
                             >

@@ -315,14 +315,14 @@ const ViewOrderApproved = () => {
                         {/* Check if the order proforma is not created */}
                         {item.isOrderProformaCreated === false ? (
                             // Check if the orderType is "WSClients" or "RetailClients"
-                            item.orderTypeName === "WSClients" ? (
+                            item.orderTypeName.toLowerCase() === "wsclients" ? (
                                 <MdCreateNewFolder
                                     size={17}
                                     className="text-teal-500 hover:text-teal-700 mx-2"
                                     onClick={() => navigate(`/Order/generateProforma/${item?.id}`)}
                                     title="Create Proforma"
                                 />
-                            ) : item.orderTypeName === "RetailClients" ? (
+                            ) : item.orderTypeName.toLowerCase() === "retailclients" ? (
                                 <MdCreateNewFolder
                                     size={17}
                                     className="text-teal-500 hover:text-teal-700 mx-2"
@@ -336,9 +336,9 @@ const ViewOrderApproved = () => {
                                 size={17}
                                 className="text-teal-500 hover:text-teal-700 mx-2"
                                 onClick={() => {
-                                    if (item.orderTypeName === "WSClients") {
+                                    if (item.orderTypeName.toLowerCase() === "wsclients") {
                                         navigate(`/Order/updateOrderProforma/${item?.id}`);
-                                    } else if (item.orderTypeName === "RetailClients") {
+                                    } else if (item.orderTypeName.toLowerCase() === "retailclients") {
                                         navigate(`/Order/updateRetailProforma/${item?.id}`);
                                     }
                                 }}

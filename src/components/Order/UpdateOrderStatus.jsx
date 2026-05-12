@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 import useorder from '../../hooks/useOrder';
 import ReactDatePicker from "react-datepicker";
 import useProduct from '../../hooks/useProduct';
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL } from '../../Constants/utils';
+import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL, GET_ORDERBYIDD_URL } from '../../Constants/utils';
 import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
@@ -127,7 +127,7 @@ const UpdateOrderStaus = () => {
     console.log("Selected Suppliers:", selectedSuppliers);
     closeSupplierModal();
   };
-  
+
 
 
 
@@ -186,8 +186,8 @@ const UpdateOrderStaus = () => {
       const data = await response.json();
       if (response.ok) {
         toast.success(`Order Status Updated  successfully`);
-     
-  
+
+
 
         // getCurrency(pagination.currentPage); // Fetch updated Currency
       } else {
@@ -196,7 +196,7 @@ const UpdateOrderStaus = () => {
     } catch (error) {
       console.error(error, response);
       toast.error("An error occurred");
-    } 
+    }
 
     // You can now send `finalData` to the backend or do any other operation with it
   };
@@ -204,14 +204,14 @@ const UpdateOrderStaus = () => {
 
 
 
-    
+
 
 
 
 
   const getOrderById = async () => {
     try {
-      const response = await fetch(`${GET_ORDERBYID_URL}/${id}`, {
+      const response = await fetch(`${GET_ORDERBYIDD_URL}/${id}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -301,7 +301,7 @@ const UpdateOrderStaus = () => {
 
 
 
- 
+
 
 
 
@@ -319,6 +319,7 @@ const UpdateOrderStaus = () => {
 
 
 
+  console.log(order, "1111111111111111111111111111111111111111110");
 
 
   return (
@@ -334,10 +335,11 @@ const UpdateOrderStaus = () => {
 
 
             orderProducts: order?.orderProducts?.map((product) => ({
+              sourceProductName: product?.sourceProductName || "No Source Product Name",  // Set initial value for sourceProductName
 
               products: {
                 ...product.products,
-                productId: product.products?.productId || '',  // Set initial value for productId
+                productId: product?.productIdName || '',  // Set initial value for productId
               },
               productSuppliers: [
                 {
@@ -347,6 +349,7 @@ const UpdateOrderStaus = () => {
                   supplierOrderQty: "",
                 },
               ],
+
               orderCategory: product.orderCategory || '',
               inStockQuantity: product.inStockQuantity || '',
               clientOrderQuantity: product.clientOrderQuantity || '',
@@ -387,7 +390,7 @@ const UpdateOrderStaus = () => {
                           <label className="mb-2.5 block text-black dark:text-white">Order No</label>
                           <ReactSelect
                             name="orderNo"
-                           
+
                             value={order?.orderNo ? { label: order.orderNo, value: order.orderNo } : null} // Display orderNo
                             styles={customStyles}
                             className="bg-white dark:bg-form-Field"
@@ -430,6 +433,10 @@ const UpdateOrderStaus = () => {
                               </th> */}
                               <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Order No
+                              </th>
+
+                              <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                Source Product
                               </th>
                               <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Product Id
@@ -490,6 +497,19 @@ const UpdateOrderStaus = () => {
                                   />
                                 </td>
 
+                                <td className="px-8 py-5 border-b border-gray-200 text-sm">
+                                  <Field
+                                    name={`orderProducts.${index}.sourceProductName`}  // ✅ Correct path
+                                    className="w-[150px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                    placeholder="Enter Source Product Name"
+                                  />
+                                  <ErrorMessage
+                                    name={`orderProducts.${index}.sourceProductName`}
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
+                                </td>
+
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <Field
                                     name={`orderProducts[${index}].products.productId`}
@@ -505,7 +525,7 @@ const UpdateOrderStaus = () => {
                                     placeholder="Enter Product ID"
                                   />
                                   <ErrorMessage
-                                    name={`orderProducts[${index}].orderCategory`}
+                                    name={`orderProducts[${index}].products.productId`}
                                     component="div"
                                     className="text-red-600 text-sm"
                                   />
@@ -556,10 +576,10 @@ const UpdateOrderStaus = () => {
                                   className="px-5 py-5 border-b border-gray-200 text-sm"
                                   colSpan={2} // Use colSpan to span across multiple columns
                                 >
-                                     <div className="flex items-center gap-2">
-                                <span onClick={() => navigate(`/order/modifyorderproduct/${product?.id}`)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"> VIEW ORDER PRODUCT</span>
-                                <span onClick={() => navigate(`/order/viewProduct/${product?.id}`)} className=" bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]">VIEW PRODUCT DETAILS</span>
-                            </div>
+                                  <div className="flex items-center gap-2">
+                                    <span onClick={() => navigate(`/order/modifyorderproduct/${product?.id}`)} className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"> VIEW ORDER PRODUCT</span>
+                                    <span onClick={() => navigate(`/order/viewProduct/${product?.id}`)} className=" bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]">VIEW PRODUCT DETAILS</span>
+                                  </div>
                                 </td>
 
                               </tr>
@@ -583,7 +603,7 @@ const UpdateOrderStaus = () => {
 
 
 
-                     
+
 
                       <div className="flex justify-center mt-4"> {/* Centering the button */}
                         <button

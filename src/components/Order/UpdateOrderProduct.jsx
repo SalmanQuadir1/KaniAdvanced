@@ -504,6 +504,7 @@ const UpdateOrderProduct = () => {
             // orderNo: order?.orderNo || '',
             orderCategory: order?.orderCategory || '',
             productId: order?.products?.productId,
+            // sourceProductId: order?.sourceProductName || '',
             quantityToManufacture: order?.quantityToManufacture,
             value: order?.value,
             expectedDate: order?.expectedDate,
@@ -574,6 +575,18 @@ const UpdateOrderProduct = () => {
                       </div>
 
                       {/* Product ID */}
+
+                         <div className="flex-1 min-w-[200px]">
+                        <label className="mb-2.5 block text-black dark:text-white">Source Product ID</label>
+                        <Field
+                          name="sourceProductId"
+                          value={order?.sourceProductName} // Ensure it reflects Formik state
+                          // onChange={(e) => setFieldValue("sourceProductId", e.target.value)} // Update Formik state
+                          className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                          placeholder="Enter Source Product ID"
+                        />
+                        <ErrorMessage name="sourceProductId" component="div" className="text-red-600 text-sm" />
+                      </div>
                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Product ID</label>
                         <Field
@@ -585,6 +598,7 @@ const UpdateOrderProduct = () => {
                         />
                         <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
                       </div>
+                     
 
                       {/* Quantity to Manufacture */}
                       <div className="flex-1 min-w-[200px]">

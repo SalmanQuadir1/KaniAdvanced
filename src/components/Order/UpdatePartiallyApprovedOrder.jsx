@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 import useorder from '../../hooks/useOrder';
 import ReactDatePicker from "react-datepicker";
 import useProduct from '../../hooks/useProduct';
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL } from '../../Constants/utils';
+import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL, GET_ORDERBYIDD_URL } from '../../Constants/utils';
 import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
@@ -211,7 +211,7 @@ const UpdatePartiallyApprovedOrder = () => {
 
   const getOrderById = async () => {
     try {
-      const response = await fetch(`${GET_ORDERBYID_URL}/${id}`, {
+      const response = await fetch(`${GET_ORDERBYIDD_URL}/${id}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -336,10 +336,10 @@ const UpdatePartiallyApprovedOrder = () => {
 
 
             orderProducts: order?.orderProducts?.map((product) => ({
-
+              sourceProductName: product.sourceProductName || "No Source Product",
               products: {
                 ...product.products,
-                productId: product.products?.productId || '',  // Set initial value for productId
+                productId: product?.productIdName || '',  // Set initial value for productId
               },
               productSuppliers: [
                 {
@@ -432,6 +432,9 @@ const UpdatePartiallyApprovedOrder = () => {
                                 Order No
                               </th>
                               <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                Source Product Id
+                              </th>
+                              <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Product Id
                               </th>
                               <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
@@ -474,12 +477,33 @@ const UpdatePartiallyApprovedOrder = () => {
 
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <Field
+                                    name={`orderProducts[${index}].sourceProductName`}
+                                    onChange={(e) => {
+                                      const newValue = e.target.value;
+                                      console.log(`New Source Product Name: ${newValue}`);
+                                      setFieldValue(
+                                        `orderProducts[${index}].sourceProductName`,
+                                        newValue
+                                      );
+                                    }}
+                                    className="w-[150px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                    placeholder="Enter Source Product Name"
+                                  />
+                                  <ErrorMessage
+                                    name={`orderProducts[${index}].sourceProductName`}
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
+                                </td>
+
+                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                  <Field
                                     name={`orderProducts[${index}].products.productId`}
                                     onChange={(e) => {
                                       const newValue = e.target.value;
                                       console.log(`New Product ID: ${newValue}`);
                                       setFieldValue(
-                                        `orderProducts[${index}].products.productId`,
+                                        `orderProducts[${index}].productId`,
                                         newValue
                                       );
                                     }}
@@ -487,7 +511,7 @@ const UpdatePartiallyApprovedOrder = () => {
                                     placeholder="Enter Product ID"
                                   />
                                   <ErrorMessage
-                                    name={`orderProducts[${index}].orderCategory`}
+                                    name={`orderProducts[${index}].productId`}
                                     component="div"
                                     className="text-red-600 text-sm"
                                   />

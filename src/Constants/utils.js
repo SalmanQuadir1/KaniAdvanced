@@ -423,6 +423,9 @@ export const VIEW_ORDERNO = `${BASE_URL}/order/viewOrderNo`;
 
 
 export const GET_ORDERBYID_URL = `${BASE_URL}/order/get`;
+export const GET_ORDERBYIDD_URL = `${BASE_URL}/order/orderReponse`;
+
+
 export const UPDATE_ORDER_URL = `${BASE_URL}/order/update`;
 
 

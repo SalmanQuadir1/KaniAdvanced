@@ -111,7 +111,7 @@ const IssueChalaan = () => {
 
 
 
- 
+
 
 
   const getOrderById = async () => {
@@ -217,7 +217,7 @@ const IssueChalaan = () => {
 
 
 
- 
+
 
 
 
@@ -260,8 +260,8 @@ const IssueChalaan = () => {
   const handleSubmit = async (values) => {
 
 
-    const formattedValues={
-      challanNo:values.challanNo,
+    const formattedValues = {
+      challanNo: values.challanNo,
       challanDate: values.challanDate,
       challanDate1: values.challanDate1,
       challanDate2: values.challanDate2,
@@ -269,7 +269,7 @@ const IssueChalaan = () => {
       challanDate4: values.challanDate4,
       expectedSupplierDate: values.expectedSupplierDate
     }
-   
+
     try {
       const url = `${UPDATE_ISSUECHALLAN}/${id}`;
       const method = "PUT";
@@ -323,7 +323,7 @@ const IssueChalaan = () => {
 
 
   console.log(selectedSuppliers, "supppppppppppppppppppplierssssssssssssssssss");
-console.log(order?.orderCategory,"jjhhjjhh");
+  console.log(order?.orderCategory, "jjhhjjhh");
 
   return (
     <DefaultLayout>
@@ -363,8 +363,8 @@ console.log(order?.orderCategory,"jjhhjjhh");
             challanDate3: "",
 
             challanDate4: "",
-            expectedSupplierDate:"",
-            updatedBy:order?.updatedBy
+            expectedSupplierDate: "",
+            updatedBy: order?.updatedBy
 
 
 
@@ -410,7 +410,7 @@ console.log(order?.orderCategory,"jjhhjjhh");
                           name="orderCategory"
                           value={order?.orderCategory || null}
                           // onChange={(option) => setFieldValue("orderCategory", option.value)} // Store only value
-                         
+
                           styles={customStyles}
                           isDisabled={true}
                           className="w-[200px] bg-gray-3 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
@@ -434,6 +434,19 @@ console.log(order?.orderCategory,"jjhhjjhh");
                         />
                         <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
                       </div> */}
+                      <div className="flex-1 min-w-[200px]">
+                        <label className="mb-2.5 block text-black dark:text-white">SourceProduct ID</label>
+                        <Field
+                          name="sourceProduct"
+                          readOnly
+
+                          value={order?.sourceProductName} // Ensure it reflects Formik state
+                          onChange={(e) => setFieldValue("productId", e.target.value)} // Update Formik state
+                          className="w-[200px] bg-gray-3 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                          placeholder="Enter Product ID"
+                        />
+                        <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
+                      </div>
 
                       {/* Product ID */}
                       <div className="flex-1 min-w-[200px]">
@@ -441,7 +454,7 @@ console.log(order?.orderCategory,"jjhhjjhh");
                         <Field
                           name="productId"
                           readOnly
-                        
+
                           value={values?.productId} // Ensure it reflects Formik state
                           onChange={(e) => setFieldValue("productId", e.target.value)} // Update Formik state
                           className="w-[200px] bg-gray-3 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"

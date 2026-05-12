@@ -327,6 +327,9 @@ const UpdateOrderRecieving = () => {
       product: {
         id: values?.productsId
       },
+      sourceProductId:{
+        id: values?.sourceProductsId
+      },
 
       receivedQuantity: values.receivedQuantity,
       receivedDate: values.receivedDate,
@@ -343,35 +346,35 @@ const UpdateOrderRecieving = () => {
     console.log(formattedValues, "nishi");
 
 
-    try {
-      const url = `${UPDATE_ORDERRECIEVED}/${id}`;
-      const method = "PUT";
+    // try {
+    //   const url = `${UPDATE_ORDERRECIEVED}/${id}`;
+    //   const method = "PUT";
 
-      const response = await fetch(url, {
-        method: method,
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(formattedValues)
-      });
+    //   const response = await fetch(url, {
+    //     method: method,
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       "Authorization": `Bearer ${token}`
+    //     },
+    //     body: JSON.stringify(formattedValues)
+    //   });
 
-      const data = await response.json();
-      if (response?.ok) {
-        toast.success(`Order Recieved Status Updated successfully`);
-        navigate("/order/partiallyApproved")
+    //   const data = await response.json();
+    //   if (response?.ok) {
+    //     toast.success(`Order Recieved Status Updated successfully`);
+    //     navigate("/order/partiallyApproved")
 
 
 
-        // getCurrency(pagination.currentPage); // Fetch updated Currency
-      } else {
-        console.log(response, "kk");
-        toast.error(`${data?.errorMessage}`);
-      }
-    } catch (error) {
-      console.error(error, "hfff");
-      toast.error(error);
-    }
+    //     // getCurrency(pagination.currentPage); // Fetch updated Currency
+    //   } else {
+    //     console.log(response, "kk");
+    //     toast.error(`${data?.errorMessage}`);
+    //   }
+    // } catch (error) {
+    //   console.error(error, "hfff");
+    //   toast.error(error);
+    // }
 
     // You can now send `finalData` to the backend or do any other operation with it
   };
@@ -442,13 +445,13 @@ const UpdateOrderRecieving = () => {
   const nowReceivable = order?.quantityToManufacture - supplier?.suppliers?.reduce((total, supplier) => total + (supplier.receivedQuantity || 0), 0)
 
 
-  console.log(nowReceivable, "22222222222222220");
+  // console.log(nowReceivable, "22222222222222220");
 
 
-  console.log(order, "5454545");
+  // console.log(order, "5454545");
 
-  console.log(selectedSupplierId, "000000000000000");
-  console.log(supplier, "11111");
+  // console.log(selectedSupplierId, "000000000000000");
+  // console.log(supplier, "11111");
 
   return (
     <DefaultLayout>
@@ -462,6 +465,7 @@ const UpdateOrderRecieving = () => {
             // orderNo: order?.orderNo || '',
             orderCategory: order?.orderCategory || '',
             productId: order?.products?.productId,
+            sourceProductId: order?.sourceProductName || '',
             quantityToManufacture: order?.quantityToManufacture,
 
             expectedDate: order?.expectedDate,
@@ -469,6 +473,7 @@ const UpdateOrderRecieving = () => {
               id: ""
             },
             productsId: order?.products?.id,
+            sourceProductsId: order?.sourceProductId,
 
             // quantityToManufacture: order?.quantityToManufacture,
             units: order?.units,
@@ -559,6 +564,19 @@ const UpdateOrderRecieving = () => {
 
                         <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
                       </div>
+                         <div className="flex-1 min-w-[200px]">
+                        <label className="mb-2.5 block text-black dark:text-white">Product ID</label>
+                        <Field
+                          name="sourceProductId"
+                          readOnly
+
+                          value={values?.sourceProductId} // Ensure it reflects Formik state
+                          onChange={(e) => setFieldValue("sourceProductId", e.target.value)} // Update Formik state
+                          className="w-[270px] bg-gray-3 dark:bg-form-input rounded border-[1.5px] border-stroke  text-black"
+                          placeholder="Enter Product ID"
+                        />
+                        <ErrorMessage name="sourceProductId" component="div" className="text-red-600 text-sm" />
+                      </div>
 
                       {/* Product ID */}
                       <div className="flex-1 min-w-[200px]">
@@ -575,7 +593,16 @@ const UpdateOrderRecieving = () => {
                         <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
                       </div>
 
-                      <div className="flex-1 ">
+                     
+
+                      {/* Quantity to Manufacture */}
+
+                    </div>
+
+
+
+                    <div className="flex flex-wrap gap-3 mt-5">
+                       <div className="flex-1 ">
                         <label className="mb-2.5 block text-black dark:text-white">Unit</label>
                         <Field
                           name="units"
@@ -585,19 +612,11 @@ const UpdateOrderRecieving = () => {
                         <ErrorMessage name="units" component="div" className="text-red-600 text-sm" />
                       </div>
 
-                      {/* Quantity to Manufacture */}
-
-                    </div>
-
-
-
-                    <div className="flex flex-wrap gap-3 mt-5">
-
                       <div className="flex-1 min-w-[10px]">
                         <label className="mb-2.5 block text-black dark:text-white min-w-[10px]">Supplier Order Quantity</label>
                         <Field
                           name="quantityToManufacture"
-                          className="w-[300px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                          className="w-[100px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           readOnly // Read-only field
                         />
                         <ErrorMessage name="quantityToManufacture" component="div" className="text-red-600 text-sm" />
@@ -640,7 +659,7 @@ const UpdateOrderRecieving = () => {
                           readOnly
                           // name={`orderProducts[${index}].expectedDate`}
                           value={values.expectedDate || ""}
-                          className="w-[300px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                          className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                         //readOnly
                         />
                         <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />

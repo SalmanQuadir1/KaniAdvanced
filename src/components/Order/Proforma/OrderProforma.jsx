@@ -476,46 +476,61 @@ const OrderProforma = () => {
                             return defGstRegistCode !== shippingStateCode;
                         };
 
-                        const calculateTaxableValue = (discountedPrice, hsnCode, isInterstate, modeOfShipment) => {
-                            // For Commercial mode, taxable value = discounted price (no GST calculation)
+                        // Corrected calculateTaxableValue function - GST should be ADDED, not subtracted
+                        const calculateTaxableValue = (wholesalePrice, discountPercentage, hsnCode, isInterstate, modeOfShipment, orderQty) => {
+                            // First calculate discounted price
+                            const discountedPrice = wholesalePrice - (wholesalePrice * (discountPercentage / 100));
+
                             if (modeOfShipment === 'Commercial') {
-                                return discountedPrice;
-                            }
-
-                            // For Courier mode, calculate GST as before
-                            if (!hsnCode) {
-                                // Default 5% GST if no HSN code
-                                return Math.round(discountedPrice / 1.05);
-                            }
-
-                            if (isInterstate) {
-                                // Interstate transaction - use IGST
-                                const igstRate = hsnCode.igst || 0;
-                                return Math.round(discountedPrice / (1 + (igstRate / 100)));
+                                // For Commercial: No GST, total = discounted price × quantity
+                                const totalValue = discountedPrice * orderQty;
+                                return {
+                                    gstTaxRate: 0,
+                                    taxibleValue: discountedPrice,
+                                    totalValue: totalValue,
+                                    gstAmount: 0
+                                };
                             } else {
-                                // Intrastate transaction - use CGST + SGST
-                                const cgstRate = hsnCode.cgst || 0;
-                                const sgstRate = hsnCode.sgst || 0;
-                                const totalGstRate = cgstRate + sgstRate;
-                                return Math.round(discountedPrice / (1 + (totalGstRate / 100)));
+                                // For Courier: Add GST to the discounted price
+                                let gstTaxRate = 0;
+
+                                if (hsnCode) {
+                                    if (isInterstate) {
+                                        gstTaxRate = hsnCode.igst || 5; // Default 5% if not set
+                                    } else {
+                                        const cgstRate = hsnCode.cgst || 2.5;
+                                        const sgstRate = hsnCode.sgst || 2.5;
+                                        gstTaxRate = cgstRate + sgstRate;
+                                    }
+                                } else {
+                                    gstTaxRate = 5; // Default 5% GST
+                                }
+
+                                // Calculate GST amount (ADDED to price, not subtracted)
+                                const gstAmount = (discountedPrice * gstTaxRate) / 100;
+
+                                // Taxable value = discounted price + GST amount
+                                const taxibleValue = discountedPrice + gstAmount;
+
+                                // Total value = taxable value × quantity
+                                const totalValue = taxibleValue * orderQty;
+
+                                return {
+                                    gstTaxRate: gstTaxRate,
+                                    taxibleValue: taxibleValue,
+                                    totalValue: totalValue,
+                                    gstAmount: gstAmount
+                                };
                             }
                         };
 
                         useEffect(() => {
-                            // Check if currency, rate, and GST registration are available
                             if (values.currency && values.rate && values.defGstRegist) {
-                                console.log(values.rate, "current rate");
-
-                                // Get GST type information
                                 const gstRegistState = getGstRegistrationState();
                                 const shippingStateCode = order?.customer?.shippingState || null;
                                 const isInterstate = isInterstateTransaction(gstRegistState, shippingStateCode);
                                 const currentModeOfShipment = values.modeOfShipment;
 
-                                console.log("Transaction type:", isInterstate ? "Interstate (IGST)" : "Intrastate (CGST+SGST)");
-                                console.log("Mode of Shipment:", currentModeOfShipment);
-
-                                // Loop through the orderProducts
                                 order?.orderProducts?.forEach((product, index) => {
                                     let wholesalePrice = 0;
 
@@ -532,54 +547,29 @@ const OrderProforma = () => {
                                         wholesalePrice = product?.products?.rmbPrice || 0;
                                     }
 
-                                    // Adjust for exchange rate if provided
+                                    // Adjust for exchange rate
                                     if (values.rate && values.rate !== 1) {
                                         wholesalePrice = wholesalePrice / values.rate;
                                     }
 
-                                    // Set the wholesale price
                                     setFieldValue(`orderProducts[${index}].wholesalePrice`, Math.round(wholesalePrice));
 
-                                    // Get the discount percentage
-                                    const discountPercentage = values.orderProducts[index]?.discount || 0;
-
-                                    // Calculate discounted price
-                                    let discountedPrice = wholesalePrice;
-                                    if (discountPercentage > 0) {
-                                        discountedPrice = wholesalePrice - (wholesalePrice * (discountPercentage / 100));
-                                    }
-
-                                    // Set discounted price
-                                    setFieldValue(`orderProducts[${index}].discountedPrice`, Math.round(discountedPrice));
-
-                                    // Calculate based on mode of shipment
-                                    const orderQty = values.orderProducts[index]?.orderQty || 0;
+                                    const discount = values.orderProducts[index]?.discount || 0;
 
                                     if (currentModeOfShipment === 'Commercial') {
-                                        // For Commercial: taxable value = discounted price, total value = discounted price * qty
-                                        const taxableValue = discountedPrice;
-                                        const totalValue = Math.round(taxableValue * orderQty);
-                                        const gstTaxRate = 0; // No GST for Commercial
+                                        // Commercial: No GST
+                                        const discountedPrice = wholesalePrice - (wholesalePrice * (discount / 100));
+                                        const totalValue = discountedPrice * (values.orderProducts[index]?.orderQty || 0);
 
-                                        setFieldValue(`orderProducts[${index}].gstTax`, gstTaxRate);
-                                        setFieldValue(`orderProducts[${index}].taxibleValue`, Math.round(taxableValue));
-                                        setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
-
-                                        // IMPORTANT: Also ensure no GST amount is calculated
-                                        console.log(`Product ${index} (Commercial):`, {
-                                            wholesalePrice: wholesalePrice,
-                                            discountedPrice: discountedPrice,
-                                            taxableValue: taxableValue,
-                                            totalValue: totalValue,
-                                            gstTaxRate: gstTaxRate
-                                        });
+                                        setFieldValue(`orderProducts[${index}].discountedPrice`, Math.round(discountedPrice));
+                                        setFieldValue(`orderProducts[${index}].gstTax`, 0);
+                                        setFieldValue(`orderProducts[${index}].taxibleValue`, Math.round(discountedPrice));
+                                        setFieldValue(`orderProducts[${index}].totalValue`, Math.round(totalValue));
                                     } else {
-                                        // For Courier: calculate GST as before
+                                        // Courier: Add GST
+                                        const discountedPrice = wholesalePrice - (wholesalePrice * (discount / 100));
                                         const hsnCode = order.orderProducts[index]?.products?.hsnCode;
-                                        const taxableValue = calculateTaxableValue(discountedPrice, hsnCode, isInterstate, currentModeOfShipment);
-                                        const totalValue = Math.round(taxableValue * orderQty);
 
-                                        // Calculate GST amount and rate
                                         let gstTaxRate = 0;
                                         if (hsnCode) {
                                             if (isInterstate) {
@@ -590,72 +580,56 @@ const OrderProforma = () => {
                                                 gstTaxRate = cgstRate + sgstRate;
                                             }
                                         } else {
-                                            gstTaxRate = 5; // Default 5% GST
+                                            gstTaxRate = 5;
                                         }
 
-                                        setFieldValue(`orderProducts[${index}].gstTax`, gstTaxRate);
-                                        setFieldValue(`orderProducts[${index}].taxibleValue`, taxableValue);
-                                        setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
+                                        // Calculate GST amount (ADDED to price)
+                                        const gstAmount = (discountedPrice * gstTaxRate) / 100;
+                                        const taxibleValue = discountedPrice + gstAmount;
+                                        const totalValue = taxibleValue * (values.orderProducts[index]?.orderQty || 0);
 
-                                        console.log(`Product ${index} (Courier):`, {
-                                            wholesalePrice: wholesalePrice,
-                                            discountedPrice: discountedPrice,
-                                            taxableValue: taxableValue,
-                                            totalValue: totalValue,
-                                            gstTaxRate: gstTaxRate,
-                                            isInterstate: isInterstate
-                                        });
+                                        setFieldValue(`orderProducts[${index}].discountedPrice`, Math.round(discountedPrice));
+                                        setFieldValue(`orderProducts[${index}].gstTax`, gstTaxRate);
+                                        setFieldValue(`orderProducts[${index}].taxibleValue`, Math.round(taxibleValue));
+                                        setFieldValue(`orderProducts[${index}].totalValue`, Math.round(totalValue));
                                     }
                                 });
 
-                                // Recalculate totals based on mode of shipment
                                 recalculateTotals();
                             }
-                        }, [values.currency, values.rate, values.orderProducts, values.defGstRegist, values.modeOfShipment, order?.orderProducts, setFieldValue]);
+                        }, [values.currency, values.rate, values.orderProducts, values.defGstRegist, values.modeOfShipment, order?.orderProducts]);
 
                         const calculateValues = (index, wholesalePrice, orderQty, discount) => {
                             console.log("Calculating values for index:", index);
 
-                            // Calculate discounted price
-                            let discountedPrice = wholesalePrice;
-                            if (discount > 0) {
-                                discountedPrice = wholesalePrice - (wholesalePrice * (discount / 100));
-                            }
-
-                            // Round discounted price
-                            discountedPrice = Math.round(discountedPrice);
-                            setFieldValue(`orderProducts[${index}].discountedPrice`, discountedPrice);
-
                             const currentModeOfShipment = values.modeOfShipment;
 
                             if (currentModeOfShipment === 'Commercial') {
-                                // For Commercial: taxable value = discounted price, no GST
-                                const taxableValue = discountedPrice;
-                                const totalValue = Math.round(taxableValue * orderQty);
-                                const gstTaxRate = 0;
+                                // Commercial: No GST, just discounted price × quantity
+                                const discountedPrice = wholesalePrice - (wholesalePrice * (discount / 100));
+                                const totalValue = discountedPrice * orderQty;
 
-                                setFieldValue(`orderProducts[${index}].gstTax`, gstTaxRate);
-                                setFieldValue(`orderProducts[${index}].taxibleValue`, Math.round(taxableValue));
-                                setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
+                                setFieldValue(`orderProducts[${index}].discountedPrice`, Math.round(discountedPrice));
+                                setFieldValue(`orderProducts[${index}].gstTax`, 0);
+                                setFieldValue(`orderProducts[${index}].taxibleValue`, Math.round(discountedPrice));
+                                setFieldValue(`orderProducts[${index}].totalValue`, Math.round(totalValue));
 
-                                // Don't proceed to GST calculation
-                                recalculateTotals();
-                                return; // Exit early
-                            }
-
-
-                            else {
-                                // For Courier: calculate with GST
+                                console.log(`Product ${index} (Commercial):`, {
+                                    wholesalePrice,
+                                    discountedPrice,
+                                    totalValue
+                                });
+                            } else {
+                                // Courier: Add GST to discounted price
                                 const gstRegistState = getGstRegistrationState();
                                 const shippingStateCode = order?.customer?.shippingState || null;
                                 const isInterstate = isInterstateTransaction(gstRegistState, shippingStateCode);
                                 const hsnCode = order?.orderProducts[index]?.products?.hsnCode;
 
-                                // Calculate taxable value based on GST type
-                                const taxableValue = calculateTaxableValue(discountedPrice, hsnCode, isInterstate, currentModeOfShipment);
-                                const totalValue = Math.round(taxableValue * orderQty);
+                                // Calculate discounted price
+                                const discountedPrice = wholesalePrice - (wholesalePrice * (discount / 100));
 
-                                // Calculate GST tax percentage
+                                // Get GST rate
                                 let gstTaxRate = 0;
                                 if (hsnCode) {
                                     if (isInterstate) {
@@ -669,45 +643,68 @@ const OrderProforma = () => {
                                     gstTaxRate = 5; // Default 5% GST
                                 }
 
+                                // Calculate GST amount (ADDED to price)
+                                const gstAmount = (discountedPrice * gstTaxRate) / 100;
+
+                                // Taxable value = discounted price + GST amount
+                                const taxibleValue = discountedPrice + gstAmount;
+
+                                // Total value = taxable value × quantity
+                                const totalValue = taxibleValue * orderQty;
+
                                 // Update form values
+                                setFieldValue(`orderProducts[${index}].discountedPrice`, Math.round(discountedPrice));
                                 setFieldValue(`orderProducts[${index}].gstTax`, gstTaxRate);
-                                setFieldValue(`orderProducts[${index}].taxibleValue`, taxableValue);
-                                setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
+                                setFieldValue(`orderProducts[${index}].taxibleValue`, Math.round(taxibleValue));
+                                setFieldValue(`orderProducts[${index}].totalValue`, Math.round(totalValue));
+
+                                console.log(`Product ${index} (Courier):`, {
+                                    wholesalePrice,
+                                    discountedPrice,
+                                    gstTaxRate,
+                                    gstAmount,
+                                    taxibleValue,
+                                    orderQty,
+                                    totalValue,
+                                    isInterstate
+                                });
                             }
 
-                            // Recalculate all totals
+                            // Recalculate totals
                             recalculateTotals();
                         };
 
                         const recalculateTotals = () => {
-                            // Recalculate total value sum
+                            // Calculate total value sum (already includes GST for Courier)
                             const totalValueSum = values.orderProducts.reduce((sum, product) => {
                                 return sum + (product.totalValue || 0);
                             }, 0);
 
-                            setFieldValue('totalUnitsValue', totalValueSum);
-
                             const currentModeOfShipment = values.modeOfShipment;
 
                             if (currentModeOfShipment === 'Commercial') {
-                                // For Commercial: No GST, total = totalValueSum
+                                // Commercial: No GST, total = totalValueSum
                                 setFieldValue('gst', 0);
-                                setTaxx(0);
                                 setFieldValue('total', totalValueSum);
+                                setFieldValue('totalUnitsValue', totalValueSum);
                                 setTotall(totalValueSum);
                             } else {
-                                // For Courier: Calculate GST
-                                const totalGst = values.orderProducts.reduce((sum, product, index) => {
-                                    const orderQty = values.orderProducts[index]?.orderQty || 0;
-                                    const discountedPrice = values.orderProducts[index]?.discountedPrice || 0;
-                                    const totalValue = values.orderProducts[index]?.totalValue || 0;
-                                    return sum + ((discountedPrice * orderQty) - totalValue);
-                                }, 0);
+                                // Courier: GST is already included in totalValue
+                                // Calculate total GST amount (sum of all GST amounts)
+                                let totalGst = 0;
+                                values.orderProducts.forEach((product, index) => {
+                                    const discountedPrice = product.discountedPrice || 0;
+                                    const gstTaxRate = product.gstTax || 0;
+                                    const orderQty = product.orderQty || 0;
+                                    const gstAmount = (discountedPrice * orderQty * gstTaxRate) / 100;
+                                    totalGst += gstAmount;
+                                });
 
                                 setFieldValue('gst', totalGst);
                                 setTaxx(totalGst);
-                                setFieldValue('total', totalValueSum + totalGst);
-                                setTotall(totalValueSum + totalGst);
+                                setFieldValue('total', totalValueSum);
+                                setFieldValue('totalUnitsValue', totalValueSum);
+                                setTotall(totalValueSum);
                             }
                         };
 
