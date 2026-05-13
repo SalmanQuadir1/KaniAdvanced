@@ -346,35 +346,35 @@ const UpdateOrderRecieving = () => {
     console.log(formattedValues, "nishi");
 
 
-    // try {
-    //   const url = `${UPDATE_ORDERRECIEVED}/${id}`;
-    //   const method = "PUT";
+    try {
+      const url = `${UPDATE_ORDERRECIEVED}/${id}`;
+      const method = "PUT";
 
-    //   const response = await fetch(url, {
-    //     method: method,
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //       "Authorization": `Bearer ${token}`
-    //     },
-    //     body: JSON.stringify(formattedValues)
-    //   });
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(formattedValues)
+      });
 
-    //   const data = await response.json();
-    //   if (response?.ok) {
-    //     toast.success(`Order Recieved Status Updated successfully`);
-    //     navigate("/order/partiallyApproved")
+      const data = await response.json();
+      if (response?.ok) {
+        toast.success(`Order Recieved Status Updated successfully`);
+        navigate("/order/partiallyApproved")
 
 
 
-    //     // getCurrency(pagination.currentPage); // Fetch updated Currency
-    //   } else {
-    //     console.log(response, "kk");
-    //     toast.error(`${data?.errorMessage}`);
-    //   }
-    // } catch (error) {
-    //   console.error(error, "hfff");
-    //   toast.error(error);
-    // }
+        // getCurrency(pagination.currentPage); // Fetch updated Currency
+      } else {
+        console.log(response, "kk");
+        toast.error(`${data?.errorMessage}`);
+      }
+    } catch (error) {
+      console.error(error, "hfff");
+      toast.error(error);
+    }
 
     // You can now send `finalData` to the backend or do any other operation with it
   };

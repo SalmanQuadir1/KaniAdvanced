@@ -62,19 +62,21 @@ const useorder = () => {
             });
 
             const data = await response.json();
+
             if (response.ok) {
                 toast.success(`Order Added successfully`);
-                navigate("/Order/ViewOrder")
-                resetForm();
-
-                // getSize(pagination.currentPage); // Fetch updated Size
+                setSubmitting(false);
+                // Small delay to allow React to complete cleanup
+                setTimeout(() => {
+                    navigate("/Order/addOrder");
+                }, 1000);
             } else {
                 toast.error(`${data.errorMessage}`);
+                setSubmitting(false);
             }
         } catch (error) {
-            console.error(error, response);
+            console.error(error);
             toast.error("An error occurred");
-        } finally {
             setSubmitting(false);
         }
     };
