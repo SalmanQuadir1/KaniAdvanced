@@ -327,9 +327,8 @@ const UpdateOrderRecieving = () => {
       product: {
         id: values?.productsId
       },
-      sourceProductId:{
-        id: values?.sourceProductsId
-      },
+      sourceProductId: Number(values?.sourceProductsId),
+
 
       receivedQuantity: values.receivedQuantity,
       receivedDate: values.receivedDate,
@@ -564,7 +563,7 @@ const UpdateOrderRecieving = () => {
 
                         <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
                       </div>
-                         <div className="flex-1 min-w-[200px]">
+                      <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Product ID</label>
                         <Field
                           name="sourceProductId"
@@ -593,7 +592,7 @@ const UpdateOrderRecieving = () => {
                         <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
                       </div>
 
-                     
+
 
                       {/* Quantity to Manufacture */}
 
@@ -602,7 +601,7 @@ const UpdateOrderRecieving = () => {
 
 
                     <div className="flex flex-wrap gap-3 mt-5">
-                       <div className="flex-1 ">
+                      <div className="flex-1 ">
                         <label className="mb-2.5 block text-black dark:text-white">Unit</label>
                         <Field
                           name="units"
@@ -1066,8 +1065,8 @@ const UpdateOrderRecieving = () => {
                                 }}
                                 disabled={!isQuantityEditable}
                                 className={`w-24 px-2 py-1 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${isQuantityEditable
-                                    ? 'border-gray-300 bg-white'
-                                    : 'border-gray-200 bg-gray-50 text-gray-500 cursor-not-allowed'
+                                  ? 'border-gray-300 bg-white'
+                                  : 'border-gray-200 bg-gray-50 text-gray-500 cursor-not-allowed'
                                   }`}
                                 min="0"
                                 step="1"
@@ -1112,8 +1111,8 @@ const UpdateOrderRecieving = () => {
                     onClick={handleUpdateSupplierQuantity}
                     disabled={!selectedSupplierId}
                     className={`px-4 py-2 rounded transition-colors flex items-center gap-2 ${selectedSupplierId
-                        ? 'bg-green-600 hover:bg-green-700 text-white'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      ? 'bg-green-600 hover:bg-green-700 text-white'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                       }`}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

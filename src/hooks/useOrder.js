@@ -68,7 +68,7 @@ const useorder = () => {
                 setSubmitting(false);
                 // Small delay to allow React to complete cleanup
                 setTimeout(() => {
-                    navigate("/Order/addOrder");
+                    navigate("/Order/viewOrder");
                 }, 1000);
             } else {
                 toast.error(`${data.errorMessage}`);
