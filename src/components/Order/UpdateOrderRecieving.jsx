@@ -688,7 +688,7 @@ const UpdateOrderRecieving = () => {
                     <div className="flex flex-wrap gap-3 mt-5">
 
                       <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Recieved Quantity</label>
+                        <label className="mb-2.5 block text-black dark:text-white">Recieved Quantity <span className="text-red-600">*</span></label>
                         <Field
                           type="number"
                           name="receivedQuantity"
@@ -722,7 +722,7 @@ const UpdateOrderRecieving = () => {
                       {/* Order No */}
 
                       <div className="flex-1 pl-16  min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Recieved Date</label>
+                        <label className="mb-2.5 block text-black dark:text-white">Recieved Date <span className="text-red-600">*</span></label>
                         <Field
                           type="date"
                           name="receivedDate"
