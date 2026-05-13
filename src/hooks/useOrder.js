@@ -67,9 +67,9 @@ const useorder = () => {
                 toast.success(`Order Added successfully`);
                 setSubmitting(false);
                 // Small delay to allow React to complete cleanup
-                setTimeout(() => {
-                    navigate("/Order/viewOrder");
-                }, 1000);
+
+                navigate("/order/created");
+
             } else {
                 toast.error(`${data.errorMessage}`);
                 setSubmitting(false);

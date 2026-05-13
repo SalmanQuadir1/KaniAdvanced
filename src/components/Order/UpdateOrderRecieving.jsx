@@ -601,21 +601,21 @@ const UpdateOrderRecieving = () => {
 
 
                     <div className="flex flex-wrap gap-3 mt-5">
-                      <div className="flex-1 ">
+                      <div className="flex-1 min-w-[250px]">
                         <label className="mb-2.5 block text-black dark:text-white">Unit</label>
                         <Field
                           name="units"
-                          className=" bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke  text-black"
+                          className="w-[260px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke  text-black"
                           readOnly
                         />
                         <ErrorMessage name="units" component="div" className="text-red-600 text-sm" />
                       </div>
 
-                      <div className="flex-1 min-w-[10px]">
+                      <div className="flex-1 ml-9 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white min-w-[10px]">Supplier Order Quantity</label>
                         <Field
                           name="quantityToManufacture"
-                          className="w-[100px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                          className="w-[260px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           readOnly // Read-only field
                         />
                         <ErrorMessage name="quantityToManufacture" component="div" className="text-red-600 text-sm" />
@@ -651,27 +651,27 @@ const UpdateOrderRecieving = () => {
 
 
                       {/* Order Category */}
-                      <div className="flex-1 min-w-[200px]">
+                      <div className="flex-1 ml-12 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Expected Date</label>
                         <Field
                           type="date"
                           readOnly
                           // name={`orderProducts[${index}].expectedDate`}
                           value={values.expectedDate || ""}
-                          className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                          className="w-[260px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                         //readOnly
                         />
                         <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
                       </div>
 
-                      <div className="flex-1 min-w-[300px]">
+                      <div className="flex-1  ml-11">
                         <label className="mb-2.5 block text-black dark:text-white">Expected Supplier Date</label>
                         <Field
                           type="date"
                           readOnly
                           // name={`orderProducts[${index}].expectedDate`}
                           value={values.expectedSupplierDate || ""}
-                          className="w-[300px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                          className="w-[260px]  bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-9 text-black"
                         //readOnly
                         />
                         <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
@@ -692,7 +692,7 @@ const UpdateOrderRecieving = () => {
                         <Field
                           type="number"
                           name="receivedQuantity"
-                          className="w-[200px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                          className="w-[260px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           onChange={(e) => {
                             console.log("hey");
 
@@ -721,7 +721,7 @@ const UpdateOrderRecieving = () => {
                       </div>
                       {/* Order No */}
 
-                      <div className="flex-1 min-w-[200px]">
+                      <div className="flex-1 pl-16  min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Recieved Date</label>
                         <Field
                           type="date"
@@ -730,12 +730,12 @@ const UpdateOrderRecieving = () => {
                           // name={receivedDate}
                           // name={`orderProducts[${index}].expectedDate`}
                           // value={values.receivedDate || ""}
-                          className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                          className="w-[260px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-9 text-black"
                         //readOnly
                         />
                         <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
                       </div>
-                      <div className="z-20 bg-transparent dark:bg-form-Field">
+                      <div className="z-20 pl-14 bg-transparent dark:bg-form-Field">
                         <label className="mb-2.5 block text-black dark:text-white">Select Supplier</label>
                         <ReactSelect
                           name="supplierName"
@@ -746,31 +746,22 @@ const UpdateOrderRecieving = () => {
 
                           options={[{ label: 'View All Suppliers', value: null }, ...SupplierList]}
                           styles={customStyles} // Pass custom styles here
-                          className="bg-white dark:bg-form-Field"
+                          className=" w-[260px] bg-white dark:bg-form-Field"
                           classNamePrefix="react-select"
                           placeholder="Select supplier Name"
                         />
                       </div>
-                      <div className="flex-1 min-w-[200px]">
+                      <div className="flex-1 ml-9 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Pending Quantity</label>
                         <Field
                           name="pendingQuantity"
-                          className="w-[200px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                          className="w-[260px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           readOnly // Read-only field
                         />
                         <ErrorMessage name="pendingQuantity" component="div" className="text-red-600 text-sm" />
                       </div>
 
-                      <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Defective Quantity</label>
-                        <Field
-                          type="number"
-                          name="defectiveQuantity"
-                          className="w-[200px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                        // Read-only field
-                        />
-                        <ErrorMessage name="defectiveQuantity" component="div" className="text-red-600 text-sm" />
-                      </div>
+
 
 
                       {/* Order Category */}
@@ -787,6 +778,17 @@ const UpdateOrderRecieving = () => {
                     </div>
 
                     <div className="flex flex-wrap gap-3 mt-5">
+
+                      <div className="flex-1 min-w-[200px]">
+                        <label className="mb-2.5 block text-black dark:text-white">Defective Quantity</label>
+                        <Field
+                          type="number"
+                          name="defectiveQuantity"
+                          className="w-[200px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                        // Read-only field
+                        />
+                        <ErrorMessage name="defectiveQuantity" component="div" className="text-red-600 text-sm" />
+                      </div>
 
                       <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Extra Quantity</label>
