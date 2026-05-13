@@ -46,7 +46,7 @@ const useorder = () => {
     }, []);
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-        console.log(values, "valuuuueee");
+ 
 
         try {
             const url = `${ADD_ORDER_URL}`;
@@ -68,7 +68,7 @@ const useorder = () => {
                 setSubmitting(false);
                 // Small delay to allow React to complete cleanup
 
-                navigate("/order/created");
+                navigate("/order/vieworder");
 
             } else {
                 toast.error(`${data.errorMessage}`);
@@ -93,7 +93,7 @@ const useorder = () => {
                 }
             });
             const data = await response.json();
-            console.log(data, "dataaaaaa");
+           
             setorderType(data);
             setPagination({
                 totalItems: data.totalElements,
@@ -118,7 +118,7 @@ const useorder = () => {
                 }
             });
             const data = await response.json();
-            console.log(data, "dataaaaaa");
+          
             setorderNo(data);
 
         } catch (error) {
@@ -137,7 +137,7 @@ const useorder = () => {
                 }
             });
             const data = await response.json();
-            console.log(data, "location");
+           
             setLocation(data);
 
         } catch (error) {
@@ -157,7 +157,7 @@ const useorder = () => {
                 }
             });
             const data = await response.json();
-            console.log(data, "dataaaaaassss");
+           
             setproductId(data);
 
         } catch (error) {
@@ -178,7 +178,7 @@ const useorder = () => {
                 }
             });
             const data = await response.json();
-            console.log(data, "dataaaaaassss");
+          
             setproductId(data);
 
         } catch (error) {
@@ -232,12 +232,12 @@ const useorder = () => {
 
     const handleUpdate = (e, item) => {
         e.preventDefault();
-        console.log("Item passed to handleUpdate:", item);
+       
 
         const uniqueId = item.id || item.orderNo || item.productId;
 
         if (uniqueId) {
-            console.log("Navigating to:", `/Order/updateorder/${uniqueId}`);
+          
             navigate(`/Order/updateorder/${uniqueId}`);
         } else {
             console.error("Item or its unique identifier is missing");
@@ -314,7 +314,7 @@ const useorder = () => {
     //     };
 
     const getOrder = async (page, filters = {}) => {
-        console.log("Fetching orders for page", page); // Log the page number being requested
+      
 
         try {
             const response = await fetch(`${VIEW_ALL_ORDERS}?page=${page || 1}`, {
@@ -329,17 +329,17 @@ const useorder = () => {
             });
 
             const textResponse = await response.text(); // Get the raw text response
-            console.log("Raw Response Text:", textResponse); // Log raw response before parsing
+        
 
             // Try parsing the response only if it's valid JSON
             try {
                 const data = JSON.parse(textResponse); // Try parsing as JSON
-                console.log("Parsed Response:", data);
+              
 
                 if (data?.content) {
                     setOrder(data.content); // Update orders state
                 } else {
-                    console.log("No orders found in the response");
+                  
                     setOrder([]); // Set an empty state
                 }
 
@@ -373,7 +373,7 @@ const useorder = () => {
                 }
             });
             const data = await response.json();
-            console.log(data, "dataaaaaa");
+           
             setSupplier(data);
 
         } catch (error) {
@@ -418,7 +418,7 @@ const useorder = () => {
                 }
             });
             const data = await response.json();
-            console.log(data, "dataaaaaa");
+          
             setcustomer(data);
             setPagination({
                 totalItems: data.totalElements,
@@ -446,7 +446,7 @@ const useorder = () => {
                 }
             });
             const data = await response.json();
-            console.log(data, "dataaaaaa");
+        
             setproductIdd(data);
             setPagination({
                 totalItems: data.totalElements,
@@ -466,7 +466,7 @@ const useorder = () => {
 
 
     const handlePageChange = (newPage) => {
-        console.log("Page change requested:", newPage);
+      
 
         setPagination((prev) => ({ ...prev, currentPage: newPage }));
         getOrder(newPage); // Correct function name and 1-indexed for user interaction

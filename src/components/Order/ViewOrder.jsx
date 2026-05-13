@@ -72,8 +72,7 @@ const ViewOrder = () => {
     }, [supplier?.data]);
 
     const getOrder = async (page, filters = {}) => {
-        console.log(filters, "filterssssssssssssssssssssssssssssssssssssssss");
-        console.log("Fetching orders for page", page);
+      
 
         try {
             const response = await fetch(`${VIEW_ALL_ORDERS}?page=${page || 1}`, {
@@ -89,7 +88,7 @@ const ViewOrder = () => {
             
             try {
                 const data = JSON.parse(textResponse);
-                console.log("Parsed Response:", data);
+              
 
                 // Only update state if component is still mounted
                 if (isMounted) {
@@ -127,7 +126,7 @@ const ViewOrder = () => {
     }, []);
 
     const handlePageChange = (newPage) => {
-        console.log("Page change requested:", newPage);
+        
         setPagination((prev) => ({ ...prev, currentPage: newPage }));
         getOrder(newPage);
     };
@@ -165,7 +164,7 @@ const ViewOrder = () => {
     };
 
     const renderTableRows = () => {
-        console.log(Order);
+    
         if (!Order || !Order.length) {
             return (
                 <tr className='bg-white dark:bg-slate-700 dark:text-white'>
@@ -234,7 +233,7 @@ const ViewOrder = () => {
     };
 
     const handleSubmit = (values) => {
-        console.log(values, "valiiiiii");
+  
         const filters = {
             orderNo: values.orderNo || undefined,
             supplierName: values.supplierName || undefined,

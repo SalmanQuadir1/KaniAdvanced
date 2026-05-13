@@ -27,17 +27,11 @@ const Modall = ({ isOpen, setIsModalOpen, onRequestClose, onSubmit, prodIdd, wid
 
   } = useorder();
 
-  useEffect(async () => {
-
-
-    // Set loading to true when data starts loading
-    await getprodId();
-
-
-    // Set loading to false once data is loaded
-
-
-
+  useEffect(() => {
+    const fetchProdId = async () => {
+      await getprodId();
+    };
+    fetchProdId();
   }, []);
 
   useEffect(() => {
