@@ -5,12 +5,11 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import ReactSelect from 'react-select';
 import flatpickr from 'flatpickr';
 import ReactDatePicker from "react-datepicker";
-import 'flatpickr/dist/themes/material_blue.css'; // Import a Flatpickr theme
+import 'flatpickr/dist/themes/material_blue.css';
 
 import useorder from '../../../hooks/useOrder';
 
 import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL, GET_PID, ADD_ORDERPROFORMA, GET_IMAGE } from '../../../Constants/utils';
-
 
 import { FiTrash2 } from 'react-icons/fi';
 import { useNavigate, useNavigation, useParams } from 'react-router-dom';
@@ -18,6 +17,7 @@ import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import { MdDelete } from 'react-icons/md';
 import useLocation from '../../../hooks/useLocation';
+
 const OrderProforma = () => {
     const navigate = useNavigate();
     const { currentUser } = useSelector((state) => state?.persisted?.user);
@@ -29,18 +29,12 @@ const OrderProforma = () => {
     const [prodIdd, setprodIdd] = useState("")
     const [Taxx, setTaxx] = useState(0)
     const [Totall, setTotall] = useState(0)
-    const [order, setOrder] = useState(null); // To store fetched product data
+    const [order, setOrder] = useState(null);
     const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
     const [suppId, setsuppId] = useState()
-    const [isLoading, setIsLoading] = useState(true); // Loader state
+    const [isLoading, setIsLoading] = useState(true);
     const [customerOptions, setcustomerOptions] = useState([])
     const { token } = currentUser;
-    const [stateCodeMapping, setStateCodeMapping] = useState({
-        'Jammu and Kashmir': '01',
-        'Delhi': '07',
-        // Add other states as needed
-    });
-
 
     const [selectedRowId, setSelectedRowId] = useState(null);
     const currency = [
@@ -56,36 +50,28 @@ const OrderProforma = () => {
     const modeOfShipmentOptions = [
         { value: 'Courier', label: 'Courier' },
         { value: 'Commercial', label: 'Commercial' },
-
     ];
-
 
     const ShippingAccountOptions = [
         { value: 'KLC', label: 'KLC' },
         { value: 'CLIENT', label: 'CLIENT' },
         { value: 'KLC FREE SHIPPING', label: 'KLC FREE SHIPPING' },
-
     ];
     const labelOptions = [
         { value: 'KLC', label: 'KLC' },
         { value: 'CLIENT', label: 'CLIENT' },
         { value: 'No Label', label: 'No Label' },
-
     ];
     const tagOptions = [
         { value: 'KLC', label: 'KLC' },
         { value: 'CLIENT', label: 'CLIENT' },
         { value: 'No Tags', label: 'No Tags' },
-
     ];
     const logoOptions = [
         { value: 'KLC', label: 'KLC' },
         { value: 'CLIENT', label: 'CLIENT' },
         { value: 'No Logo', label: 'No Logo' },
-
     ];
-
-
 
     const {
         getorderType,
@@ -96,46 +82,21 @@ const OrderProforma = () => {
         getCustomer,
     } = useorder();
 
-
     const [selectedSuppliers, setSelectedSuppliers] = useState([]);
-
-
-
     const { Locations, getAllLocation } = useLocation();
 
     useEffect(() => {
         getAllLocation();
     }, [])
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     useEffect(() => {
         getorderType();
         getprodId();
         getCustomer();
-
-
-
-
-
-
     }, [])
 
     console.log(productId, "looool");
     const { id } = useParams();
-
 
     //pid generate
     useEffect(() => {
@@ -151,24 +112,13 @@ const OrderProforma = () => {
                 const data = await response.json();
                 console.log(data, "piddd");
                 setPid(data?.pid);
-
             } catch (error) {
                 console.error(error);
                 toast.error("Failed to fetch orderType");
             }
         };
         getPid();
-
     }, [])
-
-
-
-
-
-
-
-
-
 
     const getOrderById = async () => {
         try {
@@ -185,16 +135,15 @@ const OrderProforma = () => {
 
             const data = await response.json();
             console.log(data, "datatata")
-            setOrder(data); // Store fetched product
+            setOrder(data);
         } catch (error) {
             console.error('Error fetching product:', error);
         } finally {
-            setIsLoading(false); // Stop loader
+            setIsLoading(false);
         }
     };
     console.log(order, 'hloooooo')
 
-    // Fetch data when component mounts
     useEffect(() => {
         getOrderById();
     }, [id]);
@@ -233,13 +182,6 @@ const OrderProforma = () => {
         }
     }, [orderTypee]);
 
-
-
-
-
-
-
-
     const customStyles = {
         control: (provided) => ({
             ...provided,
@@ -260,48 +202,35 @@ const OrderProforma = () => {
         }),
     };
 
-
-
-
-
-
-
-
-
-
     console.log(order, 'jugnu');
-
 
     const handleSubmit = async (values) => {
         console.log('values==========', values);
 
-        // Assuming the structure of `values.orderProducts` is similar to what you provided
         const isCommercial = values?.modeOfShipment === 'Commercial';
 
         const proformaProducts = values.orderProducts.map((product) => {
-            const gstTax = isCommercial ? 0 : (product.gstTax || 0);
+            const gstTax = isCommercial ? 0 : (product.igstTax || 0);
             return {
                 product: {
-                    id: product.product.id // Assuming you need the id of the product
+                    id: product.product.id
                 },
-                orderQty: parseInt(product.orderQty), // Convert to an integer, if needed
-                rate: product.wholesalePrice, // Using wholesalePrice as the rate
-                totalPrice: product.totalValue, // Using totalValue as the totalPrice
-                totalValue: product.totalValue, // Total value is the same
-                taxibleValue: product.taxibleValue, // Assuming this value is correct
-                gstTax: gstTax, // GST tax is already provided
-                discount: product.discount, // Assuming there's a discount property in the product
-                tax: product.gstTax * 0.1, // Assuming tax is calculated as 10% of GST tax (modify based on actual logic)
-                discountedPrice: product.totalValue - product.discount // Assuming discounted price is totalValue minus discount
+                orderQty: parseInt(product.orderQty),
+                rate: product.wholesalePrice,
+                totalPrice: product.totalValueWithGST,
+                totalValue: product.totalValue,
+                taxibleValue: product.taxibleValue,
+                gstTax: gstTax,
+                discount: product.discount || 0,
+                tax: gstTax,
+                discountedPrice: product.discountedPrice || product.totalValue
             };
         });
 
-        // Prepare the final data with proformaProduct
         const finalData = {
             order: {
                 id: order?.id
             },
-            //   "pid": "WSPI-12345-02-24",
             pid: values.pid,
             paymentTerms: values.paymentTerms,
             currency: values.currency,
@@ -312,27 +241,20 @@ const OrderProforma = () => {
             advanceReceived: values.advanceReceived,
             clothBags: values.clothBags,
             total: values.total,
-            //   carrier: values.carrier,
             service: values.service,
             modeOfShipment: values.modeOfShipment,
             rate: values.rate,
-            gst: values.gst,
+            gst: values.totalIgst,
             totalUnits: values.totalUnits,
-
-
-
             totalUnitsValue: values.totalUnitsValue,
             outstandingBalance: values.outstandingBalance,
-            //   discount: values.discount,
-            //   totalRateValue: values.totalRateValue,
             shippingAccount: values.shippingAccount,
             labels: values.labels,
             tags: values.tags,
             logo: values.logo,
-            proformaProduct: proformaProducts, // Replacing orderProducts with proformaProduct
+            proformaProduct: proformaProducts,
         };
 
-        // Log the finalData to check the format
         console.log(finalData, "finalData");
 
         try {
@@ -351,7 +273,6 @@ const OrderProforma = () => {
             const data = await response.json();
             if (response.ok) {
                 toast.success(`Proforma Added successfully`);
-                // getCurrency(pagination.currentPage); // Fetch updated Currency (if needed)
             } else {
                 toast.error(`${data.errorMessage}`);
             }
@@ -359,21 +280,7 @@ const OrderProforma = () => {
             console.error(error);
             toast.error("An error occurred");
         }
-
-        // You can now send `finalData` to the backend or do any other operation with it
     };
-
-    const formattedGstLocation = Locations?.map(loc => ({
-        label: loc.state,
-        value: loc.id
-    }));
-
-    // for gst
-
-
-
-
-
 
     return (
         <DefaultLayout>
@@ -388,153 +295,154 @@ const OrderProforma = () => {
                         billtoEmail: order?.customer?.email,
                         shipTo: order?.customer?.shippingAddress,
                         shipToEmail: order?.customer?.email,
-
                         poDate: order?.poDate,
                         paymentTerms: "",
                         shipDate: order?.shippingDate,
                         freightTerms: "",
                         shipVia: "",
                         service: "",
-
-
-
-
-
-
-
                         selectedRows: [],
                         orderNo: order?.orderNo || '',
                         currency: "",
-                        rate: "",
+                        rate: "1",
                         pid: Pid,
-
-
                         orderProducts: order?.orderProducts?.map((product) => ({
-
                             size: product?.products?.sizes?.sizeName,
                             design: product?.products?.design?.designName,
                             unit: product?.products?.unit?.name,
-                            orderQty: product?.clientOrderQuantity,// clientorderquantity
-                            totalValue: "" || 0,
-                            taxibleValue: "" || 0,
-                            gstTax: "",
-                            discountedPrice: "",
-                            // Initialize as 0, will be updated later
+                            orderQty: product?.clientOrderQuantity,
+                            totalValue: 0,
+                            totalValueWithGST: 0,
+                            taxibleValue: 0,
+                            igstTax: product?.products?.hsnCode?.igst || 0,
+                            igstAmount: 0,
+                            discountedPrice: 0,
                             wholesalePrice: 0,
-
-
-                            // Default to 0 or the correct price for INR
-
+                            discount: 0,
                             product: {
-
-                                id: product.products?.id || '',  // Set initial value for productId
+                                id: product.products?.id || '',
                             },
-
                         })) || [],
                         totalUnits: "",
-                        totalUnitsValue: "",
+                        totalUnitsValue: 0,
+                        totalIgst: 0,
                         modeOfShipment: "",
-                        gst: "",
                         shippingAccount: "",
                         courierCharges: 0,
                         advanceReceived: "",
-                        total: "",
-
+                        total: 0,
                         outstandingBalance: 0,
                         labels: "",
                         tags: "",
                         logo: "",
                         clothBags: ""
-
-
-
-
-
-                        // customer: '',
                     }}
-
-
-                // validationSchema={validationSchema}
                 >
                     {({ values, setFieldValue }) => {
+                        // Calculate values for a single product with dynamic IGST rate
+                        const calculateProductValues = (index, wholesalePrice, quantity, discount = 0) => {
+                            const currentModeOfShipment = values.modeOfShipment;
+                            const igstRate = values.orderProducts[index]?.igstTax || 0;
 
-                        const getGstRegistrationState = () => {
-                            if (!values.defGstRegist) return null;
-                            const selectedLocation = formattedGstLocation?.find(
-                                loc => loc.value === values.defGstRegist?.id
-                            );
-                            return selectedLocation?.label || null;
-                        };
+                            // Calculate discounted price if discount exists
+                            const discountedPrice = wholesalePrice - (wholesalePrice * (discount / 100));
 
-                        const isInterstateTransaction = (defGstRegistState, shippingStateCode) => {
-                            if (!defGstRegistState || !shippingStateCode) return false;
+                            // Total Value = Wholesale Price (after discount) × Quantity
+                            const totalValue = discountedPrice * quantity;
 
-                            // Get state code from state name mapping
-                            const defGstRegistCode = stateCodeMapping[defGstRegistState];
+                            if (currentModeOfShipment === 'Commercial') {
+                                // Commercial: No IGST
+                                const igstAmount = 0;
+                                const taxibleValue = totalValue;
+                                const totalValueWithGST = totalValue;
 
-                            // Compare state codes - TRUE if different states (interstate)
-                            return defGstRegistCode !== shippingStateCode;
-                        };
+                                setFieldValue(`orderProducts[${index}].totalValue`, Math.round(totalValue));
+                                setFieldValue(`orderProducts[${index}].totalValueWithGST`, Math.round(totalValueWithGST));
+                                setFieldValue(`orderProducts[${index}].taxibleValue`, Math.round(taxibleValue));
+                                setFieldValue(`orderProducts[${index}].igstAmount`, 0);
+                                setFieldValue(`orderProducts[${index}].discountedPrice`, Math.round(discountedPrice));
 
-                        // Corrected calculateTaxableValue function - GST should be ADDED, not subtracted
-                        const calculateTaxableValue = (wholesalePrice, discountPercentage, hsnCode, isInterstate, modeOfShipment, orderQty) => {
-                            // First calculate discounted price
-                            const discountedPrice = wholesalePrice - (wholesalePrice * (discountPercentage / 100));
-
-                            if (modeOfShipment === 'Commercial') {
-                                // For Commercial: No GST, total = discounted price × quantity
-                                const totalValue = discountedPrice * orderQty;
-                                return {
-                                    gstTaxRate: 0,
-                                    taxibleValue: discountedPrice,
-                                    totalValue: totalValue,
-                                    gstAmount: 0
-                                };
+                                console.log(`Product ${index} (Commercial):`, {
+                                    wholesalePrice,
+                                    discountedPrice,
+                                    quantity,
+                                    totalValue,
+                                    igstRate
+                                });
                             } else {
-                                // For Courier: Add GST to the discounted price
-                                let gstTaxRate = 0;
+                                // Courier: Add IGST based on product's HSN code rate
+                                const igstAmount = (totalValue * igstRate) / 100;
+                                const taxibleValue = totalValue; // Taxable value is the total value before GST
+                                const totalValueWithGST = totalValue + igstAmount;
 
-                                if (hsnCode) {
-                                    if (isInterstate) {
-                                        gstTaxRate = hsnCode.igst || 5; // Default 5% if not set
-                                    } else {
-                                        const cgstRate = hsnCode.cgst || 2.5;
-                                        const sgstRate = hsnCode.sgst || 2.5;
-                                        gstTaxRate = cgstRate + sgstRate;
-                                    }
-                                } else {
-                                    gstTaxRate = 5; // Default 5% GST
-                                }
+                                setFieldValue(`orderProducts[${index}].totalValue`, Math.round(totalValue));
+                                setFieldValue(`orderProducts[${index}].totalValueWithGST`, Math.round(totalValueWithGST));
+                                setFieldValue(`orderProducts[${index}].taxibleValue`, Math.round(taxibleValue));
+                                setFieldValue(`orderProducts[${index}].igstAmount`, Math.round(igstAmount));
+                                setFieldValue(`orderProducts[${index}].discountedPrice`, Math.round(discountedPrice));
 
-                                // Calculate GST amount (ADDED to price, not subtracted)
-                                const gstAmount = (discountedPrice * gstTaxRate) / 100;
+                                console.log(`Product ${index} (Courier):`, {
+                                    wholesalePrice,
+                                    discountedPrice,
+                                    quantity,
+                                    totalValue,
+                                    igstRate,
+                                    igstAmount,
+                                    totalValueWithGST
+                                });
+                            }
 
-                                // Taxable value = discounted price + GST amount
-                                const taxibleValue = discountedPrice + gstAmount;
+                            // Recalculate all totals
+                            recalculateAllTotals();
+                        };
 
-                                // Total value = taxable value × quantity
-                                const totalValue = taxibleValue * orderQty;
+                        // Recalculate all totals (sum across all products)
+                        const recalculateAllTotals = () => {
+                            const currentModeOfShipment = values.modeOfShipment;
 
-                                return {
-                                    gstTaxRate: gstTaxRate,
-                                    taxibleValue: taxibleValue,
-                                    totalValue: totalValue,
-                                    gstAmount: gstAmount
-                                };
+                            // Calculate total units
+                            const totalUnits = values.orderProducts.reduce((sum, product) => {
+                                return sum + (parseInt(product.orderQty) || 0);
+                            }, 0);
+                            setFieldValue("totalUnits", totalUnits);
+
+                            // Calculate total value sum (sum of totalValue - before GST)
+                            const totalUnitsValue = values.orderProducts.reduce((sum, product) => {
+                                return sum + (product.totalValue || 0);
+                            }, 0);
+                            setFieldValue("totalUnitsValue", Math.round(totalUnitsValue));
+
+                            if (currentModeOfShipment === 'Commercial') {
+                                // Commercial: No IGST
+                                setFieldValue("totalIgst", 0);
+                                setTaxx(0);
+                                setFieldValue("total", Math.round(totalUnitsValue));
+                                setTotall(Math.round(totalUnitsValue));
+                                setFieldValue("outstandingBalance", Math.round(totalUnitsValue - (parseFloat(values.advanceReceived) || 0)));
+                            } else {
+                                // Courier: Calculate total IGST amount
+                                const totalIgst = values.orderProducts.reduce((sum, product) => {
+                                    return sum + (product.igstAmount || 0);
+                                }, 0);
+
+                                const totalWithGST = values.orderProducts.reduce((sum, product) => {
+                                    return sum + (product.totalValueWithGST || 0);
+                                }, 0);
+
+                                setFieldValue("totalIgst", Math.round(totalIgst));
+                                setTaxx(Math.round(totalIgst));
+                                setFieldValue("total", Math.round(totalWithGST));
+                                setTotall(Math.round(totalWithGST));
+                                setFieldValue("outstandingBalance", Math.round(totalWithGST - (parseFloat(values.advanceReceived) || 0)));
                             }
                         };
 
+                        // Update wholesale price when currency changes
                         useEffect(() => {
-                            if (values.currency && values.rate && values.defGstRegist) {
-                                const gstRegistState = getGstRegistrationState();
-                                const shippingStateCode = order?.customer?.shippingState || null;
-                                const isInterstate = isInterstateTransaction(gstRegistState, shippingStateCode);
-                                const currentModeOfShipment = values.modeOfShipment;
-
-                                order?.orderProducts?.forEach((product, index) => {
+                            if (values.currency && order?.orderProducts) {
+                                order.orderProducts.forEach((product, index) => {
                                     let wholesalePrice = 0;
 
-                                    // Calculate wholesale price based on currency
                                     if (values.currency === 'INR') {
                                         wholesalePrice = product?.products?.wholesalePrice || 0;
                                     } else if (values.currency === 'USD') {
@@ -547,381 +455,81 @@ const OrderProforma = () => {
                                         wholesalePrice = product?.products?.rmbPrice || 0;
                                     }
 
-                                    // Adjust for exchange rate
-                                    if (values.rate && values.rate !== 1) {
-                                        wholesalePrice = wholesalePrice / values.rate;
+                                    // Apply exchange rate
+                                    if (values.rate && values.rate !== 1 && values.rate > 0) {
+                                        wholesalePrice = wholesalePrice / parseFloat(values.rate);
                                     }
 
                                     setFieldValue(`orderProducts[${index}].wholesalePrice`, Math.round(wholesalePrice));
+                                    setFieldValue(`orderProducts[${index}].igstTax`, product?.products?.hsnCode?.igst || 0);
 
-                                    const discount = values.orderProducts[index]?.discount || 0;
+                                    // Recalculate product values with new wholesale price
+                                    const currentQty = values.orderProducts[index]?.orderQty || 0;
+                                    const currentDiscount = values.orderProducts[index]?.discount || 0;
 
-                                    if (currentModeOfShipment === 'Commercial') {
-                                        // Commercial: No GST
-                                        const discountedPrice = wholesalePrice - (wholesalePrice * (discount / 100));
-                                        const totalValue = discountedPrice * (values.orderProducts[index]?.orderQty || 0);
-
-                                        setFieldValue(`orderProducts[${index}].discountedPrice`, Math.round(discountedPrice));
-                                        setFieldValue(`orderProducts[${index}].gstTax`, 0);
-                                        setFieldValue(`orderProducts[${index}].taxibleValue`, Math.round(discountedPrice));
-                                        setFieldValue(`orderProducts[${index}].totalValue`, Math.round(totalValue));
-                                    } else {
-                                        // Courier: Add GST
-                                        const discountedPrice = wholesalePrice - (wholesalePrice * (discount / 100));
-                                        const hsnCode = order.orderProducts[index]?.products?.hsnCode;
-
-                                        let gstTaxRate = 0;
-                                        if (hsnCode) {
-                                            if (isInterstate) {
-                                                gstTaxRate = hsnCode.igst || 5;
-                                            } else {
-                                                const cgstRate = hsnCode.cgst || 2.5;
-                                                const sgstRate = hsnCode.sgst || 2.5;
-                                                gstTaxRate = cgstRate + sgstRate;
-                                            }
-                                        } else {
-                                            gstTaxRate = 5;
-                                        }
-
-                                        // Calculate GST amount (ADDED to price)
-                                        const gstAmount = (discountedPrice * gstTaxRate) / 100;
-                                        const taxibleValue = discountedPrice + gstAmount;
-                                        const totalValue = taxibleValue * (values.orderProducts[index]?.orderQty || 0);
-
-                                        setFieldValue(`orderProducts[${index}].discountedPrice`, Math.round(discountedPrice));
-                                        setFieldValue(`orderProducts[${index}].gstTax`, gstTaxRate);
-                                        setFieldValue(`orderProducts[${index}].taxibleValue`, Math.round(taxibleValue));
-                                        setFieldValue(`orderProducts[${index}].totalValue`, Math.round(totalValue));
+                                    if (currentQty > 0) {
+                                        calculateProductValues(index, wholesalePrice, currentQty, currentDiscount);
                                     }
                                 });
-
-                                recalculateTotals();
                             }
-                        }, [values.currency, values.rate, values.orderProducts, values.defGstRegist, values.modeOfShipment, order?.orderProducts]);
+                        }, [values.currency, values.rate, order?.orderProducts]);
 
-                        const calculateValues = (index, wholesalePrice, orderQty, discount) => {
-                            console.log("Calculating values for index:", index);
-
-                            const currentModeOfShipment = values.modeOfShipment;
-
-                            if (currentModeOfShipment === 'Commercial') {
-                                // Commercial: No GST, just discounted price × quantity
-                                const discountedPrice = wholesalePrice - (wholesalePrice * (discount / 100));
-                                const totalValue = discountedPrice * orderQty;
-
-                                setFieldValue(`orderProducts[${index}].discountedPrice`, Math.round(discountedPrice));
-                                setFieldValue(`orderProducts[${index}].gstTax`, 0);
-                                setFieldValue(`orderProducts[${index}].taxibleValue`, Math.round(discountedPrice));
-                                setFieldValue(`orderProducts[${index}].totalValue`, Math.round(totalValue));
-
-                                console.log(`Product ${index} (Commercial):`, {
-                                    wholesalePrice,
-                                    discountedPrice,
-                                    totalValue
-                                });
-                            } else {
-                                // Courier: Add GST to discounted price
-                                const gstRegistState = getGstRegistrationState();
-                                const shippingStateCode = order?.customer?.shippingState || null;
-                                const isInterstate = isInterstateTransaction(gstRegistState, shippingStateCode);
-                                const hsnCode = order?.orderProducts[index]?.products?.hsnCode;
-
-                                // Calculate discounted price
-                                const discountedPrice = wholesalePrice - (wholesalePrice * (discount / 100));
-
-                                // Get GST rate
-                                let gstTaxRate = 0;
-                                if (hsnCode) {
-                                    if (isInterstate) {
-                                        gstTaxRate = hsnCode.igst || 5;
-                                    } else {
-                                        const cgstRate = hsnCode.cgst || 2.5;
-                                        const sgstRate = hsnCode.sgst || 2.5;
-                                        gstTaxRate = cgstRate + sgstRate;
-                                    }
-                                } else {
-                                    gstTaxRate = 5; // Default 5% GST
-                                }
-
-                                // Calculate GST amount (ADDED to price)
-                                const gstAmount = (discountedPrice * gstTaxRate) / 100;
-
-                                // Taxable value = discounted price + GST amount
-                                const taxibleValue = discountedPrice + gstAmount;
-
-                                // Total value = taxable value × quantity
-                                const totalValue = taxibleValue * orderQty;
-
-                                // Update form values
-                                setFieldValue(`orderProducts[${index}].discountedPrice`, Math.round(discountedPrice));
-                                setFieldValue(`orderProducts[${index}].gstTax`, gstTaxRate);
-                                setFieldValue(`orderProducts[${index}].taxibleValue`, Math.round(taxibleValue));
-                                setFieldValue(`orderProducts[${index}].totalValue`, Math.round(totalValue));
-
-                                console.log(`Product ${index} (Courier):`, {
-                                    wholesalePrice,
-                                    discountedPrice,
-                                    gstTaxRate,
-                                    gstAmount,
-                                    taxibleValue,
-                                    orderQty,
-                                    totalValue,
-                                    isInterstate
-                                });
-                            }
-
-                            // Recalculate totals
-                            recalculateTotals();
-                        };
-
-                        const recalculateTotals = () => {
-                            // Calculate total value sum (already includes GST for Courier)
-                            const totalValueSum = values.orderProducts.reduce((sum, product) => {
-                                return sum + (product.totalValue || 0);
-                            }, 0);
-
-                            const currentModeOfShipment = values.modeOfShipment;
-
-                            if (currentModeOfShipment === 'Commercial') {
-                                // Commercial: No GST, total = totalValueSum
-                                setFieldValue('gst', 0);
-                                setFieldValue('total', totalValueSum);
-                                setFieldValue('totalUnitsValue', totalValueSum);
-                                setTotall(totalValueSum);
-                            } else {
-                                // Courier: GST is already included in totalValue
-                                // Calculate total GST amount (sum of all GST amounts)
-                                let totalGst = 0;
+                        // When mode of shipment changes, recalculate all products
+                        useEffect(() => {
+                            if (values.modeOfShipment && values.orderProducts.length > 0) {
                                 values.orderProducts.forEach((product, index) => {
-                                    const discountedPrice = product.discountedPrice || 0;
-                                    const gstTaxRate = product.gstTax || 0;
-                                    const orderQty = product.orderQty || 0;
-                                    const gstAmount = (discountedPrice * orderQty * gstTaxRate) / 100;
-                                    totalGst += gstAmount;
-                                });
+                                    const wholesalePrice = product.wholesalePrice || 0;
+                                    const quantity = product.orderQty || 0;
+                                    const discount = product.discount || 0;
 
-                                setFieldValue('gst', totalGst);
-                                setTaxx(totalGst);
-                                setFieldValue('total', totalValueSum);
-                                setFieldValue('totalUnitsValue', totalValueSum);
-                                setTotall(totalValueSum);
+                                    if (wholesalePrice > 0 && quantity > 0) {
+                                        calculateProductValues(index, wholesalePrice, quantity, discount);
+                                    }
+                                });
                             }
+                        }, [values.modeOfShipment]);
+
+                        // When quantity changes
+                        const handleQuantityChange = (index, quantity) => {
+                            const wholesalePrice = values.orderProducts[index]?.wholesalePrice || 0;
+                            const discount = values.orderProducts[index]?.discount || 0;
+                            calculateProductValues(index, wholesalePrice, quantity, discount);
                         };
 
+                        // When discount changes
+                        const handleDiscountChange = (index, discount) => {
+                            const wholesalePrice = values.orderProducts[index]?.wholesalePrice || 0;
+                            const quantity = values.orderProducts[index]?.orderQty || 0;
+                            calculateProductValues(index, wholesalePrice, quantity, discount);
+                        };
 
-                        //seperate
-
+                        // Update totals when advance received changes
                         useEffect(() => {
-                            if (values.defGstRegist && order?.customer?.shippingState) {
-                                const gstRegistState = getGstRegistrationState();
-                                const shippingStateCode = order?.customer?.shippingState;
-                                const isInterstate = isInterstateTransaction(gstRegistState, shippingStateCode);
-                                const currentModeOfShipment = values.modeOfShipment;
+                            const currentTotal = values.total || 0;
+                            const advanceAmount = parseFloat(values.advanceReceived) || 0;
+                            setFieldValue("outstandingBalance", Math.round(currentTotal - advanceAmount));
+                        }, [values.advanceReceived, values.total]);
 
-                                console.log("GST Registration changed:", {
-                                    gstRegistState,
-                                    shippingStateCode,
-                                    isInterstate
-                                });
-
-                                // Recalculate all values based on new GST type
-                                order?.orderProducts?.forEach((product, index) => {
-                                    const discountedPrice = values.orderProducts[index]?.discountedPrice || 0;
-                                    const orderQty = values.orderProducts[index]?.orderQty || 0;
-
-                                    if (discountedPrice > 0) {
-                                        if (currentModeOfShipment === 'Commercial') {
-                                            const taxableValue = discountedPrice;
-                                            const totalValue = Math.round(taxableValue * orderQty);
-                                            setFieldValue(`orderProducts[${index}].gstTax`, 0);
-                                            setFieldValue(`orderProducts[${index}].taxibleValue`, Math.round(taxableValue));
-                                            setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
-                                        } else {
-                                            const hsnCode = order.orderProducts[index]?.products?.hsnCode;
-                                            const taxableValue = calculateTaxableValue(discountedPrice, hsnCode, isInterstate, currentModeOfShipment);
-                                            const totalValue = Math.round(taxableValue * orderQty);
-
-                                            let gstTaxRate = 0;
-                                            if (hsnCode) {
-                                                if (isInterstate) {
-                                                    gstTaxRate = hsnCode.igst || 5;
-                                                } else {
-                                                    const cgstRate = hsnCode.cgst || 2.5;
-                                                    const sgstRate = hsnCode.sgst || 2.5;
-                                                    gstTaxRate = cgstRate + sgstRate;
-                                                }
-                                            } else {
-                                                gstTaxRate = 5;
-                                            }
-
-                                            setFieldValue(`orderProducts[${index}].gstTax`, gstTaxRate);
-                                            setFieldValue(`orderProducts[${index}].taxibleValue`, taxableValue);
-                                            setFieldValue(`orderProducts[${index}].totalValue`, totalValue);
-                                        }
-                                    }
-                                });
-
-                                recalculateTotals();
-                            }
-                        }, [values.defGstRegist, order?.customer?.shippingState, values.modeOfShipment]);
-
+                        // Update totals when courier charges change
                         useEffect(() => {
-                            // Calculate the sum of orderQty when the orderProducts data is loaded or updated
-                            if (order?.orderProducts) {
-                                const totalUnits = order.orderProducts.reduce(
-                                    (sum, product) => sum + (parseInt(product.clientOrderQuantity) || 0),
-                                    0
-                                );
-
-                                // Set the totalUnits value in the form state
-                                setFieldValue("totalUnits", totalUnits);
-                            }
-                        }, [order?.orderProducts, setFieldValue]);
-
-                        // for wholesale price by crrency
-                        useEffect(() => {
-                            // Ensure currency is selected
-                            if (values.currency) {
-                                const selectedCurrency = values.currency;
-                                console.log(selectedCurrency, "selected currency");
-
-                                // Loop through the orderProducts and update wholesalePrice
-                                order?.orderProducts?.forEach((product, index) => {
-                                    if (selectedCurrency === 'INR') {
-                                        // Set INR wholesale price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.wholesalePrice || 0);
-                                    } else if (selectedCurrency === 'USD') {
-                                        // Set USD price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.usdPrice || 0);
-                                    } else if (selectedCurrency === 'EURO') {
-                                        // Set USD price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.euroPrice || 0);
-                                    } else if (selectedCurrency === 'GBP') {
-                                        // Set USD price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.gbpPrice || 0);
-                                    } else if (selectedCurrency === 'RMB') {
-                                        // Set USD price
-                                        setFieldValue(`orderProducts[${index}].wholesalePrice`, product?.products?.rmbPrice || 0);
-                                    }
-
-                                });
-                            }
-                        }, [values.currency, order?.orderProducts, setFieldValue]);
-
-                        // for mode of shipment gst and total
-                        useEffect(() => {
-                            if (values.modeOfShipment) {
-                                const totalValueSum = values.orderProducts.reduce((sum, product) => {
-                                    return sum + (product.totalValue || 0);
-                                }, 0);
-
-                                if (values.modeOfShipment === 'Commercial') {
-                                    // For Commercial: No GST
-                                    setFieldValue('gst', 0);
-                                    setTaxx(0);
-                                    setFieldValue('total', totalValueSum);
-                                    setTotall(totalValueSum);
-                                    setFieldValue('outstandingBalance', totalValueSum);
-                                } else if (values.modeOfShipment === 'Courier') {
-                                    // For Courier: Include GST
-                                    const totalGst = values.orderProducts.reduce((sum, product, index) => {
-                                        const orderQty = values.orderProducts[index]?.orderQty || 0;
-                                        const discountedPrice = values.orderProducts[index]?.discountedPrice || 0;
-                                        const totalValue = values.orderProducts[index]?.totalValue || 0;
-                                        const gstForProduct = Math.max(0, (discountedPrice * orderQty) - totalValue);
-                                        return sum + gstForProduct;
-                                    }, 0);
-
-                                    setFieldValue('gst', totalGst);
-                                    setTaxx(totalGst);
-                                    setFieldValue('total', totalValueSum + totalGst);
-                                    setTotall(totalValueSum + totalGst);
-                                    setFieldValue('outstandingBalance', totalValueSum + totalGst);
-                                }
-                            }
-                        }, [values.modeOfShipment, values.orderProducts]);
-
-                        // for total and total units
-                        useEffect(() => {
-                            // Calculate the sum of totalValue for all products whenever orderProducts changes
-                            const totalValueSum = values.orderProducts.reduce((sum, product) => {
-                                const totalProductValue = product.totalValue || 0; // Ensure you have a totalValue field for each product
-                                return sum + totalProductValue;
-                            }, 0);
-
-                            // Update Formik's totalUnitsValue field with the total value sum
-                            setFieldValue("totalUnitsValue", totalValueSum);
-
-                            // Update total based on mode of shipment
-                            if (values.modeOfShipment === 'Commercial') {
-                                setFieldValue("total", totalValueSum);
-                            } else {
-                                const totalGst = values.orderProducts.reduce((sum, product, index) => {
-                                    const orderQty = values.orderProducts[index]?.orderQty || 0;
-                                    const discountedPrice = values.orderProducts[index]?.discountedPrice || 0;
-                                    const totalValue = values.orderProducts[index]?.totalValue || 0;
-                                    return sum + ((discountedPrice * orderQty) - totalValue);
-                                }, 0);
-                                setFieldValue("total", totalValueSum + totalGst);
-                            }
-                        }, [values.orderProducts, setFieldValue, values.modeOfShipment]);
-
-                        // for gst cakculate and taxble 
-
-
-
-
-                        // fro total based on courrier
-                        useEffect(() => {
-                            // Step 1: Get the current total from the form state (starting fresh)
                             let currentTotal = values.total || 0;
 
-                            // Step 2: Check if shippingAccount is 'KLC' and courierCharges > 0
                             if (values.shippingAccount === 'KLC' && values.courierCharges >= 0) {
-                                // Add courier charges to the total if shippingAccount is 'KLC'
-                                currentTotal = parseFloat(values.courierCharges) + Totall;
-                            } else if (values.shippingAccount !== 'KLC' || values.courierCharges <= 0) {
-                                // If courierCharges is 0 or shippingAccount is not 'KLC', don't add any courier charges
-                                // Ensure courier charges don't affect the total when shippingAccount isn't 'KLC'
-                                currentTotal = currentTotal - (parseFloat(values.courierCharges) || 0); // Subtract the previous courierCharges if needed
+                                const baseTotal = values.modeOfShipment === 'Commercial' ? values.totalUnitsValue : values.total;
+                                currentTotal = parseFloat(baseTotal) + parseFloat(values.courierCharges || 0);
+                            } else if (values.shippingAccount !== 'KLC') {
+                                const baseTotal = values.modeOfShipment === 'Commercial' ? values.totalUnitsValue : values.total;
+                                currentTotal = parseFloat(baseTotal);
                             }
 
-                            // Step 3: Update the total field
-                            setFieldValue('total', currentTotal);
-
-                        }, [values.shippingAccount, values.courierCharges, setFieldValue]);
-
-
-
-                        // for advance
-                        useEffect(() => {
-                            // Step 1: Calculate the sum of totalValue for all products again
-                            let currentTotal = values.total || 0;
-
-                            // Step 2: Subtract advanceReceived from the totalProductValue
-                            let updatedTotal = currentTotal - parseFloat(values.advanceReceived || 0); // Ensure advanceReceived is treated as a number
-
-                            // Step 3: Update outstandingBalance
-                            setFieldValue('outstandingBalance', updatedTotal);
-
-                        }, [values.advanceReceived, values.orderProducts, setFieldValue]);
-
-
-
-
-
-
-
-
-
-
-
-
+                            setFieldValue('total', Math.round(currentTotal));
+                            const advanceAmount = parseFloat(values.advanceReceived) || 0;
+                            setFieldValue('outstandingBalance', Math.round(currentTotal - advanceAmount));
+                        }, [values.shippingAccount, values.courierCharges]);
 
                         return (
                             <Form>
                                 <div className="flex flex-col gap-9">
-                                    {/* Form fields */}
                                     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
                                         <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
                                             <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
@@ -930,10 +538,6 @@ const OrderProforma = () => {
                                         </div>
                                         <div className="p-6.5">
                                             <div className="flex flex-wrap gap-4">
-
-
-
-
                                                 <div className="flex-2 min-w-[200px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">
                                                         Date
@@ -942,24 +546,19 @@ const OrderProforma = () => {
                                                         {({ field, form }) => (
                                                             <ReactDatePicker
                                                                 {...field}
-                                                                selected={field.value ? new Date(field.value) : null} // Convert string to Date object if value exists
+                                                                selected={field.value ? new Date(field.value) : null}
                                                                 onChange={(date) => {
-                                                                    // Format date to 'yyyy-MM-dd' format before setting it in the form state
-                                                                    const formattedDate = date ? date.toISOString().split('T')[0] : ''; // This gives 'YYYY-MM-DD'
+                                                                    const formattedDate = date ? date.toISOString().split('T')[0] : '';
                                                                     form.setFieldValue("date", formattedDate);
                                                                 }}
-                                                                dateFormat="yyyy-MM-dd" // Display format
+                                                                dateFormat="yyyy-MM-dd"
                                                                 placeholderText=" Date"
                                                                 className="form-datepicker w-[270px] rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                             />
                                                         )}
                                                     </Field>
-
                                                 </div>
                                                 <ErrorMessage name="orderDate" component="div" className="text-red-600 text-sm" />
-
-
-
 
                                                 <div className="flex-2 min-w-[270px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">PI</label>
@@ -968,10 +567,9 @@ const OrderProforma = () => {
                                                         type="text"
                                                         placeholder="pid"
                                                         readOnly
-                                                        disabled // This makes the field disabled
+                                                        disabled
                                                         className="w-full rounded border-[1.5px] bg-gray-2 border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:bg-gray-300 dark:disabled:bg-gray-600 dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
-                                                    <ErrorMessage name="orderType" component="div" className="text-red-600 text-sm" />
                                                 </div>
 
                                                 <div className="flex-2 min-w-[270px]">
@@ -986,39 +584,20 @@ const OrderProforma = () => {
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
-
-                                                <div className="flex-1 min-w-[200px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Default GST Registration</label>
-                                                    <ReactSelect
-                                                        name="defGstRegist"
-                                                        value={formattedGstLocation.find(opt => opt.value === values.defGstRegist)}
-                                                        onChange={(opt) => setFieldValue('defGstRegist', { id: opt?.value, state: opt?.label })}
-                                                        options={formattedGstLocation}
-                                                        styles={customStyles}
-                                                        placeholder="Select registration"
-                                                    />
-                                                </div>
-
-
                                             </div>
-                                            <div className="mb-4.5 flex flex-wrap gap-4 mt-3">
 
+                                            <div className="mb-4.5 flex flex-wrap gap-4 mt-3">
                                                 <div className="flex-2 min-w-[270px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">
-
-
                                                         Bill To Email
                                                     </label>
                                                     <Field
                                                         name="billtoEmail"
                                                         type="text"
                                                         readOnly
-                                                        placeholder="Enter Weft Colors"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
-
-
 
                                                 <div className="flex-2 min-w-[270px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">
@@ -1028,10 +607,10 @@ const OrderProforma = () => {
                                                         name="shipTo"
                                                         type="text"
                                                         readOnly
-                                                        placeholder="Enter Warp Colors"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
+
                                                 <div className="flex-2 min-w-[270px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">
                                                         Ship To Email
@@ -1040,191 +619,128 @@ const OrderProforma = () => {
                                                         readOnly
                                                         name="shipToEmail"
                                                         type="text"
-                                                        placeholder="Enter Weft Colors"
                                                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                     />
                                                 </div>
 
-                                                <div className="mb-2 flex flex-wrap gap-6 mt-3">
-                                                    <div className="flex-1 min-w-[270px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">
-                                                            PO/Date
-                                                        </label>
-                                                        <Field
-                                                            name="poDate"
-                                                            type="text"
-
-                                                            placeholder="poDate"
-                                                            readOnly
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
-                                                    <div className="flex-1 min-w-[270px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">
-                                                            Payment Terms
-                                                        </label>
-                                                        <Field
-                                                            name="paymentTerms"
-                                                            type="text"
-                                                            placeholder="payment Terms"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
-
-                                                    <div className="flex-1 min-w-[270px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">
-                                                            Ship Date
-                                                        </label>
-                                                        <Field
-                                                            name="shipDate"
-                                                            type="text"
-
-                                                            placeholder="shippingDate"
-                                                            readOnly
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
+                                                <div className="flex-1 min-w-[270px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">
+                                                        PO/Date
+                                                    </label>
+                                                    <Field
+                                                        name="poDate"
+                                                        type="text"
+                                                        readOnly
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                    />
                                                 </div>
 
-
-
-                                                <div className="mb-2 flex flex-wrap gap-6 ">
-                                                    <div className="flex-1 min-w-[270px] ">
-                                                        <label className="mb-2.5 block text-black dark:text-white">Currency</label>
-                                                        <ReactSelect
-                                                            name="currency"
-                                                            value={currency.find(option => option.value === values.salesChannel)}
-                                                            onChange={(option) => setFieldValue('currency', option.value)}
-
-                                                            options={currency}
-                                                            styles={customStyles}
-                                                            className="bg-white dark:bg-form-input"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select"
-                                                        />
-                                                        <ErrorMessage name="tags" component="div" className="text-red-600 text-sm" />
-                                                    </div>
-                                                    <div className="flex-1 min-w-[270px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">
-                                                            Rate
-                                                        </label>
-                                                        <Field
-                                                            name="rate"
-                                                            type="Number"
-                                                            placeholder="Enter Rate"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
-
-                                                    <div className="flex-1 min-w-[270px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">
-                                                            Freight Terms
-                                                        </label>
-                                                        <Field
-                                                            name="freightTerms"
-                                                            type="text"
-                                                            placeholder="freightTerms "
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
+                                                <div className="flex-1 min-w-[270px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">
+                                                        Payment Terms
+                                                    </label>
+                                                    <Field
+                                                        name="paymentTerms"
+                                                        type="text"
+                                                        placeholder="Payment Terms"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                    />
                                                 </div>
 
-
-                                                <div className="mb-4.5 flex flex-wrap gap-6 mt-3">
-                                                    <div className="flex-1 min-w-[270px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">
-                                                            Ship Via
-                                                        </label>
-                                                        <Field
-                                                            name="shipVia"
-                                                            type="text"
-                                                            placeholder="shipVia"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
-
-
-                                                    <div className="flex items-center">
-                                                        <Field
-                                                            type="radio"
-                                                            name="service"
-                                                            value="Service"
-                                                            className="mr-2"
-                                                        />
-                                                        <label className="text-black dark:text-white">Service</label>
-                                                    </div>
-
-                                                    {/* Economy checkbox */}
-                                                    <div className="flex items-center">
-                                                        <Field
-                                                            type="radio"
-                                                            name="service"
-                                                            value="Economy"
-                                                            className="mr-2"
-                                                        />
-                                                        <label className="text-black dark:text-white">Economy</label>
-                                                    </div>
-
-                                                    {/* Priority checkbox */}
-                                                    <div className="flex items-center">
-                                                        <Field
-                                                            type="radio"
-                                                            name="service"
-                                                            value="Priority"
-                                                            className="mr-2"
-                                                        />
-                                                        <label className="text-black dark:text-white">Priority</label>
-                                                    </div>
-
+                                                <div className="flex-1 min-w-[270px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">
+                                                        Ship Date
+                                                    </label>
+                                                    <Field
+                                                        name="shipDate"
+                                                        type="text"
+                                                        readOnly
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                    />
                                                 </div>
 
-                                                {values.defGstRegist && order?.customer?.shippingState && (
-                                                    <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900 rounded">
-                                                        <p className="text-blue-700 dark:text-blue-200 font-medium">
-                                                            GST Registration State: {getGstRegistrationState()}
-                                                        </p>
-                                                        <p className="text-blue-700 dark:text-blue-200 font-medium">
-                                                            Shipping State: {order?.customer?.shippingState}
-                                                        </p>
-                                                        <p className="text-blue-700 dark:text-blue-200 font-medium">
-                                                            Transaction Type: {
-                                                                isInterstateTransaction(
-                                                                    getGstRegistrationState(),
-                                                                    order?.customer?.shippingState
-                                                                ) ? 'Interstate (IGST applicable)' : 'Intrastate (CGST + SGST applicable)'
-                                                            }
-                                                        </p>
-                                                    </div>
-                                                )}
+                                                <div className="flex-1 min-w-[270px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">Currency</label>
+                                                    <ReactSelect
+                                                        name="currency"
+                                                        value={currency.find(option => option.value === values.currency) || null}
+                                                        onChange={(option) => setFieldValue('currency', option.value)}
+                                                        options={currency}
+                                                        styles={customStyles}
+                                                        placeholder="Select Currency"
+                                                    />
+                                                </div>
 
+                                                <div className="flex-1 min-w-[270px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">
+                                                        Exchange Rate
+                                                    </label>
+                                                    <Field
+                                                        name="rate"
+                                                        type="Number"
+                                                        placeholder="Enter Rate"
+                                                        value={values.rate}
+                                                        onChange={(e) => setFieldValue('rate', e.target.value)}
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                    />
+                                                </div>
 
+                                                <div className="flex-1 min-w-[270px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">
+                                                        Freight Terms
+                                                    </label>
+                                                    <Field
+                                                        name="freightTerms"
+                                                        type="text"
+                                                        placeholder="Freight Terms"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                    />
+                                                </div>
 
-
-
-
-
-
-
+                                                <div className="flex-1 min-w-[270px]">
+                                                    <label className="mb-2.5 block text-black dark:text-white">
+                                                        Ship Via
+                                                    </label>
+                                                    <Field
+                                                        name="shipVia"
+                                                        type="text"
+                                                        placeholder="Ship Via"
+                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                    />
+                                                </div>
                                             </div>
 
+                                            <div className="mb-4.5 flex flex-wrap gap-6">
+                                                <div className="flex items-center">
+                                                    <Field
+                                                        type="radio"
+                                                        name="service"
+                                                        value="Service"
+                                                        className="mr-2"
+                                                    />
+                                                    <label className="text-black dark:text-white">Service</label>
+                                                </div>
+                                                <div className="flex items-center">
+                                                    <Field
+                                                        type="radio"
+                                                        name="service"
+                                                        value="Economy"
+                                                        className="mr-2"
+                                                    />
+                                                    <label className="text-black dark:text-white">Economy</label>
+                                                </div>
+                                                <div className="flex items-center">
+                                                    <Field
+                                                        type="radio"
+                                                        name="service"
+                                                        value="Priority"
+                                                        className="mr-2"
+                                                    />
+                                                    <label className="text-black dark:text-white">Priority</label>
+                                                </div>
+                                            </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                                            {/* Products Table */}
                                             <div className="shadow-md rounded-lg mt-3 overflow-scroll">
                                                 <table className="min-w-full leading-normal overflow-auto">
                                                     <thead>
@@ -1245,36 +761,36 @@ const OrderProforma = () => {
                                                                 Qty
                                                             </th>
                                                             <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                                WholeSale Price
+                                                                Wholesale Price
                                                             </th>
-                                                            {
-                                                                values?.modeOfShipment === 'Courier' && (
-                                                                    <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                                        GST Tax %
+                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                                                Discount %
+                                                            </th>
+                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                                                Total Value <br />(Price × Qty)
+                                                            </th>
+                                                            {values?.modeOfShipment === 'Courier' && (
+                                                                <>
+                                                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                                                        IGST %
                                                                     </th>
-                                                                )
-                                                            }
+                                                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                                                        IGST Amount
+                                                                    </th>
+                                                                    {/* <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                                                        Taxable Value
+                                                                    </th> */}
+                                                                </>
+                                                            )}
 
-
-                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                                Discount
-                                                            </th>
-                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                                Taxable value
-                                                            </th>
-                                                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                                                                Total Value
-                                                            </th>
-
+                                                            {/* <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                                                Final Total
+                                                            </th> */}
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         {order?.orderProducts?.map((product, index) => (
                                                             <tr key={product.id}>
-                                                                {/* Radio Button */}
-
-
-                                                                {/* Product ID */}
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <div className="relative group">
                                                                         <img
@@ -1285,220 +801,136 @@ const OrderProforma = () => {
                                                                         />
                                                                     </div>
                                                                 </td>
-
-
-
-                                                                {/* design */}
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
                                                                         name={`orderProducts[${index}].design`}
-                                                                        value={values.orderProducts[index]?.design || ""}
+                                                                        value={product?.products?.design?.designName || ""}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                                         readOnly
-                                                                    />
-                                                                    <ErrorMessage
-                                                                        name={`orderProducts[${index}].design`}
-                                                                        component="div"
-                                                                        className="text-red-600 text-sm"
                                                                     />
                                                                 </td>
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
                                                                         name={`orderProducts[${index}].size`}
-                                                                        onChange={(e) => {
-                                                                            const newValue = e.target.value;
-                                                                            console.log(`New Product ID: ${newValue}`);
-                                                                            setFieldValue(
-                                                                                `orderProducts[${index}].size`,
-                                                                                newValue
-                                                                            );
-                                                                        }}
+                                                                        value={product?.products?.sizes?.sizeName || ""}
                                                                         readOnly
                                                                         className="w-[150px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                                                        placeholder="Enter Product ID"
-                                                                    />
-                                                                    <ErrorMessage
-                                                                        name={`orderProducts[${index}].size`}
-                                                                        component="div"
-                                                                        className="text-red-600 text-sm"
                                                                     />
                                                                 </td>
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
                                                                         name={`orderProducts[${index}].unit`}
+                                                                        value={product?.products?.unit?.name || ""}
                                                                         readOnly
-                                                                        // value={values.orderProducts[index]?.unit || ""}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                                     />
-                                                                    <ErrorMessage
-                                                                        name={`orderProducts[${index}].value`}
-                                                                        component="div"
-                                                                        className="text-red-600 text-sm"
-                                                                    />
                                                                 </td>
-
-                                                                {/* Client Order Quantity */}
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
-                                                                        readOnly
                                                                         name={`orderProducts[${index}].orderQty`}
+                                                                        type="number"
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                                                        onBlur={() =>
-                                                                            calculateValues(
-                                                                                index,
-                                                                                values.orderProducts[index]?.wholesalePrice,
-                                                                                values.orderProducts[index]?.orderQty,
-                                                                                values.orderProducts[index]?.discount || 0
-                                                                            )
-                                                                        }
-                                                                    />
-                                                                    <ErrorMessage
-                                                                        name={`orderProducts[${index}].orderQty`}
-                                                                        component="div"
-                                                                        className="text-red-600 text-sm"
+                                                                        onChange={(e) => {
+                                                                            const qty = parseInt(e.target.value) || 0;
+                                                                            setFieldValue(`orderProducts[${index}].orderQty`, qty);
+                                                                            handleQuantityChange(index, qty);
+                                                                        }}
                                                                     />
                                                                 </td>
-
-
-
-                                                                {/* wholesalePrice */}
-
-
                                                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
                                                                         name={`orderProducts[${index}].wholesalePrice`}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                                                        readOnly // If you want the field to be read-only based on your use case
-                                                                    />
-                                                                    <ErrorMessage
-                                                                        name={`orderProducts[${index}].wholesalePrice`}
-                                                                        component="div"
-                                                                        className="text-red-600 text-sm"
+                                                                        readOnly
                                                                     />
                                                                 </td>
-
-
-
-
-                                                                {
-                                                                    values?.modeOfShipment === 'Courier' && (
-
+                                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                                    <Field
+                                                                        name={`orderProducts[${index}].discount`}
+                                                                        type="number"
+                                                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                                                        onChange={(e) => {
+                                                                            const discount = parseFloat(e.target.value) || 0;
+                                                                            setFieldValue(`orderProducts[${index}].discount`, discount);
+                                                                            handleDiscountChange(index, discount);
+                                                                        }}
+                                                                    />
+                                                                </td>
+                                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                                    <Field
+                                                                        name={`orderProducts[${index}].totalValue`}
+                                                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                                                        readOnly
+                                                                    />
+                                                                </td>
+                                                                {values?.modeOfShipment === 'Courier' && (
+                                                                    <>
                                                                         <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                             <Field
+                                                                                name={`orderProducts[${index}].igstTax`}
+                                                                                className="w-[80px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                                                 readOnly
-                                                                                name={`orderProducts[${index}].gstTax`}
-                                                                                className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                                                            />
-
-                                                                            <ErrorMessage
-                                                                                name={`orderProducts[${index}].gstTax`}
-                                                                                component="div"
-                                                                                className="text-red-600 text-sm"
                                                                             />
                                                                         </td>
-                                                                    )}
+                                                                        <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                                            <Field
+                                                                                name={`orderProducts[${index}].igstAmount`}
+                                                                                className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                                                                readOnly
+                                                                            />
+                                                                        </td>
+                                                                        {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                                            <Field
+                                                                                name={`orderProducts[${index}].taxibleValue`}
+                                                                                className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                                                                readOnly
+                                                                            />
+                                                                        </td> */}
+                                                                    </>
+                                                                )}
 
-
-                                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                                {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                                                     <Field
-                                                                        type="number"
-                                                                        name={`orderProducts[${index}].discount`}
-                                                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                                                        onBlur={() =>
-                                                                            calculateValues(
-                                                                                index,
-                                                                                values.orderProducts[index]?.wholesalePrice,
-                                                                                values.orderProducts[index]?.orderQty,
-                                                                                values.orderProducts[index]?.discount || 0
-                                                                            )
-                                                                        }
-                                                                    />
-                                                                    <ErrorMessage
-                                                                        name={`orderProducts[${index}].discount`}
-                                                                        component="div"
-                                                                        className="text-red-600 text-sm"
-                                                                    />
-                                                                </td>
-
-                                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                                    <Field
-                                                                        name={`orderProducts[${index}].taxibleValue`}
+                                                                        name={`orderProducts[${index}].totalValueWithGST`}
                                                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                                                         readOnly
                                                                     />
-                                                                    <ErrorMessage
-                                                                        name={`orderProducts[${index}].clientOrderQuantity`}
-                                                                        component="div"
-                                                                        className="text-red-600 text-sm"
-                                                                    />
-                                                                </td>
-                                                                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                                    <Field
-                                                                        name={`orderProducts[${index}].totalValue`}
-                                                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                                                                        readOnly
-                                                                    />
-                                                                    <ErrorMessage
-                                                                        name={`orderProducts[${index}].totalValue`}
-                                                                        component="div"
-                                                                        className="text-red-600 text-sm"
-                                                                    />
-                                                                </td>
-
-
-
-
-
-
+                                                                </td> */}
                                                             </tr>
                                                         ))}
                                                     </tbody>
                                                 </table>
                                             </div>
 
-
+                                            {/* Totals Section */}
                                             <div className='flex justify-between mt-4'>
                                                 <h2 className='font-semibold text-2xl'>Total</h2>
-
-
-
-
-                                                <div className='flex-col gap-6'>
-                                                    {/* Added flex to align them horizontally */}
-
+                                                <div className='flex-col gap-6 w-1/2'>
                                                     <div className='flex gap-4'>
-                                                        <div className="flex-2 min-w-[270px]">
+                                                        <div className="flex-1">
                                                             <label className="mb-2.5 block text-black dark:text-white">
                                                                 Total Units
                                                             </label>
                                                             <Field
                                                                 name="totalUnits"
                                                                 readOnly
-
-                                                                type="text"
-                                                                placeholder="Enter Warp Colors"
-                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none dark:border-form-strokedark dark:bg-form-field dark:text-white"
                                                             />
                                                         </div>
-                                                        <div className="flex-1 min-w-[270px]">
+                                                        <div className="flex-1">
                                                             <label className="mb-2.5 block text-black dark:text-white">
-                                                                Total Value
+                                                                Total Value (Before Tax)
                                                             </label>
                                                             <Field
                                                                 readOnly
                                                                 name="totalUnitsValue"
-                                                                type="text"
-                                                                placeholder="Enter Weft Colors"
-                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none dark:border-form-strokedark dark:bg-form-field dark:text-white"
                                                             />
                                                         </div>
                                                     </div>
 
-
-
-                                                    {/* Added flex to align them horizontally */}
                                                     <div className='flex gap-4 mt-3'>
-                                                        <div className="flex-2 min-w-[270px]">
+                                                        <div className="flex-1">
                                                             <label className="mb-2.5 block text-black dark:text-white">
                                                                 Mode Of Shipment
                                                             </label>
@@ -1507,61 +939,39 @@ const OrderProforma = () => {
                                                                 value={modeOfShipmentOptions?.find(option => option.value === values.modeOfShipment) || null}
                                                                 onChange={(option) => {
                                                                     setFieldValue('modeOfShipment', option.value);
-                                                                    // Recalculate all values when mode changes
-                                                                    recalculateTotals()
                                                                 }}
                                                                 options={modeOfShipmentOptions}
                                                                 styles={customStyles}
-                                                                className="bg-white dark:bg-form-Field"
-                                                                classNamePrefix="react-select"
                                                                 placeholder="Select Mode of Shipment"
                                                             />
                                                         </div>
-                                                        <div className="flex-1 min-w-[270px]">
+                                                        <div className="flex-1">
                                                             <label className="mb-2.5 block text-black dark:text-white">
-                                                                GST
+                                                                Total IGST
                                                             </label>
                                                             <Field
-                                                                name="gst"
+                                                                name="totalIgst"
                                                                 readOnly
-                                                                type="text"
-                                                                placeholder="GST Amount"
-                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none dark:border-form-strokedark dark:bg-form-field dark:text-white"
                                                             />
                                                         </div>
                                                     </div>
 
-
-
-
-
-
-
-
-
-
-
                                                     <div className='flex gap-4 mt-3'>
-
-
-                                                        <div className="flex-2 min-w-[270px]">
+                                                        <div className="flex-1">
                                                             <label className="mb-2.5 block text-black dark:text-white">
                                                                 Shipping Account
                                                             </label>
                                                             <ReactSelect
                                                                 name="shippingAccount"
                                                                 value={ShippingAccountOptions?.find(option => option.value === values.shippingAccount) || null}
-                                                                onChange={(option) => setFieldValue('shippingAccount', option.value)} // Save the selected shipping account
+                                                                onChange={(option) => setFieldValue('shippingAccount', option.value)}
                                                                 options={ShippingAccountOptions}
                                                                 styles={customStyles}
-                                                                className="bg-white dark:bg-form-Field"
-                                                                classNamePrefix="react-select"
                                                                 placeholder="Select Shipping Account"
                                                             />
                                                         </div>
-
-                                                        {/* Courier Charges Field */}
-                                                        <div className="flex-1 min-w-[270px]">
+                                                        <div className="flex-1">
                                                             <label className="mb-2.5 block text-black dark:text-white">
                                                                 Courier Charges
                                                             </label>
@@ -1570,133 +980,105 @@ const OrderProforma = () => {
                                                                 type="number"
                                                                 placeholder="Enter Courier Charges"
                                                                 value={values.courierCharges}
-                                                                onChange={(e) => setFieldValue('courierCharges', e.target.value)} // Use setFieldValue directly
-                                                                disabled={values.shippingAccount !== 'KLC'} // Disable if shippingAccount is not "KLC"
+                                                                onChange={(e) => setFieldValue('courierCharges', parseFloat(e.target.value) || 0)}
+                                                                disabled={values.shippingAccount !== 'KLC'}
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                                                             />
                                                         </div>
-
                                                     </div>
-                                                    <div className='flex justify-end gap-4 mt-3'>
 
-                                                        <div className="flex-end min-w-[270px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                    <div className='flex justify-end gap-4 mt-3'>
+                                                        <div className="w-[270px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white font-bold">
                                                                 Invoice Total
                                                             </label>
                                                             <Field
                                                                 readOnly
                                                                 name="total"
-                                                                type="text"
-                                                                placeholder="Total"
-                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                                className="w-full rounded border-[1.5px] border-primary bg-primary/10 py-3 px-5 text-black font-bold outline-none dark:border-form-strokedark dark:bg-form-field dark:text-white"
                                                             />
                                                         </div>
                                                     </div>
 
-
-
-
-
                                                     <div className='flex justify-end gap-4 mt-3'>
-
-                                                        <div className="flex-end min-w-[270px]">
+                                                        <div className="w-[270px]">
                                                             <label className="mb-2.5 block text-black dark:text-white">
-                                                                Advance Recieved
+                                                                Advance Received
                                                             </label>
                                                             <Field
                                                                 name="advanceReceived"
-                                                                type="text"
-                                                                placeholder="Total"
-
-                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                                type="number"
+                                                                placeholder="Advance Amount"
+                                                                onChange={(e) => setFieldValue('advanceReceived', parseFloat(e.target.value) || 0)}
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none dark:border-form-strokedark dark:bg-form-field dark:text-white"
                                                             />
                                                         </div>
                                                     </div>
-                                                    <div className='flex justify-end gap-4 mt-3'>
 
-                                                        <div className="flex-end min-w-[270px]">
-                                                            <label className="mb-2.5 block text-black dark:text-white">
+                                                    <div className='flex justify-end gap-4 mt-3'>
+                                                        <div className="w-[270px]">
+                                                            <label className="mb-2.5 block text-black dark:text-white font-bold">
                                                                 Outstanding Balance
                                                             </label>
                                                             <Field
                                                                 readOnly
                                                                 name="outstandingBalance"
-                                                                type="text"
-                                                                placeholder="Total"
-                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                                                                className="w-full rounded border-[1.5px] border-warning bg-warning/10 py-3 px-5 text-black font-bold outline-none dark:border-form-strokedark dark:bg-form-field dark:text-white"
                                                             />
                                                         </div>
                                                     </div>
-
-
-
                                                 </div>
-
-
-
-
-
-
-
-
-
                                             </div>
-                                            <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+
+                                            {/* Packing Instruction */}
+                                            <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark mt-6">
                                                 <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
                                                     PACKING INSTRUCTION
                                                 </h3>
                                             </div>
 
                                             <div className='flex gap-4 mt-3'>
-
-
-                                                <div className="flex-2 min-w-[270px]">
+                                                <div className="flex-1">
                                                     <label className="mb-2.5 block text-black dark:text-white">
                                                         Labels
                                                     </label>
                                                     <ReactSelect
                                                         name="labels"
                                                         value={labelOptions?.find(option => option.value === values.labels) || null}
-                                                        onChange={(option) => setFieldValue('labels', option.value)} // Save the selected shipping account
+                                                        onChange={(option) => setFieldValue('labels', option.value)}
                                                         options={labelOptions}
                                                         styles={customStyles}
-                                                        className="bg-white dark:bg-form-Field"
-                                                        classNamePrefix="react-select"
                                                         placeholder="Select Labels Option"
                                                     />
                                                 </div>
-                                                <div className="flex-2 min-w-[270px]">
+                                                <div className="flex-1">
                                                     <label className="mb-2.5 block text-black dark:text-white">
                                                         Tags
                                                     </label>
                                                     <ReactSelect
                                                         name="tags"
                                                         value={tagOptions?.find(option => option.value === values.tags) || null}
-                                                        onChange={(option) => setFieldValue('tags', option.value)} // Save the selected shipping account
+                                                        onChange={(option) => setFieldValue('tags', option.value)}
                                                         options={tagOptions}
                                                         styles={customStyles}
-                                                        className="bg-white dark:bg-form-Field"
-                                                        classNamePrefix="react-select"
                                                         placeholder="Select Tags Option"
                                                     />
                                                 </div>
-
-                                                <div className="flex-2 min-w-[270px]">
+                                                <div className="flex-1">
                                                     <label className="mb-2.5 block text-black dark:text-white">
                                                         Logo
                                                     </label>
                                                     <ReactSelect
                                                         name="logo"
                                                         value={logoOptions?.find(option => option.value === values.logo) || null}
-                                                        onChange={(option) => setFieldValue('logo', option.value)} // Save the selected shipping account
+                                                        onChange={(option) => setFieldValue('logo', option.value)}
                                                         options={logoOptions}
                                                         styles={customStyles}
-                                                        className="bg-white dark:bg-form-Field"
-                                                        classNamePrefix="react-select"
                                                         placeholder="Select Logo Option"
                                                     />
                                                 </div>
                                             </div>
+
                                             <div className='flex gap-4 mt-5'>
                                                 <div className="flex items-center">
                                                     <label>Cloth Bag</label>
@@ -1708,8 +1090,6 @@ const OrderProforma = () => {
                                                     />
                                                     <label className="text-black dark:text-white">Yes</label>
                                                 </div>
-
-                                                {/* Economy checkbox */}
                                                 <div className="flex items-center">
                                                     <Field
                                                         type="radio"
@@ -1719,36 +1099,12 @@ const OrderProforma = () => {
                                                     />
                                                     <label className="text-black dark:text-white">No</label>
                                                 </div>
-
-                                                {/* Priority checkbox */}
-
-
-
-
                                             </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                            <div className="flex justify-center mt-4"> {/* Centering the button */}
+                                            <div className="flex justify-center mt-6">
                                                 <button
                                                     type="submit"
-
-
-                                                    className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none" // Increased width
+                                                    className="w-1/3 px-6 py-3 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none font-semibold"
                                                 >
                                                     Create Proforma
                                                 </button>
@@ -1756,17 +1112,10 @@ const OrderProforma = () => {
                                         </div>
                                     </div>
                                 </div>
-
-
                             </Form>
                         )
                     }}
                 </Formik>
-
-
-
-
-
             </div>
         </DefaultLayout>
     );

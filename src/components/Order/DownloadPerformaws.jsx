@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom';
 import { Table, Container, Row, Col } from 'react-bootstrap';
 import { VIEW_PROFORMABYID } from '../../Constants/utils';
 import { useSelector } from 'react-redux';
-import Logo from '/img/logo.png';
+import Logo from '/img/urdulogoo.png';
 const DownloadPerformaws = () => {
-    
+
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
     const { id } = useParams();
@@ -111,9 +111,11 @@ const DownloadPerformaws = () => {
             borderRadius: '2px'
         },
         logo: {
-            width: '100px',
             height: '55px',
-            filter: 'contrast(1.2)'
+            filter: 'contrast(1.2)',
+            marginLeft: 'auto',
+            objectFit: 'contain',
+            marginTop: '-50px',
         },
         sectionTitle: {
             fontSize: '11px',
@@ -128,27 +130,34 @@ const DownloadPerformaws = () => {
             color: '#666'
         }
     };
-    console.log(proforma,"japan");
-    
+    console.log(proforma, "japan");
+
 
     return (
         <Container className="mt-2" style={styles.container}>
             <Row>
-                <Col md={4} className="mt-3">
+                <Col md={12} className="text-center">
+                    <h5 style={styles.invoiceHeader}>PRO FORMA INVOICE</h5>
+                </Col>
+            </Row>
+
+            {/* Second Row: Company Details on Left, Logo on Right */}
+            <Row className="align-items-center mt-3">
+                <Col md={6}>
                     <h6 style={styles.companyHeader}><b>Kashmir Loom Company Pvt Ltd</b></h6>
                     <h6 style={styles.companyHeader}>C65, Basement Nizamuddin East,</h6>
                     <h6 style={styles.companyHeader}>New Delhi-110013, India</h6>
                     <h6 style={styles.companyHeader}><b>GSTIN</b>: <span style={styles.boldText}>07AABCK4463H1ZK</span></h6>
-                    <h6 style={styles.companyHeader}><b>Email</b>: <a href="mailto:admin@kashmirloom.com" style={{ color: '#333', textDecoration: 'none' }}><span style={styles.boldText}>admin@kashmirloom.com</span></a></h6>
+                    <h6 style={styles.companyHeader}><b>Email</b>: <a href="mailto:accounts@kashmirloom.com" style={{ color: '#333', textDecoration: 'none' }}><span style={styles.boldText}>accounts@kashmirloom.com</span></a></h6>
                     <h6 style={styles.companyHeader}><b>Tel</b>: <span style={styles.boldText}>+91 1146502902</span></h6>
                 </Col>
 
-                <Col md={4} className="mt-1 text-center">
-                
-                    <img   style={styles.logo}src={Logo}  alt="Logo" />
-                    <h5 className="mt-3" style={styles.invoiceHeader}>PRO FORMA INVOICE</h5>
+                <Col md={6} className="text-end">
+                    <img style={styles.logo} src={Logo} alt="Logo" />
                 </Col>
+            </Row>
 
+            <Row>
                 <Col md={12} className="mt-3">
                     <Table bordered style={styles.table}>
                         <thead>
@@ -166,7 +175,6 @@ const DownloadPerformaws = () => {
                     </Table>
                 </Col>
             </Row>
-
             <Row className="mt-2">
                 <Col md={12} className="table-responsive">
                     <Table bordered style={styles.table}>

@@ -397,6 +397,8 @@ const RetailOrderProforma = () => {
 
 
                         orderProducts: order?.orderProducts?.map((product) => ({
+                            
+                            
 
                             size: product?.products?.sizes?.sizeName,
                             design: product?.products?.design?.designName,

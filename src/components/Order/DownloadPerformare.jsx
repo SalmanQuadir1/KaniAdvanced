@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
-import Logo from '/img/logo.png';
+import Logo from '/img/urdulogoo.png';
 import { useSelector } from 'react-redux';
 import { VIEW_PROFORMABYID } from '../../Constants/utils';
 import { Col, Container, Table } from 'react-bootstrap';
@@ -94,9 +94,11 @@ const DownloadPerformare = () => {
             margin: '15px 0'
         },
         logo: {
-            width: '100px',
             height: '55px',
-            filter: 'contrast(1.2)'
+            filter: 'contrast(1.2)',
+            marginLeft: 'auto',
+            objectFit: 'contain',
+            marginTop: '-40px',
         },
         borderedCell: {
             border: '1px solid #000'
@@ -105,7 +107,7 @@ const DownloadPerformare = () => {
             border: 'none'
         }
     };
-console.log(proforma,"kite");
+    console.log(proforma, "kite");
     return (
         <Container style={styles.container}>
             <h4 style={styles.invoiceHeader}>PRO FORMA INVOICE</h4>
@@ -116,7 +118,7 @@ console.log(proforma,"kite");
                     <h6>C65, Basement Nizamuddin East,</h6>
                     <h6>New Delhi-110013, India</h6>
                     <h6><b>GSTIN</b>: <strong>07AABCK4463H1ZK</strong></h6>
-                    <h6><b>Email</b>: <a href="mailto:admin@kashmirloom.com" style={{color:'black',textDecoration:'none'}}><strong>admin@kashmirloom.com</strong></a></h6>
+                    <h6><b>Email</b>: <a href="mailto:admin@kashmirloom.com" style={{ color: 'black', textDecoration: 'none' }}><strong>admin@kashmirloom.com</strong></a></h6>
                     <h6><b>Tel</b>: <strong>+91 1146502902</strong></h6>
                 </div>
                 <div className="col-md-4 text-right">
@@ -125,7 +127,7 @@ console.log(proforma,"kite");
             </div>
 
             <Table bordered style={styles.table}>
-                <thead> 
+                <thead>
                     <tr>
                         <th style={styles.th}>DATE</th>
                         <th style={styles.th}>PI #</th>
@@ -191,7 +193,7 @@ console.log(proforma,"kite");
                         <th style={styles.th}>MRP</th>
                         <th style={styles.th}>Discount%</th>
                         <th style={styles.th}>Discounted Price</th>
-                        <th style={styles.th}>Taxable Value</th> 
+                        <th style={styles.th}>Taxable Value</th>
                         <th style={styles.th}>Total Value</th>
                     </tr>
                 </thead>
@@ -200,11 +202,11 @@ console.log(proforma,"kite");
                         <tr key={index}>
                             <td style={styles.td}>
                                 {item?.product?.referenceImages?.length > 0 && (
-                                    <img 
-                                        width="100" 
-                                        height="90" 
-                                        src={`/product/getrefimage/${item.product.referenceImages[0]}`} 
-                                        alt="Product Reference" 
+                                    <img
+                                        width="100"
+                                        height="90"
+                                        src={`/product/getrefimage/${item.product.referenceImages[0]}`}
+                                        alt="Product Reference"
                                     />
                                 )}
                             </td>
@@ -218,7 +220,7 @@ console.log(proforma,"kite");
                             <td style={styles.td}>{item?.totalValue}</td>
                         </tr>
                     ))}
-                    
+
                     <tr>
                         <td style={styles.td} colSpan="3" className="text-center"><b>Total</b></td>
                         <td style={styles.td}>{proforma?.totalUnits}</td>
@@ -228,7 +230,7 @@ console.log(proforma,"kite");
                         <td style={styles.td}></td>
                         <td style={styles.td}>{proforma?.totalUnitsValue}</td>
                     </tr>
-                    
+
                     <tr>
                         <td style={styles.td} colSpan="5" className="text-right"><b>GST</b></td>
                         <td style={styles.td}></td>
@@ -236,7 +238,7 @@ console.log(proforma,"kite");
                         <td style={styles.td}></td>
                         <td style={styles.td}>{proforma?.gst}</td>
                     </tr>
-                    
+
                     <tr>
                         <td style={styles.td} colSpan="5" className="text-right"><b>Courier Charges</b></td>
                         <td style={styles.td}></td>
@@ -244,7 +246,7 @@ console.log(proforma,"kite");
                         <td style={styles.td}></td>
                         <td style={styles.td}>{proforma?.courierCharges}</td>
                     </tr>
-                    
+
                     <tr>
                         <td style={styles.td} colSpan="5" className="text-right"><b>Invoice Total</b></td>
                         <td style={styles.td}></td>
@@ -252,7 +254,7 @@ console.log(proforma,"kite");
                         <td style={styles.td}></td>
                         <td style={styles.td}>{proforma?.total}</td>
                     </tr>
-                    
+
                     <tr>
                         <td style={styles.td} colSpan="5" className="text-right"><b>Advance Received</b></td>
                         <td style={styles.td}></td>
@@ -260,7 +262,7 @@ console.log(proforma,"kite");
                         <td style={styles.td}></td>
                         <td style={styles.td}>{proforma?.advanceReceived}</td>
                     </tr>
-                    
+
                     <tr>
                         <td style={styles.td} colSpan="5" className="text-right"><b>Balance Payable</b></td>
                         <td style={styles.td}></td>
@@ -268,7 +270,7 @@ console.log(proforma,"kite");
                         <td style={styles.td}></td>
                         <td style={styles.td}>{proforma?.outstandingBalance}&nbsp;{proforma?.currency}</td>
                     </tr>
-                    
+
                     <tr>
                         <td style={styles.td} colSpan="9">
                             <h5>CLIENT INSTRUCTIONS:</h5>
@@ -292,27 +294,27 @@ console.log(proforma,"kite");
                         <td style={styles.td} colSpan="1"><b>Labels:</b></td>
                         <td style={styles.td} colSpan="5">{proforma?.order?.tagsAndLabels}</td>
                     </tr>
-                    
+
                     <tr>
                         <td style={styles.td} colSpan="1" className="text-right"><b>Service:</b></td>
                         <td style={styles.td} colSpan="5">{proforma?.service}</td>
                         <td style={styles.td} colSpan="1"><b>Tags:</b></td>
                         <td style={styles.td} colSpan="5">{proforma?.tags}</td>
                     </tr>
-                    
+
                     <tr>
                         <td style={styles.td} colSpan="1" className="text-right"><b>Mode of Shipment:</b></td>
                         <td style={styles.td} colSpan="5">{proforma?.modeOfShipment}</td>
                         <td style={styles.td} colSpan="1"><b>Logo:</b></td>
                         <td style={styles.td} colSpan="5">{proforma?.logo}</td>
                     </tr>
-                    
+
                     <tr>
                         <td style={styles.td} colSpan="6"></td>
                         <td style={styles.td} colSpan="1"><b>Cloth Bag:</b></td>
                         <td style={styles.td} colSpan="5">{proforma?.clothBags}</td>
                     </tr>
-                    
+
                     <tr>
                         <td style={styles.td} colSpan="12">
                             <p><strong>All our products are hand made by artisans, slight variations are the nature of the craft. These enhance the individuality of each product.</strong></p>
