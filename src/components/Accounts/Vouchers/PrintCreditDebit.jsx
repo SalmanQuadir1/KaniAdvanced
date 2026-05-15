@@ -349,9 +349,9 @@ const PrintCreditDebit = () => {
                         </div>
 
                         {/* Right side - Logo */}
-                        {/* <div style={{ marginLeft: '20px', marginTop: '0' }}>
+                        <div style={{ marginLeft: '20px', marginTop: '0' }}>
                             <img
-                                src="/img/logo.png"
+                                src="/img/urdulogoo.png"
                                 alt="Company Logo"
                                 style={{
                                     width: '200px',
@@ -359,7 +359,7 @@ const PrintCreditDebit = () => {
                                     objectFit: 'contain'
                                 }}
                             />
-                        </div> */}
+                        </div>
                     </Col>
 
                     {/* Title Column */}
