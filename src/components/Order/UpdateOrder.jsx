@@ -489,6 +489,7 @@ const {
   values.orderProducts.forEach((product, index) => {
     console.log(`Product ${index} (isNew: ${isNewProduct(index)}):`, {
       productId: product.products?.productId,
+      sourceProductId: product.sourceProductId,  // ✅ Changed from product.products?.sourceProductId
       hasIdField: !!product.id,
       suppliersCount: product.productSuppliers?.length || 0,
     });
@@ -497,7 +498,7 @@ const {
   const formattedData = {
     orderNo: values.orderNo,
     orderType: values.orderType ? { id: values.orderType.id } : null,
-    location: values.locationId ? { id: values.locationId } : null, // ADD THIS LINE
+    location: values.locationId ? { id: values.locationId } : null,
     customer: values.customer ? { id: values.customer.id } : null,
     purchaseOrderNo: values.purchaseOrderNo,
     poDate: values.poDate,
@@ -527,10 +528,27 @@ const {
         };
       }).filter(Boolean);
       
+      // ✅ FIX: Get sourceProductId from root level, not from products
+      let sourceProductIdValue = null;
+      const sourceProduct = product.sourceProductId;  // ✅ Changed from product.products?.sourceProductId
+      
+      if (sourceProduct && typeof sourceProduct === 'object') {
+        // If it's an object, extract the id
+        sourceProductIdValue = sourceProduct.id ? Number(sourceProduct.id) : null;
+      } else if (sourceProduct && !isNaN(Number(sourceProduct))) {
+        // If it's a number or numeric string, convert to number
+        sourceProductIdValue = Number(sourceProduct);
+      } else {
+        sourceProductIdValue = null;
+      }
+      
       return {
         products: {
           id: product.products?.id || product.products?.productId || product.id || ''
+          // ✅ REMOVE sourceProductId from here - it goes at root level
         },
+        sourceProductId: sourceProductIdValue,  // ✅ Add at root level (as number)
+        sourceProductName: product.sourceProductName || '',  // ✅ Add the display name too
         orderCategory: product.orderCategory || '',
         inStockQuantity: Number(product.inStockQuantity) || 0,
         clientOrderQuantity: String(product.clientOrderQuantity || ''),
@@ -551,6 +569,8 @@ const {
     console.log(`Product ${index}:`, {
       hasIdField: !!product.id,
       productId: product.products?.id,
+      sourceProductId: product.sourceProductId,  // ✅ Updated
+      sourceProductName: product.sourceProductName,  // ✅ Added
       supplierCount: product.productSuppliers?.length || 0,
     });
   });
@@ -594,27 +614,49 @@ const {
 };
 
   const getOrderById = async () => {
-    try {
-      const response = await fetch(`${GET_ORDERBYID_URL}/${id}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  try {
+    const response = await fetch(`${GET_ORDERBYID_URL}/${id}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch product');
-      }
-
-      const data = await response.json();
-      setOrder(data);
-    } catch (error) {
-      console.error('Error fetching product:', error);
-    } finally {
-      setIsLoading(false);
+    if (!response.ok) {
+      throw new Error('Failed to fetch order');
     }
-  };
 
+    const data = await response.json();
+    
+    // Fetch source product names for products that have sourceProductId
+    const updatedOrderProducts = await Promise.all(
+      data.orderProducts.map(async (product) => {
+        if (product.sourceProductId) {
+          try {
+            const sourceProductRes = await fetch(`${GET_PRODUCTBYID_URL}/${product.sourceProductId}`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            const sourceProductData = await sourceProductRes.json();
+            return {
+              ...product,
+              sourceProductName: sourceProductData.productId
+            };
+          } catch (error) {
+            console.error("Failed to fetch source product:", error);
+            return { ...product, sourceProductName: null };
+          }
+        }
+        return { ...product, sourceProductName: null };
+      })
+    );
+    
+    setOrder({ ...data, orderProducts: updatedOrderProducts });
+  } catch (error) {
+    console.error('Error fetching order:', error);
+  } finally {
+    setIsLoading(false);
+  }
+};
   useEffect(() => {
     getOrderById();
   }, [id]);
@@ -797,62 +839,68 @@ const {
       <div>
         <Formik
           enableReinitialize={true}
-          initialValues={{
-            orderNo: order?.orderNo || '',
-            orderType: order?.orderType || '',
-            locationId: order?.location?.id || '', // ADD THIS LINE
-            customer: order?.customer || null,
-            purchaseOrderNo: order?.purchaseOrderNo || '',
-            poDate: order?.poDate || '',
-            salesChannel: order?.salesChannel || '',
-            employeeName: order?.employeeName || '',
-            customisationDetails: order?.customisationDetails || '',
-            orderDate: order?.orderDate || '',
-            expectingDate: order?.expectingDate || '',
-            shippingDate: order?.shippingDate || '',
-            tagsAndLabels: order?.tagsAndLabels || '',
-            logoNo: order?.logoNo || '',
-            clientInstruction: order?.clientInstruction || '',
-            orderProducts: [
-              ...(order?.orderProducts?.map(product => ({
-                products: {
-                  id: product.products.id,
-                  productId: product.products.productId,
-                },
-                orderCategory: product.orderCategory || '',
-                inStockQuantity: product.inStockQuantity || 0,
-                clientOrderQuantity: String(product.clientOrderQuantity || ''),
-                quantityToManufacture: product.quantityToManufacture || 0,
-                units: product.units || 'Pcs',
-                value: product.value || 0,
-                clientShippingDate: product.clientShippingDate || '',
-                expectedDate: product.expectedDate || '',
-                productSuppliers: product.productSuppliers?.map(supplier => ({
-                  supplier: { 
-                    id: supplier?.supplier?.id || '',
-                    name: supplier?.supplier?.name || ''
-                  },
-                  supplierOrderQty: supplier.supplierOrderQty || 0
-                })) || []
-              })) || []),
-              
-              ...(prodIdModal?.map(item => ({
-                products: {
-                  id: item.id || item.productId || '',
-                  productId: item.productId || item.id || '',
-                },
-                orderCategory: item.orderCatagory || '',
-                inStockQuantity: 0,
-                clientOrderQuantity: '',
-                quantityToManufacture: 0,
-                units: item.units || 'Pcs',
-                value: 0,
-                clientShippingDate: '',
-                expectedDate: '',
-                productSuppliers: []
-              })) || [])
-            ]
-          }}
+        initialValues={{
+  orderNo: order?.orderNo || '',
+  orderType: order?.orderType || '',
+  locationId: order?.location?.id || '',
+  customer: order?.customer || null,
+  purchaseOrderNo: order?.purchaseOrderNo || '',
+  poDate: order?.poDate || '',
+  salesChannel: order?.salesChannel || '',
+  employeeName: order?.employeeName || '',
+  customisationDetails: order?.customisationDetails || '',
+  orderDate: order?.orderDate || '',
+  expectingDate: order?.expectingDate || '',
+  shippingDate: order?.shippingDate || '',
+  tagsAndLabels: order?.tagsAndLabels || '',
+  logoNo: order?.logoNo || '',
+  clientInstruction: order?.clientInstruction || '',
+  orderProducts: [
+    ...(order?.orderProducts?.map(product => ({
+      products: {
+        id: product.products.id,
+        productId: product.products.productId,
+        // ❌ REMOVE sourceProductId from here - it doesn't belong inside products
+      },
+      // ✅ ADD sourceProductId at root level (as shown in your API response)
+      sourceProductId: product.sourceProductId || null,      // This is a number from API
+      sourceProductName: product.sourceProductName || '',    // This is the display name
+      orderCategory: product.orderCategory || '',
+      inStockQuantity: product.inStockQuantity || 0,
+      clientOrderQuantity: String(product.clientOrderQuantity || ''),
+      quantityToManufacture: product.quantityToManufacture || 0,
+      units: product.units || 'Pcs',
+      value: product.value || 0,
+      clientShippingDate: product.clientShippingDate || '',
+      expectedDate: product.expectedDate || '',
+      productSuppliers: product.productSuppliers?.map(supplier => ({
+        supplier: { 
+          id: supplier?.supplier?.id || '',
+          name: supplier?.supplier?.name || ''
+        },
+        supplierOrderQty: supplier.supplierOrderQty || 0
+      })) || []
+    })) || []),
+    
+    ...(prodIdModal?.map(item => ({
+      products: {
+        id: item.id || item.productId || '',
+        productId: item.productId || item.id || '',
+      },
+      sourceProductId: item.sourceProductId?.id || null,      // Store the ID (number)
+      sourceProductName: item.sourceProductId?.productId || '', // Store the display name
+      orderCategory: item.orderCatagory || '',
+      inStockQuantity: 0,
+      clientOrderQuantity: '',
+      quantityToManufacture: 0,
+      units: item.units || 'Pcs',
+      value: 0,
+      clientShippingDate: '',
+      expectedDate: '',
+      productSuppliers: []
+    })) || [])
+  ]
+}}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
@@ -1136,6 +1184,9 @@ const {
                         <table className="min-w-full leading-normal overflow-auto">
                           <thead>
                             <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
+                            <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+      Source Product Id
+    </th>
                               <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Product Id
                               </th>
@@ -1178,6 +1229,31 @@ const {
                               
                               return (
                                 <tr key={index}>
+                                  {/* EXISTING */}
+                            <td className="px-5 py-5 border-b border-gray-200 text-sm">
+  {product.orderCategory?.toLowerCase() === 'dyeing' || product.orderCategory?.toLowerCase() === 'embroidery' ? (
+    <div>
+      {/* Store the ID for backend (hidden) */}
+      <Field
+        type="hidden"
+        name={`orderProducts[${index}].sourceProductId`}
+        value={product.sourceProductId || ""}
+      />
+      {/* Display the Name in a read-only field */}
+      <Field
+        name={`orderProducts[${index}].sourceProductName`}
+        value={product.sourceProductName || ""}
+        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+        placeholder="Source Product ID"
+        readOnly
+      />
+    </div>
+  ) : (
+    <div className="w-[130px] bg-gray-100 dark:bg-gray-700 rounded border py-2 px-3 text-center">
+      Plain Order
+    </div>
+  )}
+</td>
                                   <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                     <Field
                                       name={`orderProducts[${index}].products.productId`}
@@ -1396,6 +1472,39 @@ const {
 
                               return (
                                 <tr key={`new-${index}`} className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3">
+
+                               {/* In UpdateOrder.js - New Products section */}
+{/* In UpdateOrder.js - New Products section */}
+<td className="px-5 py-5 border-b border-gray-200 text-sm">
+  {item?.orderCatagory?.toLowerCase() === 'dyeing' || item?.orderCatagory?.toLowerCase() === 'embroidery' ? (
+    <div>
+      {/* Store the ID for backend (hidden) */}
+      <Field
+        type="hidden"
+        name={`orderProducts[${adjustedIndex}].sourceProductId`}
+        value={item?.sourceProductId?.id || values.orderProducts[adjustedIndex]?.sourceProductId || ""}
+      />
+      {/* Display the Name */}
+      <Field
+        type="text"
+        name={`orderProducts[${adjustedIndex}].sourceProductName`}
+        value={item?.sourceProductId?.productId || item?.sourceProductName || values.orderProducts[adjustedIndex]?.sourceProductName || ""}
+        placeholder="Enter Source Product ID"
+        onChange={(e) => {
+          // When manually entering, you'd need to look up the product
+          const enteredValue = e.target.value;
+          setFieldValue(`orderProducts[${adjustedIndex}].sourceProductName`, enteredValue);
+          // You might want to search for the product and set the ID here
+        }}
+        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+      />
+    </div>
+  ) : (
+    <div className="w-[130px] bg-gray-100 dark:bg-gray-700 rounded border py-2 px-3 text-center">
+      Plain Order
+    </div>
+  )}
+</td>
                                   <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                     <div>
                                       <Field
