@@ -4,14 +4,15 @@ import DropdownNotification from './DropdownNotification';
 import DropdownUser from './DropdownUser';
 import LogoIcon from '../../images/logo/logo-icon.svg';
 import DarkModeSwitcher from './DarkModeSwitcher';
-import { FaHome } from "react-icons/fa";
+import { FaHome } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { setAppMode } from '../../redux/Slice/AppModeSlice';
-import { TbSwitch } from "react-icons/tb";
+import { TbSwitch } from 'react-icons/tb';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { AiOutlineShoppingCart } from 'react-icons/ai';
+import { AiOutlineDisconnect, AiOutlineShoppingCart } from 'react-icons/ai';
 import { FaKaggle } from 'react-icons/fa6';
+import { Button } from 'react-bootstrap';
 
 const Header = (props) => {
   const appMode = useSelector((state) => state?.persisted?.appMode);
@@ -22,7 +23,9 @@ const Header = (props) => {
 
   const handleModeChange = (newMode) => {
     dispatch(setAppMode(newMode));
-    toast.success(`Welcome To ${newMode.charAt(0).toUpperCase() + newMode.slice(1)}`);
+    toast.success(
+      `Welcome To ${newMode.charAt(0).toUpperCase() + newMode.slice(1)}`,
+    );
 
     setShowModeDropdown(false);
     // You might want to navigate to a specific route or refresh data here
@@ -30,12 +33,11 @@ const Header = (props) => {
   };
 
   const handleModeeChange = (newMode) => {
-  dispatch(setAppMode(newMode));
-  toast.success(`Welcome To ${newMode.toUpperCase()} Mode`);
-  setShowModeDropdown(false);
-  navigate("/");
-};
-
+    dispatch(setAppMode(newMode));
+    toast.success(`Welcome To ${newMode.toUpperCase()} Mode`);
+    setShowModeDropdown(false);
+    navigate('/');
+  };
 
   return (
     <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
@@ -91,11 +93,20 @@ const Header = (props) => {
 
         <div className="hidden sm:block">
           <form action="https://formbold.com/s/unique_form_id" method="POST">
-            <div className="relative">
-              <h3 className="uppercase font-bold text-2xl  leading-tight text-center tracking-[10px]">
+            <div className="flex items-center justify-between">
+              <h3 className="uppercase font-bold text-2xl leading-tight tracking-[10px]">
                 CRAFT-FLOW ERP
               </h3>
+              <Button
+                variant="primary"
+                className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                onClick={() => navigate('/connectToShopify')}
+              >
+                <AiOutlineDisconnect size={20} className="inline-block" />
+                <span>Connect</span>
+              </Button>
             </div>
+            <div>{/* Your form content here */}</div>
           </form>
         </div>
 
@@ -104,33 +115,37 @@ const Header = (props) => {
             <DarkModeSwitcher />
           </ul>
           <ul>
-            <FaHome className='cursor-pointer p-2 bg-slate-500 text-white rounded-full' size={35} onClick={() => navigate("/")}/>
+            <FaHome
+              className="cursor-pointer p-2 bg-slate-500 text-white rounded-full"
+              size={35}
+              onClick={() => navigate('/')}
+            />
           </ul>
-          
+
           {/* Mode Switcher */}
           <div className="relative">
-            <button 
+            <button
               onClick={() => setShowModeDropdown(!showModeDropdown)}
               className={`capitalize rounded-3xl p-2 ${
-                mode === 'production' 
-                  ? 'bg-slate-500 hover:bg-red-600' 
+                mode === 'production'
+                  ? 'bg-slate-500 hover:bg-red-600'
                   : 'bg-yellow-500 hover:bg-yellow-600'
               } text-white`}
             >
               <TbSwitch />
             </button>
-            
+
             {showModeDropdown && (
               <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-boxdark rounded-md shadow-lg z-50">
-                <div 
+                <div
                   className="py-1"
                   onMouseLeave={() => setShowModeDropdown(false)}
                 >
                   <button
                     onClick={() => handleModeChange('production')}
                     className={`block w-full text-left px-4 py-2 ${
-                      mode === 'production' 
-                        ? 'bg-gray-100 dark:bg-gray-700' 
+                      mode === 'production'
+                        ? 'bg-gray-100 dark:bg-gray-700'
                         : 'hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                   >
@@ -139,8 +154,8 @@ const Header = (props) => {
                   <button
                     onClick={() => handleModeChange('accounts')}
                     className={`block w-full text-left px-4 py-2 ${
-                      mode === 'accounts' 
-                        ? 'bg-gray-100 dark:bg-gray-700' 
+                      mode === 'accounts'
+                        ? 'bg-gray-100 dark:bg-gray-700'
                         : 'hover:bg-gray-100 dark:hover:bg-gray-700'
                     }`}
                   >
@@ -150,24 +165,17 @@ const Header = (props) => {
               </div>
             )}
           </div>
-           <ul>
- 
-{/* <FaKaggle
+          <ul>
+            {/* <FaKaggle
   className="cursor-pointer p-2 bg-slate-500 text-white rounded-full"
   size={31}
   onClick={() => handleModeeChange('kani')}
 /> */}
-
-
-</ul>
-
+          </ul>
 
           {/* User Area */}
           <DropdownUser />
           {/* User Area */}
-
-
-          
         </div>
       </div>
     </header>

@@ -23,6 +23,8 @@ import PaymentSummary from './components/Accounts/Config/PaymentSummary.jsx';
 
 import Voucher from './components/Accounts/Vouchers/Voucher.jsx';
 import CreateVoucher from './components/Accounts/Vouchers/CreateVoucher.jsx';
+
+import CreateVoucherShopify from './components/Accounts/Vouchers/CreateVoucherShopify.jsx';
 import UpdateVoucher from './components/Accounts/Vouchers/UpdateVoucher.jsx';
 import CreateDebitNote from './components/Accounts/Vouchers/CreateDebitNote.jsx';
 import CreateCreditNote from './components/Accounts/Vouchers/CreateCreditNote.jsx';
@@ -338,8 +340,9 @@ import UpdateInventory from './components/ProductsInventory/UpdateInventory.jsx'
 
 import AddStockJournels from './components/StockJournell/AddStockJournels.jsx';
 
-
-
+import ShopifyPage from './components/shopifyPage/ShopifyPage.jsx';
+import ShopifyOrders from './components/shopifyPage/ShopifyOrders.jsx';
+import ShopifyInventory from './components/shopifyPage/ShopifyInventory.jsx';
 import AddStockJournell from './components/StockJournel/AddStockJournell.jsx';
 // import ViewStockJournel from './components/StockJournel/ViewStockJournel.jsx';
 import ViewStockJournels from './components/StockJournel/ViewStockJournels.jsx';
@@ -431,6 +434,16 @@ function App() {
             }
           />
 
+             <Route
+            path="/connectToShopify"
+            element={
+              <>
+                <PageTitle title="CRAFT-FLOW ERP" />
+                <ShopifyPage />
+              </>
+            }
+          />
+
             <Route
             path="/configurator/accreports"
             element={
@@ -473,6 +486,26 @@ function App() {
             }
           />
           {/* voucherss */}
+           <Route
+            path="/shopify/orders"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="shopify" />
+                <ShopifyOrders />
+              </>
+            }
+          />
+            <Route
+            path="/shopify/Inventory"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="shopify" />
+                <ShopifyInventory />
+              </>
+            }
+          />
 
 
           <Route
@@ -560,6 +593,17 @@ function App() {
                 <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
                 <PageTitle title="Voucher" />
                 <CreateVoucher />
+              </>
+            }
+          />
+
+              <Route
+            path="/create-voucher-from-order/:id"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Voucher" />
+                <CreateVoucherShopify />
               </>
             }
           />

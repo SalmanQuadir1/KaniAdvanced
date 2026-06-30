@@ -2,31 +2,32 @@ import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import SidebarLinkGroup from './SidebarLinkGroup';
 import Logo from '/img/logo.png';
-import { AiOutlineProduct } from "react-icons/ai";
-import { LiaTruckLoadingSolid } from "react-icons/lia";
-import { MdOutlineInventory2 } from "react-icons/md";
-import { TbReportAnalytics } from "react-icons/tb";
-import { FcDataConfiguration } from "react-icons/fc";
-import { FaUser } from "react-icons/fa";
-import { PiRecycleBold } from "react-icons/pi";
-import { FaBook } from "react-icons/fa6";
-import { MdAddHome } from "react-icons/md";
-import { BiTransfer } from "react-icons/bi";
-import { MdProductionQuantityLimits } from "react-icons/md";
-import { FaJediOrder } from "react-icons/fa";
-import { FaUserPlus } from "react-icons/fa";
-import { MdInventory2 } from "react-icons/md";
-import { CgShutterstock } from "react-icons/cg";
-import { MdGroups } from "react-icons/md";
-import { TbReport } from "react-icons/tb";
+import { AiOutlineProduct } from 'react-icons/ai';
+import { LiaTruckLoadingSolid } from 'react-icons/lia';
+import { MdOutlineInventory2 } from 'react-icons/md';
+import { TbReportAnalytics } from 'react-icons/tb';
+import { FcDataConfiguration } from 'react-icons/fc';
+import { FaUser } from 'react-icons/fa';
+import { PiRecycleBold } from 'react-icons/pi';
+import { FaBook } from 'react-icons/fa6';
+import { MdAddHome } from 'react-icons/md';
+import { BiTransfer } from 'react-icons/bi';
+import { MdProductionQuantityLimits } from 'react-icons/md';
+import { FaJediOrder } from 'react-icons/fa';
+import { FaUserPlus } from 'react-icons/fa';
+import { MdInventory2 } from 'react-icons/md';
+import { CgShutterstock } from 'react-icons/cg';
+import { MdGroups } from 'react-icons/md';
+import { TbReport } from 'react-icons/tb';
 import { useSelector } from 'react-redux';
-import { FcSearch } from "react-icons/fc";
-import { TbViewportWide } from "react-icons/tb";
-import { RiPagesLine } from "react-icons/ri";
-import { MdBook } from "react-icons/md";
-import { LuTornado } from "react-icons/lu";
+import { FcSearch } from 'react-icons/fc';
+import { TbViewportWide } from 'react-icons/tb';
+import { RiPagesLine } from 'react-icons/ri';
+import { MdBook } from 'react-icons/md';
+import { LuTornado } from 'react-icons/lu';
+import { FaShopify } from "react-icons/fa";
 const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
-  const [role, setrole] = useState('')
+  const [role, setrole] = useState('');
   const location = useLocation();
   const { pathname } = location;
 
@@ -38,16 +39,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
     storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true',
   );
 
-
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const appMode = useSelector((state) => state?.persisted?.appMode);
 
-  const { mode } = appMode
-
+  const { mode } = appMode;
 
   const { user } = currentUser || {};
   const roles = user?.authorities.map((auth) => auth.authority) || []; // Ensure it's always an array
-
 
   // close on click outside
   useEffect(() => {
@@ -87,18 +85,24 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   return (
     <aside
       ref={sidebar}
-      className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-black duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+      className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-black duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}
     >
       {/* <!-- SIDEBAR HEADER --> */}
       <div className="flex items-center justify-between  px-4  lg:py-7 bg-slate-900">
-
-        <div className='mt-[-30px]'>
-          <NavLink to="/" className='flex justify-center mx-auto md:h-[80px] h-[80px] '>
-            <img src={Logo} className='w-full h-40 justify-center rounded-full  ' alt="Logo" />
+        <div className="mt-[-30px]">
+          <NavLink
+            to="/"
+            className="flex justify-center mx-auto md:h-[80px] h-[80px] "
+          >
+            <img
+              src={Logo}
+              className="w-full h-40 justify-center rounded-full  "
+              alt="Logo"
+            />
             {/* <h2 className='mt-7 ml-4 text-3xl text-slate-300 font-bold stroke-form-input'>KANI</h2> */}
           </NavLink>
-
         </div>
 
         <button
@@ -112,7 +116,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
             className="fill-current"
             width="12"
             height="12"
-
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
@@ -127,7 +130,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
 
       <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
         {/* <!-- Sidebar Menu --> */}
-        <span className='capitalize bg-slate-600 text-white  p-2 text-center'>{mode}</span>
+        <span className="capitalize bg-slate-600 text-white  p-2 text-center">
+          {mode}
+        </span>
         <nav className=" px-4 lg:mt-9 lg:px-6">
           {/* <!-- Menu Group --> */}
           <div>
@@ -139,8 +144,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {/* <!-- Menu Item Dashboard --> */}
               <NavLink
                 to="/chart"
-                className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${pathname.includes('chart') && 'bg-graydark dark:bg-meta-4'
-                  }`}
+                className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                  pathname.includes('chart') && 'bg-graydark dark:bg-meta-4'
+                }`}
               >
                 <svg
                   className="fill-current"
@@ -175,7 +181,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               </NavLink>
               {/*Accounts*/}
 
-
               <SidebarLinkGroup
               // activeCondition={
               //   pathname === '/configurator' || pathname.includes('configurator')
@@ -184,13 +189,15 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {mode === "accounts" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                      {mode === 'accounts' &&
+                      roles.some((role) => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
-                            pathname.includes('forms')) &&
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            (pathname === '/forms' ||
+                              pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
-                            }`}
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
                             sidebarExpanded
@@ -201,8 +208,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           <FcDataConfiguration size={24} />
                           Configurator
                           <svg
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
-                              }`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                              open && 'rotate-180'
+                            }`}
                             width="20"
                             height="20"
                             viewBox="0 0 20 20"
@@ -220,11 +228,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       ) : null}
 
                       <div
-                        className={`translate transform overflow-hidden ${!open && 'hidden'
-                          }`}
+                        className={`translate transform overflow-hidden ${
+                          !open && 'hidden'
+                        }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-
                           <li>
                             <NavLink
                               to="/configurator/groups"
@@ -237,7 +245,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               Groups
                             </NavLink>
                           </li>
-
 
                           <li>
                             <NavLink
@@ -278,7 +285,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           </li>
                         </ul>
                       </div>
-
                     </React.Fragment>
                   );
                 }}
@@ -290,7 +296,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <>
-                      {mode === "kani" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                      {mode === 'kani' &&
+                      roles.some((role) => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
                           className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4`}
@@ -303,7 +310,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         >
                           Kani Section
                           <svg
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'}`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                              open && 'rotate-180'
+                            }`}
                             width="20"
                             height="20"
                             viewBox="0 0 20 20"
@@ -317,9 +326,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         </NavLink>
                       ) : null}
 
-                      <div className={`translate transform overflow-hidden ${!open && 'hidden'}`}>
+                      <div
+                        className={`translate transform overflow-hidden ${
+                          !open && 'hidden'
+                        }`}
+                      >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-
                           <li>
                             <NavLink
                               to="/kaniOrders"
@@ -331,19 +343,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               Kani Orders
                             </NavLink>
                           </li>
-
-
-
                         </ul>
                       </div>
                     </>
                   );
                 }}
               </SidebarLinkGroup>
-
-
-
-
 
               <SidebarLinkGroup
                 activeCondition={
@@ -353,13 +358,15 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {mode === "accounts" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                      {mode === 'accounts' &&
+                      roles.some((role) => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
-                            pathname.includes('forms')) &&
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            (pathname === '/forms' ||
+                              pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
-                            }`}
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
                             sidebarExpanded
@@ -370,8 +377,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           <FaBook size={24} />
                           Ledger
                           <svg
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
-                              }`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                              open && 'rotate-180'
+                            }`}
                             width="20"
                             height="20"
                             viewBox="0 0 20 20"
@@ -389,10 +397,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       ) : null}
 
                       <div
-                        className={`translate transform overflow-hidden ${!open && 'hidden'
-                          }`}
+                        className={`translate transform overflow-hidden ${
+                          !open && 'hidden'
+                        }`}
                       >
-
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
                           {/* <li>
                             <NavLink
@@ -417,7 +425,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             </NavLink>
                           </li>
 
-
                           <li>
                             <NavLink
                               to="/ledger/view"
@@ -440,7 +447,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               Bulk Add Ledger
                             </NavLink>
                           </li>
-
                         </ul>
                       </div>
                     </React.Fragment>
@@ -456,13 +462,15 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {mode === "accounts" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                      {mode === 'accounts' &&
+                      roles.some((role) => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
-                            pathname.includes('forms')) &&
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            (pathname === '/forms' ||
+                              pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
-                            }`}
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
                             sidebarExpanded
@@ -473,8 +481,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           <RiPagesLine size={24} />
                           Vouchers
                           <svg
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
-                              }`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                              open && 'rotate-180'
+                            }`}
                             width="20"
                             height="20"
                             viewBox="0 0 20 20"
@@ -492,10 +501,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       ) : null}
 
                       <div
-                        className={`translate transform overflow-hidden ${!open && 'hidden'
-                          }`}
+                        className={`translate transform overflow-hidden ${
+                          !open && 'hidden'
+                        }`}
                       >
-
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
                           {/* <li>
                             <NavLink
@@ -520,7 +529,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             </NavLink>
                           </li>
 
-
                           <li>
                             <NavLink
                               to="/Vouchers/view"
@@ -532,7 +540,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               View Voucher
                             </NavLink>
                           </li>
-
                         </ul>
                       </div>
                     </React.Fragment>
@@ -540,20 +547,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 }}
               </SidebarLinkGroup>
 
-
-
-
-
-
               {/* Role Admin_dli */}
 
-
-
-
-
-
-              {mode === "production" && roles.some(role => ['ROLE_ADMIN_DLI'].includes(role)) ? (
-
+              {mode === 'production' &&
+              roles.some((role) => ['ROLE_ADMIN_DLI'].includes(role)) ? (
                 <NavLink
                   to="/configurator/addcustomergroup"
                   className={({ isActive }) =>
@@ -566,35 +563,32 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 </NavLink>
               ) : null}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
               <SidebarLinkGroup
-                className={`${roles.some(role => ['supervsior', 'executor', 'director'].includes(role)) ? 'hidden' : 'hidden'
-                  }`}
-                activeCondition={pathname === '/forms' || pathname.includes('forms')}
+                className={`${
+                  roles.some((role) =>
+                    ['supervsior', 'executor', 'director'].includes(role),
+                  )
+                    ? 'hidden'
+                    : 'hidden'
+                }`}
+                activeCondition={
+                  pathname === '/forms' || pathname.includes('forms')
+                }
               >
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {mode === "production" && roles.some(role => ['ROLE_ADMIN', 'ROLE_ADMIN_SXR'].includes(role)) ? (
+                      {mode === 'production' &&
+                      roles.some((role) =>
+                        ['ROLE_ADMIN', 'ROLE_ADMIN_SXR'].includes(role),
+                      ) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
-                            pathname.includes('forms')) &&
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            (pathname === '/forms' ||
+                              pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
-                            }`}
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
                             sidebarExpanded
@@ -605,8 +599,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           <AiOutlineProduct size={24} />
                           Products
                           <svg
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
-                              }`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                              open && 'rotate-180'
+                            }`}
                             width="20"
                             height="20"
                             viewBox="0 0 20 20"
@@ -624,11 +619,15 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       ) : null}
 
                       <div
-                        className={`translate transform overflow-hidden ${!open && 'hidden'
-                          }`}
+                        className={`translate transform overflow-hidden ${
+                          !open && 'hidden'
+                        }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                          {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                          {mode === 'production' &&
+                          roles.some((role) =>
+                            ['ROLE_ADMIN'].includes(role),
+                          ) ? (
                             <li>
                               <NavLink
                                 to="/product/addProduct"
@@ -676,7 +675,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               Bulk Inventory Upload
                             </NavLink>
                           </li>
-
                         </ul>
                       </div>
                     </React.Fragment>
@@ -847,22 +845,32 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 }}
               </SidebarLinkGroup> */}
 
-
               <SidebarLinkGroup
-                className={`${roles.some(role => ['supervsior', 'executor', 'director'].includes(role)) ? 'hidden' : 'hidden'
-                  }`}
-                activeCondition={pathname === '/forms' || pathname.includes('forms')}
+                className={`${
+                  roles.some((role) =>
+                    ['supervsior', 'executor', 'director'].includes(role),
+                  )
+                    ? 'hidden'
+                    : 'hidden'
+                }`}
+                activeCondition={
+                  pathname === '/forms' || pathname.includes('forms')
+                }
               >
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {mode === "accounts" && roles.some(role => ['ROLE_ADMIN', 'ROLE_ADMIN_SXR'].includes(role)) ? (
+                      {mode === 'accounts' &&
+                      roles.some((role) =>
+                        ['ROLE_ADMIN', 'ROLE_ADMIN_SXR'].includes(role),
+                      ) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
-                            pathname.includes('forms')) &&
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            (pathname === '/forms' ||
+                              pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
-                            }`}
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
                             sidebarExpanded
@@ -873,8 +881,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           <CgShutterstock size={24} />
                           Budget
                           <svg
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
-                              }`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                              open && 'rotate-180'
+                            }`}
                             width="20"
                             height="20"
                             viewBox="0 0 20 20"
@@ -892,11 +901,15 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       ) : null}
 
                       <div
-                        className={`translate transform overflow-hidden ${!open && 'hidden'
-                          }`}
+                        className={`translate transform overflow-hidden ${
+                          !open && 'hidden'
+                        }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                          {mode === "accounts" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                          {mode === 'accounts' &&
+                          roles.some((role) =>
+                            ['ROLE_ADMIN'].includes(role),
+                          ) ? (
                             <li>
                               <NavLink
                                 to="/configurator/addbudget"
@@ -920,8 +933,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               View Budget
                             </NavLink>
                           </li>
-
-
                         </ul>
                       </div>
                     </React.Fragment>
@@ -929,67 +940,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 }}
               </SidebarLinkGroup>
 
-
-
-
-              {mode === "production" && roles.some(role => ['ROLE_ADMIN', 'ROLE_ADMIN_DLI', 'ROLE_EXECUTOR', 'ROLE_ADMIN_SXR', "ROLE_USER"].includes(role)) ? (
-                <NavLink
-                  to="/Reports"
-                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 
-                  }`}
-                >
-                  <TbReport size={24} />
-
-                  Reports
-                </NavLink>
-              ) : null}
-
-              {mode === "production" && roles.some(role => ['ROLE_ADMIN', 'ROLE_EXECUTOR', 'ROLE_ADMIN_SXR'].includes(role)) ? (
-                <NavLink
-                  to="/Order/ViewOrder"
-                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 
-                  }`}
-                >
-                  <FcSearch size={24} />
-
-                  Search Order
-                </NavLink>
-              ) : null}
-
-
-
-
-
-
-
-
-
-              {/* inventory */}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
               <SidebarLinkGroup
+                className={`${
+                  roles.some((role) =>
+                    ['supervsior', 'executor', 'director'].includes(role),
+                  )
+                    ? 'hidden'
+                    : 'hidden'
+                }`}
                 activeCondition={
                   pathname === '/forms' || pathname.includes('forms')
                 }
@@ -997,13 +955,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                      {mode === 'accounts' &&
+                      roles.some((role) =>
+                        ['ROLE_ADMIN', 'ROLE_ADMIN_SXR'].includes(role),
+                      ) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
-                            pathname.includes('forms')) &&
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            (pathname === '/forms' ||
+                              pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
-                            }`}
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
                             sidebarExpanded
@@ -1011,11 +973,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               : setSidebarExpanded(true);
                           }}
                         >
-                          <MdInventory2 size={24} />
-                          Inventory
+                          <FaShopify size={24} />
+                          Shopify
                           <svg
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
-                              }`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                              open && 'rotate-180'
+                            }`}
                             width="20"
                             height="20"
                             viewBox="0 0 20 20"
@@ -1033,14 +996,136 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       ) : null}
 
                       <div
-                        className={`translate transform overflow-hidden ${!open && 'hidden'
-                          }`}
+                        className={`translate transform overflow-hidden ${
+                          !open && 'hidden'
+                        }`}
                       >
-
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
+                          {mode === 'accounts' &&
+                          roles.some((role) =>
+                            ['ROLE_ADMIN'].includes(role),
+                          ) ? (
+                            <li>
+                              <NavLink
+                                to="/shopify/orders"
+                                className={({ isActive }) =>
+                                  'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                  (isActive && '!text-white')
+                                }
+                              >
+                                Fetch Shopify Orders
+                              </NavLink>
+                            </li>
+                          ) : null}
+                          <li>
+                            <NavLink
+                              to="/shopify/Inventory"
+                              className={({ isActive }) =>
+                                'group relative flex items-center gap-2.5 rounded-md px-4 font-small text-bodydark2 duration-300 ease-in-out hover:text-white ' +
+                                (isActive && '!text-white')
+                              }
+                            >
+                              Fetch Inventory
+                              
+                            </NavLink>
+                          </li>
+                        </ul>
+                      </div>
+                    </React.Fragment>
+                  );
+                }}
+              </SidebarLinkGroup>
 
+              {mode === 'production' &&
+              roles.some((role) =>
+                [
+                  'ROLE_ADMIN',
+                  'ROLE_ADMIN_DLI',
+                  'ROLE_EXECUTOR',
+                  'ROLE_ADMIN_SXR',
+                  'ROLE_USER',
+                ].includes(role),
+              ) ? (
+                <NavLink
+                  to="/Reports"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 
+                  }`}
+                >
+                  <TbReport size={24} />
+                  Reports
+                </NavLink>
+              ) : null}
 
+              {mode === 'production' &&
+              roles.some((role) =>
+                ['ROLE_ADMIN', 'ROLE_EXECUTOR', 'ROLE_ADMIN_SXR'].includes(
+                  role,
+                ),
+              ) ? (
+                <NavLink
+                  to="/Order/ViewOrder"
+                  className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 
+                  }`}
+                >
+                  <FcSearch size={24} />
+                  Search Order
+                </NavLink>
+              ) : null}
 
+              {/* inventory */}
+
+              <SidebarLinkGroup
+                activeCondition={
+                  pathname === '/forms' || pathname.includes('forms')
+                }
+              >
+                {(handleClick, open) => {
+                  return (
+                    <React.Fragment>
+                      {mode === 'production' &&
+                      roles.some((role) => ['ROLE_ADMIN'].includes(role)) ? (
+                        <NavLink
+                          to="#"
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            (pathname === '/forms' ||
+                              pathname.includes('forms')) &&
+                            'bg-graydark dark:bg-meta-4'
+                          }`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            sidebarExpanded
+                              ? handleClick()
+                              : setSidebarExpanded(true);
+                          }}
+                        >
+                          <MdInventory2 size={24} />
+                          Inventory
+                          <svg
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                              open && 'rotate-180'
+                            }`}
+                            width="20"
+                            height="20"
+                            viewBox="0 0 20 20"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              clipRule="evenodd"
+                              d="M4.41107 6.9107C4.73651 6.58527 5.26414 6.58527 5.58958 6.9107L10.0003 11.3214L14.4111 6.91071C14.7365 6.58527 15.2641 6.58527 15.5896 6.91071C15.915 7.23614 15.915 7.76378 15.5896 8.08922L10.5896 13.0892C10.2641 13.4147 9.73651 13.4147 9.41107 13.0892L4.41107 8.08922C4.08563 7.76378 4.08563 7.23614 4.41107 6.9107Z"
+                              fill=""
+                            />
+                          </svg>
+                        </NavLink>
+                      ) : null}
+
+                      <div
+                        className={`translate transform overflow-hidden ${
+                          !open && 'hidden'
+                        }`}
+                      >
+                        <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
                           <li>
                             <NavLink
                               to="/inventory/viewProductInventory"
@@ -1053,7 +1138,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             </NavLink>
                           </li>
 
-                           <li>
+                          <li>
                             <NavLink
                               to="/inventory/recentTransacTions"
                               className={({ isActive }) =>
@@ -1065,7 +1150,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             </NavLink>
                           </li>
 
-                            <li>
+                          <li>
                             <NavLink
                               to="/inventory/ExcelUpdateInventory"
                               className={({ isActive }) =>
@@ -1076,16 +1161,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               Upload Excel Update
                             </NavLink>
                           </li>
-
                         </ul>
                       </div>
                     </React.Fragment>
                   );
                 }}
               </SidebarLinkGroup>
-
-
-
 
               <SidebarLinkGroup
                 activeCondition={
@@ -1095,13 +1176,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {mode === "production" && roles.some(role => ['ROLE_ADMIN', "ROLE_ADMIN_DLI"].includes(role)) ? (
+                      {mode === 'production' &&
+                      roles.some((role) =>
+                        ['ROLE_ADMIN', 'ROLE_ADMIN_DLI'].includes(role),
+                      ) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
-                            pathname.includes('forms')) &&
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            (pathname === '/forms' ||
+                              pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
-                            }`}
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
                             sidebarExpanded
@@ -1112,8 +1197,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           <MdInventory2 size={24} />
                           Orders
                           <svg
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
-                              }`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                              open && 'rotate-180'
+                            }`}
                             width="20"
                             height="20"
                             viewBox="0 0 20 20"
@@ -1131,8 +1217,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       ) : null}
 
                       <div
-                        className={`translate transform overflow-hidden ${!open && 'hidden'
-                          }`}
+                        className={`translate transform overflow-hidden ${
+                          !open && 'hidden'
+                        }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
                           <li>
@@ -1170,16 +1257,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               Edit Order
                             </NavLink>
                           </li>
-
                         </ul>
                       </div>
                     </React.Fragment>
                   );
                 }}
               </SidebarLinkGroup>
-
-
-
 
               {/* stock journal */}
               <SidebarLinkGroup
@@ -1190,13 +1273,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {mode === "production" && roles.some(role => ['ROLE_ADMIN', "ROLE_ADMIN_DLI"].includes(role)) ? (
+                      {mode === 'production' &&
+                      roles.some((role) =>
+                        ['ROLE_ADMIN', 'ROLE_ADMIN_DLI'].includes(role),
+                      ) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
-                            pathname.includes('forms')) &&
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            (pathname === '/forms' ||
+                              pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
-                            }`}
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
                             sidebarExpanded
@@ -1207,8 +1294,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           <BiTransfer size={24} />
                           Stock Transfer
                           <svg
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
-                              }`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                              open && 'rotate-180'
+                            }`}
                             width="20"
                             height="20"
                             viewBox="0 0 20 20"
@@ -1226,8 +1314,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       ) : null}
 
                       <div
-                        className={`translate transform overflow-hidden ${!open && 'hidden'
-                          }`}
+                        className={`translate transform overflow-hidden ${
+                          !open && 'hidden'
+                        }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
                           <li>
@@ -1265,18 +1354,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                               Edit Order
                             </NavLink>
                           </li> */}
-
                         </ul>
                       </div>
                     </React.Fragment>
                   );
                 }}
               </SidebarLinkGroup>
-
-
-
-
-
 
               <SidebarLinkGroup
               // activeCondition={
@@ -1286,13 +1369,15 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                      {mode === 'production' &&
+                      roles.some((role) => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
-                            pathname.includes('forms')) &&
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            (pathname === '/forms' ||
+                              pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
-                            }`}
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
                             sidebarExpanded
@@ -1303,8 +1388,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           <FcDataConfiguration size={24} />
                           Configurator
                           <svg
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
-                              }`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                              open && 'rotate-180'
+                            }`}
                             width="20"
                             height="20"
                             viewBox="0 0 20 20"
@@ -1322,11 +1408,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       ) : null}
 
                       <div
-                        className={`translate transform overflow-hidden ${!open && 'hidden'
-                          }`}
+                        className={`translate transform overflow-hidden ${
+                          !open && 'hidden'
+                        }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-
                           <li>
                             <NavLink
                               to="/configurator/addunit"
@@ -1488,14 +1574,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           </li>
                         </ul>
                       </div>
-
                     </React.Fragment>
                   );
                 }}
               </SidebarLinkGroup>
 
               {/* <!-- Menu Item Tables --> */}
-
 
               {/* customer */}
 
@@ -1507,13 +1591,17 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {mode === "production" && roles.some(role => ['ROLE_ADMIN', "ROLE_ADMIN_DLI"].includes(role)) ? (
+                      {mode === 'production' &&
+                      roles.some((role) =>
+                        ['ROLE_ADMIN', 'ROLE_ADMIN_DLI'].includes(role),
+                      ) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
-                            pathname.includes('forms')) &&
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            (pathname === '/forms' ||
+                              pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
-                            }`}
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
                             sidebarExpanded
@@ -1524,8 +1612,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           <FaUser size={22} />
                           Customer
                           <svg
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
-                              }`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                              open && 'rotate-180'
+                            }`}
                             width="20"
                             height="20"
                             viewBox="0 0 20 20"
@@ -1543,8 +1632,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       ) : null}
 
                       <div
-                        className={`translate transform overflow-hidden ${!open && 'hidden'
-                          }`}
+                        className={`translate transform overflow-hidden ${
+                          !open && 'hidden'
+                        }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
                           <li>
@@ -1582,7 +1672,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           </li>
                         </ul>
                       </div>
-
                     </React.Fragment>
                   );
                 }}
@@ -1598,13 +1687,15 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                      {mode === 'production' &&
+                      roles.some((role) => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/forms' ||
-                            pathname.includes('forms')) &&
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            (pathname === '/forms' ||
+                              pathname.includes('forms')) &&
                             'bg-graydark dark:bg-meta-4'
-                            }`}
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
                             sidebarExpanded
@@ -1615,8 +1706,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           <PiRecycleBold size={24} />
                           Supplier
                           <svg
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
-                              }`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                              open && 'rotate-180'
+                            }`}
                             width="20"
                             height="20"
                             viewBox="0 0 20 20"
@@ -1634,8 +1726,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       ) : null}
 
                       <div
-                        className={`translate transform overflow-hidden ${!open && 'hidden'
-                          }`}
+                        className={`translate transform overflow-hidden ${
+                          !open && 'hidden'
+                        }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
                           <li>
@@ -1673,32 +1766,26 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           </li>
                         </ul>
                       </div>
-
                     </React.Fragment>
                   );
                 }}
               </SidebarLinkGroup>
 
-
-
-              <li>
-
-              </li>
+              <li></li>
               {/* <!-- Menu Item Settings --> */}
             </ul>
           </div>
 
           {/* <!-- Others Group --> */}
           <div>
-            {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+            {mode === 'production' &&
+            roles.some((role) => ['ROLE_ADMIN'].includes(role)) ? (
               <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
                 Auth
               </h3>
             ) : null}
 
             <ul className="mb-6 flex flex-col gap-1.5">
-
-
               {/* <!-- Auth  --> */}
               <SidebarLinkGroup
                 activeCondition={
@@ -1708,12 +1795,15 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
-                      {mode === "production" && roles.some(role => ['ROLE_ADMIN'].includes(role)) ? (
+                      {mode === 'production' &&
+                      roles.some((role) => ['ROLE_ADMIN'].includes(role)) ? (
                         <NavLink
                           to="#"
-                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${(pathname === '/auth' || pathname.includes('auth')) &&
+                          className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-small text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            (pathname === '/auth' ||
+                              pathname.includes('auth')) &&
                             'bg-graydark dark:bg-meta-4'
-                            }`}
+                          }`}
                           onClick={(e) => {
                             e.preventDefault();
                             sidebarExpanded
@@ -1752,8 +1842,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           </svg>
                           Authentication
                           <svg
-                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${open && 'rotate-180'
-                              }`}
+                            className={`absolute right-4 top-1/2 -translate-y-1/2 fill-current ${
+                              open && 'rotate-180'
+                            }`}
                             width="20"
                             height="20"
                             viewBox="0 0 20 20"
@@ -1771,11 +1862,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       ) : null}
 
                       <div
-                        className={`translate transform overflow-hidden ${!open && 'hidden'
-                          }`}
+                        className={`translate transform overflow-hidden ${
+                          !open && 'hidden'
+                        }`}
                       >
                         <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-
                           <li>
                             <NavLink
                               to="/auth/signup"
@@ -1789,7 +1880,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           </li>
                         </ul>
                       </div>
-
                     </React.Fragment>
                   );
                 }}
