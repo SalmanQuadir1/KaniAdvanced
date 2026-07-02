@@ -329,6 +329,7 @@ const ShopifyOrders = () => {
           id: order.customer?.id || null,
           name: `${order.customer?.first_name} ${order.customer.last_name}` || order.customer?.name || '',
           phone:order.phone,
+          country:order.shipping_address?.country || order.billing_address?.country || '',
        
         },
 
@@ -382,11 +383,11 @@ const ShopifyOrders = () => {
           },
         });
       } else {
-        alert(data.message || 'Failed to sync customer. Please try again.');
+        toast.error(data.message || 'Failed to sync customer. Please try again.');
       }
     } catch (error) {
       console.error('Error:', error);
-      alert('Error syncing customer: ' + error.message);
+      toast.error('Error syncing customer: ' + error.message);
     } finally {
       setCheckingCustomers((prev) => ({ ...prev, [order.id]: false }));
     }

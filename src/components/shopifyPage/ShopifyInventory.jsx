@@ -226,7 +226,7 @@ const ShopifyInventory = () => {
       for (const chunk of chunks) {
         const ids = chunk.join(',');
         const response = await fetch(
-          `/shopify/admin/api/2026-01/inventory_items.json?ids=${ids}`,
+          `/shopify/admin/api/2026-01/inventory_items.json`,
           {
             method: 'GET',
             headers: {

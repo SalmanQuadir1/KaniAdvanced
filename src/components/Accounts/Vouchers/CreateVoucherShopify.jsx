@@ -28,7 +28,7 @@ const CreateVoucherShopify = () => {
   const navigationState = location.state || {};
   const { customer, products, order, isNewCustomer } = navigationState;
 
-  console.log(products, '112233');
+  console.log(customer, '112233');
 
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const { token } = currentUser;
@@ -158,10 +158,45 @@ const CreateVoucherShopify = () => {
     { value: 'Retail-SXR', label: 'Retail-SXR' },
   ];
 
-  const stateOptions = [
+  const stateOption = [
     { value: '01', label: 'Jammu & Kashmir' },
+    { value: '02', label: 'Himachal Pradesh' },
+    { value: '03', label: 'Punjab' },
+    { value: '04', label: 'Chandigarh' },
+    { value: '05', label: 'Uttarakhand' },
+    { value: '06', label: 'Haryana' },
     { value: '07', label: 'Delhi' },
-    // add other states if needed
+    { value: '08', label: 'Rajasthan' },
+    { value: '09', label: 'Uttar Pradesh' },
+    { value: '10', label: 'Bihar' },
+    { value: '11', label: 'Sikkim' },
+    { value: '12', label: 'Arunachal Pradesh' },
+    { value: '13', label: 'Nagaland' },
+    { value: '14', label: 'Manipur' },
+    { value: '15', label: 'Mizoram' },
+    { value: '16', label: 'Tripura' },
+    { value: '17', label: 'Meghalaya' },
+    { value: '18', label: 'Assam' },
+    { value: '19', label: 'West Bengal' },
+    { value: '20', label: 'Jharkhand' },
+    { value: '21', label: 'Odisha' },
+    { value: '22', label: 'Chhattisgarh' },
+    { value: '23', label: 'Madhya Pradesh' },
+    { value: '24', label: 'Gujarat' },
+    { value: '25', label: 'Daman & Diu' },
+    { value: '26', label: 'Dadra & Nagar Haveli' },
+    { value: '27', label: 'Maharashtra' },
+    { value: '28', label: 'Andhra Pradesh' },
+    { value: '29', label: 'Karnataka' },
+    { value: '30', label: 'Goa' },
+    { value: '31', label: 'Lakshadweep' },
+    { value: '32', label: 'Kerala' },
+    { value: '33', label: 'Tamil Nadu' },
+    { value: '34', label: 'Puducherry' },
+    { value: '35', label: 'Andaman & Nicobar Islands' },
+    { value: '36', label: 'Telangana' },
+    { value: '37', label: 'Andhra Pradesh (New)' },
+    { value: '38', label: 'Ladakh' },
   ];
 
   // ── Helper Functions ──
@@ -334,7 +369,7 @@ const CreateVoucherShopify = () => {
     currentBalance: 0,
     narration: '',
     salesChannel: '',
-    isExport: false,
+    isExport: customer.country?.toLowerCase() !== 'india' ? true : false,
     igstLedgerId: null,
     cgstLedgerId: null,
     sgstLedgerId: null,
@@ -554,7 +589,7 @@ const CreateVoucherShopify = () => {
           //     'totalWithoutgst',
           //     (
           //       parseFloat(totals.totalBasePrice) -
-          
+
           //       parseFloat(totals.totalDiscount)
           //     ).toFixed(2),
           //   );
