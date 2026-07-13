@@ -154,9 +154,9 @@ const ShopifyOrders = () => {
       setOrders(ordersData);
 
       // Auto-check customers after orders load
-      if (ordersData.length > 0) {
-        checkCustomersInOrders(ordersData);
-      }
+      // if (ordersData.length > 0) {
+      //   checkCustomersInOrders(ordersData);
+      // }
     } catch (err) {
       setError({
         message: err.message,
@@ -292,45 +292,46 @@ const ShopifyOrders = () => {
       setCheckingCustomers((prev) => ({ ...prev, [order.id]: true }));
       const shippingStateCode = getStateCode(order?.shipping_address?.province);
       // Use the single sync endpoint
-      const response = await fetch(
-        `${CUSTOMERSHOPIFY_URL}`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            contactNumber: customerPhone,
-            email: order.customer?.email || '',
-            customerName: `${order.customer?.first_name} ${order.customer?.last_name}`,
-            // firstName: order.customer?.first_name || '',
-            // lastName: order.customer?.last_name || '',
-            shopifyCustomerId: order.customer?.id,
-            orderId: order.id,
-            shippingAddress: order?.shipping_address?.address1,
-            billingAddress: order?.billing_address?.address1,
-            countryName: order?.billing_address?.country || '',
-            shippingState: getStateCode(order?.shipping_address?.province),
-            typeOfopeningBalance: 'DEBIT',
-            previousOpType: 'DEBIT',
-            openingBalances: 0,
-          }),
+      const response = await fetch(`${CUSTOMERSHOPIFY_URL}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: JSON.stringify({
+          contactNumber: customerPhone,
+          email: order.customer?.email || '',
+          customerName: `${order.customer?.first_name} ${order.customer?.last_name}`,
+          // firstName: order.customer?.first_name || '',
+          // lastName: order.customer?.last_name || '',
+          shopifyCustomerId: order.customer?.id,
+          orderId: order.id,
+          shippingAddress: order?.shipping_address?.address1,
+          billingAddress: order?.billing_address?.address1,
+          countryName: order?.billing_address?.country || '',
+          shippingState: getStateCode(order?.shipping_address?.province),
+          typeOfopeningBalance: 'DEBIT',
+          previousOpType: 'DEBIT',
+          openingBalances: 0,
+        }),
+      });
 
       const data = await response.json();
-      console.log(order,"222222222umer");
-      
+      console.log(order, '222222222umer');
 
       const voucherData = {
         // ── Customer Info ──────────────────────────────────
         customer: {
           id: order.customer?.id || null,
-          name: `${order.customer?.first_name} ${order.customer.last_name}` || order.customer?.name || '',
-          phone:order.phone,
-          country:order.shipping_address?.country || order.billing_address?.country || '',
-       
+          name:
+            `${order.customer?.first_name} ${order.customer.last_name}` ||
+            order.customer?.name ||
+            '',
+          phone: order.phone,
+          country:
+            order.shipping_address?.country ||
+            order.billing_address?.country ||
+            '',
         },
 
         // ── Order Info ─────────────────────────────────────
@@ -383,7 +384,9 @@ const ShopifyOrders = () => {
           },
         });
       } else {
-        toast.error(data.message || 'Failed to sync customer. Please try again.');
+        toast.error(
+          data.message || 'Failed to sync customer. Please try again.',
+        );
       }
     } catch (error) {
       console.error('Error:', error);
@@ -693,6 +696,9 @@ const ShopifyOrders = () => {
                         Date
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                        Products
+                      </th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                         Customer
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
@@ -735,6 +741,17 @@ const ShopifyOrders = () => {
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
                           {formatDate(order.created_at)}
                         </td>
+                        <td>
+                          {order.line_items?.map((item) => (
+                            <div
+                              key={item.id}
+                              className="text-sm text-gray-700 tracking-wider whitespace-nowrap"
+                            >
+                              {item.sku} (Qty: {item.quantity})
+                            </div>
+                          ))}
+                        </td>
+
                         <td className="px-4 py-3">
                           <div className="text-sm font-medium text-gray-900">
                             {order.customer?.first_name}{' '}
