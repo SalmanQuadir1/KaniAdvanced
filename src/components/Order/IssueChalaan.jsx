@@ -8,10 +8,17 @@ import 'flatpickr/dist/themes/material_blue.css'; // Import a Flatpickr theme
 import Modal from './Modal';
 import * as Yup from 'yup';
 import useorder from '../../hooks/useOrder';
-import ReactDatePicker from "react-datepicker";
+import ReactDatePicker from 'react-datepicker';
 import useProduct from '../../hooks/useProduct';
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, VIEW_ORDER_PRODUCT, UPDATE_ORDERPRODUCT_ALL, UPDATE_ISSUECHALLAN } from '../../Constants/utils';
-import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
+import {
+  GET_PRODUCTBYID_URL,
+  GET_ORDERBYID_URL,
+  UPDATE_ORDER_URL,
+  VIEW_ORDER_PRODUCT,
+  UPDATE_ORDERPRODUCT_ALL,
+  UPDATE_ISSUECHALLAN,
+} from '../../Constants/utils';
+import { IoIosAdd, IoMdAdd, IoMdTrash } from 'react-icons/io';
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
 import { FiTrash2 } from 'react-icons/fi';
@@ -25,94 +32,57 @@ const IssueChalaan = () => {
   const navigate = useNavigate();
   const [orderType, setOrderType] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [orderTypeOptions, setorderTypeOptions] = useState([])
-  const [prodIdOptions, setprodIdOptions] = useState([])
-  const [prodIdd, setprodIdd] = useState("")
+  const [orderTypeOptions, setorderTypeOptions] = useState([]);
+  const [prodIdOptions, setprodIdOptions] = useState([]);
+  const [prodId, setprodId] = useState([]);
+  const [prodIdd, setprodIdd] = useState('');
   const [order, setOrder] = useState(null); // To store fetched product data
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
-  const [suppId, setsuppId] = useState()
+  const [suppId, setsuppId] = useState();
   const [isLoading, setIsLoading] = useState(true); // Loader state
-  const [customerOptions, setcustomerOptions] = useState([])
+  const [customerOptions, setcustomerOptions] = useState([]);
   const { token } = currentUser;
 
-
-
-  const [orderProduct, setorderProduct] = useState([])
+  const [orderProduct, setorderProduct] = useState([]);
 
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [suppliers, setSuppliers] = useState([
-    { id: 1, name: "Supplier A" },
-    { id: 2, name: "Supplier B" },
-    { id: 3, name: "Supplier C" },
-  ])
-  const {
+    { id: 1, name: 'Supplier A' },
+    { id: 2, name: 'Supplier B' },
+    { id: 3, name: 'Supplier C' },
+  ]);
+  const { productId, getprodId } = useorder();
 
-    productId,
+  useEffect(() => {
+    getprodId();
+  }, []);
 
-  } = useorder();
-
-
-
-
-
-
-
-
-
+  useEffect(() => {
+    if (productId) {
+      const prodIdOptions = productId.map((product) => ({
+        value: product.id,
+        label: product.productId,
+      }));
+      setprodId(prodIdOptions);
+    }
+  }, [productId]);
 
   const { id } = useParams();
 
-
-
-
   const [selectedSuppliers, setSelectedSuppliers] = useState([]);
 
+  console.log(selectedSuppliers, 'selecteddddddddd Suppliersss');
 
+  console.log(isSupplierModalOpen, 'll');
 
-
-
-
-  console.log(selectedSuppliers, "selecteddddddddd Suppliersss");
-
-
-
-
-  console.log(isSupplierModalOpen, "ll");
-
-  console.log(isModalOpen, "jj");
-
-
-
-
-
-
-
-
+  console.log(isModalOpen, 'jj');
 
   // Close modal
   const closeSupplierModal = () => {
     setIsSupplierModalOpen(false);
   };
 
-
-
-
-
-
-
-
-
-
-
-
-  console.log(productId, "looool");
-
-
-
-
-
-
-
+  console.log(productId, 'looool');
 
   const getOrderById = async () => {
     try {
@@ -128,7 +98,7 @@ const IssueChalaan = () => {
       }
 
       const data = await response.json();
-      console.log(data, "luciiiiferrrrrrrrrrrrrr")
+      console.log(data, 'luciiiiferrrrrrrrrrrrrr');
       setOrder(data); // Store fetched product
     } catch (error) {
       console.error('Error fetching product:', error);
@@ -137,38 +107,23 @@ const IssueChalaan = () => {
     }
   };
 
-
   // Fetch data when component mounts
   useEffect(() => {
     getOrderById();
   }, [id]);
 
-  const [prodIdModal, setprodIdModal] = useState([])
-
-
-
-
-
-
-
-
-
-
-
+  const [prodIdModal, setprodIdModal] = useState([]);
 
   const OrderCategoryOptions = [
     { value: 'Embroidery', label: 'Embroidery' },
     { value: 'Dyeing', label: 'Dyeing' },
     { value: 'PlainOrder', label: 'PlainOrder' },
-
   ];
-
 
   const ExecutionStatus = [
     { value: 'Accepted', label: 'Accepted' },
     { value: 'Rejected', label: 'Rejected' },
     { value: 'NeedModification', label: 'Need Modification' },
-
   ];
 
   const customStyles = {
@@ -191,17 +146,6 @@ const IssueChalaan = () => {
     }),
   };
 
-
-
-
-
-
-
-
-
-
-
-
   useEffect(() => {
     if (order?.productSuppliers) {
       const initialSuppliers = order.productSuppliers.map((supplier) => ({
@@ -215,50 +159,26 @@ const IssueChalaan = () => {
     }
   }, [order]);
 
-
-
-
-
-
-
-
-
-
-
-
-  console.log(selectedSuppliers, "kikikikikikikiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  console.log(
+    selectedSuppliers,
+    'kikikikikikikiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii',
+  );
 
   const handleModalSubmit = (values) => {
-    console.log(values, "gfdsa");
+    console.log(values, 'gfdsa');
 
-
-
-    setprodIdModal((prevValues) => [...prevValues, values])
-    setIsModalOpen(false)
-
-  }
-
+    setprodIdModal((prevValues) => [...prevValues, values]);
+    setIsModalOpen(false);
+  };
 
   const handleSubmit = async (values) => {
-
+    // ✅ DEFINE productDetailsArray here - filter out empty rows
+    const productDetailsArray = values.productDetails
+      .filter((item) => item.productId && item.qty > 0) // Remove empty rows
+      .map((item) => ({
+        productId: item.productId,
+        qty: item.qty,
+      }));
 
     const formattedValues = {
       challanNo: values.challanNo,
@@ -267,63 +187,45 @@ const IssueChalaan = () => {
       challanDate2: values.challanDate2,
       challanDate3: values.challanDate3,
       challanDate4: values.challanDate4,
-      expectedSupplierDate: values.expectedSupplierDate
-    }
+      expectedSupplierDate: values.expectedSupplierDate,
+      productDetails: productDetailsArray, // ✅ Now this exists
+    };
+
+    console.log(formattedValues, 'formattedValues'); // ✅ Fixed: log is now correct
 
     try {
       const url = `${UPDATE_ISSUECHALLAN}/${id}`;
-      const method = "PUT";
+      const method = 'PUT';
 
       const response = await fetch(url, {
         method: method,
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formattedValues)
+        body: JSON.stringify(formattedValues),
       });
 
       const data = await response.json();
       if (response.ok) {
-        toast.success(`Order Status Updated  successfully`);
-        navigate("/orderlist/Executed")
-
-
-
-        // getCurrency(pagination.currentPage); // Fetch updated Currency
+        toast.success(`Order Status Updated successfully`);
+        navigate('/orderlist/Executed');
       } else {
         toast.error(`${data.errorMessage}`);
       }
     } catch (error) {
-      console.error(error, response);
-      toast.error("An error occurred");
+      console.error(error);
+      toast.error('An error occurred');
     }
-
-    // You can now send `finalData` to the backend or do any other operation with it
   };
 
+  console.log(prodIdModal, 'proddidmodal');
 
-
-
-
-
-
-
-
-
-
-
-
-  console.log(prodIdModal, "proddidmodal");
-
-
-
-
-
-
-
-  console.log(selectedSuppliers, "supppppppppppppppppppplierssssssssssssssssss");
-  console.log(order?.orderCategory, "jjhhjjhh");
+  console.log(
+    selectedSuppliers,
+    'supppppppppppppppppppplierssssssssssssssssss',
+  );
+  console.log(order, 'jjhhjjhh');
 
   return (
     <DefaultLayout>
@@ -332,8 +234,6 @@ const IssueChalaan = () => {
         <Formik
           enableReinitialize={true}
           initialValues={{
-
-
             // orderNo: order?.orderNo || '',
             orderCategory: order?.orderCategory || '',
             productId: order?.products?.productId,
@@ -344,31 +244,28 @@ const IssueChalaan = () => {
             productsId: order?.products?.id,
             // supplierName: product.productSuppliers?.supplier?.name || '', // Safely accessing supplier name
             // supplierOrderQty: product.productSuppliers?.[0]?.supplierOrderQty || 0,
-            productSuppliers: order?.productSuppliers?.map(supplier => ({
-              supplier: {
-                id: supplier?.id, // Send supplier ID
-              },
+            productSuppliers:
+              order?.productSuppliers?.map((supplier) => ({
+                supplier: {
+                  id: supplier?.id, // Send supplier ID
+                },
 
-              supplierOrderQty: supplier.supplierOrderQty || 0,
-            })) || [],
+                supplierOrderQty: supplier.supplierOrderQty || 0,
+              })) || [],
+            productDetails: [],
 
+            challanNo: '',
+            challanDate: '',
 
-            challanNo: "",
-            challanDate: "",
+            challanDate1: '',
 
-            challanDate1: "",
+            challanDate2: '',
 
-            challanDate2: "",
+            challanDate3: '',
 
-            challanDate3: "",
-
-            challanDate4: "",
-            expectedSupplierDate: "",
-            updatedBy: order?.updatedBy
-
-
-
-
+            challanDate4: '',
+            expectedSupplierDate: '',
+            updatedBy: order?.updatedBy,
 
             // customer: '',
           }}
@@ -389,23 +286,34 @@ const IssueChalaan = () => {
                     <div className="flex flex-wrap gap-3">
                       {/* Order No */}
                       <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Order No</label>
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Order No
+                        </label>
                         <ReactSelect
                           name="orderNo"
-
-                          value={order?.orderNo ? { label: order.orderNo, value: order.orderNo } : null} // Display orderNo
+                          value={
+                            order?.orderNo
+                              ? { label: order.orderNo, value: order.orderNo }
+                              : null
+                          } // Display orderNo
                           styles={customStyles}
                           className="bg-white dark:bg-form-Field"
                           classNamePrefix="react-select"
                           placeholder="Select Order No"
                           isDisabled={true} // Disabled field
                         />
-                        <ErrorMessage name="orderNo" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage
+                          name="orderNo"
+                          component="div"
+                          className="text-red-600 text-sm"
+                        />
                       </div>
 
                       {/* Order Category */}
                       <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Order Category</label>
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Order Category
+                        </label>
                         <Field
                           name="orderCategory"
                           value={order?.orderCategory || null}
@@ -418,8 +326,11 @@ const IssueChalaan = () => {
                           placeholder="Select Order Category"
                         />
 
-
-                        <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage
+                          name="salesChannel"
+                          component="div"
+                          className="text-red-600 text-sm"
+                        />
                       </div>
                       {/* <div className="flex-1 min-w-[200px]">
                         <label className="mb-2.5 block text-black dark:text-white">Product ID</label>
@@ -435,98 +346,103 @@ const IssueChalaan = () => {
                         <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
                       </div> */}
                       <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">SourceProduct ID</label>
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          SourceProduct ID
+                        </label>
                         <Field
                           name="sourceProduct"
                           readOnly
-
                           value={order?.sourceProductName} // Ensure it reflects Formik state
-                          onChange={(e) => setFieldValue("productId", e.target.value)} // Update Formik state
+                          onChange={(e) =>
+                            setFieldValue('productId', e.target.value)
+                          } // Update Formik state
                           className="w-[200px] bg-gray-3 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           placeholder="Enter Product ID"
                         />
-                        <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage
+                          name="productId"
+                          component="div"
+                          className="text-red-600 text-sm"
+                        />
                       </div>
 
                       {/* Product ID */}
                       <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Product ID</label>
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Product ID
+                        </label>
                         <Field
                           name="productId"
                           readOnly
-
                           value={values?.productId} // Ensure it reflects Formik state
-                          onChange={(e) => setFieldValue("productId", e.target.value)} // Update Formik state
+                          onChange={(e) =>
+                            setFieldValue('productId', e.target.value)
+                          } // Update Formik state
                           className="w-[200px] bg-gray-3 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           placeholder="Enter Product ID"
                         />
-                        <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage
+                          name="productId"
+                          component="div"
+                          className="text-red-600 text-sm"
+                        />
                       </div>
 
                       {/* Quantity to Manufacture */}
                       <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Quantity to Manufacture</label>
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Quantity to Manufacture
+                        </label>
                         <Field
                           name="quantityToManufacture"
                           className="w-[200px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           readOnly // Read-only field
                         />
-                        <ErrorMessage name="quantityToManufacture" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage
+                          name="quantityToManufacture"
+                          component="div"
+                          className="text-red-600 text-sm"
+                        />
                       </div>
                     </div>
-
-
-
                     <div className="flex flex-wrap gap-3 mt-5">
                       {/* Order No */}
 
-
                       {/* Order Category */}
                       <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Expected Date</label>
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Expected Date
+                        </label>
                         <Field
                           type="date"
                           readOnly
                           // name={`orderProducts[${index}].expectedDate`}
-                          value={values.expectedDate || ""}
+                          value={values.expectedDate || ''}
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                        //readOnly
+                          //readOnly
                         />
-                        <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage
+                          name="salesChannel"
+                          component="div"
+                          className="text-red-600 text-sm"
+                        />
                       </div>
 
-
-
-
-
                       {/* Product ID */}
-
                     </div>
-
-
-                    <div>
-
-
-
-                    </div>
-
-
-
-
-
+                    <div></div>
                     <div className="flex flex-wrap gap-3">
                       <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                         <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
                           <table className="min-w-full leading-normal">
                             <thead>
-                              <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
+                              <tr className="px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white">
                                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                   Supplier Name
                                 </th>
                                 <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                   Supplier Quantity
                                 </th>
-
                               </tr>
                             </thead>
                             <tbody>
@@ -534,7 +450,6 @@ const IssueChalaan = () => {
                                 <tr key={index}>
                                   <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                     <input
-
                                       value={supplierData.supplierName} // Display only this supplier's name
                                       readOnly
                                       className="w-[130px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
@@ -555,15 +470,11 @@ const IssueChalaan = () => {
                                     type="hidden"
                                     value={supplierData.supplierId} // Send Supplier ID in Form Submission
                                   />
-
                                 </tr>
                               ))}
                             </tbody>
-
-
                           </table>
                           {/* Add New Supplier Button */}
-
 
                           {/* <button
               type="button"
@@ -575,17 +486,162 @@ const IssueChalaan = () => {
             >
               Add Supplier
             </button> */}
-
-
                         </div>
                       </div>
                     </div>
 
+                    {values.orderCategory.toLowerCase() === 'plain order' && (
+                      <div className="flex flex-wrap gap-3 mt-5">
+                        <div className="w-full">
+                          <div className="flex justify-between items-center mb-3">
+                            <h4 className="text-md font-semibold text-black dark:text-white">
+                              Issue Fiber Here
+                            </h4>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newProduct = { productId: '', qty: 1 };
+                                setFieldValue('productDetails', [
+                                  ...values.productDetails,
+                                  newProduct,
+                                ]);
+                              }}
+                              className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-dark flex items-center gap-2"
+                            >
+                              <IoMdAdd size={20} /> Add Row
+                            </button>
+                          </div>
+
+                          <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
+                            {/* ✅ REMOVED overflow-hidden from this div */}
+                            <div className="inline-block min-w-full shadow-md rounded-lg">
+                              <table className="min-w-full leading-normal">
+                                <thead>
+                                  <tr className="px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white">
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      Select Fiber
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      Quantity
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      Action
+                                    </th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {values.productDetails &&
+                                  values.productDetails.length > 0 ? (
+                                    values.productDetails.map(
+                                      (product, index) => (
+                                        <tr key={index}>
+                                          <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                            {/* ✅ Add z-index to the container */}
+                                            <div
+                                              style={{
+                                                position: 'relative',
+                                                zIndex: 50,
+                                              }}
+                                            >
+                                              <ReactSelect
+                                                name={`productDetails[${index}].productId`}
+                                                value={
+                                                  product.productId
+                                                    ? prodId.find(
+                                                        (option) =>
+                                                          option.value ===
+                                                          product.productId,
+                                                      )
+                                                    : null
+                                                }
+                                                options={prodId}
+                                                styles={customStyles}
+                                                className="bg-white dark:bg-form-Field min-w-[200px]"
+                                                classNamePrefix="react-select"
+                                                placeholder="Select Product ID"
+                                                onChange={(selectedOption) => {
+                                                  const updatedProducts = [
+                                                    ...values.productDetails,
+                                                  ];
+                                                  updatedProducts[
+                                                    index
+                                                  ].productId = selectedOption
+                                                    ? selectedOption.value
+                                                    : '';
+                                                  setFieldValue(
+                                                    'productDetails',
+                                                    updatedProducts,
+                                                  );
+                                                }}
+                                                menuPortalTarget={document.body} // ✅ Renders dropdown outside the table
+                                              />
+                                            </div>
+                                          </td>
+                                          <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                            <Field
+                                              name={`productDetails[${index}].qty`}
+                                              type="number"
+                                              min="1"
+                                              className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                              onChange={(e) => {
+                                                const updatedProducts = [
+                                                  ...values.productDetails,
+                                                ];
+                                                updatedProducts[index].qty =
+                                                  parseInt(e.target.value) || 0;
+                                                setFieldValue(
+                                                  'productDetails',
+                                                  updatedProducts,
+                                                );
+                                              }}
+                                            />
+                                          </td>
+                                          <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                            <button
+                                              type="button"
+                                              onClick={() => {
+                                                const updatedProducts =
+                                                  values.productDetails.filter(
+                                                    (_, i) => i !== index,
+                                                  );
+                                                setFieldValue(
+                                                  'productDetails',
+                                                  updatedProducts,
+                                                );
+                                              }}
+                                              className="text-red-500 hover:text-red-700"
+                                            >
+                                              <FiTrash2 size={20} />
+                                            </button>
+                                          </td>
+                                        </tr>
+                                      ),
+                                    )
+                                  ) : (
+                                    <tr>
+                                      <td
+                                        colSpan="3"
+                                        className="px-5 py-5 text-center text-gray-500"
+                                      >
+                                        No products added yet. Click "Add Row"
+                                        to add products.
+                                      </td>
+                                    </tr>
+                                  )}
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     <div className="flex flex-wrap gap-3 mt-5">
                       {/* Order No */}
                       <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Chalaan No</label>
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Chalaan No
+                        </label>
                         <Field
                           name="challanNo"
                           // value={values?.value} // Ensure it reflects Formik state
@@ -593,115 +649,147 @@ const IssueChalaan = () => {
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           placeholder="Enter challan No"
                         />
-                        <ErrorMessage name="orderNo" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage
+                          name="orderNo"
+                          component="div"
+                          className="text-red-600 text-sm"
+                        />
                       </div>
-
                       {/* Order Category */}
                       <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Chalaan Date</label>
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Chalaan Date
+                        </label>
                         <Field
                           name="challanDate"
                           type="date"
                           // name={`orderProducts[${index}].expectedDate`}
                           // value={values.expectedDate || ""}
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                        //readOnly
+                          //readOnly
                         />
-                        <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage
+                          name="salesChannel"
+                          component="div"
+                          className="text-red-600 text-sm"
+                        />
                       </div>
                       <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Chalaan Date</label>
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Chalaan Date
+                        </label>
                         <Field
                           type="date"
                           name="challanDate1"
                           // name={`orderProducts[${index}].expectedDate`}
                           // value={values.expectedDate || ""}
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                        //readOnly
+                          //readOnly
                         />
-                        <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage
+                          name="salesChannel"
+                          component="div"
+                          className="text-red-600 text-sm"
+                        />
                       </div>
                       <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Chalaan Date</label>
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Chalaan Date
+                        </label>
                         <Field
                           type="date"
                           name="challanDate2"
                           // name={`orderProducts[${index}].expectedDate`}
                           // value={values.expectedDate || ""}
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                        //readOnly
+                          //readOnly
                         />
-                        <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage
+                          name="salesChannel"
+                          component="div"
+                          className="text-red-600 text-sm"
+                        />
                       </div>
                       <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Chalaan Date</label>
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Chalaan Date
+                        </label>
                         <Field
                           type="date"
                           name="challanDate3"
                           // name={`orderProducts[${index}].expectedDate`}
                           // value={values.expectedDate || ""}
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                        //readOnly
+                          //readOnly
                         />
-                        <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage
+                          name="salesChannel"
+                          component="div"
+                          className="text-red-600 text-sm"
+                        />
                       </div>
                       <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Chalaan Date</label>
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Chalaan Date
+                        </label>
                         <Field
                           type="date"
                           name="challanDate4"
                           // name={`orderProducts[${index}].expectedDate`}
                           // value={values.expectedDate || ""}
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                        //readOnly
+                          //readOnly
                         />
-                        <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
-                      </div>  <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Expected Supplier Date</label>
+                        <ErrorMessage
+                          name="salesChannel"
+                          component="div"
+                          className="text-red-600 text-sm"
+                        />
+                      </div>{' '}
+                      <div className="flex-1 min-w-[200px]">
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Expected Supplier Date
+                        </label>
                         <Field
                           type="date"
                           name="expectedSupplierDate"
                           // name={`orderProducts[${index}].expectedDate`}
                           // value={values.expectedDate || ""}
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
-                        //readOnly
+                          //readOnly
                         />
-                        <ErrorMessage name="salesChannel" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage
+                          name="salesChannel"
+                          component="div"
+                          className="text-red-600 text-sm"
+                        />
                       </div>
                       <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white">Last Updated By</label>
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Last Updated By
+                        </label>
                         <Field
                           name="updatedBy"
                           value={values?.updatedBy} // Ensure it reflects Formik state
-                          onChange={(e) => setFieldValue("productId", e.target.value)} // Update Formik state
+                          onChange={(e) =>
+                            setFieldValue('productId', e.target.value)
+                          } // Update Formik state
                           className="w-[200px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                           placeholder="Last Updated By"
                         />
-                        <ErrorMessage name="orderNo" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage
+                          name="orderNo"
+                          component="div"
+                          className="text-red-600 text-sm"
+                        />
                       </div>
-
-
-
-
-
                       {/* Product ID */}
-
                     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    <div className="flex justify-center mt-4"> {/* Centering the button */}
+                    <div className="flex justify-center mt-4">
+                      {' '}
+                      {/* Centering the button */}
                       <button
+                        type="submit"
                         // type="button" // Ensures the button does not trigger the form submission
                         // onClick={(e) => handleUpdateSubmit(values, e)}
                         className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none" // Increased width
@@ -712,12 +800,9 @@ const IssueChalaan = () => {
                   </div>
                 </div>
               </div>
-
-
             </Form>
           )}
         </Formik>
-
 
         <ModalUpdate
           isOpen={isModalOpen}
@@ -727,10 +812,8 @@ const IssueChalaan = () => {
           onSubmit={handleModalSubmit}
           width="70%"
           height="80%"
-          style={{ marginLeft: '70px', marginRight: '0' }}  // Add this line
+          style={{ marginLeft: '70px', marginRight: '0' }} // Add this line
         />
-
-
       </div>
     </DefaultLayout>
   );

@@ -8,10 +8,15 @@ import 'flatpickr/dist/themes/material_blue.css'; // Import a Flatpickr theme
 import Modal from './Modal';
 import * as Yup from 'yup';
 import useorder from '../../hooks/useOrder';
-import ReactDatePicker from "react-datepicker";
+import ReactDatePicker from 'react-datepicker';
 import useProduct from '../../hooks/useProduct';
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL } from '../../Constants/utils';
-import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
+import {
+  GET_PRODUCTBYID_URL,
+  GET_ORDERBYID_URL,
+  UPDATE_ORDER_URL,
+  UPDATE_ORDERCREATED_ALL,
+} from '../../Constants/utils';
+import { IoIosAdd, IoMdAdd, IoMdTrash } from 'react-icons/io';
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
 import { FiTrash2 } from 'react-icons/fi';
@@ -24,24 +29,22 @@ const UpdatePartiallyClosed = () => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const [orderType, setOrderType] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [orderTypeOptions, setorderTypeOptions] = useState([])
-  const [prodIdOptions, setprodIdOptions] = useState([])
-  const [prodIdd, setprodIdd] = useState("")
+  const [orderTypeOptions, setorderTypeOptions] = useState([]);
+  const [prodIdOptions, setprodIdOptions] = useState([]);
+  const [prodIdd, setprodIdd] = useState('');
   const [order, setOrder] = useState(null); // To store fetched product data
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
-  const [suppId, setsuppId] = useState()
+  const [suppId, setsuppId] = useState();
   const [isLoading, setIsLoading] = useState(true); // Loader state
-  const [customerOptions, setcustomerOptions] = useState([])
+  const [customerOptions, setcustomerOptions] = useState([]);
   const { token } = currentUser;
-
-
 
   const [selectedRowId, setSelectedRowId] = useState(null);
   const [suppliers, setSuppliers] = useState([
-    { id: 1, name: "Supplier A" },
-    { id: 2, name: "Supplier B" },
-    { id: 3, name: "Supplier C" },
-  ])
+    { id: 1, name: 'Supplier A' },
+    { id: 2, name: 'Supplier B' },
+    { id: 3, name: 'Supplier C' },
+  ]);
   const {
     getorderType,
     orderTypee,
@@ -51,9 +54,7 @@ const UpdatePartiallyClosed = () => {
     getCustomer,
   } = useorder();
 
-
   const [selectedSuppliers, setSelectedSuppliers] = useState([]);
-
 
   // const handleCheckboxChange = (supplierId) => {
   //   console.log(supplierId, "sssspppp");
@@ -67,91 +68,71 @@ const UpdatePartiallyClosed = () => {
     setSelectedSuppliers((prev) => {
       const updated = [...prev];
       const rowIndex = updated.findIndex(
-        (row) => row.selectedRowId === selectedRowId
+        (row) => row.selectedRowId === selectedRowId,
       );
 
       if (rowIndex !== -1) {
         // Update supplierIds for the existing row
         const supplierExists = updated[rowIndex].supplierIds.some(
-          (s) => s.supplierId === supplierId
+          (s) => s.supplierId === supplierId,
         );
 
         if (supplierExists) {
           // Remove the supplier if already exists
           updated[rowIndex].supplierIds = updated[rowIndex].supplierIds.filter(
-            (s) => s.supplierId !== supplierId
+            (s) => s.supplierId !== supplierId,
           );
         } else {
           // Add new supplier to the row
           updated[rowIndex].supplierIds.push({
             supplierId,
-            supplierName: "", // Optional: default supplier name if needed
+            supplierName: '', // Optional: default supplier name if needed
           });
         }
       } else {
         // Add a new row with the selected supplier
         updated.push({
           selectedRowId,
-          supplierIds: [{ supplierId, supplierName: "" }],
+          supplierIds: [{ supplierId, supplierName: '' }],
         });
       }
-      console.log(updated, "updatedddddddddddddddddddddd");
+      console.log(updated, 'updatedddddddddddddddddddddd');
       return updated;
     });
   };
 
-
-  console.log(selectedSuppliers, "selecteddddddddd Suppliersss");
+  console.log(selectedSuppliers, 'selecteddddddddd Suppliersss');
 
   const openSupplierModal = (id, rowIndex) => {
-    console.log("opening supplier  modal  after update", id, rowIndex);
+    console.log('opening supplier  modal  after update', id, rowIndex);
     setIsSupplierModalOpen(true);
     setSelectedRowId(rowIndex);
-    console.log(id, "ghson");
-    setsuppId(id)
+    console.log(id, 'ghson');
+    setsuppId(id);
   };
 
+  console.log(isSupplierModalOpen, 'll');
 
-  console.log(isSupplierModalOpen, "ll");
-
-  console.log(isModalOpen, "jj");
-
+  console.log(isModalOpen, 'jj');
 
   // Close modal
   const closeSupplierModal = () => {
     setIsSupplierModalOpen(false);
   };
 
-
   const handleSupplierModalSubmit = () => {
-    console.log("Selected Suppliers:", selectedSuppliers);
+    console.log('Selected Suppliers:', selectedSuppliers);
     closeSupplierModal();
   };
-
-
-
-
-
-
-
 
   useEffect(() => {
     getorderType();
     getprodId();
     getCustomer();
+  }, []);
 
-
-
-
-
-
-  }, [])
-
-  console.log(productId, "looool");
+  console.log(productId, 'looool');
   const { id } = useParams();
-
-
-
 
   const handleSubmit = async (values) => {
     // Map selected row IDs to the desired format
@@ -165,29 +146,24 @@ const UpdatePartiallyClosed = () => {
     };
 
     // Log the data to check the format
-    console.log(finalData, "finalData");
-
-
-
+    console.log(finalData, 'finalData');
 
     try {
       const url = `${UPDATE_ORDERCREATED_ALL}/${id}`;
-      const method = "PUT";
+      const method = 'PUT';
 
       const response = await fetch(url, {
         method: method,
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(finalData)
+        body: JSON.stringify(finalData),
       });
 
       const data = await response.json();
       if (response.ok) {
         toast.success(`Order Status Updated  successfully`);
-
-
 
         // getCurrency(pagination.currentPage); // Fetch updated Currency
       } else {
@@ -195,19 +171,11 @@ const UpdatePartiallyClosed = () => {
       }
     } catch (error) {
       console.error(error, response);
-      toast.error("An error occurred");
+      toast.error('An error occurred');
     }
 
     // You can now send `finalData` to the backend or do any other operation with it
   };
-
-
-
-
-
-
-
-
 
   const getOrderById = async () => {
     try {
@@ -223,7 +191,7 @@ const UpdatePartiallyClosed = () => {
       }
 
       const data = await response.json();
-      console.log(data, "datatata")
+      console.log(data, 'datatata');
       setOrder(data); // Store fetched product
     } catch (error) {
       console.error('Error fetching product:', error);
@@ -231,53 +199,46 @@ const UpdatePartiallyClosed = () => {
       setIsLoading(false); // Stop loader
     }
   };
-  console.log(order, 'hloooooo')
+  console.log(order, 'hloooooo');
 
   // Fetch data when component mounts
   useEffect(() => {
     getOrderById();
   }, [id]);
 
-  const [prodIdModal, setprodIdModal] = useState([])
+  const [prodIdModal, setprodIdModal] = useState([]);
 
   useEffect(() => {
     if (orderTypee) {
-      const formattedOptions = orderTypee.map(order => ({
+      const formattedOptions = orderTypee.map((order) => ({
         value: order.id,
         label: order?.orderTypeName,
         orderTypeObject: order,
-        orderTypeId: { id: order.id }
+        orderTypeId: { id: order.id },
       }));
       setorderTypeOptions(formattedOptions);
     }
 
     if (productId) {
-      const formattedProdIdOptions = productId.map(prodId => ({
+      const formattedProdIdOptions = productId.map((prodId) => ({
         value: prodId.id,
         label: prodId?.productId,
         prodIdObject: prodId,
-        prodId: prodId.id
+        prodId: prodId.id,
       }));
       setprodIdOptions(formattedProdIdOptions);
     }
 
     if (customer) {
-      const formattedCustomerOptions = customer.map(customer => ({
+      const formattedCustomerOptions = customer.map((customer) => ({
         value: customer.id,
         label: customer?.customerName,
         customerObject: customer,
-        customer: customer.id
+        customer: customer.id,
       }));
       setcustomerOptions(formattedCustomerOptions);
     }
   }, [orderTypee]);
-
-
-
-
-
-
-
 
   const customStyles = {
     control: (provided) => ({
@@ -299,29 +260,14 @@ const UpdatePartiallyClosed = () => {
     }),
   };
 
-
-
-
-
-
-
-
   const handleModalSubmit = (values) => {
-    console.log(values, "gfdsa");
+    console.log(values, 'gfdsa');
 
+    setprodIdModal((prevValues) => [...prevValues, values]);
+    setIsModalOpen(false);
+  };
 
-
-    setprodIdModal((prevValues) => [...prevValues, values])
-    setIsModalOpen(false)
-
-  }
-
-  console.log(order, "orderrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-
-
-
-
-
+  console.log(order, 'orderrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
 
   return (
     <DefaultLayout>
@@ -334,45 +280,37 @@ const UpdatePartiallyClosed = () => {
             selectedRows: [],
             orderNo: order?.orderNo || '',
 
-
-            orderProducts: order?.orderProducts?.map((product) => ({
-
-              products: {
-                ...product.products,
-                productId: product.products?.productId || '',  // Set initial value for productId
-              },
-              productSuppliers: [
-                {
-                  supplier: {
-                    id: "", // Supplier ID
-                  },
-                  supplierOrderQty: "",
+            orderProducts:
+              order?.orderProducts?.map((product) => ({
+                products: {
+                  ...product.products,
+                  productId: product.products?.productId || '', // Set initial value for productId
                 },
-              ],
-              orderCategory: product.orderCategory || '',
-              inStockQuantity: product.inStockQuantity || '',
-              clientOrderQuantity: product.clientOrderQuantity || '',
-              quantityToManufacture: product.quantityToManufacture || '',
-              units: product.units || '',
-              value: product.value || '',
-              clientShippingDate: product.clientShippingDate || '',
-              expectedDate: product.expectedDate || '',
-
-
-
-            })) || [],
-
-
+                productSuppliers: [
+                  {
+                    supplier: {
+                      id: '', // Supplier ID
+                    },
+                    supplierOrderQty: '',
+                  },
+                ],
+                orderCategory: product.orderCategory || '',
+                inStockQuantity: product.inStockQuantity || '',
+                clientOrderQuantity: product.clientOrderQuantity || '',
+                quantityToManufacture: product.quantityToManufacture || '',
+                units: product.units || '',
+                value: product.value || '',
+                clientShippingDate: product.clientShippingDate || '',
+                expectedDate: product.expectedDate || '',
+              })) || [],
 
             clientInstruction: order?.clientInstruction || '',
             // customer: '',
           }}
 
-        // validationSchema={validationSchema}
+          // validationSchema={validationSchema}
         >
           {({ values, setFieldValue }) => {
-
-
             return (
               <Form>
                 <div className="flex flex-col gap-9">
@@ -386,42 +324,29 @@ const UpdatePartiallyClosed = () => {
                     <div className="p-6.5">
                       <div className="flex flex-wrap gap-4">
                         <div className="flex-1 min-w-[200px]">
-                          <label className="mb-2.5 block text-black dark:text-white">Order No</label>
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Order No
+                          </label>
                           <ReactSelect
                             name="orderNo"
-
-                            value={order?.orderNo ? { label: order.orderNo, value: order.orderNo } : null} // Display orderNo
+                            value={
+                              order?.orderNo
+                                ? { label: order.orderNo, value: order.orderNo }
+                                : null
+                            } // Display orderNo
                             styles={customStyles}
                             className="bg-white dark:bg-form-Field"
                             classNamePrefix="react-select"
                             placeholder="Select Order Type"
-
-
                             isDisabled={true}
                           />
-                          <ErrorMessage name="orderType" component="div" className="text-red-600 text-sm" />
+                          <ErrorMessage
+                            name="orderType"
+                            component="div"
+                            className="text-red-600 text-sm"
+                          />
                         </div>
-
-
-
-
                       </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                       <div className="shadow-md rounded-lg mt-3 overflow-scroll">
                         <table className="min-w-full leading-normal overflow-auto">
@@ -478,7 +403,14 @@ const UpdatePartiallyClosed = () => {
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <ReactSelect
                                     name="orderNo"
-                                    value={order?.orderNo ? { label: order.orderNo, value: order.orderNo } : null}
+                                    value={
+                                      order?.orderNo
+                                        ? {
+                                            label: order.orderNo,
+                                            value: order.orderNo,
+                                          }
+                                        : null
+                                    }
                                     styles={customStyles}
                                     className="bg-white dark:bg-form-Field w-[180px]"
                                     classNamePrefix="react-select"
@@ -497,10 +429,12 @@ const UpdatePartiallyClosed = () => {
                                     name={`orderProducts[${index}].products.productId`}
                                     onChange={(e) => {
                                       const newValue = e.target.value;
-                                      console.log(`New Product ID: ${newValue}`);
+                                      console.log(
+                                        `New Product ID: ${newValue}`,
+                                      );
                                       setFieldValue(
                                         `orderProducts[${index}].products.productId`,
-                                        newValue
+                                        newValue,
                                       );
                                     }}
                                     className="w-[150px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
@@ -517,7 +451,10 @@ const UpdatePartiallyClosed = () => {
                                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                   <Field
                                     name={`orderProducts[${index}].orderCategory`}
-                                    value={values.orderProducts[index]?.orderCategory || ""}
+                                    value={
+                                      values.orderProducts[index]
+                                        ?.orderCategory || ''
+                                    }
                                     className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                     readOnly
                                   />
@@ -553,105 +490,107 @@ const UpdatePartiallyClosed = () => {
                                   />
                                 </td>
 
-
                                 <td
                                   className="px-5 py-5 border-b border-gray-200 text-sm"
                                   colSpan={2} // Use colSpan to span across multiple columns
                                 >
-
-
-                                  {
-                                    product.productStatus?.toLowerCase() === "accepted" ? (
-                                      <div className="flex items-center gap-2">
-                                        <span
-                                          onClick={() => navigate(`/order/modifyproductafterexecution/${product?.id}`)}
-                                          className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
-                                        >
-                                          ISSUE CHALAAN
-                                        </span>
-                                        <span
-                                          onClick={() => handleUpdateBom(item?.bom?.id)}
-                                          className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
-                                        >
-                                          VIEW PRODUCT DETAILS
-                                        </span>
-                                      </div>
-                                    ) : (product.productStatus?.toLowerCase() === "approved" || product.productStatus === "Pending") ? (
-                                      <div className="flex items-center gap-2">
-                                        <span
-                                          onClick={() => navigate(`/order/updateorderproduct/${product?.id}`)}
-                                          className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
-                                        >
-                                          RECEIVING DETAILS
-                                        </span>
-                                        <span
-                                          onClick={() => handleUpdateBom(item?.bom?.id)}
-                                          className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
-                                        >
-                                          VIEW PRODUCT DETAILSt
-                                        </span>
-                                      </div>
-                                    ) : product.productStatus?.toLowerCase() === "closed" ? (
-                                      <div className="flex items-center gap-2">
-                                        <span
-                                          onClick={() => handleUpdateBom(item?.bom?.id)}
-                                          className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
-                                        >
-                                          VIEW PRODUCT DETAILS
-                                        </span>
-                                      </div>
-                                    ) : (
-                                      <div className="flex items-center gap-2">
-                                        <span
-                                          onClick={() => navigate(`/order/modifyorderproduct/${product?.id}`)}
-                                          className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
-                                        >
-                                          VIEW ORDER PRODUCT
-                                        </span>
-                                        <span
-                                          onClick={() => navigate(`/order/viewProduct/${product?.id}`)}
-                                          className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
-                                        >
-                                          VIEW PRODUCT DETAILS
-                                        </span>
-                                      </div>
-                                    )
-                                  }
-
-
-
-
-
-
-
-
-
+                                  {product.productStatus?.toLowerCase() ===
+                                  'accepted' ? (
+                                    <div className="flex items-center gap-2">
+                                      <span
+                                        onClick={() =>
+                                          navigate(
+                                            `/order/modifyproductafterexecution/${product?.id}`,
+                                          )
+                                        }
+                                        className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
+                                      >
+                                        ISSUE CHALAAN
+                                      </span>
+                                      <span
+                                        onClick={() =>
+                                          navigate(
+                                            `/order/viewProduct/${product?.id}`,
+                                          )
+                                        }
+                                        className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
+                                      >
+                                        VIEW PRODUCT DETAILS
+                                      </span>
+                                    </div>
+                                  ) : product.productStatus?.toLowerCase() ===
+                                      'approved' ||
+                                    product.productStatus === 'Pending' ? (
+                                    <div className="flex items-center gap-2">
+                                      <span
+                                        onClick={() =>
+                                          navigate(
+                                            `/order/updateorderproduct/${product?.id}`,
+                                          )
+                                        }
+                                        className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
+                                      >
+                                        RECEIVING DETAILS
+                                      </span>
+                                      <span
+                                        onClick={() =>
+                                          navigate(
+                                            `/order/viewProduct/${product?.id}`,
+                                          )
+                                        }
+                                        className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
+                                      >
+                                        VIEW PRODUCT DETAILS
+                                      </span>
+                                    </div>
+                                  ) : product.productStatus?.toLowerCase() ===
+                                    'closed' ? (
+                                    <div className="flex items-center gap-2">
+                                      <span
+                                        onClick={() =>
+                                          navigate(
+                                            `/order/viewProduct/${product?.id}`,
+                                          )
+                                        }
+                                        className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
+                                      >
+                                        VIEW PRODUCT DETAILS
+                                      </span>
+                                    </div>
+                                  ) : (
+                                    <div className="flex items-center gap-2">
+                                      <span
+                                        onClick={() =>
+                                          navigate(
+                                            `/order/modifyorderproduct/${product?.id}`,
+                                          )
+                                        }
+                                        className="bg-green-100 text-green-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-green-400 border border-green-400 cursor-pointer w-[100px]"
+                                      >
+                                        VIEW ORDER PRODUCT
+                                      </span>
+                                      <span
+                                        onClick={() =>
+                                          navigate(
+                                            `/order/viewProduct/${product?.id}`,
+                                          )
+                                        }
+                                        className="bg-red-100 text-red-800 text-[10px] font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 text-center dark:text-red-400 border border-red-400 cursor-pointer w-[100px]"
+                                      >
+                                        VIEW PRODUCT DETAILS
+                                      </span>
+                                    </div>
+                                  )}
                                 </td>
-
                               </tr>
                             ))}
                           </tbody>
                         </table>
                       </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                      <div className="flex justify-center mt-4"> {/* Centering the button */}
+                      <div className="flex justify-center mt-4">
+                        {' '}
+                        {/* Centering the button */}
                         {/* <button
                           type="submit"
 
@@ -664,10 +603,8 @@ const UpdatePartiallyClosed = () => {
                     </div>
                   </div>
                 </div>
-
-
               </Form>
-            )
+            );
           }}
         </Formik>
         {isSupplierModalOpen && (
@@ -690,10 +627,8 @@ const UpdatePartiallyClosed = () => {
           onSubmit={handleModalSubmit}
           width="70%"
           height="80%"
-          style={{ marginLeft: '70px', marginRight: '0' }}  // Add this line
+          style={{ marginLeft: '70px', marginRight: '0' }} // Add this line
         />
-
-
       </div>
     </DefaultLayout>
   );

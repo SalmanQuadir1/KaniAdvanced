@@ -4,17 +4,23 @@ import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import ReactSelect from 'react-select';
 import flatpickr from 'flatpickr';
-import ReactDatePicker from "react-datepicker";
+import ReactDatePicker from 'react-datepicker';
 import 'flatpickr/dist/themes/material_blue.css'; // Import a Flatpickr theme
-import "react-datepicker/dist/react-datepicker.css";
-import { format } from "date-fns";
+import 'react-datepicker/dist/react-datepicker.css';
+import { format } from 'date-fns';
 import Modal from './Modal';
 import * as Yup from 'yup';
-import { MdDelete } from "react-icons/md";
+import { MdDelete } from 'react-icons/md';
 import useorder from '../../hooks/useOrder';
 import useProduct from '../../hooks/useProduct';
-import { ADD_CUSTOMER_URL, GET_INPROGRESSTRACK, GET_INVENTORYBalance, GET_INVENTORYLOCATION, GET_PRODUCTBYID_URL } from '../../Constants/utils';
-import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
+import {
+  ADD_CUSTOMER_URL,
+  GET_INPROGRESSTRACK,
+  GET_INVENTORYBalance,
+  GET_INVENTORYLOCATION,
+  GET_PRODUCTBYID_URL,
+} from '../../Constants/utils';
+import { IoIosAdd, IoMdAdd, IoMdTrash } from 'react-icons/io';
 import Modall from './Modal';
 import SupplierModal from './SupplierModal';
 import { FiTrash2 } from 'react-icons/fi';
@@ -32,7 +38,7 @@ const AddOrder = () => {
 
   const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
 
-  const [isProductModalOpen, setisProductModalOpen] = useState(false)
+  const [isProductModalOpen, setisProductModalOpen] = useState(false);
   const [selectedCustomerGroup, setSelectedCustomerGroup] = useState(null);
   const [newCustomerName, setNewCustomerName] = useState('');
   const dispatch = useDispatch();
@@ -40,13 +46,13 @@ const AddOrder = () => {
   useEffect(() => {
     dispatch(fetchCustomerGroup(token));
   }, []);
-  //customer group 
+  //customer group
   const customerGroup = useSelector(
     (state) => state?.nonPersisted?.customerGroup,
   );
 
   const [customerGroupList, setCustomerGroupList] = useState([]);
-  console.log("jamshedpur+++++++++++", customerGroupList);
+  console.log('jamshedpur+++++++++++', customerGroupList);
 
   useEffect(() => {
     if (customerGroup.data) {
@@ -59,10 +65,10 @@ const AddOrder = () => {
     }
   }, [customerGroup.data]);
 
-  const [orderTypeOptions, setorderTypeOptions] = useState([])
-  const [customerOptions, setcustomerOptions] = useState([])
-  const [prodIdOptions, setprodIdOptions] = useState([])
-  const [prodIdd, setprodIdd] = useState("")
+  const [orderTypeOptions, setorderTypeOptions] = useState([]);
+  const [customerOptions, setcustomerOptions] = useState([]);
+  const [prodIdOptions, setprodIdOptions] = useState([]);
+  const [prodIdd, setprodIdd] = useState('');
 
   const [isSupplierModalOpen, setIsSupplierModalOpen] = useState(false);
   const [isINVENTORYModalOpen, setIsINVENTORYModalOpen] = useState(false);
@@ -71,14 +77,13 @@ const AddOrder = () => {
   const [isInProgressModalOpen, setIsInProgressModalOpen] = useState(false);
   const [inProgressDataData, setInProgressData] = useState(null);
 
-
-  const [suppId, setsuppId] = useState()
-  const [isLoading, setisLoading] = useState(false)
+  const [suppId, setsuppId] = useState();
+  const [isLoading, setisLoading] = useState(false);
   const [suppliers, setSuppliers] = useState([
-    { id: 1, name: "Supplier A" },
-    { id: 2, name: "Supplier B" },
-    { id: 3, name: "Supplier C" },
-  ])
+    { id: 1, name: 'Supplier A' },
+    { id: 2, name: 'Supplier B' },
+    { id: 3, name: 'Supplier C' },
+  ]);
   const {
     getorderType,
     orderTypee,
@@ -86,47 +91,33 @@ const AddOrder = () => {
     getprodId,
     getCustomer,
     customer,
-    handleSubmit
-
-
-
-
+    handleSubmit,
   } = useorder();
 
   useEffect(() => {
-
     getorderType();
     getCustomer();
-
-  }, [])
-
-
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
-      setisLoading(true)
+      setisLoading(true);
       // Set loading to true when data starts loading
       await getprodId();
 
-      setisLoading(false)
+      setisLoading(false);
       // Set loading to false once data is loaded
     };
 
     fetchData();
   }, []);
 
-  const [SelectedLocation, setSelectedLocation] = useState([])
-  const {
-
-    getLocation, Location
-
-  } = useorder();
-
-
+  const [SelectedLocation, setSelectedLocation] = useState([]);
+  const { getLocation, Location } = useorder();
 
   useEffect(() => {
     if (Location) {
-      const formattedOptions = Location.map(location => ({
+      const formattedOptions = Location.map((location) => ({
         value: location?.id,
         label: location.address,
         LocationObject: location,
@@ -140,134 +131,100 @@ const AddOrder = () => {
     getLocation();
   }, []);
 
+  console.log(SelectedLocation, '54545454545');
 
-  console.log(SelectedLocation, "54545454545");
-
-
-
-
-  console.log(productId, "proddidddddd");
-  console.log(customer, "customer");
+  console.log(productId, 'proddidddddd');
+  console.log(customer, 'customer');
 
   const [selectedSuppliers, setSelectedSuppliers] = useState([]);
   const [selectedRowId, setSelectedRowId] = useState(null);
-
 
   const handleCheckboxChange = (selectedRowId, supplierId) => {
     setSelectedSuppliers((prev) => {
       const updated = [...prev];
       const rowIndex = updated.findIndex(
-        (row) => row.selectedRowId === selectedRowId
+        (row) => row.selectedRowId === selectedRowId,
       );
 
       if (rowIndex !== -1) {
         // Update supplierIds for the existing row
         const supplierExists = updated[rowIndex].supplierIds.some(
-          (s) => s.supplierId === supplierId
+          (s) => s.supplierId === supplierId,
         );
 
         if (supplierExists) {
           // Remove the supplier if already exists
           updated[rowIndex].supplierIds = updated[rowIndex].supplierIds.filter(
-            (s) => s.supplierId !== supplierId
+            (s) => s.supplierId !== supplierId,
           );
         } else {
           // Add new supplier to the row
           updated[rowIndex].supplierIds.push({
             supplierId,
-            supplierName: "", // Optional: default supplier name if needed
+            supplierName: '', // Optional: default supplier name if needed
           });
         }
       } else {
         // Add a new row with the selected supplier
         updated.push({
           selectedRowId,
-          supplierIds: [{ supplierId, supplierName: "" }],
+          supplierIds: [{ supplierId, supplierName: '' }],
         });
       }
       return updated;
     });
   };
 
-
-
-
-
-
-
-
-
-
   const openSupplierModal = (id, rowIndex) => {
-
     setIsSupplierModalOpen(true);
 
     setsuppId(id); // For specific supplier modal logic
     setSelectedRowId(rowIndex); // Store the row index
   };
 
-
-
-
-
-
   // Close modal
   const closeSupplierModal = () => {
     setIsSupplierModalOpen(false);
   };
 
-
   const handleSupplierModalSubmit = () => {
-
     closeSupplierModal();
   };
 
-
-
-
-
-
-
-
-
-
-
-  const [prodIdModal, setprodIdModal] = useState([])
+  const [prodIdModal, setprodIdModal] = useState([]);
   const [customers, setCustomers] = useState([]); // Add this state
 
   useEffect(() => {
     if (orderTypee) {
-      const formattedOptions = orderTypee.map(order => ({
+      const formattedOptions = orderTypee.map((order) => ({
         value: order.id,
         label: order?.orderTypeName,
         orderTypeObject: order,
-        orderTypeId: { id: order.id }
+        orderTypeId: { id: order.id },
       }));
       setorderTypeOptions(formattedOptions);
     }
-    console.log(productId, "japaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    console.log(productId, 'japaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
 
     if (productId) {
-      const formattedProdIdOptions = productId?.map(prodId => ({
+      const formattedProdIdOptions = productId?.map((prodId) => ({
         value: prodId.id,
         label: prodId?.productId,
         prodIdObject: prodId,
-        prodId: prodId.id
+        prodId: prodId.id,
       }));
       setprodIdOptions(formattedProdIdOptions);
     }
     if (customer) {
-      const formattedCustomerOptions = customer.map(customer => ({
+      const formattedCustomerOptions = customer.map((customer) => ({
         value: customer.id,
         label: customer?.customerName,
         customerObject: customer,
-        customer: customer.id
+        customer: customer.id,
       }));
       setcustomerOptions(formattedCustomerOptions);
     }
   }, [orderTypee, productId, customers]);
-
-
 
   const customModalStyles = {
     content: {
@@ -299,101 +256,80 @@ const AddOrder = () => {
     { value: 'Retail-Delhi', label: 'Retail-Delhi' },
     { value: 'Retail-SXR', label: 'Retail-SXR' },
   ];
-  const theme = useSelector(state => state?.persisted?.theme);
+  const theme = useSelector((state) => state?.persisted?.theme);
   const customStyles = createCustomStyles(theme?.mode);
   const validationSchema = Yup.object().shape({
     orderType: Yup.object()
       .shape({
-        id: Yup.string().required('Order Type is required')
+        id: Yup.string().required('Order Type is required'),
       })
       .nullable()
       .required('Order Type is required'),
 
-    orderDate: Yup.string()
-      .required('Order Date is required'),
+    orderDate: Yup.string().required('Order Date is required'),
 
-    shippingDate: Yup.string()
-      .required('Shipping Date is required'),
+    shippingDate: Yup.string().required('Shipping Date is required'),
 
-    locationId: Yup.string()
-      .required('Location is required'),
+    locationId: Yup.string().required('Location is required'),
 
-    tagsAndLabels: Yup.string()
-      .required('Tags are required'),
+    tagsAndLabels: Yup.string().required('Tags are required'),
 
     logoNo: Yup.string()
       .oneOf(['Yes', 'No'], 'Please select Yes or No')
       .required('Logo No is required'),
-
-
-
-
   });
 
   const handleProductIdChange = (option, setFieldValue) => {
-
-
-
     setFieldValue('productId', option.prodId);
 
-    setprodIdd(option?.prodId)
+    setprodIdd(option?.prodId);
 
     setIsModalOpen(true);
-    setIsSupplierModalOpen(false)
-
+    setIsSupplierModalOpen(false);
   };
 
-
   const handleModalSubmit = (values) => {
-    console.log(values, "jump");
+    console.log(values, 'jump');
     setprodIdModal((prevValues) => {
-      console.log(prevValues, "jumpss");
+      console.log(prevValues, 'jumpss');
       // Ensure that previous values are preserved and the new ones are added.
-      return [...prevValues, {
-        ...values,
-        // Ensure any additional data you need to keep is added
-      }];
+      return [
+        ...prevValues,
+        {
+          ...values,
+          // Ensure any additional data you need to keep is added
+        },
+      ];
     });
 
     setIsModalOpen(false); // Close modal
-  }
-  console.log(prodIdModal, "jumper");
+  };
+  console.log(prodIdModal, 'jumper');
 
   const openINVENTORYModal = (id) => {
-
-
     const getInventory = async () => {
-
       try {
         const response = await fetch(`${GET_INVENTORYLOCATION}/${id}`, {
-          method: "GET",
+          method: 'GET',
           headers: {
             // "Content-Type": "multipart/form-data",
-            "Authorization": `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
         const data = await response.json();
 
-
         // setLocation(data);
         setSelectedINVENTORYData(data);
-
-
       } catch (error) {
         console.error(error);
-        toast.error("Failed to fetch Product");
+        toast.error('Failed to fetch Product');
       }
     };
 
-    getInventory()
-      // useEffect(() => {
-      //     getInventory()
-      // }, [])
-
-
-
-
-      ;
+    getInventory();
+    // useEffect(() => {
+    //     getInventory()
+    // }, [])
     setIsINVENTORYModalOpen(true);
   };
 
@@ -402,70 +338,68 @@ const AddOrder = () => {
     setSelectedINVENTORYData(null);
   };
 
-
-
   const openInProgressModal = async (id, locId) => {
     setIsInProgressModalOpen(true);
 
     try {
-      const response = await fetch(`${GET_INPROGRESSTRACK}${id}/location/${locId}/active`, {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
+      const response = await fetch(
+        `${GET_INPROGRESSTRACK}${id}/location/${locId}/active`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
       const data = await response.json();
       setInProgressData(data);
     } catch (error) {
       console.error(error);
-      toast.error("Failed to fetch Product");
+      toast.error('Failed to fetch Product');
     }
   };
-
 
   const CloseInProgressModal = () => {
     setIsInProgressModalOpen(false);
     setInProgressData(null);
   };
 
-
+  // inside the Formik render-prop, where setFieldValue and values already exist:
   const handleDeleteSupplier = (rowIndex, supplierIndex) => {
     setSelectedSuppliers((prev) => {
       const updated = [...prev];
-      const row = updated.find((row) => row.selectedRowId === rowIndex);
-
+      const row = updated.find((r) => r.selectedRowId === rowIndex);
       if (row) {
-        // Remove the supplier at supplierIndex
         row.supplierIds.splice(supplierIndex, 1);
-
-        // If no suppliers remain for this row, remove the row completely
         if (row.supplierIds.length === 0) {
           return updated.filter((r) => r.selectedRowId !== rowIndex);
         }
       }
-
       return updated;
     });
 
-    // Optional: Reset the form field values for the deleted supplier
-    setFieldValue(`orderProducts[${rowIndex}].productSuppliers`, (prev) =>
-      prev.filter((_, idx) => idx !== supplierIndex)
+    const updatedSuppliers = values.orderProducts[
+      rowIndex
+    ].productSuppliers.filter((_, idx) => idx !== supplierIndex);
+    setFieldValue(
+      `orderProducts[${rowIndex}].productSuppliers`,
+      updatedSuppliers,
     );
   };
   const handleDeleteRow = (index) => {
     const updatedRows = prodIdModal.filter((_, i) => i !== index);
-    console.log(updatedRows, "rowwwwwwwwwwwwws");
+    console.log(updatedRows, 'rowwwwwwwwwwwwws');
     setprodIdModal(updatedRows);
   };
-  console.log(prodIdModal, "prodddddddddddddddddddddddddd");
+  console.log(prodIdModal, 'prodddddddddddddddddddddddddd');
   const [isPopulated, setIsPopulated] = useState(false);
 
-  console.log(selectedSuppliers, "umerumer");
+  console.log(selectedSuppliers, 'umerumer');
 
   const handleAddCustomer = async (name, group) => {
     const values = {
       customerName: name,
-      customerGroup: { id: group?.id }
+      customerGroup: { id: group?.id },
     };
 
     try {
@@ -484,7 +418,7 @@ const AddOrder = () => {
         toast.success('Customer added successfully');
 
         // Simply refetch all customers after successful addition
-        await getCustomer()
+        await getCustomer();
 
         setIsCustomerModalOpen(false);
         setNewCustomerName('');
@@ -498,45 +432,42 @@ const AddOrder = () => {
   };
   useEffect(() => {
     if (orderTypee) {
-      const formattedOptions = orderTypee.map(order => ({
+      const formattedOptions = orderTypee.map((order) => ({
         value: order.id,
         label: order?.orderTypeName,
         orderTypeObject: order,
-        orderTypeId: { id: order.id }
+        orderTypeId: { id: order.id },
       }));
       setorderTypeOptions(formattedOptions);
     }
-    console.log(productId, "japaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    console.log(productId, 'japaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
 
     if (productId) {
-      const formattedProdIdOptions = productId?.map(prodId => ({
+      const formattedProdIdOptions = productId?.map((prodId) => ({
         value: prodId.id,
         label: prodId?.productId,
         prodIdObject: prodId,
-        prodId: prodId.id
+        prodId: prodId.id,
       }));
       setprodIdOptions(formattedProdIdOptions);
     }
     if (customer) {
-      const formattedCustomerOptions = customer.map(customer => ({
+      const formattedCustomerOptions = customer.map((customer) => ({
         value: customer.id,
         label: customer?.customerName,
         customerObject: customer,
-        customer: customer.id
+        customer: customer.id,
       }));
       setcustomerOptions(formattedCustomerOptions);
     }
   }, [orderTypee, productId, customers, customer]);
 
-  console.log(prodIdModal, "88888888888888888888888888");
-
+  console.log(prodIdModal, '88888888888888888888888888');
 
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Order/Create Order" />
       <div>
-
-
         <Formik
           initialValues={{
             orderType: '',
@@ -547,30 +478,32 @@ const AddOrder = () => {
             productId: '',
             clientInstruction: '',
             customer: '',
-            purchaseOrderNo: "",
-            customisationDetails: "",
+            purchaseOrderNo: '',
+            customisationDetails: '',
             locationId: null,
 
-            orderProducts: [{
-              products: { id: '' },
-              orderCategory: '',
-              clientOrderQuantity: '',
-              units: '',
-              value: '',
-              inStockQuantity: '',
-              quantityToManufacture: '',
-              clientShippingDate: '',
-              expectedDate: '',
-              productSuppliers: [
-                {
-                  supplier: {
-                    id: "", // Supplier ID
+            orderProducts: [
+              {
+                products: { id: '' },
+                orderCategory: '',
+                clientOrderQuantity: '',
+                units: '',
+                value: '',
+                inStockQuantity: '',
+                isManualStock: false,
+                quantityToManufacture: '',
+                clientShippingDate: '',
+                expectedDate: '',
+                productSuppliers: [
+                  {
+                    supplier: {
+                      id: '', // Supplier ID
+                    },
+                    supplierOrderQty: '',
                   },
-                  supplierOrderQty: "",
-                },
-              ],
-            }]
-
+                ],
+              },
+            ],
           }}
           validationSchema={validationSchema}
           // onSubmit={(values) => {
@@ -580,40 +513,40 @@ const AddOrder = () => {
           onSubmit={handleSubmit}
         >
           {({ values, setFieldValue, handleBlur, isSubmitting }) => {
-
-
-
+            const orderCategoriesKey = values.orderProducts
+              .map((p) => p?.orderCategory || '')
+              .join('|');
             useEffect(() => {
               // Check if locationId exists and orderProducts has items with valid product IDs
-              if (!values.locationId || !values.orderProducts || values.orderProducts.length === 0) {
-                return;
-              }
-
-              // Check if at least one product has a valid ID
-              const hasValidProduct = values.orderProducts.some(
-                product => product?.products?.id
-              );
-
-              if (!hasValidProduct) {
-                return;
-              }
+               if (!values.locationId || !values.orderProducts?.length) return;
+  const hasValidProduct = values.orderProducts.some((p) => p?.products?.id);
+  if (!hasValidProduct) return;
 
               values.orderProducts.forEach((product, index) => {
                 // Only call API if product ID exists
-                if (!product?.products?.id) {
-                  return;
-                }
+               if (!product?.products?.id) return;
+              
+
+                // Check if this product already has manually entered data
+                // We'll check if the inStockQuantity was manually entered (not 0)
+                // and if it's different from what we'd calculate
+                const currentInStock = product.inStockQuantity;
+
+                // Store the current form values to preserve them
+                const currentClientOrderQty = product.clientOrderQuantity;
+                const currentQtyToManufacture = product.quantityToManufacture;
+                const currentValue = product.value;
 
                 const getInStock = async () => {
                   try {
                     const response = await fetch(
                       `${GET_INVENTORYBalance}/${product?.products?.id}/${values.locationId}`,
                       {
-                        method: "GET",
+                        method: 'GET',
                         headers: {
                           Authorization: `Bearer ${token}`,
                         },
-                      }
+                      },
                     );
 
                     if (!response.ok) {
@@ -621,81 +554,120 @@ const AddOrder = () => {
                     }
 
                     const data = await response.json();
-                    console.log(data, "Inventory data for product", product?.products?.id);
+                    console.log(
+                      data,
+                      'Inventory data for product',
+                      product?.products?.id,
+                    );
 
                     // Set the inStockQuantity field with the calculated value
-                    if (data && data.closingBalance !== undefined && data.instockRecieve !== undefined) {
-                      const inStockValue = data.closingBalance - data.instockRecieve;
+                    if (
+                      data &&
+                      data.closingBalance !== undefined &&
+                      data.instockRecieve !== undefined
+                    ) {
+                      const inStockValue =
+                        data.closingBalance - data.instockRecieve;
+                      console.log(
+                        inStockValue,
+                        '00000000000000000000000000000',
+                      );
 
-                      // Update Formik field with the calculated in-stock quantity
-                      setFieldValue(`orderProducts[${index}].inStockQuantity`, inStockValue);
-
-                      // You can also update other fields based on this calculation
-                      if (product.clientOrderQuantity) {
-                        const quantityToManufacture = product.clientOrderQuantity - inStockValue;
-                        setFieldValue(`orderProducts[${index}].quantityToManufacture`,
-                          Math.abs(quantityToManufacture)
+                      // Only update inStockQuantity if it hasn't been manually set
+                      // Or if it's the initial load (value is undefined or null)
+                      if (
+                        currentInStock === undefined ||
+                        currentInStock === null ||
+                        currentInStock === 0
+                      ) {
+                        setFieldValue(
+                          `orderProducts[${index}].inStockQuantity`,
+                          inStockValue || 0,
                         );
+                      } else {
+                        // Keep the manually entered value
+                        // But we might want to recalculate quantityToManufacture and value
+                        // based on the manually entered inStockQuantity
+                        const clientOrderQty = product.clientOrderQuantity;
+                        if (clientOrderQty) {
+                          const quantityToManufacture =
+                            clientOrderQty - (currentInStock || 0);
+                          setFieldValue(
+                            `orderProducts[${index}].quantityToManufacture`,
+                            Math.abs(quantityToManufacture),
+                          );
 
-                        // Update value field
-                        const cost = prodIdModal[index]?.cost || 0;
-                        setFieldValue(`orderProducts[${index}].value`,
-                          quantityToManufacture > 0 ? quantityToManufacture * cost : 0
+                          // Update value field
+                          const cost = prodIdModal[index]?.cost || 0;
+                          setFieldValue(
+                            `orderProducts[${index}].value`,
+                            quantityToManufacture > 0
+                              ? quantityToManufacture * cost
+                              : 0,
+                          );
+                        }
+                      }
+
+                      // Update the inStockQuantity field with the calculated value
+                      // This will only run if we haven't already set it manually
+                      if (!currentInStock || currentInStock === 0) {
+                        setFieldValue(
+                          `orderProducts[${index}].inStockQuantity`,
+                          inStockValue || 0,
                         );
                       }
                     }
                   } catch (error) {
-                    console.error("Error fetching inventory:", error);
-                    toast.error(`Failed to fetch inventory for product ${product?.products?.id}`);
+                    console.error('Error fetching inventory:', error);
+                    toast.error(
+                      `Failed to fetch inventory for product ${product?.products?.id}`,
+                    );
                   }
                 };
 
                 getInStock();
               });
-            }, [values?.locationId, values.orderProducts[0].orderCategory]);
-
+            }, [values?.locationId, values.orderProducts[0]?.orderCategory]); // Remove dependency on orderCategory
 
             useEffect(() => {
-              if (prodIdModal.length > 0) {
-                console.log("ProdIdModal updated:", prodIdModal);
+              if (prodIdModal.length === 0) return;
+              // Only act when a product was actually added (array grew)
+              if (prodIdModal.length <= values.orderProducts.length) return;
 
-                const updatedOrderProducts = prodIdModal.map((item, index) => ({
-                  products: { id: item?.id || "" },
-                  sourceProductId: item?.sourceProductId.id || "",
-                  orderCategory: item?.orderCatagory || "",
-                  clientOrderQuantity: values?.orderProducts[index]?.clientOrderQuantity || "",  // Correctly referencing the specific index
-                  inStockQuantity: values?.orderProducts[index]?.inStockQuantity || "",
-                  quantityToManufacture: values?.orderProducts[index]?.quantityToManufacture || "",
-                  clientShippingDate: values?.orderProducts[index]?.clientShippingDate || "",
-                  expectedDate: values?.orderProducts[index]?.expectedDate || "",
-                  value: values?.orderProducts[index]?.value || "", // Add any other fields you need here
-                  units: item?.units || "",
+              const newItem = prodIdModal[prodIdModal.length - 1];
+              const newRow = {
+                products: { id: newItem?.id || '' },
+                sourceProductId: newItem?.sourceProductId?.id || '',
+                orderCategory: newItem?.orderCatagory || '',
+                clientOrderQuantity: '',
+                inStockQuantity: '',
+                quantityToManufacture: '',
+                clientShippingDate: '',
+                expectedDate: '',
+                value: '',
+                units: newItem?.units || '',
+                productSuppliers: [
+                  { supplier: { id: '' }, supplierOrderQty: '' },
+                ],
+              };
 
-                }));
-
-                console.log(updatedOrderProducts, "Updated Order Products");
-
-                setFieldValue("orderProducts", updatedOrderProducts);  // Update the Formik field with the modified data
-              }
-            }, [prodIdModal, setFieldValue]);
-
-
+              setFieldValue('orderProducts', [...values.orderProducts, newRow]);
+            }, [prodIdModal]);
 
             // Run only on mount
-
 
             useEffect(() => {
               // Automatically populate supplier fields for each product
               prodIdModal.forEach((_, productIndex) => {
                 const productSuppliers = selectedSuppliers.find(
-                  (supplierRow) => supplierRow.selectedRowId === productIndex
+                  (supplierRow) => supplierRow.selectedRowId === productIndex,
                 )?.supplierIds;
 
                 if (productSuppliers) {
                   productSuppliers.forEach((supplier, supplierIndex) => {
                     setFieldValue(
                       `orderProducts[${productIndex}].productSuppliers[${supplierIndex}].supplier.id`,
-                      supplier?.supplierId?.id || "" // Ensure correct path to supplier ID
+                      supplier?.supplierId || '',
                     );
                   });
                 }
@@ -704,40 +676,61 @@ const AddOrder = () => {
 
             useEffect(() => {
               values.orderProducts.forEach((product, index) => {
-
-
                 // Check if order type is WSClient
                 const selectedOrderType = orderTypeOptions?.find(
-                  (option) => option.value === values.orderType?.id
+                  (option) => option.value === values.orderType?.id,
                 );
 
-                selectedOrderType && console.log(selectedOrderType.label, "selected order type label");
-                const isWSClient = selectedOrderType?.label === "WSClients";
+                selectedOrderType &&
+                  console.log(
+                    selectedOrderType.label,
+                    'selected order type label',
+                  );
+                const isWSClient = selectedOrderType?.label === 'WSClients';
 
                 // Use wholesalePrice for WSClient, otherwise use retailMrp
-                console.log(prodIdModal[index], "umi");
+                console.log(prodIdModal[index], 'umi');
 
                 const cost = isWSClient
-                  ? (prodIdModal[index]?.wPrice || 0)
-                  : (prodIdModal[index]?.cost || 0);
+                  ? prodIdModal[index]?.wPrice || 0
+                  : prodIdModal[index]?.cost || 0;
 
-
-
-                const quantityToManufacture = product.inStockQuantity - product.clientOrderQuantity;
+                const quantityToManufacture =
+                  product.inStockQuantity - product.clientOrderQuantity;
                 const clientOrderQuantity = product.clientOrderQuantity;
 
-                if (product.clientOrderQuantity && product.inStockQuantity !== undefined) {
+                if (
+                  product.clientOrderQuantity &&
+                  product.inStockQuantity !== undefined
+                ) {
                   if (product.clientOrderQuantity <= product.inStockQuantity) {
-                    setFieldValue(`orderProducts[${index}].quantityToManufacture`, 0);
-                    setFieldValue(`orderProducts[${index}].value`, Math.abs(clientOrderQuantity * cost));
+                    setFieldValue(
+                      `orderProducts[${index}].quantityToManufacture`,
+                      0,
+                    );
+                    setFieldValue(
+                      `orderProducts[${index}].value`,
+                      Math.abs(clientOrderQuantity * cost),
+                    );
                   } else {
-                    setFieldValue(`orderProducts[${index}].quantityToManufacture`, Math.abs(quantityToManufacture));
-                    setFieldValue(`orderProducts[${index}].value`, Math.abs(clientOrderQuantity * cost));
+                    setFieldValue(
+                      `orderProducts[${index}].quantityToManufacture`,
+                      Math.abs(quantityToManufacture),
+                    );
+                    setFieldValue(
+                      `orderProducts[${index}].value`,
+                      Math.abs(clientOrderQuantity * cost),
+                    );
                   }
                 }
               });
-            }, [values.orderProducts, values.orderType, setFieldValue, prodIdModal, orderTypeOptions]);
-
+            }, [
+              values.orderProducts,
+              values.orderType,
+              setFieldValue,
+              prodIdModal,
+              orderTypeOptions,
+            ]);
 
             return (
               <Form>
@@ -755,19 +748,28 @@ const AddOrder = () => {
                       >
                         ADD ORDER
                       </h3>
-
                     </div>
                     <div className="p-6.5">
                       <div className="flex flex-wrap gap-4">
                         <div className="flex-1 min-w-[200px]">
-                          <label className="mb-2.5 block text-black dark:text-white">Order Type <span className="text-red-500 ml-1">*</span></label>
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Order Type{' '}
+                            <span className="text-red-500 ml-1">*</span>
+                          </label>
                           <ReactSelect
                             name="orderType"
                             value={
-                              orderTypeOptions?.find(option => option.value === values.orderType.id) || null
+                              orderTypeOptions?.find(
+                                (option) =>
+                                  option.value === values.orderType.id,
+                              ) || null
                             }
-                            onChange={(option) =>
-                              setFieldValue('orderType', option ? { id: option.value } : null) // Send only ID
+                            onChange={
+                              (option) =>
+                                setFieldValue(
+                                  'orderType',
+                                  option ? { id: option.value } : null,
+                                ) // Send only ID
                             }
                             options={orderTypeOptions}
                             styles={customStyles}
@@ -776,17 +778,17 @@ const AddOrder = () => {
                             placeholder="Select Order Type"
                           />
 
-
-                          <ErrorMessage name="orderType" component="div" className="text-red-600 text-sm" />
+                          <ErrorMessage
+                            name="orderType"
+                            component="div"
+                            className="text-red-600 text-sm"
+                          />
                         </div>
 
-
-
                         <div className="flex-1 min-w-[200px]">
-
-
                           <label className="mb-2.5 block text-black dark:text-white">
-                            Order Date <span className="text-red-500 ml-1">*</span>
+                            Order Date{' '}
+                            <span className="text-red-500 ml-1">*</span>
                           </label>
                           <Field
                             name="orderDate"
@@ -794,54 +796,84 @@ const AddOrder = () => {
                             className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                           />
 
-                          <ErrorMessage name="orderDate" component="div" className="text-red-600 text-sm" />
+                          <ErrorMessage
+                            name="orderDate"
+                            component="div"
+                            className="text-red-600 text-sm"
+                          />
                         </div>
 
                         <div className="flex-1 min-w-[200px]">
-                          <label className="mb-2.5 block text-black dark:text-white">Order Location</label>
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Order Location
+                          </label>
                           <ReactSelect
                             name="locationId"
                             options={SelectedLocation}
-                            value={SelectedLocation.find(option => option.value === values.locationId) || null}
-                            onChange={(option) => setFieldValue('locationId', option.value)}
+                            value={
+                              SelectedLocation.find(
+                                (option) => option.value === values.locationId,
+                              ) || null
+                            }
+                            onChange={(option) =>
+                              setFieldValue('locationId', option.value)
+                            }
                             styles={customStyles}
                             className="bg-white dark:bg-form-input"
                             classNamePrefix="react-select"
                             placeholder="Select Source Location"
                           />
-                          <ErrorMessage name="locationId" component="div" className="text-red-600 text-sm" />
+                          <ErrorMessage
+                            name="locationId"
+                            component="div"
+                            className="text-red-600 text-sm"
+                          />
                         </div>
                       </div>
 
-
-
                       {(() => {
                         const selectedOrderType = orderTypeOptions.find(
-                          (option) => option.value === values.orderType?.id
+                          (option) => option.value === values.orderType?.id,
                         );
 
                         return (
                           selectedOrderType &&
-                          (selectedOrderType.label === "RetailClients" || selectedOrderType.label === "WSClients") && (
-
-                            <div >
+                          (selectedOrderType.label === 'RetailClients' ||
+                            selectedOrderType.label === 'WSClients') && (
+                            <div>
                               <div className="flex items-start gap-4">
                                 <div className="flex-1 min-w-[250px] mt-4">
-                                  <label className="mb-2.5 block text-black dark:text-white">Customer</label>
+                                  <label className="mb-2.5 block text-black dark:text-white">
+                                    Customer
+                                  </label>
                                   <div className="flex gap-2">
                                     <ReactSelect
                                       name="Customer"
-                                      value={customerOptions?.find(option => option.value === values.customer?.id) || null}
-                                      onChange={(option) => setFieldValue('customer', option ? { id: option.value } : null)}
+                                      value={
+                                        customerOptions?.find(
+                                          (option) =>
+                                            option.value ===
+                                            values.customer?.id,
+                                        ) || null
+                                      }
+                                      onChange={(option) =>
+                                        setFieldValue(
+                                          'customer',
+                                          option ? { id: option.value } : null,
+                                        )
+                                      }
                                       options={customerOptions}
                                       styles={customStyles}
                                       className="flex-1 bg-white dark:bg-form-Field"
                                       classNamePrefix="react-select"
                                       placeholder="Select Customer"
                                     />
-
                                   </div>
-                                  <ErrorMessage name="Customer" component="div" className="text-red-600 text-sm" />
+                                  <ErrorMessage
+                                    name="Customer"
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
                                 </div>
                                 <div className="flex-1 min-w-[250px] mt-4">
                                   <button
@@ -854,28 +886,41 @@ const AddOrder = () => {
                                 </div>
                               </div>
 
-
                               <div className="flex flex-wrap gap-4">
                                 <div className="flex-1 min-w-[200px] mt-7">
-                                  <label className="mb-2.5 block text-black dark:text-white">Customer Purchase Order No</label>
+                                  <label className="mb-2.5 block text-black dark:text-white">
+                                    Customer Purchase Order No
+                                  </label>
                                   <Field
                                     name="purchaseOrderNo"
                                     placeholder="Enter Prchase Order"
                                     className="bg-white dark:bg-form-input w-full rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                   />
-                                  <ErrorMessage name="purchaseOrderNo" component="div" className="text-red-600 text-sm" />
+                                  <ErrorMessage
+                                    name="purchaseOrderNo"
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
                                 </div>
                                 <div className="flex-1 min-w-[200px] mt-7">
-                                  <label className="mb-2.5 block text-black dark:text-white">PO Date</label>
+                                  <label className="mb-2.5 block text-black dark:text-white">
+                                    PO Date
+                                  </label>
                                   <Field name="poDate">
                                     {({ field, form }) => (
                                       <ReactDatePicker
                                         {...field}
-                                        selected={(field.value && new Date(field.value)) || null}
+                                        selected={
+                                          (field.value &&
+                                            new Date(field.value)) ||
+                                          null
+                                        }
                                         onChange={(date) =>
                                           form.setFieldValue(
-                                            "poDate",
-                                            date ? format(date, "yyyy-MM-dd") : ""  // Format to yyyy-MM-dd
+                                            'poDate',
+                                            date
+                                              ? format(date, 'yyyy-MM-dd')
+                                              : '', // Format to yyyy-MM-dd
                                           )
                                         }
                                         showPreviousDates={false}
@@ -885,18 +930,31 @@ const AddOrder = () => {
                                       />
                                     )}
                                   </Field>
-                                  <ErrorMessage name="poDate" component="div" className="text-red-600 text-sm" />
+                                  <ErrorMessage
+                                    name="poDate"
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
                                 </div>
                               </div>
 
-
                               <div className="flex flex-wrap gap-4">
                                 <div className="flex-1 min-w-[300px] mt-4">
-                                  <label className="mb-2.5 block text-black dark:text-white">Sales Channel</label>
+                                  <label className="mb-2.5 block text-black dark:text-white">
+                                    Sales Channel
+                                  </label>
                                   <ReactSelect
                                     name="salesChannel"
-                                    value={salesChannel.find(option => option.value === values.salesChannel)}
-                                    onChange={(option) => setFieldValue('salesChannel', option.value)}
+                                    value={salesChannel.find(
+                                      (option) =>
+                                        option.value === values.salesChannel,
+                                    )}
+                                    onChange={(option) =>
+                                      setFieldValue(
+                                        'salesChannel',
+                                        option.value,
+                                      )
+                                    }
                                     onBlur={handleBlur}
                                     options={salesChannel}
                                     styles={customStyles}
@@ -904,45 +962,64 @@ const AddOrder = () => {
                                     classNamePrefix="react-select"
                                     placeholder="Select"
                                   />
-                                  <ErrorMessage name="tags" component="div" className="text-red-600 text-sm" />
+                                  <ErrorMessage
+                                    name="tags"
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
                                 </div>
 
-
                                 <div className="flex-1 min-w-[200px] mt-4">
-                                  <label className="mb-2.5 block text-black dark:text-white">Employee Name</label>
+                                  <label className="mb-2.5 block text-black dark:text-white">
+                                    Employee Name
+                                  </label>
                                   <Field
                                     name="employeeName"
                                     placeholder="Enter Employee Name"
                                     className="bg-white dark:bg-form-input w-full rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                   />
-                                  <ErrorMessage name="employeeName" component="div" className="text-red-600 text-sm" />
+                                  <ErrorMessage
+                                    name="employeeName"
+                                    component="div"
+                                    className="text-red-600 text-sm"
+                                  />
                                 </div>
                               </div>
-
                             </div>
-
                           )
                         );
                       })()}
 
-
                       <div className="flex flex-wrap gap-4">
                         <div className="flex-1 min-w-[300px] mt-4">
-                          <label className="mb-2.5 block text-black dark:text-white">Shipping Date <span className="text-red-500 ml-1">*</span></label>
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Shipping Date{' '}
+                            <span className="text-red-500 ml-1">*</span>
+                          </label>
                           <Field
                             name="shippingDate"
                             type="date"
                             className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                           />
-                          <ErrorMessage name="shippingDate" component="div" className="text-red-600 text-sm" />
+                          <ErrorMessage
+                            name="shippingDate"
+                            component="div"
+                            className="text-red-600 text-sm"
+                          />
                         </div>
 
                         <div className="flex-1 min-w-[300px] mt-4">
-                          <label className="mb-2.5 block text-black dark:text-white">Tags <span className="text-red-500 ml-1">*</span></label>
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Tags <span className="text-red-500 ml-1">*</span>
+                          </label>
                           <ReactSelect
                             name="tagsAndLabels"
-                            value={productgrp.find(option => option.value === values.tags)}
-                            onChange={(option) => setFieldValue('tagsAndLabels', option.value)}
+                            value={productgrp.find(
+                              (option) => option.value === values.tags,
+                            )}
+                            onChange={(option) =>
+                              setFieldValue('tagsAndLabels', option.value)
+                            }
                             onBlur={handleBlur}
                             options={productgrp}
                             styles={customStyles}
@@ -950,12 +1027,18 @@ const AddOrder = () => {
                             classNamePrefix="react-select"
                             placeholder="Select"
                           />
-                          <ErrorMessage name="tagsAndLabels" component="div" className="text-red-600 text-sm" />
+                          <ErrorMessage
+                            name="tagsAndLabels"
+                            component="div"
+                            className="text-red-600 text-sm"
+                          />
                         </div>
                       </div>
-                      <div className='flex '>
+                      <div className="flex ">
                         <div className="flex-1 min-w-[300px] mt-4">
-                          <label className="mb-2.5 block text-black dark:text-white">Logo No <span className="text-red-500 ml-1">*</span></label>
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Logo No <span className="text-red-500 ml-1">*</span>
+                          </label>
                           <div>
                             <label className="flex items-center">
                               <Field type="radio" name="logoNo" value="Yes" />
@@ -966,77 +1049,91 @@ const AddOrder = () => {
                               <span className="ml-1">No</span>
                             </label>
                           </div>
-                          <ErrorMessage name="logoNo" component="div" className="text-red-600 text-sm" />
+                          <ErrorMessage
+                            name="logoNo"
+                            component="div"
+                            className="text-red-600 text-sm"
+                          />
                         </div>
-
-
                       </div>
 
                       {isINVENTORYModalOpen && (
                         <div className="fixed inset-0 bg-gray-500 bg-opacity-95 flex justify-center items-center  z-50">
                           <div className="bg-slate-100 border border-b-1 rounded p-6 shadow-lg ml-[200px]  w-[870px] h-[400px] mt-[60px] overflow-auto">
                             <div className="text-right">
-                              <button onClick={closeINVENTORYModal} className="text-red-500 text-xl  font-bold">&times;</button>
+                              <button
+                                onClick={closeINVENTORYModal}
+                                className="text-red-500 text-xl  font-bold"
+                              >
+                                &times;
+                              </button>
                             </div>
-                            <h2 className="text-2xl text-center mb-4 font-extrabold">INVENTORY  DETAILS</h2>
+                            <h2 className="text-2xl text-center mb-4 font-extrabold">
+                              INVENTORY DETAILS
+                            </h2>
                             <div className="inline-block min-w-full shadow-md rounded-lg overflow-auto">
                               <table className="min-w-full leading-normal">
                                 <thead>
-                                  <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >LOCATION</th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">OPENING BALANCE</th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">BRANCH TRANSFER (INWARDS)</th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">BRANCH TRANSFER (OUTWARDS)</th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">CLOSING BALANCE</th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">PURCHASE</th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">SALE</th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">IN PROGRESS ORDERS</th>
+                                  <tr className="px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white">
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      LOCATION
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      OPENING BALANCE
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      BRANCH TRANSFER (INWARDS)
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      BRANCH TRANSFER (OUTWARDS)
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      CLOSING BALANCE
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      PURCHASE
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      SALE
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      IN PROGRESS ORDERS
+                                    </th>
                                   </tr>
                                 </thead>
                                 <tbody>
-
-
                                   {selectedINVENTORYData?.map((row, index) => (
                                     <tr key={row.id}>
                                       <td className="px-2 py-2 border-b">
                                         <p>{row?.location?.address}</p>
-
                                       </td>
                                       <td className="px-2 py-2 border-b">
                                         <p>{row?.openingBalance}</p>
-
                                       </td>
                                       <td className="px-2 py-2 border-b">
                                         {row.branchTransferInwards}
                                       </td>
                                       <td className="px-2 py-2 border-b">
                                         {row.branchTransferOutwards}
-
                                       </td>
                                       <td className="px-2 py-2 border-b">
                                         {row.closingBalance}
                                       </td>
                                       <td className="px-2 py-2 border-b">
                                         {row.purchase}
-
                                       </td>
                                       <td className="px-2 py-2 border-b">
                                         {row.sale}
-
                                       </td>
                                       <td className="px-2 py-2 border-b">
                                         {row.inProgressOrders}
-
                                       </td>
                                       {/* <td className="px-2 py-2 border-b">
                                                         <FiTrash2 size={17} className='text-red-500 hover:text-red-700 mx-2' title='Delete BOM' />
 
                                                     </td> */}
-
                                     </tr>
                                   ))}
-
-
                                 </tbody>
                               </table>
                             </div>
@@ -1059,43 +1156,88 @@ const AddOrder = () => {
                               </button>
                             </div>
 
-                            <h2 className="text-2xl text-center mb-4 font-extrabold">In Progress Orders Tracking.</h2>
+                            <h2 className="text-2xl text-center mb-4 font-extrabold">
+                              In Progress Orders Tracking.
+                            </h2>
 
                             <div className="inline-block min-w-full shadow-md rounded-lg overflow-auto">
                               <table className="min-w-full leading-normal">
                                 <thead>
-                                  <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Allocated Date</th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Fulfilled Date</th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">order No</th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Id</th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Description</th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">location Name</th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Allocated Quantity</th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Received Quantity</th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Remaining Quantity</th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
+                                  <tr className="px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white">
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      Allocated Date
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      Fulfilled Date
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      order No
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      Product Id
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      Product Description
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      location Name
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      Allocated Quantity
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      Received Quantity
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      Remaining Quantity
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                      Status
+                                    </th>
                                   </tr>
                                 </thead>
                                 <tbody>
                                   {inProgressDataData?.length > 0 ? (
                                     inProgressDataData.map((row, index) => (
                                       <tr key={row.id}>
-                                        <td className="px-2 py-2 border-b">{row.allocatedDate}</td>
-                                        <td className="px-2 py-2 border-b">{row.fulfilledDate}</td>
-                                        <td className="px-2 py-2 border-b">{row?.orderNo}</td>
-                                        <td className="px-2 py-2 border-b">{row?.productId}</td>
-                                        <td className="px-2 py-2 border-b">{row.productDescription}</td>
-                                        <td className="px-2 py-2 border-b">{row.locationName}</td>
-                                        <td className="px-2 py-2 border-b">{row.allocatedQuantity}</td>
-                                        <td className="px-2 py-2 border-b">{row.receivedQuantity}</td>
-                                        <td className="px-2 py-2 border-b">{row.remainingQuantity}</td>
-                                        <td className="px-2 py-2 border-b">{row.status}</td>
+                                        <td className="px-2 py-2 border-b">
+                                          {row.allocatedDate}
+                                        </td>
+                                        <td className="px-2 py-2 border-b">
+                                          {row.fulfilledDate}
+                                        </td>
+                                        <td className="px-2 py-2 border-b">
+                                          {row?.orderNo}
+                                        </td>
+                                        <td className="px-2 py-2 border-b">
+                                          {row?.productId}
+                                        </td>
+                                        <td className="px-2 py-2 border-b">
+                                          {row.productDescription}
+                                        </td>
+                                        <td className="px-2 py-2 border-b">
+                                          {row.locationName}
+                                        </td>
+                                        <td className="px-2 py-2 border-b">
+                                          {row.allocatedQuantity}
+                                        </td>
+                                        <td className="px-2 py-2 border-b">
+                                          {row.receivedQuantity}
+                                        </td>
+                                        <td className="px-2 py-2 border-b">
+                                          {row.remainingQuantity}
+                                        </td>
+                                        <td className="px-2 py-2 border-b">
+                                          {row.status}
+                                        </td>
                                       </tr>
                                     ))
                                   ) : (
                                     <tr>
-                                      <td colSpan="10" className="px-2 py-4 text-center">
+                                      <td
+                                        colSpan="10"
+                                        className="px-2 py-4 text-center"
+                                      >
                                         <span>No Data Found</span>
                                       </td>
                                     </tr>
@@ -1107,44 +1249,59 @@ const AddOrder = () => {
                         </div>
                       )}
 
-
-
                       {orderType && (
-                        <div >
-
+                        <div>
                           <div className="flex flex-wrap gap-4">
                             <div className="flex-1 min-w-[200px] mt-7">
-                              <label className="mb-2.5 block text-black dark:text-white">Employee Name</label>
+                              <label className="mb-2.5 block text-black dark:text-white">
+                                Employee Name
+                              </label>
                               <Field
                                 name="employeeName"
                                 placeholder="Enter Prchase Order"
                                 className="bg-white dark:bg-form-input w-full rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                               />
-                              <ErrorMessage name="customer" component="div" className="text-red-600 text-sm" />
+                              <ErrorMessage
+                                name="customer"
+                                component="div"
+                                className="text-red-600 text-sm"
+                              />
                             </div>
-
                           </div>
                         </div>
-
                       )}
 
-
-
                       <div className="flex-1 min-w-[200px] mt-11">
-                        <label className="mb-2.5 block text-black dark:text-white">Product Id <span className="text-red-500 ml-1">*</span></label>
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Product Id{' '}
+                          <span className="text-red-500 ml-1">*</span>
+                        </label>
                         <ReactSelect
                           name="productId"
-                          value={prodIdOptions?.find(option => option.value === values.productId?.id) || null}
-
-                          onChange={(option) => handleProductIdChange(option, setFieldValue)}
+                          value={
+                            prodIdOptions?.find(
+                              (option) => option.value === values.productId?.id,
+                            ) || null
+                          }
+                          onChange={(option) =>
+                            handleProductIdChange(option, setFieldValue)
+                          }
                           isLoading={isLoading}
-                          options={prodIdOptions || "Loading"}
+                          options={prodIdOptions || 'Loading'}
                           styles={customStyles}
                           className="bg-white dark:bg-form-Field"
                           classNamePrefix="react-select"
-                          placeholder={isLoading ? 'Loading Products...' : 'Select ProductId'}
+                          placeholder={
+                            isLoading
+                              ? 'Loading Products...'
+                              : 'Select ProductId'
+                          }
                         />
-                        <ErrorMessage name="productId" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage
+                          name="productId"
+                          component="div"
+                          className="text-red-600 text-sm"
+                        />
                       </div>
                       {/* <div className="flex-1 min-w-[250px] mt-4">
                         <button
@@ -1156,226 +1313,209 @@ const AddOrder = () => {
                         </button>
                       </div> */}
 
-
-
-
-
-
                       {prodIdModal.length > 0 && (
-
                         <div className="  shadow-md rounded-lg  mt-3 overflow-scroll">
                           <table className="min-w-full leading-normal overflow-auto">
                             <thead>
-                              <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
-
-                                <th
-                                  className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider "
-                                >
+                              <tr className="bg-slate-300 dark:bg-slate-700 dark:text-white">
+                                <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider ">
                                   Source Product Id
                                 </th>
-                                <th
-                                  className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider "
-                                >
+                                <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider ">
                                   Product Id
                                 </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                   Order Category
                                 </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                   Client Order Qty
                                 </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[200px]"
-                                >
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[200px]">
                                   Units
                                 </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                   In Stock Qty
                                 </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                   View Product Inventory
                                 </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                   Qty To Manufacture
                                 </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                   Value
                                 </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                   Client Shipping Date
                                 </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                   Expected Date
                                 </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                   Add Weaver/Embroider
                                 </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                   Supplier Details
                                 </th>
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                >
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                   Action
                                 </th>
 
-                                <th
-                                  className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100"
-                                ></th>
+                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100"></th>
                               </tr>
                             </thead>
 
                             <tbody>
-
-
-
                               {prodIdModal?.map((item, index) => (
-                                <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white px-5 py-3'>
-
+                                <tr
+                                  key={index}
+                                  className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3"
+                                >
                                   <td className="px-5 py-5 border-b border-gray-200  text-sm">
-
-                                    {
-                                      item.orderCatagory.split(" ").join("").toLowerCase() === 'dyeing' || item.orderCatagory.split(" ").join("").toLowerCase() === 'embroidery' ? (
-
-                                        <div >
-
-                                          <Field
-                                            name={`orderProducts[${index}].sourceProductId.id`}
-
-                                            value={item?.sourceProductId?.productId || ""}
-
-                                            placeholder="Enter Source Product ID"
-                                            onChange={(e) => {
-                                              console.log(`Source Product ID: ${e.target.value}`); // Log the value on change
-                                            }}
-                                            className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                                          />
-                                          <ErrorMessage name={`orderProducts[${index}].sourceProductId`} component="div" className="text-red-600 text-sm" />
-                                        </div>
-
-                                      ) : (
-                                        <div>
-                                          <p>Plain Order</p>
-                                        </div>
-                                      )
-                                    }
+                                    {item.orderCatagory
+                                      .split(' ')
+                                      .join('')
+                                      .toLowerCase() === 'dyeing' ||
+                                    item.orderCatagory
+                                      .split(' ')
+                                      .join('')
+                                      .toLowerCase() === 'embroidery' ? (
+                                      <div>
+                                        <Field
+                                          name={`orderProducts[${index}].sourceProductId.id`}
+                                          value={
+                                            item?.sourceProductId?.productId ||
+                                            ''
+                                          }
+                                          placeholder="Enter Source Product ID"
+                                          onChange={(e) => {
+                                            console.log(
+                                              `Source Product ID: ${e.target.value}`,
+                                            ); // Log the value on change
+                                          }}
+                                          className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                        />
+                                        <ErrorMessage
+                                          name={`orderProducts[${index}].sourceProductId`}
+                                          component="div"
+                                          className="text-red-600 text-sm"
+                                        />
+                                      </div>
+                                    ) : (
+                                      <div>
+                                        <p>Plain Order</p>
+                                      </div>
+                                    )}
                                   </td>
                                   <td className="px-5 py-5 border-b border-gray-200  text-sm">
-
-
-                                    <div >
-
+                                    <div>
                                       <Field
                                         name={`orderProducts[${index}].products.id`}
-
-                                        value={item?.productId || ""}
-
+                                        value={item?.productId || ''}
                                         placeholder="Enter Prchase Order"
                                         onChange={(e) => {
-                                          console.log(`Product ID: ${e.target.value}`); // Log the value on change
+                                          console.log(
+                                            `Product ID: ${e.target.value}`,
+                                          ); // Log the value on change
                                         }}
                                         className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                       />
-                                      <ErrorMessage name={`orderProducts[${index}].products.id`} component="div" className="text-red-600 text-sm" />
+                                      <ErrorMessage
+                                        name={`orderProducts[${index}].products.id`}
+                                        component="div"
+                                        className="text-red-600 text-sm"
+                                      />
                                     </div>
                                   </td>
                                   <td className="px-5 py-5 border-b border-gray-200  text-sm">
-
-
-                                    <div >
-
+                                    <div>
                                       <Field
                                         name={`orderProducts[${index}].orderCategory`}
                                         // value={item?.orderCatagory || ""}
                                         placeholder="Enter Order Category"
                                         onChange={(e) => {
-                                          console.log(`Order Category: ${e.target.value}`);
-                                          setFieldValue(`orderProducts[${index}].orderCategory`, e.target.value); // Update the field value manually
+                                          console.log(
+                                            `Order Category: ${e.target.value}`,
+                                          );
+                                          setFieldValue(
+                                            `orderProducts[${index}].orderCategory`,
+                                            e.target.value,
+                                          ); // Update the field value manually
                                         }}
                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                       />
-                                      <ErrorMessage name="orderCategory" component="div" className="text-red-600 text-sm" />
+                                      <ErrorMessage
+                                        name="orderCategory"
+                                        component="div"
+                                        className="text-red-600 text-sm"
+                                      />
                                     </div>
                                   </td>
 
-
                                   <td className="px-5 py-5 border-b border-gray-200  text-sm">
-
-
-                                    <div >
-
+                                    <div>
                                       <Field
                                         name={`orderProducts[${index}].clientOrderQuantity`}
                                         // value={item?.productId}
                                         type="number"
-
                                         placeholder="Enter In Stock Qty"
                                         className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                       />
-                                      <ErrorMessage name="clientOrderQuantity" component="div" className="text-red-600 text-sm" />
+                                      <ErrorMessage
+                                        name="clientOrderQuantity"
+                                        component="div"
+                                        className="text-red-600 text-sm"
+                                      />
                                     </div>
                                   </td>
                                   <td className="px-1 py-5 border-b border-gray-200  text-sm">
-
-
-                                    <div >
-
+                                    <div>
                                       <Field
-
                                         name={`orderProducts[${index}].units`}
                                         // value={item?.units}
                                         placeholder="Enter Units"
                                         className=" bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                       />
-                                      <ErrorMessage name="Units" component="div" className="text-red-600 text-sm" />
+                                      <ErrorMessage
+                                        name="Units"
+                                        component="div"
+                                        className="text-red-600 text-sm"
+                                      />
                                     </div>
                                   </td>
 
                                   <td className="px-5 py-5 border-b border-gray-200  text-sm">
-
-
-                                    <div >
-
+                                    <div>
                                       <Field
                                         name={`orderProducts[${index}].inStockQuantity`}
                                         type="number"
                                         onChange={(e) => {
                                           const value = e.target.value;
-                                          const inStockQuantity = value ? parseFloat(value) : 0;
+                                          const inStockQuantity = value
+                                            ? parseFloat(value)
+                                            : 0;
 
                                           // Calculate total cost
                                           const cost = item.cost || 0;
-                                          const quantity = values.orderProducts?.[index]?.clientOrderQuantity || 0;
+                                          const quantity =
+                                            values.orderProducts?.[index]
+                                              ?.clientOrderQuantity || 0;
                                           const totalCost = cost * quantity; // Adjust calculation as needed
 
                                           // Set the calculated value in form state
                                           // Assuming you have form context or setFieldValue available
                                           // Example using Formik:
-                                          setFieldValue(`orderProducts[${index}].inStockQuantity`, inStockQuantity);
+                                          setFieldValue(
+                                            `orderProducts[${index}].inStockQuantity`,
+                                            inStockQuantity,
+                                          );
 
                                           // Also set the calculated total cost to another field if needed
                                           // For example, if you have a totalCost field:
-                                          setFieldValue(`orderProducts[${index}].value`, totalCost);
+                                          setFieldValue(
+                                            `orderProducts[${index}].value`,
+                                            totalCost,
+                                          );
 
                                           // If you need to update another field with the calculation result
                                           // setFieldValue(`orderProducts[${index}].calculatedValue`, totalCost);
@@ -1383,32 +1523,43 @@ const AddOrder = () => {
                                         placeholder="Enter In Stock Qty"
                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                       />
-                                      <ErrorMessage name="InStockQty" component="div" className="text-red-600 text-sm" />
+                                      <ErrorMessage
+                                        name="InStockQty"
+                                        component="div"
+                                        className="text-red-600 text-sm"
+                                      />
                                     </div>
                                   </td>
 
-
                                   <td className="px-2 py-5 border-b border-gray-200  text-sm gap-2">
-
-
-                                    <div >
-
-                                      <span onClick={() => openINVENTORYModal(item?.id)} className=" mb-1 bg-green-100 view-badge text-green-800 text-[10px] font-medium me-2 text-center py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[220px]"> VIEW INVENTORY</span>
-
-
+                                    <div>
+                                      <span
+                                        onClick={() =>
+                                          openINVENTORYModal(item?.id)
+                                        }
+                                        className=" mb-1 bg-green-100 view-badge text-green-800 text-[10px] font-medium me-2 text-center py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[220px]"
+                                      >
+                                        {' '}
+                                        VIEW INVENTORY
+                                      </span>
                                     </div>
-                                    <div >
-
-                                      <span onClick={() => openInProgressModal(item?.id, values.locationId)} className="bg-green-100 view-badge text-green-800 text-[10px] font-medium me-2 text-center py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[220px]"> In Progress Tracking</span>
-
-
+                                    <div>
+                                      <span
+                                        onClick={() =>
+                                          openInProgressModal(
+                                            item?.id,
+                                            values.locationId,
+                                          )
+                                        }
+                                        className="bg-green-100 view-badge text-green-800 text-[10px] font-medium me-2 text-center py-0.5 rounded dark:bg-gray-700 dark:text-green-400 border border-green-400 cursor-pointer w-[220px]"
+                                      >
+                                        {' '}
+                                        In Progress Tracking
+                                      </span>
                                     </div>
                                   </td>
                                   <td className="px-5 py-5 border-b border-gray-200  text-sm">
-
-
-                                    <div >
-
+                                    <div>
                                       <Field
                                         name={`orderProducts[${index}].quantityToManufacture`}
                                         // value={item?.productId}
@@ -1416,14 +1567,15 @@ const AddOrder = () => {
                                         placeholder="Enter Qty To Manufacture"
                                         className=" w-[130px] bg-white dark:bg-form-input  rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                                       />
-                                      <ErrorMessage name="QtyToManufacture" component="div" className="text-red-600 text-sm" />
+                                      <ErrorMessage
+                                        name="QtyToManufacture"
+                                        component="div"
+                                        className="text-red-600 text-sm"
+                                      />
                                     </div>
                                   </td>
                                   <td className="px-5 py-5 border-b border-gray-200  text-sm">
-
-
-                                    <div >
-
+                                    <div>
                                       <Field
                                         name={`orderProducts[${index}].value`}
                                         readOnly
@@ -1439,19 +1591,29 @@ const AddOrder = () => {
                                           e.preventDefault();
                                         }}
                                       />
-                                      <ErrorMessage name="Value" component="div" className="text-red-600 text-sm" />
+                                      <ErrorMessage
+                                        name="Value"
+                                        component="div"
+                                        className="text-red-600 text-sm"
+                                      />
                                     </div>
                                   </td>
                                   <td className="px-5 py-5 border-b border-gray-200  text-sm">
-
-
-                                    <div >
-
-
+                                    <div>
                                       <div className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus-within:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus-within:border-primary">
                                         <ReactDatePicker
-                                          selected={values.orderProducts[index]?.clientShippingDate || null}
-                                          onChange={(date) => setFieldValue(`orderProducts[${index}].clientShippingDate`, date ? format(date, "yyyy-MM-dd") : "")}
+                                          selected={
+                                            values.orderProducts[index]
+                                              ?.clientShippingDate || null
+                                          }
+                                          onChange={(date) =>
+                                            setFieldValue(
+                                              `orderProducts[${index}].clientShippingDate`,
+                                              date
+                                                ? format(date, 'yyyy-MM-dd')
+                                                : '',
+                                            )
+                                          }
                                           dateFormat="yyyy-MM-dd"
                                           placeholderText="Enter Client Shipping Date"
                                           className="w-full bg-transparent outline-none"
@@ -1462,19 +1624,32 @@ const AddOrder = () => {
                                         />
                                       </div>
 
-                                      <ErrorMessage name="ClientShippingDate" component="div" className="text-red-600 text-sm" />
+                                      <ErrorMessage
+                                        name="ClientShippingDate"
+                                        component="div"
+                                        className="text-red-600 text-sm"
+                                      />
                                     </div>
                                   </td>
                                   <td className="px-5 py-5 border-b border-gray-200  text-sm">
-                                    <div >
+                                    <div>
                                       <div
                                         className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus-within:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus-within:border-primary"
                                         onClick={(e) => e.stopPropagation()} // Prevents event bubbling
                                       >
-
                                         <ReactDatePicker
-                                          selected={values.orderProducts[index]?.expectedDate || null}
-                                          onChange={(date) => setFieldValue(`orderProducts[${index}].expectedDate`, date ? format(date, "yyyy-MM-dd") : "")}
+                                          selected={
+                                            values.orderProducts[index]
+                                              ?.expectedDate || null
+                                          }
+                                          onChange={(date) =>
+                                            setFieldValue(
+                                              `orderProducts[${index}].expectedDate`,
+                                              date
+                                                ? format(date, 'yyyy-MM-dd')
+                                                : '',
+                                            )
+                                          }
                                           dateFormat="yyyy-MM-dd"
                                           placeholderText="Enter Client expected Date"
                                           className="w-full bg-transparent outline-none"
@@ -1483,123 +1658,120 @@ const AddOrder = () => {
                                           portalId={`datepicker-portal-${index}`}
                                         />
                                       </div>
-                                      <ErrorMessage name="ExpectedDate" component="div" className="text-red-600 text-sm" />
+                                      <ErrorMessage
+                                        name="ExpectedDate"
+                                        component="div"
+                                        className="text-red-600 text-sm"
+                                      />
                                     </div>
                                   </td>
                                   <td className="px-5 py-5 border-b border-gray-200  text-sm">
-
                                     <td className="px-5 py-5   text-sm">
-                                      <div >
-                                        <IoIosAdd size={30} onClick={() => {
-                                          setSelectedRowId(index)
-                                          openSupplierModal(item?.id, index)
-
-                                        }
-
-                                        } />
+                                      <div>
+                                        <IoIosAdd
+                                          size={30}
+                                          onClick={() => {
+                                            setSelectedRowId(index);
+                                            openSupplierModal(item?.id, index);
+                                          }}
+                                        />
                                       </div>
                                     </td>
                                   </td>
 
-
-
-
                                   <td className="px-5 py-5 border-b border-gray-200  text-sm">
-
                                     <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-                                      <div
-                                        className="inline-block min-w-full shadow-md rounded-lg overflow-hidden"
-                                      >
+                                      <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
                                         <table className="min-w-full leading-normal">
                                           <thead>
-                                            <tr className='px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                              <th
-
-                                                className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                              >
+                                            <tr className="px-5 py-3 bg-slate-300 dark:bg-slate-700 dark:text-white">
+                                              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                                 Supplier Name
                                               </th>
-                                              <th
-
-                                                className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                              >
+                                              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                                 Supplier Quantity
                                               </th>
 
-                                              <th
-
-                                                className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider"
-                                              >
+                                              <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                                 Action
                                               </th>
-
                                             </tr>
                                           </thead>
                                           <tbody>
                                             {selectedSuppliers
-                                              .find((supplierRow) => supplierRow.selectedRowId === index)
-                                              ?.supplierIds.map((supplier, supplierIndex) => (
-                                                <tr
-                                                  key={`supplier-row-${index}-${supplierIndex}`}
-                                                  className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3"
-                                                >
-                                                  {/* Supplier Name Field */}
-                                                  <td
-                                                    key={`supplier-${supplierIndex}`}
-                                                    className="px-5 py-5 border-b border-gray-200 text-sm"
+                                              .find(
+                                                (supplierRow) =>
+                                                  supplierRow.selectedRowId ===
+                                                  index,
+                                              )
+                                              ?.supplierIds.map(
+                                                (supplier, supplierIndex) => (
+                                                  <tr
+                                                    key={`supplier-row-${index}-${supplierIndex}`}
+                                                    className="bg-white dark:bg-slate-700 dark:text-white px-5 py-3"
                                                   >
-                                                    <Field
-                                                      name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`}
-                                                      placeholder="Supplier Name"
-                                                      value={supplier?.supplierId?.supplierName || ""}
-                                                      onChange={(e) =>
-                                                        setFieldValue(
-                                                          `orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`,
-                                                          e.target.value
-                                                        )
-                                                      }
-                                                      className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                                                    />
-                                                    <ErrorMessage
-                                                      name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`}
-                                                      component="div"
-                                                      className="text-red-600 text-sm"
-                                                    />
-                                                  </td>
+                                                    {/* Supplier Name Field */}
+                                                    <td
+                                                      key={`supplier-${supplierIndex}`}
+                                                      className="px-5 py-5 border-b border-gray-200 text-sm"
+                                                    >
+                                                      <Field
+                                                        name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`}
+                                                        placeholder="Supplier Name"
+                                                        value={
+                                                          supplier?.supplierId
+                                                            ?.supplierName || ''
+                                                        }
+                                                        onChange={(e) =>
+                                                          setFieldValue(
+                                                            `orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`,
+                                                            e.target.value,
+                                                          )
+                                                        }
+                                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                                      />
+                                                      <ErrorMessage
+                                                        name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplier.id`}
+                                                        component="div"
+                                                        className="text-red-600 text-sm"
+                                                      />
+                                                    </td>
 
-                                                  {/* Supplier Quantity Field */}
-                                                  <td
-                                                    key={`quantity-${supplierIndex}`}
-                                                    className="px-5 py-5 border-b border-gray-200 text-sm"
-                                                  >
-                                                    <Field
-                                                      name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
-                                                      placeholder="Supplier Quantity"
-                                                      type="number"
-                                                      className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                                                    />
-                                                    <ErrorMessage
-                                                      name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
-                                                      component="div"
-                                                      className="text-red-600 text-sm"
-                                                    />
-                                                  </td>
+                                                    {/* Supplier Quantity Field */}
+                                                    <td
+                                                      key={`quantity-${supplierIndex}`}
+                                                      className="px-5 py-5 border-b border-gray-200 text-sm"
+                                                    >
+                                                      <Field
+                                                        name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
+                                                        placeholder="Supplier Quantity"
+                                                        type="number"
+                                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+                                                      />
+                                                      <ErrorMessage
+                                                        name={`orderProducts[${index}].productSuppliers[${supplierIndex}].supplierOrderQty`}
+                                                        component="div"
+                                                        className="text-red-600 text-sm"
+                                                      />
+                                                    </td>
 
-                                                  {/* Delete Button */}
-                                                  <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                                                    < MdDelete size={20} className='text-red-500 ' onClick={() => handleDeleteSupplier(index, supplierIndex)} />
-
-                                                  </td>
-                                                </tr>
-                                              ))}
+                                                    {/* Delete Button */}
+                                                    <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                                                      <MdDelete
+                                                        size={20}
+                                                        className="text-red-500 "
+                                                        onClick={() =>
+                                                          handleDeleteSupplier(
+                                                            index,
+                                                            supplierIndex,
+                                                          )
+                                                        }
+                                                      />
+                                                    </td>
+                                                  </tr>
+                                                ),
+                                              )}
                                           </tbody>
-
-
-
-
-
-
-
                                         </table>
                                       </div>
                                     </div>
@@ -1609,65 +1781,64 @@ const AddOrder = () => {
                                 </td> */}
 
                                   <td className="px-5 py-5 border-b items-center justify-center mt-[100px]">
-
-                                    <MdDelete className='text-red-700' size={30} onClick={() => handleDeleteRow(index)} />
-
+                                    <MdDelete
+                                      className="text-red-700"
+                                      size={30}
+                                      onClick={() => handleDeleteRow(index)}
+                                    />
                                   </td>
-
                                 </tr>
-
-
                               ))}
-
-
                             </tbody>
                           </table>
                         </div>
                       )}
 
-
-
-
-
-
                       <div className="flex-1 min-w-[200px] mt-11">
-                        <label className="mb-2.5 block text-black dark:text-white">Client Instruction </label>
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Client Instruction{' '}
+                        </label>
                         <Field
                           as="textarea"
                           name="clientInstruction"
                           placeholder="Enter client instruction"
                           className="bg-white dark:bg-form-input w-full rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                         />
-                        <ErrorMessage name="clientInstruction" component="div" className="text-red-600 text-sm" />
+                        <ErrorMessage
+                          name="clientInstruction"
+                          component="div"
+                          className="text-red-600 text-sm"
+                        />
                       </div>
 
                       {(() => {
                         const selectedOrderType = orderTypeOptions.find(
-                          (option) => option.value === values.orderType?.id
+                          (option) => option.value === values.orderType?.id,
                         );
 
                         return (
                           selectedOrderType &&
-                          (selectedOrderType.label === "RetailClients" || selectedOrderType.label === "WSClients") && (
-
+                          (selectedOrderType.label === 'RetailClients' ||
+                            selectedOrderType.label === 'WSClients') && (
                             <div className="flex-1 min-w-[200px] mt-11">
-                              <label className="mb-2.5 block text-black dark:text-white">Customisation Details</label>
+                              <label className="mb-2.5 block text-black dark:text-white">
+                                Customisation Details
+                              </label>
                               <Field
                                 as="textarea"
                                 name="customisationDetails"
                                 placeholder="Enter client instruction"
                                 className="bg-white dark:bg-form-input w-full rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
                               />
-                              <ErrorMessage name="customisationDetails" component="div" className="text-red-600 text-sm" />
+                              <ErrorMessage
+                                name="customisationDetails"
+                                component="div"
+                                className="text-red-600 text-sm"
+                              />
                             </div>
-
                           )
                         );
                       })()}
-
-
-
-
 
                       <button
                         type="submit"
@@ -1679,10 +1850,8 @@ const AddOrder = () => {
                     </div>
                   </div>
                 </div>
-
-
               </Form>
-            )
+            );
           }}
         </Formik>
         {isSupplierModalOpen && (
@@ -1706,11 +1875,8 @@ const AddOrder = () => {
           onSubmit={handleModalSubmit}
           width="70%"
           height="80%"
-          style={{ marginLeft: '70px', marginRight: '0' }}  // Add this line
+          style={{ marginLeft: '70px', marginRight: '0' }} // Add this line
         />
-
-
-
 
         {isCustomerModalOpen && (
           <Modalll
@@ -1727,7 +1893,9 @@ const AddOrder = () => {
             </div>
             <div className="p-4">
               <div className="mb-4">
-                <label className="block text-black dark:text-white mb-2">Customer Name <span className="text-red-500 ml-1">*</span></label>
+                <label className="block text-black dark:text-white mb-2">
+                  Customer Name <span className="text-red-500 ml-1">*</span>
+                </label>
                 <input
                   type="text"
                   value={newCustomerName}
@@ -1738,12 +1906,20 @@ const AddOrder = () => {
               </div>
 
               <div className="mb-4">
-                <label className="mb-2.5 block text-black dark:text-white">Customer Group <span className="text-red-500 ml-1">*</span></label>
+                <label className="mb-2.5 block text-black dark:text-white">
+                  Customer Group <span className="text-red-500 ml-1">*</span>
+                </label>
                 <ReactSelect
                   name="customerGroup"
-                  value={customerGroupList?.find(option => option.value === selectedCustomerGroup?.id) || null}
+                  value={
+                    customerGroupList?.find(
+                      (option) => option.value === selectedCustomerGroup?.id,
+                    ) || null
+                  }
                   onChange={(option) => {
-                    setSelectedCustomerGroup(option ? option.customerObject : null);
+                    setSelectedCustomerGroup(
+                      option ? option.customerObject : null,
+                    );
                   }}
                   options={customerGroupList}
                   styles={customStyles}
@@ -1766,7 +1942,9 @@ const AddOrder = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleAddCustomer(newCustomerName, selectedCustomerGroup)}
+                  onClick={() =>
+                    handleAddCustomer(newCustomerName, selectedCustomerGroup)
+                  }
                   className="px-4 py-2 bg-primary text-white rounded hover:bg-blue-600 transition-colors"
                   disabled={!newCustomerName.trim()}
                 >
@@ -1791,7 +1969,9 @@ const AddOrder = () => {
             </div>
             <div className="p-4">
               <div className="mb-4">
-                <label className="block text-black dark:text-white mb-2">Id</label>
+                <label className="block text-black dark:text-white mb-2">
+                  Id
+                </label>
                 <input
                   type="text"
                   value={newCustomerName}
@@ -1802,12 +1982,20 @@ const AddOrder = () => {
               </div>
 
               <div className="mb-4">
-                <label className="mb-2.5 block text-black dark:text-white">Customer Group</label>
+                <label className="mb-2.5 block text-black dark:text-white">
+                  Customer Group
+                </label>
                 <ReactSelect
                   name="customerGroup"
-                  value={customerGroupList?.find(option => option.value === selectedCustomerGroup?.id) || null}
+                  value={
+                    customerGroupList?.find(
+                      (option) => option.value === selectedCustomerGroup?.id,
+                    ) || null
+                  }
                   onChange={(option) => {
-                    setSelectedCustomerGroup(option ? option.customerObject : null);
+                    setSelectedCustomerGroup(
+                      option ? option.customerObject : null,
+                    );
                   }}
                   options={customerGroupList}
                   styles={customStyles}
@@ -1830,7 +2018,9 @@ const AddOrder = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleAddCustomer(newCustomerName, selectedCustomerGroup)}
+                  onClick={() =>
+                    handleAddCustomer(newCustomerName, selectedCustomerGroup)
+                  }
                   className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
                   disabled={!newCustomerName.trim()}
                 >
@@ -1840,9 +2030,6 @@ const AddOrder = () => {
             </div>
           </Modalll>
         )}
-
-
-
       </div>
     </DefaultLayout>
   );

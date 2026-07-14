@@ -25,6 +25,8 @@ import useorder from '../../hooks/useOrder';
 
 import { customStyles as createCustomStyles } from '../../Constants/utils';
 const ShopifyOrders = () => {
+
+  const {prodId}=useorder()
   const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
