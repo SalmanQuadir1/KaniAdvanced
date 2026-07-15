@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -386,11 +386,15 @@ const AddOrder = () => {
       updatedSuppliers,
     );
   };
-  const handleDeleteRow = (index) => {
-    const updatedRows = prodIdModal.filter((_, i) => i !== index);
-    console.log(updatedRows, 'rowwwwwwwwwwwwws');
-    setprodIdModal(updatedRows);
-  };
+ const handleDeleteRow = (index, setFieldValue, values) => {
+  const updatedRows = prodIdModal.filter((_, i) => i !== index);
+  setprodIdModal(updatedRows);
+
+  const updatedOrderProducts = values.orderProducts.filter((_, i) => i !== index);
+  setFieldValue('orderProducts', updatedOrderProducts);
+
+  prevProdIdModalLength.current = updatedRows.length;
+};
   console.log(prodIdModal, 'prodddddddddddddddddddddddddd');
   const [isPopulated, setIsPopulated] = useState(false);
 
@@ -483,26 +487,7 @@ const AddOrder = () => {
             locationId: null,
 
             orderProducts: [
-              {
-                products: { id: '' },
-                orderCategory: '',
-                clientOrderQuantity: '',
-                units: '',
-                value: '',
-                inStockQuantity: '',
-                isManualStock: false,
-                quantityToManufacture: '',
-                clientShippingDate: '',
-                expectedDate: '',
-                productSuppliers: [
-                  {
-                    supplier: {
-                      id: '', // Supplier ID
-                    },
-                    supplierOrderQty: '',
-                  },
-                ],
-              },
+             
             ],
           }}
           validationSchema={validationSchema}
@@ -627,32 +612,30 @@ const AddOrder = () => {
 
                 getInStock();
               });
-            }, [values?.locationId, values.orderProducts[0]?.orderCategory]); // Remove dependency on orderCategory
+            }, [values?.locationId,orderCategoriesKey]); // Remove dependency on orderCategory
 
-            useEffect(() => {
-              if (prodIdModal.length === 0) return;
-              // Only act when a product was actually added (array grew)
-              if (prodIdModal.length <= values.orderProducts.length) return;
+          const prevProdIdModalLength = useRef(0);
 
-              const newItem = prodIdModal[prodIdModal.length - 1];
-              const newRow = {
-                products: { id: newItem?.id || '' },
-                sourceProductId: newItem?.sourceProductId?.id || '',
-                orderCategory: newItem?.orderCatagory || '',
-                clientOrderQuantity: '',
-                inStockQuantity: '',
-                quantityToManufacture: '',
-                clientShippingDate: '',
-                expectedDate: '',
-                value: '',
-                units: newItem?.units || '',
-                productSuppliers: [
-                  { supplier: { id: '' }, supplierOrderQty: '' },
-                ],
-              };
-
-              setFieldValue('orderProducts', [...values.orderProducts, newRow]);
-            }, [prodIdModal]);
+useEffect(() => {
+  if (prodIdModal.length > prevProdIdModalLength.current) {
+    const newItems = prodIdModal.slice(prevProdIdModalLength.current);
+    const newRows = newItems.map((newItem) => ({
+      products: { id: newItem?.id || '' },
+      sourceProductId: newItem?.sourceProductId?.id || '',
+      orderCategory: newItem?.orderCatagory || '',
+      clientOrderQuantity: '',
+      inStockQuantity: '',
+      quantityToManufacture: '',
+      clientShippingDate: '',
+      expectedDate: '',
+      value: '',
+      units: newItem?.units || '',
+      productSuppliers: [{ supplier: { id: '' }, supplierOrderQty: '' }],
+    }));
+    setFieldValue('orderProducts', [...values.orderProducts, ...newRows]);
+  }
+  prevProdIdModalLength.current = prodIdModal.length;
+}, [prodIdModal]);
 
             // Run only on mount
 
