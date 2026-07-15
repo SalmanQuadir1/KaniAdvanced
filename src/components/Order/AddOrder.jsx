@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -429,34 +429,8 @@ const AddOrder = () => {
   };
 
 
-  const handleDeleteSupplier = (rowIndex, supplierIndex) => {
-    setSelectedSuppliers((prev) => {
-      const updated = [...prev];
-      const row = updated.find((row) => row.selectedRowId === rowIndex);
+ 
 
-      if (row) {
-        // Remove the supplier at supplierIndex
-        row.supplierIds.splice(supplierIndex, 1);
-
-        // If no suppliers remain for this row, remove the row completely
-        if (row.supplierIds.length === 0) {
-          return updated.filter((r) => r.selectedRowId !== rowIndex);
-        }
-      }
-
-      return updated;
-    });
-
-    // Optional: Reset the form field values for the deleted supplier
-    setFieldValue(`orderProducts[${rowIndex}].productSuppliers`, (prev) =>
-      prev.filter((_, idx) => idx !== supplierIndex)
-    );
-  };
-  const handleDeleteRow = (index) => {
-    const updatedRows = prodIdModal.filter((_, i) => i !== index);
-    console.log(updatedRows, "rowwwwwwwwwwwwws");
-    setprodIdModal(updatedRows);
-  };
   console.log(prodIdModal, "prodddddddddddddddddddddddddd");
   const [isPopulated, setIsPopulated] = useState(false);
 
@@ -551,25 +525,7 @@ const AddOrder = () => {
             customisationDetails: "",
             locationId: null,
 
-            orderProducts: [{
-              products: { id: '' },
-              orderCategory: '',
-              clientOrderQuantity: '',
-              units: '',
-              value: '',
-              inStockQuantity: '',
-              quantityToManufacture: '',
-              clientShippingDate: '',
-              expectedDate: '',
-              productSuppliers: [
-                {
-                  supplier: {
-                    id: "", // Supplier ID
-                  },
-                  supplierOrderQty: "",
-                },
-              ],
-            }]
+            orderProducts: []
 
           }}
           validationSchema={validationSchema}
@@ -581,103 +537,88 @@ const AddOrder = () => {
         >
           {({ values, setFieldValue, handleBlur, isSubmitting }) => {
 
+            const handleDeleteSupplier = (rowIndex, supplierIndex) => {
+  const updatedSuppliers = values.orderProducts[rowIndex].productSuppliers.filter(
+    (_, idx) => idx !== supplierIndex,
+  );
+  setFieldValue(`orderProducts[${rowIndex}].productSuppliers`, updatedSuppliers);
+};
+
+const handleDeleteRow = (index) => {
+  const updatedRows = prodIdModal.filter((_, i) => i !== index);
+  setprodIdModal(updatedRows);
+
+  const updatedOrderProducts = values.orderProducts.filter((_, i) => i !== index);
+  setFieldValue('orderProducts', updatedOrderProducts);
+
+  prevProdIdModalLength.current = updatedRows.length;
+};
+
+const orderCategoriesKey = values.orderProducts
+  .map((p) => p?.orderCategory || '')
+  .join('|');
+
+useEffect(() => {
+  if (!values.locationId || !values.orderProducts?.length) return;
+  const hasValidProduct = values.orderProducts.some((p) => p?.products?.id);
+  if (!hasValidProduct) return;
+
+  values.orderProducts.forEach((product, index) => {
+    if (!product?.products?.id) return;
+    if (product.isManualStock) return; // don't touch rows user edited manually
+
+    const getInStock = async () => {
+      try {
+        const response = await fetch(
+          `${GET_INVENTORYBalance}/${product?.products?.id}/${values.locationId}`,
+          { method: 'GET', headers: { Authorization: `Bearer ${token}` } },
+        );
+        if (!response.ok) throw new Error('Failed to fetch inventory');
+
+        const data = await response.json();
+        if (data?.closingBalance !== undefined && data?.instockRecieve !== undefined) {
+          const inStockValue = data.closingBalance - data.instockRecieve;
+          setFieldValue(`orderProducts[${index}].inStockQuantity`, inStockValue || 0);
+        }
+      } catch (error) {
+        console.error('Error fetching inventory:', error);
+        toast.error(`Failed to fetch inventory for product ${product?.products?.id}`);
+      }
+    };
+
+    getInStock();
+  });
+}, [values?.locationId, orderCategoriesKey]);
 
 
-            useEffect(() => {
-              // Check if locationId exists and orderProducts has items with valid product IDs
-              if (!values.locationId || !values.orderProducts || values.orderProducts.length === 0) {
-                return;
-              }
+           // add this import at the top:
+// import React, { useEffect, useState, useRef } from 'react';
 
-              // Check if at least one product has a valid ID
-              const hasValidProduct = values.orderProducts.some(
-                product => product?.products?.id
-              );
+const prevProdIdModalLength = useRef(0);
 
-              if (!hasValidProduct) {
-                return;
-              }
-
-              values.orderProducts.forEach((product, index) => {
-                // Only call API if product ID exists
-                if (!product?.products?.id) {
-                  return;
-                }
-
-                const getInStock = async () => {
-                  try {
-                    const response = await fetch(
-                      `${GET_INVENTORYBalance}/${product?.products?.id}/${values.locationId}`,
-                      {
-                        method: "GET",
-                        headers: {
-                          Authorization: `Bearer ${token}`,
-                        },
-                      }
-                    );
-
-                    if (!response.ok) {
-                      throw new Error('Failed to fetch inventory');
-                    }
-
-                    const data = await response.json();
-                    console.log(data, "Inventory data for product", product?.products?.id);
-
-                    // Set the inStockQuantity field with the calculated value
-                    if (data && data.closingBalance !== undefined && data.instockRecieve !== undefined) {
-                      const inStockValue = data.closingBalance - data.instockRecieve;
-
-                      // Update Formik field with the calculated in-stock quantity
-                      setFieldValue(`orderProducts[${index}].inStockQuantity`, inStockValue);
-
-                      // You can also update other fields based on this calculation
-                      if (product.clientOrderQuantity) {
-                        const quantityToManufacture = product.clientOrderQuantity - inStockValue;
-                        setFieldValue(`orderProducts[${index}].quantityToManufacture`,
-                          Math.abs(quantityToManufacture)
-                        );
-
-                        // Update value field
-                        const cost = prodIdModal[index]?.cost || 0;
-                        setFieldValue(`orderProducts[${index}].value`,
-                          quantityToManufacture > 0 ? quantityToManufacture * cost : 0
-                        );
-                      }
-                    }
-                  } catch (error) {
-                    console.error("Error fetching inventory:", error);
-                    toast.error(`Failed to fetch inventory for product ${product?.products?.id}`);
-                  }
-                };
-
-                getInStock();
-              });
-            }, [values?.locationId, values.orderProducts[0].orderCategory]);
-
-
-            useEffect(() => {
-              if (prodIdModal.length > 0) {
-                console.log("ProdIdModal updated:", prodIdModal);
-
-                const updatedOrderProducts = prodIdModal.map((item, index) => ({
-                  products: { id: item?.id || "" },
-                  sourceProductId: item?.sourceProductId.id || "",
-                  orderCategory: item?.orderCatagory || "",
-                  clientOrderQuantity: values?.orderProducts[index]?.clientOrderQuantity || "",  // Correctly referencing the specific index
-                  inStockQuantity: values?.orderProducts[index]?.inStockQuantity || "",
-                  quantityToManufacture: values?.orderProducts[index]?.quantityToManufacture || "",
-                  clientShippingDate: values?.orderProducts[index]?.clientShippingDate || "",
-                  expectedDate: values?.orderProducts[index]?.expectedDate || "",
-                  value: values?.orderProducts[index]?.value || "", // Add any other fields you need here
-                  units: item?.units || "",
-
-                }));
-
-                console.log(updatedOrderProducts, "Updated Order Products");
-
-                setFieldValue("orderProducts", updatedOrderProducts);  // Update the Formik field with the modified data
-              }
-            }, [prodIdModal, setFieldValue]);
+useEffect(() => {
+  if (prodIdModal.length > prevProdIdModalLength.current) {
+    const newItems = prodIdModal.slice(prevProdIdModalLength.current);
+    const newRows = newItems.map((newItem) => ({
+      products: { id: newItem?.id || '' },
+      sourceProductId: newItem?.sourceProductId?.id || '',
+      orderCategory: newItem?.orderCatagory || '',
+      clientOrderQuantity: '',
+      inStockQuantity: '',
+      isManualStock: false,
+      quantityToManufacture: '',
+      clientShippingDate: '',
+      expectedDate: '',
+      value: '',
+      units: newItem?.units || '',
+      productSuppliers: [
+        { supplier: { id: '' }, supplierOrderQty: '' },
+      ],
+    }));
+    setFieldValue('orderProducts', [...values.orderProducts, ...newRows]);
+  }
+  prevProdIdModalLength.current = prodIdModal.length;
+}, [prodIdModal]);
 
 
 
@@ -1356,33 +1297,23 @@ const AddOrder = () => {
 
                                     <div >
 
-                                      <Field
-                                        name={`orderProducts[${index}].inStockQuantity`}
-                                        type="number"
-                                        onChange={(e) => {
-                                          const value = e.target.value;
-                                          const inStockQuantity = value ? parseFloat(value) : 0;
+                                    <Field
+  name={`orderProducts[${index}].inStockQuantity`}
+  type="number"
+  onChange={(e) => {
+    const value = e.target.value;
+    const inStockQuantity = value ? parseFloat(value) : 0;
+    const cost = item.cost || 0;
+    const quantity = values.orderProducts?.[index]?.clientOrderQuantity || 0;
+    const totalCost = cost * quantity;
 
-                                          // Calculate total cost
-                                          const cost = item.cost || 0;
-                                          const quantity = values.orderProducts?.[index]?.clientOrderQuantity || 0;
-                                          const totalCost = cost * quantity; // Adjust calculation as needed
-
-                                          // Set the calculated value in form state
-                                          // Assuming you have form context or setFieldValue available
-                                          // Example using Formik:
-                                          setFieldValue(`orderProducts[${index}].inStockQuantity`, inStockQuantity);
-
-                                          // Also set the calculated total cost to another field if needed
-                                          // For example, if you have a totalCost field:
-                                          setFieldValue(`orderProducts[${index}].value`, totalCost);
-
-                                          // If you need to update another field with the calculation result
-                                          // setFieldValue(`orderProducts[${index}].calculatedValue`, totalCost);
-                                        }}
-                                        placeholder="Enter In Stock Qty"
-                                        className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
-                                      />
+    setFieldValue(`orderProducts[${index}].inStockQuantity`, inStockQuantity);
+    setFieldValue(`orderProducts[${index}].isManualStock`, true);
+    setFieldValue(`orderProducts[${index}].value`, totalCost);
+  }}
+  placeholder="Enter In Stock Qty"
+  className="w-[130px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:text-white dark:focus:border-primary"
+/>
                                       <ErrorMessage name="InStockQty" component="div" className="text-red-600 text-sm" />
                                     </div>
                                   </td>
