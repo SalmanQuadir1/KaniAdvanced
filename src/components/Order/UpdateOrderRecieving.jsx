@@ -159,6 +159,8 @@ const UpdateOrderRecieving = () => {
         },
       });
       const data = await response.json();
+      console.log(data,"4515");
+      
       setfabricDetails(data);
     } catch (error) {
       console.error('Error fetching fabric details:', error);
@@ -906,9 +908,9 @@ const UpdateOrderRecieving = () => {
                                     <tr key={index}>
                                       <td className="px-5 py-5 border-b border-gray-200 text-sm">
                                         <input
-                                          value={fabric?.productName} // Display only this fabric's name
+                                          value={fabric?.fiberProductName} // Display only this fabric's name
                                           readOnly
-                                          className="w-[130px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                          className="w-[290px] bg-gray-200 dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                         />
                                       </td>
                                       <td className="px-5 py-5 border-b border-gray-200 text-sm">

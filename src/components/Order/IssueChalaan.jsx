@@ -494,9 +494,9 @@ const IssueChalaan = () => {
                       <div className="flex flex-wrap gap-3 mt-5">
                         <div className="w-full">
                           <div className="flex justify-between items-center mb-3">
-                            <h4 className="text-md font-semibold text-black dark:text-white">
+                            <h3 className="text-md font-semibold text-black dark:text-white">
                               Issue Fiber Here
-                            </h4>
+                            </h3>
                             <button
                               type="button"
                               onClick={() => {
