@@ -193,6 +193,7 @@ import ViewMaterialPo from './components/PuchaseOrder/ViewMaterialPo';
 import UpdateMaterialPo from './components/PuchaseOrder/UpdateMaterialPo.jsx';
 
 import AddOrder from './components/Order/AddOrder';
+import Fiber from './components/Order/Fiber.jsx';
 
 import Reports from './components/Reports/Reports.jsx';
 import ProductReport from './components/Reports/ProductReport.jsx';
@@ -860,6 +861,15 @@ function App() {
               <>
                 <PageTitle title="Add Order" />
                 <AddOrder />
+              </>
+            }
+          />
+            <Route
+            path="/Order/Fiber"
+            element={
+              <>
+                <PageTitle title="Fiber Allocated Details" />
+                <Fiber />
               </>
             }
           />

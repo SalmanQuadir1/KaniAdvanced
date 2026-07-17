@@ -176,7 +176,7 @@ const IssueChalaan = () => {
     const productDetailsArray = values.productDetails
       .filter((item) => item.productId && item.qty > 0) // Remove empty rows
       .map((item) => ({
-        productId: item.productId,
+        fiberProductId: item.productId,
         qty: item.qty,
       }));
 

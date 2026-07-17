@@ -165,6 +165,7 @@ const Chart = () => {
     ROLE_ADMIN: [
       // { title: "Products", link: "/product/viewProducts", countKey: "products", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
       { title: "Total Orders", link: "/Order/ViewOrder", countKey: "orders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
+      { title: "Fiber Allocated Details", link: "/order/Fiber", countKey: "", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
       { title: "Proforma", link: "/order/searchproforma", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },
       { title: "Orders Pending For Production Approval", link: "/order/created", countKey: "ordersWithCreated", icon: <AiOutlinePartition className="w-10 h-10" />, levelUp: true },
       { title: "Partially Approved By Production Orders", link: "/order/partiallyexecuted", countKey: "ordersWithCreatedAccepted", icon: <RiProgress1Line className="w-10 h-10" />, levelUp: true },
