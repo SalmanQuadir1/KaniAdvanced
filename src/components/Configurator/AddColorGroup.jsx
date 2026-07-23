@@ -140,7 +140,7 @@ const AddColorGroup = () => {
           <div className="p-6.5">
             <Formik
               initialValues={{
-                productGroupId: edit ? currentColor.productGroupId : null,
+                productGroupId: edit ? currentColor.id : null,
                 colors:
                   edit && currentColor.colors && currentColor.colors.length > 0
                     ? currentColor.colors.map((color) => ({
