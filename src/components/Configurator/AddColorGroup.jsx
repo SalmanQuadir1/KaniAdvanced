@@ -268,14 +268,14 @@ const AddColorGroup = () => {
                                 className="mt-3 flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
                               >
                                 <FiPlus size={18} />
-                                Add Color
+                                Add Design Group
                               </button>
                             </div>
                           );
                         }}
                       </FieldArray>
                     </div>
-                    <button>Add Row</button>
+                  
                   </div>
 
                   <div className="flex justify-center mt-6">
