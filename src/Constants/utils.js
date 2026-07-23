@@ -92,10 +92,11 @@ export const SIGNUPURL = `${BASE_URL}/api/v1/auth/signup`;
 export const ROLESURL = `${BASE_URL}/user/roles`;
 
 //color url's
-export const ADD_COLOR_URL = `${BASE_URL}/colors`;
-export const DELETE_COLOR_URL = `${BASE_URL}/colors`;
-export const UPDATE_COLOR_URL = `${BASE_URL}/colors`;
-export const GET_COLOR_URL = `${BASE_URL}/colors`;
+export const ADD_COLOR_URL = `${BASE_URL}/productgroup/add-colors`;
+
+export const DELETE_COLOR_URL = `${BASE_URL}/productgroup/delete-color`;
+export const UPDATE_COLOR_URL = `${BASE_URL}/productgroup/update-colors`;
+export const GET_COLOR_URL = `${BASE_URL}/productgroup/viewProductGroupWithColors`;
 export const GET_COLORAll_URL = `${BASE_URL}/colors/viewAll`;
 
 //create Inventory Material
