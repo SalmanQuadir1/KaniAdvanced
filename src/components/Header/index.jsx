@@ -99,11 +99,11 @@ const Header = (props) => {
               </h3>
               <Button
                 variant="primary"
-                className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+                className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-blue-200 to-blue-500 hover:from-blue-400 hover:to-blue-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
                 onClick={() => navigate('/connectToShopify')}
               >
                 <AiOutlineDisconnect size={20} className="inline-block" />
-                <span>Connect</span>
+                <span>Check Connection</span>
               </Button>
             </div>
             <div>{/* Your form content here */}</div>

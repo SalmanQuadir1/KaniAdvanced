@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import UserOne from '../../images/user/user-01.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { signoutSuccess } from '../../redux/Slice/UserSlice';
-import { FaCircleUser } from "react-icons/fa6";
+import { FaCircleUser } from 'react-icons/fa6';
 import { clearAppMode } from '../../redux/Slice/AppModeSlice';
 
 const DropdownUser = () => {
@@ -12,7 +12,6 @@ const DropdownUser = () => {
   const dispatch = useDispatch();
 
   const { currentUser } = useSelector((state) => state?.persisted?.user);
-
 
   //console.log(currentUser);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -49,77 +48,87 @@ const DropdownUser = () => {
     try {
       dispatch(signoutSuccess());
       dispatch(clearAppMode());
-      navigate("/auth/signin")
-    } catch (error) {
-
-    }
-  }
+      navigate('/auth/signin');
+    } catch (error) {}
+  };
 
   return (
     <div className="relative">
-    
       <Link
         ref={trigger}
         onClick={() => setDropdownOpen(!dropdownOpen)}
         className="flex items-center gap-4"
         to="#"
       >
-    <span className="hidden text-right lg:block">
-  <div className="relative">
-    {/* Background Pattern */}
-    <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5 rounded-xl"></div>
-    
-    <div className="relative flex items-center bg-white dark:bg-gray-800 rounded-xl shadow-lg  overflow-hidden">
-      {/* Left Accent */}
-      <div className=" h-full bg-gradient-to-b from-blue-700 to-purple-600"></div>
-      
-      {/* Content */}
-      {/* <div className="flex items-center px-4 py-2 space-x-4"> */}
-        {/* User Info */}
-        {/* <div>
+        <span className="hidden text-right lg:block">
+          <div className="relative">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5 rounded-xl"></div>
+
+            <div className="relative flex items-center bg-white dark:bg-gray-800 rounded-xl shadow-lg  overflow-hidden">
+              {/* Left Accent */}
+              <div className=" h-full bg-gradient-to-b from-blue-700 to-purple-600"></div>
+
+              {/* Content */}
+              {/* <div className="flex items-center px-4 py-2 space-x-4"> */}
+              {/* User Info */}
+              {/* <div>
           <span className="text-xs text-gray-500 dark:text-gray-400 block">Welcome,</span>
           <span className="text-sm font-bold text-gray-800 dark:text-white">
              {currentUser?.user?.authorities[0]?.authority.split('_').pop()}
           
           </span>
         </div> */}
-        
-        {/* Divider */}
-        <div className="h-8 w-px bg-gray-300 dark:bg-gray-600"></div>
-        
-        {/* Role Badge */}
-        <div className="relative">
-          <span className="absolute  flex h-2 w-1">
-            <span className="animate-ping absolute inline-flex h-[10px] w-[10px] rounded-full bg-green-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-2 w-6 bg-green-500"></span>
-          </span>
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg px-3 py-1.5">
-            <span className="text-xs font-bold text-white uppercase tracking-wider">
-                {currentUser?.user?.username}
-            </span>
-          </div>
-        </div>
-      {/* </div> */}
-    </div>
-  </div>
-</span>
 
-<span className="h-14 w-14 rounded-full mt-1 relative">
-  {/* Animated Ring */}
-  <span className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 animate-spin-slow opacity-20"></span>
-  
-  {/* Main Avatar */}
-  <div className="relative h-14 w-14 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 p-[3px]">
-    <div className="h-full w-full rounded-full bg-white dark:bg-gray-800 flex items-center justify-center shadow-inner">
-      <FaCircleUser size={42} className="text-gray-600 dark:text-gray-300" />
-    </div>
-  </div>
-  
-  {/* Status with Tooltip */}
-  <span className="absolute -bottom-1 -right-1 h-5 w-5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full flex items-center justify-center shadow-md" title="Online">
-    <span className="sr-only">Online</span>
-  </span>
-</span>
+              {/* Divider */}
+              <div className="h-8 w-px bg-gray-300 dark:bg-gray-600"></div>
+
+              {/* Role Badge */}
+              <div className="flex items-center gap-2 bg-gradient-to-r from-blue-600/10 to-purple-600/10 dark:from-blue-600/20 dark:to-purple-600/20 border border-blue-500/20 dark:border-purple-500/20 rounded-full px-4 py-1.5 backdrop-blur-sm group hover:scale-105 transition-transform cursor-pointer">
+                {/* Icon */}
+                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold">
+                  {currentUser?.user?.username?.charAt(0).toUpperCase() || 'U'}
+                </div>
+
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-200 dark:text-black capitalize">
+                  {currentUser?.user?.username || 'User'}
+                </span>
+
+                {/* Status indicator */}
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+              </div>
+              {/* </div> */}
+            </div>
+          </div>
+        </span>
+
+        <span className="h-14 w-14 rounded-full mt-1 relative">
+          {/* Animated Ring */}
+          <span className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 animate-spin-slow opacity-20"></span>
+
+          {/* Main Avatar */}
+          <div className="relative h-14 w-14 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 p-[3px]">
+            <div className="h-full w-full rounded-full bg-white dark:bg-gray-800 flex items-center justify-center shadow-inner">
+              <FaCircleUser
+                size={42}
+                className="text-gray-600 dark:text-gray-300"
+              />
+            </div>
+
+            
+          </div>
+
+          {/* Status with Tooltip */}
+          <span
+            className="absolute -bottom-1 -right-1 h-5 w-5 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full flex items-center justify-center shadow-md"
+            title="Online"
+          >
+            <span className="sr-only">Online</span>
+          </span>
+        </span>
 
         <svg
           className="hidden fill-current sm:block"
@@ -143,8 +152,9 @@ const DropdownUser = () => {
         ref={dropdown}
         onFocus={() => setDropdownOpen(true)}
         onBlur={() => setDropdownOpen(false)}
-        className={`absolute right-0 mt-4 flex w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark ${dropdownOpen === true ? 'block' : 'hidden'
-          }`}
+        className={`absolute right-0 mt-4 flex w-62.5 flex-col rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark ${
+          dropdownOpen === true ? 'block' : 'hidden'
+        }`}
       >
         {/* <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-7.5 dark:border-strokedark">
           <li>
@@ -219,7 +229,10 @@ const DropdownUser = () => {
             </Link>
           </li>
         </ul> */}
-        <button onClick={handleLogout} className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+        >
           <svg
             className="fill-current"
             width="22"
