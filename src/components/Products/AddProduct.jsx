@@ -1454,6 +1454,10 @@ const AddProduct = () => {
                           <label className="mb-2.5 block text-black dark:text-white">
                             {' '}
                             WS INR
+                             <span className="text-red-700 text-xl mt-[40px] justify-center items-center">
+                              {' '}
+                              *
+                            </span>
                           </label>
                           <Field
                             name="wholesalePrice"
