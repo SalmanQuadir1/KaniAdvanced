@@ -432,7 +432,7 @@ const ProductReport = () => {
                                             <button
                                                 type="button"
                                                 onClick={() => handlegenerateReport(values)}
-                                                className="flex  mb-4 md:w-[150px] mr-4 w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
+                                                className="flex  mb-4 md:w-[250px] mr-4 w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
                                             >
                                                 Generate Report
                                             </button>

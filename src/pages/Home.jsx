@@ -124,7 +124,7 @@ const Home = () => {
             { title: "Orders", link: "/chart", countKey: "orders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
 
             { title: "Upload Excel", link: "/product/addExcelProduct", countKey: "ordersWithCreated", icon: <AiOutlinePartition className="w-10 h-10" />, levelUp: true },
-            { title: "Financial Reports", link: "/report/freports", countKey: "inventory", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
+            { title: "Financial Reports", link: "/report/freports", countKey: "", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
 
 
 

@@ -98,8 +98,8 @@ const AddProduct = () => {
     setLoomsOptions(uniqueOptions);
 
     // Optionally clear previously selected looms if they're no longer available
-    if (values.looms) {
-      const validLooms = values.looms.filter((loomValue) =>
+    if (values?.looms) {
+      const validLooms = values?.looms.filter((loomValue) =>
         uniqueOptions.some((opt) => opt.value === loomValue),
       );
       if (validLooms.length !== values.looms.length) {
