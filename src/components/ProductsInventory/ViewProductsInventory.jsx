@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { FiEdit, FiTrash2, FiX, FiChevronDown, FiChevronRight } from "react-icons/fi";
@@ -28,6 +28,10 @@ const ViewProductsInventory = () => {
     const [inventoryData, setInventoryData] = useState([]);
     const [expandedGroups, setExpandedGroups] = useState({});
     const [expandedSubGroups, setExpandedSubGroups] = useState({});
+    
+    // 🔹 ADD LOADING STATE
+    const [isLoading, setIsLoading] = useState(false);
+    const [isPageLoading, setIsPageLoading] = useState(false);
 
     const [pagination, setPagination] = useState({
         totalItems: 0,
@@ -63,56 +67,67 @@ const ViewProductsInventory = () => {
         value: loc.address
     })) || [];
 
-   const ViewInventory = async (page = 1, filters = {}) => {
-    try {
-        // Convert to zero-based for API
-        const pageNumber = page - 1;
-        
-        console.log("Fetching page:", page, "API page number:", pageNumber);
-        
-        const response = await fetch(`${GET_INVENTORYYS}?page=${pageNumber}`, {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`
-            },
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+    // 🔹 OPTIMIZED: ViewInventory with loading states
+    const ViewInventory = async (page = 1, filters = {}) => {
+        try {
+            // Show loading for initial load or page change
+            if (page === 1 && !filters.productId && !filters.address) {
+                setIsLoading(true);
+            } else {
+                setIsPageLoading(true);
+            }
+            
+            const pageNumber = page - 1;
+            
+            console.log("Fetching page:", page, "API page number:", pageNumber);
+            
+            const response = await fetch(`${GET_INVENTORYYS}?page=${pageNumber}&size=20`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                },
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log("Pagination Response:", {
+                currentPageAPI: data.number,
+                currentPageDisplay: data.number + 1,
+                totalPages: data.totalPages,
+                totalElements: data.totalElements,
+                pageSize: data.size
+            });
+
+            setInventoryData(data.content || []);
+            setPagination({
+                totalItems: data?.totalElements || 0,
+                data: data?.content || [],
+                totalPages: data?.totalPages || 0,
+                currentPage: (data?.number || 0) + 1,
+                itemsPerPage: data?.size || 20
+            });
+        } catch (error) {
+            console.error("Error fetching inventory:", error);
+            toast.error("Failed to fetch Inventory");
+        } finally {
+            setIsLoading(false);
+            setIsPageLoading(false);
         }
-        
-        const data = await response.json();
-        console.log("Pagination Response:", {
-            currentPageAPI: data.number,
-            currentPageDisplay: data.number + 1,
-            totalPages: data.totalPages,
-            totalElements: data.totalElements,
-            pageSize: data.size
-        });
+    };
 
-        setInventoryData(data.content || []);
-        setPagination({
-            totalItems: data?.totalElements || 0,
-            data: data?.content || [],
-            totalPages: data?.totalPages || 0,
-            currentPage: (data?.number || 0) + 1, // Convert to 1-based for display
-            itemsPerPage: data?.size || 20
-        });
-    } catch (error) {
-        console.error("Error fetching inventory:", error);
-        toast.error("Failed to fetch Inventory");
-    }
-};
-
+    // 🔹 OPTIMIZED: Initial load with proper loading state
     useEffect(() => {
-        ViewInventory(0);
+        ViewInventory(1);
     }, []);
 
     const handlePageChange = (newPage) => {
-    console.log("Changing to page:", newPage);
-    setPagination((prev) => ({ ...prev, currentPage: newPage }));
-    ViewInventory(newPage); // Pass the page number directly
-};
+        console.log("Changing to page:", newPage);
+        setPagination((prev) => ({ ...prev, currentPage: newPage }));
+        ViewInventory(newPage);
+    };
 
     const handleUpdate = (id) => {
         navigate(`/inventory/updateInventory/${id}`);
@@ -132,15 +147,14 @@ const ViewProductsInventory = () => {
         }));
     };
 
-    // Calculate total inventory count for a group
-    const getGroupInventoryCount = (subGroups) => {
+    // 🔹 OPTIMIZED: Memoized calculations to prevent re-renders
+    const getGroupInventoryCount = useCallback((subGroups) => {
         return subGroups.reduce((total, subGroup) => {
             return total + (subGroup.inventories?.length || 0);
         }, 0);
-    };
+    }, []);
 
-    // Calculate total products in group
-    const getTotalProductsInGroup = (subGroups) => {
+    const getTotalProductsInGroup = useCallback((subGroups) => {
         const uniqueProducts = new Set();
         subGroups.forEach(subGroup => {
             subGroup.inventories?.forEach(inv => {
@@ -148,7 +162,7 @@ const ViewProductsInventory = () => {
             });
         });
         return uniqueProducts.size;
-    };
+    }, []);
 
     // API functions for the three modals
     const fetchRecentHistory = async (productId, locationId) => {
@@ -218,6 +232,36 @@ const ViewProductsInventory = () => {
         };
         ViewInventory(pagination.currentPage, filters);
     };
+
+    // 🔹 NEW: Full Page Spinner Component
+    const FullPageSpinner = () => (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
+            <div className="flex flex-col items-center gap-4">
+                <div className="relative">
+                    <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-8 h-8 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin animation-delay-150"></div>
+                    </div>
+                </div>
+                <p className="text-lg font-semibold text-gray-700 dark:text-gray-300 animate-pulse">
+                    Loading Inventory...
+                </p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Please wait while we fetch your data
+                </p>
+            </div>
+        </div>
+    );
+
+    // 🔹 NEW: Page Loading Spinner (for pagination)
+    const PageLoadingSpinner = () => (
+        <div className="absolute inset-0 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm flex items-center justify-center z-50 rounded-lg">
+            <div className="flex flex-col items-center gap-3">
+                <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300">Loading page...</p>
+            </div>
+        </div>
+    );
 
     // Recent History Modal Component
     const RecentHistoryModal = ({ isOpen, onClose, data, loading, inventoryItem }) => {
@@ -392,7 +436,8 @@ const ViewProductsInventory = () => {
         </thead>
     );
 
-    const renderTableRows = () => {
+    // 🔹 OPTIMIZED: Render table rows with useMemo to prevent unnecessary recalculations
+    const renderTableRows = useMemo(() => {
         if (!inventoryData || inventoryData.length === 0) {
             return (
                 <tr className="bg-white dark:bg-slate-700">
@@ -471,54 +516,53 @@ const ViewProductsInventory = () => {
                     // If sub group is expanded, show inventory items with table headers
                     if (isSubGroupExpanded && subGroup.inventories && subGroup.inventories.length > 0) {
                         // Add table headers inside the subgroup
-                     // Add table headers inside the subgroup
-rows.push(
- <tr 
-    key={`subgroup-headers-${subGroup.id}`} 
-    className="dark:bg-slate-700 dark:text-white"
-    style={{ backgroundColor: 'rgb(71 85 105)' }} // Slate-600 RGB value
->
-        <th className="px-9 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white  ">
-            S.No
-        </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
-            Product Description
-        </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
-            Product Id
-        </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
-            Location
-        </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
-            Opening Balance
-        </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
-            Purchase
-        </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
-            Sale
-        </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
-            Transfer In
-        </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
-            Transfer Out
-        </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
-            Closing Balance
-        </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
-            In Progress
-        </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
-            Recent History
-        </th>
-        <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
-            Summary
-        </th>
-     </tr>
-);
+                        rows.push(
+                            <tr 
+                                key={`subgroup-headers-${subGroup.id}`} 
+                                className="dark:bg-slate-700 dark:text-white"
+                                style={{ backgroundColor: 'rgb(71 85 105)' }}
+                            >
+                                <th className="px-9 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                    S.No
+                                </th>
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                    Product Description
+                                </th>
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                    Product Id
+                                </th>
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                    Location
+                                </th>
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                    Opening Balance
+                                </th>
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                    Purchase
+                                </th>
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                    Sale
+                                </th>
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                    Transfer In
+                                </th>
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                    Transfer Out
+                                </th>
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                    Closing Balance
+                                </th>
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                    In Progress
+                                </th>
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                    Recent History
+                                </th>
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                    Summary
+                                </th>
+                            </tr>
+                        );
 
                         // Add inventory items
                         subGroup.inventories.forEach((item, idx) => {
@@ -615,12 +659,28 @@ rows.push(
         });
 
         return rows;
-    };
+    }, [inventoryData, expandedGroups, expandedSubGroups, getGroupInventoryCount, getTotalProductsInGroup]);
+
+    // 🔹 NEW: Add CSS for animation delay
+    const style = document.createElement('style');
+    style.textContent = `
+        .animation-delay-150 {
+            animation-delay: 150ms;
+        }
+    `;
+    document.head.appendChild(style);
 
     return (
         <DefaultLayout>
             <Breadcrumb pageName="Inventory / View Inventory" />
-            <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
+            
+            {/* 🔹 SHOW FULL PAGE SPINNER WHEN LOADING */}
+            {isLoading && <FullPageSpinner />}
+            
+            <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800 relative">
+                {/* 🔹 SHOW PAGE LOADING SPINNER OVERLAY */}
+                {isPageLoading && <PageLoadingSpinner />}
+                
                 <div className="pt-5">
                     <div className='flex flex-row items-center justify-between w-full'>
                         <h2 className="text-xl text-slate-500 font-semibold w-full flex items-center justify-between">
@@ -635,12 +695,16 @@ rows.push(
                         <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
                            <table className="min-w-full leading-normal overflow-auto">
                                 <tbody>
-                                    {renderTableRows()}
+                                    {renderTableRows}
                                 </tbody>
                              </table>
                         </div>
                     </div>
-                    <Pagination totalPages={pagination.totalPages} currentPage={pagination.currentPage} handlePageChange={handlePageChange} />
+                    <Pagination 
+                        totalPages={pagination.totalPages} 
+                        currentPage={pagination.currentPage} 
+                        handlePageChange={handlePageChange} 
+                    />
                 </div>
             </div>
 
