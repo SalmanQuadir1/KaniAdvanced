@@ -43,6 +43,9 @@ import { FaDropbox } from 'react-icons/fa';
 
 const Home = () => {
   const [unitCount, setUnitCount] = useState([]);
+  const [isDownloadingAllGroups, setIsDownloadingAllGroups] = useState(false);
+  const [isDownloadingCustomer, setIsDownloadingCustomer] = useState(false); // 🔹 ADD THIS
+
   const { currentUser } = useSelector((state) => state?.persisted?.user);
   const { user, token } = currentUser;
   const role = user?.authorities?.map((auth) => auth.authority) || [];
@@ -51,7 +54,18 @@ const Home = () => {
   const { mode } = appMode;
   console.log(mode, 'kk');
 
+  // 🔹 Spinner Overlay Component
+  const SpinnerOverlay = () => (
+    <div className="absolute inset-0 bg-black/50 backdrop-blur-sm rounded-xl flex items-center justify-center z-10">
+      <div className="bg-white/90 p-4 rounded-lg shadow-lg flex flex-col items-center">
+        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+        <p className="text-sm font-medium text-gray-700 mt-2">Downloading...</p>
+      </div>
+    </div>
+  );
+
   const handleDownloadAllGroupsProductReport = async () => {
+    setIsDownloadingAllGroups(true);
     try {
       const response = await fetch(`${DOWNLOADPRODUCTRE_REPORT}`, {
         method: 'GET',
@@ -93,10 +107,13 @@ const Home = () => {
     } catch (error) {
       console.error(error);
       toast.error('Failed to download report');
+    } finally {
+      setIsDownloadingAllGroups(false);
     }
   };
 
   const handleDownloadReport = async () => {
+    setIsDownloadingCustomer(true); // 🔹 ADD THIS
     try {
       const response = await fetch(`${DOWNLOADCUSTOMER_REPORT}`, {
         method: 'GET',
@@ -104,18 +121,17 @@ const Home = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        // body: JSON.stringify(filters), // Convert body to JSON string
       });
 
       if (!response.ok) {
-        const errorText = await response.text(); // Get error response as text
+        const errorText = await response.text();
         throw new Error(errorText || 'Failed to download report');
       }
 
-      const blob = await response.blob(); // Get the binary PDF file
+      const blob = await response.blob();
 
       const disposition = response.headers.get('Content-Disposition');
-      let filename = 'Customer.csv'; // Default filename
+      let filename = 'Customer.csv';
       if (disposition && disposition.includes('attachment')) {
         const match = disposition.match(/filename="(.+)"/);
         if (match && match[1]) {
@@ -125,12 +141,11 @@ const Home = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', filename); // Use the filename from the header
+      link.setAttribute('download', filename);
 
       document.body.appendChild(link);
       link.click();
 
-      // Cleanup
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
@@ -138,6 +153,8 @@ const Home = () => {
     } catch (error) {
       console.error(error);
       toast.error('An error occurred while downloading the report');
+    } finally {
+      setIsDownloadingCustomer(false); // 🔹 ADD THIS
     }
   };
 
@@ -189,7 +206,6 @@ const Home = () => {
         icon: <RiAlignItemBottomFill className="w-10 h-10" />,
         levelUp: true,
       },
-
       {
         title: 'Orders',
         link: '/chart',
@@ -197,7 +213,6 @@ const Home = () => {
         icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
         levelDown: true,
       },
-
       {
         title: 'Upload Excel',
         link: '/product/addExcelProduct',
@@ -212,13 +227,12 @@ const Home = () => {
         icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
         levelDown: true,
       },
-
       {
         title: 'Customer Report',
         countKey: 'ordersWithCreatedAccepted',
         icon: <RiProgress1Line className="w-10 h-10" />,
         levelUp: true,
-        isDownload: true, // Added a flag to indicate it's a download button
+        isDownload: true,
       },
       {
         title: 'Monthly Order Calender',
@@ -234,15 +248,14 @@ const Home = () => {
         icon: <GrCompliance className="w-10 h-10" />,
         levelUp: true,
       },
-    {
-  title: "All Groups Product Report",
-  countKey: "",
-  icon: <GrCompliance className="w-10 h-10" />,
-  levelUp: true,
-  isDownload: true,
-
-  isAllGroupsDownload: true,
-},
+      {
+        title: "All Groups Product Report",
+        countKey: "",
+        icon: <GrCompliance className="w-10 h-10" />,
+        levelUp: true,
+        isDownload: true,
+        isAllGroupsDownload: true,
+      },
       {
         title: 'Verify Product Transfer',
         link: '/stockJournal/verify',
@@ -257,8 +270,6 @@ const Home = () => {
         icon: <RiProgress8Fill className="w-10 h-10" />,
         levelUp: true,
       },
-      // { title: "Stock Journal Accept", link: "/StockJournal/get", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
-      // { title: "Production Dashboard", link: "/kaniProducts", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelUp: true },
     ],
     ROLE_EXECUTOR: [
       {
@@ -281,7 +292,6 @@ const Home = () => {
         icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
         levelDown: true,
       },
-
       {
         title: 'Monthly Order Calender',
         link: '/Order/monthlyorders',
@@ -290,7 +300,6 @@ const Home = () => {
         levelUp: true,
       },
     ],
-
     ROLE_ADMIN_DLI: [
       {
         title: 'Reports',
@@ -354,7 +363,6 @@ const Home = () => {
         levelUp: true,
       },
     ],
-
     ROLE_ADMIN_SXR: [
       {
         title: 'Reports',
@@ -376,7 +384,6 @@ const Home = () => {
         icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
         levelDown: true,
       },
-
       {
         title: 'Monthly Order Calender',
         link: '/Order/monthlyorders',
@@ -419,7 +426,7 @@ const Home = () => {
       icon: <GiScrollUnfurled className="w-10 h-10" />,
       levelUp: true,
       isGradient: true,
-      gradientColor: 'from-purple-500 to-purple-600', // Add this line for purple
+      gradientColor: 'from-purple-500 to-purple-600',
     },
     {
       title: 'Contemporary Pashmina',
@@ -475,39 +482,10 @@ const Home = () => {
       isGradient: true,
       gradientColor: 'from-teal-500 to-teal-600',
     },
-    //  {
-    //     title: "Client Orders",
-    //     link: "/ClientOrders",
-    //     countKey: "ClientOrders",
-    //     icon: <RiUserReceived2Fill className="w-10 h-10" />,
-    //     levelUp: true,
-    //   },
-    //    {
-    //     title: "Retail Client Orders",
-    //     link: "/RetailClientOrders",
-    //     countKey: "RetailClientOrders",
-    //     icon:  <AiOutlinePartition className="w-10 h-10" />,
-    //     levelUp: true,
-    //   },
-    //    {
-    //     title: "Wholesale Client Orders",
-    //     link: "/WholesaleClientOrders",
-    //     countKey: "WholesaleClientOrders",
-    //     icon:  <RiAlignItemBottomFill className="w-10 h-10" />,
-    //     levelUp: true,
-    //   },
-    //    {
-    //       title: "Klc Orders",
-    //       link: "/KlcOrders",
-    //       countKey: "KlcOrders",
-    //       icon:  <TbReorder className="w-10 h-10" />,
-    //       levelUp: true,
-    //     },
   ];
 
-  //acounts
+  // Accounts mode cards
   const accountsModeCards = [
-    // { title: "Accounts Dashboard", link: "/accounts/dashboard", countKey: "accountsData", icon: <LuScale className="w-10 h-10" />, levelUp: true },
     {
       title: 'Pending for Bill',
       link: '/Recieved/pendingForBill',
@@ -515,72 +493,54 @@ const Home = () => {
       icon: <RiProgress8Fill className="w-10 h-10" />,
       levelUp: true,
     },
-    // { title: "Billing Info", link: "/accounts/billing", countKey: "billing", icon: <MdRepartition className="w-10 h-10" />, levelDown: true },
-    // { title: "Invoices", link: "/accounts/invoices", countKey: "invoices", icon: <MdOutlinePending className="w-10 h-10" />, levelUp: true },
   ];
 
-  // Get all cards user should see based on roles
   // Get all cards user should see based on roles
   const cardsToShow = (() => {
     if (mode === 'production') {
       return role.flatMap((roleName) => roleBasedCards[roleName] || []);
     }
-
     if (mode === 'accounts' && role.includes('ROLE_ADMIN')) {
       return accountsModeCards;
     }
-    // 🔹 Kani Dashboard
     if (mode === 'kani') {
       return kaniModeCards;
     }
-
     return [];
   })();
 
   return (
-    // <DefaultLayout>
-    //     <Breadcrumb pageName="Home" />
-    //     <div className="grid grid-cols-1 gap-3 my-1 md:grid-cols-4 md:gap-3 xl:grid-cols-4 2xl:gap-7.5 ">
-    //         {cardsToShow.map((card, index) => (
-    //             <Link to={card.link} key={index}>
-    //                 <div
-    //                     key={index}
-    //                     onClick={card.isDownload ? handleDownloadReport : null} // Apply download function only to "Customer Report"
-    //                     className="cursor-pointer  flex-col mt-4 " // Make it clear it's clickable
-    //                 >
-    //                     <CardDataStats
-    //                         title={card.title}
-
-    //                         levelUp={card.levelUp}
-    //                         levelDown={card.levelDown}
-    //                     >
-    //                         {card.icon}
-    //                     </CardDataStats>
-    //                 </div>
-    //             </Link>
-    //         ))}
-    //     </div>
-    // </DefaultLayout>
     <DefaultLayout>
       <Breadcrumb pageName="Home" />
       <div className="grid grid-cols-1 gap-3 my-1 md:grid-cols-4 md:gap-3 xl:grid-cols-5 2xl:gap-4 rounded-lg">
-        {cardsToShow.map((card, index) =>
-          card.isDownload ? (
+        {cardsToShow.map((card, index) => {
+          // ✅ MOVE THESE INSIDE THE MAP - card is available here!
+          const isAllGroupsDownloading = card.isAllGroupsDownload && isDownloadingAllGroups;
+          const isCustomerDownloading = card.isDownload && !card.isAllGroupsDownload && isDownloadingCustomer;
+          const isDownloading = isAllGroupsDownloading || isCustomerDownloading;
+
+          return card.isDownload ? (
             <div
               key={index}
               onClick={
-                card.isAllGroupsDownload
+                isDownloading
+                  ? undefined
+                  : card.isAllGroupsDownload
                   ? handleDownloadAllGroupsProductReport
                   : handleDownloadReport
               }
-              className="cursor-pointer flex-col mt-4 rounded-lg"
+              className={`cursor-pointer flex-col mt-4 rounded-lg relative ${
+                isDownloading ? 'cursor-not-allowed opacity-75' : 'cursor-pointer'
+              }`}
             >
+              {isDownloading && <SpinnerOverlay />}
               {card.isGradient ? (
-                // Gradient styled card with fixed height
                 <div
                   className={`group relative overflow-hidden rounded-xl bg-gradient-to-br ${
                     card.gradientColor || 'from-blue-500 to-blue-600'
-                  } p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer h-48 flex flex-col rounded-lg`}
+                  } p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer h-48 flex flex-col rounded-lg ${
+                    isDownloading ? 'hover:transform-none' : ''
+                  }`}
                 >
                   <div className="absolute right-0 top-0 -mt-4 -mr-4 h-20 w-20 rounded-full bg-white/10 blur-2xl"></div>
                   {card.levelUp && (
@@ -589,45 +549,37 @@ const Home = () => {
                     </span>
                   )}
                   <div className="mb-4 text-white/90">{card.icon}</div>
-
-                  {/* Title with fixed height for 2 lines */}
                   <h3 className="text-xl font-bold text-white min-h-[56px] leading-tight">
                     {card.title}
                   </h3>
-
-                  {/* Count with fixed margin */}
-                  {card.countKey &&
-                    countMapping[card.countKey] !== undefined && (
-                      <p className="text-sm text-white/80 mt-2">
-                        {countMapping[card.countKey]} items
-                      </p>
-                    )}
-
-                  {/* View/Download link always at bottom */}
+                  {card.countKey && countMapping[card.countKey] !== undefined && (
+                    <p className="text-sm text-white/80 mt-2">
+                      {countMapping[card.countKey]} items
+                    </p>
+                  )}
                   <div className="mt-auto flex items-center text-sm font-medium text-white/90 pt-4">
-                    {card.isDownload ? 'Download' : 'View'}
-                    <svg
-                      className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
+                    {isDownloading ? 'Downloading...' : 'Download'}
+                    {!isDownloading && (
+                      <svg
+                        className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    )}
                   </div>
                 </div>
               ) : (
-                // Regular CardDataStats for other cards
                 <CardDataStats
                   title={card.title}
-                  total={
-                    card.countKey ? countMapping[card.countKey] : undefined
-                  }
+                  total={card.countKey ? countMapping[card.countKey] : undefined}
                   levelUp={card.levelUp}
                   levelDown={card.levelDown}
                 >
@@ -639,7 +591,6 @@ const Home = () => {
             <Link to={card.link} key={index}>
               <div className="cursor-pointer flex-col mt-4">
                 {card.isGradient ? (
-                  // Gradient styled card for Kani Section
                   <div
                     className={`group relative overflow-hidden rounded-xl bg-gradient-to-br ${
                       card.gradientColor || 'from-blue-500 to-blue-600'
@@ -655,12 +606,11 @@ const Home = () => {
                     <h3 className="mb-2 text-xl font-bold text-white">
                       {card.title}
                     </h3>
-                    {card.countKey &&
-                      countMapping[card.countKey] !== undefined && (
-                        <p className="text-sm text-white/80">
-                          {countMapping[card.countKey]} items
-                        </p>
-                      )}
+                    {card.countKey && countMapping[card.countKey] !== undefined && (
+                      <p className="text-sm text-white/80">
+                        {countMapping[card.countKey]} items
+                      </p>
+                    )}
                     <div className="mt-6 flex items-center text-sm font-medium text-white/90">
                       View
                       <svg
@@ -679,12 +629,9 @@ const Home = () => {
                     </div>
                   </div>
                 ) : (
-                  // Regular CardDataStats for other cards
                   <CardDataStats
                     title={card.title}
-                    total={
-                      card.countKey ? countMapping[card.countKey] : undefined
-                    }
+                    total={card.countKey ? countMapping[card.countKey] : undefined}
                     levelUp={card.levelUp}
                     levelDown={card.levelDown}
                   >
@@ -693,8 +640,8 @@ const Home = () => {
                 )}
               </div>
             </Link>
-          ),
-        )}
+          );
+        })}
       </div>
     </DefaultLayout>
   );

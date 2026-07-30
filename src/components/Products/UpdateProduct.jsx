@@ -3,7 +3,13 @@ import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import { ErrorMessage, Field, Formik } from 'formik';
 import { useNavigate, useParams } from 'react-router-dom';
-import { DESIGNBYPR, GET_IMAGE, GET_PRODUCT_GROUP_SUBGROUP_URL, GET_PRODUCTBYID_URL, UPDATE_PRODUCT_URL } from '../../Constants/utils';
+import {
+  DESIGNBYPR,
+  GET_IMAGE,
+  GET_PRODUCT_GROUP_SUBGROUP_URL,
+  GET_PRODUCTBYID_URL,
+  UPDATE_PRODUCT_URL,
+} from '../../Constants/utils';
 import { useSelector } from 'react-redux';
 import ReactSelect from 'react-select';
 import { customStyles as createCustomStyles } from '../../Constants/utils';
@@ -12,909 +18,1003 @@ import { toast } from 'react-toastify';
 import Modall from './Modall';
 
 const UpdateProduct = () => {
-    const productIdField = "";
-    const [product, setProduct] = useState(null);
-    const [colorGroupOptions, setColorGroupOptions] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const theme = useSelector(state => state?.persisted?.theme);
-    const customStyles = createCustomStyles(theme?.mode);
-    const { currentUser } = useSelector((state) => state?.persisted?.user);
-    const [unitOptions, setunitOptions] = useState([]);
-    const colorGroup = useSelector(state => state?.persisted?.color);
-    const design = useSelector(state => state?.persisted?.design);
-    const [designOptions, setdesignOptions] = useState([]);
-    const [styleOptions, setstyleOptions] = useState([]);
-    const [sizeOptions, setsizeOptions] = useState([]);
-    const style = useSelector(state => state?.persisted?.style);
-    const size = useSelector(state => state?.persisted?.size);
-    const [productCategoryOptions, setproductCategoryOptions] = useState([]);
-    const [hsnOptions, sethsnOptions] = useState([]);
-    const productCategory = useSelector(state => state?.persisted?.productCategory);
-    const hsnCode = useSelector(state => state?.persisted?.hsn);
-    const [supplierNameOptions, setsupplierNameOptions] = useState([]);
-    const supplier = useSelector(state => state?.nonPersisted?.supplier);
-    const [productGroupOption, setproductGroupOption] = useState([]);
-    const [gstDetailModal, setgstDetailModal] = useState(false);
-    const productGroup = useSelector(state => state?.persisted?.productGroup);
-    const [vaaluee, setvaaluee] = useState({});
-    const [referenceImages, setrefImage] = useState([]);
-    const [actualImages, setactualImage] = useState([]);
-    const navigate = useNavigate();
-    const { getUnits, units, getWeave, weave } = useProduct({ referenceImages, actualImages, productIdField });
-    const [previews, setPreviews] = useState([]);
-    const [previewsActual, setPreviewsActual] = useState([]);
-    const [gstDetails, setgstDetails] = useState([]);
-    const [subGroupOptions, setsubGroupOptions] = useState([]);
-    const [loomsOptions, setLoomsOptions] = useState([]);
-    const [weaveOptions, setweaveOptions] = useState([]);
+  const productIdField = '';
+  const [product, setProduct] = useState(null);
+  const [colorGroupOptions, setColorGroupOptions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const theme = useSelector((state) => state?.persisted?.theme);
+  const customStyles = createCustomStyles(theme?.mode);
+  const { currentUser } = useSelector((state) => state?.persisted?.user);
+  const [unitOptions, setunitOptions] = useState([]);
+  const colorGroup = useSelector((state) => state?.persisted?.color);
+  const design = useSelector((state) => state?.persisted?.design);
+  const [designOptions, setdesignOptions] = useState([]);
+  const [styleOptions, setstyleOptions] = useState([]);
+  const [sizeOptions, setsizeOptions] = useState([]);
+  const style = useSelector((state) => state?.persisted?.style);
+  const size = useSelector((state) => state?.persisted?.size);
+  const [productCategoryOptions, setproductCategoryOptions] = useState([]);
+  const [hsnOptions, sethsnOptions] = useState([]);
+  const productCategory = useSelector(
+    (state) => state?.persisted?.productCategory,
+  );
+  const hsnCode = useSelector((state) => state?.persisted?.hsn);
+  const [supplierNameOptions, setsupplierNameOptions] = useState([]);
+  const supplier = useSelector((state) => state?.nonPersisted?.supplier);
+  const [productGroupOption, setproductGroupOption] = useState([]);
+  const [gstDetailModal, setgstDetailModal] = useState(false);
+  const productGroup = useSelector((state) => state?.persisted?.productGroup);
+  const [vaaluee, setvaaluee] = useState({});
+  const [referenceImages, setrefImage] = useState([]);
+  const [actualImages, setactualImage] = useState([]);
+  const navigate = useNavigate();
+  const { getUnits, units, getWeave, weave } = useProduct({
+    referenceImages,
+    actualImages,
+    productIdField,
+  });
+  const [previews, setPreviews] = useState([]);
+  const [previewsActual, setPreviewsActual] = useState([]);
+  const [gstDetails, setgstDetails] = useState([]);
+  const [subGroupOptions, setsubGroupOptions] = useState([]);
+  const [loomsOptions, setLoomsOptions] = useState([]);
+  const [weaveOptions, setweaveOptions] = useState([]);
 
-    const { token } = currentUser;
-    const { id } = useParams();
+  const { token } = currentUser;
+  const { id } = useParams();
 
-    // Function to format cost price to LTTH format
-    const formatCostPriceToLTTH = (costPrice) => {
-        if (!costPrice) return '0000';
-        const num = Number(costPrice);
-        if (isNaN(num)) return '0000';
-        const inRupees = num / 100;
-        const integerPart = Math.floor(inRupees);
-        const numStr = integerPart.toString();
+  // Function to format cost price to LTTH format
+  const formatCostPriceToLTTH = (costPrice) => {
+    if (!costPrice) return '0000';
+    const num = Number(costPrice);
+    if (isNaN(num)) return '0000';
+    const inRupees = num / 100;
+    const integerPart = Math.floor(inRupees);
+    const numStr = integerPart.toString();
 
-        if (numStr.length === 1) return `000${numStr}`;
-        if (numStr.length === 2) return `00${numStr}`;
-        if (numStr.length === 3) return `0${numStr}`;
-        if (numStr.length >= 4) return numStr.slice(-4);
-        return '0000';
-    };
+    if (numStr.length === 1) return `000${numStr}`;
+    if (numStr.length === 2) return `00${numStr}`;
+    if (numStr.length === 3) return `0${numStr}`;
+    if (numStr.length >= 4) return numStr.slice(-4);
+    return '0000';
+  };
 
-    useEffect(() => {
-        getWeave()
-    }, [])
+  useEffect(() => {
+    getWeave();
+  }, []);
 
-    useEffect(() => {
-        if (weave) {
-            const formattedweaveOptions = weave.map(unitGroup => ({
-                value: unitGroup?.id,
-                label: unitGroup?.weaveName,
-                weaveGroupObject: unitGroup,
-            }));
-            setweaveOptions(formattedweaveOptions);
-        }
-    }, [weave]);
+  useEffect(() => {
+    if (weave) {
+      const formattedweaveOptions = weave.map((unitGroup) => ({
+        value: unitGroup?.id,
+        label: unitGroup?.weaveName,
+        weaveGroupObject: unitGroup,
+      }));
+      setweaveOptions(formattedweaveOptions);
+    }
+  }, [weave]);
 
-    // Function to generate barcode
-    const generateBarcode = (values) => {
-        let supplierCode = '00';
-        if (values.supplier && values.supplier.length > 0) {
-            const firstSupplier = values.supplier[0];
-            const supplierOption = supplierNameOptions.find(opt => opt.value === firstSupplier.id);
-            if (supplierOption?.supplierNameObject?.supplierCode) {
-                const code = supplierOption.supplierNameObject.supplierCode.toString();
-                supplierCode = code.slice(-2).padStart(2, '0');
-            }
-        }
+  // Function to generate barcode
+  const generateBarcode = (values) => {
+    let supplierCode = '00';
+    if (values.supplier && values.supplier.length > 0) {
+      const firstSupplier = values.supplier[0];
+      const supplierOption = supplierNameOptions.find(
+        (opt) => opt.value === firstSupplier.id,
+      );
+      if (supplierOption?.supplierNameObject?.supplierCode) {
+        const code = supplierOption.supplierNameObject.supplierCode.toString();
+        supplierCode = code.slice(-2).padStart(2, '0');
+      }
+    }
 
-        let designCode = 'XXXX';
-        if (values.designCode) {
-            designCode = values.designCode.slice(0, 4).toUpperCase().padEnd(4, 'X');
-        }
+    let designCode = 'XXXX';
+    if (values.designCode) {
+      designCode = values.designCode.slice(0, 4).toUpperCase().padEnd(4, 'X');
+    }
 
-        let sizeCode = '00';
-        if (values.sizeCode) {
-            sizeCode = values.sizeCode.slice(0, 2).toUpperCase();
-        }
+    let sizeCode = '00';
+    if (values.sizeCode) {
+      sizeCode = values.sizeCode.slice(0, 2).toUpperCase();
+    }
 
-        let colourCode = 'XXXX';
-        if (values.colorCode) {
-            colourCode = values.colorCode.slice(0, 4).toUpperCase().padEnd(4, 'X');
-        }
+    let colourCode = 'XXXX';
+    if (values.colorCode) {
+      colourCode = values.colorCode.slice(0, 4).toUpperCase().padEnd(4, 'X');
+    }
 
-        let costPriceFormatted = '0000';
-        if (values.cost) {
-            costPriceFormatted = formatCostPriceToLTTH(values.cost);
-        } else if (values.wholesalePrice) {
-            costPriceFormatted = formatCostPriceToLTTH(values.wholesalePrice);
-        } else if (values.retailMrp) {
-            costPriceFormatted = formatCostPriceToLTTH(values.retailMrp);
-        }
+    let costPriceFormatted = '0000';
+    if (values.cost) {
+      costPriceFormatted = formatCostPriceToLTTH(values.cost);
+    } else if (values.wholesalePrice) {
+      costPriceFormatted = formatCostPriceToLTTH(values.wholesalePrice);
+    } else if (values.retailMrp) {
+      costPriceFormatted = formatCostPriceToLTTH(values.retailMrp);
+    }
 
-        return `${supplierCode}${designCode}${sizeCode}${colourCode}${costPriceFormatted}`;
-    };
+    return `${supplierCode}${designCode}${sizeCode}${colourCode}${costPriceFormatted}`;
+  };
 
-    // Function to update looms options based on selected suppliers
-    const updateLoomsOptions = (selectedSuppliers, setFieldValue, currentValues) => {
-        if (!selectedSuppliers || selectedSuppliers.length === 0) {
-            setLoomsOptions([]);
-            if (setFieldValue) setFieldValue('looms', []);
-            return;
-        }
+  // Function to update looms options based on selected suppliers
+  const updateLoomsOptions = (
+    selectedSuppliers,
+    setFieldValue,
+    currentValues,
+  ) => {
+    if (!selectedSuppliers || selectedSuppliers.length === 0) {
+      setLoomsOptions([]);
+      if (setFieldValue) setFieldValue('looms', []);
+      return;
+    }
 
-        const allWorkerOptions = [];
+    const allWorkerOptions = [];
 
-        selectedSuppliers.forEach(supplier => {
-            const groupTypes = supplier.supplierNameObject?.groupTypes || [];
+    selectedSuppliers.forEach((supplier) => {
+      const groupTypes = supplier.supplierNameObject?.groupTypes || [];
 
-            groupTypes.forEach(groupType => {
-                const workers = groupType.workers || [];
-                workers.forEach(worker => {
-                    allWorkerOptions.push({
-                        value: worker.workerCode,
-                        label: `${worker.workerCode} - ${worker.workerName || ''} (${supplier.label} - ${groupType.groupTypeName})`,
-                        supplierId: supplier.value,
-                        groupTypeId: groupType.id,
-                        workerData: worker
-                    });
-                });
-            });
+      groupTypes.forEach((groupType) => {
+        const workers = groupType.workers || [];
+        workers.forEach((worker) => {
+          allWorkerOptions.push({
+            value: worker.workerCode,
+            label: `${worker.workerCode} - ${worker.workerName || ''} (${
+              supplier.label
+            } - ${groupType.groupTypeName})`,
+            supplierId: supplier.value,
+            groupTypeId: groupType.id,
+            workerData: worker,
+          });
         });
+      });
+    });
 
-        const uniqueOptions = Array.from(
-            new Map(allWorkerOptions.map(item => [item.value, item])).values()
-        );
+    const uniqueOptions = Array.from(
+      new Map(allWorkerOptions.map((item) => [item.value, item])).values(),
+    );
 
-        setLoomsOptions(uniqueOptions);
+    setLoomsOptions(uniqueOptions);
 
-        if (currentValues?.looms && setFieldValue) {
-            const validLooms = currentValues.looms.filter(loomValue =>
-                uniqueOptions.some(opt => opt.value === loomValue)
-            );
-            if (validLooms.length !== currentValues.looms.length) {
-                setFieldValue('looms', validLooms);
-            }
-        }
-    };
+    if (currentValues?.looms && setFieldValue) {
+      const validLooms = currentValues.looms.filter((loomValue) =>
+        uniqueOptions.some((opt) => opt.value === loomValue),
+      );
+      if (validLooms.length !== currentValues.looms.length) {
+        setFieldValue('looms', validLooms);
+      }
+    }
+  };
 
-    useEffect(() => {
-        getUnits();
-    }, []);
+  useEffect(() => {
+    getUnits();
+  }, []);
 
-    useEffect(() => {
-        if (units) {
-            const formattedunitOptions = units.map(unitGroup => ({
-                value: unitGroup?.id,
-                label: unitGroup?.name,
-                unitGroupObject: unitGroup,
-            }));
-            setunitOptions(formattedunitOptions);
-        }
-    }, [units]);
+  useEffect(() => {
+    if (units) {
+      const formattedunitOptions = units.map((unitGroup) => ({
+        value: unitGroup?.id,
+        label: unitGroup?.name,
+        unitGroupObject: unitGroup,
+      }));
+      setunitOptions(formattedunitOptions);
+    }
+  }, [units]);
 
-const handleFileChange = async (event) => {
+  const handleFileChange = async (event) => {
     const files = Array.from(event.target.files);
     if (!files.length) return;
 
     // Create new previews for UI
     const newPreviews = files.map((file) => ({
-        file,
-        url: URL.createObjectURL(file),
-        isNew: true
+      file,
+      url: URL.createObjectURL(file),
+      isNew: true,
     }));
 
     setPreviews((prev) => [...prev, ...newPreviews]);
 
     // Append new File objects to referenceImages
     setrefImage((prev) => [...prev, ...files]);
-};
+  };
 
   useEffect(() => {
-        if (product?.images) {
-            // Store existing images with a flag indicating they're existing
-            const existingRefImages = product.images
-                .filter(img => img.referenceImage && !img.actualImage)
-                .map(img => ({
-                    imageId: img.referenceImage,
-                    isExisting: true,
-                    url: `${GET_IMAGE}/products/getimages/${img.referenceImage}`
-                }));
+    if (product?.images) {
+      // Store existing images with a flag indicating they're existing
+      const existingRefImages = product.images
+        .filter((img) => img.referenceImage && !img.actualImage)
+        .map((img) => ({
+          imageId: img.referenceImage,
+          isExisting: true,
+          url: `${GET_IMAGE}/products/getimages/${img.referenceImage}`,
+        }));
 
-            const existingActImages = product.images
-                .filter(img => img.actualImage)
-                .map(img => ({
-                    imageId: img.actualImage,
-                    isExisting: true,
-                    url: `${GET_IMAGE}/products/getimages/${img.actualImage}`
-                }));
+      const existingActImages = product.images
+        .filter((img) => img.actualImage)
+        .map((img) => ({
+          imageId: img.actualImage,
+          isExisting: true,
+          url: `${GET_IMAGE}/products/getimages/${img.actualImage}`,
+        }));
 
-            // Store the image IDs in the referenceImages/actualImages arrays
-            setrefImage(existingRefImages.map(img => img.imageId));
-            setactualImage(existingActImages.map(img => img.imageId));
+      // Store the image IDs in the referenceImages/actualImages arrays
+      setrefImage(existingRefImages.map((img) => img.imageId));
+      setactualImage(existingActImages.map((img) => img.imageId));
 
-            // Also store the preview data for display
-            setPreviews(existingRefImages);
-            setPreviewsActual(existingActImages);
-        }
-    }, [product]);
+      // Also store the preview data for display
+      setPreviews(existingRefImages);
+      setPreviewsActual(existingActImages);
+    }
+  }, [product]);
 
-const handleFileChangeActual = async (event) => {
+  const handleFileChangeActual = async (event) => {
     const files = Array.from(event.target.files);
     if (!files.length) return;
 
     // Create new previews for UI
     const newPreviewsActual = files.map((file) => ({
-        file,
-        url: URL.createObjectURL(file),
-        referenceImage: file,
-        actualImage: file,
+      file,
+      url: URL.createObjectURL(file),
+      referenceImage: file,
+      actualImage: file,
     }));
 
-    setPreviewsActual((prevPreviewsActual) => [...prevPreviewsActual, ...newPreviewsActual]);
+    setPreviewsActual((prevPreviewsActual) => [
+      ...prevPreviewsActual,
+      ...newPreviewsActual,
+    ]);
 
     // Append new File objects to actualImages
     setactualImage((prev) => [...prev, ...files]);
-};
-const handleRemoveImage = (indexToRemove) => {
+  };
+  const handleRemoveImage = (indexToRemove) => {
     // Remove from previews
     setPreviews((prevPreviews) => {
-        const updatedPreviews = [...prevPreviews];
-        URL.revokeObjectURL(updatedPreviews[indexToRemove].url);
-        updatedPreviews.splice(indexToRemove, 1);
-        return updatedPreviews;
+      const updatedPreviews = [...prevPreviews];
+      URL.revokeObjectURL(updatedPreviews[indexToRemove].url);
+      updatedPreviews.splice(indexToRemove, 1);
+      return updatedPreviews;
     });
 
     // Remove from referenceImages
     setrefImage((prev) => {
-        const updated = [...prev];
-        updated.splice(indexToRemove, 1);
-        return updated;
+      const updated = [...prev];
+      updated.splice(indexToRemove, 1);
+      return updated;
     });
-};
+  };
 
- const handleRemoveImageActual = (indexToRemove) => {
+  const handleRemoveImageActual = (indexToRemove) => {
     // Get the actual image ID/path before removing
     const imageToRemove = product?.images[indexToRemove]?.actualImage;
-    
+
     // Remove from actualImages state if it's an existing image
     if (imageToRemove && typeof imageToRemove === 'string') {
-        setactualImage((prev) => prev.filter(img => img !== imageToRemove));
+      setactualImage((prev) => prev.filter((img) => img !== imageToRemove));
     }
-    
+
     // Update product.images
     setProduct((prevProduct) => ({
-        ...prevProduct,
-        images: prevProduct.images.filter((_, index) => index !== indexToRemove),
+      ...prevProduct,
+      images: prevProduct.images.filter((_, index) => index !== indexToRemove),
     }));
-};
+  };
 
-   const handleRemoveImagePreview = (imageId) => {
+  const handleRemoveImagePreview = (imageId) => {
     // Remove existing reference image by its ID/path
-    setrefImage((prev) => prev.filter(img => img !== imageId));
-    
+    setrefImage((prev) => prev.filter((img) => img !== imageId));
+
     // Also update product.images if needed
     setProduct((prevProduct) => {
-        if (!prevProduct?.images) return prevProduct;
-        return {
-            ...prevProduct,
-            images: prevProduct.images.filter((img) => img.referenceImage !== imageId),
-        };
+      if (!prevProduct?.images) return prevProduct;
+      return {
+        ...prevProduct,
+        images: prevProduct.images.filter(
+          (img) => img.referenceImage !== imageId,
+        ),
+      };
     });
-};
+  };
 
-const handleRemoveActual = (indexToRemove) => {
+  const handleRemoveActual = (indexToRemove) => {
     // Remove from previewsActual
     setPreviewsActual((prevPreviewsActual) => {
-        const updatedPreviewsActual = [...prevPreviewsActual];
-        URL.revokeObjectURL(updatedPreviewsActual[indexToRemove].url);
-        updatedPreviewsActual.splice(indexToRemove, 1);
-        return updatedPreviewsActual;
+      const updatedPreviewsActual = [...prevPreviewsActual];
+      URL.revokeObjectURL(updatedPreviewsActual[indexToRemove].url);
+      updatedPreviewsActual.splice(indexToRemove, 1);
+      return updatedPreviewsActual;
     });
 
     // Remove from actualImages
     setactualImage((prev) => {
-        const updated = [...prev];
-        updated.splice(indexToRemove, 1);
-        return updated;
+      const updated = [...prev];
+      updated.splice(indexToRemove, 1);
+      return updated;
     });
-};
+  };
 
   const handleUpdateSubmit = async (values, { setSubmitting }) => {
     const formData = new FormData();
 
- const { productGroupId, ...restValues } = values;
+    const { productGroupId, ...restValues } = values;
 
-const productData = {
-    ...restValues, // This excludes productGroupId
-    productGroup: values.productGroup ? { id: values.productGroup.id } : { id: 0 },
-    subGroup: values.subGroup ? { id: values.subGroup.id } : { id: 0 },
-    supplier: values?.supplier?.map((supp) => ({ id: supp?.id })),
-};
+    const productData = {
+      ...restValues, // This excludes productGroupId
+      productGroup: values.productGroup
+        ? { id: values.productGroup.id }
+        : { id: 0 },
+      subGroup: values.subGroup ? { id: values.subGroup.id } : { id: 0 },
+      supplier: values?.supplier?.map((supp) => ({ id: supp?.id })),
+    };
 
     if (gstDetails && gstDetails.length > 0) {
-        productData.slabBasedRates = values.slabBasedRates;
+      productData.slabBasedRates = values.slabBasedRates;
     }
-    if (values.gstratedetails === "Specify Slab Based Rates") {
-        productData.slabBasedRates = values.slabBasedRates;
-        delete productData.hsnCode;
-        delete productData.igst;
-        delete productData.cgst;
-        delete productData.sgst;
-        delete productData.gstDescription;
-        delete productData.productDescriptionn;
-        delete productData.hsn_Sac;
-    } else if (values.gstratedetails === "Use GST Classification") {
-        productData.hsnCode = values.hsnCode;
-        delete productData.igst;
-        delete productData.cgst;
-        delete productData.sgst;
-        delete productData.productDescriptionn;
-        productData.gstDescription = values.hsnCode?.productDescriptionn;
-        productData.hsn_Sac = values.hsn_Sac;
-        delete productData.slabBasedRates;
+    if (values.gstratedetails === 'Specify Slab Based Rates') {
+      productData.slabBasedRates = values.slabBasedRates;
+      delete productData.hsnCode;
+      delete productData.igst;
+      delete productData.cgst;
+      delete productData.sgst;
+      delete productData.gstDescription;
+      delete productData.productDescriptionn;
+      delete productData.hsn_Sac;
+    } else if (values.gstratedetails === 'Use GST Classification') {
+      productData.hsnCode = values.hsnCode;
+      delete productData.igst;
+      delete productData.cgst;
+      delete productData.sgst;
+      delete productData.productDescriptionn;
+      productData.gstDescription = values.hsnCode?.productDescriptionn;
+      productData.hsn_Sac = values.hsn_Sac;
+      delete productData.slabBasedRates;
     }
 
-    formData.append("product", JSON.stringify(productData));
+    formData.append('product', JSON.stringify(productData));
 
     // Append NEW reference images only (actual File objects)
-    const newReferenceImages = referenceImages.filter(img => img instanceof File);
+    const newReferenceImages = referenceImages.filter(
+      (img) => img instanceof File,
+    );
     if (newReferenceImages.length > 0) {
-        newReferenceImages.forEach((file) => {
-            formData.append('referenceImages', file);
-        });
+      newReferenceImages.forEach((file) => {
+        formData.append('referenceImages', file);
+      });
+    }
+    else{
+        formData.append('referenceImages', null);
     }
 
     // Append NEW actual images only (actual File objects)
-    const newActualImages = actualImages.filter(img => img instanceof File);
+    const newActualImages = actualImages.filter((img) => img instanceof File);
     if (newActualImages.length > 0) {
-        newActualImages.forEach((file) => {
-            formData.append('actualImages', file);
-        });
-    }console.log(formData,"..0");
-    
+      newActualImages.forEach((file) => {
+        formData.append('actualImages', file);
+      });
+    }
+     else{
+        formData.append('actualImages', null);
+    }
+    console.log(formData, '..0');
 
     try {
-        const url = `${UPDATE_PRODUCT_URL}/${id}`;
-        const response = await fetch(url, {
-            method: "PUT",
-            headers: {
-                "Authorization": `Bearer ${token}`,
-            },
-            body: formData,
-        });
+      const url = `${UPDATE_PRODUCT_URL}/${id}`;
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
 
-        let data;
-        try {
-            data = await response.json();
-        } catch {
-            data = await response.text();
-        }
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        data = await response.text();
+      }
 
-        if (response.ok) {
-            toast.success("Product updated successfully");
-            navigate('/product/viewProducts');
-        } else {
-            toast.error(data || "A conflict occurred while updating the product.");
-        }
+      if (response.ok) {
+        toast.success('Product updated successfully');
+        navigate('/product/viewProducts');
+      } else {
+        toast.error(data || 'A conflict occurred while updating the product.');
+      }
     } catch (error) {
-        toast.error("An error occurred while updating the product.");
+      toast.error('An error occurred while updating the product.');
     } finally {
-        if (setSubmitting) setSubmitting(false);
+      if (setSubmitting) setSubmitting(false);
     }
-};
+  };
 
-    const getProductById = async () => {
-        try {
-            const response = await fetch(`${GET_PRODUCTBYID_URL}/${id}`, {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+  const getProductById = async () => {
+    try {
+      const response = await fetch(`${GET_PRODUCTBYID_URL}/${id}`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch product');
-            }
+      if (!response.ok) {
+        throw new Error('Failed to fetch product');
+      }
 
-            const data = await response.json();
-            setProduct(data);
-        } catch (error) {
-            console.error('Error fetching product:', error);
-        } finally {
-            setIsLoading(false);
-        }
+      const data = await response.json();
+      setProduct(data);
+    } catch (error) {
+      console.error('Error fetching product:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getProductById();
+  }, [id]);
+
+  useEffect(() => {
+    if (colorGroup.data) {
+      const formattedOptions = colorGroup.data.map((color) => ({
+        value: color.id,
+        label: color.colorName,
+        colorGroupObject: color,
+        color: { id: color.id },
+      }));
+      setColorGroupOptions(formattedOptions);
+    }
+  }, [colorGroup]);
+
+  useEffect(() => {
+    if (productCategory.data) {
+      const formattedOptions = productCategory.data.map((prodCat) => ({
+        value: prodCat.id,
+        label: prodCat?.productCategoryName,
+        productCategoryObject: prodCat,
+        productCategoryid: { id: prodCat.id },
+      }));
+      setproductCategoryOptions(formattedOptions);
+    }
+  }, [productCategory]);
+
+  useEffect(() => {
+    if (hsnCode.data) {
+      const formattedOptions = hsnCode.data.map((hsn) => ({
+        value: hsn.id,
+        label: hsn?.hsnCodeName,
+        hsnObject: hsn,
+        hsnCode: { id: hsn.id },
+      }));
+      sethsnOptions(formattedOptions);
+    }
+  }, [hsnCode]);
+
+  useEffect(() => {
+    if (design.data) {
+      const formattedOptions = design.data.map((design) => ({
+        value: design.id,
+        label: design?.designName,
+        designObject: design,
+        designid: { id: design.id },
+        designCode: design?.designCode || '',
+      }));
+      setdesignOptions(formattedOptions);
+    }
+  }, [design]);
+
+  useEffect(() => {
+    if (style.data) {
+      const formattedOptions = style.data.map((style) => ({
+        value: style.id,
+        label: style?.stylesName,
+        styleObject: style,
+        styleid: { id: style.id },
+      }));
+      setstyleOptions(formattedOptions);
+    }
+  }, [style]);
+
+  useEffect(() => {
+    if (size.data) {
+      const formattedOptions = size.data.map((size) => ({
+        value: size.id,
+        label: size?.sizeName,
+        sizeObject: size,
+        sizeid: { id: size.id },
+        sizeCode: size?.sizeCode || '',
+      }));
+      setsizeOptions(formattedOptions);
+    }
+  }, [size]);
+
+  useEffect(() => {
+    if (supplier.data) {
+      const formattedOptions = supplier.data.map((supp) => ({
+        value: supp.id,
+        label: supp?.name,
+        supplierNameObject: supp,
+        suplierid: { id: supp.id },
+      }));
+      setsupplierNameOptions(formattedOptions);
+    }
+  }, [supplier.data]);
+
+  const formikRef = useRef(null);
+
+  // FIX: Effect for product group options
+  useEffect(() => {
+    if (productGroup?.data && Array.isArray(productGroup.data)) {
+      const formattedOptions = productGroup.data.map((product) => ({
+        value: product.id,
+        label: product.productGroupName,
+        productGroupObject: product,
+      }));
+      setproductGroupOption(formattedOptions);
+    }
+  }, [productGroup]);
+
+  // FIX: Effect for initial data loading when product is fetched
+  useEffect(() => {
+    const loadInitialData = async () => {
+      const productGroupId = product?.productGroup?.id;
+
+      if (!productGroupId) return;
+
+      // Fetch SubGroups
+      try {
+        const subgroupResponse = await fetch(
+          `${GET_PRODUCT_GROUP_SUBGROUP_URL}/${productGroupId}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+        const subgroupData = await subgroupResponse.json();
+        const subgroupOptions =
+          subgroupData &&
+          subgroupData.map((subgroup) => ({
+            value: subgroup.id,
+            label: subgroup.productSubGroupName,
+            subGroupObject: subgroup,
+          }));
+        setsubGroupOptions(subgroupOptions);
+      } catch (error) {
+        console.error('Error fetching subgroups:', error);
+      }
+
+      // Fetch Designs based on product group
+      try {
+        const designResponse = await fetch(`${DESIGNBYPR}/${productGroupId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const designData = await designResponse.json();
+
+        const formattedOptions = designData.map((design) => ({
+          value: design.id,
+          label: design?.designName,
+          designObject: design,
+          designCode: design?.designCode || '',
+        }));
+        setdesignOptions(formattedOptions);
+      } catch (error) {
+        console.error('Error fetching designs:', error);
+      }
     };
 
-    useEffect(() => {
-        getProductById();
-    }, [id]);
+    if (product?.productGroup?.id) {
+      loadInitialData();
+    }
+  }, [product, token]);
 
-    useEffect(() => {
-        if (colorGroup.data) {
-            const formattedOptions = colorGroup.data.map((color) => ({
-                value: color.id,
-                label: color.colorName,
-                colorGroupObject: color,
-                color: { id: color.id }
-            }));
-            setColorGroupOptions(formattedOptions);
-        }
-    }, [colorGroup]);
+  const gstOptions = [
+    { value: 'Applicable', label: 'Applicable' },
+    { value: 'NotApplicable', label: 'NotApplicable' },
+  ];
 
-    useEffect(() => {
-        if (productCategory.data) {
-            const formattedOptions = productCategory.data.map(prodCat => ({
-                value: prodCat.id,
-                label: prodCat?.productCategoryName,
-                productCategoryObject: prodCat,
-                productCategoryid: { id: prodCat.id },
-            }));
-            setproductCategoryOptions(formattedOptions);
-        }
-    }, [productCategory]);
+  const supplyType = [
+    { value: 'Goods', label: 'Goods' },
+    { value: 'Service', label: 'Service' },
+    { value: 'capital Goods', label: 'capital Goods' },
+  ];
 
-    useEffect(() => {
-        if (hsnCode.data) {
-            const formattedOptions = hsnCode.data.map(hsn => ({
-                value: hsn.id,
-                label: hsn?.hsnCodeName,
-                hsnObject: hsn,
-                hsnCode: { id: hsn.id }
-            }));
-            sethsnOptions(formattedOptions);
-        }
-    }, [hsnCode]);
+  const gstdetails = [
+    { value: 'Use GST Classification', label: 'Use GST Classification' },
+  ];
 
-    useEffect(() => {
-        if (design.data) {
-            const formattedOptions = design.data.map(design => ({
-                value: design.id,
-                label: design?.designName,
-                designObject: design,
-                designid: { id: design.id },
-                designCode: design?.designCode || ''
-            }));
-            setdesignOptions(formattedOptions);
-        }
-    }, [design]);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-    useEffect(() => {
-        if (style.data) {
-            const formattedOptions = style.data.map(style => ({
-                value: style.id,
-                label: style?.stylesName,
-                styleObject: style,
-                styleid: { id: style.id }
-            }));
-            setstyleOptions(formattedOptions);
-        }
-    }, [style]);
+  const handlerateDetails = (option, setFieldValue) => {
+    setFieldValue('gstratedetails', option.value);
+    if (option.value === 'Specify Slab Based Rates') {
+      setgstDetailModal(true);
+    }
+  };
 
-    useEffect(() => {
-        if (size.data) {
-            const formattedOptions = size.data.map(size => ({
-                value: size.id,
-                label: size?.sizeName,
-                sizeObject: size,
-                sizeid: { id: size.id },
-                sizeCode: size?.sizeCode || ''
-            }));
-            setsizeOptions(formattedOptions);
-        }
-    }, [size]);
+  const handleModalSubmit = (newValues) => {
+    const currentValues = formikRef.current.values.slabBasedRates || [];
+    const updatedValues = [
+      ...currentValues,
+      ...newValues.filter(
+        (row) => !currentValues.some((existing) => existing.id === row.id),
+      ),
+    ];
+    formikRef.current.setFieldValue('slabBasedRates', updatedValues);
+    setgstDetailModal(false);
+  };
 
-    useEffect(() => {
-        if (supplier.data) {
-            const formattedOptions = supplier.data.map(supp => ({
-                value: supp.id,
-                label: supp?.name,
-                supplierNameObject: supp,
-                suplierid: { id: supp.id }
-            }));
-            setsupplierNameOptions(formattedOptions);
-        }
-    }, [supplier.data]);
-
-    const formikRef = useRef(null);
-
-    // FIX: Effect for product group options
-    useEffect(() => {
-        if (productGroup?.data && Array.isArray(productGroup.data)) {
-            const formattedOptions = productGroup.data.map(product => ({
-                value: product.id,
-                label: product.productGroupName,
-                productGroupObject: product,
-            }));
-            setproductGroupOption(formattedOptions);
-        }
-    }, [productGroup]);
-
-    // FIX: Effect for initial data loading when product is fetched
-    useEffect(() => {
-        const loadInitialData = async () => {
-            const productGroupId = product?.productGroup?.id;
-            
-            if (!productGroupId) return;
-
-            // Fetch SubGroups
-            try {
-                const subgroupResponse = await fetch(`${GET_PRODUCT_GROUP_SUBGROUP_URL}/${productGroupId}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
-                    }
-                });
-                const subgroupData = await subgroupResponse.json();
-                const subgroupOptions = subgroupData && subgroupData.map(subgroup => ({
-                    value: subgroup.id,
-                    label: subgroup.productSubGroupName,
-                    subGroupObject: subgroup,
-                }));
-                setsubGroupOptions(subgroupOptions);
-            } catch (error) {
-                console.error("Error fetching subgroups:", error);
+  return (
+    <DefaultLayout>
+      <Breadcrumb pageName="Products / UpdateProduct" />
+      <div>
+        <Formik
+          innerRef={formikRef}
+          enableReinitialize
+          initialValues={{
+            ...product,
+            // FIX: Ensure product group is set correctly
+            productGroup: product?.productGroup
+              ? {
+                  id: product.productGroup.id,
+                  productGroupName: product.productGroup.productGroupName,
+                }
+              : null,
+            // FIX: Ensure subgroup is set correctly
+            subGroup: product?.subGroup
+              ? {
+                  id: product.subGroup.id,
+                  productSubGroupName: product.subGroup.productSubGroupName,
+                }
+              : null,
+            colors: product?.colors || { id: 0 },
+            productCategory: product?.productCategory || { id: 0 },
+            hsnCode: product?.hsnCode || { id: 0 },
+            design: product?.design || { id: 0 },
+            styles: product?.styles || { id: 0 },
+            sizes: product?.sizes || { id: 1, sizeName: '3l' },
+            gstDetails: product?.gstDetails || [],
+            hsnCodes: product?.hsnCodes || '',
+            hsn_Sac: product?.hsn_Sac || '',
+            alias: product?.alias || '',
+            gstDescription: product?.gstDescription || '',
+            taxationType: product?.taxationType || '',
+            gstRate: product?.gstRate || '',
+            typeOfSupply: product?.typeOfSupply || '',
+            productId: product?.productId || '',
+            colorName: product?.colorName || '',
+            barcode: product?.barcode || '',
+            finishedWeight: product?.finishedWeight || '',
+            materialWeight: product?.materialWeight || '',
+            grossWeight: product?.grossWeight || '',
+            netWeight: product?.netWeight || '',
+            warpColors: product?.warpColors || '',
+            weftColors: product?.weftColors || '',
+            weave: product?.weave ? { id: product.weave.id } : { id: 0 },
+            warpYarn: product?.warpYarn || '',
+            weftYarn: product?.weftYarn || '',
+            gstratedetails: product?.gstratedetails || '',
+            pixAndReed: product?.pixAndReed || '',
+            cost: product?.cost || '',
+            mrp: product?.mrp || '',
+            dyeingCost: product?.dyeingCost || '',
+            wholesalePrice: product?.wholesalePrice || '',
+            usdPrice: product?.usdPrice || '',
+            euroPrice: product?.euroPrice || '',
+            gbpPrice: product?.gbpPrice || '',
+            rmbPrice: product?.rmbPrice || '',
+            productDescription: product?.productDescription || '',
+            baseColour: product?.baseColour || '',
+            kaniColors: product?.kaniColors || '',
+            fabricWeave: product?.fabricWeave || '',
+            fabricCode: product?.fabricCode || '',
+            fabricCost: product?.fabricCost || '',
+            productStatus: product?.productStatus || '',
+            supplier: product?.supplier,
+            embroideryCost: product?.embroideryCost || '',
+            totalCost: product?.totalCost || '',
+            slabBasedRates: product?.slabBasedRates || [],
+            unit: product.unit,
+            designCode: product?.designCode || '',
+            colorCode: product?.colorCode || '',
+            sizeCode: product?.sizeCode || '',
+            looms: product?.looms || [],
+            warpYarnCount: product?.warpYarnCount || '',
+            weftYarnCount: product?.weftYarnCount || '',
+            embroideryColors: product?.embroideryColors || '',
+            patternColor: product?.patternColor || '',
+            retailMrp: product?.retailMrp || '',
+          }}
+          validate={(values) => {
+            const errors = {};
+            if (values) {
+              setvaaluee(values);
             }
+            return errors;
+          }}
+          onSubmit={handleUpdateSubmit}
+        >
+          {({ setFieldValue, values }) => {
+            // Auto-calculate totalCost for embroidery products
+            useEffect(() => {
+              const fabricCost = parseFloat(values.fabricCost) || 0;
+              const embroideryCost = parseFloat(values.embroideryCost) || 0;
+              const totalCost = fabricCost + embroideryCost;
+              setFieldValue('totalCost', totalCost.toFixed(2));
+            }, [values.fabricCost, values.embroideryCost]);
 
-            // Fetch Designs based on product group
-            try {
-                const designResponse = await fetch(`${DESIGNBYPR}/${productGroupId}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`
+            // Update barcode when relevant fields change
+            useEffect(() => {
+              if (values) {
+                const barcode = generateBarcode(values);
+                setFieldValue('barcode', barcode);
+              }
+            }, [
+              values.supplier,
+              values.supplierCode,
+              values.design,
+              values.designCode,
+              values.sizes,
+              values.sizeCode,
+              values.colorName,
+              values.colors,
+              values.colorCode,
+              values.cost,
+              values.wholesalePrice,
+              values.retailMrp,
+            ]);
+
+            // Initialize looms options when component mounts with existing suppliers
+            useEffect(() => {
+              if (values.supplier && values.supplier.length > 0) {
+                const supplierOptions = values.supplier
+                  .map((supp) => {
+                    const found = supplierNameOptions.find(
+                      (opt) => opt.value === supp.id,
+                    );
+                    return found;
+                  })
+                  .filter(Boolean);
+
+                if (supplierOptions.length > 0) {
+                  updateLoomsOptions(supplierOptions, setFieldValue, values);
+                }
+              }
+            }, [values.supplier, supplierNameOptions]);
+
+            const updateProductId = (
+              designValue,
+              colorNameValue,
+              styleValue,
+              sizeValue,
+            ) => {
+              const design = designValue || 'Select Design';
+              const color = colorNameValue || 'Select Color';
+              const style = styleValue || 'Select Style';
+              const size = sizeValue || 'Select Size';
+
+              const productId = `${design} ${color} ${style} ${size}`;
+              setFieldValue('productId', productId);
+            };
+
+            useEffect(() => {
+              const designName =
+                values.design?.designName || values.designName || '';
+              const colorName = values.colorName || '';
+              const styleName = values.styles?.stylesName || '';
+              const sizeName = values.sizes?.sizeName || '';
+
+              updateProductId(designName, colorName, styleName, sizeName);
+            }, [values.design, values.colorName, values.styles, values.sizes]);
+
+            // FIX: Effect for when product group changes in form
+            useEffect(() => {
+              const fetchDataForProductGroup = async () => {
+                const productGroupId = values?.productGroup?.id;
+
+                if (!productGroupId) return;
+
+                // Fetch SubGroups
+                try {
+                  const subgroupResponse = await fetch(
+                    `${GET_PRODUCT_GROUP_SUBGROUP_URL}/${productGroupId}`,
+                    {
+                      method: 'GET',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                      },
+                    },
+                  );
+                  const subgroupData = await subgroupResponse.json();
+                  const subgroupOptions =
+                    subgroupData &&
+                    subgroupData.map((subgroup) => ({
+                      value: subgroup.id,
+                      label: subgroup.productSubGroupName,
+                      subGroupObject: subgroup,
+                    }));
+                  setsubGroupOptions(subgroupOptions);
+
+                  // Clear subgroup selection if it doesn't belong to new group
+                  if (values?.subGroup?.id) {
+                    const subgroupStillValid = subgroupOptions.some(
+                      (opt) => opt.value === values.subGroup.id,
+                    );
+                    if (!subgroupStillValid) {
+                      setFieldValue('subGroup', null);
                     }
-                });
-                const designData = await designResponse.json();
-                
-                const formattedOptions = designData.map(design => ({
+                  }
+                } catch (error) {
+                  console.error('Error fetching subgroups:', error);
+                }
+
+                // Fetch Designs
+                try {
+                  const designResponse = await fetch(
+                    `${DESIGNBYPR}/${productGroupId}`,
+                    {
+                      method: 'GET',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                      },
+                    },
+                  );
+                  const designData = await designResponse.json();
+
+                  const formattedOptions = designData.map((design) => ({
                     value: design.id,
                     label: design?.designName,
                     designObject: design,
-                    designCode: design?.designCode || ''
-                }));
-                setdesignOptions(formattedOptions);
-                
-            } catch (error) {
-                console.error("Error fetching designs:", error);
-            }
-        };
+                    designCode: design?.designCode || '',
+                  }));
+                  setdesignOptions(formattedOptions);
 
-        if (product?.productGroup?.id) {
-            loadInitialData();
-        }
-    }, [product, token]);
+                  // Clear design selection if it doesn't belong to new group
+                  if (values?.design?.id) {
+                    const designStillValid = formattedOptions.some(
+                      (opt) => opt.value === values.design.id,
+                    );
+                    if (!designStillValid) {
+                      setFieldValue('design', null);
+                      setFieldValue('designCode', '');
+                    }
+                  }
+                } catch (error) {
+                  console.error('Error fetching designs:', error);
+                }
+              };
 
-    const gstOptions = [
-        { value: 'Applicable', label: 'Applicable' },
-        { value: 'NotApplicable', label: 'NotApplicable' },
-    ];
+              if (values?.productGroup?.id) {
+                fetchDataForProductGroup();
+              }
+            }, [values?.productGroup?.id, token]);
 
-    const supplyType = [
-        { value: 'Goods', label: 'Goods' },
-        { value: 'Service', label: 'Service' },
-        { value: 'capital Goods', label: 'capital Goods' },
-    ];
+            return (
+              <form>
+                <div className="flex flex-col gap-9">
+                  <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+                    <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+                      <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
+                        Update Product
+                      </h3>
+                    </div>
+                    <div className="p-6.5">
+                      {/* Basic Information Section */}
+                      <div className="mb-4.5 flex flex-wrap gap-6">
+                        {/* Product Group Field */}
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Product Group{' '}
+                            <span className="text-red-700 text-xl"> *</span>
+                          </label>
+                          <div className="bg-white dark:bg-form-Field">
+                            <ReactSelect
+                              name="productGroup"
+                              value={
+                                productGroupOption?.find(
+                                  (option) =>
+                                    option.value === values?.productGroup?.id,
+                                ) || null
+                              }
+                              onChange={(option) => {
+                                setFieldValue(
+                                  'productGroup',
+                                  option ? option.productGroupObject : null,
+                                );
+                                // Clear dependent fields when product group changes
+                                setFieldValue('subGroup', null);
+                                setFieldValue('design', null);
+                                setFieldValue('designCode', '');
+                              }}
+                              options={productGroupOption}
+                              styles={customStyles}
+                              isDisabled="true"
+                              className="bg-white dark:bg-form-Field"
+                              classNamePrefix="react-select"
+                              placeholder="Select Product Group"
+                            />
+                          </div>
+                        </div>
 
-    const gstdetails = [
-        { value: 'Use GST Classification', label: 'Use GST Classification' },
-    ];
+                        {/* Sub Group Field */}
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Sub Group{' '}
+                            <span className="text-red-700 text-xl"> *</span>
+                          </label>
+                          <div className="bg-white dark:bg-form-Field">
+                            <ReactSelect
+                              name="subGroup"
+                              value={
+                                subGroupOptions?.find(
+                                  (option) =>
+                                    option.value === values?.subGroup?.id,
+                                ) || null
+                              }
+                              onChange={(option) =>
+                                setFieldValue(
+                                  'subGroup',
+                                  option
+                                    ? {
+                                        id: option.subGroupObject.id,
+                                        productSubGroupName:
+                                          option.subGroupObject
+                                            .productSubGroupName,
+                                      }
+                                    : null,
+                                )
+                              }
+                              options={subGroupOptions}
+                              styles={customStyles}
+                              className="bg-white dark:bg-form-Field"
+                              classNamePrefix="react-select"
+                              placeholder="Select Sub Group"
+                            />
+                          </div>
+                        </div>
 
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
+                        {/* Color Group Field */}
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Design Group{' '}
+                            <span className="text-red-700 text-xl"> *</span>
+                          </label>
+                          <div className="z-20 bg-transparent dark:bg-form-field">
+                            <ReactSelect
+                              name="colors"
+                              value={
+                                colorGroupOptions.find(
+                                  (option) =>
+                                    option.value === values.colors?.id,
+                                ) || null
+                              }
+                              onChange={(option) =>
+                                setFieldValue(
+                                  'colors',
+                                  option ? option.color : null,
+                                )
+                              }
+                              options={colorGroupOptions}
+                              styles={customStyles}
+                              className="bg-white dark:bg-form-field"
+                              classNamePrefix="react-select"
+                              placeholder="Select Color Group"
+                            />
+                          </div>
+                        </div>
+                      </div>
 
-    const handlerateDetails = (option, setFieldValue) => {
-        setFieldValue('gstratedetails', option.value);
-        if (option.value === "Specify Slab Based Rates") {
-            setgstDetailModal(true);
-        }
-    };
-
-    const handleModalSubmit = (newValues) => {
-        const currentValues = formikRef.current.values.slabBasedRates || [];
-        const updatedValues = [...currentValues, ...newValues.filter(row => !currentValues.some(existing => existing.id === row.id))];
-        formikRef.current.setFieldValue('slabBasedRates', updatedValues);
-        setgstDetailModal(false);
-    };
-
-    return (
-        <DefaultLayout>
-            <Breadcrumb pageName="Products / UpdateProduct" />
-            <div>
-                <Formik
-                    innerRef={formikRef}
-                    enableReinitialize
-                    initialValues={{
-                        ...product,
-                        // FIX: Ensure product group is set correctly
-                        productGroup: product?.productGroup ? { 
-                            id: product.productGroup.id,
-                            productGroupName: product.productGroup.productGroupName 
-                        } : null,
-                        // FIX: Ensure subgroup is set correctly
-                        subGroup: product?.subGroup ? { 
-                            id: product.subGroup.id,
-                            productSubGroupName: product.subGroup.productSubGroupName 
-                        } : null,
-                        colors: product?.colors || { id: 0 },
-                        productCategory: product?.productCategory || { id: 0 },
-                        hsnCode: product?.hsnCode || { id: 0 },
-                        design: product?.design || { id: 0 },
-                        styles: product?.styles || { id: 0 },
-                        sizes: product?.sizes || { id: 1, sizeName: "3l" },
-                        gstDetails: product?.gstDetails || [],
-                        hsnCodes: product?.hsnCodes || '',
-                        hsn_Sac: product?.hsn_Sac || '',
-                        alias: product?.alias || '',
-                        gstDescription: product?.gstDescription || '',
-                        taxationType: product?.taxationType || '',
-                        gstRate: product?.gstRate || '',
-                        typeOfSupply: product?.typeOfSupply || '',
-                        productId: product?.productId || '',
-                        colorName: product?.colorName || '',
-                        barcode: product?.barcode || '',
-                        finishedWeight: product?.finishedWeight || '',
-                        materialWeight: product?.materialWeight || '',
-                        grossWeight: product?.grossWeight || '',
-                        netWeight: product?.netWeight || '',
-                        warpColors: product?.warpColors || '',
-                        weftColors: product?.weftColors || '',
-                        weave: product?.weave ? { id: product.weave.id } : { id: 0 },
-                        warpYarn: product?.warpYarn || '',
-                        weftYarn: product?.weftYarn || '',
-                        gstratedetails: product?.gstratedetails || '',
-                        pixAndReed: product?.pixAndReed || '',
-                        cost: product?.cost || '',
-                        mrp: product?.mrp || '',
-                        dyeingCost: product?.dyeingCost || '',
-                        wholesalePrice: product?.wholesalePrice || '',
-                        usdPrice: product?.usdPrice || '',
-                        euroPrice: product?.euroPrice || '',
-                        gbpPrice: product?.gbpPrice || '',
-                        rmbPrice: product?.rmbPrice || '',
-                        productDescription: product?.productDescription || '',
-                        baseColour: product?.baseColour || '',
-                        kaniColors: product?.kaniColors || '',
-                        fabricWeave: product?.fabricWeave || '',
-                        fabricCode: product?.fabricCode || '',
-                        fabricCost: product?.fabricCost || '',
-                        productStatus: product?.productStatus || '',
-                        supplier: product?.supplier,
-                        embroideryCost: product?.embroideryCost || '',
-                        totalCost: product?.totalCost || '',
-                        slabBasedRates: product?.slabBasedRates || [],
-                        unit: product.unit,
-                        designCode: product?.designCode || '',
-                        colorCode: product?.colorCode || '',
-                        sizeCode: product?.sizeCode || '',
-                        looms: product?.looms || [],
-                        warpYarnCount: product?.warpYarnCount || '',
-                        weftYarnCount: product?.weftYarnCount || '',
-                        embroideryColors: product?.embroideryColors || '',
-                        patternColor: product?.patternColor || '',
-                        retailMrp: product?.retailMrp || '',
-                    }}
-                    validate={values => {
-                        const errors = {};
-                        if (values) {
-                            setvaaluee(values);
-                        }
-                        return errors;
-                    }}
-                    onSubmit={handleUpdateSubmit}
-                >
-                    {({ setFieldValue, values }) => {
-                        // Auto-calculate totalCost for embroidery products
-                        useEffect(() => {
-                            const fabricCost = parseFloat(values.fabricCost) || 0;
-                            const embroideryCost = parseFloat(values.embroideryCost) || 0;
-                            const totalCost = fabricCost + embroideryCost;
-                            setFieldValue("totalCost", totalCost.toFixed(2));
-                        }, [values.fabricCost, values.embroideryCost]);
-
-                        // Update barcode when relevant fields change
-                        useEffect(() => {
-                            if (values) {
-                                const barcode = generateBarcode(values);
-                                setFieldValue('barcode', barcode);
-                            }
-                        }, [
-                            values.supplier,
-                            values.supplierCode,
-                            values.design,
-                            values.designCode,
-                            values.sizes,
-                            values.sizeCode,
-                            values.colorName,
-                            values.colors,
-                            values.colorCode,
-                            values.cost,
-                            values.wholesalePrice,
-                            values.retailMrp
-                        ]);
-
-                        // Initialize looms options when component mounts with existing suppliers
-                        useEffect(() => {
-                            if (values.supplier && values.supplier.length > 0) {
-                                const supplierOptions = values.supplier.map(supp => {
-                                    const found = supplierNameOptions.find(opt => opt.value === supp.id);
-                                    return found;
-                                }).filter(Boolean);
-
-                                if (supplierOptions.length > 0) {
-                                    updateLoomsOptions(supplierOptions, setFieldValue, values);
-                                }
-                            }
-                        }, [values.supplier, supplierNameOptions]);
-
-                        const updateProductId = (designValue, colorNameValue, styleValue, sizeValue) => {
-                            const design = designValue || 'Select Design';
-                            const color = colorNameValue || 'Select Color';
-                            const style = styleValue || 'Select Style';
-                            const size = sizeValue || 'Select Size';
-
-                            const productId = `${design} ${color} ${style} ${size}`;
-                            setFieldValue('productId', productId);
-                        };
-
-                        useEffect(() => {
-                            const designName = values.design?.designName || values.designName || '';
-                            const colorName = values.colorName || '';
-                            const styleName = values.styles?.stylesName || '';
-                            const sizeName = values.sizes?.sizeName || '';
-
-                            updateProductId(designName, colorName, styleName, sizeName);
-                        }, [
-                            values.design,
-                            values.colorName,
-                            values.styles,
-                            values.sizes
-                        ]);
-
-                        // FIX: Effect for when product group changes in form
-                        useEffect(() => {
-                            const fetchDataForProductGroup = async () => {
-                                const productGroupId = values?.productGroup?.id;
-                                
-                                if (!productGroupId) return;
-
-                                // Fetch SubGroups
-                                try {
-                                    const subgroupResponse = await fetch(`${GET_PRODUCT_GROUP_SUBGROUP_URL}/${productGroupId}`, {
-                                        method: "GET",
-                                        headers: {
-                                            "Content-Type": "application/json",
-                                            "Authorization": `Bearer ${token}`
-                                        }
-                                    });
-                                    const subgroupData = await subgroupResponse.json();
-                                    const subgroupOptions = subgroupData && subgroupData.map(subgroup => ({
-                                        value: subgroup.id,
-                                        label: subgroup.productSubGroupName,
-                                        subGroupObject: subgroup,
-                                    }));
-                                    setsubGroupOptions(subgroupOptions);
-                                    
-                                    // Clear subgroup selection if it doesn't belong to new group
-                                    if (values?.subGroup?.id) {
-                                        const subgroupStillValid = subgroupOptions.some(opt => opt.value === values.subGroup.id);
-                                        if (!subgroupStillValid) {
-                                            setFieldValue('subGroup', null);
-                                        }
-                                    }
-                                } catch (error) {
-                                    console.error("Error fetching subgroups:", error);
-                                }
-
-                                // Fetch Designs
-                                try {
-                                    const designResponse = await fetch(`${DESIGNBYPR}/${productGroupId}`, {
-                                        method: "GET",
-                                        headers: {
-                                            "Content-Type": "application/json",
-                                            "Authorization": `Bearer ${token}`
-                                        }
-                                    });
-                                    const designData = await designResponse.json();
-                                    
-                                    const formattedOptions = designData.map(design => ({
-                                        value: design.id,
-                                        label: design?.designName,
-                                        designObject: design,
-                                        designCode: design?.designCode || ''
-                                    }));
-                                    setdesignOptions(formattedOptions);
-                                    
-                                    // Clear design selection if it doesn't belong to new group
-                                    if (values?.design?.id) {
-                                        const designStillValid = formattedOptions.some(opt => opt.value === values.design.id);
-                                        if (!designStillValid) {
-                                            setFieldValue('design', null);
-                                            setFieldValue('designCode', '');
-                                        }
-                                    }
-                                } catch (error) {
-                                    console.error("Error fetching designs:", error);
-                                }
-                            };
-
-                            if (values?.productGroup?.id) {
-                                fetchDataForProductGroup();
-                            }
-                        }, [values?.productGroup?.id, token]);
-
-                        return (
-                            <form>
-                                <div className="flex flex-col gap-9">
-                                    <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                                        <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                                            <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                                                Update Product
-                                            </h3>
-                                        </div>
-                                        <div className="p-6.5">
-                                            {/* Basic Information Section */}
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                {/* Product Group Field */}
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        Product Group <span className='text-red-700 text-xl'> *</span>
-                                                    </label>
-                                                    <div className="bg-white dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            name="productGroup"
-                                                            value={productGroupOption?.find(option => option.value === values?.productGroup?.id) || null}
-                                                            onChange={(option) => {
-                                                                setFieldValue('productGroup', option ? option.productGroupObject : null);
-                                                                // Clear dependent fields when product group changes
-                                                                setFieldValue('subGroup', null);
-                                                                setFieldValue('design', null);
-                                                                setFieldValue('designCode', '');
-                                                            }}
-                                                            options={productGroupOption}
-                                                            styles={customStyles}
-                                                            isDisabled="true"
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Product Group"
-                                                        />
-                                                    </div>
-                                                </div>
-
-                                                {/* Sub Group Field */}
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        Sub Group <span className='text-red-700 text-xl'> *</span>
-                                                    </label>
-                                                    <div className="bg-white dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            name="subGroup"
-                                                            value={subGroupOptions?.find(option => option.value === values?.subGroup?.id) || null}
-                                                            onChange={(option) => setFieldValue('subGroup', option ? { 
-                                                                id: option.subGroupObject.id,
-                                                                productSubGroupName: option.subGroupObject.productSubGroupName 
-                                                            } : null)}
-                                                            options={subGroupOptions}
-                                                            styles={customStyles}
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Sub Group"
-                                                        />
-                                                    </div>
-                                                </div>
-
-                                                {/* Color Group Field */}
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        Design Group <span className='text-red-700 text-xl'> *</span>
-                                                    </label>
-                                                    <div className="z-20 bg-transparent dark:bg-form-field">
-                                                        <ReactSelect
-                                                            name="colors"
-                                                            value={colorGroupOptions.find(option => option.value === values.colors?.id) || null}
-                                                            onChange={(option) => setFieldValue('colors', option ? option.color : null)}
-                                                            options={colorGroupOptions}
-                                                            styles={customStyles}
-                                                            className="bg-white dark:bg-form-field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Color Group"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Second Row */}
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                {/* Supplier/Weaver Name */}
-                                                {/* <div className="flex-1 min-w-[300px]">
+                      {/* Second Row */}
+                      <div className="mb-4.5 flex flex-wrap gap-6">
+                        {/* Supplier/Weaver Name */}
+                        {/* <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">
                                                         Supplier/Weaver Name <span className='text-red-700 text-xl'> *</span>
                                                     </label>
@@ -933,240 +1033,299 @@ const productData = {
                                                     </div>
                                                 </div> */}
 
-                                                {/* Design Name */}
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        Design Name <span className='text-red-700 text-xl'> *</span>
-                                                    </label>
-                                                    <div className="z-20 bg-transparent dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            name="design"
-                                                            value={designOptions?.find(option => option.value === values.design?.id) || null}
-                                                            onChange={(option) => {
-                                                                setFieldValue('design', option ? option.designObject : null);
-                                                                // Automatically set design code when design is selected
-                                                                if (option && option.designCode) {
-                                                                    setFieldValue('designCode', option.designCode);
-                                                                } else {
-                                                                    setFieldValue('designCode', '');
-                                                                }
-                                                                // ProductId will be updated by the useEffect above
-                                                            }}
-                                                            options={designOptions}
-                                                            styles={customStyles}
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Design"
-                                                        // isDisabled={true}
-                                                        />
-                                                    </div>
-                                                </div>
+                        {/* Design Name */}
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Design Name{' '}
+                            <span className="text-red-700 text-xl"> *</span>
+                          </label>
+                          <div className="z-20 bg-transparent dark:bg-form-Field">
+                            <ReactSelect
+                              name="design"
+                              value={
+                                designOptions?.find(
+                                  (option) =>
+                                    option.value === values.design?.id,
+                                ) || null
+                              }
+                              onChange={(option) => {
+                                setFieldValue(
+                                  'design',
+                                  option ? option.designObject : null,
+                                );
+                                // Automatically set design code when design is selected
+                                if (option && option.designCode) {
+                                  setFieldValue(
+                                    'designCode',
+                                    option.designCode,
+                                  );
+                                } else {
+                                  setFieldValue('designCode', '');
+                                }
+                                // ProductId will be updated by the useEffect above
+                              }}
+                              options={designOptions}
+                              styles={customStyles}
+                              className="bg-white dark:bg-form-Field"
+                              classNamePrefix="react-select"
+                              placeholder="Select Design"
+                              // isDisabled={true}
+                            />
+                          </div>
+                        </div>
 
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2 block text-black dark:text-white">Design Code</label>
-                                                    <Field
-                                                        name='designCode'
-                                                        type="text"
-                                                        placeholder="Enter Design Code"
-                                                        onChange={(e) => {
-                                                            setFieldValue('designCode', e.target.value);
-                                                        }}
-                                                        readOnly
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 mt-[6px] px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                    <ErrorMessage name="designCode" component="div" className="text-red-500" />
-                                                </div>
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2 block text-black dark:text-white">
+                            Design Code
+                          </label>
+                          <Field
+                            name="designCode"
+                            type="text"
+                            placeholder="Enter Design Code"
+                            onChange={(e) => {
+                              setFieldValue('designCode', e.target.value);
+                            }}
+                            readOnly
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 mt-[6px] px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                          <ErrorMessage
+                            name="designCode"
+                            component="div"
+                            className="text-red-500"
+                          />
+                        </div>
 
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        Color Name <span className='text-red-700 text-xl'> *</span>
-                                                    </label>
-                                                    <Field
-                                                        name='colorName'
-                                                        type="text"
-                                                        placeholder="Enter Color name"
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Color Name{' '}
+                            <span className="text-red-700 text-xl"> *</span>
+                          </label>
+                          <Field
+                            name="colorName"
+                            type="text"
+                            placeholder="Enter Color name"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
 
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
+                        {/* Color Name */}
+                      </div>
 
-                                                {/* Color Name */}
+                      {/* Design Code and Color Code */}
+                      <div className="mb-4.5 flex flex-wrap gap-6">
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2 block text-black dark:text-white">
+                            Color Code
+                          </label>
+                          <Field
+                            name="colorCode"
+                            type="text"
+                            placeholder="Enter Color Code"
+                            onChange={(e) => {
+                              setFieldValue('colorCode', e.target.value);
+                            }}
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 mt-[6px] px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                          <ErrorMessage
+                            name="colorCode"
+                            component="div"
+                            className="text-red-500"
+                          />
+                        </div>
 
-                                            </div>
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Style{' '}
+                            <span className="text-red-700 text-xl"> *</span>
+                          </label>
+                          <div className="relative z-20 bg-transparent dark:bg-form-Field">
+                            <ReactSelect
+                              name="styles"
+                              value={
+                                styleOptions?.find(
+                                  (option) =>
+                                    option.value === values.styles?.id,
+                                ) || null
+                              }
+                              onChange={(option) =>
+                                setFieldValue(
+                                  'styles',
+                                  option ? option.styleObject : null,
+                                )
+                              }
+                              options={styleOptions}
+                              styles={{
+                                ...customStyles,
+                                menuPortal: (base) => ({
+                                  ...base,
+                                  zIndex: 9999,
+                                }),
+                              }}
+                              className="bg-white dark:bg-form-Field"
+                              classNamePrefix="react-select"
+                              placeholder="Select Style"
+                            />
+                          </div>
+                        </div>
 
-                                            {/* Design Code and Color Code */}
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Size(in cms){' '}
+                            <span className="text-red-700 text-xl"> *</span>
+                          </label>
+                          <div className="relative z-20 bg-transparent dark:bg-form-Field">
+                            <ReactSelect
+                              name="sizes"
+                              value={
+                                sizeOptions?.find(
+                                  (option) => option.value === values.sizes?.id,
+                                ) || null
+                              }
+                              onChange={(option) => {
+                                setFieldValue(
+                                  'sizes',
+                                  option ? option.sizeObject : null,
+                                );
+                                // Automatically set size code when size is selected
+                                if (option && option.sizeCode) {
+                                  setFieldValue('sizeCode', option.sizeCode);
+                                } else {
+                                  setFieldValue('sizeCode', '');
+                                }
+                              }}
+                              options={sizeOptions}
+                              styles={{
+                                ...customStyles,
+                                menuPortal: (base) => ({
+                                  ...base,
+                                  zIndex: 9999,
+                                }),
+                              }}
+                              className="bg-white dark:bg-form-Field"
+                              classNamePrefix="react-select"
+                              placeholder="Select Size"
+                              // isDisabled={true}
+                            />
+                          </div>
+                        </div>
+                      </div>
 
+                      {/* Style and Size */}
+                      <div className="mb-4.5 flex flex-wrap gap-6"></div>
 
+                      {/* Size Code */}
 
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2 block text-black dark:text-white">Color Code</label>
-                                                    <Field
-                                                        name='colorCode'
-                                                        type="text"
-                                                        placeholder="Enter Color Code"
-                                                        onChange={(e) => {
-                                                            setFieldValue('colorCode', e.target.value);
-                                                        }}
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 mt-[6px] px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                    <ErrorMessage name="colorCode" component="div" className="text-red-500" />
-                                                </div>
+                      {/* Product ID and Barcode */}
+                      <div className="mb-4.5 flex flex-wrap gap-6">
+                        <div className="mb-4.5 flex flex-wrap gap-6">
+                          <div className="flex-1 min-w-[300px]">
+                            <label className="mb-2 block text-black dark:text-white">
+                              Size Code
+                            </label>
+                            <Field
+                              name="sizeCode"
+                              type="text"
+                              placeholder="Enter Size Code"
+                              readOnly
+                              onChange={(e) => {
+                                setFieldValue('sizeCode', e.target.value);
+                              }}
+                              className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 mt-[6px] px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                            />
+                            <ErrorMessage
+                              name="sizeCode"
+                              component="div"
+                              className="text-red-500"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Product Id
+                          </label>
+                          <Field
+                            name="productId"
+                            type="text"
+                            placeholder="Enter Product id"
+                            value={values.productId}
+                            readOnly
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
 
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        Style <span className='text-red-700 text-xl'> *</span>
-                                                    </label>
-                                                    <div className="relative z-20 bg-transparent dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            name="styles"
-                                                            value={styleOptions?.find(option => option.value === values.styles?.id) || null}
-                                                            onChange={(option) => setFieldValue('styles', option ? option.styleObject : null)}
-                                                            options={styleOptions}
-                                                            styles={{
-                                                                ...customStyles,
-                                                                menuPortal: (base) => ({
-                                                                    ...base,
-                                                                    zIndex: 9999,
-                                                                }),
-                                                            }}
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Style"
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Barcode
+                          </label>
+                          <Field
+                            name="barcode"
+                            type="text"
+                            placeholder="Barcode will auto-generate"
+                            readOnly
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
+                      </div>
 
-                                                        />
-                                                    </div>
-                                                </div>
+                      {/* Product Status */}
+                      <div className="mb-4.5 flex flex-wrap gap-6"></div>
 
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        Size(in cms) <span className='text-red-700 text-xl'> *</span>
-                                                    </label>
-                                                    <div className="relative z-20 bg-transparent dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            name="sizes"
-                                                            value={sizeOptions?.find(option => option.value === values.sizes?.id) || null}
-                                                            onChange={(option) => {
-                                                                setFieldValue('sizes', option ? option.sizeObject : null);
-                                                                // Automatically set size code when size is selected
-                                                                if (option && option.sizeCode) {
-                                                                    setFieldValue('sizeCode', option.sizeCode);
-                                                                } else {
-                                                                    setFieldValue('sizeCode', '');
-                                                                }
-                                                            }}
-                                                            options={sizeOptions}
-                                                            styles={{
-                                                                ...customStyles,
-                                                                menuPortal: (base) => ({
-                                                                    ...base,
-                                                                    zIndex: 9999,
-                                                                }),
-                                                            }}
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Size"
-                                                        // isDisabled={true}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
+                      {/* Weight Fields */}
+                      <div className="mb-4.5 flex flex-wrap gap-6">
+                        <div className="flex-1 min-w-[300px] mt-[-10px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Product Status{' '}
+                            <span className="text-red-700 text-xl"> *</span>
+                          </label>
+                          <div className="z-20 bg-transparent dark:bg-form-Field">
+                            <ReactSelect
+                              name="productCategory"
+                              value={
+                                productCategoryOptions?.find(
+                                  (option) =>
+                                    option.value === values.productCategory?.id,
+                                ) || null
+                              }
+                              onChange={(option) =>
+                                setFieldValue(
+                                  'productCategory',
+                                  option ? option.productCategoryObject : null,
+                                )
+                              }
+                              options={productCategoryOptions}
+                              styles={customStyles}
+                              className="bg-white dark:bg-form-Field"
+                              classNamePrefix="react-select"
+                              placeholder="Select Product Status"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Finished Weight
+                          </label>
+                          <Field
+                            name="finishedWeight"
+                            type="number"
+                            placeholder="Enter Finished Weight"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
 
-                                            {/* Style and Size */}
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Material Weight
+                          </label>
+                          <Field
+                            name="materialWeight"
+                            type="number"
+                            placeholder="Enter Material Weight"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
+                      </div>
 
-                                            </div>
-
-                                            {/* Size Code */}
-
-
-                                            {/* Product ID and Barcode */}
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-
-                                                <div className="mb-4.5 flex flex-wrap gap-6">
-                                                    <div className="flex-1 min-w-[300px]">
-                                                        <label className="mb-2 block text-black dark:text-white">Size Code</label>
-                                                        <Field
-                                                            name='sizeCode'
-                                                            type="text"
-                                                            placeholder="Enter Size Code"
-                                                            readOnly
-                                                            onChange={(e) => {
-                                                                setFieldValue('sizeCode', e.target.value);
-                                                            }}
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 mt-[6px] px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                        <ErrorMessage name="sizeCode" component="div" className="text-red-500" />
-                                                    </div>
-                                                </div>
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
-                                                    <Field
-                                                        name='productId'
-                                                        type="text"
-                                                        placeholder="Enter Product id"
-                                                        value={values.productId}
-                                                        readOnly
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Barcode</label>
-                                                    <Field
-                                                        name='barcode'
-                                                        type="text"
-                                                        placeholder="Barcode will auto-generate"
-                                                        readOnly
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            {/* Product Status */}
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-
-                                            </div>
-
-                                            {/* Weight Fields */}
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-1 min-w-[300px] mt-[-10px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Product Status <span className='text-red-700 text-xl'> *</span></label>
-                                                    <div className="z-20 bg-transparent dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            name="productCategory"
-                                                            value={productCategoryOptions?.find(option => option.value === values.productCategory?.id) || null}
-                                                            onChange={(option) => setFieldValue('productCategory', option ? option.productCategoryObject : null)}
-                                                            options={productCategoryOptions}
-                                                            styles={customStyles}
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Product Status"
-                                                        />
-                                                    </div>
-                                                </div>
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Finished Weight</label>
-                                                    <Field
-                                                        name='finishedWeight'
-                                                        type="number"
-                                                        placeholder="Enter Finished Weight"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Material Weight</label>
-                                                    <Field
-                                                        name='materialWeight'
-                                                        type="number"
-                                                        placeholder="Enter Material Weight"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            {/* <div className="mb-4.5 flex flex-wrap gap-6">
+                      {/* <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Gross Weight</label>
                                                     <Field
@@ -1188,76 +1347,100 @@ const productData = {
                                                 </div>
                                             </div> */}
 
-                                            {/* Color/Weave Fields */}
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Warp / Base Color</label>
-                                                    <Field
-                                                        name="warpColors"
-                                                        type="text"
-                                                        placeholder="Enter Warp / Base Color"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Weft / Emb / Kani Color</label>
-                                                    <Field
-                                                        name="weftColors"
-                                                        type="text"
-                                                        placeholder="Enter Weft / Emb / Kani Color"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Alias</label>
-                                                    <Field
-                                                        name="alias"
-                                                        type="text"
-                                                        placeholder="Enter Alias"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                            </div>
+                      {/* Color/Weave Fields */}
+                      <div className="mb-4.5 flex flex-wrap gap-6">
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Warp / Base Color
+                          </label>
+                          <Field
+                            name="warpColors"
+                            type="text"
+                            placeholder="Enter Warp / Base Color"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Weft / Emb / Kani Color
+                          </label>
+                          <Field
+                            name="weftColors"
+                            type="text"
+                            placeholder="Enter Weft / Emb / Kani Color"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Alias
+                          </label>
+                          <Field
+                            name="alias"
+                            type="text"
+                            placeholder="Enter Alias"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
+                      </div>
 
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white"> Weave <span className='text-red-700 text-xl mt-[40px] justify-center items-center'> *</span></label>
-                                                    <div className=" z-20 bg-transparent dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            name="weave"
-                                                            value={weaveOptions?.find(option => option.value === values.weave?.id) || null}
-                                                            onChange={(option) => setFieldValue('weave', option ? { id: option.value } : null)}
-                                                            options={weaveOptions}
-                                                            styles={customStyles} // Pass custom styles here
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Weave"
-                                                        />
-                                                    </div>
+                      <div className="mb-4.5 flex flex-wrap gap-6">
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            {' '}
+                            Weave{' '}
+                            <span className="text-red-700 text-xl mt-[40px] justify-center items-center">
+                              {' '}
+                              *
+                            </span>
+                          </label>
+                          <div className=" z-20 bg-transparent dark:bg-form-Field">
+                            <ReactSelect
+                              name="weave"
+                              value={
+                                weaveOptions?.find(
+                                  (option) => option.value === values.weave?.id,
+                                ) || null
+                              }
+                              onChange={(option) =>
+                                setFieldValue(
+                                  'weave',
+                                  option ? { id: option.value } : null,
+                                )
+                              }
+                              options={weaveOptions}
+                              styles={customStyles} // Pass custom styles here
+                              className="bg-white dark:bg-form-Field"
+                              classNamePrefix="react-select"
+                              placeholder="Select Weave"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Warp Yarn
+                          </label>
+                          <Field
+                            name="warpYarn"
+                            type="text"
+                            placeholder="Enter Warp Yarn"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Weft Yarn
+                          </label>
+                          <Field
+                            name="weftYarn"
+                            type="text"
+                            placeholder="Enter Weft Yarn"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
+                      </div>
 
-
-                                                </div>
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Warp Yarn</label>
-                                                    <Field
-                                                        name='warpYarn'
-                                                        type="text"
-                                                        placeholder="Enter Warp Yarn"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Weft Yarn</label>
-                                                    <Field
-                                                        name='weftYarn'
-                                                        type="text"
-                                                        placeholder="Enter Weft Yarn"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                            </div>
-
-                                            {/* <div className="mb-4.5 flex flex-wrap gap-6">
+                      {/* <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Warp Yarn Count</label>
                                                     <Field
@@ -1278,35 +1461,49 @@ const productData = {
                                                 </div>
                                             </div> */}
 
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Pic & Read</label>
-                                                    <Field
-                                                        name='pixAndReed'
-                                                        type="text"
-                                                        placeholder="Enter Pic & Read"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Units <span className='text-red-700 text-xl'> *</span></label>
-                                                    <div className="z-20 bg-transparent dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            name="unit"
-                                                            value={unitOptions?.find(option => option.value === values.unit?.id) || null}
-                                                            onChange={(option) => setFieldValue('unit', option ? option.unitGroupObject : null)}
-                                                            options={unitOptions}
-                                                            styles={customStyles}
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Units"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
+                      <div className="mb-4.5 flex flex-wrap gap-6">
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Pic & Read
+                          </label>
+                          <Field
+                            name="pixAndReed"
+                            type="text"
+                            placeholder="Enter Pic & Read"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Units{' '}
+                            <span className="text-red-700 text-xl"> *</span>
+                          </label>
+                          <div className="z-20 bg-transparent dark:bg-form-Field">
+                            <ReactSelect
+                              name="unit"
+                              value={
+                                unitOptions?.find(
+                                  (option) => option.value === values.unit?.id,
+                                ) || null
+                              }
+                              onChange={(option) =>
+                                setFieldValue(
+                                  'unit',
+                                  option ? option.unitGroupObject : null,
+                                )
+                              }
+                              options={unitOptions}
+                              styles={customStyles}
+                              className="bg-white dark:bg-form-Field"
+                              classNamePrefix="react-select"
+                              placeholder="Select Units"
+                            />
+                          </div>
+                        </div>
+                      </div>
 
-                                            {/* Base Color and Embroidery Fields */}
-                                            {/* <div className="mb-4.5 flex flex-wrap gap-6">
+                      {/* Base Color and Embroidery Fields */}
+                      {/* <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-1 min-w-[300px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Base Color</label>
                                                     <Field
@@ -1366,31 +1563,37 @@ const productData = {
                                                 </div>
                                             </div> */}
 
-                                            {/* Costing Section */}
-                                            <h1 className='text-center text-xl mt-[50px] mb-[50px] font-semibold'>Costing</h1>
+                      {/* Costing Section */}
+                      <h1 className="text-center text-xl mt-[50px] mb-[50px] font-semibold">
+                        Costing
+                      </h1>
 
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Cost Price</label>
-                                                    <Field
-                                                        name='cost'
-                                                        type="text"
-                                                        placeholder="Enter Cost Price"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Dyeing Cost</label>
-                                                    <Field
-                                                        name='dyeingCost'
-                                                        type="text"
-                                                        placeholder="Enter Dyeing Cost"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                            </div>
+                      <div className="mb-4.5 flex flex-wrap gap-6">
+                        <div className="flex-2 min-w-[250px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Cost Price
+                          </label>
+                          <Field
+                            name="cost"
+                            type="text"
+                            placeholder="Enter Cost Price"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
+                        <div className="flex-2 min-w-[250px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Dyeing Cost
+                          </label>
+                          <Field
+                            name="dyeingCost"
+                            type="text"
+                            placeholder="Enter Dyeing Cost"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
+                      </div>
 
-                                            {/* <div className="mb-4.5 flex flex-wrap gap-6">
+                      {/* <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-2 min-w-[250px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Fabric Cost</label>
                                                     <Field
@@ -1411,7 +1614,7 @@ const productData = {
                                                 </div>
                                             </div> */}
 
-                                            {/* <div className="mb-4.5 flex flex-wrap gap-6">
+                      {/* <div className="mb-4.5 flex flex-wrap gap-6">
                                                 <div className="flex-2 min-w-[250px]">
                                                     <label className="mb-2.5 block text-black dark:text-white">Total Cost</label>
                                                     <Field
@@ -1423,500 +1626,668 @@ const productData = {
                                                 </div>
                                             </div> */}
 
-                                            {/* Pricing Section */}
-                                            <h1 className='text-center text-xl mt-[50px] mb-[50px] font-semibold'>Pricing</h1>
+                      {/* Pricing Section */}
+                      <h1 className="text-center text-xl mt-[50px] mb-[50px] font-semibold">
+                        Pricing
+                      </h1>
 
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">Retail Mrp</label>
-                                                    <Field
-                                                        name='retailMrp'
-                                                        type="text"
-                                                        placeholder="Enter Retail Mrp"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">WS INR</label>
-                                                    <Field
-                                                        name='wholesalePrice'
-                                                        type="text"
-                                                        placeholder="Enter Wholesale Price"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">WS USD</label>
-                                                    <Field
-                                                        name='usdPrice'
-                                                        type="text"
-                                                        placeholder="Enter USD Price"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                            </div>
+                      <div className="mb-4.5 flex flex-wrap gap-6">
+                        <div className="flex-2 min-w-[250px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Retail Mrp
+                          </label>
+                          <Field
+                            name="retailMrp"
+                            type="text"
+                            placeholder="Enter Retail Mrp"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
+                        <div className="flex-2 min-w-[250px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            WS INR
+                          </label>
+                          <Field
+                            name="wholesalePrice"
+                            type="text"
+                            placeholder="Enter Wholesale Price"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
+                        <div className="flex-2 min-w-[250px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            WS USD
+                          </label>
+                          <Field
+                            name="usdPrice"
+                            type="text"
+                            placeholder="Enter USD Price"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
+                      </div>
 
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">WS EURO</label>
-                                                    <Field
-                                                        name='euroPrice'
-                                                        type="text"
-                                                        placeholder="Enter EURO Price"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">WS GBP</label>
-                                                    <Field
-                                                        name='gbpPrice'
-                                                        type="text"
-                                                        placeholder="Enter GBP Price"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                                <div className="flex-2 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">WS RMB</label>
-                                                    <Field
-                                                        name='rmbPrice'
-                                                        type="text"
-                                                        placeholder="Enter RMB Price"
-                                                        className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                    />
-                                                </div>
-                                            </div>
+                      <div className="mb-4.5 flex flex-wrap gap-6">
+                        <div className="flex-2 min-w-[250px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            WS EURO
+                          </label>
+                          <Field
+                            name="euroPrice"
+                            type="text"
+                            placeholder="Enter EURO Price"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
+                        <div className="flex-2 min-w-[250px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            WS GBP
+                          </label>
+                          <Field
+                            name="gbpPrice"
+                            type="text"
+                            placeholder="Enter GBP Price"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
+                        <div className="flex-2 min-w-[250px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            WS RMB
+                          </label>
+                          <Field
+                            name="rmbPrice"
+                            type="text"
+                            placeholder="Enter RMB Price"
+                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                          />
+                        </div>
+                      </div>
 
-                                            {/* Product Description */}
-                                            <div className="mb-6">
-                                                <label className="mb-2.5 block text-black dark:text-white">Product Description</label>
-                                                <Field
-                                                    name='productDescription'
-                                                    as="textarea"
-                                                    rows={6}
-                                                    placeholder="Type your message"
-                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                />
-                                            </div>
+                      {/* Product Description */}
+                      <div className="mb-6">
+                        <label className="mb-2.5 block text-black dark:text-white">
+                          Product Description
+                        </label>
+                        <Field
+                          name="productDescription"
+                          as="textarea"
+                          rows={6}
+                          placeholder="Type your message"
+                          className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                        />
+                      </div>
 
-                                            {/* Statutory Details */}
-                                            <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>Statutory Details</h1>
+                      {/* Statutory Details */}
+                      <h1 className="text-center text-xl mt-[40px] mb-[40px] font-semibold">
+                        Statutory Details
+                      </h1>
 
-                                            <div className="flex flex-wrap gap-4">
-                                                <div className="flex-1 min-w-[250px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">GST DETAILS</label>
-                                                    <div className="z-20 bg-transparent dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            name="gstDetails"
-                                                            options={gstOptions}
-                                                            value={gstOptions.find((option) => option.value === values.gstDetails)}
-                                                            onChange={(option) => setFieldValue("gstDetails", option?.value)}
-                                                            styles={customStyles}
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select GST details"
-                                                        />
-                                                    </div>
-                                                </div>
+                      <div className="flex flex-wrap gap-4">
+                        <div className="flex-1 min-w-[250px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            GST DETAILS
+                          </label>
+                          <div className="z-20 bg-transparent dark:bg-form-Field">
+                            <ReactSelect
+                              name="gstDetails"
+                              options={gstOptions}
+                              value={gstOptions.find(
+                                (option) => option.value === values.gstDetails,
+                              )}
+                              onChange={(option) =>
+                                setFieldValue('gstDetails', option?.value)
+                              }
+                              styles={customStyles}
+                              className="bg-white dark:bg-form-Field"
+                              classNamePrefix="react-select"
+                              placeholder="Select GST details"
+                            />
+                          </div>
+                        </div>
 
-                                                {(values.gstDetails === "Applicable") && (
-                                                    <div className="flex-1 min-w-[250px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">GST RATE DETAILS</label>
-                                                        <ReactSelect
-                                                            name="gstratedetails"
-                                                            options={gstdetails}
-                                                            value={gstdetails.find((option) => option.value === values.gstratedetails)}
-                                                            onChange={(option) => handlerateDetails(option, setFieldValue)}
-                                                            styles={customStyles}
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Enter GST Rate Details"
-                                                        />
-                                                    </div>
-                                                )}
-                                            </div>
+                        {values.gstDetails === 'Applicable' && (
+                          <div className="flex-1 min-w-[250px]">
+                            <label className="mb-2.5 block text-black dark:text-white">
+                              GST RATE DETAILS
+                            </label>
+                            <ReactSelect
+                              name="gstratedetails"
+                              options={gstdetails}
+                              value={gstdetails.find(
+                                (option) =>
+                                  option.value === values.gstratedetails,
+                              )}
+                              onChange={(option) =>
+                                handlerateDetails(option, setFieldValue)
+                              }
+                              styles={customStyles}
+                              classNamePrefix="react-select"
+                              placeholder="Enter GST Rate Details"
+                            />
+                          </div>
+                        )}
+                      </div>
 
-                                            <div className="mb-4.5 gap-6">
-                                                <div className="mb-4.5 mt-6">
-                                                    {values.gstratedetails === "Use GST Classification" ? (
-                                                        <div className="mb-4.5 flex flex-wrap gap-6">
-                                                            <div className="flex-2 min-w-[250px]">
-                                                                <label className="mb-2.5 block text-black dark:text-white">
-                                                                    HSN Code <span className="text-red-700 text-xl">*</span>
-                                                                </label>
-                                                                <ReactSelect
-                                                                    name="hsnCode"
-                                                                    value={hsnOptions?.find((option) => option.value === values.hsnCode?.id) || null}
-                                                                    onChange={(option) => setFieldValue("hsnCode", option ? option.hsnObject : null)}
-                                                                    options={hsnOptions}
-                                                                    styles={customStyles}
-                                                                    className="bg-white dark:bg-form-Field"
-                                                                    classNamePrefix="react-select"
-                                                                    placeholder="Select HSN Code"
-                                                                />
-                                                            </div>
-                                                            <div className="flex-2 min-w-[250px]">
-                                                                <label className="mb-2.5 block text-black dark:text-white">IGST (%)</label>
-                                                                <Field
-                                                                    type="number"
-                                                                    value={values.hsnCode?.igst || ''}
-                                                                    disabled
-                                                                    placeholder="IGST"
-                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
-                                                                />
-                                                            </div>
-                                                            <div className="flex-2 min-w-[250px]">
-                                                                <label className="mb-2.5 block text-black dark:text-white">CGST (%)</label>
-                                                                <Field
-                                                                    type="number"
-                                                                    value={values.hsnCode?.cgst || ''}
-                                                                    disabled
-                                                                    placeholder="CGST"
-                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
-                                                                />
-                                                            </div>
-                                                            <div className="flex-2 min-w-[250px]">
-                                                                <label className="mb-2.5 block text-black dark:text-white">SGST (%)</label>
-                                                                <Field
-                                                                    type="number"
-                                                                    value={values.hsnCode?.sgst || ''}
-                                                                    disabled
-                                                                    placeholder="SGST"
-                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
-                                                                />
-                                                            </div>
-                                                            <div className="flex-2 min-w-[250px]">
-                                                                <label className="mb-2.5 block text-black dark:text-white">GST Description</label>
-                                                                <Field
-                                                                    name="gstDescription"
-                                                                    value={values.hsnCode?.productDescription || ''}
-                                                                    type="text"
-                                                                    placeholder="GST Description"
-                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                />
-                                                            </div>
-                                                            <div className="flex-2 min-w-[250px]">
-                                                                <label className="mb-2.5 block text-black dark:text-white">HSN/SAC</label>
-                                                                <Field
-                                                                    name="hsn_Sac"
-                                                                    type="text"
-                                                                    placeholder="Enter HSN/SAC"
-                                                                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                                />
-                                                            </div>
-                                                        </div>
-                                                    ) : null}
-                                                </div>
+                      <div className="mb-4.5 gap-6">
+                        <div className="mb-4.5 mt-6">
+                          {values.gstratedetails ===
+                          'Use GST Classification' ? (
+                            <div className="mb-4.5 flex flex-wrap gap-6">
+                              <div className="flex-2 min-w-[250px]">
+                                <label className="mb-2.5 block text-black dark:text-white">
+                                  HSN Code{' '}
+                                  <span className="text-red-700 text-xl">
+                                    *
+                                  </span>
+                                </label>
+                                <ReactSelect
+                                  name="hsnCode"
+                                  value={
+                                    hsnOptions?.find(
+                                      (option) =>
+                                        option.value === values.hsnCode?.id,
+                                    ) || null
+                                  }
+                                  onChange={(option) =>
+                                    setFieldValue(
+                                      'hsnCode',
+                                      option ? option.hsnObject : null,
+                                    )
+                                  }
+                                  options={hsnOptions}
+                                  styles={customStyles}
+                                  className="bg-white dark:bg-form-Field"
+                                  classNamePrefix="react-select"
+                                  placeholder="Select HSN Code"
+                                />
+                              </div>
+                              <div className="flex-2 min-w-[250px]">
+                                <label className="mb-2.5 block text-black dark:text-white">
+                                  IGST (%)
+                                </label>
+                                <Field
+                                  type="number"
+                                  value={values.hsnCode?.igst || ''}
+                                  disabled
+                                  placeholder="IGST"
+                                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
+                                />
+                              </div>
+                              <div className="flex-2 min-w-[250px]">
+                                <label className="mb-2.5 block text-black dark:text-white">
+                                  CGST (%)
+                                </label>
+                                <Field
+                                  type="number"
+                                  value={values.hsnCode?.cgst || ''}
+                                  disabled
+                                  placeholder="CGST"
+                                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
+                                />
+                              </div>
+                              <div className="flex-2 min-w-[250px]">
+                                <label className="mb-2.5 block text-black dark:text-white">
+                                  SGST (%)
+                                </label>
+                                <Field
+                                  type="number"
+                                  value={values.hsnCode?.sgst || ''}
+                                  disabled
+                                  placeholder="SGST"
+                                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:disabled:bg-slate-600 dark:text-white dark:focus:border-primary"
+                                />
+                              </div>
+                              <div className="flex-2 min-w-[250px]">
+                                <label className="mb-2.5 block text-black dark:text-white">
+                                  GST Description
+                                </label>
+                                <Field
+                                  name="gstDescription"
+                                  value={
+                                    values.hsnCode?.productDescription || ''
+                                  }
+                                  type="text"
+                                  placeholder="GST Description"
+                                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                />
+                              </div>
+                              <div className="flex-2 min-w-[250px]">
+                                <label className="mb-2.5 block text-black dark:text-white">
+                                  HSN/SAC
+                                </label>
+                                <Field
+                                  name="hsn_Sac"
+                                  type="text"
+                                  placeholder="Enter HSN/SAC"
+                                  className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                />
+                              </div>
+                            </div>
+                          ) : null}
+                        </div>
 
-                                                <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>GST Rate & Related Details</h1>
-                                                <div className="mb-4.5 flex flex-wrap gap-6">
-                                                    <div className="flex-2 min-w-[250px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">Taxation Type</label>
-                                                        <Field
-                                                            name="taxationType"
-                                                            type="text"
-                                                            placeholder="Enter Taxation Type"
-                                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
-                                                        />
-                                                    </div>
+                        <h1 className="text-center text-xl mt-[40px] mb-[40px] font-semibold">
+                          GST Rate & Related Details
+                        </h1>
+                        <div className="mb-4.5 flex flex-wrap gap-6">
+                          <div className="flex-2 min-w-[250px]">
+                            <label className="mb-2.5 block text-black dark:text-white">
+                              Taxation Type
+                            </label>
+                            <Field
+                              name="taxationType"
+                              type="text"
+                              placeholder="Enter Taxation Type"
+                              className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                            />
+                          </div>
 
-                                                    <div className="flex-2 min-w-[250px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">Type of Supply</label>
-                                                        <ReactSelect
-                                                            name="typeOfSupply"
-                                                            options={supplyType}
-                                                            value={supplyType.find(option => option.value === values.typeOfSupply)}
-                                                            onChange={(option) => setFieldValue("typeOfSupply", option?.value)}
-                                                            styles={customStyles}
-                                                            placeholder="Enter Type of Supply"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
+                          <div className="flex-2 min-w-[250px]">
+                            <label className="mb-2.5 block text-black dark:text-white">
+                              Type of Supply
+                            </label>
+                            <ReactSelect
+                              name="typeOfSupply"
+                              options={supplyType}
+                              value={supplyType.find(
+                                (option) =>
+                                  option.value === values.typeOfSupply,
+                              )}
+                              onChange={(option) =>
+                                setFieldValue('typeOfSupply', option?.value)
+                              }
+                              styles={customStyles}
+                              placeholder="Enter Type of Supply"
+                            />
+                          </div>
+                        </div>
+                      </div>
 
-                                            {/* Images Section */}
-                                            <h1 className='text-center text-xl mt-[40px] mb-[40px] font-semibold'>Images</h1>
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                {/* Reference Images */}
-                                                <div className="flex flex-col space-y-4">
-                                                    <div className="flex-1 min-w-[400px] max-w-[600px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">
-                                                            Reference Image <span className="text-meta-1">*</span>
-                                                        </label>
-                                                        <div className="relative w-full">
-                                                            <Field
-                                                                name="refrenceImage"
-                                                                type="file"
-                                                                multiple
-                                                                accept="image/*"
-                                                                onChange={handleFileChange}
-                                                                className="absolute inset-0 z-50 w-full h-full opacity-0 cursor-pointer"
-                                                            />
-                                                            <div className="flex flex-col items-center justify-center space-y-3 border-[1.5px] border-stroke bg-transparent py-3 px-5 rounded text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary">
-                                                                <span className="flex h-10 w-10 items-center justify-center rounded-full border p-3 border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
-                                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path fillRule="evenodd" clipRule="evenodd" d="M1.99967 9.33337C2.36786 9.33337 2.66634 9.63185 2.66634 10V12.6667C2.66634 12.8435 2.73658 13.0131 2.8616 13.1381C2.98663 13.2631 3.1562 13.3334 3.33301 13.3334H12.6663C12.8431 13.3334 13.0127 13.2631 13.1377 13.1381C13.2628 13.0131 13.333 12.8435 13.333 12.6667V10C13.333 9.63185 13.6315 9.33337 13.9997 9.33337C14.3679 9.33337 14.6663 9.63185 14.6663 10V12.6667C14.6663 13.1971 14.4556 13.7058 14.0806 14.0809C13.7055 14.456 13.1968 14.6667 12.6663 14.6667H3.33301C2.80257 14.6667 2.29387 14.456 1.91879 14.0809C1.54372 13.7058 1.33301 13.1971 1.33301 12.6667V10C1.33301 9.63185 1.63148 9.33337 1.99967 9.33337Z" fill="#3C50E0" />
-                                                                        <path fillRule="evenodd" clipRule="evenodd" d="M7.5286 1.52864C7.78894 1.26829 8.21106 1.26829 8.4714 1.52864L11.8047 4.86197C12.0651 5.12232 12.0651 5.54443 11.8047 5.80478C11.5444 6.06513 11.1223 6.06513 10.8619 5.80478L8 2.94285L5.13807 5.80478C4.87772 6.06513 4.45561 6.06513 4.19526 5.80478C3.93491 5.54443 3.93491 5.12232 4.19526 4.86197L7.5286 1.52864Z" fill="#3C50E0" />
-                                                                        <path fillRule="evenodd" clipRule="evenodd" d="M7.99967 1.33337C8.36786 1.33337 8.66634 1.63185 8.66634 2.00004V10C8.66634 10.3682 8.36786 10.6667 7.99967 10.6667C7.63148 10.6667 7.33301 10.3682 7.33301 10V2.00004C7.33301 1.63185 7.63148 1.33337 7.99967 1.33337Z" fill="#3C50E0" />
-                                                                    </svg>
-                                                                </span>
-                                                                <p>
-                                                                    <span className="text-primary">Click to upload</span> or drag and drop
-                                                                </p>
-                                                                <p className="mt-1.5">PNG, JPG or GIF (Less Than 5 mb)</p>
-                                                                <p>(max, 800 X 800px)</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                      {/* Images Section */}
+                      <h1 className="text-center text-xl mt-[40px] mb-[40px] font-semibold">
+                        Images
+                      </h1>
+                      <div className="mb-4.5 flex flex-wrap gap-6">
+                        {/* Reference Images */}
+                        <div className="flex flex-col space-y-4">
+                          <div className="flex-1 min-w-[400px] max-w-[600px]">
+                            <label className="mb-2.5 block text-black dark:text-white">
+                              Reference Image{' '}
+                              <span className="text-meta-1">*</span>
+                            </label>
+                            <div className="relative w-full">
+                              <Field
+                                name="refrenceImage"
+                                type="file"
+                                multiple
+                                accept="image/*"
+                                onChange={handleFileChange}
+                                className="absolute inset-0 z-50 w-full h-full opacity-0 cursor-pointer"
+                              />
+                              <div className="flex flex-col items-center justify-center space-y-3 border-[1.5px] border-stroke bg-transparent py-3 px-5 rounded text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary">
+                                <span className="flex h-10 w-10 items-center justify-center rounded-full border p-3 border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
+                                  <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 16 16"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      fillRule="evenodd"
+                                      clipRule="evenodd"
+                                      d="M1.99967 9.33337C2.36786 9.33337 2.66634 9.63185 2.66634 10V12.6667C2.66634 12.8435 2.73658 13.0131 2.8616 13.1381C2.98663 13.2631 3.1562 13.3334 3.33301 13.3334H12.6663C12.8431 13.3334 13.0127 13.2631 13.1377 13.1381C13.2628 13.0131 13.333 12.8435 13.333 12.6667V10C13.333 9.63185 13.6315 9.33337 13.9997 9.33337C14.3679 9.33337 14.6663 9.63185 14.6663 10V12.6667C14.6663 13.1971 14.4556 13.7058 14.0806 14.0809C13.7055 14.456 13.1968 14.6667 12.6663 14.6667H3.33301C2.80257 14.6667 2.29387 14.456 1.91879 14.0809C1.54372 13.7058 1.33301 13.1971 1.33301 12.6667V10C1.33301 9.63185 1.63148 9.33337 1.99967 9.33337Z"
+                                      fill="#3C50E0"
+                                    />
+                                    <path
+                                      fillRule="evenodd"
+                                      clipRule="evenodd"
+                                      d="M7.5286 1.52864C7.78894 1.26829 8.21106 1.26829 8.4714 1.52864L11.8047 4.86197C12.0651 5.12232 12.0651 5.54443 11.8047 5.80478C11.5444 6.06513 11.1223 6.06513 10.8619 5.80478L8 2.94285L5.13807 5.80478C4.87772 6.06513 4.45561 6.06513 4.19526 5.80478C3.93491 5.54443 3.93491 5.12232 4.19526 4.86197L7.5286 1.52864Z"
+                                      fill="#3C50E0"
+                                    />
+                                    <path
+                                      fillRule="evenodd"
+                                      clipRule="evenodd"
+                                      d="M7.99967 1.33337C8.36786 1.33337 8.66634 1.63185 8.66634 2.00004V10C8.66634 10.3682 8.36786 10.6667 7.99967 10.6667C7.63148 10.6667 7.33301 10.3682 7.33301 10V2.00004C7.33301 1.63185 7.63148 1.33337 7.99967 1.33337Z"
+                                      fill="#3C50E0"
+                                    />
+                                  </svg>
+                                </span>
+                                <p>
+                                  <span className="text-primary">
+                                    Click to upload
+                                  </span>{' '}
+                                  or drag and drop
+                                </p>
+                                <p className="mt-1.5">
+                                  PNG, JPG or GIF (Less Than 5 mb)
+                                </p>
+                                <p>(max, 800 X 800px)</p>
+                              </div>
+                            </div>
+                          </div>
 
-                                                    {/* Existing Reference Images Preview */}
-                                                    {product?.images?.filter(ref => ref.referenceImage && !ref.actualImage).length > 0 && (
-                                                        <div className="mt-4">
-                                                            <label className="mb-2.5 block text-black dark:text-white">
-                                                                Existing Reference Images
-                                                            </label>
-                                                            <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
-                                                                <div className="flex flex-row gap-4">
-                                                                    {product?.images
-                                                                        .filter((ref) => ref.referenceImage && !ref.actualImage)
-                                                                        .map((ref, index) => (
-                                                                            <div key={index} className="relative group">
-                                                                                <img
-                                                                                    className="h-20 w-20 object-cover transition-transform duration-500 ease-in-out transform group-hover:scale-110"
-                                                                                    crossOrigin="use-credentials"
-                                                                                    src={`${GET_IMAGE}/products/getimages/${ref.referenceImage}`}
-                                                                                    alt="Reference Image"
-                                                                                />
-                                                                                <button
-                                                                                    type="button"
-                                                                                    onClick={() => handleRemoveImagePreview(ref.referenceImage)}
-                                                                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                                                >
-                                                                                    &times;
-                                                                                </button>
-                                                                            </div>
-                                                                        ))}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
-
-                                                    {/* New Reference Images Preview */}
-                                                    {previews.length > 0 && (
-                                                        <div className="mt-4">
-                                                            <label className="mb-2.5 block text-black dark:text-white">
-                                                                New Reference Images
-                                                            </label>
-                                                            <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
-                                                                <div className="grid grid-cols-3 gap-4">
-                                                                    {previews.map((preview, index) => (
-                                                                        <div key={index} className="relative group">
-                                                                            <img
-                                                                                src={preview.url}
-                                                                                alt={`Preview ${index + 1}`}
-                                                                                className="h-20 border rounded object-cover min-w-[100px] max-w-[100px] transition-transform duration-200 hover:scale-110"
-                                                                            />
-                                                                            <button
-                                                                                type="button"
-                                                                                onClick={() => handleRemoveImage(index)}
-                                                                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                                            >
-                                                                                &times;
-                                                                            </button>
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-
-                                                {/* Actual Images */}
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <div className="flex-1 min-w-[400px] max-w-[600px]">
-                                                        <label className="mb-2.5 block text-black dark:text-white">
-                                                            Actual Image <span className="text-meta-1">*</span>
-                                                        </label>
-                                                        <div className="relative w-full">
-                                                            <Field
-                                                                name="actualImage"
-                                                                type="file"
-                                                                multiple
-                                                                accept="image/*"
-                                                                onChange={handleFileChangeActual}
-                                                                className="absolute inset-0 z-50 w-full h-full opacity-0 cursor-pointer"
-                                                            />
-                                                            <div className="flex flex-col items-center justify-center space-y-3 border-[1.5px] border-stroke bg-transparent py-3 px-5 rounded text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary">
-                                                                <span className="flex h-10 w-10 items-center justify-center rounded-full border p-3 border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
-                                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                        <path fillRule="evenodd" clipRule="evenodd" d="M1.99967 9.33337C2.36786 9.33337 2.66634 9.63185 2.66634 10V12.6667C2.66634 12.8435 2.73658 13.0131 2.8616 13.1381C2.98663 13.2631 3.1562 13.3334 3.33301 13.3334H12.6663C12.8431 13.3334 13.0127 13.2631 13.1377 13.1381C13.2628 13.0131 13.333 12.8435 13.333 12.6667V10C13.333 9.63185 13.6315 9.33337 13.9997 9.33337C14.3679 9.33337 14.6663 9.63185 14.6663 10V12.6667C14.6663 13.1971 14.4556 13.7058 14.0806 14.0809C13.7055 14.456 13.1968 14.6667 12.6663 14.6667H3.33301C2.80257 14.6667 2.29387 14.456 1.91879 14.0809C1.54372 13.7058 1.33301 13.1971 1.33301 12.6667V10C1.33301 9.63185 1.63148 9.33337 1.99967 9.33337Z" fill="#3C50E0" />
-                                                                        <path fillRule="evenodd" clipRule="evenodd" d="M7.5286 1.52864C7.78894 1.26829 8.21106 1.26829 8.4714 1.52864L11.8047 4.86197C12.0651 5.12232 12.0651 5.54443 11.8047 5.80478C11.5444 6.06513 11.1223 6.06513 10.8619 5.80478L8 2.94285L5.13807 5.80478C4.87772 6.06513 4.45561 6.06513 4.19526 5.80478C3.93491 5.54443 3.93491 5.12232 4.19526 4.86197L7.5286 1.52864Z" fill="#3C50E0" />
-                                                                        <path fillRule="evenodd" clipRule="evenodd" d="M7.99967 1.33337C8.36786 1.33337 8.66634 1.63185 8.66634 2.00004V10C8.66634 10.3682 8.36786 10.6667 7.99967 10.6667C7.63148 10.6667 7.33301 10.3682 7.33301 10V2.00004C7.33301 1.63185 7.63148 1.33337 7.99967 1.33337Z" fill="#3C50E0" />
-                                                                    </svg>
-                                                                </span>
-                                                                <p>
-                                                                    <span className="text-primary">Click to upload</span> or drag and drop
-                                                                </p>
-                                                                <p className="mt-1.5">PNG, JPG or GIF (Less Than 5 mb)</p>
-                                                                <p>(max, 800 X 800px)</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Existing Actual Images Preview */}
-                                                    {product?.images?.filter(ref => ref.actualImage).length > 0 && (
-                                                        <div className="mt-4">
-                                                            <label className="mb-2.5 block text-black dark:text-white">
-                                                                Existing Actual Images
-                                                            </label>
-                                                            <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
-                                                                <div className="flex flex-row gap-4">
-                                                                    {product?.images.map((ref, index) => (
-                                                                        ref.actualImage && (
-                                                                            <div key={index} className="relative group">
-                                                                                <img
-                                                                                    className="h-20 w-20 object-cover transition-transform duration-500 ease-in-out transform group-hover:scale-110"
-                                                                                    crossOrigin="use-credentials"
-                                                                                    src={`${GET_IMAGE}/products/getimages/${ref.actualImage}`}
-                                                                                    alt="Product Image"
-                                                                                />
-                                                                                <button
-                                                                                    type="button"
-                                                                                    onClick={() => handleRemoveImageActual(index)}
-                                                                                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                                                >
-                                                                                    &times;
-                                                                                </button>
-                                                                            </div>
-                                                                        )
-                                                                    ))}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
-
-                                                    {/* New Actual Images Preview */}
-                                                    {previewsActual.length > 0 && (
-                                                        <div className="mt-4">
-                                                            <label className="mb-2.5 block text-black dark:text-white">
-                                                                New Actual Images
-                                                            </label>
-                                                            <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
-                                                                <div className="grid grid-cols-3 gap-4">
-                                                                    {previewsActual.map((previewActual, index) => (
-                                                                        <div key={index} className="relative group">
-                                                                            <img
-                                                                                src={previewActual.url}
-                                                                                alt={`Preview ${index + 1}`}
-                                                                                className="h-20 border rounded object-cover min-w-[100px] max-w-[100px] transition-transform duration-200 hover:scale-110"
-                                                                            />
-                                                                            <button
-                                                                                type="button"
-                                                                                onClick={() => handleRemoveActual(index)}
-                                                                                className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                                                                            >
-                                                                                &times;
-                                                                            </button>
-                                                                        </div>
-                                                                    ))}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            {/* Supplier and No Of Looms */}
-                                            <div className="mb-4.5 flex flex-wrap gap-6">
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        Supplier
-                                                        <span className="text-red-700 text-xl"> *</span>
-                                                    </label>
-                                                    <div className="z-20 bg-transparent dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            isMulti
-                                                            name="supplier"
-                                                            value={values?.supplier?.map((supp) => {
-                                                                const option = supplierNameOptions.find(opt => opt.value === supp.id);
-                                                                return option ? {
-                                                                    value: option.value,
-                                                                    label: option.label,
-                                                                    supplierNameObject: option.supplierNameObject
-                                                                } : null;
-                                                            }).filter(Boolean)}
-                                                            onChange={(selectedOptions) => {
-                                                                const newSuppliers = selectedOptions.map((option) => ({
-                                                                    id: option.value,
-                                                                    name: option.label,
-                                                                }));
-
-                                                                setFieldValue('supplier', newSuppliers);
-                                                                updateLoomsOptions(selectedOptions, setFieldValue, values);
-                                                            }}
-                                                            options={supplierNameOptions}
-                                                            styles={customStyles}
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Supplier Name"
-                                                        />
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex-1 min-w-[300px]">
-                                                    <label className="mb-2.5 block text-black dark:text-white">
-                                                        No Of Looms <span className='text-red-700 text-xl'> </span>
-                                                    </label>
-                                                    <div className="bg-transparent dark:bg-form-Field">
-                                                        <ReactSelect
-                                                            name="looms"
-                                                            isMulti
-                                                            value={loomsOptions?.filter(option =>
-                                                                values.looms?.includes(option.value)
-                                                            ) || []}
-                                                            onChange={(selectedOptions) => {
-                                                                setFieldValue(
-                                                                    'looms',
-                                                                    selectedOptions?.map(option => option.value) || []
-                                                                );
-                                                            }}
-                                                            options={loomsOptions}
-                                                            styles={customStyles}
-                                                            className="bg-white dark:bg-form-Field"
-                                                            classNamePrefix="react-select"
-                                                            placeholder="Select Workers/Looms"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Submit Button */}
-                                            <div className="flex justify-center mt-4">
-                                                <button
-                                                    type="button" // Ensures the button does not trigger the form submission
-                                                    onClick={(e) => handleUpdateSubmit(values, e)}
-                                                    className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none"
-                                                >
-                                                    Update Product
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
+                          {/* Existing Reference Images Preview */}
+                          {product?.images?.filter(
+                            (ref) => ref.referenceImage && !ref.actualImage,
+                          ).length > 0 && (
+                            <div className="mt-4">
+                              <label className="mb-2.5 block text-black dark:text-white">
+                                Existing Reference Images
+                              </label>
+                              <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
+                                <div className="flex flex-row gap-4">
+                                  {product?.images
+                                    .filter(
+                                      (ref) =>
+                                        ref.referenceImage && !ref.actualImage,
+                                    )
+                                    .map((ref, index) => (
+                                      <div
+                                        key={index}
+                                        className="relative group"
+                                      >
+                                        <img
+                                          className="h-20 w-20 object-cover transition-transform duration-500 ease-in-out transform group-hover:scale-110"
+                                          crossOrigin="use-credentials"
+                                          src={`${GET_IMAGE}/products/getimages/${ref.referenceImage}`}
+                                          alt="Reference Image"
+                                        />
+                                        <button
+                                          type="button"
+                                          onClick={() =>
+                                            handleRemoveImagePreview(
+                                              ref.referenceImage,
+                                            )
+                                          }
+                                          className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                        >
+                                          &times;
+                                        </button>
+                                      </div>
+                                    ))}
                                 </div>
-                            </form>
-                        );
-                    }}
-                </Formik>
-            </div>
-            <Modall
-                setIsModalOpen={setgstDetailModal}
-                isOpen={gstDetailModal}
-                onRequestClose={() => setgstDetailModal(false)}
-                onSubmit={handleModalSubmit}
-                width="70%"
-                height="80%"
-                style={{ marginLeft: '70px', marginRight: '0' }}
-            />
-        </DefaultLayout>
-    );
+                              </div>
+                            </div>
+                          )}
+
+                          {/* New Reference Images Preview */}
+                          {previews.length > 0 && (
+                            <div className="mt-4">
+                              <label className="mb-2.5 block text-black dark:text-white">
+                                New Reference Images
+                              </label>
+                              <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
+                                <div className="grid grid-cols-3 gap-4">
+                                  {previews.map((preview, index) => (
+                                    <div key={index} className="relative group">
+                                      <img
+                                        src={preview.url}
+                                        alt={`Preview ${index + 1}`}
+                                        className="h-20 border rounded object-cover min-w-[100px] max-w-[100px] transition-transform duration-200 hover:scale-110"
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() => handleRemoveImage(index)}
+                                        className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                      >
+                                        &times;
+                                      </button>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Actual Images */}
+                        <div className="flex-1 min-w-[300px]">
+                          <div className="flex-1 min-w-[400px] max-w-[600px]">
+                            <label className="mb-2.5 block text-black dark:text-white">
+                              Actual Image{' '}
+                              <span className="text-meta-1">*</span>
+                            </label>
+                            <div className="relative w-full">
+                              <Field
+                                name="actualImage"
+                                type="file"
+                                multiple
+                                accept="image/*"
+                                onChange={handleFileChangeActual}
+                                className="absolute inset-0 z-50 w-full h-full opacity-0 cursor-pointer"
+                              />
+                              <div className="flex flex-col items-center justify-center space-y-3 border-[1.5px] border-stroke bg-transparent py-3 px-5 rounded text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary">
+                                <span className="flex h-10 w-10 items-center justify-center rounded-full border p-3 border-stroke bg-white dark:border-strokedark dark:bg-boxdark">
+                                  <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 16 16"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      fillRule="evenodd"
+                                      clipRule="evenodd"
+                                      d="M1.99967 9.33337C2.36786 9.33337 2.66634 9.63185 2.66634 10V12.6667C2.66634 12.8435 2.73658 13.0131 2.8616 13.1381C2.98663 13.2631 3.1562 13.3334 3.33301 13.3334H12.6663C12.8431 13.3334 13.0127 13.2631 13.1377 13.1381C13.2628 13.0131 13.333 12.8435 13.333 12.6667V10C13.333 9.63185 13.6315 9.33337 13.9997 9.33337C14.3679 9.33337 14.6663 9.63185 14.6663 10V12.6667C14.6663 13.1971 14.4556 13.7058 14.0806 14.0809C13.7055 14.456 13.1968 14.6667 12.6663 14.6667H3.33301C2.80257 14.6667 2.29387 14.456 1.91879 14.0809C1.54372 13.7058 1.33301 13.1971 1.33301 12.6667V10C1.33301 9.63185 1.63148 9.33337 1.99967 9.33337Z"
+                                      fill="#3C50E0"
+                                    />
+                                    <path
+                                      fillRule="evenodd"
+                                      clipRule="evenodd"
+                                      d="M7.5286 1.52864C7.78894 1.26829 8.21106 1.26829 8.4714 1.52864L11.8047 4.86197C12.0651 5.12232 12.0651 5.54443 11.8047 5.80478C11.5444 6.06513 11.1223 6.06513 10.8619 5.80478L8 2.94285L5.13807 5.80478C4.87772 6.06513 4.45561 6.06513 4.19526 5.80478C3.93491 5.54443 3.93491 5.12232 4.19526 4.86197L7.5286 1.52864Z"
+                                      fill="#3C50E0"
+                                    />
+                                    <path
+                                      fillRule="evenodd"
+                                      clipRule="evenodd"
+                                      d="M7.99967 1.33337C8.36786 1.33337 8.66634 1.63185 8.66634 2.00004V10C8.66634 10.3682 8.36786 10.6667 7.99967 10.6667C7.63148 10.6667 7.33301 10.3682 7.33301 10V2.00004C7.33301 1.63185 7.63148 1.33337 7.99967 1.33337Z"
+                                      fill="#3C50E0"
+                                    />
+                                  </svg>
+                                </span>
+                                <p>
+                                  <span className="text-primary">
+                                    Click to upload
+                                  </span>{' '}
+                                  or drag and drop
+                                </p>
+                                <p className="mt-1.5">
+                                  PNG, JPG or GIF (Less Than 5 mb)
+                                </p>
+                                <p>(max, 800 X 800px)</p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Existing Actual Images Preview */}
+                          {product?.images?.filter((ref) => ref.actualImage)
+                            .length > 0 && (
+                            <div className="mt-4">
+                              <label className="mb-2.5 block text-black dark:text-white">
+                                Existing Actual Images
+                              </label>
+                              <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
+                                <div className="flex flex-row gap-4">
+                                  {product?.images.map(
+                                    (ref, index) =>
+                                      ref.actualImage && (
+                                        <div
+                                          key={index}
+                                          className="relative group"
+                                        >
+                                          <img
+                                            className="h-20 w-20 object-cover transition-transform duration-500 ease-in-out transform group-hover:scale-110"
+                                            crossOrigin="use-credentials"
+                                            src={`${GET_IMAGE}/products/getimages/${ref.actualImage}`}
+                                            alt="Product Image"
+                                          />
+                                          <button
+                                            type="button"
+                                            onClick={() =>
+                                              handleRemoveImageActual(index)
+                                            }
+                                            className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                          >
+                                            &times;
+                                          </button>
+                                        </div>
+                                      ),
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* New Actual Images Preview */}
+                          {previewsActual.length > 0 && (
+                            <div className="mt-4">
+                              <label className="mb-2.5 block text-black dark:text-white">
+                                New Actual Images
+                              </label>
+                              <div className="p-4 border-2 border-dashed rounded-md bg-gray-50 dark:bg-boxdark dark:border-strokedark">
+                                <div className="grid grid-cols-3 gap-4">
+                                  {previewsActual.map(
+                                    (previewActual, index) => (
+                                      <div
+                                        key={index}
+                                        className="relative group"
+                                      >
+                                        <img
+                                          src={previewActual.url}
+                                          alt={`Preview ${index + 1}`}
+                                          className="h-20 border rounded object-cover min-w-[100px] max-w-[100px] transition-transform duration-200 hover:scale-110"
+                                        />
+                                        <button
+                                          type="button"
+                                          onClick={() =>
+                                            handleRemoveActual(index)
+                                          }
+                                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                        >
+                                          &times;
+                                        </button>
+                                      </div>
+                                    ),
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Supplier and No Of Looms */}
+                      <div className="mb-4.5 flex flex-wrap gap-6">
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Supplier
+                            <span className="text-red-700 text-xl"> *</span>
+                          </label>
+                          <div className="z-20 bg-transparent dark:bg-form-Field">
+                            <ReactSelect
+                              isMulti
+                              name="supplier"
+                              value={values?.supplier
+                                ?.map((supp) => {
+                                  const option = supplierNameOptions.find(
+                                    (opt) => opt.value === supp.id,
+                                  );
+                                  return option
+                                    ? {
+                                        value: option.value,
+                                        label: option.label,
+                                        supplierNameObject:
+                                          option.supplierNameObject,
+                                      }
+                                    : null;
+                                })
+                                .filter(Boolean)}
+                              onChange={(selectedOptions) => {
+                                const newSuppliers = selectedOptions.map(
+                                  (option) => ({
+                                    id: option.value,
+                                    name: option.label,
+                                  }),
+                                );
+
+                                setFieldValue('supplier', newSuppliers);
+                                updateLoomsOptions(
+                                  selectedOptions,
+                                  setFieldValue,
+                                  values,
+                                );
+                              }}
+                              options={supplierNameOptions}
+                              styles={customStyles}
+                              className="bg-white dark:bg-form-Field"
+                              classNamePrefix="react-select"
+                              placeholder="Select Supplier Name"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex-1 min-w-[300px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            No Of Looms{' '}
+                            <span className="text-red-700 text-xl"> </span>
+                          </label>
+                          <div className="bg-transparent dark:bg-form-Field">
+                            <ReactSelect
+                              name="looms"
+                              isMulti
+                              value={
+                                loomsOptions?.filter((option) =>
+                                  values.looms?.includes(option.value),
+                                ) || []
+                              }
+                              onChange={(selectedOptions) => {
+                                setFieldValue(
+                                  'looms',
+                                  selectedOptions?.map(
+                                    (option) => option.value,
+                                  ) || [],
+                                );
+                              }}
+                              options={loomsOptions}
+                              styles={customStyles}
+                              className="bg-white dark:bg-form-Field"
+                              classNamePrefix="react-select"
+                              placeholder="Select Workers/Looms"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Submit Button */}
+                      <div className="flex justify-center mt-4">
+                        <button
+                          type="button" // Ensures the button does not trigger the form submission
+                          onClick={(e) => handleUpdateSubmit(values, e)}
+                          className="w-1/3 px-6 py-2 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none"
+                        >
+                          Update Product
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            );
+          }}
+        </Formik>
+      </div>
+      <Modall
+        setIsModalOpen={setgstDetailModal}
+        isOpen={gstDetailModal}
+        onRequestClose={() => setgstDetailModal(false)}
+        onSubmit={handleModalSubmit}
+        width="70%"
+        height="80%"
+        style={{ marginLeft: '70px', marginRight: '0' }}
+      />
+    </DefaultLayout>
+  );
 };
 
 export default UpdateProduct;
