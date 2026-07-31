@@ -117,7 +117,7 @@ const ViewProductsInventory = () => {
                 params.push(`page=${pageNumber}`);
                 params.push(`size=${size}`);
                 params.push(`invPage=${invPage}`);
-                params.push(`invSize=${invSize}`);
+                // params.push(`invSize=${invSize}`);
             }
             
             url += params.join('&');
