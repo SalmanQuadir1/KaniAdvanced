@@ -76,7 +76,7 @@ const ViewProductsInventory = () => {
 
     // FETCH DATA WHEN SEARCH OR PAGINATION CHANGES
     useEffect(() => {
-        ViewInventory(0);
+        ViewInventory(0, invPage);
     }, [debouncedSearch, size, invPage, invSize]);
 
     useEffect(() => {
@@ -95,7 +95,7 @@ const ViewProductsInventory = () => {
     })) || [];
 
     // ViewInventory with search and pagination - MUTUALLY EXCLUSIVE
-    const ViewInventory = async (pageNumber = 0) => {
+    const ViewInventory = async (pageNumber = 0, invPageNumber = 0) => {
         try {
             setIsLoading(true);
             
@@ -112,7 +112,7 @@ const ViewProductsInventory = () => {
                 setIsSearchMode(false);
                 params.push(`page=${pageNumber}`);
                 params.push(`size=${size}`);
-                params.push(`invPage=${invPage}`);
+                params.push(`invPage=${invPageNumber}`);
                 params.push(`invSize=${invSize}`);
             }
             
@@ -120,6 +120,7 @@ const ViewProductsInventory = () => {
             
             console.log("Fetching URL:", url);
             console.log("Mode:", debouncedSearch ? "SEARCH" : "PAGINATION");
+            console.log("invPage:", invPageNumber, "invSize:", invSize);
             
             const response = await fetch(url, {
                 method: "GET",
@@ -157,7 +158,7 @@ const ViewProductsInventory = () => {
 
     // INITIAL LOAD
     useEffect(() => {
-        ViewInventory(0);
+        ViewInventory(0, 0);
     }, []);
 
     // HANDLE MAIN PAGE CHANGE
@@ -170,7 +171,7 @@ const ViewProductsInventory = () => {
         const zeroBasedPage = newPage - 1;
         console.log("Changing to page:", zeroBasedPage);
         setPage(zeroBasedPage);
-        ViewInventory(zeroBasedPage);
+        ViewInventory(zeroBasedPage, invPage);
     };
 
     // HANDLE MAIN PAGE SIZE CHANGE
@@ -183,7 +184,31 @@ const ViewProductsInventory = () => {
         console.log("Changing page size from:", size, "to:", newSize);
         setSize(newSize);
         setPage(0);
-        ViewInventory(0);
+        ViewInventory(0, invPage);
+    };
+
+    // HANDLE SUB GROUP PAGE CHANGE
+    const handleSubGroupPageChange = (newInvPage) => {
+        if (isSearchMode) {
+            toast.info("Search results don't support pagination");
+            return;
+        }
+        console.log("Changing invPage from:", invPage, "to:", newInvPage);
+        setInvPage(newInvPage);
+        ViewInventory(page, newInvPage);
+    };
+
+    // HANDLE SUB GROUP PAGE SIZE CHANGE
+    const handleSubGroupSizeChange = (e) => {
+        if (isSearchMode) {
+            toast.info("Search results don't support pagination");
+            return;
+        }
+        const newSize = parseInt(e.target.value);
+        console.log("Changing invSize from:", invSize, "to:", newSize);
+        setInvSize(newSize);
+        setInvPage(0); // Reset to first page
+        ViewInventory(page, 0);
     };
 
     // HANDLE SEARCH SUBMIT
@@ -195,7 +220,8 @@ const ViewProductsInventory = () => {
         }
         setDebouncedSearch(searchTerm);
         setPage(0);
-        ViewInventory(0);
+        setInvPage(0);
+        ViewInventory(0, 0);
     };
 
     // HANDLE SEARCH ON ENTER KEY
@@ -208,7 +234,8 @@ const ViewProductsInventory = () => {
             }
             setDebouncedSearch(searchTerm);
             setPage(0);
-            ViewInventory(0);
+            setInvPage(0);
+            ViewInventory(0, 0);
         }
     };
 
@@ -218,7 +245,8 @@ const ViewProductsInventory = () => {
         setDebouncedSearch('');
         setIsSearchMode(false);
         setPage(0);
-        ViewInventory(0);
+        setInvPage(0);
+        ViewInventory(0, 0);
     };
 
     const handleUpdate = (id) => {
@@ -241,7 +269,7 @@ const ViewProductsInventory = () => {
 
     const getGroupInventoryCount = useCallback((subGroups) => {
         return subGroups.reduce((total, subGroup) => {
-            return total + (subGroup.inventories?.length || 0);
+            return total + (subGroup.totalInventories || 0);
         }, 0);
     }, []);
 
@@ -321,7 +349,7 @@ const ViewProductsInventory = () => {
             productId: values.ProductId || undefined,
             address: values.address || undefined
         };
-        ViewInventory(0);
+        ViewInventory(0, invPage);
     };
 
     // Full Page Spinner Component
@@ -496,27 +524,14 @@ const ViewProductsInventory = () => {
         );
     };
 
-    // Sub Group Pagination Component - Uses server-provided pagination data
+    // Sub Group Pagination Component - Uses server data
     const SubGroupPagination = ({ subGroup }) => {
         const { id, totalInventories, totalPages, currentPage, pageSize } = subGroup;
         
         if (totalInventories === 0 || totalPages === 0) return null;
 
-        const handlePageChange = (newPage) => {
-            // This would trigger a new API call with the sub group pagination params
-            // For now, we'll just log it since the data is already paginated from server
-            console.log(`SubGroup ${id} page change to:`, newPage);
-            // You can add API call here if needed
-        };
-
-        const handleSizeChange = (e) => {
-            const newSize = parseInt(e.target.value);
-            console.log(`SubGroup ${id} size change to:`, newSize);
-            // You can add API call here if needed
-        };
-
         return (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg mt-2">
+            <div className="flex flex-col sm:flex-row items-center  gap-3 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg mt-2">
                 <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                     Showing {currentPage * pageSize + 1} - {Math.min((currentPage + 1) * pageSize, totalInventories)} of {totalInventories} items
                 </span>
@@ -524,8 +539,8 @@ const ViewProductsInventory = () => {
                     <div className="flex items-center gap-2">
                         <label className="text-sm text-gray-600 dark:text-gray-300">Size:</label>
                         <select
-                            value={pageSize}
-                            onChange={handleSizeChange}
+                            value={invSize}
+                            onChange={handleSubGroupSizeChange}
                             className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-800 text-gray-900 dark:text-white text-sm"
                         >
                             <option value={5}>5</option>
@@ -537,7 +552,7 @@ const ViewProductsInventory = () => {
                     </div>
                     <div className="flex gap-1">
                         <button
-                            onClick={() => handlePageChange(currentPage - 1)}
+                            onClick={() => handleSubGroupPageChange(currentPage - 1)}
                             disabled={currentPage === 0}
                             className="px-3 py-1 text-sm bg-blue-500 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
                         >
@@ -547,7 +562,7 @@ const ViewProductsInventory = () => {
                             {currentPage + 1} / {totalPages}
                         </span>
                         <button
-                            onClick={() => handlePageChange(currentPage + 1)}
+                            onClick={() => handleSubGroupPageChange(currentPage + 1)}
                             disabled={currentPage >= totalPages - 1}
                             className="px-3 py-1 text-sm bg-blue-500 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
                         >
@@ -614,7 +629,7 @@ const ViewProductsInventory = () => {
                     const isSubGroupExpanded = expandedSubGroups[subGroup.id];
                     const inventoryCount = subGroup.inventories?.length || 0;
 
-                    // Sub Group Row with total inventory info
+                    // Sub Group Row with server pagination info
                     rows.push(
                         <tr key={`subgroup-${subGroup.id}`} className="bg-gray-50 dark:bg-gray-800/50 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => toggleSubGroup(subGroup.id)}>
                             <td colSpan="13" className="px-5 py-3 border-b border-gray-200 pl-10">
@@ -630,9 +645,9 @@ const ViewProductsInventory = () => {
                                     </div>
                                     <div className="flex gap-3 text-xs">
                                         <span className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">
-                                            Inventory: {inventoryCount}
+                                            Inventory: {subGroup.totalInventories || 0}
                                         </span>
-                                        {subGroup.totalInventories > 0 && (
+                                        {subGroup.totalPages > 1 && (
                                             <span className="bg-purple-200 dark:bg-purple-800 px-2 py-1 rounded">
                                                 Page: {subGroup.currentPage + 1}/{subGroup.totalPages}
                                             </span>
@@ -696,9 +711,8 @@ const ViewProductsInventory = () => {
                                 </tr>
                             );
 
-                            // Add inventory items
+                            // Add inventory items with correct S.No using server pagination
                             subGroup.inventories.forEach((item, idx) => {
-                                // Calculate actual index based on current page
                                 const actualIndex = subGroup.currentPage * subGroup.pageSize + idx + 1;
                                 
                                 rows.push(
