@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { FiEdit, FiTrash2, FiX, FiChevronDown, FiChevronRight } from "react-icons/fi";
@@ -10,6 +10,11 @@ import { Field, Form, Formik } from 'formik';
 import useProduct from '../../hooks/useProduct';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+
+// ✅ Import react-window
+import * as ReactWindow from 'react-window';
+
+const { FixedSizeList } = ReactWindow;
 
 const ViewProductsInventory = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
@@ -29,9 +34,9 @@ const ViewProductsInventory = () => {
     const [expandedGroups, setExpandedGroups] = useState({});
     const [expandedSubGroups, setExpandedSubGroups] = useState({});
     
-    // 🔹 ADD LOADING STATE
     const [isLoading, setIsLoading] = useState(false);
     const [isPageLoading, setIsPageLoading] = useState(false);
+    const [isSubGroupLoading, setIsSubGroupLoading] = useState({});
 
     const [pagination, setPagination] = useState({
         totalItems: 0,
@@ -40,37 +45,29 @@ const ViewProductsInventory = () => {
         currentPage: 1,
     });
 
-    // Modal states
     const [selectedInventory, setSelectedInventory] = useState(null);
     const [isRecentHistoryModalOpen, setIsRecentHistoryModalOpen] = useState(false);
     const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false);
     const [isTransactionsModalOpen, setIsTransactionsModalOpen] = useState(false);
 
-    // Data states for each modal
     const [recentHistoryData, setRecentHistoryData] = useState([]);
     const [summaryData, setSummaryData] = useState(null);
     const [transactionsData, setTransactionsData] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    const [subGroupInventoryData, setSubGroupInventoryData] = useState({});
+    const [subGroupTotalPages, setSubGroupTotalPages] = useState({});
+    const [subGroupTotalItems, setSubGroupTotalItems] = useState({});
+    const [subGroupCurrentPage, setSubGroupCurrentPage] = useState({});
+    const listRefs = useRef({});
 
     useEffect(() => {
         getLocation();
         getInventoryProductId();
     }, []);
 
-    const formattedProductId = inventoryproductId?.map(id => ({
-        label: id,
-        value: id
-    })) || [];
-
-    const formattedLocation = Location?.map(loc => ({
-        label: loc.address,
-        value: loc.address
-    })) || [];
-
-    // 🔹 OPTIMIZED: ViewInventory with loading states
     const ViewInventory = async (page = 1, filters = {}) => {
         try {
-            // Show loading for initial load or page change
             if (page === 1 && !filters.productId && !filters.address) {
                 setIsLoading(true);
             } else {
@@ -78,8 +75,6 @@ const ViewProductsInventory = () => {
             }
             
             const pageNumber = page - 1;
-            
-            console.log("Fetching page:", page, "API page number:", pageNumber);
             
             const response = await fetch(`${GET_INVENTORYYS}?page=${pageNumber}&size=20`, {
                 method: "GET",
@@ -93,13 +88,6 @@ const ViewProductsInventory = () => {
             }
             
             const data = await response.json();
-            console.log("Pagination Response:", {
-                currentPageAPI: data.number,
-                currentPageDisplay: data.number + 1,
-                totalPages: data.totalPages,
-                totalElements: data.totalElements,
-                pageSize: data.size
-            });
 
             setInventoryData(data.content || []);
             setPagination({
@@ -118,36 +106,107 @@ const ViewProductsInventory = () => {
         }
     };
 
-    // 🔹 OPTIMIZED: Initial load with proper loading state
     useEffect(() => {
         ViewInventory(1);
     }, []);
 
     const handlePageChange = (newPage) => {
-        console.log("Changing to page:", newPage);
         setPagination((prev) => ({ ...prev, currentPage: newPage }));
         ViewInventory(newPage);
     };
 
-    const handleUpdate = (id) => {
-        navigate(`/inventory/updateInventory/${id}`);
-    };
-
-    const toggleGroup = (groupId) => {
+    const toggleGroup = async (groupId) => {
+        const isExpanding = !expandedGroups[groupId];
         setExpandedGroups(prev => ({
             ...prev,
-            [groupId]: !prev[groupId]
+            [groupId]: isExpanding
         }));
+
+        if (isExpanding) {
+            const group = inventoryData.find(g => g.id === groupId);
+            if (group && group.subGroups) {
+                group.subGroups.forEach(subGroup => {
+                    if (subGroup.inventories && subGroup.inventories.length > 0) {
+                        setSubGroupInventoryData(prev => ({
+                            ...prev,
+                            [subGroup.id]: subGroup.inventories
+                        }));
+                        setSubGroupTotalItems(prev => ({
+                            ...prev,
+                            [subGroup.id]: subGroup.inventories.length
+                        }));
+                        setSubGroupTotalPages(prev => ({
+                            ...prev,
+                            [subGroup.id]: Math.ceil(subGroup.inventories.length / 100)
+                        }));
+                        setSubGroupCurrentPage(prev => ({
+                            ...prev,
+                            [subGroup.id]: 0
+                        }));
+                    }
+                });
+            }
+        }
     };
 
-    const toggleSubGroup = (subGroupId) => {
+    const toggleSubGroup = async (subGroupId) => {
+        const isExpanding = !expandedSubGroups[subGroupId];
         setExpandedSubGroups(prev => ({
             ...prev,
-            [subGroupId]: !prev[subGroupId]
+            [subGroupId]: isExpanding
         }));
+
+        if (isExpanding) {
+            setIsSubGroupLoading(prev => ({ ...prev, [subGroupId]: true }));
+            
+            let allInventories = [];
+            
+            for (const group of inventoryData) {
+                const found = group.subGroups?.find(sg => sg.id === subGroupId);
+                if (found) {
+                    allInventories = found.inventories || [];
+                    break;
+                }
+            }
+
+            if (allInventories.length > 0) {
+                setSubGroupInventoryData(prev => ({
+                    ...prev,
+                    [subGroupId]: allInventories
+                }));
+                setSubGroupTotalItems(prev => ({
+                    ...prev,
+                    [subGroupId]: allInventories.length
+                }));
+                setSubGroupTotalPages(prev => ({
+                    ...prev,
+                    [subGroupId]: Math.ceil(allInventories.length / 100)
+                }));
+                setSubGroupCurrentPage(prev => ({
+                    ...prev,
+                    [subGroupId]: 0
+                }));
+            }
+            
+            setIsSubGroupLoading(prev => ({ ...prev, [subGroupId]: false }));
+        }
     };
 
-    // 🔹 OPTIMIZED: Memoized calculations to prevent re-renders
+    const handleSubGroupPageChange = (subGroupId, direction) => {
+        setSubGroupCurrentPage(prev => {
+            const current = prev[subGroupId] || 0;
+            const total = subGroupTotalPages[subGroupId] || 1;
+            const newPage = direction === 'next' ? current + 1 : current - 1;
+            return {
+                ...prev,
+                [subGroupId]: Math.max(0, Math.min(total - 1, newPage))
+            };
+        });
+        if (listRefs.current[subGroupId]) {
+            listRefs.current[subGroupId].scrollTo(0);
+        }
+    };
+
     const getGroupInventoryCount = useCallback((subGroups) => {
         return subGroups.reduce((total, subGroup) => {
             return total + (subGroup.inventories?.length || 0);
@@ -164,7 +223,6 @@ const ViewProductsInventory = () => {
         return uniqueProducts.size;
     }, []);
 
-    // API functions for the three modals
     const fetchRecentHistory = async (productId, locationId) => {
         setLoading(true);
         try {
@@ -205,35 +263,214 @@ const ViewProductsInventory = () => {
         }
     };
 
-    const fetchInventoryTransactions = async (locationId, productId) => {
-        setLoading(true);
-        try {
-            const response = await fetch(`${BASE_URL}/productInventory/inventories/product/${productId}/location/${locationId}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                }
-            });
-            const data = await response.json();
-            setTransactionsData(data);
-        } catch (error) {
-            console.error("Error fetching inventory transactions:", error);
-            toast.error("Failed to fetch inventory transactions");
-        } finally {
-            setLoading(false);
+    // ✅ FIXED: Virtualized Inventory Row Component - Uses div instead of tr
+    const InventoryRow = ({ index, style, data }) => {
+        const { items, onViewHistory, onViewSummary } = data;
+        const item = items[index];
+        
+        if (!item) return null;
+
+        return (
+            <div style={style} className="flex items-center bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 border-b border-gray-200 dark:border-gray-600">
+                <div className="px-5 py-2 text-sm w-[5%] pl-16 flex-shrink-0">{index + 1}</div>
+                <div className="px-5 py-2 text-sm w-[20%] flex-shrink-0">
+                    <div className="flex items-center gap-2">
+                        <span className="truncate">{item.productDescription || 'N/A'}</span>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 whitespace-nowrap">
+                            Item
+                        </span>
+                    </div>
+                </div>
+                <div className="px-5 py-2 text-sm w-[10%] flex-shrink-0">{item.productId || 'N/A'}</div>
+                <div className="px-5 py-2 text-sm w-[10%] flex-shrink-0">{item.locationName || 'N/A'}</div>
+                <div className="px-5 py-2 text-sm w-[8%] flex-shrink-0">
+                    <span className="font-semibold">{item.openingBalance || 0}</span>
+                </div>
+                <div className="px-5 py-2 text-sm w-[8%] flex-shrink-0">{item.purchase || 0}</div>
+                <div className="px-5 py-2 text-sm w-[8%] flex-shrink-0">{item.sale || 0}</div>
+                <div className="px-5 py-2 text-sm w-[8%] flex-shrink-0">{item.branchTransferInwards || 0}</div>
+                <div className="px-5 py-2 text-sm w-[8%] flex-shrink-0">{item.branchTransferOutwards || 0}</div>
+                <div className="px-5 py-2 text-sm w-[8%] flex-shrink-0">
+                    <span className={`font-bold ${(item.closingBalance || 0) < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                        {item.closingBalance || 0}
+                    </span>
+                </div>
+                <div className="px-5 py-2 text-sm w-[8%] flex-shrink-0">{item.inProgressOrders || 0}</div>
+                <div className="px-5 py-2 text-sm w-[8%] flex-shrink-0">
+                    <button
+                        onClick={() => onViewHistory(item)}
+                        className="text-blue-500 hover:text-blue-700 underline text-xs whitespace-nowrap"
+                    >
+                        View History
+                    </button>
+                </div>
+                <div className="px-5 py-2 text-sm w-[8%] flex-shrink-0">
+                    <button
+                        onClick={() => onViewSummary(item)}
+                        className="text-green-500 hover:text-green-700 underline text-xs whitespace-nowrap"
+                    >
+                        View Summary
+                    </button>
+                </div>
+            </div>
+        );
+    };
+
+    // ✅ FIXED: Virtualized Inventory List Component - Uses div instead of table
+    const VirtualizedInventoryList = ({ items, subGroupId, onViewHistory, onViewSummary }) => {
+        const listRef = useRef(null);
+        const currentPage = subGroupCurrentPage[subGroupId] || 0;
+        const totalPages = subGroupTotalPages[subGroupId] || 1;
+        const totalItems = subGroupTotalItems[subGroupId] || 0;
+        
+        const itemsPerPage = 100;
+        const start = currentPage * itemsPerPage;
+        const currentItems = items.slice(start, start + itemsPerPage);
+
+        useEffect(() => {
+            if (listRef.current) {
+                listRefs.current[subGroupId] = listRef.current;
+            }
+        }, [subGroupId]);
+
+        if (items.length === 0) {
+            return (
+                <div className="px-5 py-4 text-center text-gray-500 italic">
+                    No inventory items found for this sub group
+                </div>
+            );
         }
+
+        // ✅ Check if FixedSizeList is available
+        if (!FixedSizeList) {
+            // Fallback: Render without virtualization
+            return (
+                <div>
+                    {totalItems > itemsPerPage && (
+                        <div className="flex items-center justify-between px-4 py-2 bg-gray-100 dark:bg-gray-700">
+                            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                                Showing {start + 1} - {Math.min(start + itemsPerPage, totalItems)} of {totalItems} items
+                            </span>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => {
+                                        if (currentPage > 0) {
+                                            handleSubGroupPageChange(subGroupId, 'prev');
+                                        }
+                                    }}
+                                    disabled={currentPage === 0}
+                                    className="px-3 py-1 text-sm bg-blue-500 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600"
+                                >
+                                    Previous
+                                </button>
+                                <span className="px-3 py-1 text-sm bg-gray-200 dark:bg-gray-600 rounded">
+                                    Page {currentPage + 1} of {totalPages}
+                                </span>
+                                <button
+                                    onClick={() => {
+                                        if (currentPage < totalPages - 1) {
+                                            handleSubGroupPageChange(subGroupId, 'next');
+                                        }
+                                    }}
+                                    disabled={currentPage >= totalPages - 1}
+                                    className="px-3 py-1 text-sm bg-blue-500 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                    <div className="max-h-[400px] overflow-y-auto">
+                        {currentItems.map((item, idx) => (
+                            <div key={idx} className="flex items-center bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600 border-b border-gray-200 dark:border-gray-600">
+                                <div className="px-5 py-2 text-sm w-[5%] pl-16 flex-shrink-0">{idx + 1}</div>
+                                <div className="px-5 py-2 text-sm w-[20%] flex-shrink-0">
+                                    <span className="truncate">{item.productDescription || 'N/A'}</span>
+                                </div>
+                                <div className="px-5 py-2 text-sm w-[10%] flex-shrink-0">{item.productId || 'N/A'}</div>
+                                <div className="px-5 py-2 text-sm w-[10%] flex-shrink-0">{item.locationName || 'N/A'}</div>
+                                <div className="px-5 py-2 text-sm w-[8%] flex-shrink-0">{item.openingBalance || 0}</div>
+                                <div className="px-5 py-2 text-sm w-[8%] flex-shrink-0">{item.purchase || 0}</div>
+                                <div className="px-5 py-2 text-sm w-[8%] flex-shrink-0">{item.sale || 0}</div>
+                                <div className="px-5 py-2 text-sm w-[8%] flex-shrink-0">{item.branchTransferInwards || 0}</div>
+                                <div className="px-5 py-2 text-sm w-[8%] flex-shrink-0">{item.branchTransferOutwards || 0}</div>
+                                <div className="px-5 py-2 text-sm w-[8%] flex-shrink-0">
+                                    <span className={`font-bold ${(item.closingBalance || 0) < 0 ? 'text-red-600' : 'text-green-600'}`}>
+                                        {item.closingBalance || 0}
+                                    </span>
+                                </div>
+                                <div className="px-5 py-2 text-sm w-[8%] flex-shrink-0">{item.inProgressOrders || 0}</div>
+                                <div className="px-5 py-2 text-sm w-[8%] flex-shrink-0">
+                                    <button onClick={() => onViewHistory(item)} className="text-blue-500 hover:text-blue-700 underline text-xs">View History</button>
+                                </div>
+                                <div className="px-5 py-2 text-sm w-[8%] flex-shrink-0">
+                                    <button onClick={() => onViewSummary(item)} className="text-green-500 hover:text-green-700 underline text-xs">View Summary</button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <div className="w-full">
+                {totalItems > itemsPerPage && (
+                    <div className="flex items-center justify-between px-4 py-2 bg-gray-100 dark:bg-gray-700">
+                        <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                            Showing {start + 1} - {Math.min(start + itemsPerPage, totalItems)} of {totalItems} items
+                        </span>
+                        <div className="flex gap-2">
+                            <button
+                                onClick={() => {
+                                    if (currentPage > 0) {
+                                        handleSubGroupPageChange(subGroupId, 'prev');
+                                    }
+                                }}
+                                disabled={currentPage === 0}
+                                className="px-3 py-1 text-sm bg-blue-500 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
+                            >
+                                Previous
+                            </button>
+                            <span className="px-3 py-1 text-sm bg-gray-200 dark:bg-gray-600 rounded">
+                                Page {currentPage + 1} of {totalPages}
+                            </span>
+                            <button
+                                onClick={() => {
+                                    if (currentPage < totalPages - 1) {
+                                        handleSubGroupPageChange(subGroupId, 'next');
+                                    }
+                                }}
+                                disabled={currentPage >= totalPages - 1}
+                                className="px-3 py-1 text-sm bg-blue-500 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* ✅ Using div with fixed height instead of table */}
+                <div style={{ height: '400px', width: '100%' }}>
+                    <FixedSizeList
+                        ref={listRef}
+                        height={400}
+                        itemCount={currentItems.length}
+                        itemSize={48}
+                        width="100%"
+                        itemData={{
+                            items: currentItems,
+                            onViewHistory,
+                            onViewSummary
+                        }}
+                    >
+                        {InventoryRow}
+                    </FixedSizeList>
+                </div>
+            </div>
+        );
     };
 
-    const handleSubmit = (values) => {
-        const filters = {
-            productId: values.ProductId || undefined,
-            address: values.address || undefined
-        };
-        ViewInventory(pagination.currentPage, filters);
-    };
-
-    // 🔹 NEW: Full Page Spinner Component
     const FullPageSpinner = () => (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
             <div className="flex flex-col items-center gap-4">
@@ -253,7 +490,6 @@ const ViewProductsInventory = () => {
         </div>
     );
 
-    // 🔹 NEW: Page Loading Spinner (for pagination)
     const PageLoadingSpinner = () => (
         <div className="absolute inset-0 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm flex items-center justify-center z-50 rounded-lg">
             <div className="flex flex-col items-center gap-3">
@@ -263,7 +499,7 @@ const ViewProductsInventory = () => {
         </div>
     );
 
-    // Recent History Modal Component
+    // Recent History Modal
     const RecentHistoryModal = ({ isOpen, onClose, data, loading, inventoryItem }) => {
         if (!isOpen) return null;
         const dataArray = Array.isArray(data) ? data : data ? [data] : [];
@@ -286,7 +522,7 @@ const ViewProductsInventory = () => {
                             </div>
                             {loading ? (
                                 <div className="text-center py-8">
-                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
                                     <p className="mt-2 text-gray-500">Loading...</p>
                                 </div>
                             ) : (
@@ -331,7 +567,7 @@ const ViewProductsInventory = () => {
         );
     };
 
-    // Inventory Summary Modal Component
+    // Inventory Summary Modal
     const InventorySummaryModal = ({ isOpen, onClose, data, loading, inventoryItem }) => {
         if (!isOpen) return null;
         const summaryData = data || {};
@@ -354,7 +590,9 @@ const ViewProductsInventory = () => {
                                 </button>
                             </div>
                             {loading ? (
-                                <div className="text-center py-8"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div></div>
+                                <div className="text-center py-8">
+                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                                </div>
                             ) : (
                                 <div>
                                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
@@ -415,28 +653,7 @@ const ViewProductsInventory = () => {
         );
     };
 
-    // Table Headers Component
-    const TableHeaders = () => (
-        <thead>
-            <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">S.No</th>
-                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Product Description</th>
-                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase tracking-wider whitespace-nowrap">Product Id</th>
-                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Location</th>
-                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Opening Balance</th>
-                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Purchase</th>
-                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Sale</th>
-                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Transfer In</th>
-                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Transfer Out</th>
-                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Closing Balance</th>
-                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">In Progress</th>
-                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Recent History</th>
-                <th className="px-5 py-3 border-b-2 text-left text-xs font-semibold uppercase">Summary</th>
-            </tr>
-        </thead>
-    );
-
-    // 🔹 OPTIMIZED: Render table rows with useMemo to prevent unnecessary recalculations
+    // ✅ FIXED: Render table rows with virtualization - Using td with div inside
     const renderTableRows = useMemo(() => {
         if (!inventoryData || inventoryData.length === 0) {
             return (
@@ -448,7 +665,7 @@ const ViewProductsInventory = () => {
 
         const rows = [];
 
-        inventoryData.forEach((group, groupIndex) => {
+        inventoryData.forEach((group) => {
             const isGroupExpanded = expandedGroups[group.id];
             const totalProductsInGroup = getTotalProductsInGroup(group.subGroups || []);
             const totalInventoryCount = getGroupInventoryCount(group.subGroups || []);
@@ -485,9 +702,10 @@ const ViewProductsInventory = () => {
 
             // If group is expanded, show sub groups
             if (isGroupExpanded && group.subGroups && group.subGroups.length > 0) {
-                group.subGroups.forEach((subGroup, subGroupIndex) => {
+                group.subGroups.forEach((subGroup) => {
                     const isSubGroupExpanded = expandedSubGroups[subGroup.id];
                     const inventoryCount = subGroup.inventories?.length || 0;
+                    const isLoading = isSubGroupLoading[subGroup.id];
 
                     // Sub Group Row
                     rows.push(
@@ -507,161 +725,101 @@ const ViewProductsInventory = () => {
                                         <span className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">
                                             Inventory: {inventoryCount}
                                         </span>
+                                        {isLoading && (
+                                            <span className="inline-block animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent"></span>
+                                        )}
                                     </div>
                                 </div>
                             </td>
                         </tr>
                     );
 
-                    // If sub group is expanded, show inventory items with table headers
-                    if (isSubGroupExpanded && subGroup.inventories && subGroup.inventories.length > 0) {
-                        // Add table headers inside the subgroup
+                    // If sub group is expanded, show virtualized inventory items
+                    if (isSubGroupExpanded) {
+                        const inventoryItems = subGroupInventoryData[subGroup.id] || [];
+                        
+                        // ✅ Table headers for the virtualized list - Now uses proper th elements
                         rows.push(
-                            <tr 
-                                key={`subgroup-headers-${subGroup.id}`} 
-                                className="dark:bg-slate-700 dark:text-white"
-                                style={{ backgroundColor: 'rgb(71 85 105)' }}
-                            >
-                                <th className="px-9 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                            <tr key={`subgroup-headers-${subGroup.id}`} style={{ backgroundColor: 'rgb(71 85 105)' }}>
+                                <th className="px-9 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white w-[5%]">
                                     S.No
                                 </th>
-                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white w-[20%]">
                                     Product Description
                                 </th>
-                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white w-[10%]">
                                     Product Id
                                 </th>
-                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white w-[10%]">
                                     Location
                                 </th>
-                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white w-[8%]">
                                     Opening Balance
                                 </th>
-                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white w-[8%]">
                                     Purchase
                                 </th>
-                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white w-[8%]">
                                     Sale
                                 </th>
-                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white w-[8%]">
                                     Transfer In
                                 </th>
-                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white w-[8%]">
                                     Transfer Out
                                 </th>
-                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white w-[8%]">
                                     Closing Balance
                                 </th>
-                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white w-[8%]">
                                     In Progress
                                 </th>
-                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white w-[8%]">
                                     Recent History
                                 </th>
-                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white">
+                                <th className="px-5 py-2 text-left text-xs font-semibold uppercase whitespace-nowrap text-white w-[8%]">
                                     Summary
                                 </th>
                             </tr>
                         );
 
-                        // Add inventory items
-                        subGroup.inventories.forEach((item, idx) => {
-                            rows.push(
-                                <tr key={`inventory-${item.id}`} className="bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600">
-                                    <td className="px-5 py-3 border-b text-sm pl-16">
-                                        {idx + 1}
-                                    </td>
-                                    <td className="px-5 py-3 border-b text-sm">
-                                        <div className="flex items-center gap-2">
-                                            {item.productDescription || 'N/A'}
-                                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                                                Item
-                                            </span>
+                        // ✅ Virtualized list as a single cell spanning all columns
+                        rows.push(
+                            <tr key={`virtualized-${subGroup.id}`}>
+                                <td colSpan="13" className="px-0 py-0">
+                                    {isLoading ? (
+                                        <div className="flex justify-center items-center py-8">
+                                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                                            <span className="ml-2 text-gray-600">Loading inventory items...</span>
                                         </div>
-                                    </td>
-                                    <td className="px-5 py-3 border-b text-sm">
-                                        {item.productId || 'N/A'}
-                                    </td>
-                                    <td className="px-5 py-3 border-b text-sm">
-                                        {item.locationName || 'N/A'}
-                                    </td>
-                                    <td className="px-5 py-3 border-b text-sm">
-                                        <span className="font-semibold">{item.openingBalance || 0}</span>
-                                    </td>
-                                    <td className="px-5 py-3 border-b text-sm">
-                                        {item.purchase || 0}
-                                    </td>
-                                    <td className="px-5 py-3 border-b text-sm">
-                                        {item.sale || 0}
-                                    </td>
-                                    <td className="px-5 py-3 border-b text-sm">
-                                        {item.branchTransferInwards || 0}
-                                    </td>
-                                    <td className="px-5 py-3 border-b text-sm">
-                                        {item.branchTransferOutwards || 0}
-                                    </td>
-                                    <td className="px-5 py-3 border-b text-sm">
-                                        <span className={`font-bold ${(item.closingBalance || 0) < 0 ? 'text-red-600' : 'text-green-600'}`}>
-                                            {item.closingBalance || 0}
-                                        </span>
-                                    </td>
-                                    <td className="px-5 py-3 border-b text-sm">
-                                        {item.inProgressOrders || 0}
-                                    </td>
-                                    <td className="px-5 py-3 border-b text-sm">
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
+                                    ) : (
+                                        <VirtualizedInventoryList
+                                            items={inventoryItems}
+                                            subGroupId={subGroup.id}
+                                            onViewHistory={(item) => {
                                                 setSelectedInventory(item);
                                                 fetchRecentHistory(item.productIntegerId, item.locationId);
                                                 setIsRecentHistoryModalOpen(true);
                                             }}
-                                            className="text-blue-500 hover:text-blue-700 underline text-xs"
-                                        >
-                                            View History
-                                        </button>
-                                    </td>
-                                    <td className="px-5 py-3 border-b text-sm">
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
+                                            onViewSummary={(item) => {
                                                 setSelectedInventory(item);
                                                 fetchInventorySummary(item.locationId, item.productIntegerId);
                                                 setIsSummaryModalOpen(true);
                                             }}
-                                            className="text-green-500 hover:text-green-700 underline text-xs"
-                                        >
-                                            View Summary
-                                        </button>
-                                    </td>
-                                </tr>
-                            );
-                        });
-                    } else if (isSubGroupExpanded && (!subGroup.inventories || subGroup.inventories.length === 0)) {
-                        rows.push(
-                            <tr key={`empty-${subGroup.id}`} className="bg-white dark:bg-slate-700">
-                                <td colSpan="13" className="px-5 py-4 text-center text-gray-500 italic pl-16">
-                                    No inventory items found for this sub group
+                                        />
+                                    )}
                                 </td>
                             </tr>
                         );
                     }
                 });
-            } else if (isGroupExpanded && (!group.subGroups || group.subGroups.length === 0)) {
-                rows.push(
-                    <tr key={`empty-group-${group.id}`} className="bg-white dark:bg-slate-700">
-                        <td colSpan="13" className="px-5 py-4 text-center text-gray-500 italic pl-10">
-                            No sub groups found for this product group
-                        </td>
-                    </tr>
-                );
             }
         });
 
         return rows;
-    }, [inventoryData, expandedGroups, expandedSubGroups, getGroupInventoryCount, getTotalProductsInGroup]);
+    }, [inventoryData, expandedGroups, expandedSubGroups, subGroupInventoryData, isSubGroupLoading, getGroupInventoryCount, getTotalProductsInGroup]);
 
-    // 🔹 NEW: Add CSS for animation delay
+    // Add CSS for animation delay
     const style = document.createElement('style');
     style.textContent = `
         .animation-delay-150 {
@@ -674,11 +832,9 @@ const ViewProductsInventory = () => {
         <DefaultLayout>
             <Breadcrumb pageName="Inventory / View Inventory" />
             
-            {/* 🔹 SHOW FULL PAGE SPINNER WHEN LOADING */}
             {isLoading && <FullPageSpinner />}
             
             <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800 relative">
-                {/* 🔹 SHOW PAGE LOADING SPINNER OVERLAY */}
                 {isPageLoading && <PageLoadingSpinner />}
                 
                 <div className="pt-5">
@@ -693,11 +849,11 @@ const ViewProductsInventory = () => {
 
                     <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                         <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
-                           <table className="min-w-full leading-normal overflow-auto">
+                            <table className="min-w-full leading-normal">
                                 <tbody>
                                     {renderTableRows}
                                 </tbody>
-                             </table>
+                            </table>
                         </div>
                     </div>
                     <Pagination 
