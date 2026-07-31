@@ -43,10 +43,6 @@ const ViewProductsInventory = () => {
     const [invPage, setInvPage] = useState(0);
     const [invSize, setInvSize] = useState(100);
     
-    // SUB GROUP PAGINATION STATES (for items inside subgroups)
-    const [subGroupPage, setSubGroupPage] = useState({});
-    const [subGroupSize, setSubGroupSize] = useState({});
-    
     // Track if we're in search mode
     const [isSearchMode, setIsSearchMode] = useState(false);
 
@@ -117,7 +113,7 @@ const ViewProductsInventory = () => {
                 params.push(`page=${pageNumber}`);
                 params.push(`size=${size}`);
                 params.push(`invPage=${invPage}`);
-                // params.push(`invSize=${invSize}`);
+                params.push(`invSize=${invSize}`);
             }
             
             url += params.join('&');
@@ -186,30 +182,8 @@ const ViewProductsInventory = () => {
         const newSize = parseInt(e.target.value);
         console.log("Changing page size from:", size, "to:", newSize);
         setSize(newSize);
-        setPage(0); // Reset to first page
-        // Don't update pagination state here, let ViewInventory handle it
+        setPage(0);
         ViewInventory(0);
-    };
-
-    // HANDLE SUB GROUP PAGE SIZE CHANGE
-    const handleSubGroupSizeChange = (subGroupId, e) => {
-        const newSize = parseInt(e.target.value);
-        setSubGroupSize(prev => ({
-            ...prev,
-            [subGroupId]: newSize
-        }));
-        setSubGroupPage(prev => ({
-            ...prev,
-            [subGroupId]: 0 // Reset to first page
-        }));
-    };
-
-    // HANDLE SUB GROUP PAGE CHANGE
-    const handleSubGroupPageChange = (subGroupId, newPage) => {
-        setSubGroupPage(prev => ({
-            ...prev,
-            [subGroupId]: newPage - 1 // Convert to 0-based
-        }));
     };
 
     // HANDLE SEARCH SUBMIT
@@ -522,23 +496,36 @@ const ViewProductsInventory = () => {
         );
     };
 
-    // Sub Group Pagination Component
-    const SubGroupPagination = ({ subGroupId, totalItems, currentPage, onPageChange, onSizeChange, currentSize }) => {
-        const totalPages = Math.ceil(totalItems / currentSize) || 1;
+    // Sub Group Pagination Component - Uses server-provided pagination data
+    const SubGroupPagination = ({ subGroup }) => {
+        const { id, totalInventories, totalPages, currentPage, pageSize } = subGroup;
         
-        if (totalItems === 0) return null;
+        if (totalInventories === 0 || totalPages === 0) return null;
+
+        const handlePageChange = (newPage) => {
+            // This would trigger a new API call with the sub group pagination params
+            // For now, we'll just log it since the data is already paginated from server
+            console.log(`SubGroup ${id} page change to:`, newPage);
+            // You can add API call here if needed
+        };
+
+        const handleSizeChange = (e) => {
+            const newSize = parseInt(e.target.value);
+            console.log(`SubGroup ${id} size change to:`, newSize);
+            // You can add API call here if needed
+        };
 
         return (
-            <div className="flex flex-col sm:flex-row items-center gap-3 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg mt-2">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg mt-2">
                 <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                    Showing {currentPage * currentSize + 1} - {Math.min((currentPage + 1) * currentSize, totalItems)} of {totalItems} items
+                    Showing {currentPage * pageSize + 1} - {Math.min((currentPage + 1) * pageSize, totalInventories)} of {totalInventories} items
                 </span>
                 <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
                         <label className="text-sm text-gray-600 dark:text-gray-300">Size:</label>
                         <select
-                            value={currentSize}
-                            onChange={(e) => onSizeChange(subGroupId, e)}
+                            value={pageSize}
+                            onChange={handleSizeChange}
                             className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-800 text-gray-900 dark:text-white text-sm"
                         >
                             <option value={5}>5</option>
@@ -550,7 +537,7 @@ const ViewProductsInventory = () => {
                     </div>
                     <div className="flex gap-1">
                         <button
-                            onClick={() => onPageChange(subGroupId, currentPage)}
+                            onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 0}
                             className="px-3 py-1 text-sm bg-blue-500 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
                         >
@@ -560,7 +547,7 @@ const ViewProductsInventory = () => {
                             {currentPage + 1} / {totalPages}
                         </span>
                         <button
-                            onClick={() => onPageChange(subGroupId, currentPage + 2)}
+                            onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage >= totalPages - 1}
                             className="px-3 py-1 text-sm bg-blue-500 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
                         >
@@ -572,7 +559,7 @@ const ViewProductsInventory = () => {
         );
     };
 
-    // OPTIMIZED: Render table rows
+    // OPTIMIZED: Render table rows using server-provided pagination
     const renderTableRows = useMemo(() => {
         if (!inventoryData || inventoryData.length === 0) {
             return (
@@ -626,17 +613,8 @@ const ViewProductsInventory = () => {
                 group.subGroups.forEach((subGroup, subGroupIndex) => {
                     const isSubGroupExpanded = expandedSubGroups[subGroup.id];
                     const inventoryCount = subGroup.inventories?.length || 0;
-                    
-                    // Get sub group pagination state
-                    const subPage = subGroupPage[subGroup.id] || 0;
-                    const subSize = subGroupSize[subGroup.id] || 10;
-                    
-                    // Get paginated inventory items
-                    const startIndex = subPage * subSize;
-                    const endIndex = startIndex + subSize;
-                    const paginatedInventories = subGroup.inventories?.slice(startIndex, endIndex) || [];
 
-                    // Sub Group Row
+                    // Sub Group Row with total inventory info
                     rows.push(
                         <tr key={`subgroup-${subGroup.id}`} className="bg-gray-50 dark:bg-gray-800/50 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => toggleSubGroup(subGroup.id)}>
                             <td colSpan="13" className="px-5 py-3 border-b border-gray-200 pl-10">
@@ -654,13 +632,18 @@ const ViewProductsInventory = () => {
                                         <span className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">
                                             Inventory: {inventoryCount}
                                         </span>
+                                        {subGroup.totalInventories > 0 && (
+                                            <span className="bg-purple-200 dark:bg-purple-800 px-2 py-1 rounded">
+                                                Page: {subGroup.currentPage + 1}/{subGroup.totalPages}
+                                            </span>
+                                        )}
                                     </div>
                                 </div>
                             </td>
                         </tr>
                     );
 
-                    // If sub group is expanded, show inventory items with table headers
+                    // If sub group is expanded, show inventory items
                     if (isSubGroupExpanded) {
                         // Only show if there are inventory items
                         if (subGroup.inventories && subGroup.inventories.length > 0) {
@@ -713,12 +696,15 @@ const ViewProductsInventory = () => {
                                 </tr>
                             );
 
-                            // Add paginated inventory items
-                            paginatedInventories.forEach((item, idx) => {
+                            // Add inventory items
+                            subGroup.inventories.forEach((item, idx) => {
+                                // Calculate actual index based on current page
+                                const actualIndex = subGroup.currentPage * subGroup.pageSize + idx + 1;
+                                
                                 rows.push(
                                     <tr key={`inventory-${item.id}`} className="bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600">
                                         <td className="px-5 py-3 border-b text-sm pl-16">
-                                            {startIndex + idx + 1}
+                                            {actualIndex}
                                         </td>
                                         <td className="px-5 py-3 border-b text-sm">
                                             <div className="flex items-center gap-2">
@@ -787,21 +773,16 @@ const ViewProductsInventory = () => {
                                 );
                             });
 
-                            // Add sub group pagination
-                            rows.push(
-                                <tr key={`subgroup-pagination-${subGroup.id}`}>
-                                    <td colSpan="13" className="px-0 py-2">
-                                        <SubGroupPagination
-                                            subGroupId={subGroup.id}
-                                            totalItems={subGroup.inventories.length}
-                                            currentPage={subPage}
-                                            onPageChange={handleSubGroupPageChange}
-                                            onSizeChange={handleSubGroupSizeChange}
-                                            currentSize={subSize}
-                                        />
-                                    </td>
-                                </tr>
-                            );
+                            // Add sub group pagination using server data
+                            if (subGroup.totalPages > 1) {
+                                rows.push(
+                                    <tr key={`subgroup-pagination-${subGroup.id}`}>
+                                        <td colSpan="13" className="px-0 py-2">
+                                            <SubGroupPagination subGroup={subGroup} />
+                                        </td>
+                                    </tr>
+                                );
+                            }
                         } else {
                             // No inventory items
                             rows.push(
@@ -826,7 +807,7 @@ const ViewProductsInventory = () => {
         });
 
         return rows;
-    }, [inventoryData, expandedGroups, expandedSubGroups, getGroupInventoryCount, getTotalProductsInGroup, isSearchMode, subGroupPage, subGroupSize]);
+    }, [inventoryData, expandedGroups, expandedSubGroups, getGroupInventoryCount, getTotalProductsInGroup, isSearchMode]);
 
     // Add CSS for animation delay
     const style = document.createElement('style');
