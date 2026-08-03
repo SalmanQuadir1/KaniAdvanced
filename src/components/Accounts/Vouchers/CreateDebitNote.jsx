@@ -103,8 +103,9 @@ const CreateDebitNote = () => {
             GetVoucherNos();
         }
     }, [Vouchers.id]);
-
+  const [loadingAllProducts, setLoadingAllProducts] = useState(false);
     const fetchAllProducts = async () => {
+          setLoadingAllProducts(true);
         try {
             const response = await fetch(`${GETPRODUCTS}`, {
                 method: "GET",
@@ -114,8 +115,8 @@ const CreateDebitNote = () => {
                 },
             });
             const data = await response.json();
-            if (response.ok && Array.isArray(data.content)) {
-                const productOptions = data?.content?.map(product => ({
+            if (response.ok && Array.isArray(data)) {
+                const productOptions = data?.map(product => ({
                     value: product.id,
                     label: `${product?.productId} ${product.barcode}`,
                     price: product?.retailMrp,
@@ -126,6 +127,9 @@ const CreateDebitNote = () => {
             }
         } catch (error) {
             console.error("Error fetching products:", error);
+        }
+        finally {
+            setLoadingAllProducts(false);
         }
     };
 
@@ -637,7 +641,7 @@ const CreateDebitNote = () => {
                                                                 <thead>
                                                                     <tr className="bg-gray-2 text-left dark:bg-meta-4">
                                                                         {["Product", "MRP", "Discount %", "Quantity", "Value", "GST Type", "Action"].map((header, i) => (
-                                                                            <th key={i} className="w-[180px] py-4 px-3 font-medium text-black dark:text-white text-sm border-b border-gray-300">
+                                                                            <th key={i} className="w-[280px] py-4 px-3 font-medium text-black dark:text-white text-sm border-b border-gray-300">
                                                                                 {header}
                                                                             </th>
                                                                         ))}
@@ -653,11 +657,12 @@ const CreateDebitNote = () => {
                                                                                         value={allProducts.find(p => p.value === entry.productId)}
                                                                                         onChange={(option) => handleProductSelect(option, index)}
                                                                                         options={allProducts}
-                                                                                        placeholder="Select Product"
+                                                                                        placeholder={loadingAllProducts ? "Loading..." : "Select Product"}
                                                                                         classNamePrefix="react-select"
                                                                                         menuPortalTarget={document.body}
-                                                                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                                                                        styles={{ height: ["110px"],customStyles, menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                                                                         isClearable
+                                                                                        isDisabled={loadingAllProducts}
                                                                                     />
                                                                                 ) : (
                                                                                     <div className="text-sm text-gray-400">Select supplier first</div>
@@ -750,7 +755,7 @@ const CreateDebitNote = () => {
                                                                 value: 0,
                                                                 gstCalculation: null
                                                             })}
-                                                            disabled={!selectedLedger || !originalGstType}
+                                                            disabled={!selectedLedger }
                                                             className="flex items-center gap-2 mt-4 text-primary hover:text-primary/80 font-medium disabled:text-gray-400"
                                                         >
                                                             <IoMdAdd size={20} /> Add Row
