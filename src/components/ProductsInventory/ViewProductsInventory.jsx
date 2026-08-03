@@ -41,7 +41,7 @@ const ViewProductsInventory = () => {
     const [page, setPage] = useState(0);
     const [size, setSize] = useState(10);
     const [invPage, setInvPage] = useState(0);
-    const [invSize, setInvSize] = useState(100);
+    const [invSize, setInvSize] = useState(50);
     
     // Track if we're in search mode
     const [isSearchMode, setIsSearchMode] = useState(false);
