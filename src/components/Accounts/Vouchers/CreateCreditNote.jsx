@@ -104,8 +104,10 @@ const CreateCreditNote = () => {
             GetVoucherNos();
         }
     }, [Vouchers.id]);
+     const [loadingAllProducts, setLoadingAllProducts] = useState(false);
 
     const fetchAllProducts = async () => {
+        setLoadingAllProducts(true);
         try {
             const response = await fetch(`${GETPRODUCTS}`, {
                 method: "GET",
@@ -115,8 +117,8 @@ const CreateCreditNote = () => {
                 },
             });
             const data = await response.json();
-            if (response.ok && Array.isArray(data.content)) {
-                const productOptions = data?.content?.map(product => ({
+            if (response.ok && Array.isArray(data)) {
+                const productOptions = data?.map(product => ({
                     value: product.id,
                     label: `${product?.productId} ${product.barcode}`,
                     price: product?.retailMrp,
@@ -127,6 +129,8 @@ const CreateCreditNote = () => {
             }
         } catch (error) {
             console.error("Error fetching products:", error);
+        } finally {
+            setLoadingAllProducts(false);
         }
     };
 
@@ -652,11 +656,13 @@ const CreateCreditNote = () => {
                                                                             <td className="border-b py-4 px-3">
                                                                                 {selectedLedger ? (
                                                                                     <ReactSelect
+                                                                                    className="react-select-container w-[170px] "
+                                                                                    isDisabled={loadingAllProducts}
                                                                                         name={`items.${index}.productId`}
                                                                                         value={allProducts.find(p => p.value === entry.productId)}
                                                                                         onChange={(option) => handleProductSelect(option, index)}
                                                                                         options={allProducts}
-                                                                                        placeholder="Select Product"
+                                                                                        placeholder={loadingAllProducts ? "Loading..." : "Select Product"}
                                                                                         classNamePrefix="react-select"
                                                                                         menuPortalTarget={document.body}
                                                                                         styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
