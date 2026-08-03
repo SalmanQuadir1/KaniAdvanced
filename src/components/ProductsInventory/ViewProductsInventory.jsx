@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { FiEdit, FiTrash2, FiX, FiChevronDown, FiChevronRight, FiSearch } from "react-icons/fi";
@@ -66,6 +66,9 @@ const ViewProductsInventory = () => {
     const [transactionsData, setTransactionsData] = useState([]);
     const [loading, setLoading] = useState(false);
 
+    // Use ref to track if we're already fetching
+    const isFetching = useRef(false);
+
     // DEBOUNCE SEARCH
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -76,7 +79,9 @@ const ViewProductsInventory = () => {
 
     // FETCH DATA WHEN SEARCH OR PAGINATION CHANGES
     useEffect(() => {
-        ViewInventory(0, invPage);
+        if (!isFetching.current) {
+            ViewInventory(page, invPage);
+        }
     }, [debouncedSearch, size, invPage, invSize]);
 
     useEffect(() => {
@@ -96,7 +101,11 @@ const ViewProductsInventory = () => {
 
     // ViewInventory with search and pagination - MUTUALLY EXCLUSIVE
     const ViewInventory = async (pageNumber = 0, invPageNumber = 0) => {
+        // Prevent multiple simultaneous fetches
+        if (isFetching.current) return;
+        
         try {
+            isFetching.current = true;
             setIsLoading(true);
             
             let url = `${GET_INVENTORYYS}?`;
@@ -153,6 +162,7 @@ const ViewProductsInventory = () => {
             toast.error("Failed to fetch Inventory");
         } finally {
             setIsLoading(false);
+            isFetching.current = false;
         }
     };
 
@@ -171,7 +181,7 @@ const ViewProductsInventory = () => {
         const zeroBasedPage = newPage - 1;
         console.log("Changing to page:", zeroBasedPage);
         setPage(zeroBasedPage);
-        ViewInventory(zeroBasedPage, invPage);
+        // Don't call ViewInventory here, useEffect will handle it
     };
 
     // HANDLE MAIN PAGE SIZE CHANGE
@@ -184,7 +194,7 @@ const ViewProductsInventory = () => {
         console.log("Changing page size from:", size, "to:", newSize);
         setSize(newSize);
         setPage(0);
-        ViewInventory(0, invPage);
+        // Don't call ViewInventory here, useEffect will handle it
     };
 
     // HANDLE SUB GROUP PAGE CHANGE
@@ -195,7 +205,7 @@ const ViewProductsInventory = () => {
         }
         console.log("Changing invPage from:", invPage, "to:", newInvPage);
         setInvPage(newInvPage);
-        ViewInventory(page, newInvPage);
+        // Don't call ViewInventory here, useEffect will handle it
     };
 
     // HANDLE SUB GROUP PAGE SIZE CHANGE
@@ -208,7 +218,7 @@ const ViewProductsInventory = () => {
         console.log("Changing invSize from:", invSize, "to:", newSize);
         setInvSize(newSize);
         setInvPage(0); // Reset to first page
-        ViewInventory(page, 0);
+        // Don't call ViewInventory here, useEffect will handle it
     };
 
     // HANDLE SEARCH SUBMIT
@@ -221,7 +231,6 @@ const ViewProductsInventory = () => {
         setDebouncedSearch(searchTerm);
         setPage(0);
         setInvPage(0);
-        ViewInventory(0, 0);
     };
 
     // HANDLE SEARCH ON ENTER KEY
@@ -235,7 +244,6 @@ const ViewProductsInventory = () => {
             setDebouncedSearch(searchTerm);
             setPage(0);
             setInvPage(0);
-            ViewInventory(0, 0);
         }
     };
 
@@ -246,7 +254,6 @@ const ViewProductsInventory = () => {
         setIsSearchMode(false);
         setPage(0);
         setInvPage(0);
-        ViewInventory(0, 0);
     };
 
     const handleUpdate = (id) => {
@@ -349,7 +356,8 @@ const ViewProductsInventory = () => {
             productId: values.ProductId || undefined,
             address: values.address || undefined
         };
-        ViewInventory(0, invPage);
+        setPage(0);
+        setInvPage(0);
     };
 
     // Full Page Spinner Component
@@ -531,7 +539,7 @@ const ViewProductsInventory = () => {
         if (totalInventories === 0 || totalPages === 0) return null;
 
         return (
-            <div className="flex flex-col sm:flex-row items-center  gap-3 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg mt-2">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg mt-2">
                 <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                     Showing {currentPage * pageSize + 1} - {Math.min((currentPage + 1) * pageSize, totalInventories)} of {totalInventories} items
                 </span>
