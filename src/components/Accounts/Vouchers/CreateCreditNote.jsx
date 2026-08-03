@@ -644,7 +644,7 @@ const CreateCreditNote = () => {
                                                                 <thead>
                                                                     <tr className="bg-gray-2 text-left dark:bg-meta-4">
                                                                         {["Product", "MRP", "Discount %", "Quantity", "Value", "GST Type", "Action"].map((header, i) => (
-                                                                            <th key={i} className="w-[180px] py-4 px-3 font-medium text-black dark:text-white text-sm border-b border-gray-300">
+                                                                            <th key={i} className="w-[250px] py-4 px-3 font-medium text-black dark:text-white text-sm border-b border-gray-300">
                                                                                 {header}
                                                                             </th>
                                                                         ))}
@@ -656,7 +656,7 @@ const CreateCreditNote = () => {
                                                                             <td className="border-b py-4 px-3">
                                                                                 {selectedLedger ? (
                                                                                     <ReactSelect
-                                                                                    className="react-select-container w-[170px] "
+                                                                                    className="react-select-container w-[240px] "
                                                                                     isDisabled={loadingAllProducts}
                                                                                         name={`items.${index}.productId`}
                                                                                         value={allProducts.find(p => p.value === entry.productId)}
@@ -665,7 +665,7 @@ const CreateCreditNote = () => {
                                                                                         placeholder={loadingAllProducts ? "Loading..." : "Select Product"}
                                                                                         classNamePrefix="react-select"
                                                                                         menuPortalTarget={document.body}
-                                                                                        styles={{ menuPortal: base => ({ ...base, zIndex: 9999 }) }}
+                                                                                        styles={{ height: ["110px"], menuPortal: base => ({ ...base, zIndex: 9999 }) }}
                                                                                         isClearable
                                                                                     />
                                                                                 ) : (
@@ -759,7 +759,7 @@ const CreateCreditNote = () => {
                                                                 value: 0,
                                                                 gstCalculation: null
                                                             })}
-                                                            disabled={!selectedLedger || !originalGstType}
+                                                            // disabled={!selectedLedger || !originalGstType}
                                                             className="flex items-center gap-2 mt-4 text-primary hover:text-primary/80 font-medium disabled:text-gray-400"
                                                         >
                                                             <IoMdAdd size={20} /> Add Row
