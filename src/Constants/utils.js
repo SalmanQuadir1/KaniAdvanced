@@ -33,7 +33,7 @@ export const GET_INPROGRESSTRACK = `${BASE_URL}/api/in-progress-tracking/product
 
 export const GET_INVENTORYBalance = `${BASE_URL}/productInventory/getBy`;
 export const DELETEINVENTORY_PRODUCT_URL = `${BASE_URL}/productInventory/delete/`;
-export const GETPRODUCTS = `${BASE_URL}/products`;
+export const GETPRODUCTS = `${BASE_URL}/products/entrypayment/dropdown`;
 export const GETDESCRIPTIONS = `${BASE_URL}/products/all-products`;
 
 //inventory

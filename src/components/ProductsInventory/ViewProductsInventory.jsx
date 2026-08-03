@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../../layout/DefaultLayout';
 import { FiEdit, FiTrash2, FiX, FiChevronDown, FiChevronRight, FiSearch } from "react-icons/fi";
@@ -40,8 +40,9 @@ const ViewProductsInventory = () => {
     // MAIN PAGINATION STATES (for product groups)
     const [page, setPage] = useState(0);
     const [size, setSize] = useState(10);
-    const [invPage, setInvPage] = useState(0);
-    const [invSize, setInvSize] = useState(50);
+    
+    // SUBGROUP PAGINATION STATES - Each subgroup has its own page and size
+    const [subGroupPagination, setSubGroupPagination] = useState({});
     
     // Track if we're in search mode
     const [isSearchMode, setIsSearchMode] = useState(false);
@@ -66,9 +67,6 @@ const ViewProductsInventory = () => {
     const [transactionsData, setTransactionsData] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // Use ref to track if we're already fetching
-    const isFetching = useRef(false);
-
     // DEBOUNCE SEARCH
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -79,10 +77,8 @@ const ViewProductsInventory = () => {
 
     // FETCH DATA WHEN SEARCH OR PAGINATION CHANGES
     useEffect(() => {
-        if (!isFetching.current) {
-            ViewInventory(page, invPage);
-        }
-    }, [debouncedSearch, size, invPage, invSize]);
+        ViewInventory(0);
+    }, [debouncedSearch, size]);
 
     useEffect(() => {
         getLocation();
@@ -100,12 +96,8 @@ const ViewProductsInventory = () => {
     })) || [];
 
     // ViewInventory with search and pagination - MUTUALLY EXCLUSIVE
-    const ViewInventory = async (pageNumber = 0, invPageNumber = 0) => {
-        // Prevent multiple simultaneous fetches
-        if (isFetching.current) return;
-        
+    const ViewInventory = async (pageNumber = 0) => {
         try {
-            isFetching.current = true;
             setIsLoading(true);
             
             let url = `${GET_INVENTORYYS}?`;
@@ -121,15 +113,14 @@ const ViewProductsInventory = () => {
                 setIsSearchMode(false);
                 params.push(`page=${pageNumber}`);
                 params.push(`size=${size}`);
-                params.push(`invPage=${invPageNumber}`);
-                params.push(`invSize=${invSize}`);
+                // Subgroup pagination is handled locally, not sent to API
             }
             
             url += params.join('&');
             
             console.log("Fetching URL:", url);
             console.log("Mode:", debouncedSearch ? "SEARCH" : "PAGINATION");
-            console.log("invPage:", invPageNumber, "invSize:", invSize);
+            console.log("Page:", pageNumber, "Size:", size);
             
             const response = await fetch(url, {
                 method: "GET",
@@ -162,13 +153,12 @@ const ViewProductsInventory = () => {
             toast.error("Failed to fetch Inventory");
         } finally {
             setIsLoading(false);
-            isFetching.current = false;
         }
     };
 
     // INITIAL LOAD
     useEffect(() => {
-        ViewInventory(0, 0);
+        ViewInventory(0);
     }, []);
 
     // HANDLE MAIN PAGE CHANGE
@@ -181,7 +171,7 @@ const ViewProductsInventory = () => {
         const zeroBasedPage = newPage - 1;
         console.log("Changing to page:", zeroBasedPage);
         setPage(zeroBasedPage);
-        // Don't call ViewInventory here, useEffect will handle it
+        ViewInventory(zeroBasedPage);
     };
 
     // HANDLE MAIN PAGE SIZE CHANGE
@@ -194,31 +184,40 @@ const ViewProductsInventory = () => {
         console.log("Changing page size from:", size, "to:", newSize);
         setSize(newSize);
         setPage(0);
-        // Don't call ViewInventory here, useEffect will handle it
+        ViewInventory(0);
     };
 
-    // HANDLE SUB GROUP PAGE CHANGE
-    const handleSubGroupPageChange = (newInvPage) => {
+    // HANDLE SUB GROUP PAGE CHANGE - Local only
+    const handleSubGroupPageChange = (subGroupId, newPage) => {
         if (isSearchMode) {
             toast.info("Search results don't support pagination");
             return;
         }
-        console.log("Changing invPage from:", invPage, "to:", newInvPage);
-        setInvPage(newInvPage);
-        // Don't call ViewInventory here, useEffect will handle it
+        console.log(`SubGroup ${subGroupId} page change to:`, newPage);
+        setSubGroupPagination(prev => ({
+            ...prev,
+            [subGroupId]: {
+                ...prev[subGroupId],
+                page: newPage
+            }
+        }));
     };
 
-    // HANDLE SUB GROUP PAGE SIZE CHANGE
-    const handleSubGroupSizeChange = (e) => {
+    // HANDLE SUB GROUP PAGE SIZE CHANGE - Local only
+    const handleSubGroupSizeChange = (subGroupId, e) => {
         if (isSearchMode) {
             toast.info("Search results don't support pagination");
             return;
         }
         const newSize = parseInt(e.target.value);
-        console.log("Changing invSize from:", invSize, "to:", newSize);
-        setInvSize(newSize);
-        setInvPage(0); // Reset to first page
-        // Don't call ViewInventory here, useEffect will handle it
+        console.log(`SubGroup ${subGroupId} size change to:`, newSize);
+        setSubGroupPagination(prev => ({
+            ...prev,
+            [subGroupId]: {
+                page: 0, // Reset to first page when size changes
+                size: newSize
+            }
+        }));
     };
 
     // HANDLE SEARCH SUBMIT
@@ -230,7 +229,8 @@ const ViewProductsInventory = () => {
         }
         setDebouncedSearch(searchTerm);
         setPage(0);
-        setInvPage(0);
+        setSubGroupPagination({});
+        ViewInventory(0);
     };
 
     // HANDLE SEARCH ON ENTER KEY
@@ -243,7 +243,8 @@ const ViewProductsInventory = () => {
             }
             setDebouncedSearch(searchTerm);
             setPage(0);
-            setInvPage(0);
+            setSubGroupPagination({});
+            ViewInventory(0);
         }
     };
 
@@ -253,7 +254,8 @@ const ViewProductsInventory = () => {
         setDebouncedSearch('');
         setIsSearchMode(false);
         setPage(0);
-        setInvPage(0);
+        setSubGroupPagination({});
+        ViewInventory(0);
     };
 
     const handleUpdate = (id) => {
@@ -281,9 +283,7 @@ const ViewProductsInventory = () => {
     }, []);
 
     const getTotalProductsInGroup = useCallback((subGroups) => {
-        console.log("Calculating total products in group for subGroups:", subGroups);
-       
-       return subGroups.reduce((total, subGroup) => {
+        return subGroups.reduce((total, subGroup) => {
             return total + (subGroup.totalProducts || 0);
         }, 0);
     }, []);
@@ -354,8 +354,7 @@ const ViewProductsInventory = () => {
             productId: values.ProductId || undefined,
             address: values.address || undefined
         };
-        setPage(0);
-        setInvPage(0);
+        ViewInventory(0);
     };
 
     // Full Page Spinner Component
@@ -530,23 +529,32 @@ const ViewProductsInventory = () => {
         );
     };
 
-    // Sub Group Pagination Component - Uses server data
+    // Sub Group Pagination Component - Uses local state per subgroup
     const SubGroupPagination = ({ subGroup }) => {
-        const { id, totalInventories, totalPages, currentPage, pageSize } = subGroup;
+        const { id, totalInventories, totalPages, currentPage: serverCurrentPage, pageSize: serverPageSize } = subGroup;
+        
+        // Get local pagination state for this specific subgroup
+        const localPagination = subGroupPagination[id] || { page: 0, size: 10 };
+        const localPage = localPagination.page || 0;
+        const localSize = localPagination.size || 10;
         
         if (totalInventories === 0 || totalPages === 0) return null;
 
+        // Calculate display range based on local pagination
+        const startIndex = localPage * localSize + 1;
+        const endIndex = Math.min((localPage + 1) * localSize, totalInventories);
+
         return (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg mt-2">
+            <div className="flex flex-col sm:flex-row items-center  gap-3 px-4 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg mt-2">
                 <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                    Showing {currentPage * pageSize + 1} - {Math.min((currentPage + 1) * pageSize, totalInventories)} of {totalInventories} items
+                    Showing {startIndex} - {endIndex} of {totalInventories} items
                 </span>
                 <div className="flex items-center gap-3">
                     <div className="flex items-center gap-2">
                         <label className="text-sm text-gray-600 dark:text-gray-300">Size:</label>
                         <select
-                            value={invSize}
-                            onChange={handleSubGroupSizeChange}
+                            value={localSize}
+                            onChange={(e) => handleSubGroupSizeChange(id, e)}
                             className="px-2 py-1 border border-gray-300 dark:border-gray-600 rounded focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-slate-800 text-gray-900 dark:text-white text-sm"
                         >
                             <option value={5}>5</option>
@@ -558,18 +566,18 @@ const ViewProductsInventory = () => {
                     </div>
                     <div className="flex gap-1">
                         <button
-                            onClick={() => handleSubGroupPageChange(currentPage - 1)}
-                            disabled={currentPage === 0}
+                            onClick={() => handleSubGroupPageChange(id, localPage - 1)}
+                            disabled={localPage === 0}
                             className="px-3 py-1 text-sm bg-blue-500 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
                         >
                             Previous
                         </button>
                         <span className="px-3 py-1 text-sm bg-gray-200 dark:bg-gray-600 rounded">
-                            {currentPage + 1} / {totalPages}
+                            {localPage + 1} / {totalPages}
                         </span>
                         <button
-                            onClick={() => handleSubGroupPageChange(currentPage + 1)}
-                            disabled={currentPage >= totalPages - 1}
+                            onClick={() => handleSubGroupPageChange(id, localPage + 1)}
+                            disabled={localPage >= totalPages - 1}
                             className="px-3 py-1 text-sm bg-blue-500 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
                         >
                             Next
@@ -579,6 +587,20 @@ const ViewProductsInventory = () => {
             </div>
         );
     };
+
+    // Get paginated inventory items for a subgroup
+    const getPaginatedInventories = useCallback((subGroup) => {
+        const { id, inventories } = subGroup;
+        if (!inventories || inventories.length === 0) return [];
+        
+        const pagination = subGroupPagination[id] || { page: 0, size: 10 };
+        const { page, size } = pagination;
+        
+        const start = page * size;
+        const end = Math.min(start + size, inventories.length);
+        
+        return inventories.slice(start, end);
+    }, [subGroupPagination]);
 
     // OPTIMIZED: Render table rows using server-provided pagination
     const renderTableRows = useMemo(() => {
@@ -634,6 +656,9 @@ const ViewProductsInventory = () => {
                 group.subGroups.forEach((subGroup, subGroupIndex) => {
                     const isSubGroupExpanded = expandedSubGroups[subGroup.id];
                     const inventoryCount = subGroup.inventories?.length || 0;
+                    
+                    // Get paginated inventories for this subgroup
+                    const paginatedInventories = getPaginatedInventories(subGroup);
 
                     // Sub Group Row with server pagination info
                     rows.push(
@@ -667,7 +692,7 @@ const ViewProductsInventory = () => {
                     // If sub group is expanded, show inventory items
                     if (isSubGroupExpanded) {
                         // Only show if there are inventory items
-                        if (subGroup.inventories && subGroup.inventories.length > 0) {
+                        if (paginatedInventories && paginatedInventories.length > 0) {
                             // Add table headers inside the subgroup
                             rows.push(
                                 <tr 
@@ -717,9 +742,10 @@ const ViewProductsInventory = () => {
                                 </tr>
                             );
 
-                            // Add inventory items with correct S.No using server pagination
-                            subGroup.inventories.forEach((item, idx) => {
-                                const actualIndex = subGroup.currentPage * subGroup.pageSize + idx + 1;
+                            // Add paginated inventory items
+                            paginatedInventories.forEach((item, idx) => {
+                                const pagination = subGroupPagination[subGroup.id] || { page: 0, size: 10 };
+                                const actualIndex = pagination.page * pagination.size + idx + 1;
                                 
                                 rows.push(
                                     <tr key={`inventory-${item.id}`} className="bg-white dark:bg-slate-700 hover:bg-gray-50 dark:hover:bg-slate-600">
@@ -827,7 +853,7 @@ const ViewProductsInventory = () => {
         });
 
         return rows;
-    }, [inventoryData, expandedGroups, expandedSubGroups, getGroupInventoryCount, getTotalProductsInGroup, isSearchMode]);
+    }, [inventoryData, expandedGroups, expandedSubGroups, getGroupInventoryCount, getTotalProductsInGroup, isSearchMode, subGroupPagination, getPaginatedInventories]);
 
     // Add CSS for animation delay
     const style = document.createElement('style');

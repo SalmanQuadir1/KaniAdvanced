@@ -816,41 +816,61 @@ const CreateVoucher = () => {
   const [loadingAllProducts, setLoadingAllProducts] = useState(false);
 
   // Function to fetch all products
-  const fetchAllProducts = async () => {
+ const fetchAllProducts = async () => {
     if (loadingAllProducts) return; // Prevent multiple calls
 
     setLoadingAllProducts(true);
     try {
-      // Replace with your actual API endpoint for all products
-      const response = await fetch(`${GETPRODUCTS}`, {
-        // Updated API endpoint
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
+        const response = await fetch(`${GETPRODUCTS}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
-      const data = await response.json();
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-      if (response.ok && Array.isArray(data.content)) {
-        const productOptions = data?.content?.map((product) => ({
-          value: product.id,
-          label: `${product?.productId} -${product.barcode}`,
-          price: product?.retailMrp,
-          hsnCode: product?.hsnCode || {},
-          obj: product,
-          fromOrder: false, // Mark as not from order
-        }));
-        setAllProducts(productOptions);
-      }
+        const data = await response.json();
+        console.log(data, "Raw API Response");
+        console.log("Data type:", typeof data);
+        console.log("Is Array:", Array.isArray(data));
+        console.log("Data length:", data?.length);
+
+        // Check if data is ready and valid
+        if (data && Array.isArray(data) && data.length > 0) {
+            const productOptions = data.map((product) => ({
+                value: product.id,
+                label: `${product?.productId || ''} - ${product?.barcode || ''}`,
+                price: product?.retailMrp || 0,
+                hsnCode: product?.hsnCode || {},
+                obj: product,
+                fromOrder: false,
+            }));
+            
+            // Only set state when data is fully processed
+            setAllProducts(productOptions);
+            console.log("Products set successfully:", productOptions.length);
+        } else if (data && Array.isArray(data) && data.length === 0) {
+            // Handle empty response
+            setAllProducts([]);
+            toast.info('No products found');
+        } else {
+            // Handle invalid response structure
+            console.error('Unexpected data structure:', data);
+            setAllProducts([]);
+            toast.error('Invalid data format received');
+        }
     } catch (error) {
-      console.error('Error fetching all products:', error);
-      toast.error('Failed to load all products');
+        console.error('Error fetching all products:', error);
+        toast.error('Failed to load all products');
+        setAllProducts([]);
     } finally {
-      setLoadingAllProducts(false);
+        setLoadingAllProducts(false);
     }
-  };
+};
 
   // Call this function when component mounts or when needed
   useEffect(() => {
@@ -3132,7 +3152,7 @@ const CreateVoucher = () => {
                                                         )
                                                       : rowProducts
                                                   }
-                                                  placeholder="Select Product"
+                                                  placeholder={loadingAllProducts ? "Loading..." : "Select Product"}
                                                   className="react-select-container w-[220px]"
                                                   classNamePrefix="react-select"
                                                   menuPortalTarget={
@@ -3167,7 +3187,7 @@ const CreateVoucher = () => {
                                                     </div>
                                                   )}
                                                   isClearable
-                                                  isDisabled={loadingProducts}
+                                                  isDisabled={loadingAllProducts}
                                                 />
                                               ) : (
                                                 <div className="text-sm text-gray-400">
