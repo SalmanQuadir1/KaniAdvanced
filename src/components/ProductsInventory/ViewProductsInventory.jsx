@@ -281,13 +281,11 @@ const ViewProductsInventory = () => {
     }, []);
 
     const getTotalProductsInGroup = useCallback((subGroups) => {
-        const uniqueProducts = new Set();
-        subGroups.forEach(subGroup => {
-            subGroup.inventories?.forEach(inv => {
-                if (inv.productId) uniqueProducts.add(inv.productId);
-            });
-        });
-        return uniqueProducts.size;
+        console.log("Calculating total products in group for subGroups:", subGroups);
+       
+       return subGroups.reduce((total, subGroup) => {
+            return total + (subGroup.totalProducts || 0);
+        }, 0);
     }, []);
 
     // API functions for the three modals
