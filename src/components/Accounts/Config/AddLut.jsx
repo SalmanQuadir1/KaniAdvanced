@@ -55,7 +55,9 @@ const AddLut = () => {
     };
 
     // Function to toggle LUT active status
-    const toggleLutActive = async (lutId, currentStatus) => {
+    const toggleLutActive = async (lutId, lut) => {
+        console.log(lut, "4445454");
+
         try {
             const response = await fetch(`${TOGGLE_Lut_URL}/${lutId}`, {
                 method: 'PUT',
@@ -73,7 +75,7 @@ const AddLut = () => {
             const data = await response.json();
 
             if (response.ok) {
-                toast.success(`LUT ${!currentStatus ? 'activated' : 'deactivated'} successfully`);
+                toast.success(`LUT ${lut.isActiveLut ? 'deactivated' : 'activated'} successfully`);
                 getLut(); // Refresh the list
             } else {
                 toast.error(data.errorMessage || 'Failed to update LUT status');
@@ -262,7 +264,7 @@ const AddLut = () => {
                                                                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                                         <button
                                                                             type='button'
-                                                                            onClick={() => toggleLutActive(lut.id, lut.isActive)}
+                                                                            onClick={() => toggleLutActive(lut.id, lut)}
                                                                             disabled={isExpired}
                                                                             className={`p-2 rounded-full transition-all ${lut.isActiveLut
                                                                                     ? ' text-green-600 '
