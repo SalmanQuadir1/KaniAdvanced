@@ -351,7 +351,7 @@ const UpdateClosedOrder = () => {
               ],
               orderCategory: product.orderCategory || '',
               inStockQuantity: product.inStockQuantity || '',
-              clientOrderQuantity: product.clientOrderQuantity || '',
+              clientOrderQuantity: product.clientOrderQuantity || 0,
               quantityToManufacture: product.quantityToManufacture || '',
               units: product.units || '',
               value: product.value || '',
