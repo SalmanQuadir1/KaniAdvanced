@@ -596,10 +596,8 @@ const AddProduct = () => {
                   );
                   const data = await response.json();
 
-                 
-
                   const designgroupOptions =
-                    data && 
+                    data &&
                     data?.colors?.map((color) => ({
                       value: color.id,
                       label: color.colorName,
@@ -614,9 +612,6 @@ const AddProduct = () => {
               getSubGroup();
               getDesignGroup();
             }, [values?.productGroup?.id]);
-
-          
-            
 
             useEffect(() => {
               if (values) {
@@ -638,8 +633,6 @@ const AddProduct = () => {
             ]);
 
             useEffect(() => {
-            
-
               const getDesign = async () => {
                 try {
                   const response = await fetch(
@@ -653,8 +646,6 @@ const AddProduct = () => {
                     },
                   );
                   const data = await response.json();
-
-                
 
                   const formattedOptions = data.map((design) => ({
                     value: design.id,
@@ -1069,7 +1060,7 @@ const AddProduct = () => {
                                                 </div> */}
 
                         <div className="mb-4.5 flex flex-wrap gap-6">
-                          <div className="flex-1 min-w-[300px] mt-[-10px]">
+                          <div className="flex-1 min-w-[360px] mt-[-10px]">
                             <label className="mb-2.5 block text-black dark:text-white">
                               Supplier Code{' '}
                               <span className="text-red-700 text-xl mt-[40px] justify-center items-center">
@@ -1091,7 +1082,7 @@ const AddProduct = () => {
                             </div>
                           </div>
 
-                          <div className="flex-1 min-w-[300px]">
+                          <div className="flex-1 min-w-[360px]">
                             <label className="mb-2.5 block text-black dark:text-white">
                               {' '}
                               Barcode
@@ -1109,7 +1100,7 @@ const AddProduct = () => {
                             />
                           </div>
 
-                          <div className="flex-1 min-w-[300px]">
+                          <div className="flex-1 min-w-[350px]">
                             <label className="mb-4 block text-black dark:text-white">
                               {' '}
                               Alias
@@ -1141,9 +1132,7 @@ const AddProduct = () => {
                         </div>
                       </div>
 
-                      <div className="mb-4.5 flex flex-wrap gap-6"></div>
-
-                      <div className="mb-4.5 flex flex-wrap gap-6"></div>
+                     
 
                       {/* 
                                             <div className="mb-4.5 flex flex-wrap gap-6">
@@ -1261,14 +1250,11 @@ const AddProduct = () => {
                             className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-white dark:border-form-strokedark dark:bg-form-field dark:text-white dark:focus:border-primary"
                           />
                         </div>
-                      </div>
-
-                      <div className="mb-4.5 flex flex-wrap gap-6">
-                        <div className="flex-1 min-w-[300px]">
+                          <div className="flex-1 min-w-[300px] mt-[-12px]">
                           <label className="mb-2.5 block text-black dark:text-white">
                             {' '}
                             Weave{' '}
-                            <span className="text-red-700 text-xl mt-[40px] justify-center items-center">
+                            <span className="text-red-700 text-xl justify-center items-center">
                               {' '}
                               *
                             </span>
@@ -1295,6 +1281,10 @@ const AddProduct = () => {
                             />
                           </div>
                         </div>
+                      </div>
+
+                      <div className="mb-4.5 flex flex-wrap gap-6">
+                      
                         <div className="flex-1 min-w-[300px]">
                           <label className="mb-2.5 block text-black dark:text-white">
                             {' '}
@@ -1344,7 +1334,7 @@ const AddProduct = () => {
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                             />
                                                         </div> */}
-                        <div className="flex-1 min-w-[300px]">
+                        <div className="flex-1 min-w-[300px] mt-[-10px]">
                           <label className="mb-2.5 block text-black dark:text-white">
                             {' '}
                             Units{' '}
@@ -1407,7 +1397,7 @@ const AddProduct = () => {
                                                                 className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                                             />
                                                         </div> */}
-                        <div className="flex-2 min-w-[250px]">
+                        <div className="flex-2 min-w-[250px] mt-2">
                           <label className="mb-2.5 block text-black dark:text-white">
                             {' '}
                             Dyeing Cost{' '}
@@ -1454,7 +1444,7 @@ const AddProduct = () => {
                           <label className="mb-2.5 block text-black dark:text-white">
                             {' '}
                             WS INR
-                             <span className="text-red-700 text-xl mt-[40px] justify-center items-center">
+                            <span className="text-red-700 text-xl mt-[40px] justify-center items-center">
                               {' '}
                               *
                             </span>
