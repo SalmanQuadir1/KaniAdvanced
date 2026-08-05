@@ -15,6 +15,7 @@ import { TbBaselineDensityMedium } from 'react-icons/tb';
 import { PiArrowsMergeFill } from 'react-icons/pi';
 import { FcAcceptDatabase } from 'react-icons/fc';
 import { useNavigate } from 'react-router-dom';
+import useorder from '../../hooks/useOrder';
 
 const ViewStockJournels = () => {
   const location = useSelector(state => state?.nonPersisted?.location);
@@ -36,20 +37,23 @@ const ViewStockJournels = () => {
   const actualImages = "";
   const productIdField = "";
 
-  const {
-    getProductList,
-    productList
+  // const {
+  //   getproductId,
+  //   productId
 
-  } = useProduct({ referenceImages, actualImages, productIdField });
+  // } = useProduct({ referenceImages, actualImages, productIdField });
+
+  const { productId,
+    getprodId,}=useorder()
 
 
   useEffect(() => {
-    getProductList();
+    getprodId();
   }, [])
 
-  console.log(productList, "545454");
+  console.log(productId, "545454");
 
-  const productsOptions = productList.map(product => ({
+  const productsOptions = productId.map(product => ({
     value: product.id,
     label: product.productId,
     productId: product.productId,
@@ -187,7 +191,7 @@ const ViewStockJournels = () => {
               View Stock Transfer
             </h2>
             <p className="inline-flex rounded-full bg-opacity-10 py-1 px-3 mb-2 text-sm font-medium bg-success text-success dark:bg-white dark:text-slate-800">
-              Total SJ: {pagination.totalItems}
+              Total Stock Transfer: {pagination.totalItems}
             </p>
           </div>
           <div>
@@ -216,21 +220,28 @@ const ViewStockJournels = () => {
                             icon: <AiFillProduct />,
                             color: "blue",
                             field: (
-                              <ReactSelect
-                                name="productId"
-                                onChange={(option) =>
-                                  setFieldValue(
-                                    'productId',
-                                    option?.value === 'Select' ? '' : option?.value || '',
-                                  )
-                                }
-                                value={productsOptions.find(
-                                  (option) => option.value === values.productId,
-                                )}
-                                options={productsOptions}
-                                styles={customStyles}
-                                placeholder="Select Product"
-                              />
+                           <ReactSelect
+  name="productId"
+  onChange={(option) =>
+    setFieldValue(
+      'productId',
+      option?.value === 'Select' ? '' : option?.value || '',
+    )
+  }
+  value={productsOptions.find(
+    (option) => option.value === values.productId,
+  )}
+  options={productsOptions}
+  styles={{
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 99999,
+    }),
+    ...customStyles
+  }}
+  menuPortalTarget={document.body} // Renders menu at body level
+  placeholder="Select Product"
+/>
                             )
                           },
 
