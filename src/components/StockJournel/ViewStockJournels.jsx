@@ -79,6 +79,8 @@ const ViewStockJournels = () => {
   const formatStatusOptions = () => {
     return [
       { value: '', label: 'Select Status' },
+      { value: 'REJECTED', label: 'REJECTED' },
+      { value: 'CREATED', label: 'CREATED' },
       { value: 'PARTIALLY_ACCEPTED', label: 'PARTIALLY_ACCEPTED' },
       { value: 'IN_TRANSIT', label: 'IN_TRANSIT' },
       { value: 'FULLY_ACCEPTED', label: 'FULLY_ACCEPTED' },
