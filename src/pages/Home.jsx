@@ -40,6 +40,7 @@ import { GiCottonFlower } from 'react-icons/gi';
 import { GiBandageRoll } from 'react-icons/gi';
 import { GiScrollUnfurled } from 'react-icons/gi';
 import { FaDropbox } from 'react-icons/fa';
+import { FaBook } from 'react-icons/fa6';
 
 const Home = () => {
   const [unitCount, setUnitCount] = useState([]);
@@ -485,14 +486,25 @@ const Home = () => {
   ];
 
   // Accounts mode cards
+  // const accountsModeCards = [
+  //   {
+  //     title: 'Pending for Bill',
+  //     link: '/Recieved/pendingForBill',
+  //     countKey: 'orderBillStatusAllowed',
+  //     icon: <RiProgress8Fill className="w-10 h-10" />,
+  //     levelUp: true,
+  //   },
+  // ];
+
+  
   const accountsModeCards = [
-    // {
-    //   title: 'Pending for Bill',
-    //   link: '/Recieved/pendingForBill',
-    //   countKey: 'orderBillStatusAllowed',
-    //   icon: <RiProgress8Fill className="w-10 h-10" />,
-    //   levelUp: true,
-    // },
+    {
+      title: 'Day Book',
+      link: '/configurator/dayBook',
+      countKey: '',
+      icon: <FaBook className="w-10 h-10" />,
+      levelUp: true,
+    },
   ];
 
   // Get all cards user should see based on roles

@@ -143,7 +143,7 @@ const MonthlyOrders = () => {
                             events={events}
                             startAccessor="start"
                             endAccessor="end"
-                            style={{ height: 500 }}
+                            style={{ height: 1000 }}
                             views={['month', 'agenda']}
                             onNavigate={handleDateChange}
                             onSelectEvent={(event) => window.location.href = event.url}
