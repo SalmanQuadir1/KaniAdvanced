@@ -216,7 +216,7 @@ const Home = () => {
       {
         title: 'Upload Excel',
         link: '/product/addExcelProduct',
-        countKey: 'ordersWithCreated',
+        countKey: '',
         icon: <AiOutlinePartition className="w-10 h-10" />,
         levelUp: true,
       },
@@ -229,7 +229,7 @@ const Home = () => {
       },
       {
         title: 'Customer Report',
-        countKey: 'ordersWithCreatedAccepted',
+        countKey: '',
         icon: <RiProgress1Line className="w-10 h-10" />,
         levelUp: true,
         isDownload: true,
@@ -237,14 +237,14 @@ const Home = () => {
       {
         title: 'Monthly Order Calender',
         link: '/Order/monthlyorders',
-        countKey: 'ordersWithApprovedOrForcedClosure',
+        countKey: '',
         icon: <RiProgress8Fill className="w-10 h-10" />,
         levelUp: true,
       },
       {
         title: 'Product Report',
         link: '/report/product',
-        countKey: 'approvedOrders',
+        countKey: '',
         icon: <GrCompliance className="w-10 h-10" />,
         levelUp: true,
       },
@@ -263,13 +263,13 @@ const Home = () => {
         icon: <RiProgress8Fill className="w-10 h-10" />,
         levelUp: true,
       },
-      {
-        title: 'Pending for Bill',
-        link: '/Recieved/pendingForBill',
-        countKey: 'orderBillStatusAllowed',
-        icon: <RiProgress8Fill className="w-10 h-10" />,
-        levelUp: true,
-      },
+      // {
+      //   title: 'Pending for Bill',
+      //   link: '/Recieved/pendingForBill',
+      //   countKey: 'orderBillStatusAllowed',
+      //   icon: <RiProgress8Fill className="w-10 h-10" />,
+      //   levelUp: true,
+      // },
     ],
     ROLE_EXECUTOR: [
       {
@@ -355,13 +355,13 @@ const Home = () => {
       },
     ],
     ROLE_FINANCE: [
-      {
-        title: 'Pending for Bill',
-        link: '/Recieved/pendingForBill',
-        countKey: 'orderBillStatusAllowed',
-        icon: <RiProgress8Fill className="w-10 h-10" />,
-        levelUp: true,
-      },
+      // {
+      //   title: 'Pending for Bill',
+      //   link: '/Recieved/pendingForBill',
+      //   countKey: 'orderBillStatusAllowed',
+      //   icon: <RiProgress8Fill className="w-10 h-10" />,
+      //   levelUp: true,
+      // },
     ],
     ROLE_ADMIN_SXR: [
       {
@@ -486,13 +486,13 @@ const Home = () => {
 
   // Accounts mode cards
   const accountsModeCards = [
-    {
-      title: 'Pending for Bill',
-      link: '/Recieved/pendingForBill',
-      countKey: 'orderBillStatusAllowed',
-      icon: <RiProgress8Fill className="w-10 h-10" />,
-      levelUp: true,
-    },
+    // {
+    //   title: 'Pending for Bill',
+    //   link: '/Recieved/pendingForBill',
+    //   countKey: 'orderBillStatusAllowed',
+    //   icon: <RiProgress8Fill className="w-10 h-10" />,
+    //   levelUp: true,
+    // },
   ];
 
   // Get all cards user should see based on roles
