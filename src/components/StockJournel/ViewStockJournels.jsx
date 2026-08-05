@@ -274,7 +274,7 @@ const ViewStockJournels = () => {
                                   styles={{
     menu: (provided) => ({
       ...provided,
-      zIndex: 250000000000,
+      zIndex: 999,
     }),
     ...customStyles
   }}
