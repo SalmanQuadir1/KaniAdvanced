@@ -424,7 +424,7 @@ const ViewOrderPending = () => {
                       />
                     </div>
 
-                    <div className="flex-1 min-w-[300px]">
+                    <div className="flex-1 min-w-[300px] ">
                       <label className="mb-2.5 block text-black dark:text-white">
                         Supplier
                         <span className="text-red-700 text-xl mt-[40px] justify-center items-center"> *</span>

@@ -19,9 +19,34 @@ const ProfitLossReports = () => {
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const { token } = currentUser;
 
+    // Function to get default dates (March of current year to March of next year)
+    const getDefaultDates = () => {
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth(); // 0-based (0 = January)
+        
+        let startYear, endYear;
+        
+        // If current month is before March (0,1,2 = Jan, Feb, Mar)
+        if (currentMonth < 2) { // Before March
+            startYear = currentYear - 1;
+            endYear = currentYear;
+        } else {
+            startYear = currentYear;
+            endYear = currentYear + 1;
+        }
+        
+        const fromDate = `${startYear}-03-01`; // March 1st of start year
+        const toDate = `${endYear}-03-31`; // March 31st of end year
+        
+        return { fromDate, toDate };
+    };
+
+    const defaultDates = getDefaultDates();
+
     const [currentFilters, setCurrentFilters] = useState({
-        fromDate: '',
-        toDate: ''
+        fromDate: defaultDates.fromDate,
+        toDate: defaultDates.toDate
     });
 
     // Function to fetch report data
@@ -56,6 +81,41 @@ const ProfitLossReports = () => {
         }
     };
 
+    // Auto-fetch report on component mount with default dates
+    useEffect(() => {
+        // Fetch report automatically when component mounts
+        const autoFetch = async () => {
+            setLoading(true);
+            try {
+                const response = await fetch(`${DOWNLOADAC_PROFITLOSS_REPORT}/preview`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch report data");
+                }
+
+                const data = await response.json();
+                console.log(data, "API Response");
+
+                setReportData(data);
+                setIsDataFetched(true);
+            } catch (error) {
+                console.error(error);
+                toast.error("An error occurred while fetching the report");
+                setReportData(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        autoFetch();
+    }, []);
+
     // Handle View button click
     const handleViewReport = async (values) => {
         setCurrentFilters({
@@ -66,45 +126,12 @@ const ProfitLossReports = () => {
     };
 
     // Handle CSV download
-    // const handleGenerateCsv = async (values) => {
-    //     try {
-    //         const response = await fetch(`${DOWNLOADAC_PROFITLOSS_REPORT}/download`, {
-    //             method: "GET",
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 Authorization: `Bearer ${token}`,
-    //             },
-    //         });
-
-    //         if (!response.ok) {
-    //             const errorText = await response.text();
-    //             throw new Error(errorText || "Failed to download report");
-    //         }
-
-    //         const blob = await response.blob();
-    //         const url = window.URL.createObjectURL(blob);
-    //         const link = document.createElement("a");
-    //         link.href = url;
-    //         link.setAttribute("download", `profit_loss_report_${new Date().toISOString().split('T')[0]}.xlsx`);
-    //         document.body.appendChild(link);
-    //         link.click();
-    //         document.body.removeChild(link);
-    //         window.URL.revokeObjectURL(url);
-
-    //         toast.success("Report downloaded successfully");
-    //     } catch (error) {
-    //         console.error(error);
-    //         toast.error("An error occurred while downloading the report");
-    //     }
-    // };
-
     const handleGenerateCsv = async (values) => {
         if (!reportData) {
             toast.warning("Please view the report first before downloading");
             return;
         }
         await generateExcelReport();
-
     };
 
     // Render Opening Stock Table
@@ -354,8 +381,6 @@ const ProfitLossReports = () => {
     };
 
     // Render Closing Stock Table
-
-
     const renderClosingStockTable = () => {
         if (!reportData?.closingStock || reportData.closingStock.ledgers.length === 0) return null;
 
@@ -498,18 +523,6 @@ const ProfitLossReports = () => {
             </div>
         );
     };
-
-
-
-    ///report fromfrontend
-
-
-
-    // Add this function to your component
-
-
-    // Add this function to your component
-
 
     const generateExcelReport = async () => {
         if (!reportData) {
@@ -753,7 +766,6 @@ const ProfitLossReports = () => {
 
             rightSectionRows.push({ text: 'GROSS LOSS', amount: grossLoss, isBold: true, isTotal: true });
 
-
             // Indirect Incomes Section (After Gross Loss on RIGHT SIDE)
             const indirectIncomesLedgers = reportData.indirectIncomes?.ledgers || [];
             const indirectIncomesTotal = getSafeAmount(reportData.indirectIncomes?.totalAmount);
@@ -788,8 +800,6 @@ const ProfitLossReports = () => {
             worksheet.addRow([]);
 
             // ============ TOTALS ============
-
-
             // Add empty row for spacing
             worksheet.addRow([]);
 
@@ -800,13 +810,9 @@ const ProfitLossReports = () => {
             if (netProfit) {
                 worksheet.addRow([]);
                 addStyledRow('NET PROFIT', netProfit, 'NET LOSS', netLoss, true, true);
-
-
-
             } else {
                 addStyledRow('NET PROFIT / LOSS', 0, '', '', true, true);
             }
-
 
             addStyledRow('TOTAL (DEBIT)', getSafeAmount(reportData.leftTotal), 'TOTAL (CREDIT)', getSafeAmount(reportData.rightTotal), true, true);
 
@@ -823,20 +829,6 @@ const ProfitLossReports = () => {
             toast.error("Error generating Excel report");
         }
     };
-
-    // Update your download handler
-    // const handleGenerateExcel = async (values) => {
-    //     if (!reportData) {
-    //         toast.warning("Please view the report first before downloading");
-    //         return;
-    //     }
-    //     generateExcelReport();
-    // };
-
-    // Ultra bold styling for professional look
-
-
-
 
     // Render loading state
     if (loading) {
@@ -871,8 +863,8 @@ const ProfitLossReports = () => {
                     <div className='bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8'>
                         <Formik
                             initialValues={{
-                                fromDate: '',
-                                toDate: '',
+                                fromDate: defaultDates.fromDate,
+                                toDate: defaultDates.toDate,
                             }}
                         >
                             {({ values }) => (
@@ -937,10 +929,6 @@ const ProfitLossReports = () => {
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                                 {/* Left Column - Debit Side */}
                                 <div className="space-y-6">
-                                    {/* <div className="flex items-center mb-4">
-                                        <div className="w-1 h-8 bg-red-500 rounded-full mr-3"></div>
-                                        <h3 className="text-xl font-bold text-gray-800 dark:text-white">Debit Side (Expenses & Losses)</h3>
-                                    </div> */}
                                     {renderOpeningStockTable()}
                                     {renderPurchaseTable()}
                                     {renderDirectExpensesTable()}
@@ -949,10 +937,6 @@ const ProfitLossReports = () => {
 
                                 {/* Right Column - Credit Side */}
                                 <div className="space-y-6">
-                                    {/* <div className="flex items-center mb-4">
-                                        <div className="w-1 h-8 bg-green-500 rounded-full mr-3"></div>
-                                        <h3 className="text-xl font-bold text-gray-800 dark:text-white">Credit Side (Incomes & Profits)</h3>
-                                    </div> */}
                                     {renderSalesTable()}
                                     {renderDirectIncomesTable()}
                                     {renderClosingStockTable()}
