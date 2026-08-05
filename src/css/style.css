@@ -1135,7 +1135,7 @@ table start */
   background: linear-gradient(135deg, #534AB7, #AFA9EC);
   opacity: 0;
   transition: opacity .2s ease;
-  z-index: 0;
+  z-index: 999;
 }
 .rounded-wrap:focus-within::before { opacity: 1; }
 
@@ -1143,15 +1143,15 @@ table start */
   border-radius: 0.75rem;
   border: 1.5px solid #e5e7eb;
   background: #ffffff;
-  padding: 0.875rem 1.25rem;
+  padding: 1rem 1.5rem;
   color: #1f2937;
   outline: none;
-  width: 100%;
+
   /* font-size: 0.9375rem; */
   line-height: 1.5;
   transition: all 0.2s ease;
   position: relative;
-  z-index: 1;
+  z-index: 0;
 }
 .rounded::placeholder { color: #9ca3af; }
 .rounded:hover:not(:focus) { border-color: #d1d5db; }
