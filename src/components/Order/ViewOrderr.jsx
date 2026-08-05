@@ -528,7 +528,7 @@ const ViewOrderr = () => {
                     <div className="flex justify-center mt-6">
                       <button
                         type="button"
-                        onClick={() => navigate('/Order/monthlyorders')}
+                        onClick={() => navigate(-1)}
                         className="w-1/3 px-6 py-3 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none transition-colors"
                       >
                         Back to Orders

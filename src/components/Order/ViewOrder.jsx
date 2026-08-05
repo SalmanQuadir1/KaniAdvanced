@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customStyles as createCustomStyles } from '../../Constants/utils';
+import { MdViewList } from 'react-icons/md';
 
 const ViewOrder = () => {
     const { handleUpdate, getorderNumber, orderNo, getSupplier, supplier, getCustomer, customer } = useorder();
@@ -224,8 +225,17 @@ const ViewOrder = () => {
                         </p>
                      </td>
                 ) : (
-                    <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <p className="text-gray-400 whitespace-no-wrap text-center">-</p>
+                       <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                        <p className="flex text-gray-900 whitespace-no-wrap">
+                            <MdViewList
+                                size={17}
+                                className='text-teal-500 hover:text-teal-700 mx-2 cursor-pointer'
+                                onClick={() => navigate(`/order/viewOrder/${item?.id}`)}
+                                title='View Order'
+                            />
+                            <span className="text-gray-300 mx-1">|</span>
+                           
+                        </p>
                      </td>
                 )}
              </tr>

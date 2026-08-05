@@ -269,8 +269,15 @@ const ViewStockJournels = () => {
                               <Field
                                 name="journalStatus"
                                 component={ReactSelect}
+                                menuPortalTarget={document.body}
                                 options={statusSel}
-                                styles={customStyles}
+                                  styles={{
+    menu: (provided) => ({
+      ...provided,
+      zIndex: 250000000000,
+    }),
+    ...customStyles
+  }}
                                 placeholder="Select Status"
                                 value={statusSel.find(
                                   (option) => option.value === values.journalStatus,
@@ -278,6 +285,7 @@ const ViewStockJournels = () => {
                                 onChange={(option) =>
                                   setFieldValue('journalStatus', option?.value || '')
                                 }
+                                isClearable={true}
                               />
                             )
                           },
