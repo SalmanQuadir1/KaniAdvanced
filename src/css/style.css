@@ -1145,10 +1145,14 @@ table start */
   background: #ffffff;
   padding: 1rem 1.5rem;
   color: #1f2937;
+  text-decoration: none;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 0.875rem;
   outline: none;
 
   /* font-size: 0.9375rem; */
-  line-height: 1.5;
+  line-height: 1.25;
   transition: all 0.2s ease;
   position: relative;
   z-index: 0;

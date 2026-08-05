@@ -69,7 +69,7 @@ const MonthlyOrders = () => {
                         title: order.customer ? `${order.orderNo} ${order.customer.name}` : order.orderNo,
                         start: new Date(order.orderDate),
                         end: new Date(order.orderDate),
-                        url: `/Order/updateorder/${order.id}`,
+                        url: `/order/viewOrder/${order.id}`,
                         description: order.status,
                         color: color,  // Dynamically set color based on status
                     };

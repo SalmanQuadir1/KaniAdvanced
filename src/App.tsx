@@ -311,6 +311,7 @@ import ViewOrderPartiallyClosed from './components/Order/ViewOrderPartiallyClose
 
 
 import UpdateOrder from './components/Order/UpdateOrder.jsx';
+import ViewOrderr from './components/Order/ViewOrderr.jsx';
 import UpdateOrderShippingDate from './components/Order/UpdateOrderShippingDate.jsx';
 
 import AddCustomer from './components/Customer/AddCustomer';
@@ -1679,6 +1680,15 @@ function App() {
               <>
                 <PageTitle title="View Order" />
                 <UpdateOrder />
+              </>
+            }
+          />
+            <Route
+            path="/order/viewOrder/:id"
+            element={
+              <>
+                <PageTitle title="View Order" />
+                <ViewOrderr />
               </>
             }
           />
