@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 
 const ViewStockJournels = () => {
   const location = useSelector(state => state?.nonPersisted?.location);
-  const description = useSelector(state => state?.nonPersisted?.material);
+ 
   const theme = useSelector(state => state?.persisted?.theme);
   const [locationSel, setLocationSel] = useState([]);
   const [descriptionValue, setDescriptionValue] = useState(null);
@@ -60,13 +60,13 @@ const ViewStockJournels = () => {
 
   useEffect(() => {
     setLocationSel(formatOptions(location.data, 'address', 'id', 'locationObject', 'Select Location'));
-    setDescriptionSel(formatOptions(description.data, 'description', 'id', 'materialObject'));
+   
     setStatusSel(formatStatusOptions());
-  }, [location, description]);
+  }, [location, ]);
 
   const formatOptions = (data, labelKey, valueKey, objectKey, placeholder) => {
     return [{ value: '', label: "Select" }]
-      .concat(data ? data.map(item => ({
+      .concat(data ? data?.map(item => ({
         value: item[valueKey],
         label: item[labelKey],
         [objectKey]: item
