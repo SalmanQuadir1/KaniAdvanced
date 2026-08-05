@@ -243,6 +243,7 @@ const ViewStockJournels = () => {
   }}
   menuPortalTarget={document.body} // Renders menu at body level
   placeholder="Select Product"
+  isClearable={true}
 />
                             )
                           },
