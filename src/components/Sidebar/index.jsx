@@ -525,7 +525,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                                 (isActive && '!text-white')
                               }
                             >
-                              Vouchers
+                              Add New Voucher
                             </NavLink>
                           </li>
 

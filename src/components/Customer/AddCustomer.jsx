@@ -119,7 +119,7 @@ const AddCustomer = () => {
       gstin_vatno: '',
       iecNumber: '',
       customerId: '', // Assuming customerId is same as contactNumber
-      clientCategory: '',
+      clientcategory: '',
       referalId: '',
       customerOrigin: '',
 
@@ -204,7 +204,7 @@ const AddCustomer = () => {
     ) || null;
   };
 
-    const clientCategoryOptions = [
+    const clientcategoryOptions = [
     { value: 'PREMIUM', label: 'Premium' },
     { value: 'STANDARD', label: 'Standard' },
     { value: 'BASIC', label: 'Basic' },
@@ -311,14 +311,14 @@ const AddCustomer = () => {
                           Client Category
                         </label>
                         <ReactSelect
-                          name="clientCategory"
-                          value={clientCategoryOptions.find(
-                            option => option.value === formik.values.clientCategory
+                          name="clientcategory"
+                          value={clientcategoryOptions.find(
+                            option => option.value === formik.values.clientcategory
                           )}
                           onChange={(option) =>
-                            formik.setFieldValue('clientCategory', option?.value || '')
+                            formik.setFieldValue('clientcategory', option?.value || '')
                           }
-                          options={clientCategoryOptions}
+                          options={clientcategoryOptions}
                           onBlur={formik.handleBlur}
                           styles={customStyles}
                           className="bg-white dark:bg-form-input"
