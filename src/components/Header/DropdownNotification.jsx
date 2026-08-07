@@ -244,7 +244,7 @@ const DropdownNotification = () => {
             {lateDays && (
             <div
               className="
-              ml-[60px]
+              pl-[30px]
                   flex
       items-center
       gap-1

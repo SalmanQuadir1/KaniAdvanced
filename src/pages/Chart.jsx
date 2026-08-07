@@ -13,7 +13,7 @@ import { AiOutlinePartition, AiOutlineClose } from "react-icons/ai";
 import { RiProgress1Line, RiProgress8Fill, RiUserReceived2Fill, RiAlignItemBottomFill } from "react-icons/ri";
 import { FcApproval, FcCancel } from "react-icons/fc";
 import { GrCompliance, GrUpdate } from "react-icons/gr";
-import { MdRepartition, MdOutlinePendingActions, MdOutlinePending, MdRecommend, MdEditSquare, MdReport } from "react-icons/md";
+import { MdRepartition, MdOutlinePendingActions, MdOutlinePending, MdRecommend, MdEditSquare, MdReport, MdTimer } from "react-icons/md";
 import { PiGearFineFill } from "react-icons/pi";
 import { CiCalendarDate } from "react-icons/ci";
 import { VscDiffModified } from "react-icons/vsc";
@@ -187,7 +187,8 @@ const Chart = () => {
       { title: "Cancelled Orders", link: "/order/Cancelled", countKey: "ordersCancelled", icon: <FcCancel className="w-10 h-10" />, levelUp: true },
       { title: "Edit Received Quantity", link: "/order/recievedQuantity", countKey: "ordersWithPendingProducts", icon: <MdEditSquare className="w-10 h-10" />, levelUp: true },
       { title: "Update Shipping Date", link: "/order/updateShippingDate", countKey: "ordersWithShippingDate", icon: <GrUpdate className="w-10 h-10" />, levelUp: true },
-      { title: "Monthly Orders", link: "/Order/monthlyorders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true }
+      { title: "Monthly Orders", link: "/Order/monthlyorders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
+      { title: "Delayed Orders", link: "/Order/monthlyorders", icon: <MdTimer className="w-10 h-10" />, levelDown: true }
     ],
     ROLE_QUALITYCONTROL: [
       // { title: "Products", link: "/product/viewProducts", countKey: "products", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },{ title: "Approved By Production Orders", link: "/orderlist/Executed", countKey: "ordersWithOnlyAccepted", icon: <FcApproval className="w-10 h-10" />, levelUp: true },
