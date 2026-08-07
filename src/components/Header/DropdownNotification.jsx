@@ -156,7 +156,7 @@ const supplierName = supplierMatch
                
     "
   >
-    <span
+    {/* <span
       className="
         text-[9px]
         text-gray-400
@@ -175,7 +175,7 @@ const supplierName = supplierMatch
       "
     >
       Supplier:
-    </span>
+    </span> */}
 
             <span
   className="
