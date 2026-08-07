@@ -67,6 +67,7 @@ import UpdateLedger from './components/Ledger/UpdateLedger.jsx';
 import UpdateLedgerr from './components/Ledger/UpdateLedgerr.jsx';
 import Material from './components/Material/Material.jsx';
 import AddProduct from './components/Products/AddProduct.jsx';
+import ViewNotifications from './components/Notification/ViewNotifications.jsx';
 import ViewProduct from './components/Products/ViewProduct.jsx';
 
 import ExcelUploadProduct from './components/Products/ExcelUploadProduct.jsx';
@@ -1234,6 +1235,16 @@ function App() {
               <>
                 <PageTitle title="Update Expected Date " />
                 <ViewOrderShippingDate />
+              </>
+            }
+          />
+
+          <Route
+            path="/delayedOrders"
+            element={
+              <>
+                <PageTitle title="Delayed Orders" />
+                <ViewNotifications />
               </>
             }
           />

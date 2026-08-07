@@ -147,6 +147,8 @@ export const NOTIF_COUNT = `${BASE_URL}/api/notifications/unread-count`;
 export const NOTIF_ = `${BASE_URL}/api/notifications/unread`;
 export const NOTIF = `${BASE_URL}/api/notifications`;
 
+export const DELAYPRODUCT = `${BASE_URL}/order/late-products`;
+
 
 //Currency
 export const ADD_CURRENCY_URL = `${BASE_URL}/currency`;
