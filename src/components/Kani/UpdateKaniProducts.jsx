@@ -138,6 +138,7 @@ const UpdateKaniProducts = () => {
         euroPrice: values.euroPrice || "",
         gbpPrice: values.gbpPrice || "",
         rmbPrice: values.rmbPrice || "",
+         retailMrp: values.retailMrp || 0,
         productStatus: values.productStatus || "",
         gstDetails: values.gstDetails || "",
         hsnCodes: values.hsnCodes || "",
