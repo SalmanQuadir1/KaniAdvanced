@@ -71,13 +71,13 @@ const DropdownNotification = () => {
       ? productMatch[1]
       : '';
 
-    const supplierMatch = message.match(
-      /Supplier:\s*([^\s(]+)/
-    );
+   const supplierMatch = message.match(
+  /Supplier:\s*(.*?)(?=\s*\(|$)/
+);
 
-    const supplierName = supplierMatch
-      ? supplierMatch[1]
-      : '';
+const supplierName = supplierMatch
+  ? supplierMatch[1].trim()
+  : '';
 
     const daysMatch = message.match(
       /is\s+(\d+)\s+day\(s\)\s+late/
@@ -153,7 +153,7 @@ const DropdownNotification = () => {
                 font-semibold
                 text-gray-700
                 dark:text-gray-200
-                truncate
+               
     "
   >
     <span
@@ -177,17 +177,19 @@ const DropdownNotification = () => {
       Supplier:
     </span>
 
-              <span
-                className="
-                  font-xl
-                  text-gray-700
-                  dark:text-gray-200
-                  truncate
-                  max-w-[90px]
-                "
-              >
-                {supplierName}
-              </span>
+            <span
+  className="
+    text-[11px]
+    font-bold
+    text-blue-700
+    dark:text-blue-300
+    truncate
+    max-w-[170px]
+  "
+  title={supplierName}
+>
+  {supplierName}
+</span>
             </div>
           )}
 
@@ -244,7 +246,7 @@ const DropdownNotification = () => {
             {lateDays && (
             <div
               className="
-              pl-[30px]
+            
                   flex
       items-center
       gap-1
