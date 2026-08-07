@@ -111,6 +111,7 @@ const Header = (props) => {
         </div>
 
         <div className="flex items-center gap-1 2xsm:gap-5">
+          
           <ul className="flex items-center gap-1 2xsm:gap-3">
             <DarkModeSwitcher />
           </ul>
@@ -165,7 +166,10 @@ const Header = (props) => {
               </div>
             )}
           </div>
+
+       
           <ul>
+            <DropdownNotification />
             {/* <FaKaggle
   className="cursor-pointer p-2 bg-slate-500 text-white rounded-full"
   size={31}

@@ -142,6 +142,12 @@ export const VIEW_ALL_PRODUCT_SUBGROUP_URL = `${BASE_URL}/productgroup/viewAll`;
 export const DELETE_PRODUCT_SUBGROUP_URL = `${BASE_URL}/productgroup/`;
 export const DELETE_PRODUCT_SUBGROUPP_URL = `${BASE_URL}/subGroup/`;
 
+//notification
+export const NOTIF_COUNT = `${BASE_URL}/api/notifications/unread-count`;
+export const NOTIF_ = `${BASE_URL}/api/notifications/unread`;
+export const NOTIF = `${BASE_URL}/api/notifications`;
+
+
 //Currency
 export const ADD_CURRENCY_URL = `${BASE_URL}/currency`;
 export const GET_CURRENCY_URL = `${BASE_URL}/currency`;
