@@ -373,6 +373,7 @@ export const ADD_ORDER_URL = `${BASE_URL}/order/add`;
 export const VIEW_ORDERNO = `${BASE_URL}/order/viewOrderNo`;
 
 export const GET_ORDERBYID_URL = `${BASE_URL}/order/get`;
+export const GET_ORDERBYIDDD_URL = `${BASE_URL}/order/getOrderBy`;
 export const GET_ORDERBYIDD_URL = `${BASE_URL}/order/orderReponse`;
 
 export const UPDATE_ORDER_URL = `${BASE_URL}/order/update`;

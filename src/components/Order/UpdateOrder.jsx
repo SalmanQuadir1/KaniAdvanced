@@ -11,7 +11,7 @@ import * as Yup from 'yup';
 import useorder from '../../hooks/useOrder';
 import ReactDatePicker from "react-datepicker";
 import useProduct from '../../hooks/useProduct';
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, GET_INVENTORYBalance } from '../../Constants/utils';
+import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, GET_INVENTORYBalance, GET_ORDERBYIDD_URL, GET_ORDERBYIDDD_URL } from '../../Constants/utils';
 import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
@@ -615,7 +615,7 @@ const {
 
   const getOrderById = async () => {
   try {
-    const response = await fetch(`${GET_ORDERBYID_URL}/${id}`, {
+    const response = await fetch(`${GET_ORDERBYIDDD_URL}/${id}`, {
       method: 'GET',
       headers: {
         Authorization: `Bearer ${token}`,
@@ -627,6 +627,7 @@ const {
     }
 
     const data = await response.json();
+    
     
     // Fetch source product names for products that have sourceProductId
     const updatedOrderProducts = await Promise.all(
@@ -842,7 +843,7 @@ const {
         initialValues={{
   orderNo: order?.orderNo || '',
   orderType: order?.orderType || '',
-  locationId: order?.location?.id || '',
+  locationId: order?.locationId || '',
   customer: order?.customer || null,
   purchaseOrderNo: order?.purchaseOrderNo || '',
   poDate: order?.poDate || '',
@@ -858,8 +859,8 @@ const {
   orderProducts: [
     ...(order?.orderProducts?.map(product => ({
       products: {
-        id: product.products.id,
-        productId: product.products.productId,
+        id: product.productId,
+        productId: product.productIdName,
         // ❌ REMOVE sourceProductId from here - it doesn't belong inside products
       },
       // ✅ ADD sourceProductId at root level (as shown in your API response)
