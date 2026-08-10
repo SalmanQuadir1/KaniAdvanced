@@ -114,20 +114,12 @@ const ViewOrderr = () => {
 
   // Status badge
   const StatusBadge = ({ status }) => {
-    const statusMap = {
-      'pending': 'bg-yellow-100 text-yellow-800',
-      'processing': 'bg-blue-100 text-blue-800',
-      'shipped': 'bg-purple-100 text-purple-800',
-      'delivered': 'bg-green-100 text-green-800',
-      'cancelled': 'bg-red-100 text-red-800'
-    };
-    const colorClass = statusMap[status?.toLowerCase()] || 'bg-gray-100 text-gray-800';
-    return (
-      <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${colorClass}`}>
-        {status || 'N/A'}
-      </span>
-    );
-  };
+  return (
+    <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-transparent text-gray-300 border border-gray-500/50">
+      {status || 'Unknown'}
+    </span>
+  );
+};
 
   // Loading state
   if (isLoading) {
@@ -165,7 +157,7 @@ const ViewOrderr = () => {
         </div>
 
         {/* Order Header Card */}
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-xl p-6 mb-8">
+<div className="bg-[#1f2937] rounded-2xl shadow-xl p-6 mb-8">
           <div className="flex flex-wrap items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="bg-white/20 p-3 rounded-xl">
@@ -231,9 +223,9 @@ const ViewOrderr = () => {
                 <FaTruck className="w-5 h-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Expected Date</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Shipping Date</p>
                 <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                  {formatDate(order?.expectingDate)}
+                  {formatDate(order?.shippingDate)}
                 </p>
               </div>
             </div>
