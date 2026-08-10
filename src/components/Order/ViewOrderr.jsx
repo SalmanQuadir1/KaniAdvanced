@@ -1,15 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';
-import { Formik, Form, Field } from 'formik';
-import { useNavigate } from "react-router-dom";
-import ReactSelect from 'react-select';
-import 'flatpickr/dist/themes/material_blue.css';
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from 'react-redux';
-import { GET_ORDERBYID_URL } from '../../Constants/utils';
+import { GET_ORDERBYIDDD_URL } from '../../Constants/utils';
 import useorder from '../../hooks/useOrder';
 import { toast } from 'react-toastify';
-import { useParams } from 'react-router-dom';
+import { 
+  FaArrowLeft, 
+  FaBox, 
+  FaCalendarAlt, 
+  FaUser, 
+  FaMapMarkerAlt, 
+  FaTag, 
+  FaFileAlt,
+  FaTruck,
+  FaShoppingBag,
+  FaCreditCard,
+  FaCube,
+  FaClock,
+  FaInfoCircle,
+  FaLayerGroup,
+  FaHashtag,
+  FaUsers,
+  FaSpinner
+} from 'react-icons/fa';
 
 const ViewOrderr = () => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
@@ -19,125 +34,21 @@ const ViewOrderr = () => {
 
   const [order, setOrder] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [orderTypeOptions, setOrderTypeOptions] = useState([]);
-  const [customerOptions, setCustomerOptions] = useState([]);
-  const [SelectedLocation, setSelectedLocation] = useState([]);
 
   const { getLocation, Location, getorderType, orderTypee, getCustomer, customer } = useorder();
 
-  // Custom styles for React Select
-  const customStyles = {
-    control: (provided, state) => ({
-      ...provided,
-      minHeight: '50px',
-      fontSize: '16px',
-      backgroundColor: '#f3f4f6',
-      borderColor: '#d1d5db',
-      cursor: 'default',
-      '&:hover': {
-        borderColor: '#d1d5db',
-      },
-    }),
-    valueContainer: (provided) => ({
-      ...provided,
-      padding: '10px 14px',
-    }),
-    input: (provided) => ({
-      ...provided,
-      fontSize: '16px',
-    }),
-    singleValue: (provided) => ({
-      ...provided,
-      fontSize: '16px',
-    }),
-    option: (provided, state) => ({
-      ...provided,
-      cursor: 'default',
-    }),
-    dropdownIndicator: (provided) => ({
-      ...provided,
-      display: 'none', // Hide dropdown indicator
-    }),
-    indicatorSeparator: (provided) => ({
-      ...provided,
-      display: 'none', // Hide separator
-    }),
-    menu: (provided) => ({
-      ...provided,
-      display: 'none', // Hide menu - no dropdown
-    }),
-  };
-
-  // Fetch locations
+  // Fetch dropdown data
   useEffect(() => {
     getLocation();
     getorderType();
     getCustomer();
   }, []);
 
-  // Format location options
-  useEffect(() => {
-    if (Location && Location.length > 0) {
-      const formattedOptions = Location.map(location => ({
-        value: location?.id,
-        label: location.address,
-        LocationObject: location,
-        LocationId: { id: location.id },
-      }));
-      setSelectedLocation(formattedOptions);
-    }
-  }, [Location]);
-
-  // Format order type options
-  useEffect(() => {
-    if (orderTypee && orderTypee.length > 0) {
-      const formattedOptions = orderTypee.map(order => ({
-        value: order.id,
-        label: order?.orderTypeName,
-        orderTypeObject: order,
-        orderTypeId: { id: order.id }
-      }));
-      setOrderTypeOptions(formattedOptions);
-    }
-  }, [orderTypee]);
-
-  // Format customer options
-  useEffect(() => {
-    if (customer && Array.isArray(customer) && customer.length > 0) {
-      const formatted = customer.map(c => ({
-        value: c.id,
-        label: c.customerName,
-        data: c
-      }));
-      setCustomerOptions(formatted);
-    }
-  }, [customer]);
-
-  // Sales channel options (read-only display)
-  const salesChannelOptions = [
-    { value: 'WS-Domestic', label: 'WS-Domestic' },
-    { value: 'Websale', label: 'Websale' },
-    { value: 'Social Media', label: 'Social Media' },
-    { value: 'Shop-in-Shop', label: 'Shop-in-Shop' },
-    { value: 'WS-International', label: 'WS-International' },
-    { value: 'Event-International', label: 'Event-International' },
-    { value: 'Event-Domestic', label: 'Event-Domestic' },
-    { value: 'Retail-Delhi', label: 'Retail-Delhi' },
-    { value: 'Retail-SXR', label: 'Retail-SXR' },
-  ];
-
-  // Tag options (read-only display)
-  const productgrp = [
-    { value: 'KLC', label: 'KLC' },
-    { value: 'CLIENT', label: 'CLIENT' },
-    { value: 'NO T&L', label: 'NO T&L' },
-  ];
-
-  // Fetch order by ID
+  // Get order by ID
   const getOrderById = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`${GET_ORDERBYID_URL}/${id}`, {
+      const response = await fetch(`${GET_ORDERBYIDDD_URL}/${id}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -164,20 +75,57 @@ const ViewOrderr = () => {
     }
   }, [id]);
 
-  // Helper function to get supplier name
-  const getSupplierName = (supplierId, productSuppliers) => {
-    if (!productSuppliers || !productSuppliers.length) return 'N/A';
-    const found = productSuppliers.find(s => s.supplier?.id === supplierId);
-    return found?.supplier?.name || 'N/A';
+  // Helper function to get label
+  const getLabel = (value, options) => {
+    if (!value) return 'Not Selected';
+    const found = options?.find(opt => opt.value === value);
+    return found?.label || value;
   };
 
-  // Read-only select component
-  const ReadOnlySelect = ({ value, options, placeholder }) => {
-    const selectedOption = options?.find(opt => opt.value === value) || options?.find(opt => opt.value === value?.id);
+  // Get order type name
+  const getOrderTypeName = () => {
+    const found = orderTypee?.find(ot => ot.id === order?.orderType?.id);
+    return found?.orderTypeName || 'N/A';
+  };
+
+  // Get location name
+  const getLocationName = () => {
+    const found = Location?.find(loc => loc.id === order?.locationId);
+    return found?.address || 'N/A';
+  };
+
+  // Get customer name
+  console.log(order,"lk");
+  
+  const getCustomerName = () => {
+    const found = customer?.find(c => c.id === order?.customerId);
+    return found?.customerName || 'N/A';
+  };
+
+  // Format date
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+  };
+
+  // Status badge
+  const StatusBadge = ({ status }) => {
+    const statusMap = {
+      'pending': 'bg-yellow-100 text-yellow-800',
+      'processing': 'bg-blue-100 text-blue-800',
+      'shipped': 'bg-purple-100 text-purple-800',
+      'delivered': 'bg-green-100 text-green-800',
+      'cancelled': 'bg-red-100 text-red-800'
+    };
+    const colorClass = statusMap[status?.toLowerCase()] || 'bg-gray-100 text-gray-800';
     return (
-      <div className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-700 py-3 px-5 text-black dark:text-white cursor-default">
-        {selectedOption?.label || placeholder || 'Not Selected'}
-      </div>
+      <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${colorClass}`}>
+        {status || 'N/A'}
+      </span>
     );
   };
 
@@ -185,10 +133,10 @@ const ViewOrderr = () => {
   if (isLoading) {
     return (
       <DefaultLayout>
-        <Breadcrumb pageName="Order/View Order" />
+        <Breadcrumb pageName="Order / View Order" />
         <div className="flex justify-center items-center h-96">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary mx-auto mb-4"></div>
+            <FaSpinner className="animate-spin h-16 w-16 text-indigo-600 mx-auto mb-4" />
             <p className="text-gray-600 dark:text-gray-400">Loading order details...</p>
           </div>
         </div>
@@ -198,348 +146,337 @@ const ViewOrderr = () => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Order/View Order" />
-      <div>
-        <Formik
-          enableReinitialize={true}
-          initialValues={{
-            orderNo: order?.orderNo || '',
-            orderType: order?.orderType || '',
-            locationId: order?.location?.id || '',
-            customer: order?.customer || null,
-            purchaseOrderNo: order?.purchaseOrderNo || '',
-            poDate: order?.poDate || '',
-            salesChannel: order?.salesChannel || '',
-            employeeName: order?.employeeName || '',
-            customisationDetails: order?.customisationDetails || '',
-            orderDate: order?.orderDate || '',
-            expectingDate: order?.expectingDate || '',
-            shippingDate: order?.shippingDate || '',
-            tagsAndLabels: order?.tagsAndLabels || '',
-            logoNo: order?.logoNo || '',
-            clientInstruction: order?.clientInstruction || '',
-            orderProducts: order?.orderProducts?.map(product => ({
-              products: {
-                id: product.products?.id || '',
-                productId: product.products?.productId || '',
-              },
-              sourceProductId: product.sourceProductId || null,
-              sourceProductName: product.sourceProductName || '',
-              orderCategory: product.orderCategory || '',
-              inStockQuantity: product.inStockQuantity || 0,
-              clientOrderQuantity: String(product.clientOrderQuantity || ''),
-              quantityToManufacture: product.quantityToManufacture || 0,
-              units: product.units || 'Pcs',
-              value: product.value || 0,
-              clientShippingDate: product.clientShippingDate || '',
-              expectedDate: product.expectedDate || '',
-              productSuppliers: product.productSuppliers?.map(supplier => ({
-                supplier: {
-                  id: supplier?.supplier?.id || '',
-                  name: supplier?.supplier?.name || ''
-                },
-                supplierOrderQty: supplier.supplierOrderQty || 0
-              })) || []
-            })) || []
-          }}
-          onSubmit={() => {}}
-        >
-          {({ values }) => (
-            <Form>
-              <div className="flex flex-col gap-9">
-                <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-                  <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
-                    <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
-                      Order Details
-                    </h3>
+      <Breadcrumb pageName="Order / View Order" />
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header with back button */}
+        <div className="flex items-center justify-between mb-8">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 shadow-sm"
+          >
+            <FaArrowLeft className="w-4 h-4" />
+            <span>Back to Orders</span>
+          </button>
+          <div className="flex items-center gap-3">
+            <span className="text-sm text-gray-500">Order Status:</span>
+            <StatusBadge status={order?.status} />
+          </div>
+        </div>
+
+        {/* Order Header Card */}
+        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl shadow-xl p-6 mb-8">
+          <div className="flex flex-wrap items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="bg-white/20 p-3 rounded-xl">
+                <FaBox className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white">Order #{order?.orderNo || 'N/A'}</h1>
+                <p className="text-indigo-100">Placed on {formatDate(order?.orderDate)}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 mt-4 sm:mt-0">
+              <div className="text-right">
+                <p className="text-indigo-100 text-sm">Order Type</p>
+                <p className="text-white font-semibold">{getOrderTypeName()}</p>
+              </div>
+              <div className="h-12 w-px bg-white/20"></div>
+              <div className="text-right">
+                <p className="text-indigo-100 text-sm">Total Value</p>
+                <p className="text-white font-semibold text-lg">
+                  ₹{
+                    order.orderProducts?.reduce((sum, p) => sum + (parseFloat(p.value) || 0), 0).toLocaleString() || '0'
+                  }
+                  {/* ₹{order?.totalValue?.toLocaleString() || '0'} */}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Info Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border border-gray-100 dark:border-gray-700">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
+                <FaUser className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Customer</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                  {getCustomerName()}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border border-gray-100 dark:border-gray-700">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                <FaMapMarkerAlt className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Location</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                  {getLocationName()}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border border-gray-100 dark:border-gray-700">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                <FaTruck className="w-5 h-5 text-green-600 dark:text-green-400" />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Expected Date</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                  {formatDate(order?.expectingDate)}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4 border border-gray-100 dark:border-gray-700">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                <FaTag className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Tags & Labels</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                  {order?.tagsAndLabels || 'N/A'}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          {/* Left Column - Order Details */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Customer Information */}
+            {(order?.orderType?.orderTypeName === "RetailClients" || 
+              order?.orderType?.orderTypeName === "WSClients") && (
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                  <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <FaUsers className="w-5 h-5 text-indigo-600" />
+                    Customer Information
+                  </h3>
+                </div>
+                <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Customer Name</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
+                      {getCustomerName()}
+                    </p>
                   </div>
-                  <div className="p-6.5">
-                    {/* Order Information */}
-                    <div className="flex flex-wrap gap-4">
-                      <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white font-medium">Order Number</label>
-                        <div className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-700 py-3 px-5 text-black dark:text-white">
-                          {values.orderNo || 'N/A'}
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white font-medium">Order Type</label>
-                        <ReadOnlySelect 
-                          value={values.orderType?.id} 
-                          options={orderTypeOptions} 
-                          placeholder="Not Selected"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white font-medium">Order Date</label>
-                        <div className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-700 py-3 px-5 text-black dark:text-white">
-                          {values.orderDate ? new Date(values.orderDate).toLocaleDateString() : 'N/A'}
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-[200px]">
-                        <label className="mb-2.5 block text-black dark:text-white font-medium">Location</label>
-                        <ReadOnlySelect 
-                          value={values.locationId} 
-                          options={SelectedLocation} 
-                          placeholder="Not Selected"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Customer Section */}
-                    {(values.orderType?.orderTypeName === "RetailClients" || values.orderType?.orderTypeName === "WSClients") && (
-                      <div className="mt-4">
-                        <div className="flex-1 min-w-[300px]">
-                          <label className="mb-2.5 block text-black dark:text-white font-medium">Customer</label>
-                          <ReadOnlySelect 
-                            value={values.customer?.id} 
-                            options={customerOptions} 
-                            placeholder="Not Selected"
-                          />
-                        </div>
-                        <div className="flex flex-wrap gap-4 mt-4">
-                          <div className="flex-1 min-w-[200px]">
-                            <label className="mb-2.5 block text-black dark:text-white font-medium">Customer Purchase Order No</label>
-                            <div className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-700 py-3 px-5 text-black dark:text-white">
-                              {values.purchaseOrderNo || 'N/A'}
-                            </div>
-                          </div>
-                          <div className="flex-1 min-w-[200px]">
-                            <label className="mb-2.5 block text-black dark:text-white font-medium">PO Date</label>
-                            <div className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-700 py-3 px-5 text-black dark:text-white">
-                              {values.poDate ? new Date(values.poDate).toLocaleDateString() : 'N/A'}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex flex-wrap gap-4 mt-4">
-                          <div className="flex-1 min-w-[300px]">
-                            <label className="mb-2.5 block text-black dark:text-white font-medium">Sales Channel</label>
-                            <ReadOnlySelect 
-                              value={values.salesChannel} 
-                              options={salesChannelOptions} 
-                              placeholder="Not Selected"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-[200px]">
-                            <label className="mb-2.5 block text-black dark:text-white font-medium">Employee Name</label>
-                            <div className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-700 py-3 px-5 text-black dark:text-white">
-                              {values.employeeName || 'N/A'}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Shipping & Tags */}
-                    <div className="flex flex-wrap gap-4 mt-4">
-                      <div className="flex-1 min-w-[300px]">
-                        <label className="mb-2.5 block text-black dark:text-white font-medium">Shipping Date</label>
-                        <div className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-700 py-3 px-5 text-black dark:text-white">
-                          {values.shippingDate ? new Date(values.shippingDate).toLocaleDateString() : 'N/A'}
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-[300px]">
-                        <label className="mb-2.5 block text-black dark:text-white font-medium">Tags & Labels</label>
-                        <ReadOnlySelect 
-                          value={values.tagsAndLabels} 
-                          options={productgrp} 
-                          placeholder="Not Selected"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Logo No */}
-                    <div className="flex flex-wrap gap-4 mt-4">
-                      <div className="flex-1 min-w-[300px]">
-                        <label className="mb-2.5 block text-black dark:text-white font-medium">Logo No</label>
-                        <div className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-700 py-3 px-5 text-black dark:text-white">
-                          {values.logoNo || 'N/A'}
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-[300px]">
-                        <label className="mb-2.5 block text-black dark:text-white font-medium">Expected Date</label>
-                        <div className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-700 py-3 px-5 text-black dark:text-white">
-                          {values.expectingDate ? new Date(values.expectingDate).toLocaleDateString() : 'N/A'}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Products Table */}
-                    <div className="shadow-md rounded-lg mt-6 overflow-x-auto">
-                      <table className="min-w-full leading-normal">
-                        <thead>
-                          <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                            <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                              Source Product Id
-                            </th>
-                            <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                              Product Id
-                            </th>
-                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                              Order Category
-                            </th>
-                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                              Client Order Qty
-                            </th>
-                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                              Units
-                            </th>
-                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                              In Stock Qty
-                            </th>
-                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                              Qty To Manufacture
-                            </th>
-                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                              Value
-                            </th>
-                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                              Client Shipping Date
-                            </th>
-                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                              Expected Date
-                            </th>
-                            <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                              Supplier Details
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {values.orderProducts?.length > 0 ? (
-                            values.orderProducts.map((product, index) => (
-                              <tr key={index} className="bg-white dark:bg-slate-700">
-                                <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                                  <div className="w-[130px] bg-gray-100 dark:bg-gray-700 rounded border py-2 px-3 text-center">
-                                    {product.orderCategory?.toLowerCase() === 'dyeing' || 
-                                     product.orderCategory?.toLowerCase() === 'embroidery' ? 
-                                     (product.sourceProductName || 'N/A') : 
-                                     'Plain Order'}
-                                  </div>
-                                </td>
-                                <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                                  <div className="w-[130px] bg-gray-100 dark:bg-gray-700 rounded border py-2 px-3 text-center">
-                                    {product.products?.productId || 'N/A'}
-                                  </div>
-                                </td>
-                                <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                                  <div className="w-[130px] bg-gray-100 dark:bg-gray-700 rounded border py-2 px-3 text-center">
-                                    {product.orderCategory || 'N/A'}
-                                  </div>
-                                </td>
-                                <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                                  <div className="w-[130px] bg-gray-100 dark:bg-gray-700 rounded border py-2 px-3 text-center">
-                                    {product.clientOrderQuantity || '0'}
-                                  </div>
-                                </td>
-                                <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                                  <div className="w-[130px] bg-gray-100 dark:bg-gray-700 rounded border py-2 px-3 text-center">
-                                    {product.units || 'Pcs'}
-                                  </div>
-                                </td>
-                                <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                                  <div className="w-[130px] bg-gray-100 dark:bg-gray-700 rounded border py-2 px-3 text-center">
-                                    {product.inStockQuantity || '0'}
-                                  </div>
-                                </td>
-                                <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                                  <div className="w-[130px] bg-gray-100 dark:bg-gray-700 rounded border py-2 px-3 text-center">
-                                    {product.quantityToManufacture || '0'}
-                                  </div>
-                                </td>
-                                <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                                  <div className="w-[130px] bg-gray-100 dark:bg-gray-700 rounded border py-2 px-3 text-center">
-                                    ₹{product.value?.toLocaleString() || '0'}
-                                  </div>
-                                </td>
-                                <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                                  <div className="w-[167px] bg-gray-100 dark:bg-gray-700 rounded border py-2 px-3 text-center">
-                                    {product.clientShippingDate ? new Date(product.clientShippingDate).toLocaleDateString() : 'N/A'}
-                                  </div>
-                                </td>
-                                <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                                  <div className="w-[167px] bg-gray-100 dark:bg-gray-700 rounded border py-2 px-3 text-center">
-                                    {product.expectedDate ? new Date(product.expectedDate).toLocaleDateString() : 'N/A'}
-                                  </div>
-                                </td>
-                                <td className="px-5 py-3 border-b border-gray-200 text-sm">
-                                  <div className="overflow-x-auto">
-                                    <table className="min-w-full">
-                                      <thead>
-                                        <tr className="bg-gray-200 dark:bg-gray-600">
-                                          <th className="px-3 py-2 text-xs font-semibold text-gray-700 dark:text-white">Supplier</th>
-                                          <th className="px-3 py-2 text-xs font-semibold text-gray-700 dark:text-white">Qty</th>
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        {product.productSuppliers?.length > 0 ? (
-                                          product.productSuppliers.map((supplier, idx) => (
-                                            <tr key={idx} className="border-b border-gray-200">
-                                              <td className="px-3 py-2 text-xs text-center">
-                                                {supplier.supplier?.name || 'N/A'}
-                                              </td>
-                                              <td className="px-3 py-2 text-xs text-center">
-                                                {supplier.supplierOrderQty || '0'}
-                                              </td>
-                                            </tr>
-                                          ))
-                                        ) : (
-                                          <tr>
-                                            <td colSpan="2" className="px-3 py-2 text-xs text-center text-gray-500">
-                                              No suppliers
-                                            </td>
-                                          </tr>
-                                        )}
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))
-                          ) : (
-                            <tr>
-                              <td colSpan="11" className="px-5 py-5 text-center text-gray-500">
-                                No products found in this order
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-
-                    {/* Client Instruction */}
-                    <div className="flex-1 min-w-[200px] mt-6">
-                      <label className="mb-2.5 block text-black dark:text-white font-medium">Client Instruction</label>
-                      <div className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-700 py-3 px-5 text-black dark:text-white min-h-[80px] whitespace-pre-wrap">
-                        {values.clientInstruction || 'No client instructions provided'}
-                      </div>
-                    </div>
-
-                    {/* Customisation Details */}
-                    {(values.orderType?.orderTypeName === "RetailClients" || values.orderType?.orderTypeName === "WSClients") && (
-                      <div className="flex-1 min-w-[200px] mt-4">
-                        <label className="mb-2.5 block text-black dark:text-white font-medium">Customisation Details</label>
-                        <div className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-700 py-3 px-5 text-black dark:text-white min-h-[80px] whitespace-pre-wrap">
-                          {values.customisationDetails || 'No customisation details provided'}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Back Button */}
-                    <div className="flex justify-center mt-6">
-                      <button
-                        type="button"
-                        onClick={() => navigate(-1)}
-                        className="w-1/3 px-6 py-3 text-white bg-primary rounded-lg shadow hover:bg-primary-dark focus:outline-none transition-colors"
-                      >
-                        Back to Orders
-                      </button>
-                    </div>
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">PO Number</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
+                      {order?.purchaseOrderNo || 'N/A'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">PO Date</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
+                      {formatDate(order?.poDate)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Sales Channel</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
+                      {order?.salesChannel || 'N/A'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Employee Name</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
+                      {order?.employeeName || 'N/A'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Logo Number</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
+                      {order?.logoNo || 'N/A'}
+                    </p>
                   </div>
                 </div>
               </div>
-            </Form>
-          )}
-        </Formik>
+            )}
+
+            {/* Additional Details */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                  <FaInfoCircle className="w-5 h-5 text-indigo-600" />
+                  Additional Details
+                </h3>
+              </div>
+              <div className="p-6 space-y-4">
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Shipping Date</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
+                    {formatDate(order?.shippingDate)}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Client Instructions</p>
+                  <p className="text-sm text-gray-700 dark:text-gray-300 mt-1 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                    {order?.clientInstruction || 'No client instructions provided'}
+                  </p>
+                </div>
+                {(order?.orderType?.orderTypeName === "RetailClients" || 
+                  order?.orderType?.orderTypeName === "WSClients") && (
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Customisation Details</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 mt-1 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                      {order?.customisationDetails || 'No customisation details provided'}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Order Summary */}
+          <div className="space-y-6">
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden sticky top-6">
+              <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                  <FaShoppingBag className="w-5 h-5 text-indigo-600" />
+                  Order Summary
+                </h3>
+              </div>
+              <div className="p-6 space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Total Products</span>
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                    {order?.orderProducts?.length || 0}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500 dark:text-gray-400">Total Items</span>
+                  <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                    {order?.orderProducts?.reduce((sum, p) => sum + (parseInt(p.clientOrderQuantity) || 0), 0)}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center border-t border-gray-200 dark:border-gray-700 pt-4">
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Total Value</span>
+                  <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400">
+                    ₹{order?.orderProducts?.reduce((sum, p) => sum + (parseFloat(p.value) || 0), 0).toLocaleString() || '0'}
+                  </span>
+                </div>
+                <div className="pt-2">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Order ID</p>
+                  <p className="text-xs font-mono text-gray-600 dark:text-gray-400 mt-1 break-all">
+                    {order?.id}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Products Table */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50 flex items-center justify-between">
+            <h3 className="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              <FaBox className="w-5 h-5 text-indigo-600" />
+              Products ({order?.orderProducts?.length || 0})
+            </h3>
+          </div>
+          
+          <div className="overflow-x-auto p-6">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead>
+                <tr className="bg-gray-50 dark:bg-gray-700/50">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Product ID</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Category</th>
+                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Client Qty</th>
+                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">In Stock</th>
+                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">To Manufacture</th>
+                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Units</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Value</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Suppliers</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                {order?.orderProducts?.length > 0 ? (
+                  order.orderProducts.map((product, index) => (
+                    <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors duration-150">
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="w-8 h-8 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg flex items-center justify-center mr-3">
+                            <FaHashtag className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                          </div>
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">
+                            {product?.productIdName || 'N/A'}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap">
+                        <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                          {product.orderCategory || 'N/A'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-700 dark:text-gray-300">
+                        {product.clientOrderQuantity || '0'}
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-700 dark:text-gray-300">
+                        {product.inStockQuantity || '0'}
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-700 dark:text-gray-300">
+                        {product.quantityToManufacture || '0'}
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap text-center text-sm text-gray-700 dark:text-gray-300">
+                        {product.units || 'Pcs'}
+                      </td>
+                      <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900 dark:text-white">
+                        ₹{product.value?.toLocaleString() || '0'}
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex flex-wrap gap-1">
+                          {product.productSuppliers?.length > 0 ? (
+                            product.productSuppliers.map((supplier, idx) => (
+                              <span key={idx} className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 rounded">
+                                <span className="font-medium">{supplier.supplier?.name || 'N/A'}</span>
+                                <span className="text-gray-500">({supplier.supplierOrderQty || 0})</span>
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-xs text-gray-400">No suppliers</span>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                      <FaBox className="w-12 h-12 mx-auto mb-3 text-gray-300 dark:text-gray-600" />
+                      No products found in this order
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Footer Actions */}
+        <div className="mt-8 flex justify-end gap-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="px-6 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 shadow-sm"
+          >
+            Back
+          </button>
+        </div>
       </div>
     </DefaultLayout>
   );
