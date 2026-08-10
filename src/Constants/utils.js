@@ -509,6 +509,7 @@ export const DELETE_Lut_URL = `${BASE_URL}/api/entryPayment/add`;
 export const GET_LutBYID = `${BASE_URL}/api/voucher/addVoucher`;
 export const UPDATELut_URL = `${BASE_URL}/api/entryPayment/add`;
 export const GET_Lut_URL = `${BASE_URL}/api/lut/viewAll`;
+export const EDIT_ENTRY_URL = `${BASE_URL}/entryPayment`;
 
 export const TOGGLE_Lut_URL = `${BASE_URL}/api/lut/toggle`;
 

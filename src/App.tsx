@@ -23,7 +23,7 @@ import PaymentSummary from './components/Accounts/Config/PaymentSummary.jsx';
 
 import Voucher from './components/Accounts/Vouchers/Voucher.jsx';
 import CreateVoucher from './components/Accounts/Vouchers/CreateVoucher.jsx';
-
+import EditVoucher from './components/Accounts/Vouchers/EditVoucher.jsx';
 import CreateVoucherShopify from './components/Accounts/Vouchers/CreateVoucherShopify.jsx';
 import UpdateVoucher from './components/Accounts/Vouchers/UpdateVoucher.jsx';
 import CreateDebitNote from './components/Accounts/Vouchers/CreateDebitNote.jsx';
@@ -596,6 +596,16 @@ function App() {
                 <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
                 <PageTitle title="Voucher" />
                 <CreateVoucher />
+              </>
+            }
+          />
+            <Route
+            path="/entrypayment/edit/:id"
+            element={
+              <>
+                <RoleBasedRoute allowedRoles={["ROLE_ADMIN"]}></RoleBasedRoute>
+                <PageTitle title="Edit Voucher" />
+                <EditVoucher />
               </>
             }
           />

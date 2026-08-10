@@ -188,7 +188,7 @@ const Chart = () => {
       { title: "Edit Received Quantity", link: "/order/recievedQuantity", countKey: "ordersWithPendingProducts", icon: <MdEditSquare className="w-10 h-10" />, levelUp: true },
       { title: "Update Shipping Date", link: "/order/updateShippingDate", countKey: "ordersWithShippingDate", icon: <GrUpdate className="w-10 h-10" />, levelUp: true },
       { title: "Monthly Orders", link: "/Order/monthlyorders", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelDown: true },
-      { title: "Delayed Orders", link: "/delayedOrders", icon: <MdTimer className="w-10 h-10" />, levelDown: true }
+      { title: "Delayed Orders", link: "/delayedOrders",countKey: "ordersWithDelayed", icon: <MdTimer className="w-10 h-10" />, levelDown: true }
     ],
     ROLE_QUALITYCONTROL: [
       // { title: "Products", link: "/product/viewProducts", countKey: "products", icon: <RiAlignItemBottomFill className="w-10 h-10" />, levelUp: true },{ title: "Approved By Production Orders", link: "/orderlist/Executed", countKey: "ordersWithOnlyAccepted", icon: <FcApproval className="w-10 h-10" />, levelUp: true },
