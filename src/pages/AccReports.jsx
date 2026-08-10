@@ -137,7 +137,7 @@ const AccReports = () => {
             },
             { title: "Monthly Order Calender", link: "/Order/monthlyorders", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
             { title: "Product Report", link: "/report/product", countKey: "approvedOrders", icon: <GrCompliance className="w-10 h-10" />, levelUp: true },
-            { title: "Verify Product Transfer", link: "/stockJournal/verify", countKey: "verifyStockJournals", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
+            // { title: "Verify Product Transfer", link: "/stockJournal/verify", countKey: "verifyStockJournals", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
             // { title: "Pending for Bill", link: "/Recieved/pendingForBill", countKey: "orderBillStatusAllowed", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
             // { title: "Stock Journal Accept", link: "/StockJournal/get", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
             { title: "Production Dashboard", link: "/kaniProducts", icon: <SiHomeassistantcommunitystore className="w-10 h-10" />, levelUp: true },
@@ -166,11 +166,11 @@ const AccReports = () => {
             { title: "Monthly Order Calender", link: "/Order/monthlyorders", countKey: "ordersWithApprovedOrForcedClosure", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
 
         ],
-        ROLE_VERIFIER: [
+        // ROLE_VERIFIER: [
 
-            { title: "Verify Product Transfer", link: "/stockJournal/verify", countKey: "verifyStockJournals", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
+        //     { title: "Verify Product Transfer", link: "/stockJournal/verify", countKey: "verifyStockJournals", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
 
-        ],
+        // ],
         ROLE_FINANCE: [
 
             // { title: "Pending for Bill", link: "/Recieved/pendingForBill", countKey: "orderBillStatusAllowed", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
@@ -205,7 +205,7 @@ const AccReports = () => {
         { title: "Purchase Report", link: "/accReport/Purchase", countKey: "accountsData", icon: <BiMoney className="w-10 h-10" />, levelUp: true },
         { title: "Client Report", link: "/accReport/Client", countKey: "accountsData", icon: <FaPersonWalking className="w-10 h-10" />, levelUp: true },
         { title: "Stock Report", link: "/accReport/Stock", countKey: "accountsData", icon: <SiShutterstock className="w-10 h-10" />, levelUp: true },
-        { title: "ProductGroup Report", link: "/accReport/ProductGroup", countKey: "accountsData", icon: <LuGroup className="w-10 h-10" />, levelUp: true },
+        // { title: "ProductGroup Report", link: "/accReport/ProductGroup", countKey: "accountsData", icon: <LuGroup className="w-10 h-10" />, levelUp: true },
          { title: "Profit & Loss Report", link: "/accReport/ProfitLoss", countKey: "accountsData", icon: <GiProfit className="w-10 h-10" />, levelUp: true },
     ];
 

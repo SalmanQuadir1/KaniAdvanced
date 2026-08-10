@@ -244,11 +244,11 @@ const Chart = () => {
       { title: "Supplier Receiving Orders", link: "/order/supplierRecievingOrders", countKey: "ordersWithSupplierReceiving", icon: <RiUserReceived2Fill className="w-10 h-10" />, levelUp: true },
 
     ],
-    ROLE_VERIFIER: [
+    // ROLE_VERIFIER: [
 
-      { title: "Verify Product Transfer", link: "/stockJournal/verify", countKey: "verifyStockJournals", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
+    //   { title: "Verify Product Transfer", link: "/stockJournal/verify", countKey: "verifyStockJournals", icon: <RiProgress8Fill className="w-10 h-10" />, levelUp: true },
 
-    ],
+    // ],
   };
 
   // Get all cards user should see based on roles

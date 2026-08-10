@@ -257,13 +257,13 @@ const Home = () => {
         isDownload: true,
         isAllGroupsDownload: true,
       },
-      {
-        title: 'Verify Product Transfer',
-        link: '/stockJournal/verify',
-        countKey: 'verifyStockJournals',
-        icon: <RiProgress8Fill className="w-10 h-10" />,
-        levelUp: true,
-      },
+      // {
+      //   title: 'Verify Product Transfer',
+      //   link: '/stockJournal/verify',
+      //   countKey: 'verifyStockJournals',
+      //   icon: <RiProgress8Fill className="w-10 h-10" />,
+      //   levelUp: true,
+      // },
       // {
       //   title: 'Pending for Bill',
       //   link: '/Recieved/pendingForBill',
@@ -346,15 +346,15 @@ const Home = () => {
         levelUp: true,
       },
     ],
-    ROLE_VERIFIER: [
-      {
-        title: 'Verify Product Transfer',
-        link: '/stockJournal/verify',
-        countKey: 'verifyStockJournals',
-        icon: <RiProgress8Fill className="w-10 h-10" />,
-        levelUp: true,
-      },
-    ],
+    // ROLE_VERIFIER: [
+    //   {
+    //     title: 'Verify Product Transfer',
+    //     link: '/stockJournal/verify',
+    //     countKey: 'verifyStockJournals',
+    //     icon: <RiProgress8Fill className="w-10 h-10" />,
+    //     levelUp: true,
+    //   },
+    // ],
     ROLE_FINANCE: [
       // {
       //   title: 'Pending for Bill',
