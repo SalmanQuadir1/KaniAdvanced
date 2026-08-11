@@ -623,8 +623,8 @@ const DropdownNotification = () => {
           className="
             flex-shrink-0
             flex
-            h-9
-            mt-[-3px]
+            h-7
+            mt-[-7px]
             border-b
             border-blue-100
             dark:border-blue-900/40
@@ -639,7 +639,7 @@ const DropdownNotification = () => {
               flex-1
               py-1
               px-3
-              text-[10px]
+              text-[7px]
               font-semibold
               uppercase
               tracking-wider
@@ -659,14 +659,12 @@ const DropdownNotification = () => {
               {unreadCount > 0 && (
                 <span
                   className="
-                    rounded-full
-                    bg-blue-100
-                    dark:bg-blue-900/30
-                    px-1
-                   py-[-1px]
-                    text-[8px]
+                   
+                  
+                  
+                    text-[9px]
                     font-bold
-                    text-blue-600
+                    text-red-600
                     dark:text-blue-400
                   "
                 >
@@ -699,7 +697,7 @@ const DropdownNotification = () => {
               flex-1
               py-2
               px-3
-              text-[10px]
+              text-[8px]
               font-semibold
               uppercase
               tracking-wider
@@ -714,8 +712,8 @@ const DropdownNotification = () => {
             `}
           >
             <div className="flex items-center justify-center gap-1.5">
-              <FaList className="text-[10px]" />
-              <span>All</span>
+              {/* <FaList className="text-[10px]" /> */}
+              <span>All Notifications.</span>
             </div>
             {/* Active indicator */}
             {activeTab === 'all' && (
@@ -1148,7 +1146,7 @@ const DropdownNotification = () => {
             "
           >
             <button
-              onClick={() => navigate('/delayedOrders')}
+              onClick={() => activeTab === 'unread' ? handleTabChange('all') : handleTabChange('unread')  }
               className="
                 w-full
                 flex

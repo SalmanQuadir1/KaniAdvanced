@@ -150,10 +150,16 @@ const ViewOrderr = () => {
             <FaArrowLeft className="w-4 h-4" />
             <span>Back to Orders</span>
           </button>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500">Order Status:</span>
-            <StatusBadge status={order?.status} />
-          </div>
+  <div className="flex items-center gap-3">
+  <span className="text-sm text-gray-500">Order Status:</span>
+  <div className='rounded-lg p-0.5' style={{ backgroundColor: '#dc2626', color: 'white' }}s>
+  {/* <StatusBadge 
+    status={order?.status} 
+    style={{ backgroundColor: '#dc2626', color: 'white' }}
+  /> */}
+  <span className='text-xs'>{order?.status || 'N/A'}</span>
+  </div>
+</div>
         </div>
 
         {/* Order Header Card */}
@@ -164,7 +170,7 @@ const ViewOrderr = () => {
                 <FaBox className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">Order #{order?.orderNo || 'N/A'}</h1>
+                <h1 className="text-2xl font-bold text-white">Order {order?.orderNo || 'N/A'}</h1>
                 <p className="text-indigo-100">Placed on {formatDate(order?.orderDate)}</p>
               </div>
             </div>
@@ -260,40 +266,40 @@ const ViewOrderr = () => {
                     Customer Information
                   </h3>
                 </div>
-                <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="flex p-6 grid grid-cols-3 sm:grid-cols-4 gap-4">
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Customer Name</p>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
                       {getCustomerName()}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">PO Number</p>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
                       {order?.purchaseOrderNo || 'N/A'}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">PO Date</p>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
                       {formatDate(order?.poDate)}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Sales Channel</p>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
                       {order?.salesChannel || 'N/A'}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Employee Name</p>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
                       {order?.employeeName || 'N/A'}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Logo Number</p>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
                       {order?.logoNo || 'N/A'}
                     </p>
                   </div>
@@ -309,16 +315,16 @@ const ViewOrderr = () => {
                   Additional Details
                 </h3>
               </div>
-              <div className="p-6 space-y-4">
+              <div className="grid grid-cols-4 sm:grid-cols-3 gap-4 p-6 ">
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400">Shipping Date</p>
-                  <p className="text-sm font-medium text-gray-900 dark:text-white mt-1">
+                  <p className="text-sm font-semibold text-gray-900 dark:text-white mt-1">
                     {formatDate(order?.shippingDate)}
                   </p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 dark:text-gray-400">Client Instructions</p>
-                  <p className="text-sm text-gray-700 dark:text-gray-300 mt-1 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                  <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mt-1 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
                     {order?.clientInstruction || 'No client instructions provided'}
                   </p>
                 </div>
@@ -326,7 +332,7 @@ const ViewOrderr = () => {
                   order?.orderType?.orderTypeName === "WSClients") && (
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Customisation Details</p>
-                    <p className="text-sm text-gray-700 dark:text-gray-300 mt-1 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
+                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mt-1 bg-gray-50 dark:bg-gray-700/50 p-3 rounded-lg">
                       {order?.customisationDetails || 'No customisation details provided'}
                     </p>
                   </div>
@@ -363,12 +369,12 @@ const ViewOrderr = () => {
                     ₹{order?.orderProducts?.reduce((sum, p) => sum + (parseFloat(p.value) || 0), 0).toLocaleString() || '0'}
                   </span>
                 </div>
-                <div className="pt-2">
+                {/* <div className="pt-2">
                   <p className="text-xs text-gray-500 dark:text-gray-400">Order ID</p>
                   <p className="text-xs font-mono text-gray-600 dark:text-gray-400 mt-1 break-all">
                     {order?.id}
                   </p>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
@@ -403,9 +409,9 @@ const ViewOrderr = () => {
                     <tr key={index} className="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors duration-150">
                       <td className="px-4 py-4 whitespace-nowrap">
                         <div className="flex items-center">
-                          <div className="w-8 h-8 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg flex items-center justify-center mr-3">
+                          {/* <div className="w-8 h-8 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg flex items-center justify-center mr-3">
                             <FaHashtag className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                          </div>
+                          </div> */}
                           <span className="text-sm font-medium text-gray-900 dark:text-white">
                             {product?.productIdName || 'N/A'}
                           </span>
@@ -431,11 +437,11 @@ const ViewOrderr = () => {
                       <td className="px-4 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900 dark:text-white">
                         ₹{product.value?.toLocaleString() || '0'}
                       </td>
-                      <td className="px-4 py-4">
+                      <td className="px-4 py-4 tracking-wide text-sm text-gray-700 dark:text-gray-300">
                         <div className="flex flex-wrap gap-1">
                           {product.productSuppliers?.length > 0 ? (
                             product.productSuppliers.map((supplier, idx) => (
-                              <span key={idx} className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 rounded">
+                              <span key={idx} className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 rounded tracking-wide whitespace-nowrap">
                                 <span className="font-medium">{supplier.supplier?.name || 'N/A'}</span>
                                 <span className="text-gray-500">({supplier.supplierOrderQty || 0})</span>
                               </span>
