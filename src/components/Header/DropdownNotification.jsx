@@ -570,7 +570,7 @@ const DropdownNotification = () => {
           <div className="flex items-center gap-2">
             <div
               className="
-                h-2
+                h-1
                 w-2
                 rounded-full
                 bg-blue-500
@@ -623,6 +623,8 @@ const DropdownNotification = () => {
           className="
             flex-shrink-0
             flex
+            h-9
+            mt-[-3px]
             border-b
             border-blue-100
             dark:border-blue-900/40
@@ -635,7 +637,7 @@ const DropdownNotification = () => {
             onClick={() => handleTabChange('unread')}
             className={`
               flex-1
-              py-2
+              py-1
               px-3
               text-[10px]
               font-semibold
@@ -661,7 +663,7 @@ const DropdownNotification = () => {
                     bg-blue-100
                     dark:bg-blue-900/30
                     px-1
-                    py-0.2
+                   py-[-1px]
                     text-[8px]
                     font-bold
                     text-blue-600
