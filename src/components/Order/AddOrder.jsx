@@ -347,6 +347,21 @@ const AddOrder = () => {
 
   const handleModalSubmit = (values) => {
     console.log(values, "jump");
+if (values.orderCatagory === 'Embroidery' || values.orderCatagory === 'Dyeing') {
+    console.log("i am here");
+    
+    // Check if sourceProductId is empty object or has no id
+    const isEmptyObject = !values.sourceProductId || 
+                          (typeof values.sourceProductId === 'object' && 
+                           Object.keys(values.sourceProductId).length === 0) ||
+                          !values.sourceProductId.id;
+    
+    if (isEmptyObject) {
+      console.log("i am ggb here");
+      toast.error("Please select a source product ID for Embroidery or Dyeing category.");
+      return; // Stop execution - don't submit
+    }
+  }
     setprodIdModal((prevValues) => {
       console.log(prevValues, "jumpss");
       // Ensure that previous values are preserved and the new ones are added.
@@ -680,6 +695,7 @@ useEffect(() => {
               });
             }, [values.orderProducts, values.orderType, setFieldValue, prodIdModal, orderTypeOptions]);
 
+console.log(values,"25632222");
 
             return (
               <Form>
@@ -1604,7 +1620,7 @@ useEffect(() => {
                       <button
                         type="submit"
                         className="flex w-full justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled={isSubmitting || !values.orderType?.id}
+                        disabled={isSubmitting || !values.orderType?.id ||values.orderProducts.length === 0 || !values.locationId }
                       >
                         {isSubmitting ? 'Adding Order...' : 'Add Order'}
                       </button>
