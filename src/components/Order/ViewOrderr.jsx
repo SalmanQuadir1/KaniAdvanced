@@ -406,7 +406,8 @@ const ViewOrderr = () => {
                   <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">To Manufacture</th>
                   <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Units</th>
                   <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Value</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Suppliers(Qty)</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Suppliers</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Suppliers Qty</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -449,7 +450,21 @@ const ViewOrderr = () => {
                             product.productSuppliers.map((supplier, idx) => (
                               <span key={idx} className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 rounded tracking-wide whitespace-nowrap">
                                 <span className="font-medium">{supplier.supplier?.name || 'N/A'}</span>
-                                <span className="text-gray-500">({supplier.supplierOrderQty || 0})</span>
+                              
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-xs text-gray-400">No suppliers</span>
+                          )}
+                        </div>
+                      </td>
+                       <td className="px-4 py-4 tracking-wide text-sm text-gray-700 dark:text-gray-300">
+                        <div className="flex flex-wrap gap-1">
+                          {product.productSuppliers?.length > 0 ? (
+                            product.productSuppliers.map((supplier, idx) => (
+                              <span key={idx} className="inline-flex items-center gap-1 px-2 py-1 text-xs bg-gray-100 dark:bg-gray-700 rounded tracking-wide whitespace-nowrap">
+                               
+                                <span className="text-gray-500">{supplier.supplierOrderQty || 0}</span>
                               </span>
                             ))
                           ) : (
