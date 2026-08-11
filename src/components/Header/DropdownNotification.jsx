@@ -6,6 +6,7 @@ import {
   FaCheck,
   FaEnvelope,
   FaEnvelopeOpen,
+  FaList,
 } from 'react-icons/fa';
 import { formatDistanceToNow } from 'date-fns';
 import { toast } from 'react-toastify';
@@ -25,7 +26,7 @@ const DropdownNotification = () => {
   const [loading, setLoading] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [markingAsRead, setMarkingAsRead] = useState(null);
-  const [activeTab, setActiveTab] = useState('unread'); // 'unread' | 'read'
+  const [activeTab, setActiveTab] = useState('unread'); // 'unread' | 'all'
 
   const trigger = useRef(null);
   const dropdown = useRef(null);
@@ -287,39 +288,38 @@ const DropdownNotification = () => {
     try {
       let url = `${NOTIF_}`;
       
-      // If tab is 'read', fetch read notifications
-      if (tab === 'read') {
+      // If tab is 'all', fetch all notifications
+      if (tab === 'all') {
         url = `${NOTIF}`;
       }
-      // If tab is 'unread', fetch unread notifications (existing endpoint)
+      // If tab is 'unread', fetch unread notifications
       else {
         url = `${NOTIF_}`;
       }
 
       const data = await fetchWithAuth(url);
 
-      let notificationsArray =[];
-      if(Array.isArray(data)){
-        notificationsArray = data;
-      }
-      else if (data && data.content && Array.isArray(data.content)) {
-        notificationsArray = data.content;
-      }
-
-      // Filter based on tab
-      let filteredData = [];
-
-
-
-
-
-    
-        if (tab === 'read') {
-          filteredData = notificationsArray.filter((notif) => notif.read === true);
-        } else {
-          filteredData = notificationsArray.filter((notif) => !notif.read);
-        }
+      let notificationsArray = [];
       
+      // Handle different response formats
+      if (Array.isArray(data)) {
+        notificationsArray = data;
+      } else if (data && data.content && Array.isArray(data.content)) {
+        notificationsArray = data.content;
+      } else if (data && data.data && Array.isArray(data.data)) {
+        notificationsArray = data.data;
+      } else {
+        notificationsArray = [];
+      }
+
+      // For 'unread' tab, filter to show only unread
+      // For 'all' tab, show all (no filtering)
+      let filteredData = [];
+      if (tab === 'unread') {
+        filteredData = notificationsArray.filter((notif) => !notif.read);
+      } else {
+        filteredData = notificationsArray; // Show all
+      }
 
       setNotifications(filteredData);
     } catch (error) {
@@ -342,18 +342,23 @@ const DropdownNotification = () => {
         method: 'PUT',
       });
 
-      // Remove from current list (unread tab)
-      setNotifications((prev) =>
-        prev.filter((notif) => notif.id !== id)
-      );
+      // Remove from current list if on unread tab, or just update the item if on all tab
+      if (activeTab === 'unread') {
+        setNotifications((prev) =>
+          prev.filter((notif) => notif.id !== id)
+        );
+      } else {
+        // On 'all' tab, just mark as read in the list
+        setNotifications((prev) =>
+          prev.map((notif) =>
+            notif.id === id ? { ...notif, read: true } : notif
+          )
+        );
+      }
 
       setUnreadCount((prev) => Math.max(0, prev - 1));
 
-      // If on unread tab and notification count becomes 0, switch to read tab
-      if (activeTab === 'unread' && notifications.length <= 1) {
-        setActiveTab('read');
-        fetchNotifications('read');
-      }
+      // If on unread tab and notification count becomes 0, stay on unread tab (show empty state)
     } catch (error) {
       console.error('Error marking notification as read:', error);
       toast.error('Failed to mark as read');
@@ -367,7 +372,14 @@ const DropdownNotification = () => {
   // =========================================================
   const markAllAsRead = async () => {
     try {
-      const unreadIds = notifications.filter(n => !n.read).map(n => n.id);
+      const unreadIds = notifications
+        .filter(n => !n.read)
+        .map(n => n.id);
+      
+      if (unreadIds.length === 0) {
+        toast.info('No unread notifications to mark');
+        return;
+      }
       
       await Promise.all(
         unreadIds.map(id =>
@@ -377,13 +389,17 @@ const DropdownNotification = () => {
         )
       );
       
-      setNotifications([]);
+      // Update the list - mark all as read
+      setNotifications((prev) =>
+        prev.map((notif) => ({ ...notif, read: true }))
+      );
+      
       setUnreadCount(0);
       toast.success('All notifications marked as read');
       
-      // Switch to read tab after marking all as read
-      setActiveTab('read');
-      fetchNotifications('read');
+      // Switch to 'all' tab to see the changes
+      setActiveTab('all');
+      fetchNotifications('all');
     } catch (error) {
       console.error('Error marking all as read:', error);
       toast.error('Failed to mark all as read');
@@ -577,7 +593,7 @@ const DropdownNotification = () => {
             </h4>
           </div>
 
-          {activeTab === 'unread' && unreadCount > 0 && (
+          {/* {activeTab === 'unread' && unreadCount > 0 && (
             <button
               onClick={markAllAsRead}
               className="
@@ -597,7 +613,7 @@ const DropdownNotification = () => {
               <FaCheck className="text-[8px]" />
               Mark All Read
             </button>
-          )}
+          )} */}
         </div>
 
         {/* ===================================================
@@ -614,7 +630,7 @@ const DropdownNotification = () => {
             dark:bg-gray-800/50
           "
         >
-          {/* Unread Tab */}
+          {/* Unread Tab - First */}
           <button
             onClick={() => handleTabChange('unread')}
             className={`
@@ -636,7 +652,7 @@ const DropdownNotification = () => {
             `}
           >
             <div className="flex items-center justify-center gap-1.5">
-              <FaEnvelope className="text-[10px]" />
+             
               <span>Unread</span>
               {unreadCount > 0 && (
                 <span
@@ -644,8 +660,8 @@ const DropdownNotification = () => {
                     rounded-full
                     bg-blue-100
                     dark:bg-blue-900/30
-                    px-1.5
-                    py-0.5
+                    px-1
+                    py-0.2
                     text-[8px]
                     font-bold
                     text-blue-600
@@ -674,9 +690,9 @@ const DropdownNotification = () => {
             )}
           </button>
 
-          {/* Read Tab */}
+          {/* All Tab - Second */}
           <button
-            onClick={() => handleTabChange('read')}
+            onClick={() => handleTabChange('all')}
             className={`
               flex-1
               py-2
@@ -689,18 +705,18 @@ const DropdownNotification = () => {
               duration-300
               relative
               ${
-                activeTab === 'read'
+                activeTab === 'all'
                   ? 'text-blue-600 dark:text-blue-400'
                   : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'
               }
             `}
           >
             <div className="flex items-center justify-center gap-1.5">
-              <FaEnvelopeOpen className="text-[10px]" />
-              <span>Read</span>
+              <FaList className="text-[10px]" />
+              <span>All</span>
             </div>
             {/* Active indicator */}
-            {activeTab === 'read' && (
+            {activeTab === 'all' && (
               <div
                 className="
                   absolute
@@ -824,7 +840,7 @@ const DropdownNotification = () => {
               >
                 {activeTab === 'unread' 
                   ? 'No unread notifications!'
-                  : 'No read notifications yet!'
+                  : 'No notifications found!'
                 }
               </p>
 
@@ -838,7 +854,7 @@ const DropdownNotification = () => {
               >
                 {activeTab === 'unread'
                   ? 'You\'re all caught up!'
-                  : 'Read notifications will appear here'
+                  : 'All notifications will appear here'
                 }
               </p>
             </div>
@@ -847,237 +863,263 @@ const DropdownNotification = () => {
                NOTIFICATION CELLS
             ================================================ */
             <div className="py-1">
-              {notifications.map((notification, index) => (
-                <div
-                  key={notification.id}
-                  className={`
-                    group
-                    mx-2
-                    my-1.5
-                    flex
-                    items-start
-                    gap-2
-                    rounded-lg
-                    border
-                    px-3
-                    py-2
-                    ${
-                      activeTab === 'unread'
-                        ? `
-                          bg-gradient-to-r
-                          from-blue-50
-                          via-white
-                          to-blue-50/40
-                          border-blue-100
-                          hover:from-blue-100/70
-                          hover:via-white
-                          hover:to-blue-50
-                          hover:border-blue-200
-                          dark:from-blue-950/40
-                          dark:via-gray-800/80
-                          dark:to-blue-900/20
-                          dark:border-blue-900/50
-                          dark:hover:from-blue-900/50
-                          dark:hover:via-gray-800
-                          dark:hover:to-blue-900/30
-                          dark:hover:border-blue-800
-                          ${
-                            index === 0
-                              ? `
-                                ring-1
-                                ring-blue-200/70
-                                dark:ring-blue-800/50
-                              `
-                              : ''
-                          }
-                        `
-                        : `
-                          bg-gradient-to-r
-                          from-gray-50
-                          via-white
-                          to-gray-50/40
-                          border-gray-100
-                          hover:from-gray-100/70
-                          hover:via-white
-                          hover:to-gray-50
-                          hover:border-gray-200
-                          dark:from-gray-800/40
-                          dark:via-gray-800/60
-                          dark:to-gray-800/20
-                          dark:border-gray-700/50
-                          dark:hover:from-gray-700/50
-                          dark:hover:via-gray-800
-                          dark:hover:to-gray-700/30
-                          dark:hover:border-gray-600
-                          opacity-80
-                        `
-                    }
-                    shadow-sm
-                    hover:shadow-md
-                    transition-all
-                    duration-200
-                  `}
-                >
-                  {/* STATUS DOT */}
-                  <div className="flex-shrink-0 pt-1.5">
-                    <span
-                      className={`
-                        block
-                        h-2
-                        w-2
-                        rounded-full
-                        ring-2
-                        ring-white
-                        dark:ring-gray-800
-                        ${
-                          activeTab === 'unread'
-                            ? index === 0
-                              ? 'bg-red-500 animate-pulse'
-                              : 'bg-blue-500'
-                            : 'bg-gray-300 dark:bg-gray-600'
-                        }
-                      `}
-                    />
-                  </div>
-
-                  {/* MAIN CONTENT */}
-                  <div className="flex-1 min-w-0">
-                    {/* TOP ROW */}
-                    <div
-                      className="
-                        flex
-                        items-center
-                        justify-between
-                        gap-2
-                      "
-                    >
-                      {/* ORDER + NEW */}
-                      <div
-                        className="
-                          flex
-                          items-center
-                          gap-1.5
-                          min-w-0
-                        "
-                      >
-                        <h5
-                          className="
-                            text-[11px]
-                            font-bold
-                            text-gray-800
-                            dark:text-white
-                            truncate
-                          "
-                        >
-                          Order #{notification.orderNo}
-                        </h5>
-
-                        {activeTab === 'unread' && index === 0 && (
-                          <span
-                            className="
-                              flex-shrink-0
-                              rounded-full
-                              bg-red-100
-                              dark:bg-red-900/30
-                              px-1.5
-                              py-0.5
-                              text-[8px]
-                              font-bold
-                              text-red-600
-                              dark:text-red-400
-                            "
-                          >
-                            NEW
-                          </span>
-                        )}
-                      </div>
-
-                      {/* TIME */}
-                      <div
-                        className="
-                          flex-shrink-0
-                          flex
-                          items-center
-                          gap-1
-                          text-[10px]
-                          text-blue-400
-                          dark:text-blue-300
-                          font-semibold
-                        "
-                      >
-                        <FaClock className="text-[8px]" />
-                        <span>
-                          {formatDistanceToNow(
-                            new Date(notification.createdAt),
-                            {
-                              addSuffix: true,
+              {notifications.map((notification, index) => {
+                const isUnread = !notification.read;
+                
+                return (
+                  <div
+                    key={notification.id}
+                    className={`
+                      group
+                      mx-2
+                      my-1.5
+                      flex
+                      items-start
+                      gap-2
+                      rounded-lg
+                      border
+                      px-3
+                      py-2
+                      ${
+                        isUnread && activeTab === 'unread'
+                          ? `
+                            bg-gradient-to-r
+                            from-blue-50
+                            via-white
+                            to-blue-50/40
+                            border-blue-100
+                            hover:from-blue-100/70
+                            hover:via-white
+                            hover:to-blue-50
+                            hover:border-blue-200
+                            dark:from-blue-950/40
+                            dark:via-gray-800/80
+                            dark:to-blue-900/20
+                            dark:border-blue-900/50
+                            dark:hover:from-blue-900/50
+                            dark:hover:via-gray-800
+                            dark:hover:to-blue-900/30
+                            dark:hover:border-blue-800
+                            ${
+                              index === 0
+                                ? `
+                                  ring-1
+                                  ring-blue-200/70
+                                  dark:ring-blue-800/50
+                                `
+                                : ''
                             }
-                          )}
-                        </span>
-                      </div>
+                          `
+                          : isUnread
+                          ? `
+                            bg-gradient-to-r
+                            from-blue-50/50
+                            via-white/80
+                            to-blue-50/30
+                            border-blue-100/50
+                            hover:from-blue-100/70
+                            hover:via-white
+                            hover:to-blue-50
+                            hover:border-blue-200
+                            dark:from-blue-950/30
+                            dark:via-gray-800/60
+                            dark:to-blue-900/15
+                            dark:border-blue-900/30
+                            dark:hover:from-blue-900/50
+                            dark:hover:via-gray-800
+                            dark:hover:to-blue-900/30
+                            dark:hover:border-blue-800
+                          `
+                          : `
+                            bg-gradient-to-r
+                            from-gray-50
+                            via-white
+                            to-gray-50/40
+                            border-gray-100
+                            hover:from-gray-100/70
+                            hover:via-white
+                            hover:to-gray-50
+                            hover:border-gray-200
+                            dark:from-gray-800/40
+                            dark:via-gray-800/60
+                            dark:to-gray-800/20
+                            dark:border-gray-700/50
+                            dark:hover:from-gray-700/50
+                            dark:hover:via-gray-800
+                            dark:hover:to-gray-700/30
+                            dark:hover:border-gray-600
+                            opacity-80
+                          `
+                      }
+                      shadow-sm
+                      hover:shadow-md
+                      transition-all
+                      duration-200
+                    `}
+                  >
+                    {/* STATUS DOT */}
+                    <div className="flex-shrink-0 pt-1.5">
+                      <span
+                        className={`
+                          block
+                          h-2
+                          w-2
+                          rounded-full
+                          ring-2
+                          ring-white
+                          dark:ring-gray-800
+                          ${
+                            isUnread && activeTab === 'unread'
+                              ? index === 0
+                                ? 'bg-red-500 animate-pulse'
+                                : 'bg-blue-500'
+                              : isUnread
+                              ? 'bg-blue-400'
+                              : 'bg-gray-300 dark:bg-gray-600'
+                          }
+                        `}
+                      />
                     </div>
 
-                    {/* PRODUCT + DETAILS */}
-                    {formatNotificationMessage(notification.message)}
-                  </div>
-
-                  {/* MARK AS READ - Only for unread tab */}
-                  {activeTab === 'unread' && !notification.read && (
-                    <button
-                      onClick={() => markAsRead(notification.id)}
-                      disabled={markingAsRead === notification.id}
-                      className="
-                        flex-shrink-0
-                        h-6
-                        px-2
-                        flex
-                        items-center
-                        justify-center
-                        rounded-md
-                        text-[9px]
-                        font-semibold
-                        whitespace-nowrap
-                        text-blue-600
-                        bg-blue-50
-                        border
-                        border-blue-200
-                        hover:bg-blue-600
-                        hover:text-white
-                        hover:border-blue-600
-                        dark:text-blue-300
-                        dark:bg-blue-950/40
-                        dark:border-blue-800
-                        dark:hover:bg-blue-500
-                        dark:hover:text-white
-                        transition-all
-                        duration-200
-                        disabled:opacity-50
-                        disabled:cursor-not-allowed
-                      "
-                      title="Mark as read"
-                    >
-                      {markingAsRead === notification.id ? (
-                        <span className="flex items-center gap-1">
-                          <span
+                    {/* MAIN CONTENT */}
+                    <div className="flex-1 min-w-0">
+                      {/* TOP ROW */}
+                      <div
+                        className="
+                          flex
+                          items-center
+                          justify-between
+                          gap-2
+                        "
+                      >
+                        {/* ORDER + NEW */}
+                        <div
+                          className="
+                            flex
+                            items-center
+                            gap-1.5
+                            min-w-0
+                          "
+                        >
+                          <h5
                             className="
-                              h-2.5
-                              w-2.5
-                              animate-spin
-                              rounded-full
-                              border-2
-                              border-blue-500
-                              border-t-transparent
+                              text-[11px]
+                              font-bold
+                              text-gray-800
+                              dark:text-white
+                              truncate
                             "
-                          />
-                          Marking...
-                        </span>
-                      ) : (
-                        'Mark as Read'
-                      )}
-                    </button>
-                  )}
-                </div>
-              ))}
+                          >
+                            Order #{notification.orderNo}
+                          </h5>
+
+                          {isUnread && (
+                            <span
+                              className="
+                                flex-shrink-0
+                                rounded-full
+                                bg-red-100
+                                dark:bg-red-900/30
+                                px-1.5
+                                py-0.5
+                                text-[8px]
+                                font-bold
+                                text-red-600
+                                dark:text-red-400
+                              "
+                            >
+                              NEW
+                            </span>
+                          )}
+                        </div>
+
+                        {/* TIME */}
+                        <div
+                          className="
+                            flex-shrink-0
+                            flex
+                            items-center
+                            gap-1
+                            text-[10px]
+                            text-blue-400
+                            dark:text-blue-300
+                            font-semibold
+                          "
+                        >
+                          <FaClock className="text-[8px]" />
+                          <span>
+                            {formatDistanceToNow(
+                              new Date(notification.createdAt),
+                              {
+                                addSuffix: true,
+                              }
+                            )}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* PRODUCT + DETAILS */}
+                      {formatNotificationMessage(notification.message)}
+                    </div>
+
+                    {/* MARK AS READ - Only for unread notifications */}
+                    {isUnread && (
+                      <button
+                        onClick={() => markAsRead(notification.id)}
+                        disabled={markingAsRead === notification.id}
+                        className="
+                          flex-shrink-0
+                          h-6
+                          px-2
+                          flex
+                          items-center
+                          justify-center
+                          rounded-md
+                          text-[9px]
+                          font-semibold
+                          whitespace-nowrap
+                          text-blue-600
+                          bg-blue-50
+                          border
+                          border-blue-200
+                          hover:bg-blue-600
+                          hover:text-white
+                          hover:border-blue-600
+                          dark:text-blue-300
+                          dark:bg-blue-950/40
+                          dark:border-blue-800
+                          dark:hover:bg-blue-500
+                          dark:hover:text-white
+                          transition-all
+                          duration-200
+                          disabled:opacity-50
+                          disabled:cursor-not-allowed
+                        "
+                        title="Mark as read"
+                      >
+                        {markingAsRead === notification.id ? (
+                          <span className="flex items-center gap-1">
+                            <span
+                              className="
+                                h-2.5
+                                w-2.5
+                                animate-spin
+                                rounded-full
+                                border-2
+                                border-blue-500
+                                border-t-transparent
+                              "
+                            />
+                            Marking...
+                          </span>
+                        ) : (
+                          'Mark as Read'
+                        )}
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -1124,7 +1166,7 @@ const DropdownNotification = () => {
               "
             >
               <span>
-                {activeTab === 'unread' ? 'View all unread' : 'View all read'} notifications
+                {activeTab === 'unread' ? 'View all unread' : 'View all'} notifications
               </span>
               <FaChevronRight
                 className="
