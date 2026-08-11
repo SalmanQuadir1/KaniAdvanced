@@ -60,6 +60,8 @@ const ViewOrderr = () => {
       }
 
       const data = await response.json();
+      console.log(data,"4444444444");
+      
       setOrder(data);
     } catch (error) {
       console.error('Error fetching order:', error);
@@ -152,13 +154,17 @@ const ViewOrderr = () => {
           </button>
   <div className="flex items-center gap-3">
   <span className="text-sm text-gray-500">Order Status:</span>
-  <div className='rounded-lg p-0.5' style={{ backgroundColor: '#dc2626', color: 'white' }}s>
+  
   {/* <StatusBadge 
     status={order?.status} 
     style={{ backgroundColor: '#dc2626', color: 'white' }}
   /> */}
-  <span className='text-xs'>{order?.status || 'N/A'}</span>
-  </div>
+
+     <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                         {order?.status || 'N/A'}
+                        </span>
+  {/* <span className='text-xs'>{order?.status || 'N/A'}</span> */}
+ 
 </div>
         </div>
 
