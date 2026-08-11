@@ -183,13 +183,13 @@ const ViewOrder = () => {
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
                     <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
                 </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                <td className="px-5 py-5 border-b border-gray-200 text-sm tracking-wider whitespace-nowrap">
                     <p className="text-gray-900 whitespace-no-wrap">{item?.orderNo}</p>
                 </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                <td className="px-5 py-5 border-b border-gray-200 text-sm whitespace-nowrap tracking-wider">
                     <p className="text-gray-900 whitespace-no-wrap">{item.customerName}</p>
                 </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm tracking-wider">
+                <td className="px-5 py-5 border-b border-gray-200 text-sm tracking-wider whitespace-nowrap">
                     {item?.products?.map((prodId, idx) => (
                         <div key={idx} className="mb-1">
                             <span className="text-gray-900 whitespace-no-wrap tracking-wider">{prodId.productId}</span>
@@ -197,7 +197,7 @@ const ViewOrder = () => {
                         </div>
                     ))}
                 </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
+                <td className="px-5 py-5 border-b border-gray-200 text-sm whitespace-nowrap tracking-wider">
                     <p className="text-gray-900 whitespace-no-wrap">{item.name}</p>
                 </td>
                 <td className="px-5 py-5 border-b border-gray-200 text-sm">
@@ -281,8 +281,8 @@ const ViewOrder = () => {
                         >
                             {({ setFieldValue, values, handleBlur }) => (
                                 <Form>
-                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-                                        <div className="flex-1 min-w-[200px]">
+                                    <div className=" grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+                                        <div className=" min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Order No</label>
                                             <ReactSelect
                                                 name="orderNo"
@@ -299,7 +299,7 @@ const ViewOrder = () => {
                                             />
                                         </div>
 
-                                        <div className="flex-1 min-w-[300px]">
+                                        <div className=" min-w-[300px]">
                                             <label className="mb-2.5 block text-black dark:text-white">
                                                 Supplier
                                             </label>
@@ -316,10 +316,7 @@ const ViewOrder = () => {
                                                 />
                                             </div>
                                         </div>
-                                    </div>
-
-                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-                                        <div className="flex-1 min-w-[300px]">
+                                        <div className=" min-w-[300px]">
                                             <label className="mb-2.5 block text-black dark:text-white">From Date</label>
                                             <Field
                                                 name='fromDate'
@@ -328,6 +325,9 @@ const ViewOrder = () => {
                                                 className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                             />
                                         </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
 
                                         <div className="flex-1 min-w-[300px]">
                                             <label className="mb-2.5 block text-black dark:text-white">To Date</label>
@@ -338,10 +338,7 @@ const ViewOrder = () => {
                                                 className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                             />
                                         </div>
-                                    </div>
-
-                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-                                        <div className="flex-1 min-w-[200px]">
+                                            <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Customer</label>
                                             <ReactSelect
                                                 name="customerName"
@@ -357,6 +354,10 @@ const ViewOrder = () => {
                                                 placeholder="Select"
                                             />
                                         </div>
+                                    </div>
+
+                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
+                                    
                                     </div>
 
                                     <div className="flex justify-center">

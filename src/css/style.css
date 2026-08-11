@@ -699,7 +699,7 @@ h2.text-slate-500,
 h3.text-slate-500,
 h4.text-slate-500 {
   padding: 16px 32px !important;
-  background-color: rgba(241, 245, 249, 0.9) !important;
+  background-color: rgba(67, 146, 224, 0.9) !important;
   margin-bottom: 1.5rem !important;
 }
 
@@ -715,7 +715,7 @@ h4.text-slate-500::after {
   right: 24px !important;
   height: 3px !important;
   background: linear-gradient(90deg, 
-    rgba(100, 116, 139, 0.4) 0%, 
+    rgba(115, 164, 233, 0.4) 0%, 
     rgba(71, 85, 105, 0.6) 50%,
     rgba(100, 116, 139, 0.4) 100%) !important;
   border-radius: 1.5px !important;

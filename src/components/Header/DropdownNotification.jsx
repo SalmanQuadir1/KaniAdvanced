@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   FaBell,
   FaClock,
@@ -7,6 +7,7 @@ import {
   FaEnvelope,
   FaEnvelopeOpen,
   FaList,
+  FaSpinner,
 } from 'react-icons/fa';
 import { formatDistanceToNow } from 'date-fns';
 import { toast } from 'react-toastify';
@@ -27,9 +28,16 @@ const DropdownNotification = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [markingAsRead, setMarkingAsRead] = useState(null);
   const [activeTab, setActiveTab] = useState('unread'); // 'unread' | 'all'
+  
+  // Infinite scroll states
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [totalItems, setTotalItems] = useState(0);
+  const [initialLoading, setInitialLoading] = useState(true);
 
   const trigger = useRef(null);
   const dropdown = useRef(null);
+  const observerRef = useRef();
 
   const { currentUser } = useSelector(
     (state) => state?.persisted?.user
@@ -280,40 +288,45 @@ const DropdownNotification = () => {
   };
 
   // =========================================================
-  // FETCH NOTIFICATIONS BY TAB
+  // FETCH NOTIFICATIONS BY TAB WITH PAGINATION
   // =========================================================
-  const fetchNotifications = async (tab = activeTab) => {
+  const fetchNotifications = async (tab = activeTab, pageNumber = 1, append = false) => {
+    if (loading) return;
+    
     setLoading(true);
 
     try {
-      let url = `${NOTIF_}`;
+      let url = '';
       
-      // If tab is 'all', fetch all notifications
+      // If tab is 'all', fetch all notifications with pagination
       if (tab === 'all') {
-        url = `${NOTIF}`;
+        url = `${NOTIF}?page=${pageNumber}&size=5`;
       }
       // If tab is 'unread', fetch unread notifications
       else {
-        url = `${NOTIF_}`;
+        url = `${NOTIF_}?page=${pageNumber}&size=5`;
       }
 
       const data = await fetchWithAuth(url);
 
       let notificationsArray = [];
+      let totalElements = 0;
       
       // Handle different response formats
       if (Array.isArray(data)) {
         notificationsArray = data;
+        totalElements = data.length;
       } else if (data && data.content && Array.isArray(data.content)) {
         notificationsArray = data.content;
+        totalElements = data.totalElements || 0;
       } else if (data && data.data && Array.isArray(data.data)) {
         notificationsArray = data.data;
+        totalElements = data.total || 0;
       } else {
         notificationsArray = [];
       }
 
       // For 'unread' tab, filter to show only unread
-      // For 'all' tab, show all (no filtering)
       let filteredData = [];
       if (tab === 'unread') {
         filteredData = notificationsArray.filter((notif) => !notif.read);
@@ -321,15 +334,53 @@ const DropdownNotification = () => {
         filteredData = notificationsArray; // Show all
       }
 
-      setNotifications(filteredData);
+      setTotalItems(totalElements);
+
+      if (append) {
+        setNotifications((prev) => [...prev, ...filteredData]);
+      } else {
+        setNotifications(filteredData);
+      }
+
+      // Check if there are more items to load
+      const currentTotal = append ? notifications.length + filteredData.length : filteredData.length;
+      setHasMore(currentTotal < totalElements);
+
     } catch (error) {
       console.error('Error fetching notifications:', error);
       toast.error('Failed to load notifications');
       setNotifications([]);
     } finally {
       setLoading(false);
+      setInitialLoading(false);
     }
   };
+
+  // =========================================================
+  // LOAD MORE NOTIFICATIONS
+  // =========================================================
+  const loadMoreNotifications = () => {
+    if (!hasMore || loading || !dropdownOpen) return;
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchNotifications(activeTab, nextPage, true);
+  };
+
+  // =========================================================
+  // OBSERVER FOR INFINITE SCROLL
+  // =========================================================
+  const lastElementRef = useCallback(node => {
+    if (loading) return;
+    if (observerRef.current) observerRef.current.disconnect();
+    
+    observerRef.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore && dropdownOpen) {
+        loadMoreNotifications();
+      }
+    });
+    
+    if (node) observerRef.current.observe(node);
+  }, [loading, hasMore, dropdownOpen]);
 
   // =========================================================
   // MARK AS READ
@@ -399,7 +450,9 @@ const DropdownNotification = () => {
       
       // Switch to 'all' tab to see the changes
       setActiveTab('all');
-      fetchNotifications('all');
+      setPage(1);
+      setHasMore(true);
+      fetchNotifications('all', 1, false);
     } catch (error) {
       console.error('Error marking all as read:', error);
       toast.error('Failed to mark all as read');
@@ -422,7 +475,10 @@ const DropdownNotification = () => {
   // =========================================================
   useEffect(() => {
     if (dropdownOpen) {
-      fetchNotifications(activeTab);
+      setPage(1);
+      setHasMore(true);
+      setInitialLoading(true);
+      fetchNotifications(activeTab, 1, false);
     }
   }, [dropdownOpen, activeTab]);
 
@@ -432,7 +488,17 @@ const DropdownNotification = () => {
   const handleTabChange = (tab) => {
     if (tab === activeTab) return;
     setActiveTab(tab);
+    setPage(1);
+    setHasMore(true);
     // fetchNotifications will be triggered by the useEffect above
+  };
+
+  // =========================================================
+  // HANDLE VIEW ALL CLICK
+  // =========================================================
+  const handleViewAllClick = () => {
+    const targetTab = activeTab === 'unread' ? 'all' : 'unread';
+    handleTabChange(targetTab);
   };
 
   return (
@@ -591,9 +657,14 @@ const DropdownNotification = () => {
             >
               Delayed Orders
             </h4>
+            {totalItems > 0 && (
+              <span className="text-[8px] text-gray-400 dark:text-gray-500">
+                ({totalItems})
+              </span>
+            )}
           </div>
 
-          {/* {activeTab === 'unread' && unreadCount > 0 && (
+          {activeTab === 'unread' && unreadCount > 0 && (
             <button
               onClick={markAllAsRead}
               className="
@@ -613,7 +684,7 @@ const DropdownNotification = () => {
               <FaCheck className="text-[8px]" />
               Mark All Read
             </button>
-          )} */}
+          )}
         </div>
 
         {/* ===================================================
@@ -654,14 +725,10 @@ const DropdownNotification = () => {
             `}
           >
             <div className="flex items-center justify-center gap-1.5">
-             
               <span>Unread</span>
               {unreadCount > 0 && (
                 <span
                   className="
-                   
-                  
-                  
                     text-[9px]
                     font-bold
                     text-red-600
@@ -712,8 +779,12 @@ const DropdownNotification = () => {
             `}
           >
             <div className="flex items-center justify-center gap-1.5">
-              {/* <FaList className="text-[10px]" /> */}
-              <span>All Notifications.</span>
+              <span>All</span>
+              {totalItems > 0 && (
+                <span className="text-[8px] text-gray-400 dark:text-gray-500">
+                  ({totalItems})
+                </span>
+              )}
             </div>
             {/* Active indicator */}
             {activeTab === 'all' && (
@@ -735,7 +806,7 @@ const DropdownNotification = () => {
         </div>
 
         {/* ===================================================
-            NOTIFICATION LIST
+            NOTIFICATION LIST WITH INFINITE SCROLL
         ==================================================== */}
         <div
           className="
@@ -758,9 +829,9 @@ const DropdownNotification = () => {
           }}
         >
           {/* =================================================
-              LOADING
+              LOADING (Initial)
           ================================================== */}
-          {loading ? (
+          {initialLoading ? (
             <div
               className="
                 flex
@@ -865,10 +936,12 @@ const DropdownNotification = () => {
             <div className="py-1">
               {notifications.map((notification, index) => {
                 const isUnread = !notification.read;
+                const isLastItem = index === notifications.length - 1;
                 
                 return (
                   <div
                     key={notification.id}
+                    ref={isLastItem && activeTab === 'all' ? lastElementRef : null}
                     className={`
                       group
                       mx-2
@@ -1120,6 +1193,31 @@ const DropdownNotification = () => {
                   </div>
                 );
               })}
+              
+              {/* ===============================================
+                  LOADING MORE INDICATOR
+              ================================================ */}
+              {loading && !initialLoading && (
+                <div className="flex items-center justify-center py-3">
+                  <div className="flex items-center gap-2">
+                    <FaSpinner className="animate-spin text-blue-500 text-xs" />
+                    <span className="text-[8px] text-gray-400 dark:text-gray-500">
+                      Loading more...
+                    </span>
+                  </div>
+                </div>
+              )}
+              
+              {/* ===============================================
+                  END OF LIST MESSAGE
+              ================================================ */}
+              {!hasMore && notifications.length > 0 && activeTab === 'all' && (
+                <div className="text-center py-2">
+                  <p className="text-[8px] text-gray-400 dark:text-gray-500">
+                    — You've seen all {totalItems} notifications —
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -1146,7 +1244,7 @@ const DropdownNotification = () => {
             "
           >
             <button
-              onClick={() => activeTab === 'unread' ? handleTabChange('all') : handleTabChange('unread')  }
+              onClick={handleViewAllClick}
               className="
                 w-full
                 flex
@@ -1166,7 +1264,7 @@ const DropdownNotification = () => {
               "
             >
               <span>
-                {activeTab === 'unread' ? 'View all unread' : 'View all'} notifications
+                {activeTab === 'unread' ? 'View All Notifications' : 'View Unread Notifications'}
               </span>
               <FaChevronRight
                 className="
