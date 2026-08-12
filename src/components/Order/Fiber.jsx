@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 import { BASE_URL } from '../../Constants/utils';
 import { useNavigate } from 'react-router-dom';
 import ReactDOM from 'react-dom';
+import { Col, Row } from 'react-bootstrap';
 
 const Fiber = () => {
   const { currentUser } = useSelector((state) => state?.persisted?.user);
@@ -22,6 +23,7 @@ const Fiber = () => {
     itemsPerPage: 10,
     totalItems: 0,
   });
+
   const [printData, setPrintData] = useState(null);
   const [isPrinting, setIsPrinting] = useState(false);
 
@@ -29,8 +31,11 @@ const Fiber = () => {
   const fetchOrderProducts = async (page = 1) => {
     setLoading(true);
     try {
+      // Convert to 0-indexed for API
+      const apiPage = page - 1;
+      
       const response = await fetch(
-        `${BASE_URL}/order/orderCategory/plainOrders?page=${page}&size=10`,
+        `${BASE_URL}/order/orderCategory/plainOrders?page=${apiPage}&size=10`,
         {
           method: 'GET',
           headers: {
@@ -46,7 +51,7 @@ const Fiber = () => {
       if (response.ok) {
         setOrderProducts(data.orders || []);
         setPagination({
-          currentPage: page,
+          currentPage: page, // Store 1-indexed for UI
           totalPages: data.totalPages || 1,
           itemsPerPage: data.size || 10,
           totalItems: data.totalItems || 0,
@@ -65,7 +70,7 @@ const Fiber = () => {
   };
 
   useEffect(() => {
-    fetchOrderProducts();
+    fetchOrderProducts(1); // Start with page 1
   }, []);
 
   // Handle page change
@@ -145,51 +150,51 @@ const Fiber = () => {
             {startingSerialNumber + index}
           </p>
         </td>
-       <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm">
-  <span className="text-gray-900 dark:text-white whitespace-nowrap font-medium">
-    {item.orderNo || 'N/A'}
-  </span>
-</td>
-    <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm whitespace-no-wrap tracking-wider">
-  {item.orderProducts && item.orderProducts.length > 0 ? (
-    <div className="flex flex-wrap gap-1">
-      {item.orderProducts.map((product, idx) => (
-        <span 
-          key={idx} 
-          className="text-gray-900 dark:text-white whitespace-nowrap"
-        >
-          {product.productName || 'N/A'}
-          {idx < item.orderProducts.length - 1 && ', '}
-        </span>
-      ))}
-    </div>
-  ) : (
-    <span className="text-gray-900 dark:text-white whitespace-nowrap">
-      {item.productName || 'N/A'}
-    </span>
-  )}
-</td>
- <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm">
-  {item.orderProducts?.map((product) => (
-    <div key={product.id} className="flex flex-wrap gap-1">
-      {product.plainOrderCategoryDetails?.length > 0 ? (
-        product.plainOrderCategoryDetails?.map((fiber, idx) => (
-          <span 
-            key={idx} 
-            className="text-gray-900 dark:text-white whitespace-nowrap"
-          >
-            {fiber.fiberProductName}
-            {idx < product.plainOrderCategoryDetails.length - 1 && ', '}
+        <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm">
+          <span className="text-gray-900 dark:text-white whitespace-nowrap font-medium">
+            {item.orderNo || 'N/A'}
           </span>
-        ))
-      ) : (
-        <span className="text-gray-500 dark:text-gray-400">
-          No fibers assigned
-        </span>
-      )}
-    </div>
-  ))}
-</td>
+        </td>
+        <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm whitespace-no-wrap tracking-wider">
+          {item.orderProducts && item.orderProducts.length > 0 ? (
+            <div className="flex flex-wrap gap-1">
+              {item.orderProducts.map((product, idx) => (
+                <span 
+                  key={idx} 
+                  className="text-gray-900 dark:text-white whitespace-nowrap"
+                >
+                  {product.productName || 'N/A'}
+                  {idx < item.orderProducts.length - 1 && ', '}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <span className="text-gray-900 dark:text-white whitespace-nowrap">
+              {item.productName || 'N/A'}
+            </span>
+          )}
+        </td>
+        <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm">
+          {item.orderProducts?.map((product) => (
+            <div key={product.id} className="flex flex-wrap gap-1">
+              {product.plainOrderCategoryDetails?.length > 0 ? (
+                product.plainOrderCategoryDetails?.map((fiber, idx) => (
+                  <span 
+                    key={idx} 
+                    className="text-gray-900 dark:text-white whitespace-nowrap"
+                  >
+                    {fiber.fiberProductName}
+                    {idx < product.plainOrderCategoryDetails.length - 1 && ', '}
+                  </span>
+                ))
+              ) : (
+                <span className="text-gray-500 dark:text-gray-400">
+                  No fibers assigned
+                </span>
+              )}
+            </div>
+          ))}
+        </td>
         <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm tracking-wider whitespace-no-wrap">
           {item.orderProducts?.map((product) => (
             <div key={product.id} className="space-y-1">
@@ -201,44 +206,37 @@ const Fiber = () => {
             </div>
           ))}
         </td>
-     <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm tracking-wider whitespace-no-wrap">
-  {item.orderProducts?.map((product) => (
-    <div key={product.id} className="flex flex-wrap gap-1">
-      {product.plainOrderCategoryDetails?.map((fiber, idx) => (
-        <span 
-          key={idx} 
-          className="text-gray-900 dark:text-white whitespace-nowrap"
-        >
-          {fiber.locationName || 'N/A'}
-          {idx < product.plainOrderCategoryDetails.length - 1 && ', '}
-        </span>
-      ))}
-    </div>
-  ))}
-</td>
-       <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm tracking-wider whitespace-no-wrap">
-  {item.orderProducts?.map((product) => (
-    <div key={product.id} className="inline-flex flex-wrap gap-1">
-      {product.plainOrderCategoryDetails?.map((fiber, idx) => (
-        <span 
-          key={idx} 
-          className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 whitespace-nowrap"
-        >
-          {fiber.orderCategory || 'N/A'}
-        </span>
-      ))}
-    </div>
-  ))}
-</td>
+        <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm tracking-wider whitespace-no-wrap">
+          {item.orderProducts?.map((product) => (
+            <div key={product.id} className="flex flex-wrap gap-1">
+              {product.plainOrderCategoryDetails?.map((fiber, idx) => (
+                <span 
+                  key={idx} 
+                  className="text-gray-900 dark:text-white whitespace-nowrap"
+                >
+                  {fiber.locationName || 'N/A'}
+                  {idx < product.plainOrderCategoryDetails.length - 1 && ', '}
+                </span>
+              ))}
+            </div>
+          ))}
+        </td>
+        <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm tracking-wider whitespace-no-wrap">
+          {item.orderProducts?.map((product) => (
+            <div key={product.id} className="inline-flex flex-wrap gap-1">
+              {product.plainOrderCategoryDetails?.map((fiber, idx) => (
+                <span 
+                  key={idx} 
+                  className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 whitespace-nowrap"
+                >
+                  {fiber.orderCategory || 'N/A'}
+                </span>
+              ))}
+            </div>
+          ))}
+        </td>
         <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm">
           <div className="flex items-center gap-2">
-            {/* <button
-              onClick={() => navigate(`/order/fiber-details/${item.id}`)}
-              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-              title="View Details"
-            >
-              <FiEye size={18} />
-            </button> */}
             <button
               onClick={() => handlePrintRow(item)}
               className="text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300"
@@ -261,6 +259,62 @@ const Fiber = () => {
     const fibers = data.orderProducts?.flatMap(
       (product) => product.plainOrderCategoryDetails || []
     ) || [];
+    console.log(fibers,"454");
+    
+    const styles = {
+      container: {
+        fontFamily: "'Arial', sans-serif",
+        fontSize: '12px',
+        lineHeight: '1.3',
+        color: '#000',
+        padding: '15px',
+        maxWidth: '210mm',
+        margin: '0 auto',
+        backgroundColor: '#fff'
+      },
+      header: {
+        borderBottom: '2px solid #000',
+        paddingBottom: '10px',
+        marginBottom: '15px'
+      },
+    }
+  
+    const getCompanyAddress = () => {
+      const addresses = {
+        delhi: {
+          name: "Kashmir Loom Company Pvt Ltd",
+          address: "C-65, Basement, Nizamuddin East, New Delhi",
+          gstin: "07AABCK4463H1ZK",
+          cin: "U74899DL2000PTC104407",
+          contact: "+911146502902, 9810511952",
+          email: "shop@kashmirloom.com",
+          state: "Delhi",
+          stateCode: "07"
+        },
+        srinagar: {
+          name: "Kashmir Loom Company Pvt Ltd",
+          address: "GULSHAN ANNEX, MUSKAN ROAD, LAL MANDI, SRINAGAR",
+          gstin: "01AABCK4463H1ZW",
+          cin: "U74899DL2000PTC104407",
+          contact: "+911942313989, 9266577005",
+          email: "shop@kashmirloom.com",
+          state: "Jammu & Kashmir",
+          stateCode: "01"
+        }
+      };
+
+      const gstRegistration = fibers[0]?.locationName?.toLowerCase() || '';
+
+      if (gstRegistration.includes('delhi')) {
+        return addresses.delhi;
+      } else if (gstRegistration.includes('srinagar')) {
+        return addresses.srinagar;
+      }
+
+      return addresses.srinagar;
+    };
+
+    const companyAddress = getCompanyAddress();
 
     return (
       <div className="print-row-content" style={{ display: isPrinting ? 'block' : 'none' }}>
@@ -371,6 +425,45 @@ const Fiber = () => {
         </style>
 
         <div className="print-row-header">
+          <div style={styles.header}>
+            <Row className="align-items-start">
+              <Col md={8} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                {/* Left side - Company Address */}
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>{companyAddress.name}</div>
+                  <div style={{ fontSize: '12px', color: '#374151', marginBottom: '4px' }}>{companyAddress.address}</div>
+                  <div style={{ fontSize: '12px', color: '#374151', marginBottom: '4px' }}>
+                    <strong>GSTIN/UIN:</strong> {companyAddress.gstin}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#374151', marginBottom: '4px' }}>
+                    <strong>State Name:</strong> {companyAddress.state}, <strong>Code:</strong> {companyAddress.stateCode}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#374151', marginBottom: '4px' }}>
+                    <strong>CIN:</strong> {companyAddress.cin}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#374151', marginBottom: '4px' }}>
+                    <strong>Contact:</strong> {companyAddress.contact}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#374151', marginBottom: '4px' }}>
+                    <strong>E-Mail:</strong> {companyAddress.email}
+                  </div>
+                </div>
+
+                {/* Right side - Logo */}
+                <div style={{ marginLeft: '20px', marginTop: '0' }}>
+                  <img
+                    src="/img/urdulogoo.png"
+                    alt="Company Logo"
+                    style={{
+                      width: '200px',
+                      height: '200px',
+                      objectFit: 'contain'
+                    }}
+                  />
+                </div>
+              </Col>
+            </Row>
+          </div>
           <h1>FIBER ORDER DETAILS</h1>
           <div className="subtitle">Order Information</div>
           <div className="order-info">
@@ -390,7 +483,7 @@ const Fiber = () => {
           <div className="detail-item">
             <span className="label tracking-wider whitespace-nowrap">Challan No :</span>
             <span className="value">
-              {data.orderProducts.map((p) => p.challanNo).join(', ') || 'N/A'}
+              {data.orderProducts?.map((p) => p.challanNo).join(', ') || 'N/A'}
             </span>
           </div>
         </div>
@@ -492,7 +585,7 @@ const Fiber = () => {
                         Fibers Assigned
                       </th>
                       <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-slate-700 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                         Qty
+                        Qty
                       </th>
                       <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-slate-700 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                         Location
