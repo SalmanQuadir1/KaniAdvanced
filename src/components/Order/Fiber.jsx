@@ -538,14 +538,14 @@ const Fiber = () => {
           {/* Details Grid */}
           <div className="print-details">
             <div className="detail-item">
-              <span className="label">Destination Product:</span>
-              <span className="value">
+              <span className="label tracking-wider whitespace-nowrap">Destination Product:</span>
+              <span className="value tracking-wider whitespace-nowrap">
                 {data.orderProducts?.map((p) => p.productName).join(', ') || data.productName || 'N/A'}
               </span>
             </div>
             <div className="detail-item">
-              <span className="label">Challan No:</span>
-              <span className="value">
+              <span className="label tracking-wider whitespace-nowrap">Challan No:</span>
+              <span className="value tracking-wider whitespace-nowrap">
                 {data.orderProducts?.map((p) => p.challanNo).filter(Boolean).join(', ') || 'N/A'}
               </span>
             </div>
