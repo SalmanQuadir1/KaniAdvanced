@@ -44,12 +44,12 @@ const Fiber = () => {
       console.log(data, 'kj');
 
       if (response.ok) {
-        setOrderProducts(data || []);
+        setOrderProducts(data.orders || []);
         setPagination({
           currentPage: page,
           totalPages: data.totalPages || 1,
           itemsPerPage: data.size || 10,
-          totalItems: data.totalElements || 0,
+          totalItems: data.totalItems || 0,
         });
       } else {
         toast.error(data.errorMessage || 'Failed to fetch order products');
@@ -254,6 +254,8 @@ const Fiber = () => {
 
   // Print Row Component
   const PrintRow = ({ data }) => {
+    console.log(data,"qwert");
+    
     if (!data) return null;
 
     const fibers = data.orderProducts?.flatMap(
@@ -380,15 +382,15 @@ const Fiber = () => {
 
         <div className="print-row-details">
           <div className="detail-item">
-            <span className="label">Destination Products:</span>
-            <span className="value">
+            <span className="label ">Destination Product</span>
+            <span className="value tracking-wider whitespace-nowrap">
               {data.orderProducts?.map((p) => p.productName).join(', ') || data.productName || 'N/A'}
             </span>
           </div>
           <div className="detail-item">
-            <span className="label">Location:</span>
+            <span className="label tracking-wider whitespace-nowrap">Challan No :</span>
             <span className="value">
-              {data.locationName || 'N/A'}
+              {data.orderProducts.map((p) => p.challanNo).join(', ') || 'N/A'}
             </span>
           </div>
         </div>
@@ -401,7 +403,7 @@ const Fiber = () => {
                 <th>Fiber Product</th>
                 <th>Quantity</th>
                 <th>Location</th>
-                <th>Category</th>
+                <th className='w-[200px]'>Category</th>
               </tr>
             </thead>
             <tbody>
@@ -412,7 +414,7 @@ const Fiber = () => {
                   <td>{fiber.deductedInventoryQty || 0}</td>
                   <td>{fiber.locationName || 'N/A'}</td>
                   <td>
-                    <span className="print-badge">
+                    <span className="print-badge flex items-center justify-center whitespace-nowrap tracking-wide px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
                       {fiber.orderCategory || 'N/A'}
                     </span>
                   </td>
@@ -435,14 +437,14 @@ const Fiber = () => {
   return (
     <>
       <DefaultLayout>
-        <Breadcrumb pageName="Order / Fiber Orders" />
+        <Breadcrumb pageName="Order / Fiber To Orders" />
 
         <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800 rounded-lg shadow-md">
           <div className="pt-5 pb-5">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row items-center justify-between w-full mb-6">
               <h2 className="text-xl text-slate-500 dark:text-slate-300 font-semibold flex items-center justify-between w-full md:w-auto">
-                <span>FIBER ORDERS</span>
+                <span>FIBER ALLOCATED TO ORDERS</span>
               </h2>
 
               <div className="flex items-center gap-4 mt-3 md:mt-0">
@@ -490,7 +492,7 @@ const Fiber = () => {
                         Fibers Assigned
                       </th>
                       <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-slate-700 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                        Total Qty
+                         Qty
                       </th>
                       <th className="px-5 py-3 border-b-2 border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-slate-700 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                         Location

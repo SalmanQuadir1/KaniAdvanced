@@ -779,7 +779,7 @@ const DropdownNotification = () => {
             `}
           >
             <div className="flex items-center justify-center gap-1.5">
-              <span>All</span>
+              <span>All Notifications</span>
               {totalItems > 0 && (
                 <span className="text-[8px] text-gray-400 dark:text-gray-500">
                   ({totalItems})

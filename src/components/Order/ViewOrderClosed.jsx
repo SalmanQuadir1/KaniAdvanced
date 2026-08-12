@@ -14,6 +14,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { customStyles as createCustomStyles } from '../../Constants/utils';
+import { MdViewList } from 'react-icons/md';
 
 const ViewOrderPending = () => {
   const {
@@ -368,20 +369,16 @@ const ViewOrderPending = () => {
           )}
         </td>
         <td className="px-5 py-5 border-b border-gray-200 text-sm">
-          <p className="flex text-gray-900 whitespace-no-wrap">
-            <FiEdit 
-              size={17} 
-              className='text-teal-500 hover:text-teal-700 mx-2 cursor-pointer' 
-              onClick={() => navigate(`/Order/updateorderClosed/${item?.id}`)} 
-              title='Edit Order' 
-            />
-            <FiTrash2 
-              size={17} 
-              className='text-red-500 hover:text-red-700 mx-2 cursor-pointer' 
-              onClick={(e) => handleDelete(e, item?.id)} 
-              title='Delete Product' 
-            />
-          </p>
+              <p className="flex text-gray-900 whitespace-no-wrap">
+                                      <MdViewList
+                                          size={17}
+                                          className='text-teal-500 hover:text-teal-700 mx-2 cursor-pointer'
+                                          onClick={() => navigate(`/order/viewOrder/${item?.id}`)}
+                                          title='View Order'
+                                      />
+                                      <span className="text-gray-300 mx-1">|</span>
+                                     
+                                  </p>
         </td>
       </tr>
     ));
