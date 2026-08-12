@@ -31,7 +31,6 @@ const Fiber = () => {
   const fetchOrderProducts = async (page = 1) => {
     setLoading(true);
     try {
-      // Convert to 0-indexed for API
       const apiPage = page - 1;
       
       const response = await fetch(
@@ -51,7 +50,7 @@ const Fiber = () => {
       if (response.ok) {
         setOrderProducts(data.orders || []);
         setPagination({
-          currentPage: page, // Store 1-indexed for UI
+          currentPage: page,
           totalPages: data.totalPages || 1,
           itemsPerPage: data.size || 10,
           totalItems: data.totalItems || 0,
@@ -70,7 +69,7 @@ const Fiber = () => {
   };
 
   useEffect(() => {
-    fetchOrderProducts(1); // Start with page 1
+    fetchOrderProducts(1);
   }, []);
 
   // Handle page change
@@ -86,7 +85,6 @@ const Fiber = () => {
     setIsPrinting(true);
     setTimeout(() => {
       window.print();
-      // Reset after print dialog closes
       setTimeout(() => {
         setIsPrinting(false);
         setPrintData(null);
@@ -252,33 +250,12 @@ const Fiber = () => {
 
   // Print Row Component
   const PrintRow = ({ data }) => {
-    console.log(data,"qwert");
-    
     if (!data) return null;
 
     const fibers = data.orderProducts?.flatMap(
       (product) => product.plainOrderCategoryDetails || []
     ) || [];
-    console.log(fibers,"454");
-    
-    const styles = {
-      container: {
-        fontFamily: "'Arial', sans-serif",
-        fontSize: '12px',
-        lineHeight: '1.3',
-        color: '#000',
-        padding: '15px',
-        maxWidth: '210mm',
-        margin: '0 auto',
-        backgroundColor: '#fff'
-      },
-      header: {
-        borderBottom: '2px solid #000',
-        paddingBottom: '10px',
-        marginBottom: '15px'
-      },
-    }
-  
+
     const getCompanyAddress = () => {
       const addresses = {
         delhi: {
@@ -315,6 +292,16 @@ const Fiber = () => {
     };
 
     const companyAddress = getCompanyAddress();
+    
+    // Get first fiber for order info
+    const firstFiber = fibers[0] || {};
+    const orderDate = firstFiber.createdAt 
+      ? new Date(firstFiber.createdAt).toLocaleDateString('en-GB', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        })
+      : 'N/A';
 
     return (
       <div className="print-row-content" style={{ display: isPrinting ? 'block' : 'none' }}>
@@ -332,196 +319,277 @@ const Fiber = () => {
                 left: 0;
                 top: 0;
                 width: 100%;
-                padding: 40px;
+                padding: 30px 40px;
                 background: white;
                 z-index: 99999;
               }
               .print-row-table {
                 width: 100%;
                 border-collapse: collapse;
-                font-size: 13px;
-                margin-top: 20px;
+                font-size: 12px;
+                margin-top: 15px;
               }
               .print-row-table th {
                 background-color: #f3f4f6;
                 border: 1px solid #d1d5db;
-                padding: 10px 12px;
+                padding: 8px 12px;
                 text-align: left;
                 font-weight: 600;
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
               }
               .print-row-table td {
                 border: 1px solid #d1d5db;
-                padding: 10px 12px;
+                padding: 8px 12px;
+                font-size: 11px;
               }
-              .print-row-header {
-                text-align: center;
-                margin-bottom: 25px;
-                border-bottom: 2px solid #e5e7eb;
+              .print-row-table tr:nth-child(even) {
+                background-color: #f9fafb;
+              }
+              .print-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                border-bottom: 3px solid #1e3a5f;
                 padding-bottom: 15px;
+                margin-bottom: 20px;
               }
-              .print-row-header h1 {
-                font-size: 24px;
-                font-weight: bold;
-                margin: 0;
+              .print-header-left {
+                flex: 1;
+              }
+              .print-header-right {
+                flex-shrink: 0;
+                margin-left: 30px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              }
+              .company-name {
+                font-size: 18px;
+                font-weight: 700;
+                color: #1e3a5f;
+                margin-bottom: 5px;
+              }
+              .company-detail {
+                font-size: 10px;
+                color: #4b5563;
+                margin-bottom: 2px;
+                line-height: 1.4;
+              }
+              .company-detail strong {
                 color: #1f2937;
+                font-weight: 600;
               }
-              .print-row-header .subtitle {
+              .print-title {
+                text-align: center;
+                margin: 15px 0;
+              }
+              .print-title h1 {
+                font-size: 22px;
+                font-weight: 700;
+                color: #1e3a5f;
+                margin: 0;
+                letter-spacing: 1px;
+              }
+              .print-title .subtitle {
                 color: #6b7280;
-                margin: 5px 0;
-                font-size: 14px;
+                font-size: 12px;
+                margin-top: 3px;
               }
-              .print-row-header .order-info {
-                margin-top: 10px;
-                font-size: 14px;
+              .order-info-bar {
+                display: flex;
+                justify-content: center;
+                gap: 30px;
+                background: #f3f4f6;
+                padding: 10px 20px;
+                border-radius: 6px;
+                margin: 10px 0 15px 0;
+              }
+              .order-info-bar .info-item {
+                font-size: 12px;
                 color: #374151;
               }
-              .print-row-header .order-info strong {
+              .order-info-bar .info-item strong {
                 font-weight: 600;
+                color: #1f2937;
+              }
+              .print-details {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin: 15px 0;
+                padding: 12px 15px;
+                background: #f9fafb;
+                border-radius: 6px;
+                border: 1px solid #e5e7eb;
+              }
+              .print-details .detail-item {
+                display: flex;
+                gap: 8px;
+                font-size: 11px;
+              }
+              .print-details .detail-item .label {
+                font-weight: 600;
+                color: #4b5563;
+                min-width: 100px;
+              }
+              .print-details .detail-item .value {
+                color: #1f2937;
               }
               .print-badge {
                 display: inline-block;
-                padding: 3px 10px;
+                padding: 2px 10px;
                 border-radius: 9999px;
-                font-size: 11px;
+                font-size: 10px;
                 font-weight: 500;
                 background-color: #dbeafe;
                 color: #1e40af;
               }
-              .print-row-footer {
-                margin-top: 25px;
+              .print-footer {
+                margin-top: 20px;
                 text-align: center;
-                font-size: 12px;
-                color: #6b7280;
+                font-size: 10px;
+                color: #9ca3af;
                 border-top: 1px solid #e5e7eb;
-                padding-top: 15px;
+                padding-top: 12px;
               }
               .no-fibers {
                 text-align: center;
                 color: #9ca3af;
                 padding: 20px;
+                font-size: 12px;
               }
-              .print-row-details {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-                margin: 15px 0;
-                padding: 15px;
-                background: #f9fafb;
-                border-radius: 6px;
-              }
-              .print-row-details .detail-item {
-                display: flex;
-                gap: 10px;
-              }
-              .print-row-details .detail-item .label {
-                font-weight: 600;
-                color: #4b5563;
-              }
-              .print-row-details .detail-item .value {
-                color: #1f2937;
+              .logo-image {
+                max-width: 120px;
+                max-height: 80px;
+                object-fit: contain;
               }
             }
           `}
         </style>
 
-        <div className="print-row-header">
-          <div style={styles.header}>
-            <Row className="align-items-start">
-              <Col md={8} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                {/* Left side - Company Address */}
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '8px' }}>{companyAddress.name}</div>
-                  <div style={{ fontSize: '12px', color: '#374151', marginBottom: '4px' }}>{companyAddress.address}</div>
-                  <div style={{ fontSize: '12px', color: '#374151', marginBottom: '4px' }}>
-                    <strong>GSTIN/UIN:</strong> {companyAddress.gstin}
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#374151', marginBottom: '4px' }}>
-                    <strong>State Name:</strong> {companyAddress.state}, <strong>Code:</strong> {companyAddress.stateCode}
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#374151', marginBottom: '4px' }}>
-                    <strong>CIN:</strong> {companyAddress.cin}
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#374151', marginBottom: '4px' }}>
-                    <strong>Contact:</strong> {companyAddress.contact}
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#374151', marginBottom: '4px' }}>
-                    <strong>E-Mail:</strong> {companyAddress.email}
-                  </div>
-                </div>
-
-                {/* Right side - Logo */}
-                <div style={{ marginLeft: '20px', marginTop: '0' }}>
-                  <img
-                    src="/img/urdulogoo.png"
-                    alt="Company Logo"
-                    style={{
-                      width: '200px',
-                      height: '200px',
-                      objectFit: 'contain'
-                    }}
-                  />
-                </div>
-              </Col>
-            </Row>
+        <div className="print-row-content-inner">
+          {/* Header with Company on Left, Logo on Right */}
+          <div className="print-header">
+            <div className="print-header-left">
+              <div className="company-name">{companyAddress.name}</div>
+              <div className="company-detail">{companyAddress.address}</div>
+              <div className="company-detail">
+                <strong>GSTIN/UIN:</strong> {companyAddress.gstin}
+              </div>
+              <div className="company-detail">
+                <strong>State:</strong> {companyAddress.state} 
+                <span style={{ marginLeft: '10px' }}>
+                  <strong>Code:</strong> {companyAddress.stateCode}
+                </span>
+              </div>
+              <div className="company-detail">
+                <strong>CIN:</strong> {companyAddress.cin}
+              </div>
+              <div className="company-detail">
+                <strong>Contact:</strong> {companyAddress.contact}
+              </div>
+              <div className="company-detail">
+                <strong>E-Mail:</strong> {companyAddress.email}
+              </div>
+            </div>
+            <div className="print-header-right">
+              <img
+                src="/img/urdulogoo.png"
+                alt="Company Logo"
+                className="logo-image"
+                style={{
+                  maxWidth: '120px',
+                  maxHeight: '80px',
+                  objectFit: 'contain'
+                }}
+              />
+              <div style={{ 
+                fontSize: '9px', 
+                color: '#6b7280', 
+                marginTop: '5px',
+                textAlign: 'center'
+              }}>
+               
+              </div>
+            </div>
           </div>
-          <h1>FIBER ORDER DETAILS</h1>
-          <div className="subtitle">Order Information</div>
-          <div className="order-info">
-            <strong>Order No:</strong> #{data.orderNo || 'N/A'} &nbsp;|&nbsp;
-            <strong>Date:</strong> {data.createdAt ? new Date(data.createdAt).toLocaleDateString() : 'N/A'} &nbsp;|&nbsp;
-            <strong>Category:</strong> {data.orderCategory || 'N/A'}
-          </div>
-        </div>
 
-        <div className="print-row-details">
-          <div className="detail-item">
-            <span className="label ">Destination Product</span>
-            <span className="value tracking-wider whitespace-nowrap">
-              {data.orderProducts?.map((p) => p.productName).join(', ') || data.productName || 'N/A'}
+          {/* Title */}
+          <div className="print-title">
+            <h1>FIBER ORDER DETAILS</h1>
+            {/* <div className="subtitle">Fiber Allocation Summary</div> */}
+          </div>
+
+          {/* Order Info Bar */}
+          <div className="order-info-bar">
+            <span className="info-item">
+              <strong>Order No:</strong> #{data.orderNo || 'N/A'}
+            </span>
+            <span className="info-item">
+              <strong>Date:</strong> {orderDate}
+            </span>
+            <span className="info-item">
+              <strong>Category:</strong> {firstFiber.orderCategory || 'Plain Order'}
             </span>
           </div>
-          <div className="detail-item">
-            <span className="label tracking-wider whitespace-nowrap">Challan No :</span>
-            <span className="value">
-              {data.orderProducts?.map((p) => p.challanNo).join(', ') || 'N/A'}
-            </span>
-          </div>
-        </div>
 
-        {fibers.length > 0 ? (
-          <table className="print-row-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Fiber Product</th>
-                <th>Quantity</th>
-                <th>Location</th>
-                <th className='w-[200px]'>Category</th>
-              </tr>
-            </thead>
-            <tbody>
-              {fibers.map((fiber, idx) => (
-                <tr key={idx}>
-                  <td>{idx + 1}</td>
-                  <td>{fiber.fiberProductName || 'N/A'}</td>
-                  <td>{fiber.deductedInventoryQty || 0}</td>
-                  <td>{fiber.locationName || 'N/A'}</td>
-                  <td>
-                    <span className="print-badge flex items-center justify-center whitespace-nowrap tracking-wide px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                      {fiber.orderCategory || 'N/A'}
-                    </span>
-                  </td>
+          {/* Details Grid */}
+          <div className="print-details">
+            <div className="detail-item">
+              <span className="label">Destination Product:</span>
+              <span className="value">
+                {data.orderProducts?.map((p) => p.productName).join(', ') || data.productName || 'N/A'}
+              </span>
+            </div>
+            <div className="detail-item">
+              <span className="label">Challan No:</span>
+              <span className="value">
+                {data.orderProducts?.map((p) => p.challanNo).filter(Boolean).join(', ') || 'N/A'}
+              </span>
+            </div>
+          </div>
+
+          {/* Fiber Table */}
+          {fibers.length > 0 ? (
+            <table className="print-row-table">
+              <thead>
+                <tr>
+                  <th style={{ width: '5%' }}>#</th>
+                  <th style={{ width: '30%' }}>Fiber Product</th>
+                  <th style={{ width: '15%' }}>Quantity</th>
+                  <th style={{ width: '25%' }}>Location</th>
+                  <th style={{ width: '25%' }}>Category</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <div className="no-fibers">No fibers assigned to this order</div>
-        )}
+              </thead>
+              <tbody>
+                {fibers.map((fiber, idx) => (
+                  <tr key={idx}>
+                    <td>{idx + 1}</td>
+                    <td>{fiber.fiberProductName || 'N/A'}</td>
+                    <td>{fiber.deductedInventoryQty || 0}</td>
+                    <td>{fiber.locationName || 'N/A'}</td>
+                    <td>
+                      <span className="print-badge">
+                        {fiber.orderCategory || 'N/A'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div className="no-fibers">No fibers assigned to this order</div>
+          )}
 
-        <div className="print-row-footer">
-          <p>Generated on: {new Date().toLocaleString()}</p>
-          <p>This is a system-generated document. All rights reserved.</p>
+          {/* Footer */}
+          <div className="print-footer">
+            <p>Generated on: {new Date().toLocaleString()}</p>
+            <p style={{ marginTop: '2px' }}>
+              This is a system-generated document. All rights reserved.
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -617,9 +685,18 @@ const Fiber = () => {
         </div>
       </DefaultLayout>
 
-      {/* Print Row Component - Rendered using Portal */}
+      {/* Print Row Component */}
       {isPrinting && printData && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 99999, background: 'white' }}>
+        <div style={{ 
+          position: 'fixed', 
+          top: 0, 
+          left: 0, 
+          width: '100%', 
+          height: '100%', 
+          zIndex: 99999, 
+          background: 'white',
+          overflow: 'auto'
+        }}>
           <PrintRow data={printData} />
         </div>
       )}
