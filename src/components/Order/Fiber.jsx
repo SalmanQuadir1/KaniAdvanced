@@ -415,9 +415,11 @@ const Fiber = () => {
                 color: #1f2937;
               }
               .print-details {
+              display: flex;
+                flex-wrap: wrap;
                 display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 12px;
+                // grid-template-columns: 1fr 1fr;
+                // gap: 12px;
                 margin: 15px 0;
                 padding: 12px 15px;
                 background: #f9fafb;
