@@ -920,7 +920,7 @@ const ViewProductsInventory = () => {
                             <div className="relative flex-1">
                                 <input
                                     type="text"
-                                    placeholder="Search by Product ID..."
+                                    placeholder="Search by Product Id Or Product Group"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     onKeyDown={handleSearchKeyDown}

@@ -428,10 +428,10 @@ const UpdatePartiallyApprovedOrder = () => {
                           <thead>
                             <tr className="bg-slate-300 dark:bg-slate-700 dark:text-white">
 
-                              <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                              <th className="px-2 py-3 min-w-[220px] border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Order No
                               </th>
-                              <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                              <th className="px-2 py-3 min-w-[250px] border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                                 Source Product Id
                               </th>
                               <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
@@ -463,7 +463,7 @@ const UpdatePartiallyApprovedOrder = () => {
                                     name="orderNo"
                                     value={order?.orderNo ? { label: order.orderNo, value: order.orderNo } : null}
                                     styles={customStyles}
-                                    className="bg-white dark:bg-form-Field w-[180px]"
+                                    className="bg-white dark:bg-form-Field w-[200px]"
                                     classNamePrefix="react-select"
                                     placeholder="Select Order Type"
                                     isDisabled={true}
@@ -486,7 +486,7 @@ const UpdatePartiallyApprovedOrder = () => {
                                         newValue
                                       );
                                     }}
-                                    className="w-[150px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                    className="w-[290px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                     placeholder="Enter Source Product Name"
                                   />
                                   <ErrorMessage
@@ -507,7 +507,7 @@ const UpdatePartiallyApprovedOrder = () => {
                                         newValue
                                       );
                                     }}
-                                    className="w-[150px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
+                                    className="w-[290px] bg-white dark:bg-form-input rounded border-[1.5px] border-stroke py-3 px-5 text-black"
                                     placeholder="Enter Product ID"
                                   />
                                   <ErrorMessage

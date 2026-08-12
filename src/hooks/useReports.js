@@ -38,7 +38,7 @@ const useReports = () => {
         setproductGroup(data)
     }, [data])
     
-console.log(orderType,"heyyji");
+
 
     const [pagination, setPagination] = useState({
         totalItems: 0,
@@ -210,7 +210,7 @@ console.log(orderType,"heyyji");
 
 
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
-        console.log(values,"i am here");
+       
         try {
      
     

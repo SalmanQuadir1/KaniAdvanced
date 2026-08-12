@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react'
 import DefaultLayout from '../../layout/DefaultLayout'
 import Breadcrumb from '../Breadcrumbs/Breadcrumb'
 import { Field, Formik, Form } from 'formik'
-//  import Flatpickr from 'react-flatpickr';
-import { DELETE_ORDER_URL, DOWNLOADCSV_REPORT, DOWNLOAD_REPORT, VIEW_ALL_ORDERS, VIEW_CREATED_ORDERS, VIEW_REPORT } from "../../Constants/utils";
+import { DELETE_ORDER_URL, DOWNLOADCSV_REPORT, DOWNLOAD_REPORT, VIEW_REPORT } from "../../Constants/utils";
 import ReactSelect from 'react-select';
-import useorder from '../../hooks/useOrder';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import Pagination from '../Pagination/Pagination';
 import { useSelector } from 'react-redux';
@@ -14,274 +12,88 @@ import { toast } from 'react-toastify';
 import { customStyles as createCustomStyles } from '../../Constants/utils';
 import useReports from '../../hooks/useReports';
 
-
-
-
-const productgrp = [
-    { value: 'BrandA', label: 'Brand A' },
-    { value: 'BrandB', label: 'Brand B' },
-    { value: 'BrandC', label: 'Brand C' },
-];
-
-
 const Reports = () => {
-
     const { productGroup, Supplier, orderType, getSupplier,
         getOrderNo,
         getProdId, orderNo,
         prodId, getCustomer, Customer, getorderType } = useReports();
 
     const [loading, setLoading] = useState(false);
-
     const { currentUser } = useSelector((state) => state?.persisted?.user);
     const theme = useSelector(state => state?.persisted?.theme);
-
     const customStyles = createCustomStyles(theme?.mode);
-    const [report, setreport] = useState()
-
+    const [report, setreport] = useState([]);
     const { token } = currentUser;
-
-    // console.log(productIdd,"huhuuhuuuuuuuuuuuuuuuuu");
-
-    const [Order, setOrder] = useState()
-
-    const [supplierNameOptions, setsupplierNameOptions] = useState([])
-    const [orderNameOptions, setorderNameOptions] = useState([])
-    // const supplier = useSelector(state => state?.nonPersisted?.supplier);
-    const order = useSelector(state => state?.nonPersisted?.order);
     const navigate = useNavigate();
-    useEffect(() => {
-        getSupplier(),
-            getOrderNo(),
-            getProdId(),
-            getCustomer(),
-            getorderType()
 
+    const [Order, setOrder] = useState([]);
+    const [pagination, setPagination] = useState({
+        totalItems: 0,
+        data: [],
+        totalPages: 0,
+        currentPage: 1,
+        itemsPerPage: 10,
+    });
+
+    useEffect(() => {
+        getSupplier();
+        getOrderNo();
+        getProdId();
+        getCustomer();
+        getorderType();
     }, []);
 
     const formattedProductGroup = productGroup?.map(prod => ({
         label: prod.productGroupName,
         value: prod.productGroupName
     }));
+
     const formattedOrderType = orderType?.map(type => ({
         label: type.orderTypeName,
         value: type.orderTypeName
     }));
+
     const formattedCustomer = Customer?.map(cust => ({
         label: cust.customerName,
         value: cust.customerName
     }));
 
     const orderStatus = [
-        {
-            label: "Pending",
-            value: "Pending"
-        },
-        {
-            label: "Closed",
-            value: "Closed"
-        },
-        {
-            label: "Partially_Pending",
-            value: "Partially_Pending"
-        },
-        {
-            label: "Partially_Closed",
-            value: "Partially_Closed"
-        },
-        {
-            label: "Forced_Closure",
-            value: "Forced_Closure"
-        },
-        {
-            label: "approved",
-            value: "approved"
-        },
-        {
-            label: "Partially_Approved",
-            value: "Partially_Approved"
-        },
-        {
-            label: "created",
-            value: "created"
-        },
-        {
-            label: "accepted",
-            value: "accepted"
-        },
-        {
-            label: "Partially_Accepted",
-            value: "Partially_Accepted"
-        },
-        {
-            label: "rejected",
-            value: "rejected"
-        },
-
-
-
-
+        { label: "Pending", value: "Pending" },
+        { label: "Closed", value: "Closed" },
+        { label: "Partially_Pending", value: "Partially_Pending" },
+        { label: "Partially_Closed", value: "Partially_Closed" },
+        { label: "Forced_Closure", value: "Forced_Closure" },
+        { label: "approved", value: "approved" },
+        { label: "Partially_Approved", value: "Partially_Approved" },
+        { label: "created", value: "created" },
+        { label: "accepted", value: "accepted" },
+        { label: "Partially_Accepted", value: "Partially_Accepted" },
+        { label: "rejected", value: "rejected" },
     ];
-
-
-
 
     const formattedSupplier = Supplier?.map(sup => ({
         label: sup.name,
         value: sup.id
     }));
 
-    console.log(Supplier, "jhjhjh");
+    const formattedProdId = prodId?.map(id => ({
+        label: id,
+        value: id
+    })) || [];
 
-    // console.log(Customer,"kjkjkjkj");
-    // console.log(supplier, customer, productIdd, "orderNo");
+    const formattedOrderNo = orderNo?.map(no => ({
+        label: no,
+        value: no
+    })) || [];
 
-    const formattedProdId = prodId.map(prodId => ({
-        label: prodId,
-        value: prodId
-    }));
-
-    const formattedOrderNo = orderNo.map(orderNo => ({
-        label: orderNo,
-        value: orderNo
-    }));
-
-    // const formattedProdId = productIdd.map(prod => ({
-    //     label: prod,
-    //     value: prod
-    // }));
-
-
-
-
-    // const formattedCustomer = customer.map(customer => ({
-    //     label: customer.customerName,
-    //     value: customer.customerName
-    // }));
-
-
-
-
-
-    // useEffect(() => {
-    //     if (supplier.data) {
-    //         const formattedOptions = supplier.data.map(supp => ({
-    //             value: supp.id,
-    //             label: supp?.name,
-    //             supplierNameObject: supp,
-    //             suplierid: { id: supp.id }
-    //         }));
-    //         setsupplierNameOptions(formattedOptions);
-    //     }
-    // }, [supplier.data]);
-
-    // console.log(supplierNameOptions, "heyyy");
-
-
-    const [pagination, setPagination] = useState({
-        totalItems: 0,
-        data: [],
-        totalPages: 0,
-        currentPage: 1,
-    });
-
-
-    // useEffect(() => {
-    //     if (supplier.data) {
-    //         const formattedOptions = supplier.data.map(supp => ({
-    //             value: supp.id,
-    //             label: supp?.name,
-    //             supplierNameObject: supp,
-    //             suplierid: { id: supp.id }
-    //         }));
-    //         setsupplierNameOptions(formattedOptions);
-    //     }
-    // }, [supplier.data]);
-
-
-
-
-    // const getOrder = async (page, filters = {}) => {
-    //     console.log(filters, "filterssssssssssssssssssssssssssssssssssssssss");
-    //     console.log("Fetching orders for page", page); // Log the page number being requested
-
-    //     try {
-    //         const response = await fetch(`${VIEW_CREATED_ORDERS}?page=${page || 1}`, {
-    //             method: "POST", // GET method
-    //             headers: {
-    //                 "Content-Type": "application/json",
-    //                 "Authorization": `Bearer ${token}`,
-    //             },
-    //             body: JSON.stringify(filters)
-    //         });
-
-    //         const textResponse = await response.text();
-
-    //         console.log(textResponse, "japaaaaaaaaaaaaaaaaaan");
-
-    //         // Get the raw text response
-    //         // Log raw response before parsing   
-
-    //         // Try parsing the response only if it's valid JSON
-    //         try {
-    //             const data = JSON.parse(textResponse); // Try parsing as JSON
-    //             console.log("Parsed Response:", data);
-
-    //             if (data?.content) {
-    //                 setOrder(data.content); // Update orders state
-    //             } else {
-    //                 console.log("No orders found in the response");
-    //                 setOrder([]); // Set an empty state
-    //             }
-
-    //             // Update pagination state
-    //             setPagination({
-    //                 totalItems: data?.totalElements || 0,
-    //                 data: data?.content || [],
-    //                 totalPages: data?.totalPages || 0,
-    //                 currentPage: data?.number + 1 || 1,
-    //                 itemsPerPage: data?.size || 0,
-    //             });
-    //         } catch (parseError) {
-    //             console.error("Error parsing response as JSON:", parseError);
-    //             toast.error("Invalid response format.");
-    //         }
-    //     } catch (error) {
-    //         console.error("Error fetching orders:", error);
-    //         toast.error("Failed to fetch orders");
-    //         setOrder([]); // Reset to an empty state in case of an error
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     getOrder()
-    // }, [])
-
-
-
-    console.log(order, "heyorder");
-
-
-    //   console.log(order)
-    //   useEffect(() => {
-    //     if (order.data) {
-    //         const formattedOptions = order.data.map(ord => ({
-    //             value: ord.id,
-    //             label: ord?.name,
-    //             orderNameObject: ord,
-    //             orderid: { id: ord.id }
-    //         }));
-    //         setorderNameOptions(formattedOptions);
-    //     }
-    // }, [order.data]);
-
+    // ✅ FIXED: Render table rows with proper data access
     const renderTableRows = () => {
-        console.log(report);
         if (!report || !report.length) {
             return (
                 <tr className='bg-white dark:bg-slate-700 dark:text-white'>
-                    <td colSpan="6" className="px-5 py-5 border-b border-gray-200 text-sm">
-                        <p className="text-gray-900 whitespace-no-wrap text-center">No Order Found</p>
+                    <td colSpan="8" className="px-5 py-5 border-b border-gray-200 text-sm text-center">
+                        <p className="text-gray-900 dark:text-gray-300">No Orders Found</p>
                     </td>
                 </tr>
             );
@@ -289,117 +101,74 @@ const Reports = () => {
 
         const startingSerialNumber = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
 
-        const handleDelete = async (e, id) => {
-            e.preventDefault();
-            try {
-                const response = await fetch(`${DELETE_ORDER_URL}/${id}`, { // Correct API endpoint
-                    method: 'DELETE',
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${token}`,
-                    },
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                    toast.success(`Order Deleted Successfully !!`);
-
-                    // Check if the current page becomes empty
-                    const isCurrentPageEmpty = Order.length === 1;
-
-                    if (isCurrentPageEmpty && pagination.currentPage > 1) {
-                        const previousPage = pagination.currentPage - 1;
-                        handlePageChange(previousPage); // Go to the previous page if current page becomes empty
-                    } else {
-                        getOrder(pagination.currentPage); // Refresh orders on the current page
-                    }
-                } else {
-                    toast.error(`${data.errorMessage}`);
-                }
-            } catch (error) {
-                console.error(error);
-                toast.error("An error occurred");
-            }
-        };
-        return report.map((item, index) => (
-
-            <tr key={index} className='bg-white dark:bg-slate-700 dark:text-white'>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{startingSerialNumber + index}</p>
-                </td>
-
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.orderNo}</p>
-
-                </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.customerName}</p>
-                </td>
-
-
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.products?.productId}</p>
-                </td>
-
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item.receivedQuantity}</p>
-                </td>
-
-
-
-
-                {/* <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    {item.products &&
-                        item.products.map((prodId, index) => (
-                            <p key={index} className="text-gray-900 whitespace-nowrap">
-                                {prodId?.productId}
-                            </p>
-                        ))}
-                </td> */}
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.orderQuantity || 0}</p>
-                </td>
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    <p className="text-gray-900 whitespace-no-wrap">{item?.productStatus}</p>
-                </td>
-
-
-                <td className="px-5 py-5 border-b border-gray-200 text-sm">
-                    {item.productSuppliers &&
-                        item.productSuppliers.map((supp, index) => (
-                            <p key={index} className="text-gray-900 whitespace-nowrap">
-                                {supp?.supplier?.name}
-                            </p>
-                        ))}
-                </td>
-
-
-
-
-
-
-
-
-
-
-            </tr>
-        ));
-
-
-
-
-
-
-
-
+        return report.map((item, index) => {
+            // ✅ Safely access nested data
+            const productData = item?.products || {};
+            const productId = productData?.productId || item?.productId || 'N/A';
+            const customerName = item?.customerName || item?.customer?.customerName || 'N/A';
+            const orderNoValue = item?.orderNo || 'N/A';
+            const receivedQuantity = item?.receivedQuantity || 0;
+            const orderQuantity = item?.orderQuantity || item?.quantity || 0;
+            const productStatus = item?.productStatus || item?.status || 'N/A';
+            
+            // ✅ Safely get suppliers
+            const suppliers = item?.productSuppliers || [];
+            
+            return (
+                <tr key={item.id || index} className='bg-white dark:bg-slate-700 dark:text-white hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors'>
+                    <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm">
+                        <p className="text-gray-900 dark:text-white whitespace-no-wrap">{startingSerialNumber + index}</p>
+                    </td>
+                    <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm">
+                        <p className="text-gray-900 dark:text-white whitespace-no-wrap font-medium">{orderNoValue}</p>
+                    </td>
+                    <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm">
+                        <p className="text-gray-900 dark:text-white whitespace-no-wrap">{customerName}</p>
+                    </td>
+                    <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm">
+                        <p className="text-gray-900 dark:text-white whitespace-no-wrap">{productId}</p>
+                    </td>
+                    <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm">
+                        <p className="text-gray-900 dark:text-white whitespace-no-wrap">{orderQuantity}</p>
+                    </td>
+                    <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm">
+                        <p className="text-gray-900 dark:text-white whitespace-no-wrap">{receivedQuantity}</p>
+                    </td>
+                    <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm">
+                        <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
+                            productStatus === 'LATE' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
+                            productStatus === 'COMPLETED' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                            productStatus === 'PENDING' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300' :
+                            'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                        }`}>
+                            {productStatus}
+                        </span>
+                    </td>
+                    <td className="px-5 py-4 border-b border-gray-200 dark:border-gray-600 text-sm">
+                        {suppliers.length > 0 ? (
+                            suppliers.map((supp, idx) => (
+                                <p key={idx} className="text-gray-900 dark:text-white whitespace-nowrap">
+                                    {supp?.supplier?.name || supp?.name || 'N/A'}
+                                </p>
+                            ))
+                        ) : (
+                            <span className="text-gray-500 dark:text-gray-400 text-xs">No supplier</span>
+                        )}
+                    </td>
+                </tr>
+            );
+        });
     };
-    const getReport = async (page, filters = {}) => {
-        console.log(filters, "filterssssssssssssssssssssssssssssssssssssssss");
-        console.log("Fetching orders for page", page); // Log the page number being requested
 
+    // ✅ FIXED: Get report with proper error handling
+    const getReport = async (page, filters = {}) => {
+        setLoading(true);
         try {
-            const response = await fetch(`${VIEW_REPORT}?page=${page || 1}`, {
-                method: "POST", // GET method
+            const apiPage = (page || 1) ;
+            const url = `${VIEW_REPORT}?page=${apiPage}`;
+            
+            const response = await fetch(url, {
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
@@ -407,148 +176,87 @@ const Reports = () => {
                 body: JSON.stringify(filters)
             });
 
-            const textResponse = await response.text();
-
-
-
-            // Get the raw text response
-            // Log raw response before parsing   
-
-            // Try parsing the response only if it's valid JSON
-            try {
-                const data = JSON.parse(textResponse); // Try parsing as JSON
-                console.log("Parsed Response:", data);
-
-                if (data?.content) {
-                    setreport(data.content); // Update orders state
-                } else {
-                    console.log("No orders found in the response");
-                    setreport([]); // Set an empty state
-                }
-
-                // Update pagination state
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("API Error:", errorText);
+                toast.error(`Server error: ${response.status}`);
+                setreport([]);
                 setPagination({
-                    totalItems: data?.totalElements || 0,
-                    data: data?.content || [],
-                    totalPages: data?.totalPages || 0,
-                    currentPage: data?.number + 1 || 1,
-                    itemsPerPage: data?.size || 0,
+                    totalItems: 0,
+                    data: [],
+                    totalPages: 0,
+                    currentPage: 1,
+                    itemsPerPage: 10,
                 });
-            } catch (parseError) {
-                console.error("Error parsing response as JSON:", parseError);
-                toast.error("Invalid response format.");
+                setLoading(false);
+                return;
+            }
+
+            const data = await response.json();
+            console.log("✅ Parsed Data:", data);
+
+            // ✅ Check if data has content
+            if (data && data.content && Array.isArray(data.content)) {
+                setreport(data.content);
+                setPagination({
+                    totalItems: data.totalElements || 0,
+                    data: data.content || [],
+                    totalPages: data.totalPages || 0,
+                    currentPage: (data.number || 0) + 1,
+                    itemsPerPage: data.size || 10,
+                });
+            } else {
+                console.warn("No content in response:", data);
+                setreport([]);
+                setPagination({
+                    totalItems: 0,
+                    data: [],
+                    totalPages: 0,
+                    currentPage: 1,
+                    itemsPerPage: 10,
+                });
             }
         } catch (error) {
-            console.error("Error fetching orders:", error);
-            toast.error("Failed to fetch orders");
-            setOrder([]); // Reset to an empty state in case of an error
+            console.error("Fetch Error:", error);
+            toast.error("Failed to fetch orders. Please try again.");
+            setreport([]);
+            setPagination({
+                totalItems: 0,
+                data: [],
+                totalPages: 0,
+                currentPage: 1,
+                itemsPerPage: 10,
+            });
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        getReport()
-    }, [])
+        getReport(1);
+    }, []);
 
-    // const handlePageChange = (newPage) => {
-    //     console.log("Page change requested:", newPage);
-
-    //     setPagination((prev) => ({ ...prev, currentPage: newPage }));
-    //     getOrder(newPage); // Correct function name and 1-indexed for user interaction
-    // };
-
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= pagination.totalPages) {
+            setPagination(prev => ({ ...prev, currentPage: newPage }));
+            getReport(newPage);
+        }
+    };
 
     const handleSubmit = (values) => {
-
-
         const filters = {
-
-
-
             orderType: values.orderTypeName,
             group: values.productGroup,
             orderNo: values.orderNo,
             customerName: values.customerName,
             supplierId: values.supplierName,
             productId: values.ProductId,
-
-
             fromDate: values.fromDate,
             orderStatus: values.orderStatus,
             toDate: values.toDate,
-
-
         };
-
-        getReport(pagination.currentPage, filters)
-        // getOrder(pagination.currentPage, filters);
-        // ViewInventory(pagination.currentPage, filters);
+        getReport(1, filters);
     };
-
-    // const handlegenerateReport = async (values) => {
-
-    //     const filters = {
-
-
-
-    //         orderType: values.orderTypeName,
-    //         group: values.productGroup,
-    //         orderNo: values.orderNo ,
-    //         customerName: values.customerName ,
-    //         supplierId: values.supplierName ,
-    //         productId: values?.productId,
-
-
-    //         fromDate: values.fromDate,
-    //         toDate: values.toDate,
-
-
-    //     };
-    //     console.log(filters, "lala");
-
-    //     try {
-    //         const response = await fetch(`${DOWNLOAD_REPORT}`, {
-    //           method: 'POST',
-    //           headers: {
-    //             'Content-Type': 'application/json',
-    //             Authorization: `Bearer ${token}`,
-    //           },
-    //           body:JSON.stringify({filters})
-
-    //         });
-    //         const data = await response.json();
-    //         console.log(data,"datattatattatata");
-    //         if (response) {
-    //             console.log(response,"afterok");
-    //             // const blob = await response.blob();
-
-    //             // // Create a temporary download link
-    //             // const url = window.URL.createObjectURL(blob);
-    //             // const link = document.createElement('a');
-    //             // link.href = url;
-    //             // // link.setAttribute('download'.pdf` // Filename for the downloaded file);
-
-    //             // // Append to the document and trigger the download
-    //             // document.body.appendChild(link);
-    //             // link.click();
-
-    //             // // Clean up
-    //             // link.parentNode.removeChild(link);
-    //             // window.URL.revokeObjectURL(url);
-
-    //          toast.success("report downlaoded Successfully")
-
-
-    //             // getSize(pagination.currentPage); // Fetch updated Size
-    //         } else {
-    //             toast.error(`${data.errorMessage}`);
-    //         }
-    //     } catch (error) {
-    //         console.error(error);
-    //         toast.error("An error occurred");
-    //     } finally {
-
-    //     }
-    // }
 
     const handlegenerateReport = async (values) => {
         const filters = {
@@ -557,48 +265,42 @@ const Reports = () => {
             orderNo: values.orderNo,
             customerName: values.customerName,
             supplierId: values.supplierName,
-            productId: values?.ProductId,
+            productId: values.ProductId,
             fromDate: values.fromDate,
             orderStatus: values.orderStatus,
             toDate: values.toDate,
         };
 
-        console.log(filters, "lala");
-
         try {
-            const response = await fetch(`${DOWNLOAD_REPORT}`, {
+            const response = await fetch(DOWNLOAD_REPORT, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(filters), // Convert body to JSON string
+                body: JSON.stringify(filters),
             });
 
             if (!response.ok) {
-                const errorText = await response.text(); // Get error response as text
-                throw new Error(errorText || "Failed to download report");
+                throw new Error("Failed to download report");
             }
 
-            const blob = await response.blob(); // Get the binary PDF file
+            const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            // link.setAttribute("download", "report.pdf"); // Ensure correct filename
-
+            link.setAttribute("download", "report.pdf");
             document.body.appendChild(link);
             link.click();
-
-            // Cleanup
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
-
             toast.success("Report downloaded successfully");
         } catch (error) {
             console.error(error);
             toast.error("An error occurred while downloading the report");
         }
     };
+
     const handlegenerateCsv = async (values) => {
         const filters = {
             orderType: values.orderTypeName,
@@ -606,34 +308,29 @@ const Reports = () => {
             orderNo: values.orderNo,
             customerName: values.customerName,
             supplierId: values.supplierName,
-            productId: values?.ProductId,
+            productId: values.ProductId,
             fromDate: values.fromDate,
             orderStatus: values.orderStatus,
             toDate: values.toDate,
         };
 
-
-
         try {
-            const response = await fetch(`${DOWNLOADCSV_REPORT}`, {
+            const response = await fetch(DOWNLOADCSV_REPORT, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify(filters), // Convert body to JSON string
+                body: JSON.stringify(filters),
             });
 
             if (!response.ok) {
-                const errorText = await response.text(); // Get error response as text
-                throw new Error(errorText || "Failed to download report");
+                throw new Error("Failed to download CSV");
             }
 
-            const blob = await response.blob(); // Get the binary CSV file
-
-            // Extract the filename from the Content-Disposition header
+            const blob = await response.blob();
             const disposition = response.headers.get("Content-Disposition");
-            let filename = "report.csv"; // Default filename
+            let filename = "report.csv";
             if (disposition && disposition.includes("attachment")) {
                 const match = disposition.match(/filename="(.+)"/);
                 if (match && match[1]) {
@@ -644,42 +341,21 @@ const Reports = () => {
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement("a");
             link.href = url;
-            link.setAttribute("download", filename); // Use the filename from the header
-
+            link.setAttribute("download", filename);
             document.body.appendChild(link);
             link.click();
-
-            // Cleanup
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
-
-            toast.success("Report downloaded successfully");
+            toast.success("CSV downloaded successfully");
         } catch (error) {
             console.error(error);
-            toast.error("An error occurred while downloading the report");
+            toast.error("An error occurred while downloading the CSV");
         }
-    };
-
-
-
-
-
-
-
-
-
-
-
-    const handlePageChange = (newPage) => {
-        console.log("Page change requested:", newPage);
-
-        setPagination((prev) => ({ ...prev, currentPage: newPage }));
-        getReport(newPage); // Correct function name and 1-indexed for user interaction
     };
 
     return (
         <DefaultLayout>
-            <Breadcrumb pageName="Order/ View Order" />
+            <Breadcrumb pageName="Order / Reports" />
             <div className="container mx-auto px-4 sm:px-8 bg-white dark:bg-slate-800">
                 <div className="pt-5">
                     <div className='flex flex-row items-center justify-between w-full'>
@@ -690,7 +366,6 @@ const Reports = () => {
                             </span>
                         </h2>
                     </div>
-
 
                     <div className='items-center justify-center'>
                         <Formik
@@ -704,192 +379,117 @@ const Reports = () => {
                                 fromDate: '',
                                 orderStatus: "",
                                 toDate: ''
-
-
-
                             }}
                             onSubmit={handleSubmit}
                         >
-                            {({ setFieldValue, values, handleBlur }) => (
+                            {({ setFieldValue, values }) => (
                                 <Form>
-                                    <div className=" flex flex-wrap gap-6 mt-12">
-
+                                    <div className="flex flex-wrap gap-6 mt-12">
                                         <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Order Type</label>
                                             <ReactSelect
                                                 name="orderType"
-                                                // value={orderNameOptions.find(option => option.value === values.orderNo)}
-                                                onChange={(option) => {
-                                                    setFieldValue('orderTypeName', option.value);
-
-                                                }}
-                                                // onBlur={handleBlur}
-                                                // options={formattedorder}
-
-                                                options={[{ label: 'View All Order', value: null }, ...formattedOrderType]}
-
+                                                onChange={(option) => setFieldValue('orderTypeName', option?.value || null)}
+                                                options={[{ label: 'View All', value: null }, ...formattedOrderType]}
                                                 styles={customStyles}
                                                 className="bg-white dark:bg-form-input"
                                                 classNamePrefix="react-select"
                                                 placeholder="Select"
                                             />
-
                                         </div>
-
 
                                         <div className="flex-1 min-w-[300px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Product Group</label>
-                                            <div className="z-20 bg-transparent dark:bg-form-Field">
-                                                <ReactSelect
-                                                    name="productGroup"
-
-                                                    // value={productgrp.find(option => option.value === values.customerName)}
-                                                    onChange={(option) => setFieldValue('productGroup', option ? option.value : null)}
-
-
-                                                    options={[{ label: 'Select', value: null }, ...formattedProductGroup]}
-                                                    styles={customStyles} // Pass custom styles here
-                                                    className="bg-white dark:bg-form-Field"
-                                                    classNamePrefix="react-select"
-                                                    placeholder="Select productGroup"
-                                                />
-                                            </div>
+                                            <ReactSelect
+                                                name="productGroup"
+                                                onChange={(option) => setFieldValue('productGroup', option?.value || null)}
+                                                options={[{ label: 'Select', value: null }, ...formattedProductGroup]}
+                                                styles={customStyles}
+                                                className="bg-white dark:bg-form-Field"
+                                                classNamePrefix="react-select"
+                                                placeholder="Select Product Group"
+                                            />
                                         </div>
+
                                         <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Order No</label>
                                             <ReactSelect
                                                 name="orderNo"
-                                                // value={orderNameOptions.find(option => option.value === values.orderNo)}
-                                                onChange={(option) => {
-                                                    setFieldValue('orderNo', option.value);
-
-                                                }}
-                                                // onBlur={handleBlur}
-                                                // options={formattedorder}
-
+                                                onChange={(option) => setFieldValue('orderNo', option?.value || null)}
                                                 options={[{ label: 'Select', value: null }, ...formattedOrderNo]}
-
                                                 styles={customStyles}
                                                 className="bg-white dark:bg-form-input"
                                                 classNamePrefix="react-select"
                                                 placeholder="Select"
                                             />
-
                                         </div>
                                     </div>
 
-
                                     <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-
-
-
-
-                                     
-                                    </div>
-
-
-
-
-                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-
-                                           <div className="flex-1 min-w-[300px]">
-                                         <label className="mb-2.5 block text-black dark:text-white">Supplier</label>
-                                            <div className="z-20 bg-transparent dark:bg-form-Field">
-                                                <ReactSelect
-                                                    name="supplierName"
-
-                                                    // value={productgrp.find(option => option.value === values.customerName)}
-                                                    onChange={(option) => setFieldValue('supplierName', option ? option.value : null)}
-                                                    // options={formattedSupplier}
-
-                                                    options={[{ label: 'Select', value: null }, ...formattedSupplier]}
-                                                    styles={customStyles} // Pass custom styles here
-                                                    className="bg-white dark:bg-form-Field"
-                                                    classNamePrefix="react-select"
-                                                    placeholder="Select supplier Name"
-                                                />
-                                            </div>
+                                        <div className="flex-1 min-w-[300px]">
+                                            <label className="mb-2.5 block text-black dark:text-white">Supplier</label>
+                                            <ReactSelect
+                                                name="supplierName"
+                                                onChange={(option) => setFieldValue('supplierName', option?.value || null)}
+                                                options={[{ label: 'Select', value: null }, ...formattedSupplier]}
+                                                styles={customStyles}
+                                                className="bg-white dark:bg-form-Field"
+                                                classNamePrefix="react-select"
+                                                placeholder="Select Supplier"
+                                            />
                                         </div>
+
                                         <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Product Id</label>
                                             <ReactSelect
                                                 name="ProductId"
-                                                // value={formattedProdId.find(option => option.value === values.ProductId)}
-                                                onChange={(option) => {
-                                                    setFieldValue('ProductId', option.value);
-
-                                                }}
-                                                // onBlur={handleBlur}
-                                                // // options={formattedCustomer}
+                                                onChange={(option) => setFieldValue('ProductId', option?.value || null)}
                                                 options={[{ label: 'Select', value: null }, ...formattedProdId]}
                                                 styles={customStyles}
                                                 className="bg-white dark:bg-form-input"
                                                 classNamePrefix="react-select"
                                                 placeholder="Select"
                                             />
-
                                         </div>
+
                                         <div className="flex-1 min-w-[200px]">
                                             <label className="mb-2.5 block text-black dark:text-white">Customer</label>
                                             <ReactSelect
                                                 name="customerName"
-                                                // value={productgrp.find(option => option.value === values.customerName)}
-                                                onChange={(option) => {
-                                                    setFieldValue('customerName', option.value);
-
-                                                }}
-                                                // onBlur={handleBlur}
-                                                // // options={formattedCustomer}
+                                                onChange={(option) => setFieldValue('customerName', option?.value || null)}
                                                 options={[{ label: 'Select', value: null }, ...formattedCustomer]}
                                                 styles={customStyles}
                                                 className="bg-white dark:bg-form-input"
                                                 classNamePrefix="react-select"
                                                 placeholder="Select"
                                             />
-
                                         </div>
-
                                     </div>
 
                                     <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
                                         <div className="flex-1 min-w-[300px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">
-                                                From Date
-                                            </label>
+                                            <label className="mb-2.5 block text-black dark:text-white">From Date</label>
                                             <Field
                                                 name='fromDate'
                                                 type="date"
-                                                placeholder="Enter From Date"
-                                                className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                             />
                                         </div>
 
-
                                         <div className="flex-1 min-w-[300px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">
-                                                To Date
-                                            </label>
+                                            <label className="mb-2.5 block text-black dark:text-white">To Date</label>
                                             <Field
                                                 name='toDate'
                                                 type="date"
-                                                placeholder="Enter To Date"
-                                                className="form-datepicker w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
+                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                                             />
                                         </div>
 
-                                          <div className="flex-1 min-w-[300px]">
-                                            <label className="mb-2.5 block text-black dark:text-white">
-                                                Order Status
-                                            </label>
+                                        <div className="flex-1 min-w-[300px]">
+                                            <label className="mb-2.5 block text-black dark:text-white">Order Status</label>
                                             <ReactSelect
                                                 name="orderStatus"
-                                                // value={productgrp.find(option => option.value === values.customerName)}
-                                                onChange={(option) => {
-                                                    setFieldValue('orderStatus', option.value);
-
-                                                }}
-                                                // onBlur={handleBlur}
-                                                // // options={formattedCustomer}
+                                                onChange={(option) => setFieldValue('orderStatus', option?.value || null)}
                                                 options={[{ label: 'Select', value: null }, ...orderStatus]}
                                                 styles={customStyles}
                                                 className="bg-white dark:bg-form-input"
@@ -899,86 +499,76 @@ const Reports = () => {
                                         </div>
                                     </div>
 
-                                    <div className="mb-4.5 flex flex-wrap gap-6 mt-12">
-                                      
-
-
-
-                                    </div>
-
-                                    <div className="flex justify-center">
-                                        <div>
-
-                                            <button
-                                                type="submit"
-                                                className="flex md:w-[150px] w-[220px] md:h-[37px] mr-4 h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
-                                            >
-                                                Submit
-                                            </button>
-                                        </div>
-                                        <div>
-
-                                            <button
-                                                type="button"
-                                                onClick={() => handlegenerateReport(values)}
-                                                className="flex md:w-[230px] mr-4 w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
-                                            >
-                                                Generate Report
-                                            </button>
-                                        </div>
-                                        <div>
-
-                                            <button
-                                                type="button"
-                                                onClick={() => handlegenerateCsv(values)}
-                                                className="flex md:w-[230px] w-[220px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center  bg-primary md:p-2.5 font-medium md:text-sm text-gray hover:bg-opacity-90"
-                                            >
-                                                Generate Report (csv)
-                                            </button>
-                                        </div>
-
-
+                                    <div className="flex flex-wrap justify-center gap-4 mt-8">
+                                        <button
+                                            type="submit"
+                                            className="px-6 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-blue-700 transition-colors"
+                                        >
+                                            Search
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handlegenerateReport(values)}
+                                            className="px-6 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-green-700 transition-colors"
+                                        >
+                                            Generate PDF
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => handlegenerateCsv(values)}
+                                            className="px-6 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-purple-700 transition-colors"
+                                        >
+                                            Generate CSV
+                                        </button>
                                     </div>
                                 </Form>
                             )}
                         </Formik>
                     </div>
 
-
-
                     <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                         <div className="inline-block min-w-full shadow-md rounded-lg overflow-hidden">
                             <table className="min-w-full leading-normal">
                                 <thead>
                                     <tr className='bg-slate-300 dark:bg-slate-700 dark:text-white'>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider" >SNO</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Order No</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Customer</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Product Id</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Ordered Quantity</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Recieved Quantity</th>
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Status</th>
-
-                                        <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Supplier</th>
-                                        {/* <th className="px-2 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider w-[600px] md:w-[120px]">ADD BOM </th> */}
-
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-slate-700 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">S.No</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-slate-700 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Order No</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-slate-700 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Customer</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-slate-700 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Product ID</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-slate-700 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Ordered Qty</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-slate-700 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Received Qty</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-slate-700 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 dark:bg-slate-700 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Supplier</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {renderTableRows()}
+                                    {loading ? (
+                                        <tr>
+                                            <td colSpan="8" className="text-center py-8">
+                                                <div className="flex justify-center items-center">
+                                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                                                    <span className="ml-3 text-gray-600 dark:text-gray-300">Loading...</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        renderTableRows()
+                                    )}
                                 </tbody>
                             </table>
                         </div>
-                        <Pagination totalPages={pagination.totalPages} currentPage={pagination.currentPage} handlePageChange={handlePageChange} />
+                        {pagination.totalPages > 1 && (
+                            <Pagination 
+                                totalPages={pagination.totalPages} 
+                                currentPage={pagination.currentPage} 
+                                handlePageChange={handlePageChange} 
+                            />
+                        )}
                     </div>
-
-
                 </div>
-
             </div>
-
         </DefaultLayout>
     )
 }
 
-export default Reports
+export default Reports;
