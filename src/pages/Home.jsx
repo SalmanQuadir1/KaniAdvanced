@@ -197,7 +197,7 @@ const Home = () => {
          {
         title: 'Orders Dashboard',
         link: '/chart',
-        countKey: 'orders',
+        countKey: '',
         icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
         levelDown: true,
       },
