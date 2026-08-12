@@ -194,6 +194,13 @@ const Home = () => {
         icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
         levelUp: true,
       },
+         {
+        title: 'Orders Dashboard',
+        link: '/chart',
+        countKey: 'orders',
+        icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
+        levelDown: true,
+      },
       {
         title: 'Reports',
         link: '/Reports',
@@ -207,13 +214,7 @@ const Home = () => {
         icon: <RiAlignItemBottomFill className="w-10 h-10" />,
         levelUp: true,
       },
-      {
-        title: 'Orders',
-        link: '/chart',
-        countKey: 'orders',
-        icon: <SiHomeassistantcommunitystore className="w-10 h-10" />,
-        levelDown: true,
-      },
+   
       {
         title: 'Upload Excel',
         link: '/product/addExcelProduct',
