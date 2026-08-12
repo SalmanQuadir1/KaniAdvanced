@@ -61,7 +61,7 @@ const useproductCategory = () => {
 
             const data = await response.json();
             if (response.ok) {
-                toast.success(`productCategory Deleted Successfully !!`);
+                toast.success(`productStatus Deleted Successfully !!`);
 
                 // Check if the current page becomes empty
                 const isCurrentPageEmpty = productCategory.length === 1;
@@ -105,7 +105,7 @@ const useproductCategory = () => {
 
             const data = await response.json();
             if (response.ok) {
-                toast.success(`productCategory ${edit ? 'updated' : 'added'} successfully`);
+                toast.success(`productStatus ${edit ? 'updated' : 'added'} successfully`);
                 resetForm();
                 setEdit(false);
                 setCurrentproductCategory({
