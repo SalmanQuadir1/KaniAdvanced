@@ -409,7 +409,7 @@ const handleCancelUpdate = () => {
                         value={field}
                         onChange={(e) => updateSubgroupField(index, e.target.value)}
                         placeholder={`SubGroup Name ${index + 1}`}
-                        className="w-full rounded border-[1.5px] border-stroke py-3 px-5 focus:border-primary"
+                        className="w-full rounded border-[1.5px] border-stroke py-3 px-5 focus:border-gray-400"
                       />
 
                       {/* Show delete button for all fields when in edit mode or when there are multiple fields */}
@@ -499,7 +499,7 @@ const handleCancelUpdate = () => {
                       {group?.subGroups?.map((sg) => (
                         <span
                           key={sg.id}
-                          className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs group hover:bg-red-100 hover:text-red-800 transition-all duration-200"
+                          className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs group hover:bg-gray-100 hover:text-brown-800 transition-all duration-200"
                         >
                           {sg.productSubGroupName}
                           <button
