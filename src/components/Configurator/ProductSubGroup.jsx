@@ -396,7 +396,7 @@ const handleCancelUpdate = () => {
                     <button
                       type="button"
                       onClick={addSubgroupField}
-                      className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
+                      className="px-3 py-1 bg-primary text-white rounded hover:bg-primary-dark transition-colors"
                     >
                       + Add Field
                     </button>
@@ -444,9 +444,9 @@ const handleCancelUpdate = () => {
                   <button
                     type="submit"
                     disabled={isSubmitting || formikSubmitting}
-                    className={`px-6 py-2 rounded text-white font-medium transition-colors ${isEditMode
-                      ? 'bg-green-600 hover:bg-green-700'
-                      : 'bg-blue-600 hover:bg-blue-700'
+                    className={`flex w-[300px] justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90  ${isEditMode
+                      ? 'bg-primary'
+                      : 'bg-primary'
                       } disabled:opacity-50 disabled:cursor-not-allowed`}
                   >
                     {isSubmitting || formikSubmitting
@@ -531,7 +531,7 @@ const handleCancelUpdate = () => {
                   <td className="p-3">
                     <button
                       onClick={() => handleUpdateClick(group)}
-                      className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors mr-2"
+                      className="px-3 py-1 bg-primary transition-colors mr-2"
                     >
                       Update
                     </button>
