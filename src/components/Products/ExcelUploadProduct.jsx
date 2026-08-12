@@ -27,36 +27,9 @@ const ExcelUploadProduct = () => {
 
   const categories = [
     {
-      label: 'Contemporary Pashmina',
+      label: 'All Categories',
       value: 'contemporary',
       sampleFile: '/products/downloadCp',
-    },
-    {
-      label: 'Pashmina Embroidery',
-      value: 'pashminaEmb',
-      sampleFile: '/samples/Pashmina EMb.xlsx',
-    },
-    { label: 'Kani', value: 'kani', sampleFile: '/products/downloadCp' },
-    {
-      label: 'Wool Embroidery',
-      value: 'woolemb',
-      sampleFile: '/samples/pashmina.xlsx',
-    },
-    {
-      label: 'Paper Machie',
-      value: 'papermachie',
-      sampleFile: '/products/downloadCp',
-    },
-    { label: 'Cotton', value: 'cotton', sampleFile: '/samples/pashmina.xlsx' },
-    {
-      label: 'Contemporary Saree',
-      value: 'contempSaree',
-      sampleFile: '/samples/kani.xlsx',
-    },
-    {
-      label: 'Contemporary Wool',
-      value: 'contempwool',
-      sampleFile: '/samples/cotton.xlsx',
     },
   ];
 
@@ -234,17 +207,15 @@ const ExcelUploadProduct = () => {
                           />
 
                           <button
-                          style={{backgroundColor:"blue", color:"white"}}
                             type="submit"
                             disabled={fullScreenLoading}
-                            className="bg-blue-900 text-white py-2 px-4 rounded hover:bg-blue-600"
+                            className="flex w-[300px] mb-3 justify-center rounded bg-primary p-3 font-medium text-gray hover:bg-opacity-90 mt-4"
                           >
                             {fullScreenLoading ? 'Uploading...' : 'Upload'}
                           </button>
                         </div>
 
                         <div className="flex-1 min-w-[300px]">
-                           
                           <button
                             type="button"
                             onClick={async () => {
@@ -302,7 +273,6 @@ const ExcelUploadProduct = () => {
                             Download Sample File
                           </button>
 
-                          
                           {/* <button
                             type="submit"
                             disabled={fullScreenLoading}
@@ -310,7 +280,6 @@ const ExcelUploadProduct = () => {
                           >
                             {fullScreenLoading ? 'Uploading...' : 'Upload'}
                           </button> */}
-                      
                         </div>
                       </>
                     )}
