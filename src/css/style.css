@@ -346,13 +346,7 @@ table::-webkit-scrollbar-track {
 
 /* button end  */
 
-/* span{
- 
-  
-  font-size:14px !important;
 
-  
-} */
 /* span :start */
 /* Modern Badge/Span Styling */
 .view-badge {
@@ -1267,6 +1261,10 @@ table start */
 .dark .rounded.success {
   border-color: #34d399;
   background-color: #064e3b;
+}
+input[type="text"].rounded{
+  width: 100%;
+
 }
 
 /* Different input types */

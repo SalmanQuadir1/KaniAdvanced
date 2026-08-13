@@ -90,6 +90,8 @@ const EditVoucher = () => {
         }
 
         const data = await response.json();
+        console.log(data,"09");
+        
         setVoucherData(data);
         await getLedger();
         await getLedgerIncome();
@@ -102,6 +104,7 @@ const EditVoucher = () => {
           ledgerId: data.ledgerId || '',
           narration: data.narration || '',
           amount: data.amount || 0,
+          voucherId: data.voucherId || '',
           typeOfVoucher: data.typeOfVoucher || '',
           paymentDate: data.paymentDate || '',
           modeOfPayment: data.modeOfPayment || '',
@@ -158,13 +161,27 @@ const EditVoucher = () => {
                 ...item,
                 id: item.id || uuidv4(),
                 gstCalculation: item.gstCalculation || null,
-                // Ensure quantity is a number
                 quantity: parseFloat(item.quantity) || 1,
-                // Ensure mrp and wholesale are numbers
                 mrp: parseFloat(item.mrp) || 0,
                 wholesalePrice: parseFloat(item.wholesalePrice) || parseFloat(item.mrp) || 0,
                 discount: parseFloat(item.discount) || 0,
                 value: parseFloat(item.value) || 0,
+                rate: parseFloat(item.rate) || 0,
+                ...(item.gstCalculation && !item.gstCalculation.basePrice && {
+                  gstCalculation: {
+                    ...item.gstCalculation,
+                    basePrice: parseFloat(item.mrp) / (1 + parseFloat(item.gstCalculation.igstRate || 0) / 100) || parseFloat(item.mrp),
+                    ...(item.gstCalculation.type === 'IGST' && {
+                      cgstAmount: 0,
+                      sgstAmount: 0,
+                    }),
+                    ...(item.gstCalculation.type === 'CGST+SGST' && {
+                      cgstAmount: parseFloat(item.gstCalculation.cgstAmount) || 0,
+                      sgstAmount: parseFloat(item.gstCalculation.sgstAmount) || 0,
+                      gstAmount: 0,
+                    }),
+                  }
+                })
               }))
             : [{
                 id: uuidv4(),
@@ -198,7 +215,7 @@ const EditVoucher = () => {
     }
   }, [id, token]);
 
-  // Calculate GST - FIXED: This should calculate per unit, not per total quantity
+  // Calculate GST
   const calculateGST = (
     mrp,
     hsnCode,
@@ -317,99 +334,76 @@ const EditVoucher = () => {
     }
   };
 
-  // Calculate line total - FIXED: Calculate properly with GST
+  // Calculate Rate (MRP - GST)
+  const calculateRate = (mrp, gstCalc) => {
+    if (!gstCalc) return mrp;
+    if (gstCalc.type === 'EXPORT') return gstCalc.wholesalePrice || mrp;
+    
+    const gstAmount = gstCalc.totalGstAmount || 0;
+    return Math.max(mrp - gstAmount, 0);
+  };
+
+  // Calculate line total - Total = Rate × Quantity (after discount)
   const calculateLineTotal = (entry) => {
     const quantity = parseFloat(entry.quantity) || 1;
     const discount = parseFloat(entry.discount) || 0;
+    const rate = parseFloat(entry.rate) || parseFloat(entry.mrp) || 0;
 
-    if (entry.gstCalculation?.type === 'EXPORT') {
-      const wholesalePrice = parseFloat(entry.wholesalePrice) || parseFloat(entry.mrp) || 0;
-      const mrp = parseFloat(entry.mrp) || wholesalePrice;
-      const discountAmount = (mrp * discount) / 100;
-      const discountedWholesale = wholesalePrice - discountAmount;
-      const finalDiscounted = discountedWholesale > 0 ? discountedWholesale : 0;
-      return (finalDiscounted * quantity).toFixed(2);
-    }
-
-    // For GST calculations, use the per-unit GST amount from gstCalculation
-    const gstCalculation = entry.gstCalculation;
-    if (!gstCalculation) {
-      const mrp = parseFloat(entry.mrp) || 0;
-      return (mrp * quantity).toFixed(2);
-    }
-
-    // Get per-unit values
-    const basePrice = gstCalculation.basePrice || 0;
-    const totalGstAmountPerUnit = gstCalculation.totalGstAmount || 0;
+    const discountedRate = rate * (1 - discount / 100);
+    const totalPerUnit = discountedRate;
     
-    // Calculate per-unit price with discount
-    const discountedBasePrice = basePrice * (1 - discount / 100);
-    
-    // Total per unit including GST
-    const totalPerUnit = discountedBasePrice + totalGstAmountPerUnit;
-    
-    // Multiply by quantity
     return (totalPerUnit * quantity).toFixed(2);
   };
 
-  // Calculate totals - FIXED: Properly calculate all totals
+  // Calculate totals
   const calculateTotals = (values) => {
     let subtotal = 0, totalCGST = 0, totalSGST = 0, totalIGST = 0;
     let totalGST = 0, totalDiscount = 0, totalMRP = 0, totalQuantity = 0;
     let totalBasePrice = 0, totalDiscountedBasePrice = 0;
 
     values.paymentDetails.forEach((entry) => {
-      console.log(entry,"l");
-      
       const quantity = parseFloat(entry.quantity) || 1;
       const discount = parseFloat(entry.discount) || 0;
       const mrp = parseFloat(entry.mrp) || 0;
-      const gstCalc = entry.mrp;
+      const rate = parseFloat(entry.rate) || mrp;
+      const gstCalc = entry.gstCalculation;
+
+      totalMRP += mrp * quantity;
+      totalQuantity += quantity;
 
       if (!gstCalc) {
-        totalMRP += mrp * quantity;
-        totalQuantity += quantity;
-        subtotal += mrp * quantity;
+        const discountedRate = rate * (1 - discount / 100);
+        subtotal += discountedRate * quantity;
+        totalDiscount += (rate - discountedRate) * quantity;
         return;
       }
 
-      const basePrice = gstCalc || 0;
-      console.log(basePrice,"11001");
+      const basePrice = gstCalc.basePrice || (mrp / (1 + (gstCalc.igstRate || 0) / 100));
       
+      const discountAmount = (rate * discount) / 100;
+      const discountedRate = rate - discountAmount;
       
-      // Calculate per-unit discount amount
-      const discountPerUnit = (basePrice * discount) / 100;
-      const discountedBasePricePerUnit = basePrice - discountPerUnit;
-      
-      // GST per unit
       let cgstPerUnit = 0, sgstPerUnit = 0, igstPerUnit = 0;
       
       if (gstCalc.type === 'CGST+SGST') {
-        cgstPerUnit = gstCalc.cgstAmount || 0;
-        sgstPerUnit = gstCalc.sgstAmount || 0;
+        cgstPerUnit = gstCalc.cgstAmount || (basePrice * (gstCalc.cgstRate || 0) / 100);
+        sgstPerUnit = gstCalc.sgstAmount || (basePrice * (gstCalc.sgstRate || 0) / 100);
         totalCGST += cgstPerUnit * quantity;
         totalSGST += sgstPerUnit * quantity;
         totalGST += (cgstPerUnit + sgstPerUnit) * quantity;
       } else if (gstCalc.type === 'IGST') {
-        igstPerUnit = gstCalc.gstAmount || 0;
+        igstPerUnit = gstCalc.gstAmount || (basePrice * (gstCalc.igstRate || 0) / 100);
         totalIGST += igstPerUnit * quantity;
         totalGST += igstPerUnit * quantity;
       }
 
-      // Per unit total including GST
-      const totalPerUnit = discountedBasePricePerUnit + (gstCalc.totalGstAmount || 0);
-      
-      // Line total
-      const lineTotal = totalPerUnit * quantity;
-      
-      // Accumulate totals
-      subtotal += lineTotal;
-      totalMRP += mrp * quantity;
-      totalQuantity += quantity;
-      totalDiscount += discountPerUnit * quantity;
+      subtotal += discountedRate * quantity;
+      totalDiscount += discountAmount * quantity;
       totalBasePrice += basePrice * quantity;
-      totalDiscountedBasePrice += discountedBasePricePerUnit * quantity;
+      totalDiscountedBasePrice += (basePrice * (1 - discount / 100)) * quantity;
     });
+
+    const grandTotal = parseFloat(subtotal) + parseFloat(totalGST);
 
     return {
       subtotal: subtotal.toFixed(2),
@@ -418,7 +412,7 @@ const EditVoucher = () => {
       totalIGST: totalIGST.toFixed(2),
       totalGST: totalGST.toFixed(2),
       totalDiscount: totalDiscount.toFixed(2),
-      grandTotal: subtotal.toFixed(2),
+      grandTotal: grandTotal.toFixed(2),
       totalMRP: totalMRP.toFixed(2),
       totalQuantity: totalQuantity,
       totalBasePrice: totalBasePrice.toFixed(2),
@@ -430,13 +424,26 @@ const EditVoucher = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch(`${EDIT_ENTRY_URL}/${id}`, {
+      const totals = calculateTotals(values);
+      
+      const submissionData = {
+        ...values,
+        amount: parseFloat(totals.grandTotal),
+        totalAmount: parseFloat(totals.grandTotal),
+        totalGst: parseFloat(totals.totalGST),
+        totalCgst: parseFloat(totals.totalCGST),
+        totalSgst: parseFloat(totals.totalSGST),
+        totalIgst: parseFloat(totals.totalIGST),
+        discountAmount: parseFloat(totals.totalDiscount),
+      };
+
+      const response = await fetch(`${EDIT_ENTRY_URL}/update/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(submissionData),
       });
 
       if (!response.ok) {
@@ -445,7 +452,7 @@ const EditVoucher = () => {
       }
 
       toast.success('Voucher updated successfully!');
-      navigate('/vouchers');
+      navigate('/vouchers/view');
     } catch (error) {
       console.error('Error updating voucher:', error);
       toast.error(error.message || 'Failed to update voucher');
@@ -506,45 +513,22 @@ const EditVoucher = () => {
 
   return (
     <DefaultLayout>
-      <Breadcrumb pageName="Edit Voucher" />
+      <Breadcrumb pageName="Edit Entry Payment" />
 
       <div className="container mx-auto px-4 py-6 max-w-7xl">
-        <div className="bg-white dark:bg-boxdark rounded-2xl shadow-sm border border-gray-200/50 dark:border-gray-700/50 overflow-hidden">
+        <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
           {/* Header */}
-          <div className="px-6 py-4 border-b border-gray-200/50 dark:border-gray-700/50 bg-gradient-to-r from-blue-50/30 to-purple-50/30 dark:from-blue-900/10 dark:to-purple-900/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => navigate('/vouchers')}
-                className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200"
-              >
-                <FaArrowLeft className="text-gray-600 dark:text-gray-400" />
-              </button>
-              <div>
-                <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-                  Edit Voucher #{voucherData?.recieptNumber || id}
-                </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {voucherData?.typeOfVoucher || 'Voucher'} - Update product lines only
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <span
-                className={`px-3 py-1 text-xs font-medium rounded-full ${
-                  voucherData?.status === 'COMPLETED'
-                    ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                    : voucherData?.status === 'PENDING'
-                    ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
-                    : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-400'
-                }`}
-              >
-                {voucherData?.status || 'DRAFT'}
-              </span>
-            </div>
+          <div className="border-b border-stroke py-4 px-6.5 dark:border-strokedark">
+            <h3 className="font-medium text-slate-500 text-center text-xl dark:text-white">
+              Edit Entry Payment #{voucherData?.recieptNumber || id}
+            </h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-1">
+              {voucherData?.typeOfVoucher || 'Voucher'} - Update product lines only
+            </p>
           </div>
 
           {/* Form */}
-          <div className="px-6 py-6">
+          <div className="flex flex-col p-6.5">
             <Formik
               initialValues={initialValues}
               validationSchema={Yup.object().shape({
@@ -560,207 +544,212 @@ const EditVoucher = () => {
                 return (
                   <Form>
                     {/* Read-Only Fields Section */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 p-4 bg-gray-50 dark:bg-gray-800/30 rounded-lg border border-gray-200 dark:border-gray-700">
-                      <div className="col-span-3">
-                        <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
-                          Voucher Information (Read-Only)
-                        </h3>
-                      </div>
+                    <div className="mb-4.5 flex flex-col gap-6">
+                      <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                        Voucher Information (Read-Only)
+                      </h3>
                       
-                      <div>
-                        <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                          Voucher Number
-                        </label>
-                        <Field
-                          type="text"
-                          name="recieptNumber"
-                          className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 py-2 px-3 text-gray-500 dark:text-gray-400 cursor-not-allowed text-sm"
-                          disabled
-                        />
+                      <div className="flex flex-wrap gap-4">
+                        <div className="flex-1 min-w-[180px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Voucher Number
+                          </label>
+                          <Field
+                            type="text"
+                            name="recieptNumber"
+                            className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-800 py-3 px-5 text-black dark:text-white cursor-not-allowed outline-none transition dark:border-form-strokedark"
+                            disabled
+                          />
+                        </div>
+
+                        <div className="flex-1 min-w-[180px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Date
+                          </label>
+                          <Field
+                            type="text"
+                            name="date"
+                            className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-800 py-3 px-5 text-black dark:text-white cursor-not-allowed outline-none transition dark:border-form-strokedark"
+                            disabled
+                          />
+                        </div>
+
+                        <div className="flex-1 min-w-[200px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Party Account
+                          </label>
+                          <Field
+                            type="text"
+                            name="ledgerId"
+                            value={LedgerData?.find(l => l.value === values.ledgerId)?.label || 'N/A'}
+                            className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-800 py-3 px-5 text-black dark:text-white cursor-not-allowed outline-none transition dark:border-form-strokedark"
+                            disabled
+                          />
+                        </div>
+
+                        <div className="flex-1 min-w-[180px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Type of Voucher
+                          </label>
+                          <Field
+                            type="text"
+                            name="typeOfVoucher"
+                            className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-800 py-3 px-5 text-black dark:text-white cursor-not-allowed outline-none transition dark:border-form-strokedark"
+                            disabled
+                          />
+                        </div>
                       </div>
 
-                      <div>
-                        <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                          Date
-                        </label>
-                        <Field
-                          type="text"
-                          name="date"
-                          className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 py-2 px-3 text-gray-500 dark:text-gray-400 cursor-not-allowed text-sm"
-                          disabled
-                        />
+                      <div className="flex flex-wrap gap-4">
+                        <div className="flex-1 min-w-[180px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Sales Channel
+                          </label>
+                          <Field
+                            type="text"
+                            name="salesChannel"
+                            className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-800 py-3 px-5 text-black dark:text-white cursor-not-allowed outline-none transition dark:border-form-strokedark"
+                            disabled
+                          />
+                        </div>
+
+                        <div className="flex-1 min-w-[180px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Currency
+                          </label>
+                          <Field
+                            type="text"
+                            name="currency"
+                            className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-800 py-3 px-5 text-black dark:text-white cursor-not-allowed outline-none transition dark:border-form-strokedark"
+                            disabled
+                          />
+                        </div>
+
+                        <div className="flex-1 min-w-[180px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Narration
+                          </label>
+                          <Field
+                            type="text"
+                            name="narration"
+                            className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-800 py-3 px-5 text-black dark:text-white cursor-not-allowed outline-none transition dark:border-form-strokedark"
+                            disabled
+                          />
+                        </div>
+
+                        <div className="flex-1 min-w-[180px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Amount
+                          </label>
+                          <Field
+                            type="text"
+                            name="amount"
+                            value={totals.grandTotal}
+                            className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-800 py-3 px-5 text-black dark:text-white font-bold cursor-not-allowed outline-none transition dark:border-form-strokedark"
+                            disabled
+                          />
+                        </div>
                       </div>
 
-                      <div>
-                        <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                          Party Account
-                        </label>
-                        <Field
-                          type="text"
-                          name="ledgerId"
-                          value={LedgerData?.find(l => l.value === values.ledgerId)?.label || 'N/A'}
-                          className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 py-2 px-3 text-gray-500 dark:text-gray-400 cursor-not-allowed text-sm"
-                          disabled
-                        />
+                      <div className="flex flex-wrap gap-4">
+                        <div className="flex-1 min-w-[180px]">
+                          <label className="mb-2.5 block text-black dark:text-white">
+                            Mode of Payment
+                          </label>
+                          <Field
+                            type="text"
+                            name="modeOfPayment"
+                            className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-800 py-3 px-5 text-black dark:text-white cursor-not-allowed outline-none transition dark:border-form-strokedark"
+                            disabled
+                          />
+                        </div>
+
+                        {values.modeOfPayment === 'Cheque' && (
+                          <>
+                            <div className="flex-1 min-w-[180px]">
+                              <label className="mb-2.5 block text-black dark:text-white">
+                                Cheque Number
+                              </label>
+                              <Field
+                                type="text"
+                                name="chequeNumber"
+                                className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-800 py-3 px-5 text-black dark:text-white cursor-not-allowed outline-none transition dark:border-form-strokedark"
+                                disabled
+                              />
+                            </div>
+                            <div className="flex-1 min-w-[180px]">
+                              <label className="mb-2.5 block text-black dark:text-white">
+                                Cheque Amount
+                              </label>
+                              <Field
+                                type="text"
+                                name="chequeAmount"
+                                className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-800 py-3 px-5 text-black dark:text-white cursor-not-allowed outline-none transition dark:border-form-strokedark"
+                                disabled
+                              />
+                            </div>
+                          </>
+                        )}
+
+                        {values.modeOfPayment === 'Card' && (
+                          <>
+                            <div className="flex-1 min-w-[180px]">
+                              <label className="mb-2.5 block text-black dark:text-white">
+                                Card Number
+                              </label>
+                              <Field
+                                type="text"
+                                name="cardNumber"
+                                className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-800 py-3 px-5 text-black dark:text-white cursor-not-allowed outline-none transition dark:border-form-strokedark"
+                                disabled
+                              />
+                            </div>
+                            <div className="flex-1 min-w-[180px]">
+                              <label className="mb-2.5 block text-black dark:text-white">
+                                Card Amount
+                              </label>
+                              <Field
+                                type="text"
+                                name="cardAmount"
+                                className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-800 py-3 px-5 text-black dark:text-white cursor-not-allowed outline-none transition dark:border-form-strokedark"
+                                disabled
+                              />
+                            </div>
+                          </>
+                        )}
+
+                        {values.modeOfPayment === 'Bank Transfer' && (
+                          <>
+                            <div className="flex-1 min-w-[180px]">
+                              <label className="mb-2.5 block text-black dark:text-white">
+                                Transaction ID
+                              </label>
+                              <Field
+                                type="text"
+                                name="transactionId"
+                                className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-800 py-3 px-5 text-black dark:text-white cursor-not-allowed outline-none transition dark:border-form-strokedark"
+                                disabled
+                              />
+                            </div>
+                            <div className="flex-1 min-w-[180px]">
+                              <label className="mb-2.5 block text-black dark:text-white">
+                                Bank Amount
+                              </label>
+                              <Field
+                                type="text"
+                                name="bankAmount"
+                                className="w-full rounded border-[1.5px] border-stroke bg-gray-100 dark:bg-gray-800 py-3 px-5 text-black dark:text-white cursor-not-allowed outline-none transition dark:border-form-strokedark"
+                                disabled
+                              />
+                            </div>
+                          </>
+                        )}
                       </div>
-
-                      <div>
-                        <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                          Type of Voucher
-                        </label>
-                        <Field
-                          type="text"
-                          name="typeOfVoucher"
-                          className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 py-2 px-3 text-gray-500 dark:text-gray-400 cursor-not-allowed text-sm"
-                          disabled
-                        />
-                      </div>
-
-                      <div>
-                        <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                          Sales Channel
-                        </label>
-                        <Field
-                          type="text"
-                          name="salesChannel"
-                          className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 py-2 px-3 text-gray-500 dark:text-gray-400 cursor-not-allowed text-sm"
-                          disabled
-                        />
-                      </div>
-
-                      <div>
-                        <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                          Currency
-                        </label>
-                        <Field
-                          type="text"
-                          name="currency"
-                          className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 py-2 px-3 text-gray-500 dark:text-gray-400 cursor-not-allowed text-sm"
-                          disabled
-                        />
-                      </div>
-
-                      <div>
-                        <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                          Narration
-                        </label>
-                        <Field
-                          type="text"
-                          name="narration"
-                          className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 py-2 px-3 text-gray-500 dark:text-gray-400 cursor-not-allowed text-sm"
-                          disabled
-                        />
-                      </div>
-
-                      <div>
-                        <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                          Amount
-                        </label>
-                        <Field
-                          type="text"
-                          name="amount"
-                          className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 py-2 px-3 text-gray-500 dark:text-gray-400 cursor-not-allowed text-sm"
-                          disabled
-                        />
-                      </div>
-
-                      <div>
-                        <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                          Mode of Payment
-                        </label>
-                        <Field
-                          type="text"
-                          name="modeOfPayment"
-                          className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 py-2 px-3 text-gray-500 dark:text-gray-400 cursor-not-allowed text-sm"
-                          disabled
-                        />
-                      </div>
-
-                      {values.modeOfPayment === 'Cheque' && (
-                        <>
-                          <div>
-                            <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                              Cheque Number
-                            </label>
-                            <Field
-                              type="text"
-                              name="chequeNumber"
-                              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 py-2 px-3 text-gray-500 dark:text-gray-400 cursor-not-allowed text-sm"
-                              disabled
-                            />
-                          </div>
-                          <div>
-                            <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                              Cheque Amount
-                            </label>
-                            <Field
-                              type="text"
-                              name="chequeAmount"
-                              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 py-2 px-3 text-gray-500 dark:text-gray-400 cursor-not-allowed text-sm"
-                              disabled
-                            />
-                          </div>
-                        </>
-                      )}
-
-                      {values.modeOfPayment === 'Card' && (
-                        <>
-                          <div>
-                            <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                              Card Number
-                            </label>
-                            <Field
-                              type="text"
-                              name="cardNumber"
-                              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 py-2 px-3 text-gray-500 dark:text-gray-400 cursor-not-allowed text-sm"
-                              disabled
-                            />
-                          </div>
-                          <div>
-                            <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                              Card Amount
-                            </label>
-                            <Field
-                              type="text"
-                              name="cardAmount"
-                              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 py-2 px-3 text-gray-500 dark:text-gray-400 cursor-not-allowed text-sm"
-                              disabled
-                            />
-                          </div>
-                        </>
-                      )}
-
-                      {values.modeOfPayment === 'Bank Transfer' && (
-                        <>
-                          <div>
-                            <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                              Transaction ID
-                            </label>
-                            <Field
-                              type="text"
-                              name="transactionId"
-                              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 py-2 px-3 text-gray-500 dark:text-gray-400 cursor-not-allowed text-sm"
-                              disabled
-                            />
-                          </div>
-                          <div>
-                            <label className="mb-1 block text-xs font-medium text-gray-500 dark:text-gray-400">
-                              Bank Amount
-                            </label>
-                            <Field
-                              type="text"
-                              name="bankAmount"
-                              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-100 dark:bg-gray-800 py-2 px-3 text-gray-500 dark:text-gray-400 cursor-not-allowed text-sm"
-                              disabled
-                            />
-                          </div>
-                        </>
-                      )}
                     </div>
 
                     {/* Products Section - Editable */}
                     <div className="mb-6">
-                      <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+                      <h3 className="text-sm font-semibold text-black dark:text-white mb-3">
                         Products (Editable)
                       </h3>
                       <FieldArray name="paymentDetails">
@@ -769,215 +758,210 @@ const EditVoucher = () => {
                             <div className="overflow-x-auto">
                               <table className="w-full border-collapse">
                                 <thead>
-                                  <tr className="bg-gray-100 dark:bg-gray-800">
-                                    <th className="py-2 px-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300">#</th>
-                                    <th className="py-2 px-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300">Product</th>
-                                    <th className="w-[60px] py-2 px-6 text-left text-xs font-medium text-gray-700 dark:text-gray-300">MRP</th>
-                                    <th className="py-2 px-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300">Wholesale</th>
-                                    <th className="py-2 px-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300">Qty</th>
-                                    <th className="py-2 px-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300">Discount %</th>
-                                    <th className="py-2 px-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300">Total</th>
-                                    <th className="py-2 px-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300">Action</th>
+                                  <tr className="bg-gray-2 text-left dark:bg-meta-4">
+                                    <th className="py-4 px-3 font-medium text-black dark:text-white text-sm border-b border-gray-300">#</th>
+                                    <th className="py-4 px-3 font-medium text-black dark:text-white text-sm border-b border-gray-300 min-w-[200px]">Product</th>
+                                    <th className="py-4 px-3 font-medium text-black dark:text-white text-sm border-b border-gray-300">MRP</th>
+                                    <th className="py-4 px-3 font-medium text-black dark:text-white text-sm border-b border-gray-300">Rate</th>
+                                    <th className="py-4 px-3 font-medium text-black dark:text-white text-sm border-b border-gray-300">Qty</th>
+                                    <th className="py-4 px-3 font-medium text-black dark:text-white text-sm border-b border-gray-300">Discount %</th>
+                                    <th className="py-4 px-3 font-medium text-black dark:text-white text-sm border-b border-gray-300">Total</th>
+                                    <th className="py-4 px-3 font-medium text-black dark:text-white text-sm border-b border-gray-300">Action</th>
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  {values.paymentDetails.map((entry, index) => (
-                                    <tr key={entry.id || index} className="border-b border-gray-200 dark:border-gray-700">
-                                      <td className="py-2 px-2 text-sm">{index + 1}</td>
-                                      <td className="py-2 px-2 min-w-[200px]">
-                                        <ReactSelect
-                                          name={`paymentDetails.${index}.productsId`}
-                                          value={getProductValue(entry.productsId)}
-                                          onChange={(option) => {
-                                            if (!option) {
-                                              setFieldValue(`paymentDetails.${index}.productsId`, null);
-                                              setFieldValue(`paymentDetails.${index}.mrp`, 0);
-                                              setFieldValue(`paymentDetails.${index}.wholesalePrice`, 0);
-                                              setFieldValue(`paymentDetails.${index}.gstCalculation`, null);
-                                              setFieldValue(`paymentDetails.${index}.value`, 0);
-                                              return;
-                                            }
-                                            
-                                            const mrp = option?.price || 0;
-                                            const wholesalePrice = option?.wholesalePrice || mrp;
-                                            const hsnCode = option?.hsnCode || {};
-                                            const isExport = values.isExport || false;
-                                            
-                                            const gstCalculation = calculateGST(
-                                              mrp, hsnCode, '',
-                                              '', 0, '', isExport, wholesalePrice
-                                            );
+                                  {values.paymentDetails.map((entry, index) => {
+                                    const calculatedRate = calculateRate(entry.mrp, entry.gstCalculation);
+                                    
+                                    return (
+                                      <tr key={entry.id || index} className="hover:bg-gray-50 dark:hover:bg-gray-800">
+                                        <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark text-sm">
+                                          {index + 1}
+                                        </td>
+                                        <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark min-w-[200px]">
+                                          <ReactSelect
+                                            name={`paymentDetails.${index}.productsId`}
+                                            value={getProductValue(entry.productsId)}
+                                            onChange={(option) => {
+                                              if (!option) {
+                                                setFieldValue(`paymentDetails.${index}.productsId`, null);
+                                                setFieldValue(`paymentDetails.${index}.mrp`, 0);
+                                                setFieldValue(`paymentDetails.${index}.rate`, 0);
+                                                setFieldValue(`paymentDetails.${index}.gstCalculation`, null);
+                                                setFieldValue(`paymentDetails.${index}.value`, 0);
+                                                return;
+                                              }
+                                              
+                                              const mrp = option?.price || 0;
+                                              const wholesalePrice = option?.wholesalePrice || mrp;
+                                              const hsnCode = option?.hsnCode || {};
+                                              const isExport = values.isExport || false;
+                                              
+                                              const gstCalculation = calculateGST(
+                                                mrp, hsnCode, '',
+                                                '', 0, '', isExport, wholesalePrice
+                                              );
+                                              
+                                              const rate = calculateRate(mrp, gstCalculation);
 
-                                            setFieldValue(`paymentDetails.${index}.productsId`, option?.value);
-                                            setFieldValue(`paymentDetails.${index}.mrp`, mrp);
-                                            setFieldValue(`paymentDetails.${index}.wholesalePrice`, wholesalePrice);
-                                            setFieldValue(`paymentDetails.${index}.gstCalculation`, gstCalculation);
-                                            
-                                            // Calculate line total with quantity
-                                            const currentQuantity = parseFloat(entry.quantity) || 1;
-                                            const currentDiscount = parseFloat(entry.discount) || 0;
-                                            const lineTotal = calculateLineTotal({
-                                              ...entry,
-                                              mrp,
-                                              wholesalePrice,
-                                              gstCalculation,
-                                              discount: currentDiscount,
-                                              quantity: currentQuantity,
-                                            });
-                                            setFieldValue(`paymentDetails.${index}.value`, lineTotal);
-                                          }}
-                                          options={allProducts}
-                                          placeholder="Select Product"
-                                          className="react-select-container"
-                                          classNamePrefix="react-select"
-                                          menuPortalTarget={document.body}
-                                          styles={{
-                                            ...customStyles,
-                                            menuPortal: (base) => ({ ...base, zIndex: 100000 }),
-                                          }}
-                                          isClearable
-                                          isDisabled={loadingProducts}
-                                        />
-                                      </td>
-                                      <td className="py-2 px-2">
-                                        <Field
-                                          type="number"
-                                          name={`paymentDetails.${index}.mrp`}
-                                          className="w-30 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 py-1 px-2 text-sm"
-                                          readOnly
-                                        />
-                                      </td>
-                                      <td className="py-2 px-2">
-                                        <Field
-                                          type="number"
-                                          name={`paymentDetails.${index}.wholesalePrice`}
-                                          className="w-30 rounded border border-gray-300 dark:border-gray-600 bg-transparent py-1 px-2 text-sm"
-                                          onChange={(e) => {
-                                            const value = parseFloat(e.target.value) || 0;
-                                            setFieldValue(`paymentDetails.${index}.wholesalePrice`, value);
-                                            const currentQuantity = parseFloat(entry.quantity) || 1;
-                                            const currentDiscount = parseFloat(entry.discount) || 0;
-                                            const lineTotal = calculateLineTotal({
-                                              ...entry,
-                                              wholesalePrice: value,
-                                              quantity: currentQuantity,
-                                              discount: currentDiscount,
-                                            });
-                                            setFieldValue(`paymentDetails.${index}.value`, lineTotal);
-                                          }}
-                                        />
-                                      </td>
-                                      <td className="py-2 px-2">
-                                        <Field
-                                          type="number"
-                                          name={`paymentDetails.${index}.quantity`}
-                                          className="w-26 rounded border border-gray-300 dark:border-gray-600 bg-transparent py-1 px-2 text-sm"
-                                          min="1"
-                                          onChange={(e) => {
-                                            const value = parseFloat(e.target.value) || 1;
-                                            setFieldValue(`paymentDetails.${index}.quantity`, value);
-                                            const currentDiscount = parseFloat(entry.discount) || 0;
-                                            const lineTotal = calculateLineTotal({
-                                              ...entry,
-                                              quantity: value,
-                                              discount: currentDiscount,
-                                            });
-                                            setFieldValue(`paymentDetails.${index}.value`, lineTotal);
-                                          }}
-                                        />
-                                      </td>
-                                      <td className="py-2 px-2">
-                                        <Field
-                                          type="number"
-                                          name={`paymentDetails.${index}.discount`}
-                                          className="w-26 rounded border border-gray-300 dark:border-gray-600 bg-transparent py-1 px-2 text-sm"
-                                          min="0"
-                                          max="100"
-                                          onChange={(e) => {
-                                            const value = parseFloat(e.target.value) || 0;
-                                            setFieldValue(`paymentDetails.${index}.discount`, value);
-                                            
-                                            const mrp = parseFloat(entry.mrp) || 0;
-                                            const wholesalePrice = parseFloat(entry.wholesalePrice) || mrp;
-                                            const hsnCode = {};
-                                            const isExport = values.isExport || false;
-                                            
-                                            const gstCalculation = calculateGST(
-                                              mrp, hsnCode, '',
-                                              '', value, '', isExport, wholesalePrice
-                                            );
-                                            
-                                            setFieldValue(`paymentDetails.${index}.gstCalculation`, gstCalculation);
-                                            const currentQuantity = parseFloat(entry.quantity) || 1;
-                                            const lineTotal = calculateLineTotal({
-                                              ...entry,
-                                              discount: value,
-                                              gstCalculation,
-                                              quantity: currentQuantity,
-                                            });
-                                            setFieldValue(`paymentDetails.${index}.value`, lineTotal);
-                                          }}
-                                        />
-                                      </td>
-                                      <td className="py-2 px-2 font-medium">
-                                        <Field
-                                          type="text"
-                                          name={`paymentDetails.${index}.value`}
-                                          className="w-30 rounded border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 py-1 px-2 text-sm"
-                                          readOnly
-                                        />
-                                      </td>
-                                      <td className="py-2 px-2">
-                                        <button
-                                          type="button"
-                                          onClick={() => remove(index)}
-                                          className="text-red-500 hover:text-red-700 transition-colors"
-                                          disabled={values.paymentDetails.length === 1}
-                                        >
-                                          <FaTrash />
-                                        </button>
-                                      </td>
-                                    </tr>
-                                  ))}
+                                              setFieldValue(`paymentDetails.${index}.productsId`, option?.value);
+                                              setFieldValue(`paymentDetails.${index}.mrp`, mrp);
+                                              setFieldValue(`paymentDetails.${index}.rate`, rate);
+                                              setFieldValue(`paymentDetails.${index}.gstCalculation`, gstCalculation);
+                                              
+                                              const currentQuantity = parseFloat(entry.quantity) || 1;
+                                              const currentDiscount = parseFloat(entry.discount) || 0;
+                                              const lineTotal = calculateLineTotal({
+                                                ...entry,
+                                                rate,
+                                                discount: currentDiscount,
+                                                quantity: currentQuantity,
+                                              });
+                                              setFieldValue(`paymentDetails.${index}.value`, lineTotal);
+                                            }}
+                                            options={allProducts}
+                                            placeholder="Select Product"
+                                            className="react-select-container"
+                                            classNamePrefix="react-select"
+                                            menuPortalTarget={document.body}
+                                            styles={{
+                                              ...customStyles,
+                                              menuPortal: (base) => ({ ...base, zIndex: 100000 }),
+                                            }}
+                                            isClearable
+                                            isDisabled={loadingProducts}
+                                          />
+                                        </td>
+                                        <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
+                                          <Field
+                                            type="number"
+                                            name={`paymentDetails.${index}.mrp`}
+                                            className="w-full rounded border-[1.5px] border-stroke bg-gray-50 dark:bg-gray-800 py-2 px-3 text-sm text-black dark:text-white outline-none transition dark:border-form-strokedark"
+                                            readOnly
+                                          />
+                                        </td>
+                                        <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
+                                          <Field
+                                            type="number"
+                                            name={`paymentDetails.${index}.rate`}
+                                            className="w-full rounded border-[1.5px] border-stroke bg-gray-50 dark:bg-gray-800 py-2 px-3 text-sm text-black dark:text-white outline-none transition dark:border-form-strokedark"
+                                            readOnly
+                                            value={entry.rate || calculatedRate}
+                                          />
+                                        </td>
+                                        <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
+                                          <Field
+                                            type="number"
+                                            name={`paymentDetails.${index}.quantity`}
+                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-3 text-sm text-black dark:text-white outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:focus:border-primary"
+                                            min="1"
+                                            onChange={(e) => {
+                                              const value = parseFloat(e.target.value) || 1;
+                                              setFieldValue(`paymentDetails.${index}.quantity`, value);
+                                              const currentDiscount = parseFloat(entry.discount) || 0;
+                                              const lineTotal = calculateLineTotal({
+                                                ...entry,
+                                                quantity: value,
+                                                discount: currentDiscount,
+                                              });
+                                              setFieldValue(`paymentDetails.${index}.value`, lineTotal);
+                                            }}
+                                          />
+                                        </td>
+                                        <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark">
+                                          <Field
+                                            type="number"
+                                            name={`paymentDetails.${index}.discount`}
+                                            className="w-full rounded border-[1.5px] border-stroke bg-transparent py-2 px-3 text-sm text-black dark:text-white outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:focus:border-primary"
+                                            min="0"
+                                            max="100"
+                                            onChange={(e) => {
+                                              const value = parseFloat(e.target.value) || 0;
+                                              setFieldValue(`paymentDetails.${index}.discount`, value);
+                                              
+                                              const lineTotal = calculateLineTotal({
+                                                ...entry,
+                                                discount: value,
+                                                quantity: entry.quantity || 1,
+                                              });
+                                              setFieldValue(`paymentDetails.${index}.value`, lineTotal);
+                                            }}
+                                          />
+                                        </td>
+                                        <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark font-medium">
+                                          <Field
+                                            type="text"
+                                            name={`paymentDetails.${index}.value`}
+                                            className="w-full rounded border-[1.5px] border-stroke bg-gray-50 dark:bg-gray-800 py-2 px-3 text-sm text-black dark:text-white outline-none transition dark:border-form-strokedark"
+                                            readOnly
+                                          />
+                                        </td>
+                                        <td className="border-b border-[#eee] py-4 px-3 dark:border-strokedark text-center">
+                                          <button
+                                            type="button"
+                                            onClick={() => {
+                                              remove(index);
+                                              setTimeout(() => {
+                                                const newTotals = calculateTotals(values);
+                                                setFieldValue('amount', parseFloat(newTotals.grandTotal));
+                                              }, 0);
+                                            }}
+                                            className="text-red-500 hover:text-red-700 transition-colors"
+                                            disabled={values.paymentDetails.length === 1}
+                                          >
+                                            <IoMdRemove size={22} className="text-red-500 hover:text-red-700" />
+                                          </button>
+                                        </td>
+                                      </tr>
+                                    );
+                                  })}
                                 </tbody>
                               </table>
                             </div>
                             <button
                               type="button"
-                              onClick={() => push({
-                                id: uuidv4(),
-                                productsId: null,
-                                mrp: 0,
-                                wholesalePrice: 0,
-                                discount: 0,
-                                quantity: 1,
-                                value: 0,
-                                gstCalculation: null,
-                              })}
-                              className="mt-3 flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-sm"
+                              onClick={() => {
+                                const newEntry = {
+                                  id: uuidv4(),
+                                  productsId: null,
+                                  mrp: 0,
+                                  rate: 0,
+                                  wholesalePrice: 0,
+                                  discount: 0,
+                                  quantity: 1,
+                                  value: 0,
+                                  gstCalculation: null,
+                                };
+                                push(newEntry);
+                                setTimeout(() => {
+                                  const newTotals = calculateTotals(values);
+                                  setFieldValue('amount', parseFloat(newTotals.grandTotal));
+                                }, 0);
+                              }}
+                              className="mt-3 flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-sm font-medium"
                             >
-                              <FaPlus /> Add Product
+                              <IoMdAdd size={20} /> Add Product
                             </button>
                           </div>
                         )}
                       </FieldArray>
                     </div>
 
-                    {/* Summary - FIXED: Shows complete breakdown */}
+                    {/* Summary */}
                     <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800/30 rounded-lg border border-gray-200 dark:border-gray-700">
-                      <h4 className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">Summary</h4>
+                      <h4 className="text-sm font-semibold mb-3 text-black dark:text-white">Summary</h4>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div>
                           <p className="text-xs text-gray-500 dark:text-gray-400">Total MRP</p>
-                          <p className="text-lg font-bold text-gray-800 dark:text-white">₹{totals.totalMRP}</p>
+                          <p className="text-lg font-bold text-black dark:text-white">₹{totals.totalMRP}</p>
                         </div>
                         <div>
                           <p className="text-xs text-gray-500 dark:text-gray-400">Total Discount</p>
                           <p className="text-lg font-bold text-red-500">-₹{totals.totalDiscount}</p>
                         </div>
                         <div>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">Subtotal (excl. GST)</p>
-                          <p className="text-lg font-bold text-gray-800 dark:text-white">₹{totals.totalDiscountedBasePrice}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">Subtotal</p>
+                          <p className="text-lg font-bold text-black dark:text-white">₹{totals.subtotal}</p>
                         </div>
                         <div>
                           <p className="text-xs text-gray-500 dark:text-gray-400">Total GST</p>
@@ -1001,28 +985,29 @@ const EditVoucher = () => {
                             <p className="text-sm font-semibold text-blue-600">₹{totals.totalIGST}</p>
                           </div>
                         )}
-                        <div>
+                        <div className="col-span-2 md:col-span-1">
                           <p className="text-xs text-gray-500 dark:text-gray-400">Grand Total</p>
                           <p className="text-lg font-bold text-primary">₹{totals.grandTotal}</p>
+                          <p className="text-xs text-gray-400 mt-1">(Subtotal + GST)</p>
                         </div>
                       </div>
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200/50 dark:border-gray-700/50">
+                    <div className="flex flex-wrap justify-center gap-4 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex-1 py-3 px-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-500/20"
+                        className="flex md:w-[170px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center bg-primary md:p-2.5 font-medium md:text-sm text-white hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isSubmitting ? (
                           <>
-                            <FaSpinner className="animate-spin" />
+                            <FaSpinner className="animate-spin mr-2" />
                             Updating...
                           </>
                         ) : (
                           <>
-                            <FaSave className="text-sm" />
+                            <FaSave className="mr-2" />
                             Update Voucher
                           </>
                         )}
@@ -1031,7 +1016,7 @@ const EditVoucher = () => {
                       <button
                         type="button"
                         onClick={() => navigate('/vouchers')}
-                        className="flex-1 py-3 px-6 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
+                        className="flex md:w-[170px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center bg-gray-300 dark:bg-gray-700 md:p-2.5 font-medium md:text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-400 dark:hover:bg-gray-600"
                       >
                         Cancel
                       </button>
