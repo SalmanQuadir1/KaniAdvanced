@@ -1262,9 +1262,12 @@ table start */
   border-color: #34d399;
   background-color: #064e3b;
 }
-input[type="text"].rounded{
-  width: 100%;
 
+input[type="text"].rounded {
+  width: auto;
+  min-width: 60px;
+  max-width: 140px;
+  display: inline-block;
 }
 
 /* Different input types */
