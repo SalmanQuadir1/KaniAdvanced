@@ -91,6 +91,8 @@ const useReports = () => {
             },
           });
           const data = await response.json();
+          console.log(data,"1110");
+          
           // console.log(data,"from url");
           setSupplier(data);
         

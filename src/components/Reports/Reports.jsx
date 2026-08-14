@@ -27,6 +27,7 @@ const Reports = () => {
     const navigate = useNavigate();
 
     const [Order, setOrder] = useState([]);
+    const [currentFilters, setCurrentFilters] = useState({}); // ✅ Store current filters
     const [pagination, setPagination] = useState({
         totalItems: 0,
         data: [],
@@ -42,6 +43,8 @@ const Reports = () => {
         getCustomer();
         getorderType();
     }, []);
+
+    console.log(report, "4521");
 
     const formattedProductGroup = productGroup?.map(prod => ({
         label: prod.productGroupName,
@@ -148,7 +151,7 @@ const Reports = () => {
                         {suppliers.length > 0 ? (
                             suppliers.map((supp, idx) => (
                                 <p key={idx} className="text-gray-900 dark:text-white whitespace-nowrap">
-                                    {supp?.supplier?.name || supp?.name || 'N/A'}
+                                    {supp?.supplierName || supp?.name || 'N/A'}
                                 </p>
                             ))
                         ) : (
@@ -160,12 +163,20 @@ const Reports = () => {
         });
     };
 
-    // ✅ FIXED: Get report with proper error handling
+    // ✅ FIXED: Get report with filters - now stores filters in state
     const getReport = async (page, filters = {}) => {
         setLoading(true);
         try {
-            const apiPage = (page || 1) ;
+            // ✅ Store filters for pagination
+            if (page === 1 || Object.keys(filters).length > 0) {
+                setCurrentFilters(filters);
+            }
+
+            const apiPage = (page || 1);
             const url = `${VIEW_REPORT}?page=${apiPage}`;
+            
+            // ✅ Use stored filters if no filters provided (for pagination)
+            const requestFilters = Object.keys(filters).length > 0 ? filters : currentFilters;
             
             const response = await fetch(url, {
                 method: "POST",
@@ -173,7 +184,7 @@ const Reports = () => {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`,
                 },
-                body: JSON.stringify(filters)
+                body: JSON.stringify(requestFilters)
             });
 
             if (!response.ok) {
@@ -233,13 +244,14 @@ const Reports = () => {
     };
 
     useEffect(() => {
-        getReport(1);
+        getReport(1, {});
     }, []);
 
     const handlePageChange = (newPage) => {
         if (newPage >= 1 && newPage <= pagination.totalPages) {
             setPagination(prev => ({ ...prev, currentPage: newPage }));
-            getReport(newPage);
+            // ✅ Pass empty filters - will use stored filters from state
+            getReport(newPage, currentFilters);
         }
     };
 
@@ -255,6 +267,8 @@ const Reports = () => {
             orderStatus: values.orderStatus,
             toDate: values.toDate,
         };
+        // ✅ Store filters and fetch page 1
+        setCurrentFilters(filters);
         getReport(1, filters);
     };
 
@@ -431,11 +445,15 @@ const Reports = () => {
                                             <ReactSelect
                                                 name="supplierName"
                                                 onChange={(option) => setFieldValue('supplierName', option?.value || null)}
-                                                options={[{ label: 'Select', value: null }, ...formattedSupplier]}
+                                                options={formattedSupplier.length > 0 ? [{ label: 'Select', value: null }, ...formattedSupplier] : []}
                                                 styles={customStyles}
                                                 className="bg-white dark:bg-form-Field"
                                                 classNamePrefix="react-select"
-                                                placeholder="Select Supplier"
+                                                placeholder={formattedSupplier.length === 0 ? "Loading suppliers..." : "Select Supplier"}
+                                                isDisabled={formattedSupplier.length === 0}
+                                                isLoading={formattedSupplier.length === 0}
+                                                loadingMessage={() => "Loading suppliers..."}
+                                                noOptionsMessage={() => "No suppliers available"}
                                             />
                                         </div>
 

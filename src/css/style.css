@@ -1263,12 +1263,7 @@ table start */
   background-color: #064e3b;
 }
 
-input[type="text"].rounded {
-  width: auto;
-  min-width: 60px;
-  max-width: 140px;
-  display: inline-block;
-}
+
 
 /* Different input types */
 .rounded[type="date"],
