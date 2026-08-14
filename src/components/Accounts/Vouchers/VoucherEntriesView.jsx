@@ -4,6 +4,7 @@ import Breadcrumb from '../../Breadcrumbs/Breadcrumb';
 import { Field, Formik, Form } from 'formik';
 //  import Flatpickr from 'react-flatpickr';
 import {
+  ENTRYPAYMENT_URL,
   GET_VoucherEntriessearch_URL,
   GET_Vouchersearch_URL,
   UPDATETOGGLE_Voucher_URL,
@@ -139,7 +140,7 @@ const VoucherEntriesView = () => {
     const handleDelete = async (e, id) => {
       e.preventDefault();
       try {
-        const response = await fetch(`${DELETE_Voucher_URL}/${id}`, {
+        const response = await fetch(`${ENTRYPAYMENT_URL}/delete/${id}`, {
           // Correct API endpoint
           method: 'DELETE',
           headers: {
@@ -156,7 +157,7 @@ const VoucherEntriesView = () => {
           const isCurrentPageEmpty = Voucher.length === 1;
 
           if (isCurrentPageEmpty && pagination.currentPage > 1) {
-            const previousPage = pagination.currentPage - 1;
+            const previousPage = pagination.currentPage ;
             handlePageChange(previousPage); // Go to the previous page if current page becomes empty
           } else {
             getVoucher(pagination.currentPage); // Refresh Vouchers on the current page
@@ -251,12 +252,12 @@ const VoucherEntriesView = () => {
                
               ))}
 
-            {/* <FiTrash2
+            <FiTrash2
                             size={17}
                             className="text-red-500 hover:text-red-700 mx-2"
                             onClick={(e) => handleDelete(e, item?.id)}
-                            title="Delete Product"
-                        /> */}
+                            title="Delete Entry"
+                        />
           </p>
         </td>
       </tr>
