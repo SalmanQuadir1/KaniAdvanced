@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 
 const UpdateSupplier = () => {
   const navigate = useNavigate();
+   const [productGroupOptions, setproductGroupOptions] = useState([])
   const { seloptions, groups, GetSupplierById, currentSupplier } =
     useSupplier();
   const { id } = useParams();
@@ -20,6 +21,60 @@ const UpdateSupplier = () => {
   const [supplierType, setsupplierType] = useState();
   const theme = useSelector((state) => state?.persisted?.theme);
   const customStyles = createCustomStyles(theme?.mode);
+
+   const productGroup = useSelector(state => state?.persisted?.productGroup);
+
+    useEffect(() => {
+           if (productGroup.data) {
+               const formattedOptions = productGroup.data.map(product => ({
+                   value: product.productGroupName,
+                   label: product.productGroupName,
+                   productGroupObject: product,
+               }));
+               setproductGroupOptions(formattedOptions);
+           }
+       }, [productGroup.data]);
+
+    const stateOption = [
+        { value: '01', label: 'Jammu & Kashmir' },
+        { value: '02', label: 'Himachal Pradesh' },
+        { value: '03', label: 'Punjab' },
+        { value: '04', label: 'Chandigarh' },
+        { value: '05', label: 'Uttarakhand' },
+        { value: '06', label: 'Haryana' },
+        { value: '07', label: 'Delhi' },
+        { value: '08', label: 'Rajasthan' },
+        { value: '09', label: 'Uttar Pradesh' },
+        { value: '10', label: 'Bihar' },
+        { value: '11', label: 'Sikkim' },
+        { value: '12', label: 'Arunachal Pradesh' },
+        { value: '13', label: 'Nagaland' },
+        { value: '14', label: 'Manipur' },
+        { value: '15', label: 'Mizoram' },
+        { value: '16', label: 'Tripura' },
+        { value: '17', label: 'Meghalaya' },
+        { value: '18', label: 'Assam' },
+        { value: '19', label: 'West Bengal' },
+        { value: '20', label: 'Jharkhand' },
+        { value: '21', label: 'Odisha' },
+        { value: '22', label: 'Chhattisgarh' },
+        { value: '23', label: 'Madhya Pradesh' },
+        { value: '24', label: 'Gujarat' },
+        { value: '25', label: 'Daman & Diu' },
+        { value: '26', label: 'Dadra & Nagar Haveli' },
+        { value: '27', label: 'Maharashtra' },
+        { value: '28', label: 'Andhra Pradesh' },
+        { value: '29', label: 'Karnataka' },
+        { value: '30', label: 'Goa' },
+        { value: '31', label: 'Lakshadweep' },
+        { value: '32', label: 'Kerala' },
+        { value: '33', label: 'Tamil Nadu' },
+        { value: '34', label: 'Puducherry' },
+        { value: '35', label: 'Andaman & Nicobar Islands' },
+        { value: '36', label: 'Telangana' },
+        { value: '37', label: 'Andhra Pradesh (New)' },
+        { value: '38', label: 'Ladakh' }
+    ];
   const workerSelectStyles = {
     ...customStyles,
     control: (provided) => ({
@@ -43,48 +98,65 @@ const UpdateSupplier = () => {
   const [rows, setRows] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const supplierData = await GetSupplierById(id);
-      console.log(supplierData,"umershahaa");
+  const fetchData = async () => {
+    const supplierData = await GetSupplierById(id);
 
-      if (supplierData) {
-        setInitialValues({
-          name: supplierData?.name,
-          phoneNumber: supplierData?.phoneNumber,
-          supplierCode: supplierData?.supplierCode,
-          address: supplierData?.address,
-          bankName: supplierData?.bankName,
-          accountNo: supplierData?.accountNo,
-          ifscCode: supplierData?.ifscCode,
-          emailId: supplierData?.emailId,
-          supplierType: seloptions.find(
-            (option) => option.value === supplierData.supplierType,
-          ),
-        });
+    console.log("SUPPLIER RESPONSE:", supplierData);
+    console.log("PRODUCT GROUP OPTIONS:", productGroupOptions);
 
-        // Initialize the rows state with readonly property for fetched data
-        setRows(
-          supplierData.groupTypes &&
-            supplierData.groupTypes.map((group) => ({
-              selectedOption1: groups.find(
-                (g) => g.value === group?.groupTypeName,
-              ),
-              selectedOption3: group.workers.map((worker) => ({
+    if (!supplierData) return;
+
+    setInitialValues({
+      name: supplierData?.name || '',
+      phoneNumber: supplierData?.phoneNumber || '',
+      supplierCode: supplierData?.supplierCode || '',
+      address: supplierData?.address || '',
+      bankName: supplierData?.bankName || '',
+      shippingState: supplierData?.shippingState || null,
+      accountNo: supplierData?.accountNo || '',
+       typeOfopeningBalance: "",
+                        previousOpType: "",
+                        openingBalances: '',
+                        previousOpBalance: '',
+      ifscCode: supplierData?.ifscCode || '',
+      emailId: supplierData?.emailId || '',
+      supplierType:
+        seloptions.find(
+          (option) => option.value === supplierData.supplierType
+        ) || null,
+    });
+
+    if (
+      supplierData?.groupTypes &&
+      productGroupOptions.length > 0
+    ) {
+      setRows(
+        supplierData.groupTypes.map((group) => {
+          const selectedGroup = productGroupOptions.find(
+            (option) =>
+              option.value === group?.groupTypeName
+          );
+
+          return {
+            selectedOption1: selectedGroup || null,
+
+            selectedOption3:
+              group?.workers?.map((worker) => ({
                 value: worker.workerCode,
                 label: worker.workerCode,
-              })),
-              numOfLooms: group.noOfLooms,
-              readonly: true, // Mark as readonly
-            })),
-        );
-      }
-    };
-    
-    fetchData();
-    console.log(rows,"row===================================");
+              })) || [],
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+            numOfLooms: group?.noOfLooms || 0,
+
+            readonly: false,
+          };
+        })
+      );
+    }
+  };
+
+  fetchData();
+}, [id, productGroupOptions]);
 
   const addRow = () => {
     const newRow = {
@@ -180,6 +252,7 @@ const UpdateSupplier = () => {
   if (!initialValues) {
     return <div>Loading...</div>;
   }
+console.log(rows,"456");
 
   return (
     <DefaultLayout>
@@ -269,9 +342,7 @@ const UpdateSupplier = () => {
                           className="text-red-500"
                         />
                       </div>
-                    </div>
-                    <div className="mb-4.5 flex flex-wrap gap-6">
-                      <div className="flex-1 min-w-[300px]">
+                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
                           Phone Number <span className="text-red-500 ml-1">*</span>
                         </label>
@@ -287,7 +358,13 @@ const UpdateSupplier = () => {
                           className="text-red-500"
                         />
                       </div>
-                      <div className="flex-1 min-w-[300px]">
+                    </div>
+                    <div className="mb-4.5 flex flex-wrap gap-6">
+                     
+                 
+                    </div>
+                    <div className="mb-4.5 flex flex-wrap gap-6">
+                           <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
                           Email Id
                         </label>
@@ -303,8 +380,6 @@ const UpdateSupplier = () => {
                           className="text-red-500"
                         />
                       </div>
-                    </div>
-                    <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
                           Address <span className="text-red-500 ml-1">*</span>
@@ -321,7 +396,36 @@ const UpdateSupplier = () => {
                           className="text-red-500"
                         />
                       </div>
-                      <div className="flex-1 min-w-[300px]">
+
+                       <div className="flex-1 min-w-[300px]">
+                                                <label className="mb-2.5 block text-black dark:text-white">
+                                                    State <span className="text-red-600">*</span>
+                                                </label>
+                                                <ReactSelect
+                                                    name="shippingState"
+                                                    styles={customStyles}
+                                                    value={stateOption.find(option => option.value === values.shippingState) || null}
+
+                                                    onChange={(option) =>
+                                                        setFieldValue(
+                                                            'shippingState',
+                                                            option ? option.value : null,
+                                                        )
+                                                    }
+
+                                                    options={stateOption}
+                                                    className="bg-white dark:bg-form-input"
+                                                    classNamePrefix="react-select"
+                                                    placeholder="Select  State"
+                                                />
+
+                                                <ErrorMessage name="shippingState" component="div" className="text-red-600 text-sm" />
+
+                                            </div>
+                      
+                    </div>
+                    <div className="mb-4.5 flex flex-wrap gap-6">
+                        <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
                           Bank Name <span className="text-red-500 ml-1">*</span>
                         </label>
@@ -337,8 +441,6 @@ const UpdateSupplier = () => {
                           className="text-red-500"
                         />
                       </div>
-                    </div>
-                    <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="flex-1 min-w-[300px]">
                         <label className="mb-2.5 block text-black dark:text-white">
                           Account Number <span className="text-red-500 ml-1">*</span>
@@ -371,6 +473,9 @@ const UpdateSupplier = () => {
                           className="text-red-500"
                         />
                       </div>
+                    
+                    </div>
+                     <div className="mb-4.5 flex flex-wrap gap-6">
                       <div className="min-w-[320px] sm:min-w-[400px]">
                         <label className="mb-2.5 block text-black dark:text-white">
                           Supplier Type 
@@ -385,7 +490,72 @@ const UpdateSupplier = () => {
                           }
                         />
                       </div>
-                    </div>
+                     </div>
+                       <div className="mb-4.5  gap-6">
+                                                <div className="flex mb-4.5 gap-7   pt-4 dark:border-strokedark w-full">
+                                                    {/* Radio Buttons for Opening Balance Type */}
+                                                    <div className="mb-2.5 flex items-center gap-4">
+                                                        <h4 className="font-medium text-black dark:text-white">Opening Balance Type:</h4>
+                                                        <label className="flex items-center gap-2">
+                                                            <input
+                                                                type="radio"
+                                                                name="typeOfopeningBalance"
+                                                                value="DEBIT"
+                                                                checked={values.typeOfopeningBalance === "DEBIT"}
+                                                                onChange={(e) => {
+                                                                    setFieldValue('typeOfopeningBalance', e.target.value);
+                                                                    setFieldValue('previousOpType', e.target.value);
+                                                                }}
+                                                                className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
+                                                            />
+                                                            <span className="text-black dark:text-white"> (DR)</span>
+                                                        </label>
+                                                        <label className="flex items-center gap-2">
+                                                            <input
+                                                                type="radio"
+                                                                name="typeOfopeningBalance"
+                                                                value="CREDIT"
+                                                                checked={values.typeOfopeningBalance === "CREDIT"}
+                                                                onChange={(e) => {
+                                                                    setFieldValue('typeOfopeningBalance', e.target.value);
+                                                                    setFieldValue('previousOpType', e.target.value);
+                                                                }}
+                                                                className="h-4 w-4 border-stroke bg-transparent text-primary focus:ring-0 dark:border-form-strokedark dark:bg-slate-700"
+                                                            />
+                                                            <span className="text-black dark:text-white"> (CR)</span>
+                                                        </label>
+                                                    </div>
+
+                                                    {/* Opening Balance Input */}
+                                                    <div className="flex items-center gap-2 mt-2">
+                                                        <div className="flex-1 min-w-[250px]">
+                                                            <input
+                                                                type="number"
+                                                                name="openingBalances"
+                                                                placeholder="Opening Balance"
+                                                                onChange={(e) => {
+
+                                                                    setFieldValue('previousOpBalance', e.target.value);
+                                                                    setFieldValue('openingBalances', e.target.value);
+                                                                }}
+                                                                //   onBlur={formik.handleBlur}
+                                                                value={values.openingBalances}
+                                                                className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-slate-700 dark:text-white dark:focus:border-primary"
+                                                            />
+                                                        </div>
+                                                        {/* Display "CR" if Credit is selected */}
+                                                        {values.typeOfopeningBalance === "CREDIT" ? (
+                                                            <span className="text-lg font-medium text-gray-600 dark:text-gray-300">
+                                                                Cr.
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-lg font-medium text-gray-600 dark:text-gray-300">
+                                                                Dr.
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
                   </div>
 
                   {values?.supplierType?.value === 'PRODUCT' && (
@@ -397,7 +567,7 @@ const UpdateSupplier = () => {
                         <button
                           type="button"
                           onClick={addRow}
-                          className="flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+                          className="flex items-center h-12 mt-9  border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary focus:outline-none focus:ring-2 focus:ring-offset-2 "
                         >
                           <IoMdAdd className="mr-2" size={20} />
                           Add Row
@@ -427,11 +597,13 @@ const UpdateSupplier = () => {
                             </thead>
                             <tbody>
                               {rows.map((row, index) => (
+                              
+                                
                                 <tr key={index}>
                                   <td className="px-2 py-2 border-b">
                                     <ReactSelect
                                       styles={customStyles}
-                                      options={groups}
+                                      options={productGroupOptions}
                                       value={row.selectedOption1}
                                       onChange={(option) =>
                                         handleGroupChange(index, option)
