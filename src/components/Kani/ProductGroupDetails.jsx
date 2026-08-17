@@ -36,6 +36,16 @@ const ProductGroupDetails = () => {
   const [categoryError, setCategoryError] = useState(null);
   const [selectedOrderType, setSelectedOrderType] = useState(null);
 
+  // Add state for category counts
+  const [categoryCounts, setCategoryCounts] = useState({
+    retail: 0,
+    wholesale: 0,
+    klc: 0,
+    total: 0,
+    inProgress: 0,
+    supplier: 0
+  });
+
   // Pagination states
   const [ordersPagination, setOrdersPagination] = useState({
     currentPage: 1,
@@ -720,94 +730,231 @@ const ProductGroupDetails = () => {
 
   const stats = getCategoryStats();
 
-  useEffect(() => {
-    const fetchProductDetails = async () => {
-      try {
-        setLoading(true);
+  // useEffect(() => {
+  //   const fetchProductDetails = async () => {
+  //     try {
+  //       setLoading(true);
         
-        const params = new URLSearchParams();
-        params.append('productGroupName', productGroupName);
+  //       const params = new URLSearchParams();
+  //       params.append('productGroupName', productGroupName);
         
-        const response = await axios.get(`${GET_PRODUCTDETAILS_URL}?${params.toString()}`, {
-          headers: {
-            'Authorization': `Bearer ${currentUser?.token}`
-          }
-        });
+  //       const response = await axios.get(`${GET_PRODUCTDETAILS_URL}?${params.toString()}`, {
+  //         headers: {
+  //           'Authorization': `Bearer ${currentUser?.token}`
+  //         }
+  //       });
         
-        let productsData = [];
-        let totalElements = 0;
+  //       let productsData = [];
+  //       let totalElements = 0;
         
-        if (response.data?.content && Array.isArray(response.data.content)) {
-          response.data.content.forEach((order) => {
-            if (order.products && Array.isArray(order.products)) {
-              order.products.forEach((product) => {
-                let referenceImage = null;
-                let actualImage = null;
-                let allImages = [];
+  //       // Extract counts from response
+  //       if (response.data) {
+  //         setCategoryCounts({
+  //           retail: response.data.retailCount || 0,
+  //           wholesale: response.data.wsCount || 0,
+  //           klc: response.data.klcCount || 0,
+  //           total: response.data.totalCount || 0
+  //         });
+  //       }
+        
+  //       if (response.data?.content && Array.isArray(response.data.content)) {
+  //         response.data.content.forEach((order) => {
+  //           if (order.products && Array.isArray(order.products)) {
+  //             order.products.forEach((product) => {
+  //               let referenceImage = null;
+  //               let actualImage = null;
+  //               let allImages = [];
                 
-                if (product.images && Array.isArray(product.images)) {
-                  allImages = product.images;
-                  product.images.forEach(image => {
-                    if (image.referenceImage && !referenceImage) {
-                      referenceImage = image.referenceImage;
-                    }
-                    if (image.actualImage && !actualImage) {
-                      actualImage = image.actualImage;
-                    }
-                  });
-                }
+  //               if (product.images && Array.isArray(product.images)) {
+  //                 allImages = product.images;
+  //                 product.images.forEach(image => {
+  //                   if (image.referenceImage && !referenceImage) {
+  //                     referenceImage = image.referenceImage;
+  //                   }
+  //                   if (image.actualImage && !actualImage) {
+  //                     actualImage = image.actualImage;
+  //                   }
+  //                 });
+  //               }
                 
-                productsData.push({
-                  orderNo: order.orderNo,
-                  orderProductId: product?.orderProductId,
-                  productId: product?.productId || "N/A",
-                  productGroup: product?.productGroup || productGroupName,
-                  category: product?.productCategory || order.orderCategory || "N/A",
-                  supplier: product?.supplier?.supplierName || "N/A",
-                  status: order.status || order.orderStatus || "N/A",
-                  refImage: referenceImage,
-                  actImage: actualImage,
-                  allImages: allImages,
-                  product: product
-                });
-              });
-            }
-          });
-          totalElements = response.data.totalElements || productsData.length;
-        }
+  //               productsData.push({
+  //                 orderNo: order.orderNo,
+  //                 orderProductId: product?.orderProductId,
+  //                 productId: product?.productId || "N/A",
+  //                 productGroup: product?.productGroup || productGroupName,
+  //                 category: product?.productCategory || order.orderCategory || "N/A",
+  //                 supplier: product?.supplier?.supplierName || "N/A",
+  //                 status: order.status || order.orderStatus || "N/A",
+  //                 refImage: referenceImage,
+  //                 actImage: actualImage,
+  //                 allImages: allImages,
+  //                 product: product
+  //               });
+  //             });
+  //           }
+  //         });
+  //         totalElements = response.data.totalElements || productsData.length;
+  //       }
         
-        setAllProducts(productsData);
+  //       setAllProducts(productsData);
         
-        const totalPages = Math.ceil(totalElements / ordersPagination.pageSize);
-        const startIndex = (ordersPagination.currentPage - 1) * ordersPagination.pageSize;
-        const endIndex = startIndex + ordersPagination.pageSize;
-        const paginatedData = productsData.slice(startIndex, endIndex);
+  //       const totalPages = Math.ceil(totalElements / ordersPagination.pageSize);
+  //       const startIndex = (ordersPagination.currentPage - 1) * ordersPagination.pageSize;
+  //       const endIndex = startIndex + ordersPagination.pageSize;
+  //       const paginatedData = productsData.slice(startIndex, endIndex);
         
-        setProducts(paginatedData);
-        setOrdersPagination({
-          ...ordersPagination,
-          totalPages: totalPages,
-          totalItems: totalElements
-        });
+  //       setProducts(paginatedData);
+  //       setOrdersPagination({
+  //         ...ordersPagination,
+  //         totalPages: totalPages,
+  //         totalItems: totalElements
+  //       });
         
-        const uniqueSuppliers = [...new Set(productsData.map(p => p.supplier).filter(s => s && s !== "N/A"))];
-        setSuppliers(uniqueSuppliers);
-        setError(productsData.length === 0 ? "No products found in this category" : null);
-      } catch (err) {
-        console.error("Error fetching product details:", err);
-        setError("Failed to load products. Please try again later.");
-        setProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+  //       const uniqueSuppliers = [...new Set(productsData.map(p => p.supplier).filter(s => s && s !== "N/A"))];
+  //       setSuppliers(uniqueSuppliers);
+  //       setError(productsData.length === 0 ? "No products found in this category" : null);
+  //     } catch (err) {
+  //       console.error("Error fetching product details:", err);
+  //       setError("Failed to load products. Please try again later.");
+  //       setProducts([]);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
 
-    if (productGroupName) {
-      fetchProductDetails();
-    }
-  }, [productGroupName, currentUser]);
+  //   if (productGroupName) {
+  //     fetchProductDetails();
+  //   }
+  // }, [productGroupName, currentUser]);
 
   // Filtered products based on selected category and supplier
+ 
+ useEffect(() => {
+  const fetchProductDetails = async () => {
+    try {
+      setLoading(true);
+      
+      const params = new URLSearchParams();
+      params.append('productGroupName', productGroupName);
+      
+      const response = await axios.get(`${GET_PRODUCTDETAILS_URL}?${params.toString()}`, {
+        headers: {
+          'Authorization': `Bearer ${currentUser?.token}`
+        }
+      });
+      
+      // Log the full API response
+      console.log('API Response:', response.data);
+      
+      let productsData = [];
+      let totalElements = 0;
+      
+      // Extract counts from response - now includes inProgressCount and supplierCount
+      if (response.data) {
+        // Log individual counts
+        console.log('Retail Count:', response.data.retailCount);
+        console.log('Wholesale Count:', response.data.wsCount);
+        console.log('KLC Count:', response.data.klcCount);
+        console.log('Total Count:', response.data.totalCount);
+        console.log('In Progress Count:', response.data.inProgressCount);
+        console.log('Supplier Count:', response.data.supplierCount);
+        
+        setCategoryCounts({
+          retail: response.data.retailCount || 0,
+          wholesale: response.data.wsCount || 0,
+          klc: response.data.klcCount || 0,
+          total: response.data.totalCount || 0,
+          inProgress: response.data.inProgressCount || 0,
+          supplier: response.data.supplierCount || 0
+        });
+      }
+      
+      // The data is directly in response.data.content
+      if (response.data?.content && Array.isArray(response.data.content)) {
+        console.log('Content length:', response.data.content.length);
+        console.log('Content data:', response.data.content);
+        
+        response.data.content.forEach((order) => {
+          if (order.products && Array.isArray(order.products)) {
+            order.products.forEach((product) => {
+              let referenceImage = null;
+              let actualImage = null;
+              let allImages = [];
+              
+              if (product.images && Array.isArray(product.images)) {
+                allImages = product.images;
+                product.images.forEach(image => {
+                  if (image.referenceImage && !referenceImage) {
+                    referenceImage = image.referenceImage;
+                  }
+                  if (image.actualImage && !actualImage) {
+                    actualImage = image.actualImage;
+                  }
+                });
+              }
+              
+              productsData.push({
+                orderNo: order.orderNo,
+                orderProductId: product?.orderProductId,
+                productId: product?.productId || "N/A",
+                productGroup: product?.productGroup || productGroupName,
+                category: product?.productCategory || order.orderCategory || "N/A",
+                supplier: product?.supplier?.supplierName || "N/A",
+                status: order.status || order.orderStatus || "N/A",
+                refImage: referenceImage,
+                actImage: actualImage,
+                allImages: allImages,
+                product: product
+              });
+            });
+          }
+        });
+        totalElements = response.data.totalElements || productsData.length;
+      } else {
+        console.warn('No content array found in response');
+        console.warn('Response structure:', Object.keys(response.data));
+      }
+      
+      // Log the processed products
+      console.log('Processed Products:', productsData);
+      console.log('Total Elements:', totalElements);
+      
+      setAllProducts(productsData);
+      
+      const totalPages = Math.ceil(totalElements / ordersPagination.pageSize);
+      const startIndex = (ordersPagination.currentPage - 1) * ordersPagination.pageSize;
+      const endIndex = startIndex + ordersPagination.pageSize;
+      const paginatedData = productsData.slice(startIndex, endIndex);
+      
+      setProducts(paginatedData);
+      setOrdersPagination({
+        ...ordersPagination,
+        totalPages: totalPages,
+        totalItems: totalElements
+      });
+      
+      const uniqueSuppliers = [...new Set(productsData.map(p => p.supplier).filter(s => s && s !== "N/A"))];
+      setSuppliers(uniqueSuppliers);
+      setError(productsData.length === 0 ? "No products found in this category" : null);
+    } catch (err) {
+      console.error("Error fetching product details:", err);
+      console.error("Error response:", err.response?.data);
+      console.error("Error status:", err.response?.status);
+      console.error("Error headers:", err.response?.headers);
+      setError("Failed to load products. Please try again later.");
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (productGroupName) {
+    fetchProductDetails();
+  }
+}, [productGroupName, currentUser]);
+
+
+
   const filteredProductsList = useMemo(() => {
     let filtered = allProducts;
     
@@ -890,7 +1037,7 @@ const ProductGroupDetails = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ORDER NO</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">PRODUCT ID</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">PRODUCT GROUP</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">CATEGORY</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">PRODUCT STATUS</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">REF IMAGE</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ACT IMAGE</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">ALL IMAGES</th>
@@ -1820,116 +1967,142 @@ const ProductGroupDetails = () => {
         </div>
 
         {/* Search Tabs Label */}
-<p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-  🔍 Search Tabs - Click any tile below to filter orders by category
-</p>
+        {/* <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          🔍 Search Tabs - Click any tile below to filter orders by category
+        </p> */}
+
+        {/* Search Tabs Label with Total Count */}
+<div className="flex justify-between items-center mb-2">
+  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+    🔍 Search Tabs - Click any tile below to filter orders by category
+  </p>
+  <span className="text-sm font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-800">
+    Total Count : {categoryCounts.total}
+  </span>
+</div>
         
-        {/* Clean Border Cards - No Colors */}
-               {/* Clean Border Cards - No Colors - Smaller Size */}
-     <div className="grid grid-cols-5 gap-2 mb-6">
-  {/* Retail Card */}
-  <div 
-    onClick={() => handleCategoryClick('retail')}
-    className={`cursor-pointer rounded-lg border transition-all duration-200 p-2 ${
-      (selectedCategory === 'retail' && activeView === 'orders') || (activeView === 'category' && selectedOrderType === 'RetailClients') 
-        ? 'border-primary ring-2 ring-primary/20 bg-primary/20 dark:bg-primary/30' 
-        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm'
-    }`}
-  >
-    <div className="flex items-center justify-between">
-      <div>
-        {/* <p className="text-gray-900 dark:text-white font-medium text-xs uppercase">Retail</p> */}
-        <p className="text-gray-900 dark:text-white font-bold text-xs uppercase">
-  Retail
-</p>
-        <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Clients</p>
-      </div>
-      <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-      </svg>
-    </div>
-  </div>
+        {/* Clean Border Cards - No Colors - Smaller Size */}
+        <div className="grid grid-cols-5 gap-2 mb-6">
+          {/* Retail Card */}
+          <div 
+            onClick={() => handleCategoryClick('retail')}
+            className={`cursor-pointer rounded-lg border transition-all duration-200 p-2 ${
+              (selectedCategory === 'retail' && activeView === 'orders') || (activeView === 'category' && selectedOrderType === 'RetailClients') 
+                ? 'border-primary ring-2 ring-primary/20 bg-primary/20 dark:bg-primary/30' 
+                : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-900 dark:text-white font-bold text-xs uppercase">Retail</p>
+                <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Clients</p>
+                {/* Count Badge */}
+                <span className="inline-block mt-1 px-2 py-0.5 bg-purple-100 text-purple-800 text-xs font-semibold rounded-full">
+                  {categoryCounts.retail}
+                </span>
+              </div>
+              <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+            </div>
+          </div>
 
-  {/* Wholesale Card */}
-  <div 
-    onClick={() => handleCategoryClick('wholesale')}
-    className={`cursor-pointer rounded-lg border transition-all duration-200 p-2 ${
-      (selectedCategory === 'wholesale' && activeView === 'orders') || (activeView === 'category' && selectedOrderType === 'WSClients') 
-        ? 'border-primary ring-2 ring-primary/20 bg-primary/20 dark:bg-primary/30' 
-        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm'
-    }`}
-  >
-    <div className="flex items-center justify-between">
-      <div>
-        <p className="text-gray-900 dark:text-white font-bold text-xs uppercase">Wholesale</p>
-        <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Clients</p>
-      </div>
-      <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 21h6M12 15v6" />
-      </svg>
-    </div>
-  </div>
+          {/* Wholesale Card */}
+          <div 
+            onClick={() => handleCategoryClick('wholesale')}
+            className={`cursor-pointer rounded-lg border transition-all duration-200 p-2 ${
+              (selectedCategory === 'wholesale' && activeView === 'orders') || (activeView === 'category' && selectedOrderType === 'WSClients') 
+                ? 'border-primary ring-2 ring-primary/20 bg-primary/20 dark:bg-primary/30' 
+                : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-900 dark:text-white font-bold text-xs uppercase">Wholesale</p>
+                <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Clients</p>
+                {/* Count Badge */}
+                <span className="inline-block mt-1 px-2 py-0.5 bg-blue-100 text-blue-800 text-xs font-semibold rounded-full">
+                  {categoryCounts.wholesale}
+                </span>
+              </div>
+              <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.5 6M17 13l1.5 6M9 21h6M12 15v6" />
+              </svg>
+            </div>
+          </div>
 
-  {/* KLC Card */}
-  <div 
-    onClick={() => handleCategoryClick('klc')}
-    className={`cursor-pointer rounded-lg border transition-all duration-200 p-2 ${
-      (selectedCategory === 'klc' && activeView === 'orders') || (activeView === 'category' && selectedOrderType === 'KLCStock') 
-        ? 'border-primary ring-2 ring-primary/20 bg-primary/20 dark:bg-primary/30' 
-        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm'
-    }`}
-  >
-    <div className="flex items-center justify-between">
-      <div>
-        <p className="text-gray-900 dark:text-white font-bold text-xs uppercase">KLC</p>
-        <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Stock</p>
-      </div>
-      <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    </div>
-  </div>
+          {/* KLC Card */}
+          <div 
+            onClick={() => handleCategoryClick('klc')}
+            className={`cursor-pointer rounded-lg border transition-all duration-200 p-2 ${
+              (selectedCategory === 'klc' && activeView === 'orders') || (activeView === 'category' && selectedOrderType === 'KLCStock') 
+                ? 'border-primary ring-2 ring-primary/20 bg-primary/20 dark:bg-primary/30' 
+                : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm'
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-900 dark:text-white font-bold text-xs uppercase">KLC</p>
+                <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Stock</p>
+                {/* Count Badge */}
+                <span className="inline-block mt-1 px-2 py-0.5 bg-green-100 text-green-800 text-xs font-semibold rounded-full">
+                  {categoryCounts.klc}
+                </span>
+              </div>
+              <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+          </div>
 
-  {/* In Progress Card */}
-  <div 
-    onClick={handleInProgressClick}
-    className={`cursor-pointer rounded-lg border transition-all duration-200 p-2 ${
-      activeView === 'inProgress' 
-        ? 'border-primary ring-2 ring-primary/20 bg-primary/20 dark:bg-primary/30' 
-        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm'
-    }`}
-  >
-    <div className="flex items-center justify-between">
-      <div>
-        <p className="text-gray-900 dark:text-white font-bold text-xs uppercase">In Progress</p>
-        <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Orders</p>
-      </div>
-      <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
+         {/* In Progress Card */}
+<div 
+  onClick={handleInProgressClick}
+  className={`cursor-pointer rounded-lg border transition-all duration-200 p-2 ${
+    activeView === 'inProgress' 
+      ? 'border-primary ring-2 ring-primary/20 bg-primary/20 dark:bg-primary/30' 
+      : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm'
+  }`}
+>
+  <div className="flex items-center justify-between">
+    <div>
+      <p className="text-gray-900 dark:text-white font-bold text-xs uppercase">In Progress</p>
+      <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Orders</p>
+      {/* Always show the badge, even when count is 0 */}
+      <span className="inline-block mt-1 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded-full min-w-[20px] text-center">
+        {categoryCounts.inProgress !== undefined ? categoryCounts.inProgress : 0}
+      </span>
     </div>
-  </div>
-
-  {/* Suppliers Card */}
-  <div 
-    onClick={handleSupplierClick}
-    className={`cursor-pointer rounded-lg border transition-all duration-200 p-2 ${
-      activeView === 'suppliers' 
-        ? 'border-primary ring-2 ring-primary/20 bg-primary/20 dark:bg-primary/30' 
-        : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm'
-    }`}
-  >
-    <div className="flex items-center justify-between">
-      <div>
-        <p className="text-gray-900 dark:text-white font-bold text-xs uppercase">Suppliers</p>
-        <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Filter View</p>
-      </div>
-      <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-      </svg>
-    </div>
+    <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
   </div>
 </div>
+
+{/* Suppliers Card */}
+<div 
+  onClick={handleSupplierClick}
+  className={`cursor-pointer rounded-lg border transition-all duration-200 p-2 ${
+    activeView === 'suppliers' 
+      ? 'border-primary ring-2 ring-primary/20 bg-primary/20 dark:bg-primary/30' 
+      : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-sm'
+  }`}
+>
+  <div className="flex items-center justify-between">
+    <div>
+      <p className="text-gray-900 dark:text-white font-bold text-xs uppercase">Suppliers</p>
+      <p className="text-gray-500 dark:text-gray-400 text-[9px] mt-0.5">Filter View</p>
+      {/* Always show the badge, even when count is 0 */}
+      <span className="inline-block mt-1 px-2 py-0.5 bg-orange-100 text-orange-800 text-xs font-semibold rounded-full min-w-[20px] text-center">
+        {categoryCounts.supplier !== undefined ? categoryCounts.supplier : 0}
+      </span>
+    </div>
+    <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+    </svg>
+  </div>
+</div>
+        </div>
 
         {activeView === 'orders' && (selectedCategory !== 'all' || selectedSupplier !== 'all') && (
           <div className="flex justify-end mb-4">
