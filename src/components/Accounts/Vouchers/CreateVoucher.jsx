@@ -565,27 +565,24 @@ const CreateVoucher = () => {
     );
   };
 
- const calculateLineTotal = (entry) => {
+const calculateLineTotal = (entry) => {
   const quantity = entry.quantity || 1;
   const discount = entry.discount || 0;
 
   if (entry.gstCalculation?.type === 'EXPORT') {
     const wholesalePrice = entry.wholesalePrice || entry.mrp || 0;
-    const mrp           = entry.mrp || wholesalePrice;
-    // discount % is always on MRP
-    const discountAmount        = (mrp * discount) / 100;
-    // but we subtract that from wholesalePrice
-    const discountedWholesale   = wholesalePrice - discountAmount;
-    const finalDiscounted       = discountedWholesale > 0 ? discountedWholesale : 0;
+    const mrp = entry.mrp || wholesalePrice;
+    const discountAmount = (mrp * discount) / 100;
+    const discountedWholesale = wholesalePrice - discountAmount;
+    const finalDiscounted = discountedWholesale > 0 ? discountedWholesale : 0;
     return (finalDiscounted * quantity).toFixed(2);
   }
 
-  // Non-export: existing logic unchanged
-  const basePrice           = entry.gstCalculation?.basePrice || 0;
-  const discountedBasePrice = basePrice * (1 - discount / 100);
-  const baseTotal           = discountedBasePrice * quantity;
-  const gstAmount           = (entry.gstCalculation?.totalGstAmount || 0) * quantity;
-  return (baseTotal + gstAmount).toFixed(2);
+  // Use rate (exclusive of GST) for calculation
+  const rate = entry.rate || entry.mrp || 0;
+  const discountedRate = rate * (1 - discount / 100);
+  // Return the discounted rate × quantity (exclusive of GST)
+  return (discountedRate * quantity).toFixed(2);
 };
   const calculateLineTotalForPur = (entry) => {
     // Use exclusiveGst (price including GST) as the rate for Purchase too
@@ -598,98 +595,97 @@ const CreateVoucher = () => {
   // Calculate totals for the summary
   // Calculate totals for the summary
   const calculateTotals = (values) => {
-    let subtotal = 0;
-    let totalCGST = 0;
-    let totalSGST = 0;
-    let totalIGST = 0;
-    let totalGST = 0;
-    let grandTotal = 0;
-    let totalDiscount = 0;
-    let totalDiscountPer = 0;
-    let totalMRP = 0;
-    let totalQuantity = 0;
-    let totalBasePrice = 0;
-    let totalDiscountedBasePrice = 0;
+  let subtotal = 0;
+  let totalCGST = 0;
+  let totalSGST = 0;
+  let totalIGST = 0;
+  let totalGST = 0;
+  let grandTotal = 0;
+  let totalDiscount = 0;
+  let totalDiscountPer = 0;
+  let totalMRP = 0;
+  let totalQuantity = 0;
+  let totalBasePrice = 0;
+  let totalDiscountedBasePrice = 0;
 
-    values.paymentDetails.forEach((entry) => {
-      const basePrice = entry.gstCalculation?.basePrice || 0;
-      const discount = entry.discount || 0;
-      const quantity = entry.quantity || 1;
-   if (entry.gstCalculation?.type === 'EXPORT') {
-  const wholesalePrice      = entry.wholesalePrice || entry.mrp || 0;
-  const mrp                 = entry.mrp || wholesalePrice;
-  const discountAmount      = (mrp * discount) / 100;       // discount on MRP
-  const discountedWholesale = wholesalePrice - discountAmount;
-  const lineTotal           = (discountedWholesale > 0 ? discountedWholesale : 0) * quantity;
+  values.paymentDetails.forEach((entry) => {
+    const basePrice = entry.gstCalculation?.basePrice || 0;
+    const discount = entry.discount || 0;
+    const quantity = entry.quantity || 1;
+    
+    if (entry.gstCalculation?.type === 'EXPORT') {
+      const wholesalePrice = entry.wholesalePrice || entry.mrp || 0;
+      const mrp = entry.mrp || wholesalePrice;
+      const discountAmount = (mrp * discount) / 100;
+      const discountedWholesale = wholesalePrice - discountAmount;
+      const lineTotal = (discountedWholesale > 0 ? discountedWholesale : 0) * quantity;
 
-  totalBasePrice            += wholesalePrice * quantity;
-  totalDiscountedBasePrice  += (discountedWholesale > 0 ? discountedWholesale : 0) * quantity;
-  subtotal                  += lineTotal;
-  totalMRP                  += mrp * quantity;
-  totalQuantity             += quantity;
-  totalDiscount             += discountAmount * quantity;   // discount on MRP
-  return; // skip rest of forEach body
-}
-
-      // Calculate discounted base price
-      const discountedBasePrice = basePrice * (1 - discount / 100);
-      const discountedBaseTotal = discountedBasePrice * quantity;
-
-      // Calculate base price total (without discount)
-      const basePriceTotal = basePrice * quantity;
-      totalBasePrice += basePriceTotal;
-
-      // Calculate discount amount
-      const discountAmount = ((basePrice * discount) / 100) * quantity;
-      totalDiscount += discountAmount;
-
-      // Calculate MRP total
-      const mrpTotal = (entry.mrp || 0) * quantity;
-      totalMRP += mrpTotal;
-
-      // Calculate total quantity
-      totalQuantity += quantity;
-
-      // Calculate GST amounts (GST is on base price before discount)
-      if (entry.gstCalculation) {
-        if (entry.gstCalculation.type === 'CGST+SGST') {
-          const cgstAmount = (entry.gstCalculation.cgstAmount || 0) * quantity;
-          const sgstAmount = (entry.gstCalculation.sgstAmount || 0) * quantity;
-          totalCGST += cgstAmount;
-          totalSGST += sgstAmount;
-          totalGST += cgstAmount + sgstAmount;
-        } else if (entry.gstCalculation.type === 'IGST') {
-          const igstAmount = (entry.gstCalculation.gstAmount || 0) * quantity;
-          totalIGST += igstAmount;
-          totalGST += igstAmount;
-        }
-      }
-
-      // Calculate subtotal (discounted base price + GST)
-      const gstAmount = (entry.gstCalculation?.totalGstAmount || 0) * quantity;
-      const lineTotal = discountedBaseTotal + gstAmount;
+      totalBasePrice += wholesalePrice * quantity;
+      totalDiscountedBasePrice += (discountedWholesale > 0 ? discountedWholesale : 0) * quantity;
       subtotal += lineTotal;
+      totalMRP += mrp * quantity;
+      totalQuantity += quantity;
+      totalDiscount += discountAmount * quantity;
+      return;
+    }
 
-      // Track discounted base price total for summary
-      totalDiscountedBasePrice += discountedBaseTotal;
-    });
+    // Use rate (exclusive of GST) for subtotal
+    const rate = entry.rate || entry.mrp || 0;
+    const discountedRate = rate * (1 - discount / 100);
+    const discountedRateTotal = discountedRate * quantity;
 
-    grandTotal = subtotal;
+    // Calculate base price total (without discount)
+    const basePriceTotal = basePrice * quantity;
+    totalBasePrice += basePriceTotal;
 
-    return {
-      subtotal: subtotal.toFixed(2),
-      totalCGST: totalCGST.toFixed(2),
-      totalSGST: totalSGST.toFixed(2),
-      totalIGST: totalIGST.toFixed(2),
-      totalGST: totalGST.toFixed(2),
-      totalDiscount: totalDiscount.toFixed(2),
-      grandTotal: grandTotal.toFixed(2),
-      totalMRP: totalMRP.toFixed(2),
-      totalQuantity: totalQuantity,
-      totalBasePrice: totalBasePrice.toFixed(2),
-      totalDiscountedBasePrice: totalDiscountedBasePrice.toFixed(2),
-    };
+    // Calculate discount amount
+    const discountAmount = ((rate * discount) / 100) * quantity;
+    totalDiscount += discountAmount;
+
+    // Calculate MRP total
+    const mrpTotal = (entry.mrp || 0) * quantity;
+    totalMRP += mrpTotal;
+
+    // Calculate total quantity
+    totalQuantity += quantity;
+
+    // Calculate GST amounts (GST is on base price before discount)
+    if (entry.gstCalculation) {
+      if (entry.gstCalculation.type === 'CGST+SGST') {
+        const cgstAmount = (entry.gstCalculation.cgstAmount || 0) * quantity;
+        const sgstAmount = (entry.gstCalculation.sgstAmount || 0) * quantity;
+        totalCGST += cgstAmount;
+        totalSGST += sgstAmount;
+        totalGST += cgstAmount + sgstAmount;
+      } else if (entry.gstCalculation.type === 'IGST') {
+        const igstAmount = (entry.gstCalculation.gstAmount || 0) * quantity;
+        totalIGST += igstAmount;
+        totalGST += igstAmount;
+      }
+    }
+
+    // Subtotal is the discounted rate (exclusive of GST)
+    subtotal += discountedRateTotal;
+    totalDiscountedBasePrice += discountedRateTotal;
+  });
+
+  // Grand Total = Subtotal + GST
+  grandTotal = subtotal + totalGST;
+
+  return {
+    subtotal: subtotal.toFixed(2),
+    totalCGST: totalCGST.toFixed(2),
+    totalSGST: totalSGST.toFixed(2),
+    totalIGST: totalIGST.toFixed(2),
+    totalGST: totalGST.toFixed(2),
+    totalDiscount: totalDiscount.toFixed(2),
+    grandTotal: grandTotal.toFixed(2),
+    totalMRP: totalMRP.toFixed(2),
+    totalQuantity: totalQuantity,
+    totalBasePrice: totalBasePrice.toFixed(2),
+    totalDiscountedBasePrice: totalDiscountedBasePrice.toFixed(2),
   };
+};
 
   const validationSchema = Yup.object().shape({
     recieptNumber: Yup.string().required('Voucher number is required'),
@@ -1995,6 +1991,7 @@ const CreateVoucher = () => {
       setgsttype('EXPORT');
     }
               // Replace your existing calculateGST function with this updated version
+// Replace the entire calculateGST function with this corrected version
 const calculateGST = (
   mrp,
   hsnCode,
@@ -2005,21 +2002,28 @@ const calculateGST = (
   isExport = false,
   wholesalePrice = null,
 ) => {
+  // Handle EXPORT case first
   if (isExport) {
-    const basePrice = wholesalePrice || mrp;                 // wholesale is the base
-    const discountAmount = discount > 0 ? (mrp * discount) / 100 : 0; // discount % is always on MRP
+    const basePrice = wholesalePrice || mrp;
+    const discountAmount = discount > 0 ? (mrp * discount) / 100 : 0;
     const finalPrice = Math.max(basePrice - discountAmount, 0);
 
-    if (typeof setgsttype === 'function') setgsttype('EXPORT');
+    if (typeof setgsttype === 'function') {
+      setgsttype('EXPORT');
+    }
 
-    return {                          // <-- THIS return was missing
+    return {
       type: 'EXPORT',
-      cgstRate: 0, sgstRate: 0, igstRate: 0,
-      basePrice,
+      cgstRate: 0,
+      sgstRate: 0,
+      igstRate: 0,
+      basePrice: basePrice,
       wholesalePrice: wholesalePrice || mrp,
-      cgstAmount: 0, sgstAmount: 0,
-      gstAmount: 0, totalGstAmount: 0,
-      finalPrice,
+      cgstAmount: 0,
+      sgstAmount: 0,
+      gstAmount: 0,
+      totalGstAmount: 0,
+      finalPrice: finalPrice,
       inclusivePrice: finalPrice,
       originalMrp: mrp,
       discountedPrice: finalPrice,
@@ -2031,11 +2035,132 @@ const calculateGST = (
     };
   }
 
-  // ... rest of your existing non-export logic remains the same
+  // Non-export logic
   const igstRate = hsnCode?.igst || 0;
   const cgstRate = hsnCode?.cgst || 0;
   const sgstRate = hsnCode?.sgst || 0;
-  // ... rest of your code
+
+  // Calculate total GST rate
+  const totalGstRate = igstRate || cgstRate + sgstRate;
+
+  // Calculate base price (exclusive of GST)
+  const basePrice = mrp / (1 + totalGstRate / 100);
+
+  let cgstAmount = 0;
+  let sgstAmount = 0;
+  let gstAmount = 0;
+  let totalGstAmount = 0;
+
+  // Normalize state codes
+  const registrationCode = String(gstRegistration || '').trim();
+  const customerStateCode = String(customerState || '').trim();
+  const newShippingStateCode = newShippingState
+    ? String(newShippingState).trim()
+    : null;
+
+  // Function to convert state name to state code
+  const getStateCode = (state) => {
+    const stateStr = String(state || '').toLowerCase().trim();
+
+    if (
+      stateStr === '01' ||
+      stateStr.includes('jammu') ||
+      stateStr.includes('kashmir') ||
+      stateStr.includes('srinagar')
+    ) {
+      return '01';
+    }
+
+    if (stateStr === '07' || stateStr.includes('delhi')) {
+      return '07';
+    }
+
+    return stateStr;
+  };
+
+  const registrationStateCode = getStateCode(registrationCode);
+  let customerStateToCompare = newShippingStateCode;
+
+  if (!customerStateToCompare || customerStateToCompare === '') {
+    customerStateToCompare = getStateCode(customerStateCode);
+  } else {
+    customerStateToCompare = getStateCode(newShippingStateCode);
+  }
+
+  const isSameState =
+    registrationStateCode === customerStateToCompare &&
+    (registrationStateCode === '01' || registrationStateCode === '07');
+
+  if (isSameState) {
+    // Same state - apply CGST + SGST
+    cgstAmount = basePrice * (cgstRate / 100);
+    sgstAmount = basePrice * (sgstRate / 100);
+    totalGstAmount = cgstAmount + sgstAmount;
+
+    if (typeof setgsttype === 'function') {
+      setgsttype('SGST+CGST');
+    }
+
+    const discountedBasePrice = discount > 0 ? basePrice * (1 - discount / 100) : basePrice;
+    const finalPrice = discountedBasePrice + totalGstAmount;
+
+    return {
+      type: 'CGST+SGST',
+      cgstRate,
+      sgstRate,
+      igstRate: 0,
+      basePrice: basePrice,
+      cgstAmount,
+      sgstAmount,
+      gstAmount: 0,
+      totalGstAmount,
+      finalPrice,
+      inclusivePrice: finalPrice,
+      originalMrp: mrp,
+      discountedPrice: discountedBasePrice,
+      discountApplied: discount > 0,
+      discountPercentage: discount,
+      isSameState: true,
+      registrationStateCode,
+      customerStateCode: customerStateToCompare,
+      stateName: registrationStateCode === '01' ? 'Jammu And Kashmir' : 'Delhi',
+      usedShippingState: newShippingStateCode ? 'newShippingState' : 'customerState',
+    };
+  } else {
+    // Different state - apply IGST
+    gstAmount = basePrice * (igstRate / 100);
+    totalGstAmount = gstAmount;
+
+    if (typeof setgsttype === 'function') {
+      setgsttype('IGST');
+    }
+
+    const discountedBasePrice = discount > 0 ? basePrice * (1 - discount / 100) : basePrice;
+    const finalPrice = discountedBasePrice + totalGstAmount;
+
+    return {
+      type: 'IGST',
+      igstRate,
+      cgstRate: 0,
+      sgstRate: 0,
+      basePrice: basePrice,
+      gstAmount,
+      cgstAmount: 0,
+      sgstAmount: 0,
+      totalGstAmount,
+      finalPrice,
+      inclusivePrice: finalPrice,
+      originalMrp: mrp,
+      discountedPrice: discountedBasePrice,
+      discountApplied: discount > 0,
+      discountPercentage: discount,
+      isSameState: false,
+      registrationStateCode,
+      customerStateCode: customerStateToCompare,
+      stateName: 'Inter-State',
+      usedShippingState: newShippingStateCode ? 'newShippingState' : 'customerState',
+    };
+  }
 };
               }
 
@@ -2180,8 +2305,7 @@ const calculateGST = (
               }
             };
 
-            // Replace your useEffect for GST calculation with this:
-            // Replace your useEffect for GST calculation with this:
+         
             useEffect(() => {
               // This will run whenever ledgerId or newShippingState changes
               if (values?.paymentDetails?.length > 0 && values?.ledgerId) {
@@ -2260,7 +2384,7 @@ const calculateGST = (
                         const lineTotal = calculateLineTotal({
                           ...entry,
                           exclusiveGst: gstCalculation.inclusivePrice,
-                          rate: gstCalculation.inclusivePrice,
+                         rate: Math.max(entry.mrp - (gstCalculation.totalGstAmount || 0), 0),
                           quantity: entry.quantity || 1,
                         });
 
@@ -2278,6 +2402,7 @@ const calculateGST = (
                 }
               }
             }, [
+
               values?.ledgerId,
               newShippingState,
               values?.paymentDetails?.length,
@@ -3132,7 +3257,8 @@ const calculateGST = (
                                                     values,
                                                     index,
                                                   )}
-                                                 onChange={(option) => {
+                                                 // In the onChange handler of ReactSelect for products
+onChange={(option) => {
   if (!option) {
     // Clear the row
     setFieldValue(`paymentDetails.${index}.productsId`, null);
@@ -3170,16 +3296,22 @@ const calculateGST = (
     wholesalePrice,
   );
 
-  // For export: show wholesalePrice as rate, not MRP
-  const displayRate = isExport
-    ? wholesalePrice
-    : gstCalculation.finalPrice ?? gstCalculation.inclusivePrice ?? mrp;
+  // FIX: Calculate rate as MRP - GST (exclusive price)
+  // For Sales: Rate = MRP - GST Amount
+  // For Purchase: Rate = MRP - GST Amount (for regular suppliers)
+  let displayRate;
+  if (isExport) {
+    displayRate = wholesalePrice;
+  } else {
+    // Rate = MRP - GST (Exclusive of GST)
+    displayRate = Math.max(mrp - (gstCalculation.totalGstAmount || 0), 0);
+  }
 
   setFieldValue(`paymentDetails.${index}.productsId`,   option?.obj?.product?.id || option?.obj?.id || null);
   setFieldValue(`paymentDetails.${index}.orderProductId`, option?.orderProdId || null);
   setFieldValue(`paymentDetails.${index}.mrp`,          mrp);
   setFieldValue(`paymentDetails.${index}.wholesalePrice`, wholesalePrice);
-  setFieldValue(`paymentDetails.${index}.rate`,          displayRate);
+  setFieldValue(`paymentDetails.${index}.rate`,          displayRate); // This is the exclusive price
   setFieldValue(`paymentDetails.${index}.igstRate`,      hsnCode?.igst || 0);
   setFieldValue(`paymentDetails.${index}.gstAmount`,     gstCalculation.totalGstAmount);
   setFieldValue(`paymentDetails.${index}.exclusiveGst`,  gstCalculation.finalPrice ?? gstCalculation.inclusivePrice ?? mrp);
@@ -3510,21 +3642,20 @@ if (entry.productsId) {
     name={`paymentDetails.${index}.value`}
     value={(() => {
       if (entry.gstCalculation?.type === 'EXPORT') {
-        const ws       = entry.wholesalePrice || entry.mrp || 0;
-        const mrp      = entry.mrp || ws;
+        const ws = entry.wholesalePrice || entry.mrp || 0;
+        const mrp = entry.mrp || ws;
         const discount = entry.discount || 0;
-        const qty      = entry.quantity || 1;
-        // Discount on MRP, applied against wholesale
-        const discountAmt    = (mrp * discount) / 100;
-        const discountedWS   = ws - discountAmt;
+        const qty = entry.quantity || 1;
+        const discountAmt = (mrp * discount) / 100;
+        const discountedWS = ws - discountAmt;
         return ((discountedWS > 0 ? discountedWS : 0) * qty).toFixed(2);
       }
-      // Non-export
-      const basePrice           = entry.gstCalculation?.basePrice || 0;
-      const discount            = entry.discount || 0;
-      const quantity            = entry.quantity || 1;
-      const discountedBasePrice = basePrice * (1 - discount / 100);
-      return (discountedBasePrice * quantity).toFixed(2);
+      // Use rate (exclusive of GST)
+      const rate = entry.rate  || 0;
+      const discount = entry.discount || 0;
+      const quantity = entry.quantity || 1;
+      const discountedRate = rate * (1 - discount / 100);
+      return (discountedRate * quantity).toFixed(2);
     })()}
     readOnly
     className="w-full bg-gray-50 dark:bg-slate-800 py-2 px-3 text-sm rounded border"

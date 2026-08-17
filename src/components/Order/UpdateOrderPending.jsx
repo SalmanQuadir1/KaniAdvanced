@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 import useorder from '../../hooks/useOrder';
 import ReactDatePicker from "react-datepicker";
 import useProduct from '../../hooks/useProduct';
-import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL } from '../../Constants/utils';
+import { GET_PRODUCTBYID_URL, GET_ORDERBYID_URL, UPDATE_ORDER_URL, UPDATE_ORDERCREATED_ALL, GET_ORDERBYIDDD_URL } from '../../Constants/utils';
 import { IoIosAdd, IoMdAdd, IoMdTrash } from "react-icons/io";
 import ModalUpdate from './ModalUpdate';
 import SupplierModal from './SupplierModal';
@@ -211,7 +211,7 @@ const UpdateOrderPending = () => {
 
   const getOrderById = async () => {
     try {
-      const response = await fetch(`${GET_ORDERBYID_URL}/${id}`, {
+      const response = await fetch(`${GET_ORDERBYIDDD_URL}/${id}`, {
         method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,

@@ -40,6 +40,8 @@ const UpdateCustomer = () => {
   ,
   ]
 
+
+
   const registrationTypeOptions = [
     { value: 'INDIVIDUAL', label: 'Individual' },
     { value: 'BUSINESS', label: 'Business' },
