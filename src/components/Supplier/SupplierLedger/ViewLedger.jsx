@@ -1695,11 +1695,11 @@ const ViewLedger = () => {
                                                                         {ledger.voucherNumber ? `Voucher: ${ledger.voucherNumber}` : 'No Voucher'}
                                                                     </div>
                                                                 </td>
-                                                                <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-xs">
-                                                                    <div className="truncate" title={ledger.description || 'No description'}>
-                                                                        {ledger.description || 'No description'}
-                                                                    </div>
-                                                                </td>
+                                                               <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-[400px]">
+  <div className="truncate" title={ledger.description || 'No description'}>
+    {ledger.description || 'No description'}
+  </div>
+</td>
                                                                 <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-xs">
                                                                     <div className="truncate" title={ledger.voucherType || 'No voucherType'}>
                                                                         {ledger.voucherType || 'No voucherType'}
@@ -1707,7 +1707,7 @@ const ViewLedger = () => {
                                                                 </td>
                                                                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-xs">
                                                                     <div className="truncate" title={ledger.voucherType || 'No voucherType'}>
-                                                                       <span> {(ledger?.updatedBy?.split("-")[0]) }</span> <br></br><span>{new Date(ledger.updatedAt).toLocaleDateString() }</span>
+                                                                       <span> {(ledger?.updatedBy?.split("-")[0]?.toUpperCase()) }</span> <br></br><span>{new Date(ledger.updatedAt).toLocaleDateString() }</span>
                                                                     </div>
                                                                 </td>
 
