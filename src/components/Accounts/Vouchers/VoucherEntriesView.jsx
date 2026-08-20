@@ -244,6 +244,11 @@ const VoucherEntriesView = () => {
             {item?.totalAmount}{' '}
           </p>
         </td>
+        <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
+          <p className="text-gray-900 whitespace-no-wrap">
+            {(item?.date).toLocaleString()}{' '}
+          </p>
+        </td>
         {item?.typeOfVoucher?.toLowerCase() === 'purchase' && (
           <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
             <p className="text-gray-900 whitespace-no-wrap">
@@ -444,7 +449,10 @@ const VoucherEntriesView = () => {
                       narration
                     </th>
                     <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      totalAmount
+                      total Amount
+                    </th>
+                     <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      Created Date
                     </th>
                     {Voucher &&
                       Voucher.length > 0 &&
