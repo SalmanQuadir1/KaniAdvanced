@@ -420,7 +420,7 @@ const UpdateKani = () => {
             <div className="px-6 py-4 border-b border-gray-200 dark:border-strokedark bg-gray-50 dark:bg-meta-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                  Update Order Product
+                   Order Product Detail
                 </h3>
                 <span className="text-xs bg-primary/10 text-primary px-3 py-1 rounded-full font-medium">
                   Order #{order?.orderNo || 'N/A'}
@@ -474,6 +474,7 @@ const UpdateKani = () => {
                           className="bg-white dark:bg-form-Field"
                           classNamePrefix="react-select"
                           placeholder="Select Order Category"
+                          isDisabled={true}
                         />
                       </FormField>
 
@@ -484,6 +485,7 @@ const UpdateKani = () => {
                           onChange={(e) => setFieldValue("productId", e.target.value)}
                           className="w-full bg-white dark:bg-form-input rounded-lg border border-gray-300 dark:border-strokedark py-2.5 px-4 text-gray-800 dark:text-white outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:bg-gray-100 dark:disabled:bg-meta-4"
                           placeholder="Enter Product ID"
+                          readOnly
                         />
                       </FormField>
 
@@ -575,7 +577,7 @@ const UpdateKani = () => {
             <div className="px-6 py-4 border-b border-gray-200 dark:border-strokedark bg-gradient-to-r from-gray-50 to-gray-100 dark:from-meta-4 dark:to-meta-4">
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
-                  View Production Dashboard
+                  Product Details
                 </h3>
                 <span className="text-xs bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-3 py-1 rounded-full font-medium">
                   Product Details
@@ -1190,7 +1192,7 @@ const UpdateKani = () => {
                       </div>
 
                       {/* Product Status */}
-                      <div className="mt-4">
+                      {/* <div className="mt-4">
                         <FormField label="Product Status">
                           <Field
                             name='productStatus'
@@ -1199,7 +1201,7 @@ const UpdateKani = () => {
                             readOnly
                           />
                         </FormField>
-                      </div>
+                      </div> */}
                     </form>
                   )}
                 </Formik>
