@@ -16,6 +16,8 @@ const DropdownUser = () => {
   const dispatch = useDispatch();
 
   const { currentUser } = useSelector((state) => state?.persisted?.user);
+  console.log(currentUser,"4521");
+  
 
   //console.log(currentUser);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -124,12 +126,16 @@ const DropdownUser = () => {
           </div>
         </div>
         <div className="flex flex-col">
-          <span className="text-sm font-semibold text-gray-800 dark:text-white">
+          <span className="text-sm font-semibold text-gray-800 dark:text-white ">
             {currentUser?.user?.username || 'User'}
           </span>
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            {currentUser?.user?.email || 'user@example.com'}
+           <span className="text-xs text-red-600 font-semibold text-gray-500 dark:text-gray-400 animate-blink">
+            {(currentUser?.user.authorities[0].authority).split("_")[1] || 'No Email'}
           </span>
+          <span className="text-xs text-gray-500 dark:text-gray-400">
+            {currentUser?.user?.email || 'No Email'}
+          </span>
+
         </div>
       </div>
     </div>

@@ -144,7 +144,7 @@ const EditVoucher = () => {
         console.log(data, '09');
 
         setVoucherData(data);
-        
+
         // Fetch ledgers first (these are needed for dropdowns)
         await getLedger();
         await getLedgerIncome();
@@ -274,7 +274,6 @@ const EditVoucher = () => {
 
         // Fetch products in the background after page is rendered
         fetchAllProducts();
-
       } catch (error) {
         console.error('Error fetching voucher:', error);
         toast.error('Failed to load voucher data');
@@ -467,6 +466,7 @@ const EditVoucher = () => {
       totalQuantity = 0;
     let totalBasePrice = 0,
       totalDiscountedBasePrice = 0;
+      let totalWithoutGst = 0;
 
     values.paymentDetails.forEach((entry) => {
       const quantity = parseFloat(entry.quantity) || 1;
@@ -482,6 +482,7 @@ const EditVoucher = () => {
         const discountedRate = rate * (1 - discount / 100);
         subtotal += discountedRate * quantity;
         totalDiscount += (rate - discountedRate) * quantity;
+         totalWithoutGst += discountedRate * quantity;
         return;
       }
 
@@ -514,6 +515,7 @@ const EditVoucher = () => {
       totalDiscount += discountAmount * quantity;
       totalBasePrice += basePrice * quantity;
       totalDiscountedBasePrice += basePrice * (1 - discount / 100) * quantity;
+      totalWithoutGst = subtotal;
     });
 
     const grandTotal = parseFloat(subtotal) + parseFloat(totalGST);
@@ -530,6 +532,7 @@ const EditVoucher = () => {
       totalQuantity: totalQuantity,
       totalBasePrice: totalBasePrice.toFixed(2),
       totalDiscountedBasePrice: totalDiscountedBasePrice.toFixed(2),
+      totalWithoutGst: totalWithoutGst.toFixed(2),
     };
   };
 
@@ -548,6 +551,9 @@ const EditVoucher = () => {
         totalSgst: parseFloat(totals.totalSGST),
         totalIgst: parseFloat(totals.totalIGST),
         discountAmount: parseFloat(totals.totalDiscount),
+        totalWithoutgst: parseFloat(totals.subtotal),
+        userName:currentUser?.user?.username,
+        role:currentUser?.user.authorities[0].authority
       };
 
       const response = await fetch(`${EDIT_ENTRY_URL}/update/${id}`, {
@@ -1038,8 +1044,8 @@ const EditVoucher = () => {
                                             }}
                                             options={allProducts}
                                             placeholder={
-                                              loadingProducts 
-                                                ? 'Loading products...' 
+                                              loadingProducts
+                                                ? 'Loading products...'
                                                 : 'Select Product'
                                             }
                                             className="react-select-container"
@@ -1300,7 +1306,7 @@ const EditVoucher = () => {
                         ) : (
                           <>
                             <FaSave className="mr-2" />
-                            Update 
+                            Update
                           </>
                         )}
                       </button>
