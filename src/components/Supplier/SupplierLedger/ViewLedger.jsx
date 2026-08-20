@@ -1659,7 +1659,7 @@ const ViewLedger = () => {
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Transaction Ledger</th>
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Description</th>
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Voucher Type</th>
-
+<th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Updated By</th>
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Debit (₹)</th>
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Credit (₹)</th>
                                                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Action</th>
@@ -1703,6 +1703,11 @@ const ViewLedger = () => {
                                                                 <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-xs">
                                                                     <div className="truncate" title={ledger.voucherType || 'No voucherType'}>
                                                                         {ledger.voucherType || 'No voucherType'}
+                                                                    </div>
+                                                                </td>
+                                                                 <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-xs">
+                                                                    <div className="truncate" title={ledger.voucherType || 'No voucherType'}>
+                                                                       <span> {(ledger?.updatedBy?.split("-")[0]) }</span> <br></br><span>{new Date(ledger.updatedAt).toLocaleDateString() }</span>
                                                                     </div>
                                                                 </td>
 
