@@ -316,7 +316,7 @@ const VoucherEntriesView = () => {
       gstRegistration: values.gstRegistration || undefined,
       ledgerId: values.ledgerId || undefined,
     };
-    getVoucher(pagination.currentPage, filters);
+    getVoucher(pagination.currentPage+1, filters);
     // ViewInventory(pagination.currentPage, filters);
   };
 
