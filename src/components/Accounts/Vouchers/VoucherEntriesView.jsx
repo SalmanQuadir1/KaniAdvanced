@@ -105,6 +105,47 @@ const VoucherEntriesView = () => {
     }
   };
 
+  const stateOption = [
+    { value: '1', label: 'Jammu & Kashmir' },
+    { value: '2', label: 'Himachal Pradesh' },
+    { value: '3', label: 'Punjab' },
+    { value: '4', label: 'Chandigarh' },
+    { value: '5', label: 'Uttarakhand' },
+    { value: '6', label: 'Haryana' },
+    { value: '7', label: 'Delhi' },
+    { value: '8', label: 'Rajasthan' },
+    { value: '9', label: 'Uttar Pradesh' },
+    { value: '10', label: 'Bihar' },
+    { value: '11', label: 'Sikkim' },
+    { value: '12', label: 'Arunachal Pradesh' },
+    { value: '13', label: 'Nagaland' },
+    { value: '14', label: 'Manipur' },
+    { value: '15', label: 'Mizoram' },
+    { value: '16', label: 'Tripura' },
+    { value: '17', label: 'Meghalaya' },
+    { value: '18', label: 'Assam' },
+    { value: '19', label: 'West Bengal' },
+    { value: '20', label: 'Jharkhand' },
+    { value: '21', label: 'Odisha' },
+    { value: '22', label: 'Chhattisgarh' },
+    { value: '23', label: 'Madhya Pradesh' },
+    { value: '24', label: 'Gujarat' },
+    { value: '25', label: 'Daman & Diu' },
+    { value: '26', label: 'Dadra & Nagar Haveli' },
+    { value: '27', label: 'Maharashtra' },
+    { value: '28', label: 'Andhra Pradesh' },
+    { value: '29', label: 'Karnataka' },
+    { value: '30', label: 'Goa' },
+    { value: '31', label: 'Lakshadweep' },
+    { value: '32', label: 'Kerala' },
+    { value: '33', label: 'Tamil Nadu' },
+    { value: '34', label: 'Puducherry' },
+    { value: '35', label: 'Andaman & Nicobar Islands' },
+    { value: '36', label: 'Telangana' },
+    { value: '37', label: 'Andhra Pradesh (New)' },
+    { value: '38', label: 'Ladakh' },
+  ];
+
   useEffect(() => {
     getVoucher();
   }, []);
@@ -189,11 +230,11 @@ const VoucherEntriesView = () => {
         <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
           <p className="text-gray-900 whitespace-no-wrap">{item?.ledgerName}</p>
         </td>
-        <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
-          <p className="text-gray-900 whitespace-no-wrap">
-            {item?.gstRegistration}{' '}
-          </p>
-        </td>
+       <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
+  <p className="text-gray-900 whitespace-no-wrap">
+    {stateOption.find(state => state.value === String(item?.gstRegistration))?.label || item?.gstRegistration}
+  </p>
+</td>
 
         <td className="px-5 py-5 bVoucher-b bVoucher-gray-200 text-sm">
           <p className="text-gray-900 whitespace-no-wrap">{item?.narration} </p>
@@ -353,7 +394,7 @@ const VoucherEntriesView = () => {
 
                   <div className="mb-4.5 flex flex-wrap gap-6">
                     {/* GST Registration Field */}
-                    <div className="flex-1 min-w-[300px]">
+                    {/* <div className="flex-1 min-w-[300px]">
                       <label className="mb-2.5 block text-black dark:text-white">
                         GST Registration
                       </label>
@@ -363,7 +404,7 @@ const VoucherEntriesView = () => {
                         placeholder="Enter GST Registration"
                         className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-Field dark:text-white dark:focus:border-primary"
                       />
-                    </div>
+                    </div> */}
 
                     {/* Voucher Name Field */}
                   </div>
