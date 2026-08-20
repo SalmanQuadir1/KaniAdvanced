@@ -1290,7 +1290,7 @@ const EditVoucher = () => {
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex md:w-[170px] w-[170px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center bg-primary md:p-2.5 font-medium md:text-sm text-white hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex md:w-[190px] w-[190px] md:h-[37px] h-[40px] pt-2 rounded-lg justify-center bg-primary md:p-2.5 font-medium md:text-sm text-white hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isSubmitting ? (
                           <>
@@ -1300,7 +1300,7 @@ const EditVoucher = () => {
                         ) : (
                           <>
                             <FaSave className="mr-2" />
-                            Update Voucher
+                            Update 
                           </>
                         )}
                       </button>
