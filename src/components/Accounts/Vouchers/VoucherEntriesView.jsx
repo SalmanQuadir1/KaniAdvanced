@@ -158,9 +158,9 @@ const VoucherEntriesView = () => {
 
           if (isCurrentPageEmpty && pagination.currentPage > 1) {
             const previousPage = pagination.currentPage ;
-            handlePageChange(previousPage); // Go to the previous page if current page becomes empty
+            handlePageChange(previousPage+1); // Go to the previous page if current page becomes empty
           } else {
-            getVoucher(pagination.currentPage); // Refresh Vouchers on the current page
+            getVoucher(pagination.currentPage+1); // Refresh Vouchers on the current page
           }
         } else {
           toast.error(`${data.errorMessage}`);
@@ -397,7 +397,7 @@ const VoucherEntriesView = () => {
                       Party Name
                     </th>
                     <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                      gstRegistration
+                      gst Registration
                     </th>
                     <th className="px-2 py-3 bVoucher-b-2 bVoucher-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       narration
