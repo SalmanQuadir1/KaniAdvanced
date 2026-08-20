@@ -568,7 +568,8 @@ const CreateVoucher = () => {
 const calculateLineTotal = (entry) => {
   const quantity = entry.quantity || 1;
   const discount = entry.discount || 0;
-
+  
+  // Handle export case first
   if (entry.gstCalculation?.type === 'EXPORT') {
     const wholesalePrice = entry.wholesalePrice || entry.mrp || 0;
     const mrp = entry.mrp || wholesalePrice;
@@ -578,10 +579,17 @@ const calculateLineTotal = (entry) => {
     return (finalDiscounted * quantity).toFixed(2);
   }
 
-  // Use rate (exclusive of GST) for calculation
-  const rate = entry.rate || entry.mrp || 0;
+  // For non-export, use rate (exclusive of GST)
+  // If rate is not available, calculate it from MRP and GST
+  let rate = entry.rate || 0;
+  
+  // If rate is 0 but we have MRP and GST calculation, calculate rate
+  if (rate === 0 && entry.mrp && entry.gstCalculation) {
+    const totalGstAmount = entry.gstCalculation.totalGstAmount || 0;
+    rate = Math.max(entry.mrp - totalGstAmount, 0);
+  }
+  
   const discountedRate = rate * (1 - discount / 100);
-  // Return the discounted rate × quantity (exclusive of GST)
   return (discountedRate * quantity).toFixed(2);
 };
   const calculateLineTotalForPur = (entry) => {
@@ -1109,6 +1117,8 @@ const calculateLineTotal = (entry) => {
           validationSchema={validationSchema}
           onSubmit={(values, { setSubmitting }) => {
             const action = values.formAction || 'save';
+            console.log(values,"78547");
+            
             handleCreateVoucher(values, action, setSubmitting);
           }}
         >
@@ -2403,13 +2413,12 @@ const calculateGST = (
               }
             }, [
 
-              values?.ledgerId,
-              newShippingState,
-              values?.paymentDetails?.length,
-              allProducts,
-              availableProducts,
-              Vouchers?.typeOfVoucher,
-              values.isExport,
+            values?.ledgerId,
+  newShippingState,
+  allProducts,
+  availableProducts,
+  Vouchers?.typeOfVoucher,
+  values.isExport,
             ]);
 
             // Also add this useEffect for when newShippingState changes from the delivery address field
@@ -2428,7 +2437,7 @@ const calculateGST = (
 
             // Add this function to handle product selection with proper GST calculation
             // Add this function to handle product selection with proper GST calculation
-           const handleProductSelect = (
+      const handleProductSelect = (
   index,
   option,
   setFieldValue,
@@ -2458,6 +2467,15 @@ const calculateGST = (
     wholesalePrice,
   );
 
+  // Calculate the rate (exclusive of GST)
+  let displayRate;
+  if (isExport) {
+    displayRate = wholesalePrice;
+  } else {
+    // Rate = MRP - GST Amount (Exclusive of GST)
+    displayRate = Math.max(mrp - (gstCalculation.totalGstAmount || 0), 0);
+  }
+
   setFieldValue(`paymentDetails.${index}.productsId`, option?.obj?.product?.id || option?.obj.id || null);
   setFieldValue(`paymentDetails.${index}.orderProductId`, option?.orderProdId || null);
   setFieldValue(`paymentDetails.${index}.mrp`, mrp);
@@ -2465,14 +2483,17 @@ const calculateGST = (
   setFieldValue(`paymentDetails.${index}.igstRate`, hsnCode?.igst || 0);
   setFieldValue(`paymentDetails.${index}.gstAmount`, gstCalculation.totalGstAmount);
   setFieldValue(`paymentDetails.${index}.exclusiveGst`, gstCalculation.finalPrice);
-  setFieldValue(`paymentDetails.${index}.rate`, gstCalculation.finalPrice);
+  setFieldValue(`paymentDetails.${index}.rate`, displayRate); // This is the exclusive price
   setFieldValue(`paymentDetails.${index}.gstCalculation`, gstCalculation);
 
   const lineTotal = calculateLineTotal({
     ...entry,
-    exclusiveGst: gstCalculation.finalPrice,
-    rate: gstCalculation.finalPrice,
+    mrp,
+    wholesalePrice,
+    discount: currentDiscount,
     quantity: entry.quantity || 1,
+    gstCalculation,
+    rate: displayRate,
   });
 
   setFieldValue(`paymentDetails.${index}.value`, lineTotal);
